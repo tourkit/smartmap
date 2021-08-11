@@ -6,7 +6,6 @@
 #include <cmath>
 #include "RectangleBinPack/GuillotineBinPack.h" 
 
-
 struct Attribute {
 
   static inline std::vector<float> attributes;
@@ -200,7 +199,7 @@ struct Stack {
   static inline std::map<Buffer*,Drawcall> stack;
   static inline std::vector<Buffer*> passes;
 
-  static void addRenderer(Renderer* src, Buffer* dst, int level = 0);
+  static void addRenderer(Renderer* src, Buffer* dst);
 
   static Buffer* createPass() { passes.push_back(new Buffer); return passes.back(); }
 
@@ -289,10 +288,10 @@ struct Output : public Renderer {
 };
 
 
-void Stack::addRenderer(Renderer* src, Buffer* dst, int level) {
+void Stack::addRenderer(Renderer* src, Buffer* dst) {
 
 
-    std::cout << "Stack::addRenderer(" << src->name << ", " << dst->name << ", " << level << ")\n";
+    std::cout << "Stack::addRenderer(" << src->name << ", " << dst->name  << ")\n";
 
 }
 
@@ -303,7 +302,7 @@ int main() {
   std::vector<Renderer*> tree;
 
   tree.push_back(new Compo(800,600));
-  auto* output = (Compo*)tree[0];
+  Compo* output = (Compo*)tree[0];
 
   output->tree.push_back(new Pass(output));
   output->tree.push_back(new Obj);
@@ -318,7 +317,9 @@ int main() {
 
   dc.addBuffer(&bf1);
 
+
   rbp::GuillotineBinPack testbinpack(16000,16000);
+
 
   testbinpack.Insert(1920,1200,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
   testbinpack.Insert(1920,1200,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
