@@ -315,9 +315,7 @@ int main() {
 
   Drawcall dc;
 
-  Buffer bf1(100,100); //!!! 
-
-  std::cout << "ooo";
+  Buffer bf1(100,100);
 
   dc.addBuffer(&bf1);
 
