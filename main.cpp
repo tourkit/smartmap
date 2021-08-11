@@ -103,35 +103,6 @@ struct AdvancedAttribute : public Attribute {
 
 };
 
-struct Coords { float x,y; };
-
-struct QuadCoords { Coords size, pos; };
-
-std::vector<QuadCoords> matrice(unsigned int x, unsigned int y) {
-
-    std::vector<QuadCoords> mat;
-
-    float xsize = 1. / x;
-    float ysize = 1. / y;
-
-    for (size_t row = 0; row < x; ++row) for (size_t col = 0; col < y; ++col) mat.push_back({xsize, ysize, xsize * row,  ysize * col});
-
-    return mat;
-
-}
-
-std::vector<QuadCoords> matrice(unsigned int q) {
-
-    unsigned int m = std::ceil(std::sqrt(q > 1 ? q-1 : q ));
-
-    auto mat = matrice(m,m);
-
-    mat.resize(q);
-
-    return mat;
-
-}
-
 struct Buffer {
 
   static inline std::vector<Buffer*> pool;
@@ -155,57 +126,42 @@ struct Buffer {
 };
 
 
+struct Renderer;
+
 struct Drawcall {
 
-  static inline unsigned int uid = 0;
+  static inline std::map<int, std::vector<Drawcall>> stack;
 
   unsigned int id, width, height;
 
-  std::set<Buffer*> buffers;
+  Buffer* dst ;
+  std::set<Buffer*> sources;
 
-  Buffer atlas;
+  Buffer buffer;
 
-  Drawcall() { id = uid++; }
+  rbp::GuillotineBinPack atlas;
 
-  void binPack() {
+  using Rect = rbp::Rect;
 
-    std::vector<QuadCoords> atlas = matrice(buffers.size());
+  Drawcall() : atlas(16000,16000) { }
 
-    int i = 0;
+  void build() { std::vector<Rect> matrice = atlas.GetUsedRectangles(); }
 
-    for (auto* b : buffers) {
+  int add(Renderer* src, Buffer* dst);
 
-      b->dc_id = id;
+  static void add(Renderer* src, Buffer* dst, int level) {
 
-      // b->pos = atlas[i].pos;
+     if (stack[level].size()<1) stack[level].resize(1);
 
-      i++;
+     if (!stack[level].back().add(src,dst)) {
+    
+       stack[level].resize(stack[level].size()+1);
 
+       add(src,dst,level);
 
-    }
+     }
 
-  }
-
-  void addBuffer(Buffer* buffer) {
-
-      buffers.insert(buffer);
-      binPack();
-
-  }
-
-};
-
-struct Renderer;
-struct Stack {
-
-  // add level vector system
-
-  static inline std::map<Buffer*,Drawcall> stack;
-  static inline std::vector<Buffer*> passes;
-
-  static void addRenderer(Renderer* src, Buffer* dst);
-
-  static Buffer* createPass() { passes.push_back(new Buffer); return passes.back(); }
+   }
 
 };
 
@@ -218,7 +174,7 @@ struct Renderer {
 
   Renderer() { pool.push_back(this); }
 
-  virtual void dc(Buffer* dst, unsigned int level = 0) = 0;
+  virtual void dc(Buffer* dst = 0) = 0;
 
 };
 
@@ -228,9 +184,9 @@ struct Obj : public Renderer {
 
     Obj() { name = "Obj"; }
 
-    void dc(Buffer* dst, unsigned int level = 0) override {
+    void dc(Buffer* dst) override {
 
-      Stack::addRenderer(this,dst);
+      Drawcall::add(this, dst, (texture==dst));
 
     }
 
@@ -250,19 +206,11 @@ struct Compo : public Obj {
 
   }
 
-  void dc(Buffer* dst, unsigned int level = 0) override {
+  void dc(Buffer* dst = 0) override {
 
-    for (Renderer* o : tree) { o->dc(&buffer,level); }
+    for (Renderer* o : tree) { o->dc(&buffer); }
 
-    if (texture != dst) { Obj::dc(dst,level); }
-    
-    else {
-
-      Buffer* pass = Stack::createPass();
-      pass->name = "Buffer_Pass";
-      Obj::dc(pass, level+1); //  glsubcopystuff() ify ?
-
-    }
+    Obj::dc(dst); 
 
   }
 
@@ -272,7 +220,7 @@ struct Pass : public Compo {
 
   Pass(Compo* parent) : Compo(parent->buffer.width, parent->buffer.height) { name = "Pass"; texture = &parent->buffer; }
 
-  void dc(Buffer* dst, unsigned int level = 0) override { Compo::dc(dst); }
+  void dc(Buffer* dst = 0) override { Compo::dc(dst); }
 
 };
 
@@ -284,46 +232,33 @@ struct Output : public Renderer {
 
   Output(unsigned int width, unsigned int height) : width(width), height(height) { name = "Output"; }
 
-  void dc(Buffer* dst, unsigned int level = 0) override {
+  void dc(Buffer* dst = 0) override {
 
 
   }
 
 };
 
-void Stack::addRenderer(Renderer* src, Buffer* dst) {
+int Drawcall::add(Renderer* src, Buffer* dst) { 
 
-
-    std::cout << "Stack::addRenderer(" << src->name << ", " << dst->name  << ")\n";
-
-}
-
-struct Matrice : public rbp::GuillotineBinPack {
-
-using Rect = rbp::Rect;
-
-std::vector<Rect> matrice;
-
-Matrice(int width, int height) : GuillotineBinPack(width, height) {}
-
-void build() { matrice = GetUsedRectangles(); }
-
-int add(int width, int height) { 
-
-  auto matrice = GetFreeRectangles(); 
+  auto matrice = atlas.GetFreeRectangles(); 
 
   for (auto cell : matrice )  {
 
-    if (width < cell.width && height < cell.height) {
+    if (dst->width < cell.width && dst->height < cell.height) {
 
-        Insert(
+        atlas.Insert(
           
-          width, height,
+          dst->width, dst->height,
           0,
           rbp::GuillotineBinPack::RectBestAreaFit, 
           rbp::GuillotineBinPack::SplitShorterAxis
         
         );
+
+        sources.insert(dst);
+
+        return 1;
 
         break;
 
@@ -331,44 +266,30 @@ int add(int width, int height) {
 
   }
 
+  return 0;
+
+    // std::cout << "Stack::addRenderer(" << src->name << ", " << dst->name  << ")\n";
+
 }
-  
-  
-};
 
 int main() {
 
   Buffer zero(1920,1200); zero.name = "Zero";
   std::vector<Renderer*> tree;
 
-  tree.push_back(new Compo(800,600));
-  Compo* output = (Compo*)tree[0];
-  Compo* bbb = new Compo(100,100);
-  // bbb->name="koubi";
+  // tree.push_back(new Compo(800,600));
+  // Compo* output = (Compo*)tree[0];
+  // Compo* bbb = new Compo(100,100);
+  // // bbb->name="koubi";
 
-  output->tree.push_back(new Pass(output));
-  output->tree.push_back(new Obj);
+  // output->tree.push_back(new Pass(output));
+  // output->tree.push_back(new Obj);
+  tree.push_back(new Obj);
 
   for (auto* r : tree) r->dc(&zero);
 
-  std::cout <<"\n\n";
-
   Drawcall dc;
-  
-  Buffer bf1(100,100);
 
-  dc.addBuffer(&bf1);
-
-
-  Matrice matrice(3840,10000);
-
-  matrice.add(1920,1200);
-  matrice.add(1920,1200);
-  matrice.add(1920,1200);
-  matrice.add(100,100);
-  matrice.add(100,100);
-
-  int count = 0;
-  for (auto y : matrice.GetUsedRectangles() )  std::cout << "id:" <<count++ << " size(" << y.width << "/" << y.height << ") offset(" << y.x << ", " << y.y <<  ")\n";
+  std::cout <<"\n\n";
 
 }
