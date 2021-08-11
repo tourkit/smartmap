@@ -225,7 +225,8 @@ struct Obj : public Renderer {
     Obj() { name = "Obj"; }
 
     void dc(Buffer* dst) override {
-
+      if (name == "Pass") {  }
+      
       Stack::addRenderer(this,dst);
 
     }
@@ -303,6 +304,8 @@ int main() {
 
   tree.push_back(new Compo(800,600));
   Compo* output = (Compo*)tree[0];
+  Compo* bbb = new Compo(100,100);
+  // bbb->name="koubi";
 
   output->tree.push_back(new Pass(output));
   output->tree.push_back(new Obj);
