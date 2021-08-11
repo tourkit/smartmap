@@ -23,10 +23,9 @@ include(CPack)
 
 
 target_include_directories(TestMake PRIVATE
-    .       
+    .
+    src
+    include
     include/vendor
     
     )
-    
-    
-# target_link_libraries(TestMake -Linclude/vendor/)

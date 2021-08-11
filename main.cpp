@@ -6,7 +6,6 @@
 #include <cmath>
 #include "RectangleBinPack/GuillotineBinPack.h" 
 
-
 struct Attribute {
 
   static inline std::vector<float> attributes;
@@ -200,7 +199,7 @@ struct Stack {
   static inline std::map<Buffer*,Drawcall> stack;
   static inline std::vector<Buffer*> passes;
 
-  static void addRenderer(Renderer* src, Buffer* dst, int level = 0);
+  static void addRenderer(Renderer* src, Buffer* dst);
 
   static Buffer* createPass() { passes.push_back(new Buffer); return passes.back(); }
 
@@ -215,7 +214,7 @@ struct Renderer {
 
   Renderer() { pool.push_back(this); }
 
-  virtual void dc(Buffer* dst) = 0;
+  virtual void dc(Buffer* dst, unsigned int level = 0) = 0;
 
 };
 
@@ -225,7 +224,7 @@ struct Obj : public Renderer {
 
     Obj() { name = "Obj"; }
 
-    void dc(Buffer* dst) override {
+    void dc(Buffer* dst, unsigned int level = 0) override {
 
       Stack::addRenderer(this,dst);
 
@@ -247,17 +246,17 @@ struct Compo : public Obj {
 
   }
 
-  void dc(Buffer* dst) override {
+  void dc(Buffer* dst, unsigned int level = 0) override {
 
-    for (Renderer* o : tree) { o->dc(&buffer); }
+    for (Renderer* o : tree) { o->dc(&buffer,level); }
 
-    if (texture != dst) { Obj::dc(dst); }
+    if (texture != dst) { Obj::dc(dst,level); }
+    
     else {
 
       Buffer* pass = Stack::createPass();
-      Obj::dc(pass);
-      // some glsubcopystuff()
-
+      pass->name = "Buffer_Pass";
+      Obj::dc(pass, level+1); //  glsubcopystuff() ify ?
 
     }
 
@@ -269,7 +268,7 @@ struct Pass : public Compo {
 
   Pass(Compo* parent) : Compo(parent->buffer.width, parent->buffer.height) { name = "Pass"; texture = &parent->buffer; }
 
-  void dc(Buffer* dst) override { Compo::dc(dst); }
+  void dc(Buffer* dst, unsigned int level = 0) override { Compo::dc(dst); }
 
 };
 
@@ -281,7 +280,7 @@ struct Output : public Renderer {
 
   Output(unsigned int width, unsigned int height) : width(width), height(height) { name = "Output"; }
 
-  void dc(Buffer* dst) override {
+  void dc(Buffer* dst, unsigned int level = 0) override {
 
 
   }
@@ -289,10 +288,10 @@ struct Output : public Renderer {
 };
 
 
-void Stack::addRenderer(Renderer* src, Buffer* dst, int level) {
+void Stack::addRenderer(Renderer* src, Buffer* dst) {
 
 
-    std::cout << "Stack::addRenderer(" << src->name << ", " << dst->name << ", " << level << ")\n";
+    std::cout << "Stack::addRenderer(" << src->name << ", " << dst->name  << ")\n";
 
 }
 
@@ -303,34 +302,37 @@ int main() {
   std::vector<Renderer*> tree;
 
   tree.push_back(new Compo(800,600));
-  auto* output = (Compo*)tree[0];
+  Compo* output = (Compo*)tree[0];
+  Compo* bbb = new Compo(100,100);
+  // bbb->name="koubi";
 
   output->tree.push_back(new Pass(output));
   output->tree.push_back(new Obj);
 
   for (auto* r : tree) r->dc(&zero);
 
-
-  std::cout <<"\n\no";
+  std::cout <<"\n\n";
 
   Drawcall dc;
-
-  Buffer bf1(100,100); //!!! 
-
-  std::cout << "ooo";
+  
+  Buffer bf1(100,100);
 
   dc.addBuffer(&bf1);
 
+
   rbp::GuillotineBinPack testbinpack(16000,16000);
 
-  testbinpack.Insert(1920,1200,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
-  testbinpack.Insert(1920,1200,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
-  testbinpack.Insert(100,100,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
-  testbinpack.Insert(100,100,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
+  auto rectChoice = rbp::GuillotineBinPack::RectBestAreaFit;
+  auto splitMethod = rbp::GuillotineBinPack::SplitShorterAxis;
 
-  auto x = testbinpack.GetUsedRectangles(); 
+  testbinpack.Insert(1920,1200,0,rectChoice,splitMethod);
+  testbinpack.Insert(1920,1200,0,rectChoice,splitMethod);
+  testbinpack.Insert(100,100,0,rectChoice,splitMethod);
+  testbinpack.Insert(100,100,0,rectChoice,splitMethod);
+
+  auto matrice = testbinpack.GetUsedRectangles(); 
 
   int count = 0;
-  for (auto y : x )  std::cout << "id:" <<count++ << " size(" << y.width << "/" << y.height << ") offset(" << y.x << ", " << y.y <<  ")\n";
+  for (auto y : matrice )  std::cout << "id:" <<count++ << " size(" << y.width << "/" << y.height << ") offset(" << y.x << ", " << y.y <<  ")\n";
 
 }
