@@ -214,7 +214,7 @@ struct Renderer {
 
   Renderer() { pool.push_back(this); }
 
-  virtual void dc(Buffer* dst) = 0;
+  virtual void dc(Buffer* dst, unsigned int level = 0) = 0;
 
 };
 
@@ -224,9 +224,8 @@ struct Obj : public Renderer {
 
     Obj() { name = "Obj"; }
 
-    void dc(Buffer* dst) override {
-      if (name == "Pass") {  }
-      
+    void dc(Buffer* dst, unsigned int level = 0) override {
+
       Stack::addRenderer(this,dst);
 
     }
@@ -247,17 +246,17 @@ struct Compo : public Obj {
 
   }
 
-  void dc(Buffer* dst) override {
+  void dc(Buffer* dst, unsigned int level = 0) override {
 
-    for (Renderer* o : tree) { o->dc(&buffer); }
+    for (Renderer* o : tree) { o->dc(&buffer,level); }
 
-    if (texture != dst) { Obj::dc(dst); }
+    if (texture != dst) { Obj::dc(dst,level); }
+    
     else {
 
       Buffer* pass = Stack::createPass();
-      Obj::dc(pass);
-      // some glsubcopystuff()
-
+      pass->name = "Buffer_Pass";
+      Obj::dc(pass, level+1); //  glsubcopystuff() ify ?
 
     }
 
@@ -269,7 +268,7 @@ struct Pass : public Compo {
 
   Pass(Compo* parent) : Compo(parent->buffer.width, parent->buffer.height) { name = "Pass"; texture = &parent->buffer; }
 
-  void dc(Buffer* dst) override { Compo::dc(dst); }
+  void dc(Buffer* dst, unsigned int level = 0) override { Compo::dc(dst); }
 
 };
 
@@ -281,7 +280,7 @@ struct Output : public Renderer {
 
   Output(unsigned int width, unsigned int height) : width(width), height(height) { name = "Output"; }
 
-  void dc(Buffer* dst) override {
+  void dc(Buffer* dst, unsigned int level = 0) override {
 
 
   }
@@ -323,15 +322,17 @@ int main() {
 
   rbp::GuillotineBinPack testbinpack(16000,16000);
 
+  auto rectChoice = rbp::GuillotineBinPack::RectBestAreaFit;
+  auto splitMethod = rbp::GuillotineBinPack::SplitShorterAxis;
 
-  testbinpack.Insert(1920,1200,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
-  testbinpack.Insert(1920,1200,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
-  testbinpack.Insert(100,100,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
-  testbinpack.Insert(100,100,0,rbp::GuillotineBinPack::RectBestAreaFit,rbp::GuillotineBinPack::SplitShorterAxis);
+  testbinpack.Insert(1920,1200,0,rectChoice,splitMethod);
+  testbinpack.Insert(1920,1200,0,rectChoice,splitMethod);
+  testbinpack.Insert(100,100,0,rectChoice,splitMethod);
+  testbinpack.Insert(100,100,0,rectChoice,splitMethod);
 
-  auto x = testbinpack.GetUsedRectangles(); 
+  auto matrice = testbinpack.GetUsedRectangles(); 
 
   int count = 0;
-  for (auto y : x )  std::cout << "id:" <<count++ << " size(" << y.width << "/" << y.height << ") offset(" << y.x << ", " << y.y <<  ")\n";
+  for (auto y : matrice )  std::cout << "id:" <<count++ << " size(" << y.width << "/" << y.height << ") offset(" << y.x << ", " << y.y <<  ")\n";
 
 }
