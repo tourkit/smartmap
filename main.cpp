@@ -262,7 +262,7 @@ struct Compo : public Obj {
 
   }
 
-};
+}; 
 
 struct Pass : public Compo {
 
@@ -311,7 +311,7 @@ int main() {
 
   for (auto* r : tree) r->dc(&zero);
 
-  std::cout <<"\n\n";
+  std::cout <<"\nn";
 
   Drawcall dc;
   
