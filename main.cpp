@@ -310,8 +310,7 @@ int main() {
 
   for (auto* r : tree) r->dc(&zero);
 
-
-  std::cout <<"\n\no";
+  std::cout <<"\n\n";
 
   Drawcall dc;
 
