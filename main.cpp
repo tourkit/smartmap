@@ -311,7 +311,7 @@ int main() {
 
   for (auto* r : tree) r->dc(&zero);
 
-  std::cout <<"\nn";
+  std::cout <<"\n\n";
 
   Drawcall dc;
   
