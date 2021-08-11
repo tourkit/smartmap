@@ -5,6 +5,7 @@
 #include <string>
 #include <cmath>
 #include "RectangleBinPack/GuillotineBinPack.h" 
+#include "test.hpp"
 
 struct Attribute {
 
@@ -153,6 +154,7 @@ struct Buffer {
 
 };
 
+
 struct Drawcall {
 
   static inline unsigned int uid = 0;
@@ -195,6 +197,8 @@ struct Drawcall {
 
 struct Renderer;
 struct Stack {
+
+  // add level vector system
 
   static inline std::map<Buffer*,Drawcall> stack;
   static inline std::vector<Buffer*> passes;
@@ -287,7 +291,6 @@ struct Output : public Renderer {
 
 };
 
-
 void Stack::addRenderer(Renderer* src, Buffer* dst) {
 
 
@@ -295,6 +298,43 @@ void Stack::addRenderer(Renderer* src, Buffer* dst) {
 
 }
 
+struct Matrice : public rbp::GuillotineBinPack {
+
+using Rect = rbp::Rect;
+
+std::vector<Rect> matrice;
+
+Matrice(int width, int height) : GuillotineBinPack(width, height) {}
+
+void build() { matrice = GetUsedRectangles(); }
+
+int add(int width, int height) { 
+
+  auto matrice = GetFreeRectangles(); 
+
+  for (auto cell : matrice )  {
+
+    if (width < cell.width && height < cell.height) {
+
+        Insert(
+          
+          width, height,
+          0,
+          rbp::GuillotineBinPack::RectBestAreaFit, 
+          rbp::GuillotineBinPack::SplitShorterAxis
+        
+        );
+
+        break;
+
+    }
+
+  }
+
+}
+  
+  
+};
 
 int main() {
 
@@ -320,19 +360,15 @@ int main() {
   dc.addBuffer(&bf1);
 
 
-  rbp::GuillotineBinPack testbinpack(16000,16000);
+  Matrice matrice(3840,10000);
 
-  auto rectChoice = rbp::GuillotineBinPack::RectBestAreaFit;
-  auto splitMethod = rbp::GuillotineBinPack::SplitShorterAxis;
-
-  testbinpack.Insert(1920,1200,0,rectChoice,splitMethod);
-  testbinpack.Insert(1920,1200,0,rectChoice,splitMethod);
-  testbinpack.Insert(100,100,0,rectChoice,splitMethod);
-  testbinpack.Insert(100,100,0,rectChoice,splitMethod);
-
-  auto matrice = testbinpack.GetUsedRectangles(); 
+  matrice.add(1920,1200);
+  matrice.add(1920,1200);
+  matrice.add(1920,1200);
+  matrice.add(100,100);
+  matrice.add(100,100);
 
   int count = 0;
-  for (auto y : matrice )  std::cout << "id:" <<count++ << " size(" << y.width << "/" << y.height << ") offset(" << y.x << ", " << y.y <<  ")\n";
+  for (auto y : matrice.GetUsedRectangles() )  std::cout << "id:" <<count++ << " size(" << y.width << "/" << y.height << ") offset(" << y.x << ", " << y.y <<  ")\n";
 
 }
