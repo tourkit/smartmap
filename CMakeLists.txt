@@ -9,6 +9,8 @@ add_executable(TestMake
 
     main.cpp
 
+    src/test.cpp
+
     include/vendor/RectangleBinPack/GuillotineBinPack.cpp
     include/vendor/RectangleBinPack/Rect.cpp
 
