@@ -28,6 +28,3 @@ target_include_directories(TestMake PRIVATE
     include/vendor
     
     )
-    
-    
-# target_link_libraries(TestMake -Linclude/vendor/)
