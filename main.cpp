@@ -4,8 +4,11 @@
 #include <vector>
 #include <string>
 #include <cmath>
-#include "RectangleBinPack/GuillotineBinPack.h" 
+#include "include/vendor/RectangleBinPack/GuillotineBinPack.h" 
 #include "test.hpp"
+
+using Rect = rbp::Rect;
+
 
 struct Attribute {
 
@@ -107,6 +110,10 @@ struct Buffer {
 
   static inline std::vector<Buffer*> pool;
 
+  std::vector<char> data;
+
+  bool CPP_STORE_DATA = 0;
+
   Attribute width, height;
 
   std::string name;
@@ -125,52 +132,107 @@ struct Buffer {
 
 };
 
-
 struct Renderer;
 
-struct Drawcall {
+struct Call {
 
-  static inline std::map<int, std::vector<Drawcall>> stack;
+  static inline std::vector<Call*> stack;
 
-  unsigned int id, width, height;
+  int active;
 
-  Buffer* dst ;
-  std::set<Buffer*> sources;
+  Call() { active = true; }
 
-  Buffer buffer;
-
-  rbp::GuillotineBinPack atlas;
-
-  using Rect = rbp::Rect;
-
-  Drawcall() : atlas(16000,16000) { }
-
-  void build() { std::vector<Rect> matrice = atlas.GetUsedRectangles(); }
-
-  int add(Renderer* src, Buffer* dst);
-
-  static void add(Renderer* src, Buffer* dst, int level) {
-
-     if (stack[level].size()<1) stack[level].resize(1);
-
-     if (!stack[level].back().add(src,dst)) {
-    
-       stack[level].resize(stack[level].size()+1);
-
-       add(src,dst,level);
-
-     }
-
-   }
+  virtual void routine() { };
 
 };
 
+struct Drawcall : public Call {
 
-struct Renderer {
+  unsigned int width, height;
+
+  std::set<Buffer*> sources;
+
+  Buffer* dst;
+
+  static inline void Atlasify() { /* for (auto* dc:pool) { Atlas::add(dc); } */ }
+
+};
+
+std::vector<Call> stack;
+
+struct Atlas : public Drawcall {
+    
+  static inline std::vector<Atlas*> pool;
+
+  Atlas() : binpack(16000,16000), buffer(16000,16000) {  }
+
+  rbp::GuillotineBinPack binpack;
+  
+  Buffer buffer;
+
+  void add(Drawcall* dc){ 
+
+    
+
+    //  if (stack[level].size()<1) stack[level].resize(1);
+
+    //  if (!stack[level].back().add(src,dst)) {
+    
+    //    stack[level].resize(stack[level].size()+1);
+
+    //    add(src,dst,level);
+
+    //  }
+
+   
+
+    if(sources.find(dc->dst) != sources.end()) { /* need to be in other atlas deeper level */ }
+
+    else { 
+
+      for (auto cell : binpack.GetFreeRectangles() )  {
+
+        if (dc->width < cell.width && dc->height < cell.height) {
+
+            binpack.Insert(
+              
+              dc->width, dc->height,
+              0,
+              rbp::GuillotineBinPack::RectBestAreaFit, 
+              rbp::GuillotineBinPack::SplitShorterAxis
+            
+            );
+
+            for (auto& s:dc->sources) sources.insert(s); 
+            
+            // std::cout << "Stack::addRenderer(" << src->name << ", " << dst->name  << ")\n";
+            
+            break;
+
+        }
+
+      }
+
+      /* COULD NOT FIT IN BINPACK : need to be in other atlas same level */ 
+
+      pool.push_back(new Atlas); 
+
+      add(dc);
+
+
+    }
+
+  }
+
+};
+
+struct Renderer : public Drawcall {
 
   static inline std::vector<Renderer*> pool;
 
   std::string name;
+
+  Buffer* dst;
 
   Renderer() { pool.push_back(this); }
 
@@ -186,8 +248,10 @@ struct Obj : public Renderer {
 
     void dc(Buffer* dst) override {
 
-      Drawcall::add(this, dst, (texture==dst));
+      // auto* dc = Drawcall::add(this, dst, (texture==dst)); 
 
+      // dc->sources.push_back(Stack::adress[texture]);
+      
     }
 
 };
@@ -239,57 +303,53 @@ struct Output : public Renderer {
 
 };
 
-int Drawcall::add(Renderer* src, Buffer* dst) { 
 
-  auto matrice = atlas.GetFreeRectangles(); 
 
-  for (auto cell : matrice )  {
 
-    if (dst->width < cell.width && dst->height < cell.height) {
-
-        atlas.Insert(
-          
-          dst->width, dst->height,
-          0,
-          rbp::GuillotineBinPack::RectBestAreaFit, 
-          rbp::GuillotineBinPack::SplitShorterAxis
-        
-        );
-
-        sources.insert(dst);
-
-        return 1;
-
-        break;
-
-    }
-
-  }
-
-  return 0;
-
-    // std::cout << "Stack::addRenderer(" << src->name << ", " << dst->name  << ")\n";
-
-}
 
 int main() {
 
   Buffer zero(1920,1200); zero.name = "Zero";
   std::vector<Renderer*> tree;
 
-  // tree.push_back(new Compo(800,600));
-  // Compo* output = (Compo*)tree[0];
-  // Compo* bbb = new Compo(100,100);
-  // // bbb->name="koubi";
+  tree.push_back(new Compo(800,600));
+  Compo* output = (Compo*)tree[0];
+  Compo* bbb = new Compo(100,100);
+  // bbb->name="koubi";
 
-  // output->tree.push_back(new Pass(output));
-  // output->tree.push_back(new Obj);
+  output->tree.push_back(new Pass(output));
+  output->tree.push_back(new Obj);
   tree.push_back(new Obj);
 
   for (auto* r : tree) r->dc(&zero);
 
-  Drawcall dc;
-
   std::cout <<"\n\n";
+
+    int count = 0;
+
+    for (auto& dcs : Drawcall::stack) {
+
+    //   for (auto& dc : dcs.second) {
+
+    //     for (auto y : dc.atlas.GetUsedRectangles() )  
+        
+    //         std::cout << "id:" << dcs.first << " size(" << y.width 
+    //         << "/" << y.height << ") offset(" << y.x << ", " 
+    //         << y.y <<  ")\n";
+
+    //         // comment un BFR connait sa stack address ?
+
+    //         // une map [buffer->id, Rect] 
+
+    //   }
+
+    }
+
+
+struct Test {
+    
+    Test() {  }
+}
+
 
 }
