@@ -1,13 +1,16 @@
-#ifndef TEST_CLASS
-#define TEST_CLASS
+#ifndef TEST_HPP
+#define TEST_HPP
 
-#include <iostream>
+struct Test  {
 
-struct Test {
+		Test();
 
-    Test();
-    void dodo() {}
+		void dodo();
+
+		~Test();
 
 };
 
-#endif
+
+
+#endif // TEST_HPP

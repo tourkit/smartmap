@@ -1,13 +1,15 @@
-cmake_minimum_required(VERSION 3.0.0)
-project(TestMake VERSION 0.1.0)
+cmake_minimum_required(VERSION 3.12)
+project(TestZone VERSION 0.1.0)
 
 
-include(CTest)
-enable_testing()
+# include(CTest)
+# enable_testing()
 
-add_executable(TestMake 
+add_executable(TestZone 
 
     main.cpp
+
+    src/attribute.cpp
 
     src/test.cpp
 
@@ -16,7 +18,7 @@ add_executable(TestMake
 
 )
 
-set_target_properties(TestMake PROPERTIES COMPILE_FLAGS "-std=c++17")
+set_target_properties(TestZone PROPERTIES COMPILE_FLAGS "-std=c++17")
 
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
@@ -24,7 +26,7 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 
 
-target_include_directories(TestMake PRIVATE
+target_include_directories(TestZone PRIVATE
     .
     src
     include
