@@ -6,105 +6,9 @@
 #include <cmath>
 #include "include/vendor/RectangleBinPack/GuillotineBinPack.h" 
 #include "test.hpp"
+#include "attribute.hpp"
 
 using Rect = rbp::Rect;
-
-
-struct Attribute {
-
-  static inline std::vector<float> attributes;
-
-  unsigned int id; // can be address x.y if attributes is vec of vec
-
-  float cur_val;
-
-  std::set<Attribute*> links_to;
-
-  Attribute* link_from;
-
-  Attribute(float v) : Attribute() { set(v); }
-  Attribute(int v) : Attribute() { set((float)v); }
-  Attribute() {
-
-    cur_val = 0;
-
-    link_from = nullptr;
-
-    id = attributes.size();
-
-    attributes.push_back(0);
-
-  }
-
-  ~Attribute() {
-
-    if (link_from) link_from->unlink(this);
-
-    for (auto* l:links_to) unlink(l);
-
-  }
-
-  void link(Attribute* dst) {
-
-    links_to.insert(dst);
-
-    dst->link_from = this;
-
-    dst->update(attributes[id]);
-
-  }
-
-  void unlink(Attribute* dst) {
-
-    links_to.erase(dst);
-
-    dst->link_from = nullptr;
-
-    dst->update(dst->cur_val);
-
-  }
-
-  void set(const float& val) {
-
-    cur_val = val;
-
-    update(val);
-
-  }
-
-  void update(const float& val) {
-
-    attributes[id] = val;//std::min(std::max(val,min_val),max_val);
-
-    for (auto* l:links_to) attributes[l->id] = attributes[id];
-
-    // + callback() ?
-
-  }
-
-  const float& get() { return attributes[id]; }
-
-  operator float() { return get(); }
-
-  void operator= (const float& val) {  set(val); }
-  void operator= (const int& val) {  set((float)val); }
-
-};
-
-struct AdvancedAttribute : public Attribute {
-
-  float min_val, max_val, def_val;
-
-  void min() { set(min_val); }
-  void min(const float& v) { min_val = v; }
-  void max() { set(max_val); }
-  void max(const float& v) { max_val = v; }
-  void def() { set(def_val); }
-  void def(const float& v) { def_val = v; }
-
-  // GUI STUFF HERE ?
-
-};
 
 struct Buffer {
 
@@ -171,8 +75,6 @@ struct Atlas : public Drawcall {
   Buffer buffer;
 
   void add(Drawcall* dc){ 
-
-    
 
     //  if (stack[level].size()<1) stack[level].resize(1);
 
@@ -303,10 +205,6 @@ struct Output : public Renderer {
 
 };
 
-
-
-
-
 int main() {
 
   Buffer zero(1920,1200); zero.name = "Zero";
@@ -344,12 +242,5 @@ int main() {
     //   }
 
     }
-
-
-struct Test {
-    
-    Test() {  }
-}
-
 
 }
