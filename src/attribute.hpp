@@ -1,27 +1,33 @@
 #ifndef ATTRIBUTE_H
 #define ATTRIBUTE_H
 	
-
 #include <vector>
 #include <set>
+#include <memory>
 
-// struct Operator;
+struct Operator {};
 
 struct Attribute {
 
-	static inline std::vector<float> attributes;
+	static inline std::set<Attribute*> pool;
+	
 
-	unsigned int id; // can be address x.y if attributes is vec of vec
+	static inline std::vector<float> data;
 
-	float cur_val;
+
+	unsigned int id = 0; // can be address x.y if attributes is vec of vec
+
+	float cur_val = 0;
 
 	float min_val, max_val, def_val;
 
-	// std::vector<Operator> operators;
 
-	std::set<Attribute*> links_to;
+	std::set<Attribute*> links;
 
-	Attribute* link_from;
+	std::set<Operator> operators;
+	
+
+	Attribute(float* target);
 
 	Attribute(float v);
 
@@ -33,11 +39,9 @@ struct Attribute {
 
 	void link(Attribute* dst);
 
-	void unlink(Attribute* dst);
-
 	void set(const float& val);
 
-	void update(const float& val);
+	virtual void update(const float& val);
 
 	const float& get();
 
@@ -49,7 +53,16 @@ struct Attribute {
 
 };
 
+// struct DMXAttribute {
+
+// 	enum Mode { NORMAL, FINE, ULTRA };
+
+// 	DMXAttribute(unsigned char* target, Mode NORMAL) {
+
+// 		set()
+// 	}
 
 
+// };
 
 #endif
