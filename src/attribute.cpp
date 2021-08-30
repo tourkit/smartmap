@@ -12,10 +12,7 @@ Attribute::~Attribute() {
   
 }
 
-Attribute::Attribute(float* target) {
 
-  
-}
 
 Attribute::Attribute(float v) : Attribute() { 
   
@@ -29,7 +26,7 @@ Attribute::Attribute(int v) : Attribute() {
   
 }
 
-Attribute::Attribute() {
+Attribute::Attribute(std::vector<float>* data = nullptr) {
 
   pool.insert(this);
 

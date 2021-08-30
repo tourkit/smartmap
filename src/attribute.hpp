@@ -27,8 +27,6 @@ struct Attribute {
 	std::set<Operator> operators;
 	
 
-	Attribute(float* target);
-
 	Attribute(float v);
 
 	Attribute(int v);
@@ -52,6 +50,7 @@ struct Attribute {
 	void operator= (const int& val);
 
 };
+
 
 // struct DMXAttribute {
 
