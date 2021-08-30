@@ -82,8 +82,9 @@ void Shader::error(GLuint type, std::string out) {
     if (!success) {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
+        std::cout << out << std::endl;
         std::cout << infoLog;
-        std::cout << out << std::endl << std::endl;
+        std::cout << std::endl;
 
     }
 
@@ -101,10 +102,14 @@ void Shader::compile() {
 
     glCompileShader(id);
 
-    error(GL_COMPILE_STATUS, code+"\n\nshader compile failed");
+    std::string strtype;
+    if (type == FRAGMENT) strtype = "frag";
+    else if (type == VERTEX) strtype = "vert";
+    else if (type == COMPUTE)strtype = "comp" ;
+
+    error(GL_COMPILE_STATUS, "\n\nshader "+strtype+" compile failed");
 
 }
-
 void Shader::build() {
 
     int count = 0;
