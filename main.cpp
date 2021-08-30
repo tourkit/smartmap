@@ -18,15 +18,40 @@ GL::Window* window = new GL::Window(false,900,600);
 
 int main() {
 
-GL::ShaderProgram shader("assets/shader/vertex_test.glsl", "assets/shader/fragment_test.glsl");
+    std::vector<float> vertices =
+    {
+        -1, 1,     1, 1,
 
-while(true) window->render([&]() {
+        -1,-1,     1,-1
+    };
+
+    std::vector<int> indices = { 0,1,2, 1,2,3 };
+
+    GLuint vao, vbo,ibo;
+    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao); 
+
+    glBindVertexArray(vao);
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER,  vertices.size()*sizeof(float) , &vertices[0], GL_STATIC_DRAW );
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6*sizeof(int) , &indices[0], GL_STATIC_DRAW );
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 2*sizeof(float), (GLvoid *) 0);
+    glEnableVertexAttribArray(0);
+
+    GL::ShaderProgram shader("assets/shader/vertex_test.glsl", "assets/shader/fragment_test.glsl");
+
+    while(true) window->render([&]() {
+
+        shader.use();
     
+        glDrawElements   ( GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
-    shader.use();
+    });
 
-
-});
+    glDisableVertexAttribArray(0);
 
 } 
 
