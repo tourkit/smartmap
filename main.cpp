@@ -10,6 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include <thread>
+#include <cmath>
 
 #include "window.hpp"
 #include "shader.hpp"
@@ -66,23 +67,24 @@ int main() {
     
     while(true) window->render([&]() {
 
-
         float now = glfwGetTime(); 
         float delta = now - last;
-    
-        if (delta > time)
-        {
+
+        if (delta > time) {
+
             reloadShader();
             last = now;
-        }
 
+        }
     
+        shader->sendUniform("x", (float)(std::sin(now)*.5+.5));
+
         glClearColor(0,0,0,0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         shader->use();
     
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, 2);
 
         std::this_thread::sleep_for(std::chrono::microseconds(10));
 

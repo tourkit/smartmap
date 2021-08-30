@@ -82,10 +82,11 @@ void Shader::error(GLuint type, std::string out) {
     if (!success) {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
-        std::cout << out << std::endl;
-        std::cout << infoLog;
-        std::cout << std::endl;
 
+        std::string logstr = infoLog;
+
+        std::cout << out << logstr;
+        
     }
 
 }
@@ -107,7 +108,7 @@ void Shader::compile() {
     else if (type == VERTEX) strtype = "vert";
     else if (type == COMPUTE)strtype = "comp" ;
 
-    error(GL_COMPILE_STATUS, "\n\nshader "+strtype+" compile failed");
+    error(GL_COMPILE_STATUS, strtype+": ");
 
 }
 void Shader::build() {
