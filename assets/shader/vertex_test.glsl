@@ -1,46 +1,76 @@
 #version 430 core
 
 layout (location = 0) in vec2 position;
+layout (location = 1) in int ID;
 
-struct Cell { vec2 size;vec2 pos;  } cell;
+struct Cell { vec2 size;vec2 pos;  };
 struct Fixture { vec2 size;vec2 pos;  } fixture;
 
-out float id;
+out float passID;
+out float instanceID;
 out vec2 texcoord;
 uniform float x = 0; // from 0 to 1
 
 void main() {
 
-    id = gl_InstanceID;
-
     vec2 pos = position;
+    
+    passID = ID;
+    instanceID = gl_InstanceID;
 
-    if (id > 0){
+    texcoord = pos;
 
-        cell.size = vec2(.5,1);
-        cell.pos = vec2(.25,0);
+    Cell cell[10]; //vec2(.1,1),  vec2(.1,0));
+    cell[0].size = vec2(1,.1);
+    cell[0].pos = vec2(0,0);
+    cell[1].size = vec2(1,.1);
+    cell[1].pos = vec2(0,.1);
+    cell[2].size = vec2(1,.1);
+    cell[2].pos = vec2(0,.2);
+    cell[3].size = vec2(1,.1);
+    cell[3].pos = vec2(0,.3);
+    cell[4].size = vec2(1,.1);
+    cell[4].pos = vec2(0,.4);
+    cell[5].size = vec2(1,.1);
+    cell[5].pos = vec2(0,.5);
+    cell[6].size = vec2(1,.1);
+    cell[6].pos = vec2(0,.6);
+    cell[7].size = vec2(1,.1);
+    cell[7].pos = vec2(0,.7);
+    cell[8].size = vec2(1,.1);
+    cell[8].pos = vec2(0,.8);
+    cell[9].size = vec2(1,.1);
+    cell[9].pos = vec2(0,.9);
 
-        fixture.size = vec2(1,1);
-        fixture.pos = vec2(.0,.0);
-        fixture.pos.x = x*2-1;
-        fixture.pos.x *= cell.size.x;
+    fixture.size = vec2(1,1);
+    fixture.pos = vec2(.0,.0);
+    fixture.pos.x = x*2-1;
+    // fixture.pos.x *= cell[gl_InstanceID].size.x;
+    pos *= cell[gl_InstanceID].size;
+        
+    if (passID > 0){
 
+        vec2 size = cell[gl_InstanceID].size*fixture.size;
         pos *= fixture.size;
-        pos *= cell.size;
-        texcoord = pos/cell.size;
-        pos += cell.pos;
+        texcoord /= size;
         pos += fixture.pos;
 
-        vec2 ipos = min(pos, cell.pos+cell.size);
-        texcoord *= (cell.size-(pos-ipos))/cell.size;
+        vec2 ipos = min(pos, cell[gl_InstanceID].pos+cell[gl_InstanceID].size);
+        texcoord *= (size-(pos-ipos))/size;
         pos = ipos;
 
-        vec2 opos = max(pos, cell.pos);
-        vec2 test = opos-pos;
-        texcoord += test/cell.size;
+        vec2 opos = max(pos, cell[gl_InstanceID].pos);
+        texcoord += (opos-pos)/size;
         pos = opos;
 
+    } else {
+        
+         texcoord *= cell[gl_InstanceID].size;
+         texcoord += cell[gl_InstanceID].pos;
+   
     }
+    
+    pos += cell[gl_InstanceID].pos;
 
     gl_Position = vec4(pos*2-1,0,1);
 

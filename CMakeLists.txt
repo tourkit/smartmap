@@ -13,6 +13,9 @@ add_executable(TestZone
     # src/attribute.cpp
     src/window.cpp
     src/shader.cpp
+    src/texture.cpp
+    src/framebuffer.cpp
+    src/file.cpp
 
     # include/vendor/RectangleBinPack/GuillotineBinPack.cpp
     # include/vendor/RectangleBinPack/Rect.cpp
