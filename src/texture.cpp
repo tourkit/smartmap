@@ -1,5 +1,4 @@
-#include "texture.hpp"  
-#include "file.hpp"
+#include "texture.hpp" 
 
 Texture::Texture(GLuint width, GLuint height, GLenum format, void* data) : width(width), height(height), format(format) {
 

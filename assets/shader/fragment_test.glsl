@@ -13,6 +13,7 @@ in float passID;
 in float instanceID;
 in vec2 texcoord;
 uniform float x = 0;
+uniform float feedback = 0;
 
 void main() {
 
@@ -21,7 +22,7 @@ void main() {
         color = texture(media,texcoord)*vec4(abs(texcoord.x*2-1));
     }else{
 
-        color = texture(media,texcoord);//vec4(1,0,0,1);
+        color = texture(media,texcoord)*feedback;//vec4(1,0,0,1);
 
     }
     return;

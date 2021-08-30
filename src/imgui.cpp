@@ -1,0 +1,32 @@
+#include "imgui.hpp"
+GUI::GUI(GLFWwindow* window) {
+
+  const char* glsl_version = "#version 430";
+  ImGui::CreateContext();
+  ImGui_ImplGlfw_InitForOpenGL(window, true);
+  ImGui_ImplOpenGL3_Init(glsl_version);
+
+}
+
+GUI::~GUI() {   
+  
+  ImGui_ImplOpenGL3_Shutdown();
+  ImGui_ImplGlfw_Shutdown();
+
+  ImGui::DestroyContext(); 
+  
+}
+
+
+void GUI::draw() {
+  
+  ImGui_ImplOpenGL3_NewFrame();
+  ImGui_ImplGlfw_NewFrame();
+  ImGui::NewFrame();
+
+  for (auto e:elements) e.get()->draw();
+
+  ImGui::Render();
+  ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+}

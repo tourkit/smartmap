@@ -7,24 +7,35 @@ find_package(OpenGL REQUIRED)
 add_executable(TestZone 
 
     main.cpp
-    
-    include/vendor/gl3w/src/gl3w.c
 
     # src/attribute.cpp
+    
     src/window.cpp
     src/shader.cpp
     src/texture.cpp
     src/framebuffer.cpp
+    src/vbo.cpp
+
+    
+    src/imgui.cpp
+
     src/file.cpp
 
-    # include/vendor/RectangleBinPack/GuillotineBinPack.cpp
-    # include/vendor/RectangleBinPack/Rect.cpp
+    include/vendor/imgui/imgui.cpp
+    include/vendor/imgui/imgui_widgets.cpp
+    include/vendor/imgui/imgui_draw.cpp
+    include/vendor/imgui/imgui_impl_glfw.cpp
+    include/vendor/imgui/imgui_impl_opengl3.cpp    
+    
+    include/vendor/gl3w/src/gl3w.c
+
+    include/vendor/RectangleBinPack/GuillotineBinPack.cpp
+    include/vendor/RectangleBinPack/Rect.cpp
 
 )
 
-# target_compile_features(TestZone PUBLIC cxx_std_20)
-set_target_properties(TestZone PROPERTIES COMPILE_FLAGS "-std=c++17 ")
-
+target_compile_features(TestZone PUBLIC cxx_std_20)
+set_target_properties(TestZone PROPERTIES COMPILE_FLAGS "-DIMGUI_IMPL_OPENGL_LOADER_GL3W  ")
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
