@@ -10,19 +10,18 @@
 #include <iostream>
 #include <sstream>
 
-
 #include "window.hpp"
 #include "shader.hpp"
 
-GL::Window* window = new GL::Window(false,900,600);
+GL::Window* window = new GL::Window(false,200,100);
 
 int main() {
 
     std::vector<float> vertices =
     {
-        -1, 1,     1, 1,
+         0, 1,     1, 1,
 
-        -1,-1,     1,-1
+         0, 0,     1, 0
     };
 
     std::vector<int> indices = { 0,1,2, 1,2,3 };
@@ -41,11 +40,29 @@ int main() {
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 2*sizeof(float), (GLvoid *) 0);
     glEnableVertexAttribArray(0);
 
-    GL::ShaderProgram shader("assets/shader/vertex_test.glsl", "assets/shader/fragment_test.glsl");
+    auto* shader = new GL::ShaderProgram("assets/shader/vertex_test.glsl", "assets/shader/fragment_test.glsl");
+
+    window->clickCallBack = [&]() {
+
+        delete shader;
+        
+        shader = new GL::ShaderProgram(
+          
+            "C:/Users/ebkc/Documents/testmake/assets/shader/vertex_test.glsl", 
+            "C:/Users/ebkc/Documents/testmake/assets/shader/fragment_test.glsl"
+            
+        );
+ 
+    };
 
     while(true) window->render([&]() {
 
-        shader.use();
+        glClearColor(0,0,0,0);
+        //   glBindFramebuffer(GL_FRAMEBUFFER, id);
+        // glClearColor(r,g,b,a);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        shader->use();
     
         glDrawElements   ( GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 

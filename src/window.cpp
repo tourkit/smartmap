@@ -100,10 +100,11 @@ void Window::initUidCallbacks() {
     glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
         (void)button;
         (void)mods;
-        // auto _this = (Window*)glfwGetWindowUserPointer(window);
-        // if (action == GLFW_PRESS) {
-        //     // mouse click
-        // }
+        auto _this = (Window*)glfwGetWindowUserPointer(window);
+        if (action == GLFW_PRESS) {
+            // mouse click
+             _this->clickCallBack();
+        }
     });
 }
 

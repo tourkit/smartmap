@@ -38,6 +38,8 @@ struct Window {
     void readRGB(char *rgb, uint16_t width, uint16_t height, uint16_t x = 0, uint16_t y = 0, uint8_t mode = 3);
 
     void initUidCallbacks();
+    
+    std::function<void()> clickCallBack = []() { std::cout << "click" <<std::endl;};
 
 private:
     // SAD FACE EMOJI FPS  SUKI LAME
