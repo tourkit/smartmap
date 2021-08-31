@@ -18,11 +18,10 @@ vec4 fromAtlas(float pos) { vec4 media[1]; media[0] = vec4(0.0944824219,0.094482
 
 void main() {
 
-    if (passID > 0) color = fromAtlas(0);
+
+    if (passID == 2) color = fromAtlas(0);
 
     else color = texture(pass,texcoord)*feedback;
-
-    if (passID == 999) color = texture(pass,texcoord);
 
     // color = vec4(1);
 

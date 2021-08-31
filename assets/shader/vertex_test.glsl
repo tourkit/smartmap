@@ -52,7 +52,7 @@ void main() {
     texcoord = pos;
     pos *= cell[gl_InstanceID].size;
 
-    if (passID > 0){
+    if (passID  == 2){
 
         vec2 size = cell[gl_InstanceID].size*fixture.size;
         pos *= fixture.size;
@@ -76,7 +76,7 @@ void main() {
     
     pos += cell[gl_InstanceID].pos;
 
-    if (passID == 999){ pos = position; texcoord = pos;}
+    if (passID == 0){ pos = position; texcoord = pos;}
 
     gl_Position = vec4(pos*2-1,0,1);
 

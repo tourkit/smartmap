@@ -10,11 +10,11 @@
 
 #include "shader.hpp"
 
-static std::vector<float> attributes;
-
 struct UBO {
 
     static inline GLuint count = 0;
+
+    std::vector<float> data;
 
     GLuint id, binding_point;
 
@@ -24,19 +24,21 @@ struct UBO {
 
     UBO(GLuint size) { create(size); }
 
+    void destroy() { if (id) glDeleteBuffers(1, &id); }
+
     void create(int size = 0) {
 
         destroy();
 
         if (!size) {
 
-            attributes.resize(std::ceil(attributes.size()/4.0f)*4);
+            data.resize(std::ceil(data.size()/4.0f)*4); // needs to be power of 4
 
-            size = attributes.size();
+            size = data.size();
 
         }
 
-        size = std::ceil(size/4.0f)*4;
+        size = std::ceil(size/4.0f)*4; // needs to be power of 4
 
         glGenBuffers(1, &id);
 
@@ -50,11 +52,17 @@ struct UBO {
 
     }
 
-    void destroy() { if (id) glDeleteBuffers(1, &id); }
+    void resize(GLuint size) { 
+        
+        std::vector<float>  t_data = std::move(data); 
+        
+        destroy(); create(size); // need to create new UBO_bufferid cause i Believe glBufferData can't be resized
+        
+        data = std::move(t_data); 
+        
+    } 
 
-    void resize(GLuint size) { destroy(); create(size); } // need to create new UBO cause i Believe glBufferData can't be resized
-
-    void send(){ send(&attributes[0], sizeof(float)*attributes.size()); }
+    void send(){ send(&data[0], sizeof(float)*data.size()); }
 
     void send(GLvoid* data, size_t size, GLuint offset = 0){
 

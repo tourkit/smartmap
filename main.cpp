@@ -46,14 +46,23 @@ void Draw2D(const Texture& tex) {
 
 }
 
+struct Drawcall {
+
+    UBO data;
+
+    FrameBuffer dst;
+
+    GL::ShaderProgram shader;
+
+};
+
 int main() {
 
-
-    draw2D.addQuad(999);
+    draw2D.addQuad(0); //
     
     VBO quad;
-    quad.addQuad(0);
-    quad.addQuad(1);
+    quad.addQuad(1); // feedback
+    quad.addQuad(2); // fixture
 
     gui->elements.insert(std::make_shared<GUI::Counter>("count"));
     gui->elements.insert(std::make_shared<GUI::SliderF>("feedback", 1, .9));
