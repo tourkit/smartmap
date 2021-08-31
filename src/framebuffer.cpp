@@ -27,5 +27,22 @@ void FrameBuffer::attach(const Texture& tex) {
     std::vector<GLuint> drawBuffers;
     for (size_t i = 0; i < attachments+1; i++) drawBuffers.push_back( GL_COLOR_ATTACHMENT0+i);
     glDrawBuffers(attachments+1, &drawBuffers[0]);
+ 
+}
 
+std::vector<unsigned char> FrameBuffer::download(GLuint width, GLuint height, GLuint x, GLuint y, GLenum format) {
+
+    if (!width) width = this->width;
+    if (!height) height = this->height;
+
+    std::vector<unsigned char> data;
+
+    data.resize(width*height*3);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, id);
+    
+    glReadPixels(x, y, width, height, format, GL_UNSIGNED_BYTE, &data[0]);
+
+    return data;
+ 
 }
