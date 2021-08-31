@@ -33,6 +33,9 @@ void Atlas::link(GL::ShaderProgram& shader) {
     atlaspos.link(shader, "mediasCoords");
     atlaspos.send((float*)&normalized[0].x,(normalized.size()-1)*4*4);
     
+    shader.sendUniform("test", 0.0944824219,0.0944824219);
+    shader.sendUniform("test", normalized[0].x,normalized[0].x);
+    shader.sendUniform("test", 0.,0.);
     shader.sendUniform("mediasAtlas", 1);
     buffer.bind(1);
 

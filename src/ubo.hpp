@@ -56,7 +56,7 @@ struct UBO {
 
         glGenBuffers(1, &id);
 
-        binding_point = count;
+        binding_point = 0;
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         glBufferData(GL_UNIFORM_BUFFER, size*sizeof(float), NULL, GL_DYNAMIC_COPY);
@@ -82,6 +82,7 @@ struct UBO {
 
         // to replace with subData 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
+        glBindBufferBase(GL_UNIFORM_BUFFER, binding_point, id);
         GLvoid* ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
         memcpy(static_cast<char*>(ptr)+offset, data, size);
         glUnmapBuffer(GL_UNIFORM_BUFFER);

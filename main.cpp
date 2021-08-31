@@ -82,19 +82,25 @@ int main() {
     Atlas atlas("assets/media/");
     atlas.link(*shader);
 
-    
-    CellUBO cells[10];
+    CellUBO cells[100];
 
     for (int i = 0; i < 10; i++) {
 
-        cells[i].size.x = .1;
-        cells[i].pos.x = i*.1;
+        cells[i].size = {.1,1 }; 
+        cells[i].pos.x = (i%10)*.1;
+        // cells[i].pos.y = std::floor(i/10)*.1;
 
     }
 
-    UBO cellsUBO(&cells[0], sizeof(CellUBO)*10, "cellsUBO"); 
+    UBO cellsUBO(&cells[0], sizeof(CellUBO)*1, "cellsUBO"); 
     cellsUBO.link(*shader);
     cellsUBO.send();
+
+    CellUBO cell;
+    cell.size = {1,1};
+    UBO cellUBO(&cell, sizeof(CellUBO), "xxx"); 
+    cellUBO.link(*shader);
+    cellUBO.send();
 
 
     // Image boy("assets/media/boy.jpg", true);
