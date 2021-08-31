@@ -21,8 +21,6 @@ void main() {
     passID = ID;
     instanceID = gl_InstanceID;
 
-    texcoord = pos;
-
     Cell cell[10];
     cell[0].size = vec2(1,.1);
     cell[0].pos = vec2(0,0);
@@ -51,9 +49,9 @@ void main() {
     fixture.pos *= cell[gl_InstanceID].size;
     fixture.pos += (1-fixture.size)*cell[gl_InstanceID].size*.5;//cell[gl_InstanceID].pos;//*.5;
 
+    texcoord = pos;
     pos *= cell[gl_InstanceID].size;
 
-        
     if (passID > 0){
 
         vec2 size = cell[gl_InstanceID].size*fixture.size;
@@ -71,8 +69,8 @@ void main() {
 
     } else {
         
-         texcoord *= cell[gl_InstanceID].size;
-         texcoord += cell[gl_InstanceID].pos;
+        texcoord *= cell[gl_InstanceID].size;
+        texcoord += cell[gl_InstanceID].pos;
    
     }
     

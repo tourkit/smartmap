@@ -13,7 +13,7 @@ uniform float feedback = 0;
 
 void main() {
 
-    if (passID > 0) color = vec4(texcoord.y);//texture(media,texcoord);
+    if (passID > 0) color = texture(media,texcoord);
 
     else color = texture(pass,texcoord)*feedback;
 

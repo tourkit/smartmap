@@ -77,7 +77,6 @@ int main() {
 
         float now = glfwGetTime(); 
 
-
         if (now - last > 2) { reloadShader(); last = now; }
 
         /* DRAW LOOP */
@@ -87,7 +86,7 @@ int main() {
         shader->use();
         quad.draw(*quantity);
 
-        // passBuf.copy(outBuf);
+        passBuf.copy(outBuf);
 
         winFB.clear();
         Draw2D(outBuf);
