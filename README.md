@@ -1,3 +1,3 @@
 # SmartMap
 
-lil' lighting oriented openGL4 based content generator !
+openGL4 content generator for lighting fixtures !
