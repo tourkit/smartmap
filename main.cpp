@@ -48,8 +48,6 @@ void Draw2D(const Texture& tex) {
 
 int main() {
 
-    // Atlas atlas("media/user/");
-    // atlas.link(*shader);
 
     draw2D.addQuad(999);
     
@@ -67,9 +65,12 @@ int main() {
     
     reloadShader();
 
-    Image boy("assets/media/boy.jpg", true);
-    Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
-    boyTex.bind(1);
+    Atlas atlas("assets/media/");
+    atlas.link(*shader);
+
+    // Image boy("assets/media/boy.jpg", true);
+    // Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
+    // boyTex.bind(1);
 
     Texture passBuf(FW,FH, GL_RGB8);
     Texture outBuf(FW,FH, GL_RGBA8);

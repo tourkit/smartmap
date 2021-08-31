@@ -61,7 +61,7 @@ struct UBO {
         // to replace with subData 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         GLvoid* ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
-        memcpy(ptr+offset, data, size);
+        memcpy(static_cast<char*>(ptr)+offset, data, size);
         glUnmapBuffer(GL_UNIFORM_BUFFER);
 
     }
