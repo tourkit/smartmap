@@ -36,12 +36,17 @@ void GUI::draw() {
     
   newframe();
 
+  ImGui::Begin("Uniforms");
+  ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+
   for (auto e:elements) {
     
     e.get()->draw();
     e.get()->send();
 
   }
+
+  ImGui::End();
 
   render();
   

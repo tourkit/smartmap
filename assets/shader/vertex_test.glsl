@@ -25,7 +25,7 @@ void main() {
 
     Cell cell[10];
     cell[0].size = vec2(1,.1);
-    cell[0].pos = vec2(0,0);
+    cell[0].pos = vec2(0,.05);
     cell[1].size = vec2(1,.1);
     cell[1].pos = vec2(0,.1);
     cell[2].size = vec2(1,.1);

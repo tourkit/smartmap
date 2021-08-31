@@ -28,10 +28,11 @@ void reloadShader() {
 
     for (auto e:deleted) e.get()->links.insert(shader);
 
+    shader->sendUniform("media", (int)1);
+
 
 }  
  
-
 VBO draw2D;
 void Draw2D(GLuint tex) {
 
@@ -49,18 +50,18 @@ int main() {
     quad.addQuad(0);
     quad.addQuad(1);
 
-    reloadShader();
-
     gui->elements.insert(std::make_shared<GUI::Counter>("count"));
     gui->elements.insert(std::make_shared<GUI::SliderF>("feedback", 1, .9));
     gui->elements.insert(std::make_shared<GUI::SliderI>("texchoice", 1,0,0,15));
     gui->elements.insert(std::make_shared<GUI::SliderF>("blurv"));
     gui->elements.insert(std::make_shared<GUI::SliderF>("u_scale", 2,1));
     gui->elements.insert(std::make_shared<GUI::SliderF>("u_translate", 2,0,-1,1));
+    
+    reloadShader();
 
     Image boy("C:/Users/ebkc/Documents/testmake/assets/media/boy.jpg", true);
     Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
-    boyTex.bind(2);
+    boyTex.bind(1);
 
     Texture passBuf(FW,FH, GL_RGB8);
     Texture outBuf(FW,FH, GL_RGBA8);

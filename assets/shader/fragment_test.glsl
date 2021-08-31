@@ -2,6 +2,7 @@
 
 out vec4 color;
 
+uniform sampler2D pass;
 uniform sampler2D media;
 
 in float passID;
@@ -12,11 +13,11 @@ uniform float feedback = 0;
 
 void main() {
 
-    if (passID > 0) color = vec4(1);
+    if (passID > 0) color = vec4(texcoord.y);//texture(media,texcoord);
 
-    else color = texture(media,texcoord)*feedback;
+    else color = texture(pass,texcoord)*feedback;
 
-    if (passID == 999) color = texture(media,texcoord);
+    if (passID == 999) color = texture(pass,texcoord);
 
     return;
 
