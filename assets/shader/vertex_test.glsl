@@ -6,6 +6,8 @@ layout (location = 1) in int ID;
 struct Cell { vec2 size;vec2 pos;  };
 struct Fixture { vec2 size;vec2 pos;  } fixture;
 
+layout (std140) uniform cellsUBO { Cell[10] cell;};
+
 out float passID;
 out float instanceID;
 out vec2 texcoord;
@@ -20,28 +22,6 @@ void main() {
     
     passID = ID;
     instanceID = gl_InstanceID;
-
-    Cell cell[10];
-    cell[0].size = vec2(1,.1);
-    cell[0].pos = vec2(0,0);
-    cell[1].size = vec2(1,.1);
-    cell[1].pos = vec2(0,.1);
-    cell[2].size = vec2(1,.1);
-    cell[2].pos = vec2(0,.2);
-    cell[3].size = vec2(1,.1);
-    cell[3].pos = vec2(0,.3);
-    cell[4].size = vec2(1,.1);
-    cell[4].pos = vec2(0,.4);
-    cell[5].size = vec2(1,.1);
-    cell[5].pos = vec2(0,.5);
-    cell[6].size = vec2(1,.1);
-    cell[6].pos = vec2(0,.6);
-    cell[7].size = vec2(1,.1);
-    cell[7].pos = vec2(0,.7);
-    cell[8].size = vec2(1,.1);
-    cell[8].pos = vec2(0,.8);
-    cell[9].size = vec2(1,.1);
-    cell[9].pos = vec2(0,.9);
 
     fixture.size = u_scale;
     fixture.pos = u_translate;

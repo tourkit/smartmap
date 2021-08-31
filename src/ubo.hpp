@@ -16,29 +16,43 @@ struct UBO {
 
     std::vector<float> data;
 
-    GLuint id, binding_point;
+    void* ptr;
 
-    UBO() { id = 0; }
+    std::string name;
+
+    GLuint id, binding_point, size;
 
     ~UBO() { destroy(); }
 
-    UBO(GLuint size) { create(size); }
+    UBO(void* data, size_t size, std::string name = "data") : name(name) { 
+        
+        create(size); 
+
+        ptr = data;
+
+    } 
+
+    UBO(GLuint size = 512, std::string name = "data") : name(name) { 
+
+         // needs to be power of 4 
+         // for STD140 data structure
+        data.resize(std::ceil(size/4.0f)*4);
+
+        UBO(&data[0],data.size(),name);
+
+      } 
 
     void destroy() { if (id) glDeleteBuffers(1, &id); }
 
-    void create(int size = 0) {
+    void set(void* src) {  memcpy(&data[0], src, this->size);   }
+    
+    void set(void* src, size_t size = 0, int offset = 0) {   memcpy(&data[0]+offset, src, size);   }
+
+    void create(size_t size) {
+
+        this->size = size;
 
         destroy();
-
-        if (!size) {
-
-            data.resize(std::ceil(data.size()/4.0f)*4); // needs to be power of 4
-
-            size = data.size();
-
-        }
-
-        size = std::ceil(size/4.0f)*4; // needs to be power of 4
 
         glGenBuffers(1, &id);
 
@@ -62,7 +76,7 @@ struct UBO {
         
     } 
 
-    void send(){ send(&data[0], sizeof(float)*data.size()); }
+    void send(){ send(ptr, sizeof(float)*size); }
 
     void send(GLvoid* data, size_t size, GLuint offset = 0){
 

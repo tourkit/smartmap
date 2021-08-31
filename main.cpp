@@ -56,7 +56,12 @@ struct Drawcall {
 
 };
 
+struct vec2 { float x,y; };
+struct CellUBO { vec2 size = {1,1}; vec2 pos = {0,0}; };
+struct FixtureUBO { vec2 size,pos; };
+
 int main() {
+
 
     draw2D.addQuad(0); //
     
@@ -76,6 +81,21 @@ int main() {
 
     Atlas atlas("assets/media/");
     atlas.link(*shader);
+
+    
+    CellUBO cells[10];
+
+    for (int i = 0; i < 10; i++) {
+
+        cells[i].size.x = .1;
+        cells[i].pos.x = i*.1;
+
+    }
+
+    UBO cellsUBO(&cells[0], sizeof(CellUBO)*10, "cellsUBO"); 
+    cellsUBO.link(*shader);
+    cellsUBO.send();
+
 
     // Image boy("assets/media/boy.jpg", true);
     // Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
