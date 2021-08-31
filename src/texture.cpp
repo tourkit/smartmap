@@ -1,4 +1,5 @@
 #include "texture.hpp" 
+#include "file.hpp" 
 
 Texture::Texture(GLuint width, GLuint height, GLenum format, void* data) : width(width), height(height), format(format) {
 
@@ -47,3 +48,6 @@ void Texture::copy(const Texture& texture, GLuint offset_x, GLuint offset_y) {
 void Texture::bind(int unit) { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0); }
 
 void Texture::bind() { glBindTexture(GL_TEXTURE_2D, id); }
+
+
+// operator Texture::GLuint() { return id; }

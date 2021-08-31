@@ -3,6 +3,7 @@
 #include "texture.hpp"  
 	
 extern GL::Window* window;
+
 FrameBuffer::FrameBuffer(GLuint id) : id(0), width(window->width), height(window->height) { }
 FrameBuffer::FrameBuffer() { glGenFramebuffers(1, &id); }
 FrameBuffer::FrameBuffer(const Texture& tex) : FrameBuffer() { attach(tex); }

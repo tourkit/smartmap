@@ -1,7 +1,9 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H	
 	
-#include "globals.hpp"
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
+#include <string>
 
 struct Texture {
 
@@ -21,7 +23,7 @@ struct Texture {
 
     void bind();
 
-    operator GLuint() { return id; }
+    // operator GLuint();
 
 };
 

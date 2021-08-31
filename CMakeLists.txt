@@ -10,12 +10,14 @@ add_executable(TestZone
 
     # src/attribute.cpp
     
+    src/texture.cpp
     src/window.cpp
     src/shader.cpp
-    src/texture.cpp
     src/framebuffer.cpp
     src/vbo.cpp
-
+    src/ubo.cpp
+    src/atlas.cpp
+    
     
     src/imgui.cpp
 

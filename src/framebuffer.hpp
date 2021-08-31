@@ -1,7 +1,9 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 	
-#include "globals.hpp"
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
+#include <vector>
 
 struct Texture;
 	
@@ -18,4 +20,4 @@ struct FrameBuffer {
     std::vector<unsigned char> download(GLuint width = 0, GLuint height = 0, GLuint x = 0, GLuint y = 0, GLenum format = GL_RGB);
 
 };
-#endif
+#endif 

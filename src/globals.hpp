@@ -14,14 +14,14 @@
 #include <thread>
 #include <cmath>
 
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
-
 #include "window.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
 #include "framebuffer.hpp"
 #include "vbo.hpp"
+#include "atlas.hpp"
+#include "ubo.hpp"
 
 #include "imgui.hpp"
 #include "file.hpp"
+

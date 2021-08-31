@@ -1,3 +1,9 @@
+/*
+
+    SMARTMAP v1 beta
+
+                        */
+
 #include "globals.hpp"
 
 int WIDTH = 600, HEIGHT = 300;
@@ -29,19 +35,21 @@ void reloadShader() {
     for (auto e:deleted) e.get()->links.insert(shader);
 
     shader->sendUniform("media", (int)1);
-
 }  
  
 VBO draw2D;
-void Draw2D(GLuint tex) {
+void Draw2D(const Texture& tex) {
 
-    glBindTexture(GL_TEXTURE_2D, tex);
+    glBindTexture(GL_TEXTURE_2D, tex.id);
     shader->use();
     draw2D.draw();
 
 }
 
 int main() {
+
+    // Atlas atlas("media/user/");
+    // atlas.link(*shader);
 
     draw2D.addQuad(999);
     
@@ -59,7 +67,7 @@ int main() {
     
     reloadShader();
 
-    Image boy("C:/Users/ebkc/Documents/testmake/assets/media/boy.jpg", true);
+    Image boy("assets/media/boy.jpg", true);
     Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
     boyTex.bind(1);
 
@@ -77,7 +85,7 @@ int main() {
 
         float now = glfwGetTime(); 
 
-        if (now - last > 2) { reloadShader(); last = now; }
+        // if (now - last > 2) { reloadShader(); last = now; }
 
         /* DRAW LOOP */
         outFB.clear();
