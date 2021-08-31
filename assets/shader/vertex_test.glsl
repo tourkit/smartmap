@@ -23,7 +23,7 @@ void main() {
 
     texcoord = pos;
 
-    Cell cell[10]; //vec2(.1,1),  vec2(.1,0));
+    Cell cell[10];
     cell[0].size = vec2(1,.1);
     cell[0].pos = vec2(0,0);
     cell[1].size = vec2(1,.1);
@@ -47,8 +47,10 @@ void main() {
 
     fixture.size = u_scale;
     fixture.pos = u_translate;
-    // fixture.pos.x = x*2-1;
-    fixture.pos.x *= cell[gl_InstanceID].size.x;
+
+    // // fixture.pos.x = x*2-1;
+    // // fixture.pos.x *= cell[gl_InstanceID].size.x;
+
     pos *= cell[gl_InstanceID].size;
         
     if (passID > 0){
@@ -74,6 +76,8 @@ void main() {
     }
     
     pos += cell[gl_InstanceID].pos;
+
+    if (passID == 999){ pos = position; texcoord = pos;}
 
     gl_Position = vec4(pos*2-1,0,1);
 

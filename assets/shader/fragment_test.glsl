@@ -2,31 +2,21 @@
 
 out vec4 color;
 
-struct Cell { vec2 size;vec2 pos;  } cell;
-struct Fixture { vec2 size;vec2 pos;  } fixture;
-
 uniform sampler2D media;
 
 in float passID;
 in float instanceID;
 in vec2 texcoord;
-uniform float x = 0;
-uniform float feedback = 0;
 
-uniform vec2 u_scale = vec2(1);
-uniform vec2 u_translate = vec2(0);
+uniform float feedback = 0;
 
 void main() {
 
-    if (passID > 0){
-        
-        color = texture(media,texcoord)*vec4(abs(texcoord.x*2-1));
+    if (passID > 0) color = vec4(1);
 
-    }else{
+    else color = texture(media,texcoord)*feedback;
 
-        color = texture(media,texcoord)*feedback;//vec4(1,0,0,1);
-
-    }
+    if (passID == 999) color = texture(media,texcoord);
 
     return;
 
