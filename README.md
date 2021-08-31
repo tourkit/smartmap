@@ -1,3 +1,3 @@
-# testmake
+# SmartMap beta_0.1
 
-Coucou les nuls !
+openGL4 content generator for lighting fixtures !
