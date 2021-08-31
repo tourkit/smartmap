@@ -24,10 +24,10 @@ void main() {
     texcoord = pos;
 
     Cell cell[10];
-    cell[0].size = vec2(1,.5);
-    cell[0].pos = vec2(0,-.1);
-    cell[1].size = vec2(1,.5);
-    cell[1].pos = vec2(0,.2);
+    cell[0].size = vec2(1,.1);
+    cell[0].pos = vec2(0,0);
+    cell[1].size = vec2(1,.1);
+    cell[1].pos = vec2(0,.1);
     cell[2].size = vec2(1,.1);
     cell[2].pos = vec2(0,.2);
     cell[3].size = vec2(1,.1);
@@ -54,14 +54,14 @@ void main() {
 
         vec2 size = cell[gl_InstanceID].size*fixture.size;
         pos *= fixture.size;
-        texcoord /= fixture.size;
+        texcoord = pos/size;
         pos += fixture.pos;
 
-        vec2 ipos = min(pos, cell[gl_InstanceID].pos+cell[gl_InstanceID].size);
+        vec2 ipos = min(pos,cell[gl_InstanceID].size);
         texcoord *= (size-(pos-ipos))/size;
         pos = ipos;
 
-        vec2 opos = max(pos, cell[gl_InstanceID].pos);
+        vec2 opos = max(pos, 0);
         texcoord += (opos-pos)/size;
         pos = opos;
 
