@@ -48,7 +48,11 @@ void main() {
     fixture.size = u_scale;
     fixture.pos = u_translate;
 
+    fixture.pos *= cell[gl_InstanceID].size;
+    fixture.pos += (1-fixture.size)*cell[gl_InstanceID].size*.5;//cell[gl_InstanceID].pos;//*.5;
+
     pos *= cell[gl_InstanceID].size;
+
         
     if (passID > 0){
 
