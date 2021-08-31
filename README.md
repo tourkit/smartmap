@@ -1,3 +1,3 @@
-# testmake
+# SmartMap
 
-Coucou les nuls !
+lil' lighting oriented content generator !
