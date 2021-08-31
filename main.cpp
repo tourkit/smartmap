@@ -30,7 +30,6 @@ void reloadShader() {
 
     shader->sendUniform("media", (int)1);
 
-
 }  
  
 VBO draw2D;
@@ -56,6 +55,7 @@ int main() {
     gui->elements.insert(std::make_shared<GUI::SliderF>("blurv"));
     gui->elements.insert(std::make_shared<GUI::SliderF>("u_scale", 2,1));
     gui->elements.insert(std::make_shared<GUI::SliderF>("u_translate", 2,0,-1,1));
+    auto quantity = gui->elements.insert(std::make_shared<GUI::SliderI>("quantity", 1,2,1,10)).first->get();
     
     reloadShader();
 
@@ -65,7 +65,7 @@ int main() {
 
     Texture passBuf(FW,FH, GL_RGB8);
     Texture outBuf(FW,FH, GL_RGBA8);
-    FrameBuffer fb(outBuf);
+    FrameBuffer outFB(outBuf);
     FrameBuffer winFB(0);
 
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -80,13 +80,13 @@ int main() {
         if (now - last > 2) { reloadShader(); last = now; }
 
         /* DRAW LOOP */
-        fb.clear();
+        outFB.clear();
 
         passBuf.bind(); 
         shader->use();
-        quad.draw(2);
+        quad.draw(*quantity);
 
-        passBuf.copy(outBuf);
+        // passBuf.copy(outBuf);
 
         winFB.clear();
         Draw2D(outBuf);

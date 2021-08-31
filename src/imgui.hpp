@@ -47,6 +47,8 @@ struct GUI {
 
     }
 
+    operator int() { return data[0]; }
+
     virtual void draw() = 0;
     
   };
@@ -82,7 +84,7 @@ struct GUI {
     void draw() override { 
 
       std::vector<int> data;
-      data.resize(this->data.size());
+      for (auto v:this->data) data.push_back(v);
       
       if (data.size() == 1) ImGui::SliderInt(name.c_str(),&data[0],min,max); 
       else if (data.size() == 2) ImGui::SliderInt2(name.c_str(),&data[0],min,max); 

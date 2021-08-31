@@ -24,10 +24,10 @@ void main() {
     texcoord = pos;
 
     Cell cell[10];
-    cell[0].size = vec2(1,.1);
-    cell[0].pos = vec2(0,.05);
-    cell[1].size = vec2(1,.1);
-    cell[1].pos = vec2(0,.1);
+    cell[0].size = vec2(1,.5);
+    cell[0].pos = vec2(0,-.1);
+    cell[1].size = vec2(1,.5);
+    cell[1].pos = vec2(0,.2);
     cell[2].size = vec2(1,.1);
     cell[2].pos = vec2(0,.2);
     cell[3].size = vec2(1,.1);
@@ -48,16 +48,13 @@ void main() {
     fixture.size = u_scale;
     fixture.pos = u_translate;
 
-    // // fixture.pos.x = x*2-1;
-    // // fixture.pos.x *= cell[gl_InstanceID].size.x;
-
     pos *= cell[gl_InstanceID].size;
         
     if (passID > 0){
 
         vec2 size = cell[gl_InstanceID].size*fixture.size;
         pos *= fixture.size;
-        texcoord /= size;
+        texcoord /= fixture.size;
         pos += fixture.pos;
 
         vec2 ipos = min(pos, cell[gl_InstanceID].pos+cell[gl_InstanceID].size);
