@@ -1,3 +1,3 @@
 # SmartMap beta_0.1
 
-An openGL4 based generative  engine for pixelmapping !
+An openGL4 based generative  engine for futuritic pixelmapping !
