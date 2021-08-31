@@ -77,6 +77,7 @@ int main() {
 
         float now = glfwGetTime(); 
 
+
         if (now - last > 2) { reloadShader(); last = now; }
 
         /* DRAW LOOP */
@@ -98,5 +99,4 @@ int main() {
     });
 
 } 
-
 

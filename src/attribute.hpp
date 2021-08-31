@@ -1,5 +1,5 @@
-#ifndef ATTRIBUTE_H
-#define ATTRIBUTE_H
+#ifndef Number_H
+#define Number_H
 	
 #include <vector>
 #include <set>
@@ -10,36 +10,42 @@ struct Operator {};
 struct Attribute {
 
 	static inline std::set<Attribute*> pool;
-	
 
-	static inline std::vector<float> data;
+	std::set<Attribute*> links;
 
+	Attribute() { pool.insert(this); }
 
-	unsigned int id = 0; // can be address x.y if attributes is vec of vec
+	virtual void update() {}
+
+};
+
+struct Number : public Attribute {
+
 
 	float cur_val = 0;
 
 	float min_val, max_val, def_val;
 
-
-	std::set<Attribute*> links;
-
 	std::set<Operator> operators;
-	
 
+<<<<<<< Updated upstream
 	Attribute(float v);
+=======
 
-	Attribute(int v);
+	Number(float v);
+>>>>>>> Stashed changes
 
-	Attribute();
+	Number(int v);
 
-	~Attribute();
+	Number();
 
-	void link(Attribute* dst);
+	~Number();
+
+	void link(Number* dst);
 
 	void set(const float& val);
 
-	virtual void update(const float& val);
+	void update(const float& val);
 
 	const float& get();
 
@@ -51,12 +57,33 @@ struct Attribute {
 
 };
 
+<<<<<<< Updated upstream
 
 // struct DMXAttribute {
+=======
+struct ShaderNumber : public Number {
+
+	static inline std::vector<float> data;
+
+	unsigned int id = 0; // can be address x.y if Numbers is vec of vec
+
+	ShaderNumber(float v);
+
+	ShaderNumber(int v);
+
+	ShaderNumber();
+
+	~ShaderNumber();
+
+
+};
+
+// struct DMXNumber {
+>>>>>>> Stashed changes
 
 // 	enum Mode { NORMAL, FINE, ULTRA };
 
-// 	DMXAttribute(unsigned char* target, Mode NORMAL) {
+// 	DMXNumber(unsigned char* target, Mode NORMAL) {
 
 // 		set()
 // 	}

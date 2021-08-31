@@ -4,7 +4,7 @@
 #include <unordered_set>
 #include <string>
 
-Attribute::~Attribute() { 
+Number::~Number() { 
   
   for (auto* attr:pool) { attr->links.erase(this); }  
   
@@ -13,22 +13,26 @@ Attribute::~Attribute() {
 }
 
 
+<<<<<<< Updated upstream
 
 Attribute::Attribute(float v) : Attribute() { 
   
   set(v); 
+=======
+Number::Number() { }
+>>>>>>> Stashed changes
 
-}
+Number::Number(float v) : Number() { set(v); }
+Number::Number(int v) : Number() { set((float)v); }
 
-Attribute::Attribute(int v) : Attribute() { 
-  
-  set((float)v); 
-  
-}
-
+<<<<<<< Updated upstream
 Attribute::Attribute(std::vector<float>* data = nullptr) {
+=======
+ShaderNumber::ShaderNumber(float v) :  Number(v) { ShaderNumber(); }
+ShaderNumber::ShaderNumber(int v) : Number(v) { ShaderNumber(); }
+>>>>>>> Stashed changes
 
-  pool.insert(this);
+ShaderNumber::ShaderNumber() {
 
   id = data.size()+1;
 
@@ -36,7 +40,7 @@ Attribute::Attribute(std::vector<float>* data = nullptr) {
 
 }
 
-void Attribute::link(Attribute* dst) { 
+void Number::link(Number* dst) { 
   
   for (auto* link:dst->links) {
     
@@ -48,7 +52,7 @@ void Attribute::link(Attribute* dst) {
   
 }
 
-void Attribute::set(const float& val) {
+void Number::set(const float& val) {
  
   cur_val = val;
 
@@ -56,19 +60,24 @@ void Attribute::set(const float& val) {
 
 }
 
-void Attribute::update(const float& val) {
+void Number::update(const float& val) {
 
-  data[id] = val; //std::min(std::max(val,min_val),max_val);
-
-  for (auto* link:links) link->update(get());
+  for (auto* link:links) ((Number*)link)->update(get());
 
 }
 
-const float& Attribute::get() { return data[id]; }
+void ShaderNumber::update(const float& val) {
 
-Attribute::operator float() { return get(); }
+  data[id] = val; //std::min(std::max(val,min_val),max_val);
 
-void Attribute::operator= (const float& val) {  set(val); }
+  Number::update(val);
 
-void Attribute::operator= (const int& val) {  set((float)val); }
+}
 
+const float& Number::get() { return cur_val; }
+
+Number::operator float() { return get(); }
+
+void Number::operator= (const float& val) {  set(val); }
+
+void Number::operator= (const int& val) {  set((float)val); }
