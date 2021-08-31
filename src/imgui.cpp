@@ -18,15 +18,31 @@ GUI::~GUI() {
 }
 
 
-void GUI::draw() {
-  
+void GUI::newframe() {
+
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
 
-  for (auto e:elements) e.get()->draw();
+}
+void GUI::render() {
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+}
+
+void GUI::draw() {
+    
+  newframe();
+
+  for (auto e:elements) {
+    
+    e.get()->draw();
+    e.get()->send();
+
+  }
+
+  render();
+  
 }

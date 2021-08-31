@@ -11,6 +11,9 @@ out float instanceID;
 out vec2 texcoord;
 uniform float x = 0; // from 0 to 1
 
+uniform vec2 u_scale = vec2(1);
+uniform vec2 u_translate = vec2(0);
+
 void main() {
 
     vec2 pos = position;
@@ -42,10 +45,10 @@ void main() {
     cell[9].size = vec2(1,.1);
     cell[9].pos = vec2(0,.9);
 
-    fixture.size = vec2(1,1);
-    fixture.pos = vec2(.0,.0);
-    fixture.pos.x = x*2-1;
-    // fixture.pos.x *= cell[gl_InstanceID].size.x;
+    fixture.size = u_scale;
+    fixture.pos = u_translate;
+    // fixture.pos.x = x*2-1;
+    fixture.pos.x *= cell[gl_InstanceID].size.x;
     pos *= cell[gl_InstanceID].size;
         
     if (passID > 0){

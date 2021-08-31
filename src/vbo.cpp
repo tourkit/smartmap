@@ -25,7 +25,7 @@ void VBO::upload() {
 
 void VBO::addQuad(int id) {
 
-    int pos = indices.size()*sizeof(Indice);
+    int pos = vertices.size();
 
     vertices.push_back({0, 1, id});
     vertices.push_back({1, 1, id});
