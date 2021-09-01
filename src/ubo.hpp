@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 #include <cmath>
+#include <set>
 
 #include "shader.hpp"
 
@@ -20,79 +21,87 @@ struct UBO {
 
     std::string name;
 
-    GLuint id, binding_point, size;
+    GLuint id = 0;
+    
+    GLuint binding = count++;
+
+    size_t ubo_size = 0;
+
+    std::set<GL::ShaderProgram*> links;
 
     ~UBO() { destroy(); }
 
-    UBO(void* data, size_t size, std::string name = "data") : name(name) { 
-        
-        create(size); 
+    UBO(std::string name = "ubo") : name(name) { } 
 
-        ptr = data;
+    UBO(void* data, size_t size, std::string name = "ubo") : ptr(data), name(name), ubo_size(std::ceil(size/4.0f)*4) {  create(); } 
+
+    UBO(size_t size, std::string name = "ubo") : name(name), ubo_size(std::ceil(size/4.0f)*4) {
+
+        data.resize(ubo_size);
+
+        if (ubo_size) ptr = &data[0];
+
+        create();
 
     } 
 
-    UBO(GLuint size = 512, std::string name = "data") : name(name) { 
-
-         // needs to be power of 4 
-         // for STD140 data structure
-        data.resize(std::ceil(size/4.0f)*4);
-
-        UBO(&data[0],data.size(),name);
-
-      } 
-
     void destroy() { if (id) glDeleteBuffers(1, &id); }
 
-    void set(void* src) {  memcpy(&data[0], src, this->size);   }
+    void set(void* src) {  memcpy(&data[0], src, ubo_size);   }
     
     void set(void* src, size_t size = 0, int offset = 0) {   memcpy(&data[0]+offset, src, size);   }
 
-    void create(size_t size) {
-
-        this->size = size;
+    void create() {
 
         destroy();
 
+         // can do better ^^
+        if (binding > 100) std::cout << "MAX_UBO might soon be reached";
+
+        if (name == "ubo") name += std::to_string(binding);
+
         glGenBuffers(1, &id);
 
-        binding_point = 0;
+        glBindBuffer(GL_UNIFORM_BUFFER, id);
+        glBufferData(GL_UNIFORM_BUFFER, ubo_size, NULL, GL_DYNAMIC_COPY);
+        
+        std::cout << "ID:" << id << " - layout(std140, binding = " << binding << ") uniform " << name << " { size:" << ubo_size << " };" <<std::endl;
+
+        for (auto l:links) { link(l); }
+        
+        
+    }
+
+    void link(GL::ShaderProgram* shader) {
+
+        links.insert(shader);
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glBufferData(GL_UNIFORM_BUFFER, size*sizeof(float), NULL, GL_DYNAMIC_COPY);
-        glBindBufferBase(GL_UNIFORM_BUFFER, binding_point, id);
-
-        if (binding_point > 100) std::cout << "MAX_UBO might soon be reached, replace with proper glGet here";
-
+        glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name.c_str()), binding);
+        glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
     }
 
     void resize(GLuint size) { 
         
-        std::vector<float>  t_data = std::move(data); 
+        ubo_size = size;
+
+        // std::vector<float>  t_data = std::move(data); 
         
-        destroy(); create(size); // need to create new UBO_bufferid cause i Believe glBufferData can't be resized
-        
-        data = std::move(t_data); 
+        create(); 
+
+        data.resize(size);
+        // data = std::move(t_data); 
+
+        if (size) ptr = &data[0];
         
     } 
 
-    void send(){ send(ptr, sizeof(float)*size); }
+    void send(){ send(ptr, ubo_size); }
 
     void send(GLvoid* data, size_t size, GLuint offset = 0){
 
-        // to replace with subData 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glBindBufferBase(GL_UNIFORM_BUFFER, binding_point, id);
-        GLvoid* ptr = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
-        memcpy(static_cast<char*>(ptr)+offset, data, size);
-        glUnmapBuffer(GL_UNIFORM_BUFFER);
-
-    }
-
-    void link(const GL::ShaderProgram& shader, std::string name = "data") {
-
-        glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glUniformBlockBinding(shader.id, glGetUniformBlockIndex(shader.id, name.c_str()), binding_point);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 
 
     }
 

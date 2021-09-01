@@ -6,9 +6,7 @@ layout (location = 1) in int ID;
 struct Cell { vec2 size;vec2 pos;  };
 struct Fixture { vec2 size;vec2 pos;  } fixture;
 
-layout (std140) uniform cellsUBO { Cell[1] cell;};
-
-layout (std140) uniform xxx { Cell[1] media;};
+layout(std140) uniform cellsUBO  { Cell[10] cell;} ;
 
 out vec2 merde;
 
@@ -22,7 +20,6 @@ uniform vec2 u_translate = vec2(0);
 
 void main() {
 
-    merde = media[0].size;
 
     vec2 pos = position;
     

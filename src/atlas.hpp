@@ -21,8 +21,8 @@ struct Atlas : public rbp::GuillotineBinPack{
     std::vector<vec4> normalized;
 
     Texture buffer;
-        
-    UBO atlaspos;
+         
+    UBO atlaspos; 
 
     bool buffered = false;
 
@@ -36,7 +36,7 @@ struct Atlas : public rbp::GuillotineBinPack{
 
     bool add(int width, int height, unsigned char* data);
 
-    void link(GL::ShaderProgram& shader);
+    void link(GL::ShaderProgram* shader);
 
 };
 

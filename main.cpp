@@ -80,7 +80,7 @@ int main() {
     reloadShader();
 
     Atlas atlas("assets/media/");
-    atlas.link(*shader);
+    atlas.link(shader);
 
     CellUBO cells[100];
 
@@ -92,15 +92,15 @@ int main() {
 
     }
 
-    UBO cellsUBO(&cells[0], sizeof(CellUBO)*1, "cellsUBO"); 
-    cellsUBO.link(*shader);
+    UBO cellsUBO(&cells[0], 10*4*sizeof(float), "cellsUBO"); 
+    cellsUBO.link(shader);
     cellsUBO.send();
 
-    CellUBO cell;
-    cell.size = {1,1};
-    UBO cellUBO(&cell, sizeof(CellUBO), "xxx"); 
-    cellUBO.link(*shader);
-    cellUBO.send();
+    // CellUBO cell;
+    // cell.size = {1,1};
+    // UBO cellUBO(&cell, sizeof(CellUBO), "xxx"); 
+    // cellUBO.link(shader);
+    // cellUBO.send();
 
 
     // Image boy("assets/media/boy.jpg", true);

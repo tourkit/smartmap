@@ -14,11 +14,9 @@ uniform float texchoice = 0;
 uniform vec2 test = vec2(0);
 uniform vec2 merde = vec2(1);
 
-struct Cell { vec2 size;vec2 pos;  };
+layout (std140) uniform mediasCoords { vec4[16] media;};
 
-layout (shared) uniform xxx { Cell[1] media;};
-
-vec4 fromAtlas(float pos) { return texture(mediasAtlas,texcoord*merde); }
+vec4 fromAtlas(float pos) { return texture(mediasAtlas,texcoord*media[int(pos)].xy+media[int(pos)].zw); }
 
 void main() {
 

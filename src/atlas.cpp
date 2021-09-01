@@ -3,7 +3,7 @@
 
 Atlas::Atlas(int width, int height)  
 
-    : width(width), buffer(width,height, GL_RGB8), height(height),rbp::GuillotineBinPack(width,height) {  }
+    : atlaspos("mediasCoords"), width(width), buffer(width,height, GL_RGB8), height(height),rbp::GuillotineBinPack(width,height) {  }
 
 
 Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
@@ -25,18 +25,20 @@ Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
 }
 
-void Atlas::link(GL::ShaderProgram& shader) {
+void Atlas::link(GL::ShaderProgram* shader) {
 
-    normalize();
-
-    atlaspos.create((normalized.size()-1)*4);
-    atlaspos.link(shader, "mediasCoords");
-    atlaspos.send((float*)&normalized[0].x,(normalized.size()-1)*4*4);
+    normalize(); 
     
-    shader.sendUniform("test", 0.0944824219,0.0944824219);
-    shader.sendUniform("test", normalized[0].x,normalized[0].x);
-    shader.sendUniform("test", 0.,0.);
-    shader.sendUniform("mediasAtlas", 1);
+
+    atlaspos.resize(list.size()*4*4); 
+    atlaspos.data.resize(0);
+    atlaspos.ptr = &normalized[0];
+
+    atlaspos.link(shader);
+    atlaspos.send();
+
+
+    shader->sendUniform("mediasAtlas", 1);
     buffer.bind(1);
 
 }
