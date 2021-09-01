@@ -1,6 +1,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
+#define DEBUG_GL  /// <= DISABLE BEFORE RELEASE
+
 #include <iostream>
 
 #include <set>
@@ -45,10 +47,8 @@ static void glInfo(GLenum glenum, std::string name = "Info") {
 
 }
 
-#define DEBUG_GL
-
 #ifdef DEBUG_GL
-std::map<GLenum,std::string> GL_errors = {
+static std::map<GLenum,std::string> GL_errors = {
 
   { GL_NO_ERROR, "no error" },
   { GL_INVALID_ENUM, "invalid enumerant" },
@@ -60,7 +60,7 @@ std::map<GLenum,std::string> GL_errors = {
   { GL_NO_ERROR, "unknown" }
 
 };
-void glError(std::string file_name, std::string function_name, GLuint line) {
+static void glError(std::string file_name, std::string function_name, GLuint line) {
 
   GLenum code = glGetError();
 

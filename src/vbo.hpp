@@ -26,5 +26,7 @@ struct VBO {
 
 } ;
 
+struct Quad : public VBO { Quad(int id = 0) { addQuad(id);} };
+
 
 #endif

@@ -4,6 +4,9 @@
 
                         */
 
+                       
+#define DEBUG_GL
+
 #include "smartmap.hpp"
 
 int WIDTH = 600, HEIGHT = 300;
@@ -37,7 +40,7 @@ void reloadShader() {
     shader->sendUniform("media", (int)1);
 }  
  
-VBO draw2D;
+Quad draw2D;
 void Draw2D(const Texture& tex) {
 
     glBindTexture(GL_TEXTURE_2D, tex.id);
@@ -58,9 +61,6 @@ struct Drawcall {
 
 int main() {
 
-    // glewGetErrorString();
-
-    draw2D.addQuad(0); //
     
     VBO quad;
     quad.addQuad(1); // feedback
