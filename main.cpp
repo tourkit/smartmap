@@ -35,6 +35,8 @@ int main() {
     gui->elements.insert(std::make_shared<GUI::SliderF>("u_translate", 2,0,-1,1));
     auto quantity = gui->elements.insert(std::make_shared<GUI::SliderI>("quantity", 1,2,1,10)).first->get();
 
+    for (auto e:gui->elements){ e.get()->links.insert(shader);}
+
     Atlas atlas("assets/media/");
     atlas.link(shader);
 
@@ -53,25 +55,23 @@ int main() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA); // OR glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     VBO quad;
-    quad.addQuad(1); // feedback
-    quad.addQuad(2); // fixture
+    quad.addQuad(1); // 1 is feedback
+    quad.addQuad(2); // 2 is fixture
     
     while(true) window->render([&]() {
 
         outFB.clear();
 
-        passBuf.bind(); 
+        passBuf.bind();
         shader->use();
         quad.draw(*quantity);
 
-        passBuf.copy(outBuf);
+        passBuf.copy(outBuf); 
 
         winFB.clear();
         Draw2D(outBuf);
     
         gui->draw();
-
-        std::this_thread::sleep_for(std::chrono::microseconds(10));
  
     });
 
