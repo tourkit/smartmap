@@ -58,8 +58,8 @@ struct UBO {
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         glBufferData(GL_UNIFORM_BUFFER, ubo_size, NULL, GL_DYNAMIC_COPY);
-        
-        std::cout << "ID:" << id << " - layout(std140, binding = " << binding << ") uniform " << name << " { size:" << ubo_size << " };" <<std::endl;
+
+        GL_PRINT("layout(std140, binding = " << binding << ") uniform " << name << " { size:" << ubo_size << " };");
 
         for (auto l:links) { link(l); }
         

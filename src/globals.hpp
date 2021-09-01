@@ -79,8 +79,10 @@ static void glError(std::string file_name, std::string function_name, GLuint lin
 }
 
 #define GL_ERROR() glError(__FILE__, __PRETTY_FUNCTION__, __LINE__)
+#define GL_PRINT(str) std::cout << str << std::endl;
 #else
 #define GL_ERROR()
+#define GL_PRINT()
 #endif
 
 

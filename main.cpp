@@ -76,7 +76,14 @@ int main() {
     Atlas atlas("assets/media/");
     atlas.link(shader);
 
-    RectF cells[100];
+    Texture passBuf(FW,FH, GL_RGB8);
+
+    Texture outBuf(FW,FH, GL_RGB8);
+    FrameBuffer outFB(outBuf);
+
+    FrameBuffer winFB(0);
+
+    RectF cells[10];
 
     for (int i = 0; i < 10; i++) {
 
@@ -89,16 +96,6 @@ int main() {
     UBO cellsUBO(&cells[0], 10*sizeof(RectF), "cellsUBO"); 
     cellsUBO.link(shader);
     cellsUBO.send();
-
-
-    Image boy("assets/media/boy.jpg", true);
-    Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
-    // boyTex.bind(1);
-
-    Texture passBuf(FW,FH, GL_RGB8);
-    Texture outBuf(FW,FH, GL_RGB8);
-    FrameBuffer outFB(outBuf);
-    FrameBuffer winFB(0);
 
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA);
