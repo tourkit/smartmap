@@ -27,13 +27,14 @@ void Draw2D(const Texture& tex) {
 
 int main() {
 
+    auto quantity = gui->elements.insert(std::make_shared<GUI::SliderI>("quantity", 1,2,1,10)).first->get();
+    
     gui->elements.insert(std::make_shared<GUI::Counter>("count"));
     gui->elements.insert(std::make_shared<GUI::SliderF>("feedback", 1, .9));
     gui->elements.insert(std::make_shared<GUI::SliderI>("texchoice", 1,0,0,15));
     gui->elements.insert(std::make_shared<GUI::SliderF>("blurv"));
     gui->elements.insert(std::make_shared<GUI::SliderF>("u_scale", 2,1));
     gui->elements.insert(std::make_shared<GUI::SliderF>("u_translate", 2,0,-1,1));
-    auto quantity = gui->elements.insert(std::make_shared<GUI::SliderI>("quantity", 1,2,1,10)).first->get();
 
     for (auto e:gui->elements){ e.get()->links.insert(shader);}
 
@@ -55,8 +56,8 @@ int main() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA); // OR glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     VBO quad;
-    quad.addQuad(1); // 1 is feedback
-    quad.addQuad(2); // 2 is fixture
+    quad.addQuad(1); // in shader, id 1 is feedback
+    quad.addQuad(2); // in shader, id 2 is fixture
     
     while(true) window->render([&]() {
 
