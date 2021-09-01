@@ -37,6 +37,20 @@ struct vec2 { float x,y; };
 struct vec4 { float x,y,z,w; };
 struct RectF { vec2 size = {1,1}; vec2 pos = {0,0}; };
 
+
+static std::vector<RectF> matrice(unsigned int x, unsigned int y) {
+
+    std::vector<RectF> mat;
+
+    float xsize = 1. / x;
+    float ysize = 1. / y;
+
+    for (int row = 0; row < x; ++row) for (int col = 0; col < y; ++col) mat.push_back({xsize, ysize, xsize * row,  ysize * col});
+
+    return mat;
+
+}
+
 static void glInfo(GLenum glenum, std::string name = "Info") {
 
     int data;
