@@ -3,10 +3,7 @@
     SMARTMAP v1 beta
 
                         */
-
                        
-#define DEBUG_GL
-
 #include "smartmap.hpp"
 
 int WIDTH = 600, HEIGHT = 300;
