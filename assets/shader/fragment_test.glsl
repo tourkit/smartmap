@@ -1,6 +1,7 @@
 #version 430 core
 
 out vec4 color;
+// out vec4 feddpass;
 
 uniform sampler2D pass;
 uniform sampler2D mediasAtlas;
@@ -11,23 +12,30 @@ in vec2 texcoord;
 
 uniform float feedback = 0;
 uniform float texchoice = 0;
-uniform vec2 test = vec2(0);
-uniform vec2 merde = vec2(1);
 
-layout (std140) uniform mediasCoords { vec4[16] media;};
+struct Rect { vec2 size;vec2 pos;  };
 
-vec4 fromAtlas(float pos) { return texture(mediasAtlas,texcoord*media[int(pos)].xy+media[int(pos)].zw); }
+layout (std140) uniform mediasCoords { Rect[16] mediaCoord;};
+
+vec4 fromAtlas(int id) { return texture(mediasAtlas,texcoord*mediaCoord[id].size+mediaCoord[id].pos); }
+
+struct Fixture { float feedback; };
 
 void main() {
 
+    Fixture f;
+    f.feedback = 0;
 
-    if (passID == 2) color = fromAtlas(0);
+    if (instanceID == 0) f.feedback = feedback;
+
+    if (passID == 2) color = fromAtlas(int(texchoice));
 
     else color = texture(pass,texcoord);
     
-    if (passID == 1) color *= feedback;
+    if (passID == 1) color *= f.feedback;
 
     // color = vec4(1);
+    // feddpass = color;
 
     return;
 

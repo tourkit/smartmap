@@ -3,12 +3,9 @@
 layout (location = 0) in vec2 position;
 layout (location = 1) in int ID;
 
-struct Cell { vec2 size;vec2 pos;  };
-struct Fixture { vec2 size;vec2 pos;  } fixture;
+struct Rect { vec2 size;vec2 pos;  };
 
-layout(std140) uniform cellsUBO  { Cell[10] cell;} ;
-
-out vec2 merde;
+layout(std140) uniform cellsUBO  { Rect[10] cell;} ;
 
 out float passID;
 out float instanceID;
@@ -21,13 +18,22 @@ uniform vec2 u_translate = vec2(0);
 void main() {
 
 
+
+
     vec2 pos = position;
     
     passID = ID;
     instanceID = gl_InstanceID;
 
-    fixture.size = u_scale;
-    fixture.pos = u_translate;
+    Rect fixture;
+    
+    fixture.size = vec2(1);
+    fixture.pos = vec2(0);
+    
+    if (gl_InstanceID == 0) {
+        fixture.size = u_scale;
+        fixture.pos = u_translate;
+    }
 
     fixture.pos *= cell[gl_InstanceID].size;
     fixture.pos += (1-fixture.size)*cell[gl_InstanceID].size*.5;

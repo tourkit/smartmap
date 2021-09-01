@@ -8,7 +8,7 @@
 
 int WIDTH = 600, HEIGHT = 300;
 
-int FW = 1920, FH = 12000;
+int FW = 600, FH = 300;
 
 GL::Window* window = new GL::Window(false,WIDTH,HEIGHT);
 
@@ -62,7 +62,6 @@ struct FixtureUBO { vec2 size,pos; };
 
 int main() {
 
-
     draw2D.addQuad(0); //
     
     VBO quad;
@@ -103,8 +102,8 @@ int main() {
     // cellUBO.send();
 
 
-    // Image boy("assets/media/boy.jpg", true);
-    // Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
+    Image boy("assets/media/boy.jpg", true);
+    Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
     // boyTex.bind(1);
 
     Texture passBuf(FW,FH, GL_RGB8);
@@ -126,11 +125,14 @@ int main() {
         /* DRAW LOOP */
         outFB.clear();
 
+        glMemoryBarrier( GL_ALL_BARRIER_BITS ); // GL_ALL_BARRIER_BITS ,
         passBuf.bind(); 
         shader->use();
         quad.draw(*quantity);
 
+        glMemoryBarrier( GL_ALL_BARRIER_BITS ); // GL_ALL_BARRIER_BITS ,
         passBuf.copy(outBuf);
+        glMemoryBarrier( GL_ALL_BARRIER_BITS ); // GL_ALL_BARRIER_BITS ,
 
         winFB.clear();
         Draw2D(outBuf);
