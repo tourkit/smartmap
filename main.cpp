@@ -20,8 +20,8 @@ void reloadShader() {
 
     auto* temp = new GL::ShaderProgram(
         
-        "C:/Users/ebkc/Documents/testmake/assets/shader/vertex_test.glsl", 
-        "C:/Users/ebkc/Documents/testmake/assets/shader/fragment_test.glsl"
+        "C:/Users/ebkc/Documents/testmake/assets/shader/smartmap.vert", 
+        "C:/Users/ebkc/Documents/testmake/assets/shader/smartmap.frag"
         
     );
 

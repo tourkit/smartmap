@@ -45,8 +45,8 @@ include(CPack)
 
 file(COPY assets DESTINATION .)
 
-configure_file(assets/shader/vertex_test.glsl assets/shader/ COPYONLY)
-configure_file(assets/shader/fragment_test.glsl assets/shader/ COPYONLY)
+configure_file(assets/shader/smartmap.vert assets/shader/ COPYONLY)
+configure_file(assets/shader/smartmap.frag assets/shader/ COPYONLY)
 
 target_include_directories(TestZone PRIVATE
     .
