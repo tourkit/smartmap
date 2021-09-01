@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.12)
-project(TestZone VERSION 0.1.0)
+project(SmartMap VERSION 0.1.0)
 
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
-add_executable(TestZone 
+add_executable(SmartMap 
 
     main.cpp
 
@@ -36,8 +36,8 @@ add_executable(TestZone
 
 )
 
-target_compile_features(TestZone PUBLIC cxx_std_20)
-set_target_properties(TestZone PROPERTIES COMPILE_FLAGS "-DIMGUI_IMPL_OPENGL_LOADER_GL3W  ")
+target_compile_features(SmartMap PUBLIC cxx_std_20)
+set_target_properties(SmartMap PROPERTIES COMPILE_FLAGS "-DIMGUI_IMPL_OPENGL_LOADER_GL3W  ")
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
@@ -48,7 +48,7 @@ file(COPY assets DESTINATION .)
 configure_file(assets/shader/smartmap.vert assets/shader/ COPYONLY)
 configure_file(assets/shader/smartmap.frag assets/shader/ COPYONLY)
 
-target_include_directories(TestZone PRIVATE
+target_include_directories(SmartMap PRIVATE
     .
     src
     include
@@ -57,7 +57,7 @@ target_include_directories(TestZone PRIVATE
     
     )
 
-target_link_libraries(TestZone PRIVATE
+target_link_libraries(SmartMap PRIVATE
     OpenGL::GL
     glfw
     ws2_32
