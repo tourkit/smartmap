@@ -8,7 +8,7 @@
 
 int WIDTH = 600, HEIGHT = 300;
 
-int FW = 600, FH = 300;
+int FW = 1920, FH = 1200;
 
 GL::Window* window = new GL::Window(false,WIDTH,HEIGHT);
 
