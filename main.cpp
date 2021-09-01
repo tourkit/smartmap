@@ -46,16 +46,6 @@ void Draw2D(const Texture& tex) {
 
 }
 
-struct Drawcall {
-
-    UBO data;
-
-    FrameBuffer dst;
-
-    GL::ShaderProgram shader;
-
-};
-
 int main() {
 
     
