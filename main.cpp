@@ -10,11 +10,11 @@ int WIDTH = 600, HEIGHT = 300;
 
 int FW = 1920, FH = 1200;
 
-GL::Window* window = new GL::Window(false,WIDTH,HEIGHT);
+auto* window = new GL::Window(false,WIDTH,HEIGHT);
 
 auto*  gui = new GUI{window->window}; 
 
-GL::ShaderProgram* shader = new GL::ShaderProgram("assets/shader/smartmap.vert", "assets/shader/smartmap.frag");
+auto* shader = new GL::ShaderProgram("assets/shader/smartmap.vert", "assets/shader/smartmap.frag");
  
 Quad draw2D;
 void Draw2D(const Texture& tex) {
