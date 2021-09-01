@@ -25,7 +25,26 @@ void Draw2D(const Texture& tex) {
 
 }
 
+
+struct FixtureUBO {
+
+    vec2 size{1,1}, pos{0,0};
+
+    vec4 rgba;
+
+    vec4 gobo;
+
+    float feedback;
+    float strobe;
+
+    vec2 useless; // pack size for std140
+
+} fixtures[10];
+
+
 int main() {
+
+    // std::cout << f.gobo <<std::endl;
 
     auto quantity = gui->elements.insert(std::make_shared<GUI::SliderI>("quantity", 1,2,1,10)).first->get();
     
@@ -48,11 +67,15 @@ int main() {
 
     FrameBuffer winFB(0);
 
-    auto matrice_data = matrice(10,1);
-    UBO matriceUBO(&matrice_data[0], matrice_data.size()*sizeof(RectF), "MatriceUBO"); 
+    auto mat = matrice(10,1);
+    UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
     matriceUBO.link(shader);
     matriceUBO.send();
-    
+
+    UBO fixtureUBO(&fixtures[0], 10*sizeof(FixtureUBO), "FixtureUBO"); 
+    fixtureUBO.link(shader);
+    fixtureUBO.send();
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA); // OR glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     VBO quad;
@@ -61,7 +84,9 @@ int main() {
     
     while(true) window->render([&]() {
 
-        outFB.clear();
+        outFB.clear(); // thus bind
+
+        fixtureUBO.send();
 
         passBuf.bind();
         shader->use();
@@ -69,7 +94,7 @@ int main() {
 
         passBuf.copy(outBuf); 
 
-        winFB.clear();
+        winFB.clear(); // thus bind
         Draw2D(outBuf);
     
         gui->draw();

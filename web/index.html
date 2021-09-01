@@ -2,23 +2,53 @@
 <head>
 <style>
 
-a {
+body {
+
+
+    width:300px;
+    margin:auto;
+
+    
+    font-size:20px;
+    font-family:Arial;
+
+    
+    background-color:rgb(58, 58, 58);
+}
+
+h1 {
+    
+    text-align: center;
+}
+
+.menuItem {
+
+    cursor: pointer;
   
   display:block;
-  width:200px;
+  width:100%;
   color:#666;
-  background-color:#ddd;
+  background-color:rgb(39, 39, 39);
   margin:4px;
   padding:4px;
   text-decoration:none;
-  font-family:Arial;
   font-weight:bold;
   
 }
 
-a:nth-child(1) { background-color:#bbb; }
+.value {
 
-a:hover { background-color:#dbb; }
+    float:right;
+    color:#bbb;
+    font-weight:normal;
+    font-size:16px;
+    padding-top:4px;
+}
+
+.menuItem:last-child  .value{ display:none; }
+/* a:last-child { background-color:#bbb; } */
+
+.menuItem:hover { background-color:rgb(46, 46, 46); color:rgb(141, 71, 13); }
 
 </style>
 
@@ -30,35 +60,55 @@ ready(() => {
 
     menu = [
 
-        { name:"Home", tree:[1,2,3,5,6]},
-        { name:"Patch", tree:[0,7,8]},
-        { name:"Output", tree:[0]}, 
-        { name:"Config", tree:[0,4]},
-        { name:"Network", tree:[2]},
-        { name:"USB", tree:[0]},
+        { name:"Home", tree:[1,2,5,6]},
+        { name:"Patch", tree:[7,8, 0]},
+        { name:"Config", tree:[4,3,11, 0]},
+        { name:"HDMI1", value:"WUXGA@50", tree:[12,13,  2]}, 
+        { name:"Network", value:"127.0.0.1/24", tree:[9,10,2]},
+        { name:"Backup", tree:[0]},
         { name:"Reset", tree:[0]},
         { name:"New", tree:[1]},
-        { name:"Cluster 1", tree:[1]},
+        { name:"Cluster 1", value:"1.001..1.028 @HDMI1", tree:[14,15,16,1]},
+        { name:"Address", value:"127.0.0.1", tree:[4]},
+        { name:"Mask", value:"24", tree:[4]},
+        { name:"HDMI2", value:"WUXGA@50", tree:[12,13,2]},
+        { name:"Resolution", value:"WUXGA", tree:[3]},
+        { name:"Frequency", value:"50", tree:[3]},
+        { name:"First address", value:"1.001", tree:[8]},
+        { name:"Instances", value:"4", tree:[8]},
+        { name:"Output", value:"HDMI1", tree:[8]},
 
     ];
 
-    var body = document.querySelector("body");
+    var cont = document.querySelector("div");
 
     function showMenu(x) {
 
-    body.textContent = "";
+        cont.textContent = "";
 
-    for (i in menu[x].tree) {
+        for (i in menu[x].tree) {
 
-    var id = menu[x].tree[i];
-    var link =  document.createElement("a");
-    link.href = "#";
-    link.id = id;
-    link.textContent = menu[id].name;
-    link.addEventListener("click", (e) => { showMenu(e.target.id); });
-    body.appendChild(link);
+            var id = menu[x].tree[i];
 
-    }
+            var link =  document.createElement("div");
+            link.id = id;
+            link.className = "menuItem";
+            link.textContent = menu[id].name;
+            
+            cont.appendChild(link);
+            
+            var value = document.createElement("div");
+            value.className = "value";
+            value.textContent = menu[id].value;
+            link.appendChild(value);
+
+            
+
+
+            link.addEventListener("click", (e) => { showMenu(e.target.id); });
+            
+
+        }
 
     }
 
@@ -68,5 +118,9 @@ showMenu(0);
 
 </script>
 </head>
-<body></body>
+<body>
+
+    <h1>SmartMap</h1>
+    <div></div>
+</body>
 </html>

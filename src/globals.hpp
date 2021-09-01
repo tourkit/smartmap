@@ -33,9 +33,9 @@
 
 #include "file.hpp"
 
-struct vec2 { float x,y; };
-struct vec4 { float x,y,z,w; };
-struct RectF { vec2 size = {1,1}; vec2 pos = {0,0}; };
+struct vec2 { float x = 0, y = 0; };
+struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
+struct RectF { vec2 size = {1,1}; vec2 pos;  };
 
 
 static std::vector<RectF> matrice(unsigned int x, unsigned int y) {

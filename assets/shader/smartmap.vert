@@ -5,14 +5,27 @@ layout (location = 1) in int uid;
 
 struct Rect { vec2 size, pos; };
 
-layout(std140) uniform MatriceUBO  { Rect matrice[10];} ;
+struct Fixture {
+
+    vec2 size, pos;
+
+    vec4 rgba;
+
+    vec4 gobo;
+
+    float feedback;
+    float strobe;
+
+    vec2 useless; // pack size for std140
+
+};
+
+layout(std140) uniform MatriceUBO  { Rect matrice[10]; };
+layout(std140) uniform FixtureUBO  { Fixture fixtures[10];} ;
 
 out float UID;      // caps mean cast from int
 out float INSTANCE; // caps mean cast from int
 out vec2 texcoord;
-
-uniform vec2 u_scale = vec2(1);
-uniform vec2 u_translate = vec2(0);
 
 void main() {
 
@@ -23,15 +36,7 @@ void main() {
     
     vec2 pos = position;
 
-    Rect fixture;
-    
-    fixture.size = vec2(1);
-    fixture.pos = vec2(0);
-    
-    if (instance == 0) {
-        fixture.size = u_scale;
-        fixture.pos = u_translate;
-    }
+    Fixture fixture = fixtures[instance];
 
     fixture.pos *= matrice[instance].size;
     fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
