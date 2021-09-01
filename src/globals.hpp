@@ -90,6 +90,8 @@ static void glError(std::string file_name, std::string function_name, GLuint lin
 
   std::cout << file_name << "(" << line << "): " << function_name  <<  "() => " << code_string << '\n';
 
+  exit(0);
+
 }
 
 #define GL_ERROR() glError(__FILE__, __PRETTY_FUNCTION__, __LINE__)

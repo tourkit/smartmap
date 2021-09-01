@@ -1,54 +1,52 @@
 #version 430 core
 
 layout (location = 0) in vec2 position;
-layout (location = 1) in int ID;
+layout (location = 1) in int uid;
 
-struct Rect { vec2 size;vec2 pos;  };
+struct Rect { vec2 size, pos; };
 
-layout(std140) uniform cellsUBO  { Rect[10] cell;} ;
+layout(std140) uniform MatriceUBO  { Rect matrice[10];} ;
 
-out float passID;
-out float instanceID;
+out float UID;      // caps mean cast from int
+out float INSTANCE; // caps mean cast from int
 out vec2 texcoord;
-uniform float x = 0; // from 0 to 1
 
 uniform vec2 u_scale = vec2(1);
 uniform vec2 u_translate = vec2(0);
 
 void main() {
 
+    UID = uid;
 
-
-
-    vec2 pos = position;
+    int instance = gl_InstanceID;
+    INSTANCE = instance;
     
-    passID = ID;
-    instanceID = gl_InstanceID;
+    vec2 pos = position;
 
     Rect fixture;
     
     fixture.size = vec2(1);
     fixture.pos = vec2(0);
     
-    if (gl_InstanceID == 0) {
+    if (instance == 0) {
         fixture.size = u_scale;
         fixture.pos = u_translate;
     }
 
-    fixture.pos *= cell[gl_InstanceID].size;
-    fixture.pos += (1-fixture.size)*cell[gl_InstanceID].size*.5;
+    fixture.pos *= matrice[instance].size;
+    fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
 
     texcoord = pos;
-    pos *= cell[gl_InstanceID].size;
+    pos *= matrice[instance].size;
 
-    if (passID  == 2){
+    if (UID  == 2){
 
-        vec2 size = cell[gl_InstanceID].size*fixture.size;
+        vec2 size = matrice[instance].size*fixture.size;
         pos *= fixture.size;
         texcoord = pos/size;
         pos += fixture.pos;
 
-        vec2 ipos = min(pos,cell[gl_InstanceID].size);
+        vec2 ipos = min(pos,matrice[instance].size);
         texcoord *= (size-(pos-ipos))/size;
         pos = ipos;
 
@@ -58,14 +56,14 @@ void main() {
 
     } else {
         
-        texcoord *= cell[gl_InstanceID].size;
-        texcoord += cell[gl_InstanceID].pos;
+        texcoord *= matrice[instance].size;
+        texcoord += matrice[instance].pos;
    
     }
     
-    pos += cell[gl_InstanceID].pos;
+    pos += matrice[instance].pos;
 
-    if (passID == 0){ pos = position; texcoord = pos;}
+    if (UID == 0){ pos = position; texcoord = pos;}
 
     gl_Position = vec4(pos*2-1,0,1);
 

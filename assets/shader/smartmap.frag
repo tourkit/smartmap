@@ -5,8 +5,8 @@ out vec4 color;
 uniform sampler2D pass;
 uniform sampler2D mediasAtlas;
 
-in float passID;
-in float instanceID;
+in float UID;
+in float INSTANCE;
 in vec2 texcoord;
 
 uniform float feedback = 0;
@@ -25,13 +25,13 @@ void main() {
     Fixture f;
     f.feedback = 0;
 
-    if (instanceID == 0) f.feedback = feedback;
+    if (INSTANCE == 0) f.feedback = feedback;
 
-    if (passID == 2) color = fromAtlas(int(texchoice));
+    if (UID == 2) color = fromAtlas(int(texchoice));
 
     else color = texture(pass,texcoord);
     
-    if (passID == 1) color *= f.feedback;
+    if (UID == 1) color *= f.feedback;
 
     // color = vec4(1);
 

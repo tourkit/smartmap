@@ -48,16 +48,16 @@ int main() {
 
     FrameBuffer winFB(0);
 
-    auto mat = matrice(10,1);
-    UBO cellsUBO(&mat[0], mat.size()*sizeof(RectF), "cellsUBO"); 
-    cellsUBO.link(shader);
-    cellsUBO.send();
+    auto matrice_data = matrice(10,1);
+    UBO matriceUBO(&matrice_data[0], matrice_data.size()*sizeof(RectF), "MatriceUBO"); 
+    matriceUBO.link(shader);
+    matriceUBO.send();
     
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA); // OR glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     VBO quad;
-    quad.addQuad(1); // in shader, id 1 is feedback
-    quad.addQuad(2); // in shader, id 2 is fixture
+    quad.addQuad(1); // UID #1 in shader (feedback)
+    quad.addQuad(2); // UID #2 in shader (fixture)
     
     while(true) window->render([&]() {
 
@@ -65,7 +65,7 @@ int main() {
 
         passBuf.bind();
         shader->use();
-        quad.draw(*quantity);
+        quad.draw(*quantity); // quantity is instances count in shader
 
         passBuf.copy(outBuf); 
 
