@@ -25,10 +25,9 @@ void Draw2D(const Texture& tex) {
 
 }
 
-
 struct FixtureUBO {
 
-    vec2 size{1,1}, pos{0,0};
+    vec2 focus{1,1}, pos{0,0};
 
     vec4 rgba;
 
@@ -41,19 +40,17 @@ struct FixtureUBO {
 
 } fixtures[10];
 
-
 int main() {
-
-    // std::cout << f.gobo <<std::endl;
 
     auto quantity = gui->elements.insert(std::make_shared<GUI::SliderI>("quantity", 1,2,1,10)).first->get();
     
     gui->elements.insert(std::make_shared<GUI::Counter>("count"));
+    gui->elements.insert(std::make_shared<GUI::SliderF>("size", 2,1));
+    gui->elements.insert(std::make_shared<GUI::SliderF>("position", 2,0,-1,1));
+    gui->elements.insert(std::make_shared<GUI::SliderF>("rgba", 3,1));
     gui->elements.insert(std::make_shared<GUI::SliderF>("feedback", 1, .9));
     gui->elements.insert(std::make_shared<GUI::SliderI>("texchoice", 1,0,0,15));
     gui->elements.insert(std::make_shared<GUI::SliderF>("blurv"));
-    gui->elements.insert(std::make_shared<GUI::SliderF>("u_scale", 2,1));
-    gui->elements.insert(std::make_shared<GUI::SliderF>("u_translate", 2,0,-1,1));
 
     for (auto e:gui->elements){ e.get()->links.insert(shader);}
 
@@ -81,6 +78,9 @@ int main() {
     VBO quad;
     quad.addQuad(1); // UID #1 in shader (feedback)
     quad.addQuad(2); // UID #2 in shader (fixture)
+
+    VBO quad2;
+    quad.addQuad(3); // UID #3 in shader (merge matrice))
     
     while(true) window->render([&]() {
 
