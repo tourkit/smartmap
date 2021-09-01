@@ -24,3 +24,14 @@
 
 #include "imgui.hpp"
 #include "file.hpp"
+
+
+// void glInfo(GLenum glenum, std::string name = "Info") {
+
+//     int data;
+
+//     glGetIntegerv(glenum, &data);
+
+//     std::cout << name << ": " << data <<std::endl;
+
+// }

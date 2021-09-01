@@ -61,17 +61,10 @@ struct CellUBO { vec2 size = {1,1}; vec2 pos = {0,0}; };
 struct FixtureUBO { vec2 size,pos; };
 
 
-   void glInfo(GLenum glenum, std::string name = "Info") {
-
-        int data;
-
-        glGetIntegerv(glenum, &data);
-
-        std::cout << name << ": " << data <<std::endl;
-
-    }
 
 int main() {
+
+    // glewGetErrorString();
 
     draw2D.addQuad(0); //
     
@@ -117,7 +110,7 @@ int main() {
     Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
     // boyTex.bind(1);
 
-    Texture passBuf(FW,FH, GL_RGB8);
+    Texture passBuf(FW,FH, GL_RGBA8);
     Texture outBuf(FW,FH, GL_RGB8);
     FrameBuffer outFB(outBuf);
     FrameBuffer winFB(0);
