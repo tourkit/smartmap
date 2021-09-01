@@ -1,20 +1,9 @@
 #ifndef TOURKIT_GL_SHADER_HPP
 #define TOURKIT_GL_SHADER_HPP
 
-#include <GL/gl3w.h>
-#include <functional>
-
-#include <map>
-#include <set>
 
 
-#include <string>
-#include <iostream>
-
-#include <functional>
-#include <iostream>
-#include <string>
-#include <cstring>
+#include "globals.hpp"
 
 
 

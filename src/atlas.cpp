@@ -1,5 +1,4 @@
 #include "atlas.hpp"  
-#include "file.hpp"  
 
 Atlas::Atlas(int width, int height)  
 

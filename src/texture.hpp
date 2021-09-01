@@ -1,9 +1,7 @@
 #ifndef TEXTURE_H
 #define TEXTURE_H	
 	
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <string>
+#include "globals.hpp"
 
 struct Texture {
 

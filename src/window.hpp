@@ -1,12 +1,7 @@
 #ifndef __ENGINE_GL_WINDOW_HPP__
 #define __ENGINE_GL_WINDOW_HPP__
 
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <chrono>
-#include <functional>
-#include <iostream>
-#include <string>
+#include "globals.hpp"
 
 namespace GL {
 

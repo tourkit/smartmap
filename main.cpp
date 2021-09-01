@@ -4,7 +4,7 @@
 
                         */
 
-#include "globals.hpp"
+#include "smartmap.hpp"
 
 int WIDTH = 600, HEIGHT = 300;
 
@@ -56,12 +56,6 @@ struct Drawcall {
 
 };
 
-struct vec2 { float x,y; };
-struct CellUBO { vec2 size = {1,1}; vec2 pos = {0,0}; };
-struct FixtureUBO { vec2 size,pos; };
-
-
-
 int main() {
 
     // glewGetErrorString();
@@ -85,7 +79,7 @@ int main() {
     Atlas atlas("assets/media/");
     atlas.link(shader);
 
-    CellUBO cells[100];
+    RectF cells[100];
 
     for (int i = 0; i < 10; i++) {
 
@@ -95,22 +89,16 @@ int main() {
 
     }
 
-    UBO cellsUBO(&cells[0], 10*4*sizeof(float), "cellsUBO"); 
+    UBO cellsUBO(&cells[0], 10*sizeof(RectF), "cellsUBO"); 
     cellsUBO.link(shader);
     cellsUBO.send();
-
-    // CellUBO cell;
-    // cell.size = {1,1};
-    // UBO cellUBO(&cell, sizeof(CellUBO), "xxx"); 
-    // cellUBO.link(shader);
-    // cellUBO.send();
 
 
     Image boy("assets/media/boy.jpg", true);
     Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
     // boyTex.bind(1);
 
-    Texture passBuf(FW,FH, GL_RGBA8);
+    Texture passBuf(FW,FH, GL_RGB8);
     Texture outBuf(FW,FH, GL_RGB8);
     FrameBuffer outFB(outBuf);
     FrameBuffer winFB(0);

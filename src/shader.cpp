@@ -1,15 +1,5 @@
 #include "shader.hpp"
 
-
-#include <functional>
-#include <iostream> 
-#include <string>
-#include <cstring>
-#include <iterator>
-#include <regex>
-#include <cstring>
-#include <fstream>
-
 std::string readFile(const char* path) {
 
   std::string data;

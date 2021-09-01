@@ -1,14 +1,11 @@
 #ifndef ATLAS_H
 #define ATLAS_H  
  
-#include <RectangleBinPack/GuillotineBinPack.h> 
-#include <vector>
+#include "globals.hpp"
 #include "texture.hpp"
 #include "ubo.hpp"
 
 struct UBO;
-
-struct vec4 { float x,y,z,w; }; 
  
 struct Atlas : public rbp::GuillotineBinPack{
 

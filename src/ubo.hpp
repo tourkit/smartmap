@@ -1,13 +1,7 @@
 #ifndef UBO_H
 #define UBO_H
 
-#include <iostream>
-
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
-#include <vector>
-#include <cmath>
-#include <set>
+#include "globals.hpp"
 
 #include "shader.hpp"
 

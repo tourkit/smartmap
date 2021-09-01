@@ -1,7 +1,6 @@
 #version 430 core
 
 out vec4 color;
-// out vec4 feddpass;
 
 uniform sampler2D pass;
 uniform sampler2D mediasAtlas;
@@ -35,7 +34,6 @@ void main() {
     if (passID == 1) color *= f.feedback;
 
     // color = vec4(1);
-    // feddpass = color;
 
     return;
 
