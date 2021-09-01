@@ -117,8 +117,8 @@ int main() {
     Texture boyTex(boy.width, boy.height, GL_RGB8, boy.i);
     // boyTex.bind(1);
 
-    Texture passBuf(FW,FH, GL_RGBA8);
-    Texture outBuf(FW,FH, GL_RGBA8);
+    Texture passBuf(FW,FH, GL_RGB8);
+    Texture outBuf(FW,FH, GL_RGB8);
     FrameBuffer outFB(outBuf);
     FrameBuffer winFB(0);
 

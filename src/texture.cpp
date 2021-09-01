@@ -43,15 +43,6 @@ void Texture::copy(const Texture& texture, GLuint offset_x, GLuint offset_y) {
     
     glCopyImageSubData(texture.id, GL_TEXTURE_2D, 0, 0,0, 0, id, GL_TEXTURE_2D, 0, offset_x, offset_y, 0, texture.width,texture.height, 1);
 
-
-    // if the texel size of the uncompressed image is not equal to the block size of the compressed image.
-    
-    // if either object is a texture and the texture is not complete
-
-    // if the source and destination internal formats are not compatible, or if the number of samples do not match.
-
-    std::cout << (unsigned int)glGetError() <<std::endl;
-
 }
 
 void Texture::bind(int unit) { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0); }
