@@ -3,7 +3,7 @@
     SMARTMAP v1 beta
 
                         */
-                       
+
 #include "smartmap.hpp"
 
 int WIDTH = 600, HEIGHT = 300;
@@ -114,14 +114,11 @@ int main() {
         /* DRAW LOOP */
         outFB.clear();
 
-        glMemoryBarrier( GL_ALL_BARRIER_BITS ); // GL_ALL_BARRIER_BITS ,
         passBuf.bind(); 
         shader->use();
         quad.draw(*quantity);
 
-        glMemoryBarrier( GL_ALL_BARRIER_BITS ); // GL_ALL_BARRIER_BITS ,
         passBuf.copy(outBuf);
-        glMemoryBarrier( GL_ALL_BARRIER_BITS ); // GL_ALL_BARRIER_BITS ,
 
         winFB.clear();
         Draw2D(outBuf);
