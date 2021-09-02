@@ -32,9 +32,7 @@ Shader::Shader(std::string file) {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
 
-        std::string logstr = infoLog;
-
-        std::cout << ext << ": " << logstr;
+        GL_PRINT(ext << ": " << infoLog);
         
     }
 
