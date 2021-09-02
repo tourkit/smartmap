@@ -42,31 +42,21 @@ Shader::Shader(std::string file) {
 
 Shader::operator GLuint() { return id; }
 
-
-ShaderProgram::ShaderProgram() { id = 0; }
-
 ShaderProgram::~ShaderProgram() { if (id) glDeleteProgram(id); }
 
-ShaderProgram::ShaderProgram(const char *vertexShader, const char *fragmentShader) { load(vertexShader, fragmentShader); }
-
-
-
-void ShaderProgram::load(const char *vertexShader, const char *fragmentShader) {
+ShaderProgram::ShaderProgram(std::vector<std::string> paths) {
 
     id = glCreateProgram();
 
-    Shader fragment(fragmentShader);
-    Shader vertex(vertexShader);
+    std::set<std::shared_ptr<Shader>> shaders;
 
-    glAttachShader(id, fragment);
-    glAttachShader(id, vertex);
+    for (auto p:paths) shaders.insert(std::make_shared<Shader>(p));
+
+    for (auto shader:shaders) glAttachShader(id, shader->id);
 
     glLinkProgram( id );
 
 }
-
-
-
 
 void ShaderProgram::use() {  glUseProgram(id); }
 

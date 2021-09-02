@@ -30,19 +30,7 @@ struct ShaderProgram {
 
   ShaderProgram();
 
-  ShaderProgram(const char *vertexShader, const char *fragmentShader);
-
-  ShaderProgram(const char *computeShader);
-
-  void init();
-
-  void load(const char *vertexShader, const char *fragmentShader);
-
-  void build();
-
-  void compile(GLuint fragment, GLuint vertex);
-
-  void compile(GLuint compute);
+  ShaderProgram(std::vector<std::string> paths);
 
   void use();
 
