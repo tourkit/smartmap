@@ -117,7 +117,7 @@ struct GUI {
   void render();
   void draw();
 
-  void add(Element* elem, ShaderProgram* shader = nullptr);
+  Ref<GUI::Element> add(Element* elem, ShaderProgram* shader = nullptr);
 
 };
 

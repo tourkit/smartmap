@@ -57,6 +57,7 @@ ShaderProgram::ShaderProgram(std::vector<std::string> paths) {
 }
 
 void ShaderProgram::use() {  glUseProgram(id); }
+void ShaderProgram::use(GLuint x, GLuint y, GLuint z) {  glUseProgram(id); glDispatchCompute(x,y,z); }
 
 ShaderProgram::operator GLuint() { return id; }
 

@@ -51,10 +51,12 @@ void GUI::draw() {
   render();
   
 }
+ 
+Ref<GUI::Element> GUI::add(Element* elem, ShaderProgram* shader)  {
 
-void GUI::add(Element* elem, ShaderProgram* shader)  {
-
-    elements.push_back(std::shared_ptr<Element>(elem));
+    elements.push_back(Ref<Element>(elem));
     if (shader) elements.back()->links.insert(shader);
+    return elements.back();
 
 }
+ 

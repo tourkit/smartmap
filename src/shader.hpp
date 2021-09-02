@@ -33,6 +33,7 @@ struct ShaderProgram {
   ShaderProgram(std::vector<std::string> paths);
 
   void use();
+  void use(GLuint x, GLuint y = 1, GLuint z = 1);
 
   int getLoc(const std::string& name);
   void sendUniform(const std::string& name, int i1);

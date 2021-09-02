@@ -30,6 +30,13 @@
 
 #include "file.hpp"
 
+	template<typename T>
+	using Ref = std::shared_ptr<T>;
+	template<typename T, typename ... Args>
+	constexpr Ref<T> newRef(Args&& ... args) {
+		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
+
 struct vec2 { float x = 0, y = 0; };
 struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
 struct RectF { vec2 size = {1,1}; vec2 pos;  };

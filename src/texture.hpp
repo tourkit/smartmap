@@ -21,7 +21,7 @@ struct Texture {
 
     void bind();
 
-    // operator GLuint();
+    operator GLuint();
 
 };
 

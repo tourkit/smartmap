@@ -51,4 +51,4 @@ void Texture::bind(int unit) { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(
 void Texture::bind() { glBindTexture(GL_TEXTURE_2D, id); }
 
 
-// operator Texture::GLuint() { return id; }
+Texture::operator GLuint() { return id; }
