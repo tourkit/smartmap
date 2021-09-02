@@ -13,7 +13,7 @@ struct Fixture {
     float orientation; 
     float feedback; 
     float strobe;  
-    float useless; 
+    float ratio; 
 
 };
 
@@ -24,6 +24,20 @@ out float UID;      // caps mean cast from int
 out float INSTANCE; // caps mean cast from int
 out vec2 texcoord;
 
+vec2 rotate(int instance, vec2 v, float a) {
+
+    float t_ratio = fixtures[instance].ratio;
+
+    float s = sin(a);
+    float c = cos(a);
+    mat2 m = mat2(c, -s, s, c);
+
+    vec2 AR = vec2(1);
+
+    if (t_ratio > 1.) { AR.x = t_ratio; return (m*(v*AR))*(1./AR); } else { AR.y = t_ratio; return (m*(v/AR))/(1./AR); }
+
+}
+
 void main() {
 
     UID = uid;
@@ -33,15 +47,17 @@ void main() {
     
     vec2 pos = position;
 
-    Fixture fixture = fixtures[instance];
-
-    fixture.pos *= matrice[instance].size;
-    fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
-
-    texcoord = pos;
-    pos *= matrice[instance].size;
-
     if (UID  == 2){
+
+        Fixture fixture = fixtures[instance];
+
+        fixture.pos *= matrice[instance].size;
+        fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
+
+        texcoord = pos;
+        pos *= matrice[instance].size;
+
+        pos = rotate(instance, pos, fixtures[instance].orientation*6.28318530718);
 
         vec2 size = matrice[instance].size*fixture.size;
         pos *= fixture.size;
@@ -56,7 +72,16 @@ void main() {
         texcoord += (opos-pos)/size;
         pos = opos;
 
-    } else {
+    } else if (UID  == 1) {
+
+        Fixture fixture = fixtures[instance];
+
+        fixture.pos *= matrice[instance].size;
+        fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
+
+        texcoord = pos;
+        pos *= matrice[instance].size;
+    
         
         texcoord *= matrice[instance].size;
         texcoord += matrice[instance].pos;

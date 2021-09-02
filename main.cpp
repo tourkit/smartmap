@@ -46,7 +46,7 @@ int main() {
     matriceUBO.link(shader);
     matriceUBO.send();
 
-    struct FixtureUBO { vec2 focus{.1,1}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float feedback; float orientation; float strobe;  float useless; } fixtures[10];
+    struct FixtureUBO { vec2 focus{.1,1}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float orientation = .4; float feedback; float strobe;  float ratio = 600./300.; } fixtures[10];
     UBO fixtureUBO(&fixtures[0], 10*sizeof(FixtureUBO), "FixtureUBO"); 
     fixtureUBO.link(shader);
     fixtureUBO.send();

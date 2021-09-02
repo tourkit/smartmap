@@ -21,7 +21,7 @@ struct Fixture {
     float orientation; 
     float feedback; 
     float strobe;  
-    float useless; 
+    float ratio; 
 
 };
 
@@ -30,7 +30,6 @@ layout (std140) uniform mediasCoords { Rect[16] mediaCoord;};
 layout(std140) uniform FixtureUBO  { Fixture fixtures[10];} ;
 
 vec4 fromAtlas(int id) { return texture(mediasAtlas,texcoord*mediaCoord[id].size+mediaCoord[id].pos); }
-
 
 float t_ratio = 1;
 
