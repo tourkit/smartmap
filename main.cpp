@@ -64,7 +64,8 @@ int main() {
         gui->add(new GUI::SliderF("position",  2,  0, -1,  1, &fixtures[selected].pos.x));
         gui->add(new GUI::SliderF("rgba",      3,  1,  0,  1, &fixtures[selected].rgba.x));
         gui->add(new GUI::SliderF("feedback",  1, .9,  0,  1, &fixtures[selected].feedback));
-        gui->add(new GUI::SliderI("texchoice", 1,  0,  0, 15, &fixtures[selected].gobo.x));
+        gui->add(new GUI::SliderF("gobo",      1,  0,  0,  1, &fixtures[selected].gobo.x));
+        gui->add(new GUI::SliderF("gobo_fx",   3,  0,  0,  1, &fixtures[selected].gobo.y));
         gui->add(new GUI::SliderF("strobe",    1, .9,  0,  1, &fixtures[selected].strobe));
 
         outFB.clear(); // thus bind
