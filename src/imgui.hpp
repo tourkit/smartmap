@@ -22,6 +22,10 @@ struct GUI {
     float min = 0;
     float max = 1;
 
+    float* ptr;
+
+    size_t size = 0;
+
     std::set<GL::ShaderProgram*> links;
 
     std::vector<float> data;
@@ -30,22 +34,25 @@ struct GUI {
 
       for (auto* l:links) {
         
-        if (data.size() == 1) l->sendUniform(name.c_str(), data[0]);
-        if (data.size() == 2) l->sendUniform(name.c_str(), data[0],data[1]);
-        if (data.size() == 3) l->sendUniform(name.c_str(), data[0],data[1],data[2]);
+        if (size == 1) l->sendUniform(name.c_str(), *ptr);
+        if (size == 2) l->sendUniform(name.c_str(), *ptr, *ptr+1);
+        if (size == 3) l->sendUniform(name.c_str(), *ptr, *ptr+1, *ptr+2);
+
       }
 
     }
 
-    Element(std::string name, size_t size = 1, float def = 0, float min = 0, float max =1)
-      : name(name), def(def), min(min), max(max)  { init(size); }
+    Element(std::string name, size_t size = 1, float def = 0, float min = 0, float max =1, float* ptr = nullptr)
+      : name(name), def(def), min(min), max(max), ptr(ptr), size(size) {
 
-    void init(size_t size) {
+      if (ptr) return;
 
       data.resize(size); 
      
-      for (size_t i = 0; i < data.size(); i++) data[i] = def;  // for (auto f:data) f = 1; // marche pas ?!!!
+      for (size_t i = 0; i < size; i++) data[i] = def;  // for (auto f:data) f = 1; // marche pas ?!!!
 
+      this->ptr = &data[0];
+      
     }
 
     operator int() { return data[0]; }
@@ -64,14 +71,14 @@ struct GUI {
 
   struct SliderF : public Element {
 
-    SliderF(std::string name, size_t size = 1, float def = 0, float min = 0, float max =1) 
-      : Element(name, size, def, min, max) { }
+    SliderF(std::string name, size_t size = 1, float def = 0, float min = 0, float max = 1, float* ptr = nullptr) 
+      : Element(name, size, def, min, max, ptr) { }
 
     void draw() override { 
       
-      if (data.size() == 1) ImGui::SliderFloat(name.c_str(),&data[0],min,max); 
-      else if (data.size() == 2) ImGui::SliderFloat2(name.c_str(),&data[0],min,max); 
-      else if (data.size() == 3) ImGui::SliderFloat3(name.c_str(),&data[0],min,max); 
+      if (size == 1) ImGui::SliderFloat(name.c_str(),ptr,min,max); 
+      else if (size == 2) ImGui::SliderFloat2(name.c_str(),ptr,min,max); 
+      else if (size == 3) ImGui::SliderFloat3(name.c_str(),ptr,min,max); 
       
     }
 
@@ -79,19 +86,20 @@ struct GUI {
 
   struct SliderI : public Element {
 
-    SliderI(std::string name, size_t size = 1, float def = 0, float min = 0, float max = 255) 
-      : Element(name, size, def, min, max) { }
+    SliderI(std::string name, size_t size = 1, float def = 0, float min = 0, float max = 255, float* ptr = nullptr) 
+      : Element(name, size, def, min, max, ptr) { }
       
     void draw() override { 
 
       std::vector<int> data;
-      for (auto v:this->data) data.push_back(v);
-      
-      if (data.size() == 1) ImGui::SliderInt(name.c_str(),&data[0],min,max); 
-      else if (data.size() == 2) ImGui::SliderInt2(name.c_str(),&data[0],min,max); 
-      else if (data.size() == 3) ImGui::SliderInt3(name.c_str(),&data[0],min,max); 
 
-      for (size_t i = 0; i < data.size(); i++) this->data[i] = data[i];
+      for (size_t i = 0; i < size; i++) data.push_back(*ptr+i);
+      
+      if (size == 1) ImGui::SliderInt(name.c_str(),&data[0],min,max); 
+      else if (size == 2) ImGui::SliderInt2(name.c_str(),&data[0],min,max); 
+      else if (size == 3) ImGui::SliderInt3(name.c_str(),&data[0],min,max); 
+
+      for (size_t i = 0; i < size; i++) ptr[i] = data[i];
       
     }
 
@@ -106,7 +114,7 @@ struct GUI {
   void newframe();
   void render();
   void draw();
-
+  
 };
 
 #endif

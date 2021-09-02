@@ -8,7 +8,7 @@
 
 int WIDTH = 600, HEIGHT = 300;
 
-int FW = 1920, FH = 1200;
+int FW = 6000, FH = 300;
 
 auto* window = new GL::Window(false,WIDTH,HEIGHT);
 
@@ -27,9 +27,9 @@ void Draw2D(const Texture& tex) {
 
 struct FixtureUBO {
 
-    vec2 focus{1,1}, pos{0,0};
+    vec2 focus{.1,1}, pos{0,0};
 
-    vec4 rgba;
+    vec4 rgba = {1,1,1,1};
 
     vec4 gobo;
 
@@ -41,18 +41,6 @@ struct FixtureUBO {
 } fixtures[10];
 
 int main() {
-
-    auto quantity = gui->elements.insert(std::make_shared<GUI::SliderI>("quantity", 1,2,1,10)).first->get();
-    
-    gui->elements.insert(std::make_shared<GUI::Counter>("count"));
-    gui->elements.insert(std::make_shared<GUI::SliderF>("size", 2,1));
-    gui->elements.insert(std::make_shared<GUI::SliderF>("position", 2,0,-1,1));
-    gui->elements.insert(std::make_shared<GUI::SliderF>("rgba", 3,1));
-    gui->elements.insert(std::make_shared<GUI::SliderF>("feedback", 1, .9));
-    gui->elements.insert(std::make_shared<GUI::SliderI>("texchoice", 1,0,0,15));
-    gui->elements.insert(std::make_shared<GUI::SliderF>("blurv"));
-
-    for (auto e:gui->elements){ e.get()->links.insert(shader);}
 
     Atlas atlas("assets/media/");
     atlas.link(shader);
@@ -82,7 +70,20 @@ int main() {
     VBO quad2;
     quad.addQuad(3); // UID #3 in shader (merge matrice))
     
+    float selectedf = 0;
+
     while(true) window->render([&]() {
+
+        gui->elements.clear();
+        gui->elements.insert(std::make_shared<GUI::SliderI>("selected", 1,  0,  0,  9, &selectedf)); int selected = selectedf;
+        gui->elements.insert(std::make_shared<GUI::Counter>("count"));
+        gui->elements.insert(std::make_shared<GUI::SliderF>("size",      2,  1,  0,  1, &fixtures[selected].focus.x));
+        gui->elements.insert(std::make_shared<GUI::SliderF>("position",  2,  0, -1,  1, &fixtures[selected].pos.x));
+        gui->elements.insert(std::make_shared<GUI::SliderF>("rgba",      3,  1,  0,  1, &fixtures[selected].rgba.x));
+        gui->elements.insert(std::make_shared<GUI::SliderF>("feedback",  1, .9,  0,  1, &fixtures[selected].feedback));
+        gui->elements.insert(std::make_shared<GUI::SliderI>("texchoice", 1,  0,  0, 15, &fixtures[selected].gobo.x));
+        gui->elements.insert(std::make_shared<GUI::SliderF>("strobe",    1, .9,  0,  1, &fixtures[selected].strobe));
+
 
         outFB.clear(); // thus bind
 
@@ -90,7 +91,7 @@ int main() {
 
         passBuf.bind();
         shader->use();
-        quad.draw(*quantity); // quantity is instances count in shader
+        quad.draw(10); // quantity is instances count in shader
 
         passBuf.copy(outBuf); 
 

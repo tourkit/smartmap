@@ -38,6 +38,8 @@ void main() {
 
     Fixture fixture = fixtures[instance];
 
+    if (instance == 0) fixture.size.y *= .5;
+
     fixture.pos *= matrice[instance].size;
     fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
 
