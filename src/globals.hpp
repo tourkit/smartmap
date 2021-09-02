@@ -105,5 +105,4 @@ static void glError(std::string file_name, std::string function_name, GLuint lin
 #define GL_PRINT()
 #endif
 
-
 #endif

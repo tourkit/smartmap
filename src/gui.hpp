@@ -119,6 +119,10 @@ struct GUI {
 
   Ref<GUI::Element> add(Element* elem, ShaderProgram* shader = nullptr);
 
+  static inline GLint GL_BLEND_MODE_IN = 5;
+  static inline GLint GL_BLEND_MODE_OUT = 2;
+  static void blendTest();
+
 };
 
 #endif
