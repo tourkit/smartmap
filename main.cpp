@@ -25,21 +25,6 @@ void Draw2D(const Texture& tex) {
 
 }
 
-struct FixtureUBO {
-
-    vec2 focus{.1,1}, pos{0,0};
-
-    vec4 rgba = {1,1,1,1};
-
-    vec4 gobo;
-
-    float feedback;
-    float strobe;
-
-    vec2 useless; // pack size for std140
-
-} fixtures[10];
-
 int main() {
 
     Atlas atlas("assets/media/");
@@ -47,43 +32,40 @@ int main() {
 
     Texture passBuf(FW,FH, GL_RGB8);
 
-    Texture outBuf(FW,FH, GL_RGB8);
+    Texture outBuf(FW,FH, GL_RGB8); 
     FrameBuffer outFB(outBuf);
 
     FrameBuffer winFB(0);
+
+    VBO quad;
+    quad.addQuad(1); // UID #1 in shader (feedback)
+    quad.addQuad(2); // UID #2 in shader (fixture)
 
     auto mat = matrice(10,1);
     UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
     matriceUBO.link(shader);
     matriceUBO.send();
 
+    struct FixtureUBO { vec2 focus{.1,1}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float feedback; float strobe; vec2 useless; } fixtures[10];
     UBO fixtureUBO(&fixtures[0], 10*sizeof(FixtureUBO), "FixtureUBO"); 
     fixtureUBO.link(shader);
     fixtureUBO.send();
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA); // OR glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    VBO quad;
-    quad.addQuad(1); // UID #1 in shader (feedback)
-    quad.addQuad(2); // UID #2 in shader (fixture)
-
-    VBO quad2;
-    quad.addQuad(3); // UID #3 in shader (merge matrice))
     
     float selectedf = 0;
 
     while(true) window->render([&]() {
 
-        gui->elements.clear();
-        gui->elements.insert(std::make_shared<GUI::SliderI>("selected", 1,  0,  0,  9, &selectedf)); int selected = selectedf;
-        gui->elements.insert(std::make_shared<GUI::Counter>("count"));
-        gui->elements.insert(std::make_shared<GUI::SliderF>("size",      2,  1,  0,  1, &fixtures[selected].focus.x));
-        gui->elements.insert(std::make_shared<GUI::SliderF>("position",  2,  0, -1,  1, &fixtures[selected].pos.x));
-        gui->elements.insert(std::make_shared<GUI::SliderF>("rgba",      3,  1,  0,  1, &fixtures[selected].rgba.x));
-        gui->elements.insert(std::make_shared<GUI::SliderF>("feedback",  1, .9,  0,  1, &fixtures[selected].feedback));
-        gui->elements.insert(std::make_shared<GUI::SliderI>("texchoice", 1,  0,  0, 15, &fixtures[selected].gobo.x));
-        gui->elements.insert(std::make_shared<GUI::SliderF>("strobe",    1, .9,  0,  1, &fixtures[selected].strobe));
-
+        gui->elements.resize(0);
+        gui->add(new GUI::SliderI("selected", 1,  0,  0,  9, &selectedf)); int selected = selectedf;
+        gui->add(new GUI::Counter("count"));
+        gui->add(new GUI::SliderF("size",      2,  1,  0,  1, &fixtures[selected].focus.x));
+        gui->add(new GUI::SliderF("position",  2,  0, -1,  1, &fixtures[selected].pos.x));
+        gui->add(new GUI::SliderF("rgba",      3,  1,  0,  1, &fixtures[selected].rgba.x));
+        gui->add(new GUI::SliderF("feedback",  1, .9,  0,  1, &fixtures[selected].feedback));
+        gui->add(new GUI::SliderI("texchoice", 1,  0,  0, 15, &fixtures[selected].gobo.x));
+        gui->add(new GUI::SliderF("strobe",    1, .9,  0,  1, &fixtures[selected].strobe));
 
         outFB.clear(); // thus bind
 

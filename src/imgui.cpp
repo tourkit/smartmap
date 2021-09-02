@@ -51,3 +51,9 @@ void GUI::draw() {
   render();
   
 }
+
+void GUI::add(Element* elem) {
+  
+    elements.push_back(std::shared_ptr<Element>(elem));
+
+}

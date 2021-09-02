@@ -105,7 +105,7 @@ struct GUI {
 
   };
 
-  std::set<std::shared_ptr<Element>> elements;
+  std::vector<std::shared_ptr<Element>> elements;
 
   GUI(GLFWwindow* window);
 
@@ -114,7 +114,9 @@ struct GUI {
   void newframe();
   void render();
   void draw();
-  
+
+  void add(Element* elem);
+
 };
 
 #endif

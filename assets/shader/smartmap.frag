@@ -41,10 +41,20 @@ void main() {
         
     }
 
-    else if (UID == 1) {color =  texture(pass,texcoord)*fixtures[instance].feedback; }
+    else if (UID == 1) {
+
+        float feedback = 1;
+
+        // missing fixture.beam[0]!= 0  for ????
+        if (!(fixtures[instance].rgba.r == 0 && fixtures[instance].rgba.g == 0 && fixtures[instance].rgba.b == 0)) feedback -= 1-pow(abs((fixtures[instance].feedback*.5+.5)-1),3);
+        
+        color =  texture(pass,texcoord)-max(.002,feedback);
+
+    }
 
     else if (UID == 2) {color = fixtures[instance].rgba*fromAtlas(int(texchoice));}
 
     return;
 
 }
+
