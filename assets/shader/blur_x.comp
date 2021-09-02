@@ -36,6 +36,6 @@ void main() {
 
      vec4 color = worseblurever(blurv,storePos); 
     
-    imageStore(out_image, storePos, vec4(1));
+    imageStore(out_image, storePos, color);
     
 }
