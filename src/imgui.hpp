@@ -37,6 +37,7 @@ struct GUI {
         if (size == 1) l->sendUniform(name.c_str(), *ptr);
         if (size == 2) l->sendUniform(name.c_str(), *ptr, *ptr+1);
         if (size == 3) l->sendUniform(name.c_str(), *ptr, *ptr+1, *ptr+2);
+        if (size == 4) l->sendUniform(name.c_str(), *ptr, *ptr+1, *ptr+2, *ptr+3);
 
       }
 
@@ -79,6 +80,7 @@ struct GUI {
       if (size == 1) ImGui::SliderFloat(name.c_str(),ptr,min,max); 
       else if (size == 2) ImGui::SliderFloat2(name.c_str(),ptr,min,max); 
       else if (size == 3) ImGui::SliderFloat3(name.c_str(),ptr,min,max); 
+      else if (size == 4) ImGui::SliderFloat4(name.c_str(),ptr,min,max); 
       
     }
 
