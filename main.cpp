@@ -15,8 +15,8 @@ auto* window = new GL::Window(false,WIDTH,HEIGHT);
 auto*  gui = new GUI{window->window}; 
 
 auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
-// auto* blur_x = new ShaderProgram({"assets/shader/blur_x.comp"});
-// auto* blur_y = new ShaderProgram({"assets/shader/blur_x.comp"});
+auto* blur_x = new ShaderProgram({"assets/shader/blur_x.comp"});
+auto* blur_y = new ShaderProgram({"assets/shader/blur_x.comp"});
  
 Quad draw2D;
 void Draw2D(const Texture& tex) {
@@ -57,24 +57,24 @@ int main() {
     
     float selectedf = 0;
 
-    // gui->add(new GUI::Counter("count"), shader);
-    // auto blur = gui->add(new GUI::SliderF("blurv",   1, .5,  0,  1));
-    // blur->links.insert(blur_x);
-    // blur->links.insert(blur_y);
+    gui->add(new GUI::Counter("count"), shader);
+    auto blur = gui->add(new GUI::SliderF("blurv",   1, .5,  0,  1));
+    blur->links.insert(blur_x);
+    blur->links.insert(blur_y);
     
 
     while(true) window->render([&]() {
 
-        // gui->elements.resize(2);
-        // gui->add(new GUI::SliderI("selected", 1,  0,  0,  9, &selectedf)); int selected = selectedf;
-        // gui->add(new GUI::SliderF("size",     2,  1,  0,  1, &fixtures[selected].focus.x));
-        // gui->add(new GUI::SliderF("position", 2,  0, -1,  1, &fixtures[selected].pos.x));
-        // gui->add(new GUI::SliderF("Angle",    1,.5,  0,  1, &fixtures[selected].orientation));
-        // gui->add(new GUI::SliderF("rgba",     3,  1,  0,  1, &fixtures[selected].rgba.x));
-        // gui->add(new GUI::SliderF("feedback", 1, .9,  0,  1, &fixtures[selected].feedback));
-        // gui->add(new GUI::SliderF("gobo",     1,  0,  0,  1, &fixtures[selected].gobo.x));
-        // gui->add(new GUI::SliderF("gobo_fx",  3,  0,  0,  1, &fixtures[selected].gobo.y));
-        // gui->add(new GUI::SliderF("strobe",   1, .9,  0,  1, &fixtures[selected].strobe));
+        gui->elements.resize(2);
+        gui->add(new GUI::SliderI("selected", 1,  0,  0,  9, &selectedf)); int selected = selectedf;
+        gui->add(new GUI::SliderF("size",     2,  1,  0,  1, &fixtures[selected].focus.x));
+        gui->add(new GUI::SliderF("position", 2,  0, -1,  1, &fixtures[selected].pos.x));
+        gui->add(new GUI::SliderF("Angle",    1,.5,  0,  1, &fixtures[selected].orientation));
+        gui->add(new GUI::SliderF("rgba",     3,  1,  0,  1, &fixtures[selected].rgba.x));
+        gui->add(new GUI::SliderF("feedback", 1, .9,  0,  1, &fixtures[selected].feedback));
+        gui->add(new GUI::SliderF("gobo",     1,  0,  0,  1, &fixtures[selected].gobo.x));
+        gui->add(new GUI::SliderF("gobo_fx",  3,  0,  0,  1, &fixtures[selected].gobo.y));
+        gui->add(new GUI::SliderF("strobe",   1, .9,  0,  1, &fixtures[selected].strobe));
 
         // CLUSTER RENDER LOOP
 
@@ -88,11 +88,11 @@ int main() {
 
         passBuf.copy(outBuf);
 
-        // glBindImageTexture(0, outBuf, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-        // glBindImageTexture(1, outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-        // blur_x->use(FW/16,FH/16);
-        // blur_y->use(FW/16,FH/16);
-        // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
+        glBindImageTexture(0, outBuf, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+        glBindImageTexture(1, outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+        blur_x->use(FW/16,FH/16);
+        blur_y->use(FW/16,FH/16);
+        glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
 
         winFB.clear(); // thus bind
         Draw2D(outBuf);
