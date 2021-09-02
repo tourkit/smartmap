@@ -1,29 +1,5 @@
 #include "shader.hpp"
 
-std::string readFile(const char* path) {
-
-  std::string data;
-
-  std::ifstream file(path, std::ifstream::in | std::ifstream::binary);
-  file.seekg(0, std::ios::end);
-  std::streampos length(file.tellg());
-
-  if (length) {
-
-      file.seekg(0, std::ios::beg);
-      data.resize(length);
-      file.read(&data[0], length);
-
-  }
-
-  file.clear();
-
-  return data;
-
-}
-
-namespace GL {
-
 Shader::Shader(ShaderType type) : type(type) {  }
 
 ShaderProgram::ShaderProgram() { id = 0; }
@@ -166,5 +142,3 @@ void ShaderProgram::sendUniform(const std::string& name, float f1, float f2, flo
 //void Shader::sendUniform(std::string name, glm::mat4 mat) { glProgramUniformMatrix4fv(program, getLoc(name), 1, GL_FALSE, &mat[0][0]); }
 
 
-
-}

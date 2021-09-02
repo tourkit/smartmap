@@ -1,15 +1,9 @@
-#ifndef TOURKIT_GL_SHADER_HPP
-#define TOURKIT_GL_SHADER_HPP
-
-
+#ifndef SHADER_H
+#define SHADER_H
 
 #include "globals.hpp"
 
-
-
 enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
-
-namespace GL {
 
 struct Shader {
 
@@ -65,7 +59,5 @@ struct ShaderProgram {
   operator GLuint();
 
 };
-
-}
 
 #endif

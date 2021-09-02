@@ -33,7 +33,7 @@ struct Atlas : public rbp::GuillotineBinPack{
 
     bool add(int width, int height, unsigned char* data);
 
-    void link(GL::ShaderProgram* shader);
+    void link(ShaderProgram* shader);
 
 };
 

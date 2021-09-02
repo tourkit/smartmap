@@ -1,10 +1,34 @@
-#ifndef __TOURKIT_FILE_HPP__
-#define __TOURKIT_FILE_HPP__
+#ifndef FILE_H
+#define FILE_H
 
 #include <dirent.h>
+#include <fstream>
+#include <sstream>
 #include <iostream>
 #include <string>
 #include <vector>
+
+static std::string readFile(const char* path) {
+
+  std::string data;
+
+  std::ifstream file(path, std::ifstream::in | std::ifstream::binary);
+  file.seekg(0, std::ios::end);
+  std::streampos length(file.tellg());
+
+  if (length) {
+
+      file.seekg(0, std::ios::beg);
+      data.resize(length);
+      file.read(&data[0], length);
+
+  }
+
+  file.clear();
+
+  return data;
+
+};
 
 namespace TourKit {
 

@@ -52,7 +52,7 @@ void GUI::draw() {
   
 }
 
-void GUI::add(Element* elem, GL::ShaderProgram* shader)  {
+void GUI::add(Element* elem, ShaderProgram* shader)  {
 
     elements.push_back(std::shared_ptr<Element>(elem));
     if (shader) elements.back()->links.insert(shader);

@@ -24,7 +24,7 @@ Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
 }
 
-void Atlas::link(GL::ShaderProgram* shader) {
+void Atlas::link(ShaderProgram* shader) {
 
     normalize(); 
     

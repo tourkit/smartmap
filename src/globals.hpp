@@ -14,9 +14,6 @@
 
 #include <cmath>
 
-#include <dirent.h>
-#include <fstream>
-#include <sstream>
 #include <thread>
 
 #include <functional>

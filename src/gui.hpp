@@ -26,7 +26,7 @@ struct GUI {
 
     size_t size = 0;
 
-    std::set<GL::ShaderProgram*> links;
+    std::set<ShaderProgram*> links;
 
     std::vector<float> data;
 
@@ -117,7 +117,7 @@ struct GUI {
   void render();
   void draw();
 
-  void add(Element* elem, GL::ShaderProgram* shader = nullptr);
+  void add(Element* elem, ShaderProgram* shader = nullptr);
 
 };
 

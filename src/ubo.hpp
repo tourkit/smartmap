@@ -21,7 +21,7 @@ struct UBO {
 
     size_t ubo_size = 0;
 
-    std::set<GL::ShaderProgram*> links;
+    std::set<ShaderProgram*> links;
 
     ~UBO() { destroy(); }
 
@@ -66,7 +66,7 @@ struct UBO {
         
     }
 
-    void link(GL::ShaderProgram* shader) {
+    void link(ShaderProgram* shader) {
 
         links.insert(shader);
 
