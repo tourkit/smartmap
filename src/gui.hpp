@@ -117,7 +117,7 @@ struct GUI {
   void render();
   void draw();
 
-  void add(Element* elem);
+  void add(Element* elem, GL::ShaderProgram* shader = nullptr);
 
 };
 

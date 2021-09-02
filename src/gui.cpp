@@ -1,4 +1,4 @@
-#include "imgui.hpp"
+#include "gui.hpp"
 GUI::GUI(GLFWwindow* window) {
 
   const char* glsl_version = "#version 430";
@@ -52,8 +52,9 @@ void GUI::draw() {
   
 }
 
-void GUI::add(Element* elem) {
-  
+void GUI::add(Element* elem, GL::ShaderProgram* shader)  {
+
     elements.push_back(std::shared_ptr<Element>(elem));
+    if (shader) elements.back()->links.insert(shader);
 
 }
