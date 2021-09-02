@@ -8,15 +8,12 @@ struct Rect { vec2 size, pos; };
 struct Fixture {
 
     vec2 size, pos;
-
     vec4 rgba;
-
     vec4 gobo;
-
-    float feedback;
-    float strobe;
-
-    vec2 useless; // pack size for std140
+    float orientation; 
+    float feedback; 
+    float strobe;  
+    float useless; 
 
 };
 
