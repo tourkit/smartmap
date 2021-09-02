@@ -7,25 +7,22 @@ enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
 
 struct Shader {
 
-  std::string code;
-
-  ShaderType type;
 
   GLuint id;
 
-  Shader(ShaderType type);
+  GLenum type;
 
-  void build();
+  Shader(std::string file);
+
+  ~Shader();
 
   void compile();
-
-  void error(GLuint type, std::string out);
+  
+  operator GLuint();
 
 };
 
 struct ShaderProgram {
-
-  Shader fragment{FRAGMENT}, vertex{VERTEX}, compute{COMPUTE};
 
   GLuint id;
 

@@ -1,49 +1,32 @@
 #include "shader.hpp"
 
-Shader::Shader(ShaderType type) : type(type) {  }
+Shader::~Shader() { glDeleteShader(id);  }
 
-ShaderProgram::ShaderProgram() { id = 0; }
+Shader::Shader(std::string file) {
 
-ShaderProgram::~ShaderProgram() { if (id) glDeleteProgram(id); }
+    std::string ext = file.substr(file.find_first_of(".")+1);
 
-ShaderProgram::ShaderProgram(const char *vertexShader, const char *fragmentShader) { load(vertexShader, fragmentShader); }
+    if (ext == "frag") type = GL_FRAGMENT_SHADER;
+    else if (ext == "vert") type = GL_VERTEX_SHADER;
+    else if (ext == "comp") type = GL_COMPUTE_SHADER;
+    else std::cout << "shadertype error in Shader::compile" << std::endl;
 
-ShaderProgram::ShaderProgram(const char *computeShader) {
+    file = readFile(file.c_str());
 
-    id = glCreateProgram();
-
-    compute.code = readFile(computeShader);
-
-    compute.compile();
-
-    compile(compute.id);
-  
-}
-
-void ShaderProgram::load(const char *vertexShader, const char *fragmentShader) {
-
-        id = glCreateProgram();
-
-        
-
-    fragment.code = readFile(fragmentShader);
-
-    vertex.code = readFile(vertexShader);
-
-    fragment.compile();
-    vertex.compile();
-
-    compile(fragment.id, vertex.id);
-
-}
+    id = glCreateShader(type);
+ 
+    auto ptr = file.data(); // J'arive pas a juste ecire (const GLchar* const*)code.data() dans glShaderSource a la place de &ptr ca m'eneeeeeerve
+    glShaderSource(id, 1, &ptr, nullptr);
+ 
+    glCompileShader(id);
 
 
-void Shader::error(GLuint type, std::string out) {
+    // Check for errors
 
     GLchar infoLog[512];
     GLint success;
 
-    glGetShaderiv(id, type, &success);
+    glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 
     if (!success) {
 
@@ -51,77 +34,39 @@ void Shader::error(GLuint type, std::string out) {
 
         std::string logstr = infoLog;
 
-        std::cout << out << logstr;
+        std::cout << ext << ": " << logstr;
         
     }
 
 }
 
-void Shader::compile() {
+Shader::operator GLuint() { return id; }
 
-    if (type == FRAGMENT) id = glCreateShader(GL_FRAGMENT_SHADER);
-    else if (type == VERTEX) id = glCreateShader(GL_VERTEX_SHADER);
-    else if (type == COMPUTE) id = glCreateShader(GL_COMPUTE_SHADER);
-    else std::cout << "shadertype error in Shader::compile" << std::endl;
 
-    auto ptr = code.data(); // J'arive pas a juste ecire (GLchar* const*)code.data() dans glShaderSource a la place de &ptr ca m'eneeeeeerve
-    glShaderSource(id, 1, &ptr, nullptr);
+ShaderProgram::ShaderProgram() { id = 0; }
 
-    glCompileShader(id);
+ShaderProgram::~ShaderProgram() { if (id) glDeleteProgram(id); }
 
-    std::string strtype;
-    if (type == FRAGMENT) strtype = "frag";
-    else if (type == VERTEX) strtype = "vert";
-    else if (type == COMPUTE)strtype = "comp" ;
+ShaderProgram::ShaderProgram(const char *vertexShader, const char *fragmentShader) { load(vertexShader, fragmentShader); }
 
-    error(GL_COMPILE_STATUS, strtype+": ");
 
-}
-void Shader::build() {
 
-    int count = 0;
-
-    compile();
-
-}
-
-void ShaderProgram::init() {
+void ShaderProgram::load(const char *vertexShader, const char *fragmentShader) {
 
     id = glCreateProgram();
 
-}
-
-
-void ShaderProgram::build() {
-
-    fragment.build();
-    vertex.build();
-
-    compile(fragment.id, vertex.id);
-
-}
-
-void ShaderProgram::compile(GLuint fragment, GLuint vertex) {
+    Shader fragment(fragmentShader);
+    Shader vertex(vertexShader);
 
     glAttachShader(id, fragment);
     glAttachShader(id, vertex);
 
     glLinkProgram( id );
 
-    glDeleteShader( fragment ); 
-    glDeleteShader( vertex );
-
 }
 
-void ShaderProgram::compile(GLuint compute) {
 
-    glAttachShader(id, compute);
 
-    glLinkProgram( id );
-
-    glDeleteShader( compute );
-
-}
 
 void ShaderProgram::use() {  glUseProgram(id); }
 
