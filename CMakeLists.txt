@@ -7,8 +7,6 @@ find_package(OpenGL REQUIRED)
 add_executable(SmartMap 
 
     main.cpp
-
-    # src/attribute.cpp
     
     src/texture.cpp
     src/window.cpp
@@ -18,10 +16,9 @@ add_executable(SmartMap
     src/ubo.cpp
     src/atlas.cpp
     
+        src/file.cpp
     
-    src/imgui.cpp
-
-    src/file.cpp
+    src/gui.cpp
 
     include/vendor/imgui/imgui.cpp
     include/vendor/imgui/imgui_widgets.cpp
