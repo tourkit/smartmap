@@ -34,7 +34,7 @@ void main() {
 
     ivec2 storePos = ivec2(gl_GlobalInvocationID.xy);
 
-     vec4 color = worseblurever(blurv,storePos); 
+     vec4 color = worseblurever(blurv,storePos*ivec2(2)); 
     
     imageStore(out_image, storePos, color);
     

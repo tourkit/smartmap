@@ -8,7 +8,8 @@
 
 int WIDTH = 600, HEIGHT = 300;
 
-int FW = 1920, FH = 12000;
+int MAT_X = 3; 
+int MAT_Y = 12;
 
 auto* window = new GL::Window(false,WIDTH,HEIGHT);
 
@@ -32,10 +33,14 @@ int main() {
     Atlas atlas("assets/media/");
     atlas.link(shader);
 
+    
+    int FW = 1920*MAT_X, FH = 1200*MAT_Y;
+
     Texture passBuf(FW,FH, GL_RGBA8);
 
     Texture outBuf(FW,FH, GL_RGBA8); 
     FrameBuffer outFB(outBuf);
+    Texture outBlur(FW*.5,FH*.5, GL_RGBA8); 
 
     FrameBuffer winFB(0);
 
@@ -43,17 +48,16 @@ int main() {
     quad.addQuad(1); // UID #1 in shader (feedback)
     quad.addQuad(2); // UID #2 in shader (fixture)
 
-    auto mat = matrice(1,1);
+    auto mat = matrice(MAT_X,MAT_Y);
     UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
     matriceUBO.link(shader);
     matriceUBO.send();
 
-    struct FixtureUBO { vec2 focus{.1,1}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float orientation = .0; float feedback =1; float strobe;  float ratio = 600./300.; } fixtures[10];
+    struct FixtureUBO { vec2 focus{.1,.9}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float orientation = .0; float feedback =0; float strobe;  float ratio = 600./300.; } fixtures[10];
     UBO fixtureUBO(&fixtures[0], 10*sizeof(FixtureUBO), "FixtureUBO"); 
     fixtureUBO.link(shader);
     fixtureUBO.send();
 
-   
     float selectedf = 0;
 
     auto count = gui->add(new GUI::Counter("count"), shader);
@@ -66,10 +70,6 @@ int main() {
 
     while(true) window->render([&]() {
 
-        gui->newframe();
-    
-        GUI::blendTest();
-
         gui->elements.resize(2);
         gui->add(new GUI::SliderI("selected", 1,  0,  0,  9, &selectedf)); int selected = selectedf;
         gui->add(new GUI::SliderF("size",     2, .1,  0,  1, &fixtures[selected].focus.x));
@@ -81,7 +81,6 @@ int main() {
         gui->add(new GUI::SliderF("gobo_fx",  3,  0,  0,  1, &fixtures[selected].gobo.y));
         gui->add(new GUI::SliderF("strobe",   1, .9,  0,  1, &fixtures[selected].strobe));
 
-        // fixtures[0].pos.x = (((int)count->data[0]*4)%1000)/1000.;
         // CLUSTER RENDER LOOP
 
         outFB.clear(); // thus bind
@@ -94,19 +93,18 @@ int main() {
 
         passBuf.copy(outBuf);
 
-        glBindImageTexture(0, outBuf, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+        glBindImageTexture(0, outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
         glBindImageTexture(1, outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-        blur_x->use(FW/16,FH/16);
-        blur_y->use(FW/16,FH/16);
+        blur_x->use(FW*.5/16,FH*.5/16);
+        blur_y->use(FW*.5/16,FH*.5/16);
         glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
 
         winFB.clear(); // thus bind
-        Draw2D(outBuf);
+        Draw2D(outBlur);
 
         // END OF LOOP
     
         gui->draw();
-        gui->render();
  
     });
 

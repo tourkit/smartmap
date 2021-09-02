@@ -34,7 +34,7 @@ void GUI::render() {
 
 void GUI::draw() {
     
-  // newframe();
+  newframe();
 
   ImGui::Begin("Uniforms");
   ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
@@ -48,7 +48,7 @@ void GUI::draw() {
 
   ImGui::End();
 
-  // render();
+  render();
   
 }
  
