@@ -64,14 +64,6 @@ void main() {
         texcoord = pos/size;
         pos += fixture.pos;
 
-        vec2 ipos = min(pos,matrice[instance].size);
-        texcoord *= (size-(pos-ipos))/size;
-        pos = ipos;
-
-        vec2 opos = max(pos, 0);
-        texcoord += (opos-pos)/size;
-        pos = opos;
-
     } else if (UID  == 1) {
 
         Fixture fixture = fixtures[instance];

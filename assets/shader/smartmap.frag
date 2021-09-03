@@ -258,6 +258,10 @@ vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
 
 vec4 smartmap(int instance) {
 
+        vec2 xp = gl_FragCoord.xy/200.*2-1;
+        if (min(xp,matrice[instance].pos+matrice[instance].size) !=xp) return vec4(0);
+        if (max(xp,matrice[instance].pos-matrice[instance].size) !=xp) return vec4(0);
+
 
     vec2 t_uv = texcoord-.5;
 
