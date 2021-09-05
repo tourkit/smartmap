@@ -38,7 +38,8 @@ void Atlas::link(ShaderProgram* shader) {
 
 
     shader->sendUniform("mediasAtlas", 1);
-    buffer.bind(1);
+    shader->sendUniform("pass", 0);
+    buffer.bind(0);
 
 }
 

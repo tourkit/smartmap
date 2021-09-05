@@ -2,7 +2,7 @@
 
 Texture::Texture(GLuint width, GLuint height, GLenum format, void* data) : width(width), height(height), format(format) {
 
-    glGenTextures(1, &id);
+    glGenTextures(1, &id); 
     glBindTexture(GL_TEXTURE_2D, id);
     glTexStorage2D(GL_TEXTURE_2D, mipmaps, format, width, height);
 

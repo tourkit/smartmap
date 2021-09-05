@@ -4,7 +4,7 @@ Shader::~Shader() { glDeleteShader(id);  }
 
 Shader::Shader(std::string file) {
 
-    std::string ext = file.substr(file.find_first_of(".")+1);
+    std::string ext = file.substr(file.find_last_of(".")+1);
 
     if (ext == "frag") type = GL_FRAGMENT_SHADER;
     else if (ext == "vert") type = GL_VERTEX_SHADER;

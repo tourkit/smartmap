@@ -18,8 +18,10 @@ void VBO::upload() {
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, sizeof(Vertice), (GLvoid *) 0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_TRUE, sizeof(Vertice), (GLvoid *) (2*sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertice), (GLvoid *) (2*sizeof(float)));
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_TRUE, sizeof(Vertice), (GLvoid *) (4*sizeof(float)));
+    glEnableVertexAttribArray(2);
 
 }
 
@@ -27,10 +29,10 @@ void VBO::addQuad(int id) {
 
     int pos = vertices.size();
 
-    vertices.push_back({0, 1, id});
-    vertices.push_back({1, 1, id});
-    vertices.push_back({0, 0, id});
-    vertices.push_back({1, 0, id});
+    vertices.push_back({-1,  1, 0, 1, id});
+    vertices.push_back({1 ,  1, 1, 1, id});
+    vertices.push_back({-1, -1, 0, 0,id});
+    vertices.push_back({1 , -1, 1, 0, id});
 
     indices.push_back({pos+0,pos+1,pos+2});
     indices.push_back({pos+1,pos+2,pos+3});

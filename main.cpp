@@ -6,106 +6,46 @@
 
 #include "smartmap.hpp"
 
-int WIDTH = 600, HEIGHT = 300;
-
-int MAT_X = 3; 
-int MAT_Y = 12;
+int WIDTH = 300, HEIGHT = 150;
 
 auto* window = new GL::Window(false,WIDTH,HEIGHT);
 
 auto*  gui = new GUI{window->window}; 
 
-auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
-auto* blur_x = new ShaderProgram({"assets/shader/blur_x.comp"});
-auto* blur_y = new ShaderProgram({"assets/shader/blur_x.comp"});
- 
-Quad draw2D;
-void Draw2D(const Texture& tex) {
+ShaderProgram* shader = nullptr;
 
-    glBindTexture(GL_TEXTURE_2D, tex.id);
-    shader->use();
-    draw2D.draw();
+float count = 0;
+void loadShader() { 
+    if (shader) { delete shader; } 
+    shader = new ShaderProgram({
+        "../assets/shader/smartmap.vert", 
+        "../assets/shader/smartmap.frag"
+    }); 
+    shader->sendUniform("count",count);
 
+    count += .1;
 }
 
+FrameBuffer winFB(0);
+
+Image boy("assets/media/boy.jpg", true);
+Texture boyTex(boy.width,boy.height, GL_RGB8, boy.i);
 int main() {
 
-    Atlas atlas("assets/media/");
-    atlas.link(shader);
-
-    
-    int FW = 1920*MAT_X, FH = 1200*MAT_Y;
-
-    Texture passBuf(FW,FH, GL_RGBA8);
-
-    Texture outBuf(FW,FH, GL_RGBA8); 
-    FrameBuffer outFB(outBuf);
-    Texture outBlur(FW*.5,FH*.5, GL_RGBA8); 
-
-    FrameBuffer winFB(0);
-
     VBO quad;
-    quad.addQuad(1); // UID #1 in shader (feedback)
-    quad.addQuad(2); // UID #2 in shader (fixture)
-
-    auto mat = matrice(MAT_X,MAT_Y);
-    UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
-    matriceUBO.link(shader);
-    matriceUBO.send();
-
-    struct FixtureUBO { vec2 focus{.1,.9}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float orientation = .0; float feedback =0; float strobe;  float ratio = 600./300.; } fixtures[10];
-    UBO fixtureUBO(&fixtures[0], 10*sizeof(FixtureUBO), "FixtureUBO"); 
-    fixtureUBO.link(shader);
-    fixtureUBO.send();
-
-    float selectedf = 0;
-
-    auto count = gui->add(new GUI::Counter("count"), shader);
-    auto blur = gui->add(new GUI::SliderF("blurv",   1, .0,  0,  1));
-    blur->links.insert(blur_x);
-    blur->links.insert(blur_y);
-    
-
-    glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
+    quad.addQuad();
 
     while(true) window->render([&]() {
 
-        gui->elements.resize(2);
-        gui->add(new GUI::SliderI("selected", 1,  0,  0,  9, &selectedf)); int selected = selectedf;
-        gui->add(new GUI::SliderF("size",     2, .1,  0,  1, &fixtures[selected].focus.x));
-        gui->add(new GUI::SliderF("position", 2,  0, -1,  1, &fixtures[selected].pos.x));
-        gui->add(new GUI::SliderF("Angle",    1, .0,  0,  1, &fixtures[selected].orientation));
-        gui->add(new GUI::SliderF("rgba",     3,  1,  0,  1, &fixtures[selected].rgba.x));
-        gui->add(new GUI::SliderF("feedback", 1, .9,  0,  1, &fixtures[selected].feedback));
-        gui->add(new GUI::SliderF("gobo",     1,  0,  0,  1, &fixtures[selected].gobo.x));
-        gui->add(new GUI::SliderF("gobo_fx",  3,  0,  0,  1, &fixtures[selected].gobo.y));
-        gui->add(new GUI::SliderF("strobe",   1, .9,  0,  1, &fixtures[selected].strobe));
-
-        // CLUSTER RENDER LOOP
-
-        outFB.clear(); // thus bind
-
-        fixtureUBO.send();
-
-        passBuf.bind();
+        loadShader();
+        
+        winFB.clear();
+        boyTex.bind();
         shader->use();
-        quad.draw(10); // quantity is instances count in shader
+        quad.draw(3);
 
-        passBuf.copy(outBuf);
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
-        glBindImageTexture(0, outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-        glBindImageTexture(1, outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-        blur_x->use(FW*.5/16,FH*.5/16);
-        blur_y->use(FW*.5/16,FH*.5/16);
-        glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
-
-        winFB.clear(); // thus bind
-        Draw2D(outBlur);
-
-        // END OF LOOP
-    
-        gui->draw();
- 
     });
 
 } 
