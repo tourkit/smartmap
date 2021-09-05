@@ -13,17 +13,23 @@ out vec2 celcoord;
 
 uniform float count = 0;
 
-vec2 rotate(vec2 v, float a) {
+vec2 rotate(vec2 v, float a, vec2 r2) {
 
-    float t_ratio = 2;
+    float t_ratio = 2*r2.x/r2.y;
 
     float s = sin(a);
     float c = cos(a);
     mat2 m = mat2(c, -s, s, c);
 
     vec2 AR = vec2(1);
-
-    if (t_ratio > 1.) { AR.x = t_ratio; return (m*(v*AR))*(1./AR); } else { AR.y = t_ratio; return (m*(v/AR))/(1./AR); }
+// return (m*(v*AR))*(1./AR); 
+    if (t_ratio > 1.) { 
+        AR.x = t_ratio; 
+        return (m*(v*AR))*(1./AR); 
+        
+    } else { 
+        AR.y = t_ratio; 
+        return (m*(v/AR))/(1./AR); }
 
 }
 
@@ -34,6 +40,8 @@ void main() {
     id = gl_InstanceID;
 
     texcoord = TEXCOORD;
+
+    vec2 pos = POSITION;
 
     // DEBUG BEGIN
 
@@ -66,27 +74,31 @@ void main() {
     mat[0].pos = vec2(0);
     mat[1].size = size;
     mat[1].pos = vec2(-size.x*2,0);
-    mat[2].size = size;
-    mat[2].pos = vec2(size.x*2,0);
-    mat[3].size = vec2(0);
-    mat[3].pos = vec2(0);
+    mat[2].size = size*vec2(1,.5);;
+    size.y = .5;
+    mat[2].pos = vec2(size.x*2,-size.y);
+    mat[3].size = size;
+    mat[3].pos = vec2(size.x*2,size.y);
 
 
     // DEBUG END
 
-    vec2 pos = POSITION;
-    pos *= fix[id].size;
-    pos *= mat[id].size;
+        // fixture.pos *= matrice[instance].size;
+        // fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
 
-    texcoord = pos+mat[id].pos;
-    texcoord *= mat[id].size*.5;
-    texcoord += mat[id].size*.5;
-    texcoord /= mat[id].size;
+    vec2 t_size = mat[id].size * fix[id].size;
+    vec2 t_pos = mat[id].pos + fix[id].pos;
 
-    pos = rotate(pos,count);
-    celcoord = pos;//-vec2(.3333,0);fix[id].size;
+    texcoord = pos ;
+    texcoord *= t_size;
+    texcoord += t_pos;
+    texcoord*=.5;
+    texcoord+=.5;
 
-    pos += mat[id].pos;
+    pos = rotate(pos,count,mat[id].size);
+    celcoord = pos;
+    pos *= t_size;
+    pos += t_pos;
 
     gl_Position = vec4(pos,0,1);
 
