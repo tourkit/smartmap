@@ -5,7 +5,7 @@
 	
 struct VBO {
 
-    struct Vertice { float x,y,z,w; int id; }; 
+    struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float clip_x,clip_y; int id; }; 
     struct Indice { int a,b,c; }; 
 
     std::vector<Vertice> vertices;

@@ -5,14 +5,12 @@ out vec4 color;
 uniform sampler2D pass; 
 
 flat in int obj;
-flat in int id;
+flat in int inst;
 in vec2 texcoord;
-in vec2 celcoord;
+
 
 void main() {
 
-    if (min(vec2(1),celcoord) != celcoord) return;
-    if (max(vec2(-1),celcoord) != celcoord) return;
     color = texture(pass,texcoord);
 
     return;

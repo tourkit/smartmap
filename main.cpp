@@ -22,6 +22,7 @@ void loadShader() {
         "../assets/shader/smartmap.frag"
     }); 
     shader->sendUniform("count",count);
+    shader->sendUniform("ratio",WIDTH/HEIGHT);
 
     count += .1;
 }
@@ -35,6 +36,13 @@ int main() {
     VBO quad;
     quad.addQuad();
 
+    // glEnable(GL_CLIP_PLANE0);
+
+    glEnable(GL_CLIP_DISTANCE0);
+    glEnable(GL_CLIP_DISTANCE1);
+    glEnable(GL_CLIP_DISTANCE2);
+    glEnable(GL_CLIP_DISTANCE3);
+
     while(true) window->render([&]() {
 
         loadShader();
@@ -42,7 +50,7 @@ int main() {
         winFB.clear();
         boyTex.bind();
         shader->use();
-        quad.draw(3);
+        quad.draw(4);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
