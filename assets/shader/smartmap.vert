@@ -2,6 +2,7 @@
 
 layout (location = 0) in vec2 POSITION;
 layout (location = 1) in vec2 TEXCOORD;
+layout (location = 2) in vec2 CLIPRECT;
 layout (location = 3) in int ID;
 
 struct Rect { vec2 size;vec2 pos; }, mat[12], fix[12];
@@ -22,13 +23,10 @@ vec2 rotate(vec2 v, float a, vec2 r2) {
     mat2 m = mat2(c, -s, s, c);
 
     vec2 AR = vec2(1);
-    if (ratio > 1.) { 
-        AR.x = ratio; 
-        return (m*(v*AR))*(1./AR); 
-        
-    } else { 
-        AR.y = ratio; 
-        return (m*(v/AR))/(1./AR); }
+
+    if (ratio > 1.) {   AR.x = ratio;  return (m*(v*AR))*(1./AR);  } 
+
+    else { AR.y = ratio; return (m*(v/AR))/(1./AR); }
 
 }
 
@@ -40,11 +38,11 @@ void main() {
     fix[0].size = vec2(.95);
     fix[0].pos = vec2(0);
     fix[1].size = vec2(.95);
-    fix[1].pos = vec2(0);
+    fix[1].pos = vec2(sin(count*.25), 0);
     fix[2].size = vec2(.5,.95);
     fix[2].pos = vec2(0);
     fix[3].size = vec2(.95);
-    fix[3].pos = vec2(0);
+    fix[3].pos = vec2(0,sin(count*.25));
 
     vec2 size = vec2(.333,1);
     mat[0].size = size;
@@ -67,16 +65,29 @@ void main() {
 
     vec2 pos = POSITION;
 
+    // Could Move Matrice Job to CPU .. again ^^
+
     vec2 t_size = mat[id].size * fix[id].size;
     vec2 t_pos = mat[id].pos + fix[id].pos;
 
     pos = rotate(pos,count,t_size);
+    
+    
+    vec2 clip_x = vec2(1)/fix[id].size.x;
+    clip_x += ((fix[id].pos.x*(clip_x.x))*(vec2(1,-1)/mat[id].size.x));
+    
+    vec2 clip_y = vec2(-1,1)/fix[id].size.y;
+    clip_y += ((fix[id].pos.y*(clip_y.y))*(vec2(-1,-1)/mat[id].size.y));
 
-    vec4 ClipRect = vec4(vec2((1/fix[id].size.x),1/fix[id].size.y),vec2((1/-fix[id].size.x),1/(fix[id].size.y)));
-    gl_ClipDistance[0] = pos.x+ClipRect[0];
-    gl_ClipDistance[1] = ClipRect[1] - pos.x;
-    gl_ClipDistance[2] = pos.y - ClipRect[2];
-    gl_ClipDistance[3] = ClipRect[3] - pos.y;
+    vec4 clipcoord = vec4(clip_x,clip_y);
+
+    // clipcoord.x +=;
+    // clipcoord.y -=((fix[id].pos.x*(clip_x.x))*(1/mat[id].size.x));
+
+    gl_ClipDistance[0] = pos.x+clipcoord[0];
+    gl_ClipDistance[1] = clipcoord[1] - pos.x;
+    gl_ClipDistance[2] = pos.y - clipcoord[2];
+    gl_ClipDistance[3] = clipcoord[3] - pos.y;
 
     pos *= t_size;
     pos += t_pos;
