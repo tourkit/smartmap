@@ -63,38 +63,36 @@ void main() {
 
     texcoord = TEXCOORD;
 
-    vec2 pos = POSITION;
+    gl_Position = vec4(POSITION,0,1);
 
     // Could Move Matrice Job to CPU .. again ^^
 
     vec2 t_size = mat[id].size * fix[id].size;
     vec2 t_pos = mat[id].pos + fix[id].pos;
 
-    pos = rotate(pos,count,t_size);
+    gl_Position.xy = rotate(gl_Position.xy,count,t_size);
+        
+    // vec2 clip_x = vec2(1)/fix[id].size.x;
+    // clip_x += ((fix[id].pos.x*(clip_x.x))*(vec2(1,-1)/mat[id].size.x));
     
-    
-    vec2 clip_x = vec2(1)/fix[id].size.x;
-    clip_x += ((fix[id].pos.x*(clip_x.x))*(vec2(1,-1)/mat[id].size.x));
-    
-    vec2 clip_y = vec2(-1,1)/fix[id].size.y;
-    clip_y += ((fix[id].pos.y*(clip_y.y))*(vec2(-1,-1)/mat[id].size.y));
+    // vec2 clip_y = vec2(-1,1)/fix[id].size.y;
+    // clip_y += ((fix[id].pos.y*(clip_y.y))*(vec2(-1,-1)/mat[id].size.y));
 
-    vec4 clipcoord = vec4(clip_x,clip_y);
+    // vec4 clipcoord = vec4(clip_x,clip_y);
 
-    // clipcoord.x +=;
-    // clipcoord.y -=((fix[id].pos.x*(clip_x.x))*(1/mat[id].size.x));
+    // gl_ClipDistance[0] = gl_Position.x+clipcoord[0];
+    // gl_ClipDistance[1] = clipcoord[1] - gl_Position.x;
+    // gl_ClipDistance[2] = gl_Position.y - clipcoord[2];
+    // gl_ClipDistance[3] = clipcoord[3] - gl_Position.y;
 
-    gl_ClipDistance[0] = pos.x+clipcoord[0];
-    gl_ClipDistance[1] = clipcoord[1] - pos.x;
-    gl_ClipDistance[2] = pos.y - clipcoord[2];
-    gl_ClipDistance[3] = clipcoord[3] - pos.y;
+    gl_Position.xy *= t_size;
+    gl_Position.xy += t_pos;
 
-    pos *= t_size;
-    pos += t_pos;
-
-
-    gl_Position = vec4(pos,0,1);
-
+    gl_ClipDistance[0] = gl_Position.x-mat[id].pos.x+mat[id].size.x; 
+    gl_ClipDistance[1] = -gl_Position.x+mat[id].pos.x+mat[id].size.x;
+    gl_ClipDistance[2] = gl_Position.y -mat[id].pos.y+mat[id].size.y;
+    gl_ClipDistance[3] = -gl_Position.y+mat[id].pos.y+mat[id].size.y;
+    // vec2 clipcoords = mat[id].pos+mat[id].size;
 
 
 }
