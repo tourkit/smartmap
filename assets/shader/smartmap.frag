@@ -5,8 +5,8 @@ out vec4 color;
 uniform sampler2D pass;
 uniform sampler2D mediasAtlas;
 
-in float UID;
-in float INSTANCE;
+flat in int obj;
+flat in int id;
 in vec2 texcoord;
 
 uniform float feedback = 0;
@@ -25,9 +25,10 @@ struct Fixture {
 
 };
 
-layout(std140) uniform MatriceUBO  { Rect matrice[10]; };
+layout(std140) uniform MatriceUBO  { Rect mat[10]; };
 layout (std140) uniform mediasCoords { Rect[16] mediaCoord;};
-layout(std140) uniform FixtureUBO  { Fixture fixtures[10];} ;
+layout(std140) uniform FixtureUBO  { Fixture fix[10];} ;
+
 
 vec4 fromAtlas(int id) { return texture(mediasAtlas,texcoord*mediaCoord[id].size+mediaCoord[id].pos); }
 
@@ -261,19 +262,19 @@ vec4 smartmap(int instance) {
 
     vec2 t_uv = texcoord-.5;
 
-    int gobo_id = int(fixtures[instance].gobo[0]*255);
+    int gobo_id = int(fix[instance].gobo[0]*255);
 
-    if (gobo_id == 1) return fixtures[instance].rgba*grid(t_uv, fixtures[instance].gobo[1], fixtures[instance].gobo[2], fixtures[instance].gobo[3]);
-    if (gobo_id == 2) return fixtures[instance].rgba*grid2(t_uv, fixtures[instance].gobo[1], fixtures[instance].gobo[2], fixtures[instance].gobo[3]);
-    if (gobo_id == 3) return fixtures[instance].rgba*gradient(t_uv, fixtures[instance].gobo[1], fixtures[instance].gobo[2], fixtures[instance].gobo[3]);
-    if (gobo_id == 4) return fixtures[instance].rgba*burst(rotate(t_uv, fixtures[instance].gobo[3]), fixtures[instance].gobo[1], 0, fixtures[instance].gobo[2]);
-    if (gobo_id == 5) return fixtures[instance].rgba*burst(rotate(t_uv, fixtures[instance].gobo[3]), fixtures[instance].gobo[1], 1, fixtures[instance].gobo[2]);
-    if (gobo_id == 6) return fixtures[instance].rgba*flower(t_uv*(1/fixtures[instance].size), fixtures[instance].gobo[1], fixtures[instance].gobo[2], fixtures[instance].gobo[3]);
-    if (gobo_id == 7) return fixtures[instance].rgba*border(t_uv, fixtures[instance].gobo[1]);
-    if (gobo_id == 8) return fixtures[instance].rgba*fromAtlas(int(fixtures[instance].gobo[1]*255));
-    if (gobo_id == 9) return fixtures[instance].rgba*s1plx(t_uv, fixtures[instance].gobo[1], fixtures[instance].gobo[2], fixtures[instance].gobo[3]);
+    if (gobo_id == 1) return fix[instance].rgba*grid(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 2) return fix[instance].rgba*grid2(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 3) return fix[instance].rgba*gradient(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 4) return fix[instance].rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 0, fix[instance].gobo[2]);
+    if (gobo_id == 5) return fix[instance].rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 1, fix[instance].gobo[2]);
+    if (gobo_id == 6) return fix[instance].rgba*flower(t_uv*(1/fix[instance].size), fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 7) return fix[instance].rgba*border(t_uv, fix[instance].gobo[1]);
+    if (gobo_id == 8) return fix[instance].rgba*fromAtlas(int(fix[instance].gobo[1]*255));
+    if (gobo_id == 9) return fix[instance].rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
 
-    return fixtures[instance].rgba*vec4(1);
+    return fix[instance].rgba*vec4(1);
 
 
 }
@@ -281,26 +282,31 @@ vec4 smartmap(int instance) {
 
 void main() {
 
-    int instance = int(INSTANCE);
+    // color = texture(pass,texcoord);
+    // color = vec4(.5*texcoord.x);
+    // if (id == 0) color.x = 0;
+    // if (id == 1) color.y = 0;
+    // if (id == 2) color.z = 0;
+    // return;
 
-    if (UID == 0) { 
+    if (obj == 0) { 
 
-        for (int i = 0; i < 10; i++) color += texture(pass,texcoord*matrice[i].size+matrice[i].pos); 
-        
+        color =  texture(pass,texcoord);
+        // for (int i = 0; i < 10; i++) color += texture(pass,texcoord*(mat[i].size)+(mat[i].pos));  
+         
     }
-
-    else if (UID == 1) {
+    else if (obj == 1) {
 
         float feedback = 1;
 
-        // missing fixtures[instance].beam[0]!= 0  for ????
-        if (!(fixtures[instance].rgba.r == 0 && fixtures[instance].rgba.g == 0 && fixtures[instance].rgba.b == 0)) feedback -= 1-pow(abs((fixtures[instance].feedback*.5+.5)-1),3);
+        // missing fix[id].beam[0]!= 0  for ????
+        if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
         
         color =  texture(pass,texcoord)-max(.002,feedback);
+        color *= vec4(1,0,0,1);
 
     }
-
-    else if (UID == 2) {color = smartmap(instance); }
+    else if (obj == 2) { color = smartmap(id);  }
 
     return;
 

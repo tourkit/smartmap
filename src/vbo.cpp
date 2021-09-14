@@ -40,10 +40,10 @@ void VBO::addQuad(int id) {
 
     int pos = vertices.size();
 
-    vertices.push_back({0,  1, 0, 1, clip_x, clip_y, id});
+    vertices.push_back({-1,  1, 0, 1, clip_x, clip_y, id});
     vertices.push_back({1 ,  1, 1, 1, clip_x, clip_y, id});
-    vertices.push_back({0, 0, 0, 0, clip_x, clip_y, id});
-    vertices.push_back({1 , 0, 1, 0, clip_x, clip_y, id});
+    vertices.push_back({-1, -1, 0, 0, clip_x, clip_y, id});
+    vertices.push_back({1 , -1, 1, 0, clip_x, clip_y, id});
 
     indices.push_back({pos+0,pos+1,pos+2});
     indices.push_back({pos+1,pos+2,pos+3});

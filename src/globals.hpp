@@ -49,7 +49,9 @@ static std::vector<RectF> matrice(unsigned int x, unsigned int y) {
     float xsize = 1. / x;
     float ysize = 1. / y;
 
-    for (int row = 0; row < x; ++row) for (int col = 0; col < y; ++col) mat.push_back({xsize, ysize, xsize * row,  ysize * col});
+    for (int row = 0; row < x; ++row) 
+      for (int col = 0; col < y; ++col) 
+        mat.push_back({xsize, ysize, xsize * row*2-(1-xsize),  ysize * col*2-(1-ysize)});
 
     return mat;
 

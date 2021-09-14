@@ -9,7 +9,7 @@
 int WIDTH = 600, HEIGHT = 300;
 
 int MAT_X = 3; 
-int MAT_Y = 12;
+int MAT_Y = 3;
 
 auto* window = new GL::Window(false,WIDTH,HEIGHT);
 
@@ -68,6 +68,11 @@ int main() {
 
     glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
 
+    glEnable(GL_CLIP_DISTANCE0);
+    glEnable(GL_CLIP_DISTANCE1);
+    glEnable(GL_CLIP_DISTANCE2);
+    glEnable(GL_CLIP_DISTANCE3);
+
     while(true) window->render([&]() {
 
         gui->elements.resize(2);
@@ -89,7 +94,7 @@ int main() {
 
         passBuf.bind();
         shader->use();
-        quad.draw(10); // quantity is instances count in shader
+        quad.draw(9); // quantity is instances count in shader
 
         passBuf.copy(outBuf);
 
@@ -102,7 +107,7 @@ int main() {
         winFB.clear(); // thus bind
         Draw2D(outBlur);
 
-        // END OF LOOP
+        // // END OF LOOP
     
         gui->draw();
  

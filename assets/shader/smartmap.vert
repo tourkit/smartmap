@@ -1,9 +1,9 @@
 #version 430 core
 
-layout (location = 0) in vec2 position;
+layout (location = 0) in vec2 POSITION;
 layout (location = 1) in vec2 TEXCOORD;
 layout (location = 2) in vec2 CLIPRECT;
-layout (location = 3) in int uid;
+layout (location = 3) in int OBJ;
 
 struct Rect { vec2 size, pos; };
 
@@ -19,16 +19,17 @@ struct Fixture {
 
 };
 
-layout(std140) uniform MatriceUBO  { Rect matrice[10]; };
-layout(std140) uniform FixtureUBO  { Fixture fixtures[10];} ;
+layout(std140) uniform MatriceUBO  { Rect mat[10]; };
+layout(std140) uniform FixtureUBO  { Fixture fix[10];} ;
 
-out float UID;      // caps mean cast from int
-out float INSTANCE; // caps mean cast from int
+flat out int obj;
+flat out int id;
 out vec2 texcoord;
 
-vec2 rotate(int instance, vec2 v, float a) {
 
-    float t_ratio = fixtures[instance].ratio;
+vec2 rotate(vec2 v, float a, vec2 r2) {
+
+    float ratio = 2*r2.x/r2.y;
 
     float s = sin(a);
     float c = cos(a);
@@ -36,64 +37,61 @@ vec2 rotate(int instance, vec2 v, float a) {
 
     vec2 AR = vec2(1);
 
-    if (t_ratio > 1.) { AR.x = t_ratio; return (m*(v*AR))*(1./AR); } else { AR.y = t_ratio; return (m*(v/AR))/(1./AR); }
+    if (ratio > 1.) {   AR.x = ratio;  return (m*(v*AR))*(1./AR);  } 
+
+    else { AR.y = ratio; return (m*(v/AR))/(1./AR); }
 
 }
 
 void main() {
 
-    UID = uid;
+    obj = OBJ;
 
-    int instance = gl_InstanceID;
-    INSTANCE = instance;
+    id = gl_InstanceID;
+
+    texcoord = TEXCOORD;
     
-    vec2 pos = position;
+    gl_Position = vec4(POSITION,0,1);
 
-    if (UID  == 2){
+    gl_ClipDistance[0] = 1;
+    gl_ClipDistance[1] = 1;
+    gl_ClipDistance[2] = 1;
+    gl_ClipDistance[3] = 1;
 
-        Fixture fixture = fixtures[instance];
 
-        fixture.pos *= matrice[instance].size;
-        fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
+    if (obj == 0) return;
 
-        texcoord = pos;
-        pos *= matrice[instance].size;
+    if (obj  == 2){
 
-        pos = rotate(instance, pos, fixtures[instance].orientation*6.28318530718);
+        // Fixture fixture = fixtures[instance];
 
-        vec2 size = matrice[instance].size*fixture.size;
-        pos *= fixture.size;
-        texcoord = pos/size;
-        pos += fixture.pos;
+        // fixture.pos *= matrice[instance].size;
+        // fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
 
-        vec2 ipos = min(pos,matrice[instance].size);
-        texcoord *= (size-(pos-ipos))/size;
-        pos = ipos;
+        vec2 size = mat[id].size * fix[id].size;
+        vec2 pos = mat[id].pos + fix[id].pos;
 
-        vec2 opos = max(pos, 0);
-        texcoord += (opos-pos)/size;
-        pos = opos;
+        gl_Position.xy = rotate(gl_Position.xy,fix[id].orientation,size);
 
-    } else if (UID  == 1) {
+        gl_Position.xy *= size;
+        gl_Position.xy += pos;
 
-        Fixture fixture = fixtures[instance];
+        vec2 mins = mat[id].pos-mat[id].size;
+        vec2 maxs = mat[id].pos+mat[id].size;
+        gl_ClipDistance[0] = gl_Position.x-mins.x; 
+        gl_ClipDistance[1] = maxs.x-gl_Position.x;
+        gl_ClipDistance[2] = gl_Position.y -mins.y;
+        gl_ClipDistance[3] = maxs.y-gl_Position.y;
 
-        fixture.pos *= matrice[instance].size;
-        fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
 
-        texcoord = pos;
-        pos *= matrice[instance].size;
-    
-        
-        texcoord *= matrice[instance].size;
-        texcoord += matrice[instance].pos;
-   
+    } else if (obj  == 1) {
+
+        gl_Position.xy *= mat[id].size;
+        gl_Position.xy += mat[id].pos;
+
+        texcoord = gl_Position.xy*.5+.5;
+
     }
     
-    pos += matrice[instance].pos;
-
-    if (UID == 0){ pos = position; texcoord = pos;}
-
-    gl_Position = vec4(pos*2-1,0,1);
 
 }
