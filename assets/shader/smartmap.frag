@@ -25,9 +25,9 @@ struct Fixture {
 
 };
 
-layout(std140) uniform MatriceUBO  { Rect mat[10]; };
+layout(std140) uniform MatriceUBO  { Rect mat[24]; };
 layout (std140) uniform mediasCoords { Rect[16] mediaCoord;};
-layout(std140) uniform FixtureUBO  { Fixture fix[10];} ;
+layout(std140) uniform FixtureUBO  { Fixture fix[24];} ;
 
 
 vec4 fromAtlas(int id) { return texture(mediasAtlas,texcoord*mediaCoord[id].size+mediaCoord[id].pos); }
@@ -279,20 +279,15 @@ vec4 smartmap(int instance) {
 
 }
 
-
 void main() {
-
-    // color = texture(pass,texcoord);
-    // color = vec4(.5*texcoord.x);
-    // if (id == 0) color.x = 0;
-    // if (id == 1) color.y = 0;
-    // if (id == 2) color.z = 0;
-    // return;
 
     if (obj == 0) { 
 
-        color =  texture(pass,texcoord);
-        // for (int i = 0; i < 10; i++) color += texture(pass,texcoord*(mat[i].size)+(mat[i].pos));  
+        for (int i = 0; i < 24; i++) color += texture(pass,
+            
+            texcoord*mat[i].size+((mat[i].pos+(1-mat[i].size))*.5)
+        
+        );  
          
     }
     else if (obj == 1) {
@@ -303,7 +298,6 @@ void main() {
         if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
         
         color =  texture(pass,texcoord)-max(.002,feedback);
-        color *= vec4(1,0,0,1);
 
     }
     else if (obj == 2) { color = smartmap(id);  }

@@ -8,7 +8,7 @@
 
 int WIDTH = 600, HEIGHT = 300;
 
-int MAT_X = 3; 
+int MAT_X = 8; 
 int MAT_Y = 3;
 
 auto* window = new GL::Window(false,WIDTH,HEIGHT);
@@ -53,8 +53,8 @@ int main() {
     matriceUBO.link(shader);
     matriceUBO.send();
 
-    struct FixtureUBO { vec2 focus{.1,.9}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float orientation = .0; float feedback =0; float strobe;  float ratio = 600./300.; } fixtures[10];
-    UBO fixtureUBO(&fixtures[0], 10*sizeof(FixtureUBO), "FixtureUBO"); 
+    struct FixtureUBO { vec2 focus{.1,.9}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float orientation = .0; float feedback =0; float strobe;  float ratio = 600./300.; } fixtures[24];
+    UBO fixtureUBO(&fixtures[0], 24*sizeof(FixtureUBO), "FixtureUBO"); 
     fixtureUBO.link(shader);
     fixtureUBO.send();
 
@@ -76,7 +76,7 @@ int main() {
     while(true) window->render([&]() {
 
         gui->elements.resize(2);
-        gui->add(new GUI::SliderI("selected", 1,  0,  0,  9, &selectedf)); int selected = selectedf;
+        gui->add(new GUI::SliderI("selected", 1,  0,  0,  23, &selectedf)); int selected = selectedf;
         gui->add(new GUI::SliderF("size",     2, .1,  0,  1, &fixtures[selected].focus.x));
         gui->add(new GUI::SliderF("position", 2,  0, -1,  1, &fixtures[selected].pos.x));
         gui->add(new GUI::SliderF("Angle",    1, .0,  0,  1, &fixtures[selected].orientation));

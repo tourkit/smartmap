@@ -19,8 +19,8 @@ struct Fixture {
 
 };
 
-layout(std140) uniform MatriceUBO  { Rect mat[10]; };
-layout(std140) uniform FixtureUBO  { Fixture fix[10];} ;
+layout(std140) uniform MatriceUBO  { Rect mat[24]; };
+layout(std140) uniform FixtureUBO  { Fixture fix[24];} ;
 
 flat out int obj;
 flat out int id;
@@ -58,18 +58,16 @@ void main() {
     gl_ClipDistance[2] = 1;
     gl_ClipDistance[3] = 1;
 
-
     if (obj == 0) return;
 
     if (obj  == 2){
 
-        // Fixture fixture = fixtures[instance];
+        vec2 size = mat[id].size;
+        size *= fix[id].size;
 
-        // fixture.pos *= matrice[instance].size;
-        // fixture.pos += (1-fixture.size)*matrice[instance].size*.5;
-
-        vec2 size = mat[id].size * fix[id].size;
-        vec2 pos = mat[id].pos + fix[id].pos;
+        vec2 pos = fix[id].pos;
+        pos *= mat[id].size+size;
+        pos +=  mat[id].pos;
 
         gl_Position.xy = rotate(gl_Position.xy,fix[id].orientation,size);
 
