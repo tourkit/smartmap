@@ -32,7 +32,6 @@ vec2 rotate(vec2 v, float a, vec2 r2) {
 
 void main() {
 
-
     // DEBUG BEGIN
 
     fix[0].size = vec2(.95);
@@ -54,7 +53,6 @@ void main() {
     mat[3].size = size*vec2(1,.5);;
     mat[3].pos = vec2(size.x*2,.5*size.y);
 
-
     // DEBUG END
 
     obj = ID;
@@ -65,34 +63,19 @@ void main() {
 
     gl_Position = vec4(POSITION,0,1);
 
-    // Could Move Matrice Job to CPU .. again ^^
-
     vec2 t_size = mat[id].size * fix[id].size;
     vec2 t_pos = mat[id].pos + fix[id].pos;
 
     gl_Position.xy = rotate(gl_Position.xy,count,t_size);
-        
-    // vec2 clip_x = vec2(1)/fix[id].size.x;
-    // clip_x += ((fix[id].pos.x*(clip_x.x))*(vec2(1,-1)/mat[id].size.x));
-    
-    // vec2 clip_y = vec2(-1,1)/fix[id].size.y;
-    // clip_y += ((fix[id].pos.y*(clip_y.y))*(vec2(-1,-1)/mat[id].size.y));
-
-    // vec4 clipcoord = vec4(clip_x,clip_y);
-
-    // gl_ClipDistance[0] = gl_Position.x+clipcoord[0];
-    // gl_ClipDistance[1] = clipcoord[1] - gl_Position.x;
-    // gl_ClipDistance[2] = gl_Position.y - clipcoord[2];
-    // gl_ClipDistance[3] = clipcoord[3] - gl_Position.y;
 
     gl_Position.xy *= t_size;
     gl_Position.xy += t_pos;
 
-    gl_ClipDistance[0] = gl_Position.x-mat[id].pos.x+mat[id].size.x; 
-    gl_ClipDistance[1] = -gl_Position.x+mat[id].pos.x+mat[id].size.x;
-    gl_ClipDistance[2] = gl_Position.y -mat[id].pos.y+mat[id].size.y;
-    gl_ClipDistance[3] = -gl_Position.y+mat[id].pos.y+mat[id].size.y;
-    // vec2 clipcoords = mat[id].pos+mat[id].size;
-
+    vec2 mins = mat[id].pos-mat[id].size;
+    vec2 maxs = mat[id].pos+mat[id].size;
+    gl_ClipDistance[0] = gl_Position.x-mins.x; 
+    gl_ClipDistance[1] = maxs.x-gl_Position.x;
+    gl_ClipDistance[2] = gl_Position.y -mins.y;
+    gl_ClipDistance[3] = maxs.y-gl_Position.y;
 
 }
