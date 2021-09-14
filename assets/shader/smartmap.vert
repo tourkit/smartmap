@@ -1,7 +1,9 @@
 #version 430 core
 
 layout (location = 0) in vec2 position;
-layout (location = 1) in int uid;
+layout (location = 1) in vec2 TEXCOORD;
+layout (location = 2) in vec2 CLIPRECT;
+layout (location = 3) in int uid;
 
 struct Rect { vec2 size, pos; };
 

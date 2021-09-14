@@ -5,7 +5,7 @@
 	
 struct VBO {
 
-    struct Vertice { float x,y; int id; }; 
+    struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float clip_x,clip_y; int id; }; 
     struct Indice { int a,b,c; }; 
 
     std::vector<Vertice> vertices;
@@ -14,7 +14,7 @@ struct VBO {
 
     GLuint vao, vbo,ibo;
 
-    ~VBO() { glDisableVertexAttribArray(0); glDisableVertexAttribArray(1); } // that should be elsewhere I think
+    ~VBO(); // that should be elsewhere I think
 
     VBO();    
     
