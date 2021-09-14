@@ -94,7 +94,7 @@ int main() {
 
         passBuf.bind();
         shader->use();
-        quad.draw(9); // quantity is instances count in shader
+        quad.draw(MAT_X*MAT_Y); // quantity is instances count in shader
 
         passBuf.copy(outBuf);
 
