@@ -21,12 +21,13 @@ add_executable(SmartMap
     src/gui.cpp
 
     
-    include/vendor/artnet/artnet.c
-    include/vendor/artnet/misc.c
-    include/vendor/artnet/network.c
-    include/vendor/artnet/receive.c
-    include/vendor/artnet/tod.c
-    include/vendor/artnet/transmit.c
+    include/vendor/ofxLibArtnet/artnet/artnet.c
+    include/vendor/ofxLibArtnet/artnet/misc.c
+    include/vendor/ofxLibArtnet/artnet/network.c
+    include/vendor/ofxLibArtnet/artnet/receive.c
+    include/vendor/ofxLibArtnet/artnet/tod.c
+    include/vendor/ofxLibArtnet/artnet/transmit.c
+    include/vendor/ofxLibArtnet/ofxLibArtnet.cpp
 
 
     include/vendor/imgui/imgui.cpp

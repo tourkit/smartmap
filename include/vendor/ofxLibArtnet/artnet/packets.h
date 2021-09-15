@@ -29,7 +29,7 @@
 #include <netinet/in.h>
 #endif
 
-#include <artnet/common.h>
+#include "common.h";
 
 
 

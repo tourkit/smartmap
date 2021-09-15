@@ -32,7 +32,7 @@
 typedef unsigned long in_addr_t;
 #endif
 
-#include <artnet/common.h>
+#include "common.h"
 
 /* the external storage class is "extern" in UNIX; in MSW it's ugly. */
 #ifndef EXTERN

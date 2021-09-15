@@ -27,15 +27,26 @@ void Draw2D(const Texture& tex) {
     draw2D.draw();
 
 }
-#include "artnet/artnet.h"
+ 
+#include "ofxLibArtnet/ofxLibArtnet.h"
 
 int main() {
 
+  
     auto artnet = artnet_new("2.0.0.222", 1);
-    auto port = artnet_start(artnet);
+    artnet_start(artnet);
     
-    uint8_t ddd[9] = { 255,255,255,255,255,255,255,255,255 };
-    artnet_send_dmx(artnet, port, 2, &ddd[0]);
+    int port_id = 0; // first port
+    uint8_t universe = 4; // subnet 0, universe 3
+    uint8_t subnet = 1; // subnet 0, universe 3
+
+    artnet_set_subnet_addr(artnet, subnet);
+    artnet_set_port_type(artnet, port_id, ARTNET_ENABLE_OUTPUT, ARTNET_PORT_DMX);
+    artnet_set_port_addr(artnet, port_id, ARTNET_OUTPUT_PORT, universe );
+
+    uint8_t ddd[1024] = { 255,255,255,255,255,255,255,255,255 };
+    
+    while(true) artnet_send_dmx(artnet, 1, 512, &ddd[0]);
 
     return 0;
 
