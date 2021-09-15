@@ -16,9 +16,18 @@ add_executable(SmartMap
     src/ubo.cpp
     src/atlas.cpp
     
-        src/file.cpp
+    src/file.cpp
     
     src/gui.cpp
+
+    
+    include/vendor/artnet/artnet.c
+    include/vendor/artnet/misc.c
+    include/vendor/artnet/network.c
+    include/vendor/artnet/receive.c
+    include/vendor/artnet/tod.c
+    include/vendor/artnet/transmit.c
+
 
     include/vendor/imgui/imgui.cpp
     include/vendor/imgui/imgui_widgets.cpp
@@ -34,7 +43,7 @@ add_executable(SmartMap
 )
 
 target_compile_features(SmartMap PUBLIC cxx_std_20)
-set_target_properties(SmartMap PROPERTIES COMPILE_FLAGS "-DIMGUI_IMPL_OPENGL_LOADER_GL3W  ")
+set_target_properties(SmartMap PROPERTIES COMPILE_FLAGS "-DIMGUI_IMPL_OPENGL_LOADER_GL3W ")
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
@@ -60,4 +69,7 @@ target_link_libraries(SmartMap PRIVATE
     OpenGL::GL
     glfw
     ws2_32
+    netapi32
+    dpnet
+    iphlpapi
 )

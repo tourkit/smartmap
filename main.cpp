@@ -27,8 +27,17 @@ void Draw2D(const Texture& tex) {
     draw2D.draw();
 
 }
+#include "artnet/artnet.h"
 
 int main() {
+
+    auto artnet = artnet_new("2.0.0.222", 1);
+    auto port = artnet_start(artnet);
+    
+    uint8_t ddd[9] = { 255,255,255,255,255,255,255,255,255 };
+    artnet_send_dmx(artnet, port, 2, &ddd[0]);
+
+    return 0;
 
     Atlas atlas("assets/media/");
     atlas.link(shader);
