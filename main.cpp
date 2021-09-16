@@ -31,50 +31,33 @@ void Draw2D(const Texture& tex) {
 #include "ofxLibArtnet/ofxLibArtnet.h"
 
 int main() {
-  
-    auto artnet = artnet_new("2.0.0.222", 1);
+
+    int port = 0;
+    uint8_t addr = 3;
+    uint8_t subnet = 8;
+    artnet_node artnet;
+
+    artnet = artnet_new("2.0.0.222", 1);
+
+    std::vector<uint8_t> data = { 1,2,3,4,5,6,7,8 };
 
     artnet_set_long_name(artnet, "SmartMap");
     artnet_set_short_name(artnet, "SM");
     artnet_set_node_type(artnet, ARTNET_RAW);
 
-    artnet_start(artnet);
+    artnet_set_subnet_addr(artnet, subnet);
 
-    auto artnet3 = artnet_new("2.0.0.222", 1);
+    artnet_set_port_type(artnet, port, ARTNET_ENABLE_OUTPUT, ARTNET_PORT_DMX);
+    artnet_set_port_addr(artnet, port, ARTNET_OUTPUT_PORT, addr);
 
-    artnet_set_long_name(artnet3, "SmartMap");
-    artnet_set_short_name(artnet3, "SM");
-    artnet_set_node_type(artnet3, ARTNET_RAW);
+    artnet_dump_config(artnet);
 
-    artnet_start(artnet3);
-
-    auto artnet2 = artnet_new("2.0.0.222", 1);
-
-    artnet_set_long_name(artnet2, "SmartMap");
-    artnet_set_short_name(artnet2, "SM");
-
-    artnet_set_port_type(artnet2, 0, ARTNET_ENABLE_OUTPUT, ARTNET_PORT_DMX);
-    artnet_set_port_addr(artnet2, 0, ARTNET_OUTPUT_PORT, 0 );
-
-    artnet_set_port_type(artnet2, 1, ARTNET_ENABLE_OUTPUT, ARTNET_PORT_DMX);
-    artnet_set_port_addr(artnet2, 1, ARTNET_OUTPUT_PORT, 0 );
-
-    artnet_set_port_type(artnet2, 2, ARTNET_ENABLE_OUTPUT, ARTNET_PORT_DMX);
-    artnet_set_port_addr(artnet2, 2, ARTNET_OUTPUT_PORT, 2 );
-
-    artnet_dump_config(artnet2);
-    artnet_start(artnet2);
+    if (artnet_start(artnet) != 0) std::cout << artnet_strerror() << std::endl;
     
-    
+    artnet_send_dmx(artnet, port, data.size(), &data[0]);
 
-    uint8_t ddd[1024] = { 255,255,255,255,255,255,255,255,255 };
-
-
-    while(true) {
-        artnet_send_dmx(artnet2, 1, 512, &ddd[0]);
-        artnet_raw_send_dmx(artnet, 5, 512, &ddd[0]);
-        artnet_raw_send_dmx(artnet3, 6, 512, &ddd[0]);
-        }
+    artnet_stop(artnet);
+    artnet_destroy(artnet);
 
     return 0;
 
