@@ -721,7 +721,7 @@ int artnet_raw_send_dmx(artnet_node vn,
   p.data.admx.ver = ARTNET_VERSION;
   p.data.admx.sequence = 0;
   p.data.admx.physical = 0;
-  p.data.admx.universe = 3;
+  p.data.admx.universe = uni;
 
   // set length
   p.data.admx.lengthHi = short_get_high_byte(length);

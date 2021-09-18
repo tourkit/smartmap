@@ -771,6 +771,7 @@ int handle(node n, artnet_packet p) {
       break;
     case ARTNET_DMX:
       handle_dmx(n, p);
+      printf("DMX\n");
       break;
     case ARTNET_ADDRESS:
       handle_address(n, p);
