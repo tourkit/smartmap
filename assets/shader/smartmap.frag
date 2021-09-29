@@ -9,6 +9,8 @@ flat in int obj;
 flat in int id;
 in vec2 texcoord;
 
+uniform float fixcount = 1;
+
 uniform float feedback = 0;
 uniform float texchoice = 0;
 
@@ -283,7 +285,9 @@ void main() {
 
     if (obj == 0) { 
 
-        for (int i = 0; i < 24; i++) color += texture(pass,
+        int FIXCOUNT = int(fixcount);
+
+        for (int i = 0; i < FIXCOUNT; i++) color += texture(pass,
             
             texcoord*mat[i].size+((mat[i].pos+(1-mat[i].size))*.5)
         

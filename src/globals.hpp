@@ -1,7 +1,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#define DEBUG_GL  /// <= DISABLE BEFORE RELEASE
+// #define DEBUG_GL  /// <= DISABLE BEFORE RELEASE
 
 #include <iostream>
 
@@ -104,7 +104,7 @@ static void glError(std::string file_name, std::string function_name, GLuint lin
 #define GL_PRINT(str) std::cout << str << std::endl;
 #else
 #define GL_ERROR()
-#define GL_PRINT()
+#define GL_PRINT(str) /**/
 #endif
 
 #endif
