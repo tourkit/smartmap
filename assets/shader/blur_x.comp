@@ -28,6 +28,7 @@ vec4 worseblurever(float v_size, ivec2 coord) {
     return color/(size+1);
 }
 
+uniform float count;
 uniform float blurv;
 
 void main() {
