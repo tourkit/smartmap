@@ -33,6 +33,7 @@ typedef unsigned long in_addr_t;
 #endif
 
 #include "common.h"
+#include "packets.h"
 
 /* the external storage class is "extern" in UNIX; in MSW it's ugly. */
 #ifndef EXTERN
@@ -223,6 +224,7 @@ EXTERN int artnet_setesta(artnet_node vn, char hi, char lo);
 EXTERN int artnet_set_bcast_limit(artnet_node vn, int limit);
 EXTERN int artnet_start(artnet_node n);
 EXTERN int artnet_read(artnet_node n, int timeout);
+EXTERN artnet_packet_t artnet_raw_read(artnet_node n, int timeout);
 EXTERN int artnet_stop(artnet_node n);
 EXTERN int artnet_destroy(artnet_node n);
 

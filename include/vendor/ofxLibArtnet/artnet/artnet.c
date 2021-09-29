@@ -327,6 +327,38 @@ int artnet_read(artnet_node vn, int timeout) {
   return ARTNET_EOK;
 }
 
+artnet_packet_t artnet_raw_read(artnet_node vn, int timeout) {
+  node n = (node) vn;
+  node tmp;
+  artnet_packet_t p;
+  int ret;
+
+  while (1) {
+    memset(&p.data, 0x0, sizeof(p.data));
+
+    // check timeouts now, else this packet may update the timestamps
+    check_timeouts(n);
+
+    if ((ret = artnet_net_recv(n, &p, timeout)) < 0)
+      return p;
+
+    // nothing to read
+    if (ret == RECV_NO_DATA)
+      break;
+
+    // skip this packet (filtered)
+    if (p.length == 0)
+      continue;
+
+    for (tmp = n->peering.peer; tmp != NULL && tmp != n; tmp = tmp->peering.peer)
+      check_timeouts(tmp);
+
+  }
+
+  return p;
+
+}
+
 
 /*
  * To get around the 4 universes per node limitation , we can start more than
@@ -453,8 +485,8 @@ int artnet_set_dmx_handler(artnet_node vn,
   node n = (node) vn;
   check_nullnode(vn);
 
-  n->callbacks.dmx_c.fh = fh;
-  n->callbacks.dmx_c.data = data;
+  n->callbacks.dmx.fh = fh;
+  n->callbacks.dmx.data = data;
   return ARTNET_EOK;
 }
 

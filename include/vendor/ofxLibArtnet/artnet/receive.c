@@ -18,6 +18,8 @@
  * Copyright (C) 2004-2007 Simon Newton
  */
 
+
+#include "stdio.h"
 #include "private.h"
 
 uint8_t _make_addr(uint8_t subnet, uint8_t addr);
@@ -82,151 +84,18 @@ void handle_reply(node n, artnet_packet p) {
 /*
  * handle a art dmx packet
  */
-void handle_dmx(node n, artnet_packet p) {
-  int i, data_length;
-  output_port_t *port;
-  in_addr_t ipA, ipB;
 
+void handle_dmx(node n, artnet_packet p) {
+  
   // run callback if defined
   if (check_callback(n, p, n->callbacks.dmx))
     return;
 
-  data_length = (int) bytes_to_short(p->data.admx.lengthHi,
-                                     p->data.admx.length);
-  data_length = min(data_length, ARTNET_DMX_LENGTH);
 
-  // find matching output ports
-  for (i = 0; i < ARTNET_MAX_PORTS; i++) {
-    // if the addr matches and this port is enabled
-    if (p->data.admx.universe == n->ports.out[i].port_addr &&
-        n->ports.out[i].port_enabled) {
+  printf("%i: ", p->data.admx.universe);
+  for(int i = 0; i < 10; ++i ) printf("%i ", p->data.admx.data[i]);
+  printf("\n");
 
-      port = &n->ports.out[i];
-      ipA = port->ipA.s_addr;
-      ipB = port->ipB.s_addr;
-
-      // ok packet matches this port
-      n->ports.out[i].port_status = n->ports.out[i].port_status | PORT_STATUS_ACT_MASK;
-
-      /**
-       * 9 cases for merging depending on what the stored ips are.
-       * here's the truth table
-       *
-       *
-       * \   ipA   #           #            #             #
-       *  ------   #   empty   #            #             #
-       *   ipB  \  #   ( 0 )   #    p.from  #   ! p.from  #
-       * ##################################################
-       *           # new node  # continued  # start       #
-       *  empty    # first     #  trans-    #  merge      #
-       *   (0)     #   packet  #   mission  #             #
-       * ##################################################
-       *           #continued  #            # cont        #
-       *  p.from   # trans-    # invalid!   #  merge      #
-       *           #  mission  #            #             #
-       * ##################################################
-       *           # start     # cont       #             #
-       * ! p.from  #  merge    #   merge    # discard     #
-       *           #           #            #             #
-       * ##################################################
-       *
-       * The merge exits when:
-       *   o ACCancel command is received in an ArtAddress packet
-       *       (this is done in handle_address )
-       *   o no data is recv'ed from one source in 10 seconds
-       *
-       */
-
-      check_merge_timeouts(n,i);
-
-      if (ipA == 0 && ipB == 0) {
-        // first packet recv on this port
-        port->ipA.s_addr = p->from.s_addr;
-        port->timeA = time(NULL);
-
-        memcpy(&port->dataA, &p->data.admx.data, data_length);
-        port->length = data_length;
-        memcpy(&port->data, &p->data.admx.data, data_length);
-      }
-      else if (ipA == p->from.s_addr && ipB == 0) {
-        //continued transmission from the same ip (source A)
-
-        port->timeA = time(NULL);
-        memcpy(&port->dataA, &p->data.admx.data, data_length);
-        port->length = data_length;
-        memcpy(&port->data, &p->data.admx.data, data_length);
-      }
-      else if (ipA == 0 && ipB == p->from.s_addr) {
-        //continued transmission from the same ip (source B)
-
-        port->timeB = time(NULL);
-        memcpy(&port->dataB, &p->data.admx.data, data_length);
-        port->length = data_length;
-        memcpy(&port->data, &p->data.admx.data, data_length);
-      }
-      else if (ipA != p->from.s_addr  && ipB == 0) {
-        // new source, start the merge
-        port->ipB.s_addr = p->from.s_addr;
-        port->timeB = time(NULL);
-        memcpy(&port->dataB, &p->data.admx.data,data_length);
-        port->length = data_length;
-
-        // merge, newest data is port B
-        merge(n,i,data_length, port->dataB);
-
-        // send reply if needed
-
-      }
-      else if (ipA == 0 && ipB == p->from.s_addr) {
-        // new source, start the merge
-        port->ipA.s_addr = p->from.s_addr;
-        port->timeB = time(NULL);
-        memcpy(&port->dataB, &p->data.admx.data,data_length);
-        port->length = data_length;
-
-        // merge, newest data is portA
-        merge(n,i,data_length, port->dataA);
-
-        // send reply if needed
-      }
-      else if (ipA == p->from.s_addr && ipB != p->from.s_addr) {
-        // continue merge
-        port->timeA = time(NULL);
-        memcpy(&port->dataA, &p->data.admx.data,data_length);
-        port->length = data_length;
-
-        // merge, newest data is portA
-        merge(n,i,data_length, port->dataA);
-
-      }
-      else if (ipA != p->from.s_addr && ipB == p->from.s_addr) {
-        // continue merge
-        port->timeB = time(NULL);
-        memcpy(&port->dataB, &p->data.admx.data,data_length);
-        port->length = data_length;
-
-        // merge newest data is portB
-        merge(n,i,data_length, port->dataB);
-
-      }
-      else if (ipA == p->from.s_addr && ipB == p->from.s_addr) {
-//        err_warn("In handle_dmx, source matches both buffers, this shouldn't be happening!\n");
-
-      }
-      else if (ipA != p->from.s_addr && ipB != p->from.s_addr) {
-//        err_warn("In handle_dmx, more than two sources, discarding data\n");
-
-      }
-      else {
-//        err_warn("In handle_dmx, no cases matched, this shouldn't happen!\n");
-
-      }
-
-      // do the dmx callback here
-      if (n->callbacks.dmx_c.fh != NULL)
-        n->callbacks.dmx_c.fh(n,i, n->callbacks.dmx_c.data);
-    }
-  }
   return;
 }
 
