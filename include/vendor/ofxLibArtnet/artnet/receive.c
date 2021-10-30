@@ -92,12 +92,10 @@ void handle_dmx(node n, artnet_packet p) {
     return;
 
 
-  printf("%i: ", p->data.admx.universe);
-  for(int i = 0; i < 10; ++i ) printf("%i ", p->data.admx.data[i]);
-  printf("\n");
+
 
   return;
-}
+} 
 
 
 /**
@@ -697,7 +695,7 @@ int handle(node n, artnet_packet p) {
       break;
     default:
       n->state.report_code = ARTNET_RCPARSEFAIL;
-      printf("artnet but not yet implemented!, op was %x\n", (int) p->type);
+      // printf("artnet but not yet implemented!, op was %x\n", (int) p->type);
   }
   return 0;
 }

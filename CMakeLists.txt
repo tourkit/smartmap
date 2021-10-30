@@ -5,8 +5,7 @@ project(SmartMap VERSION 0.1.0)
 add_executable(SmartMap 
 
     main.cpp
-    
-    
+
     include/vendor/ofxLibArtnet/artnet/artnet.c
     include/vendor/ofxLibArtnet/artnet/misc.c
     include/vendor/ofxLibArtnet/artnet/network.c
@@ -15,6 +14,8 @@ add_executable(SmartMap
     include/vendor/ofxLibArtnet/artnet/transmit.c
     include/vendor/ofxLibArtnet/ofxLibArtnet.cpp
 
+    src/device/artnet.cpp;
+    
 
 
 )

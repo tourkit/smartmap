@@ -8,30 +8,35 @@
 // int WIDTH = 600, HEIGHT = 300;
 // auto* window = new GL::Window(false,WIDTH,HEIGHT);
  
-#include <vector>
 #include <iostream>
- 
-#include "ofxLibArtnet/artnet/artnet.h"
+
+#include "device/artnet.hpp"
+#include "fixture.hpp"
+
+ArtnetDevice artnet;
 
 int main() {
 
-  artnet_node artnet = artnet_new("2.0.0.222", 0); // set ip la !
-  artnet_set_short_name(artnet, "SmartMap");
-  artnet_set_long_name(artnet, "SmartMap");
-  
-  artnet_start(artnet);
+  std::vector<std::string> fixture_chart = {
 
-  
+    "Color.Red",
+    "Position.Horizontal --FINE",
+    "Color.Blue",
+    "Color.Green --FINE"
 
-   while(true) {
+  };
 
-    // std::cout << artnet_read(artnet, .1) << std::endl;
+  Fixture* fifix1 = new Fixture();
+  fifix1->DMXpatch(2,1,fixture_chart);
+
+  Fixture* fifix2 = new Fixture();
+  fifix2->DMXpatch(1,14,fixture_chart);
+
+  while(true) {
+
+    artnet.run();
 
   }
-
-
-  artnet_stop(artnet);
-  artnet_destroy(artnet);
 
   return 0;
 

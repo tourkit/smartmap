@@ -62,7 +62,7 @@ public:
     
     int artnetReceiver(artnet_node node, void *pp);
     
-    static int artnetReceiverWrapper(artnet_node node, void *pp, void *d) {
+    static int  artnetReceiverWrapper(artnet_node node, void *pp, void *d) {
         Node* n = (Node*) d;
         return n->artnetReceiver(node, pp);
     };

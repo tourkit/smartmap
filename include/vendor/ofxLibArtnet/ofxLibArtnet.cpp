@@ -110,7 +110,8 @@ void Node::close()
 #pragma Mark - Callback for receiving
 //should only work as is if not sending raw...
 
-int Node::artnetReceiver(artnet_node node, void *pp) {
+int Node::
+artnetReceiver(artnet_node node, void *pp) {
     printf("Receiving Art-Net data!");
     artnet_packet pack = (artnet_packet) pp;
     printf("Received packet sequence %d\n", pack->data.admx.sequence);

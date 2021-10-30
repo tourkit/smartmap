@@ -35,6 +35,11 @@ typedef unsigned long in_addr_t;
 #include "common.h"
 #include "packets.h"
 
+// #include <vector>
+// #include <map>
+
+// std::map<std::vector<uint8_t>> universe;
+
 /* the external storage class is "extern" in UNIX; in MSW it's ugly. */
 #ifndef EXTERN
 #ifdef MSW
@@ -237,7 +242,7 @@ EXTERN int artnet_set_handler(artnet_node vn,
   int (*fh)(artnet_node n, void *pp, void *d),
   void* data);
 EXTERN int artnet_set_dmx_handler(artnet_node vn,
-  int (*fh)(artnet_node n, int port, void *d),
+  int (*fh)(artnet_node n, artnet_packet port, void *d),
   void *data);
 EXTERN int artnet_set_program_handler(artnet_node vn,
   int (*fh)(artnet_node n, void *d),
