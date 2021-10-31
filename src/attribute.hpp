@@ -6,9 +6,9 @@
 #include <iostream>
 #include <string.h>
 
-static inline std::vector<float> UBO;
-
 struct Attribute {
+
+  static inline std::vector<float> UBO;
 
   int id = -1;
 

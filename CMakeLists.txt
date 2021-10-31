@@ -16,7 +16,7 @@ add_executable(SmartMap
     src/ubo.cpp
     src/atlas.cpp
 
-    src/device/artnet.cpp;
+    src/device/artnet.cpp
     
     src/file.cpp
     
