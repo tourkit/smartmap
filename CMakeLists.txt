@@ -15,8 +15,10 @@ add_executable(SmartMap
     src/vbo.cpp
     src/ubo.cpp
     src/atlas.cpp
+
+    src/device/artnet.cpp;
     
-        src/file.cpp
+    src/file.cpp
     
     src/gui.cpp
 
@@ -30,6 +32,16 @@ add_executable(SmartMap
 
     include/vendor/RectangleBinPack/GuillotineBinPack.cpp
     include/vendor/RectangleBinPack/Rect.cpp
+
+    include/vendor/ofxLibArtnet/artnet/artnet.c
+    include/vendor/ofxLibArtnet/artnet/misc.c
+    include/vendor/ofxLibArtnet/artnet/network.c
+    include/vendor/ofxLibArtnet/artnet/receive.c
+    include/vendor/ofxLibArtnet/artnet/tod.c
+    include/vendor/ofxLibArtnet/artnet/transmit.c
+    include/vendor/ofxLibArtnet/ofxLibArtnet.cpp
+
+    
 
 )
 
@@ -60,4 +72,7 @@ target_link_libraries(SmartMap PRIVATE
     OpenGL::GL
     glfw
     ws2_32
+    netapi32
+    dpnet
+    iphlpapi
 )
