@@ -27,10 +27,11 @@ struct Fixture {
 
 };
 
-layout(std140) uniform MatriceUBO  { Rect mat[24]; };
 layout (std140) uniform mediasCoords { Rect[16] mediaCoord;};
 layout(std140) uniform FixtureUBO  { Fixture fix[24];} ;
 
+layout(std140) uniform MatriceUBO  { Rect mat[24]; };
+uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
 vec4 fromAtlas(int id) { return texture(mediasAtlas,texcoord*mediaCoord[id].size+mediaCoord[id].pos); }
 
@@ -285,20 +286,15 @@ void main() {
 
     if (obj == 0) { 
 
-        int FIXCOUNT = int(fixcount);
-
-        for (int i = 0; i < FIXCOUNT; i++) color += texture(pass,
-            
-            texcoord*mat[i].size+((mat[i].pos+(1-mat[i].size))*.5)
-        
-        );  
+        color = vec4(0);
+        for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, texcoord*mat[i].size+((mat[i].pos+(1-mat[i].size))*.5) );  
          
     }
     else if (obj == 1) {
 
         float feedback = 1;
 
-        // missing fix[id].beam[0]!= 0  for ????
+        // missing fix[id].beam[0]!= 0 // for ????
         if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
         
         color =  texture(pass,texcoord)-max(.002,feedback);

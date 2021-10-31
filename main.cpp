@@ -73,7 +73,7 @@ int main() {
     glEnable(GL_CLIP_DISTANCE2);
     glEnable(GL_CLIP_DISTANCE3);
 
-    shader->sendUniform("fixcount", MAT_X*MAT_Y);
+    shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
     while(true) window->render([&]() {
 
