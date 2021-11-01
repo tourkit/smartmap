@@ -14,7 +14,7 @@ struct DMXAttribute : public Attribute {
 
 	DMXAttribute(int address) : address(address), Attribute(std::to_string(address).c_str(), 0) {  }
 
-	virtual void update(uint8_t* data) {  set(data[address]/255.); }
+	virtual void update(uint8_t* data) { set(data[address]/255.); }
 
   void set(float val) override {  for (auto l:links_dst) l->setNormalized(val); }
 
@@ -62,7 +62,7 @@ struct ArtnetDevice {
 
     data[dmx.universe]; // ca coute qq chose ca a chaque tcheck une fois qu'il est deja créé ?
 
-    for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.length); ++i) data[dmx.universe].chan[i] = dmx.data[i];
+    for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.lengthHi); ++i) data[dmx.universe].chan[i] = dmx.data[i];
 
     for (auto l : data[dmx.universe].links) l->update(&data[dmx.universe].chan[0]); // ou data[dmx.universe].update(); mais pas cool avec 16bit
 
