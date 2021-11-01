@@ -6,6 +6,10 @@
 
 #include "smartmap.hpp"
 
+#define DEBUG
+
+ArtnetDevice artnet;
+
 int WIDTH = 600, HEIGHT = 300;
 
 int MAT_X = 1; 
@@ -28,13 +32,23 @@ void Draw2D(const Texture& tex) {
 
 }
 
+    double lastTime = glfwGetTime();
+
+
+    bool checka() {
+
+        if (glfwGetTime() - lastTime <= 1./280. ) { return false; }
+        else { lastTime = glfwGetTime(); return true; }
+    
+    }
+
 int main() {
 
     Atlas atlas("assets/media/");
     atlas.link(shader);
-
     
-    int FW = 1920*MAT_X, FH = 1200*MAT_Y;
+    // int FW = 1920*MAT_X, FH = 1200*MAT_Y; // GOOD 
+    int FW = WIDTH*MAT_X, FH = HEIGHT*MAT_Y; // TEST ONLY !!!REMOVE FOR RELEASE
 
     Texture passBuf(FW,FH, GL_RGBA8);
 
@@ -53,18 +67,36 @@ int main() {
     matriceUBO.link(shader);
     matriceUBO.send();
 
-    struct FixtureUBO { vec2 focus{.1,.9}, pos{0,0}; vec4 rgba = {1,1,1,1}; vec4 gobo; float orientation = .0; float feedback =0; float strobe;  float ratio = 600./300.; } fixtures[24];
-    UBO fixtureUBO(&fixtures[0], 24*sizeof(FixtureUBO), "FixtureUBO"); 
+    Fixture fixtures[25];
+    int address = 1;
+
+    for (auto f:fixtures) address += f.DMXpatch(1,address, {
+    
+        "Color.Red",
+        "Color.Green",
+        "Color.Blue",
+        "Position.Horizontal",
+        "Position.Vertical",
+        "Gobo.ID",
+        "Gobo.Fx1",
+        "Gobo.Fx2",
+        "Gobo.Fx3",
+        "Strobe",
+        "Feedback",
+        "Orientation",
+        "Focus.Horizontal",
+        "Focus.Vertical"
+        
+    });
+
+    UBO fixtureUBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
     fixtureUBO.link(shader);
     fixtureUBO.send();
 
-    float selectedf = 0;
-
-    auto count = gui->add(new GUI::Counter("count"), shader);
-    auto blur = gui->add(new GUI::SliderF("blurv",   1, .0,  0,  1));
-    blur->links.insert(blur_x);
-    blur->links.insert(blur_y);
-    
+    // auto count = gui->add(new GUI::Counter("count"), shader);
+    // auto blur = gui->add(new GUI::SliderF("blurv",   1, .0,  0,  1));
+    // blur->links.insert(blur_x);
+    // blur->links.insert(blur_y);
 
     glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
 
@@ -75,18 +107,12 @@ int main() {
 
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
+
     while(true) window->render([&]() {
 
-        gui->elements.resize(2);
-        gui->add(new GUI::SliderI("selected", 1,  0,  0,  23, &selectedf)); int selected = selectedf;
-        gui->add(new GUI::SliderF("size",     2, .1,  0,  1, &fixtures[selected].focus.x));
-        gui->add(new GUI::SliderF("position", 2,  0, -1,  1, &fixtures[selected].pos.x));
-        gui->add(new GUI::SliderF("Angle",    1, .0,  0,  1, &fixtures[selected].orientation));
-        gui->add(new GUI::SliderF("rgba",     3,  1,  0,  1, &fixtures[selected].rgba.x));
-        gui->add(new GUI::SliderF("feedback", 1, .9,  0,  1, &fixtures[selected].feedback));
-        gui->add(new GUI::SliderF("gobo",     1,  0,  0,  1, &fixtures[selected].gobo.x));
-        gui->add(new GUI::SliderF("gobo_fx",  3,  0,  0,  1, &fixtures[selected].gobo.y));
-        gui->add(new GUI::SliderF("strobe",   1, .9,  0,  1, &fixtures[selected].strobe));
+        artnet.run();
+
+        if (!checka()) return;
 
         // CLUSTER RENDER LOOP
 
@@ -111,7 +137,10 @@ int main() {
 
         // // END OF LOOP
     
-        gui->draw();
+        gui->newframe();
+        for (auto a:fixtures[0].attributes->childrens) a->gui();
+        gui->render();
+
  
     });
 

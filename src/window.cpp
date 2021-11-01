@@ -110,49 +110,16 @@ void Window::initUidCallbacks() {
 
 void Window::render(std::function<void()> callback) {
 
-    getFPS();
-
-    iTime = std::chrono::duration<float, std::milli>(std::chrono::steady_clock::now()-start_c).count();
-
     // glfwMakeContextCurrent(window);  glewInit(); // MUTLI WINDOW ATTEMPT
 
     //glClearColor(0.0f, 0.0f, 0.0f, 0.1f); // BG COLOR
-
-  //  glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
+    //  glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
     callback();
 
     glfwPollEvents();
 
     glfwSwapBuffers(window);
-
-}
-
-
-
-void Window::readRGB(char *rgb, uint16_t width, uint16_t height, uint16_t x, uint16_t y, uint8_t mode) {
-
-    glReadPixels(x,y,width,height,GL_RGB,GL_BYTE,rgb);
-
-}
-
-void Window::getFPS() {
-
-    double time = glfwGetTime();
-    double deltaTime = time - lastTime;
-
-    while (deltaTime <= maxPeriod ) {
-
-        std::this_thread::sleep_for(std::chrono::microseconds(10));
-
-        time  = glfwGetTime();
-        deltaTime = time - lastTime;
-
-    }
-
-    auto now = glfwGetTime();
-    fps = (60.0/((now - lastTime)*60.0));
-    lastTime = now;
 
 }
 

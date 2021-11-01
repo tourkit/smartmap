@@ -9,8 +9,9 @@ struct Rect { vec2 size, pos; };
 
 struct Fixture {
 
-    vec2 size, pos;
     vec4 rgba;
+    vec2 pos;
+    vec2 size;
     vec4 gobo;
     float orientation; 
     float feedback; 

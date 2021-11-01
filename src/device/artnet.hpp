@@ -12,9 +12,11 @@ struct DMXAttribute : public Attribute {
 
 	int address;
 
-	DMXAttribute(int address) : address(address), Attribute(0, std::to_string(address).c_str()) {  }
+	DMXAttribute(int address) : address(address), Attribute(std::to_string(address).c_str(), 0) {  }
 
-	virtual void update(uint8_t* data) { set(data[address]/255.); }
+	virtual void update(uint8_t* data) {  set(data[address]/255.); }
+
+  void set(float val) override {  for (auto l:links_dst) l->setNormalized(val); }
 
 };
 

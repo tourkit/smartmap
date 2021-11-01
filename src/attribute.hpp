@@ -6,6 +6,10 @@
 #include <iostream>
 #include <string.h>
 
+
+#include "gui.hpp"
+
+
 struct Attribute {
 
   static inline std::vector<float> UBO;
@@ -16,29 +20,53 @@ struct Attribute {
 
   std::vector<Attribute*> childrens;
 
-  Attribute(float val, const char* name = "") : name(name) { 
+  float min_val, max_val, def_val, range_val;
+ 
+  std::vector<float> local{1}; 
 
-    id = UBO.size();
-    
-    UBO.push_back(0);
+  std::vector<float>* buffer = &UBO; 
 
-    set(val);
+  Attribute(const char* name, float val, float min_val = 0, float max_val = 1, std::vector<float>* dst = nullptr) 
+  
+    : name(name), min_val(min_val), max_val(max_val), def_val(val), range_val(max_val-min_val) { 
+
+      if (dst) buffer = dst; 
+
+      id = buffer->size();
+      
+      buffer->push_back(0);
+
+      set(val);
     
   }
 
-  Attribute(std::set<Attribute*> childrens, const char* name = "") : name(name) { 
+  void gui() {
 
-    for (auto c:childrens) this->childrens.push_back(c);
-    
+    int size = childrens.size();
+    if (!size) size = 1;
+
+    if (size == 1) ImGui::SliderFloat(name,ptr(),min_val,max_val); 
+    else if (size == 2) ImGui::SliderFloat2(name,ptr(),child(0)->min_val,child(0)->max_val); 
+    else if (size == 3) ImGui::SliderFloat3(name,ptr(),child(0)->min_val,child(0)->max_val); 
+    else if (size == 4) ImGui::SliderFloat4(name,ptr(),child(0)->min_val,child(0)->max_val); 
+
   }
+
+  float* ptr() { if (id <0) return child(0)->ptr(); else return &(*buffer)[id]; }
+
+  Attribute(const char* name, std::set<Attribute*> childrens, float min_val = 0, float max_val = 1) : name(name) { for (auto c:childrens) this->childrens.push_back(c); }
+
+  Attribute(std::set<Attribute*> childrens) : Attribute("", childrens) { }
 
   Attribute* link_src = nullptr;
 
   std::set<Attribute*> links_dst;
 
-  float get() { return UBO[id]; }
+  float get() { return (*buffer)[id]; }
 
-  void set(float val) { UBO[id] = val;  for (auto l:links_dst) l->set(val); } 
+  virtual void set(float val) { (*buffer)[id] = val;  for (auto l:links_dst) l->set(val); } 
+
+  void setNormalized(float val) { set(val*(range_val)+min_val); } 
 
   Attribute* child(int id = 0) { return childrens[id]; }
 

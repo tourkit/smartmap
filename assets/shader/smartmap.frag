@@ -17,8 +17,9 @@ uniform float texchoice = 0;
 struct Rect { vec2 size;vec2 pos;  };
 struct Fixture {
 
-    vec2 size, pos;
     vec4 rgba;
+    vec2 pos;
+    vec2 size;
     vec4 gobo;
     float orientation; 
     float feedback; 
