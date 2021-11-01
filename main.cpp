@@ -12,8 +12,8 @@ ArtnetDevice artnet;
 
 int WIDTH = 600, HEIGHT = 300;
 
-int MAT_X = 1; 
-int MAT_Y = 1;
+int MAT_X = 5; 
+int MAT_Y = 2;
 
 auto* window = new GL::Window(false,WIDTH,HEIGHT,1920-WIDTH);
 
@@ -32,15 +32,8 @@ void Draw2D(const Texture& tex) {
 
 }
 
-    double lastTime = glfwGetTime();
-
-
-    bool checka() {
-
-        if (glfwGetTime() - lastTime <= 1./280. ) { return false; }
-        else { lastTime = glfwGetTime(); return true; }
-    
-    }
+double lastTime = glfwGetTime();
+bool checkFPS() { if (glfwGetTime() - lastTime <= 1./280. ) { return false; } else { lastTime = glfwGetTime(); return true; } }
 
 int main() {
 
@@ -112,7 +105,7 @@ int main() {
 
         artnet.run();
 
-        if (!checka()) return;
+        // if (!checkFPS()) return;
 
         // CLUSTER RENDER LOOP
 
@@ -137,8 +130,13 @@ int main() {
 
         // // END OF LOOP
     
-        gui->newframe();
+        gui->newframe();  
+        ImGui::Begin("Uniforms");
+        ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
+
         for (auto a:fixtures[0].attributes->childrens) a->gui();
+
+        ImGui::End();
         gui->render();
 
  
