@@ -53,7 +53,10 @@ int main() {
 
     VBO quad;
     quad.addQuad(1); // UID #1 in shader (feedback)
-    quad.addQuad(2); // UID #2 in shader (fixture)
+    // quad.addQuad(2); // UID #2 in shader (fixture)
+
+    VBO quad2;
+    quad2.addQuad(2); // UID #2 in shader (fixture)
 
     auto mat = matrice(MAT_X,MAT_Y);
     UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
@@ -91,7 +94,6 @@ int main() {
     // blur->links.insert(blur_x);
     // blur->links.insert(blur_y);
 
-    glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
 
     glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_CLIP_DISTANCE1);
@@ -115,7 +117,11 @@ int main() {
 
         passBuf.bind();
         shader->use();
-        quad.draw(MAT_X*MAT_Y); // quantity is instances count in shader
+
+        glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
+        quad.draw(MAT_X*MAT_Y); // quantity is instances count in shader 
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        quad2.draw(MAT_X*MAT_Y); // quantity is instances count in shader 
 
         passBuf.copy(outBuf);
 
@@ -126,6 +132,8 @@ int main() {
         glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
 
         winFB.clear(); // thus bind
+
+        // ID 0
         Draw2D(outBlur);
 
         // // END OF LOOP

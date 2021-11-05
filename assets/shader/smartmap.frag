@@ -298,7 +298,8 @@ void main() {
         // missing fix[id].beam[0]!= 0 // for ????
         if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
         
-        color =  texture(pass,texcoord)-max(.002,feedback);
+        color =  texture(pass,texcoord)-max(.002,feedback); 
+        
 
     }
     else if (obj == 2) { color = smartmap(id);  }
