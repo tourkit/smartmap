@@ -25,10 +25,12 @@ add_executable(SmartMap
     include/vendor/imgui/imgui.cpp
     include/vendor/imgui/imgui_widgets.cpp
     include/vendor/imgui/imgui_draw.cpp
-    include/vendor/imgui/imgui_impl_glfw.cpp
-    include/vendor/imgui/imgui_impl_opengl3.cpp    
-    # include/vendor/imgui/backends/imgui_impl_glfw.cpp
-    # include/vendor/imgui/backends/imgui_impl_opengl3.cpp    
+    # include/vendor/imgui/imgui_impl_glfw.cpp
+    # include/vendor/imgui/imgui_impl_opengl3.cpp    
+    include/vendor/imgui/imgui_tables.cpp
+    include/vendor/imgui/backends/imgui_impl_win32.cpp    
+    include/vendor/imgui/backends/imgui_impl_opengl3.cpp    
+    include/vendor/imgui/backends/imgui_impl_glfw.cpp
     include/vendor/ImGuiColorTextEdit/TextEditor.cpp 
     
     include/vendor/gl3w/src/gl3w.c
@@ -78,4 +80,7 @@ target_link_libraries(SmartMap PRIVATE
     netapi32
     dpnet
     iphlpapi
+    imm32
+    dwmapi
+    # `pkg-config --static --libs sdl2`
 )
