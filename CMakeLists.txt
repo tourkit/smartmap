@@ -27,6 +27,9 @@ add_executable(SmartMap
     include/vendor/imgui/imgui_draw.cpp
     include/vendor/imgui/imgui_impl_glfw.cpp
     include/vendor/imgui/imgui_impl_opengl3.cpp    
+    # include/vendor/imgui/backends/imgui_impl_glfw.cpp
+    # include/vendor/imgui/backends/imgui_impl_opengl3.cpp    
+    include/vendor/ImGuiColorTextEdit/TextEditor.cpp 
     
     include/vendor/gl3w/src/gl3w.c
 
