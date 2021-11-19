@@ -12,7 +12,10 @@
 
 class TextEditor
 {
+
+
 public:
+	const char* fileToEdit;
 	enum class PaletteIndex
 	{
 		Default,
@@ -183,7 +186,10 @@ public:
 	};
 
 	TextEditor();
+	TextEditor(const char* fileToEdit);
 	~TextEditor();
+
+	void render();
 
 	void SetLanguageDefinition(const LanguageDefinition& aLanguageDef);
 	const LanguageDefinition& GetLanguageDefinition() const { return mLanguageDefinition; }

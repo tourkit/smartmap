@@ -82,5 +82,4 @@ target_link_libraries(SmartMap PRIVATE
     iphlpapi
     imm32
     dwmapi
-    # `pkg-config --static --libs sdl2`
 )
