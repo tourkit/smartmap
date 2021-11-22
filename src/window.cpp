@@ -12,7 +12,7 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
 
     : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) {
 
-    createView(0, 1, 0, 1);
+    createView(0, 1, 1, 0);
 
 
 }
@@ -28,8 +28,8 @@ void Window::createView(int8_t windows_border, int8_t window_on_top, int8_t curs
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    glfwWindowHint(GLFW_DECORATED, (windows_border ? GLFW_TRUE : GLFW_FALSE));
-    glfwWindowHint(GLFW_FLOATING, (window_on_top ? GLFW_TRUE : GLFW_FALSE));
+    // glfwWindowHint(GLFW_DECORATED, (windows_border ? GLFW_TRUE : GLFW_FALSE));
+    // glfwWindowHint(GLFW_FLOATING, (window_on_top ? GLFW_TRUE : GLFW_FALSE));
 
     if (fullscreen)
     {

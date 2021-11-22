@@ -5,6 +5,7 @@
 // imgui.cpp imgui_draw.cpp imgui_widgets.cpp imgui_impl_glfw.cpp imgui_impl_opengl3.cpp
 
 #include "imgui/imgui.h"
+#include "imgui/imgui_internal.h"
 #include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -109,6 +110,56 @@ struct GUI {
     }
 
   };
+
+  struct Node {
+
+    const char * name;
+    std::vector<Node*> tree;
+
+  };
+
+  static inline bool tree_open, tree_clicked;
+  static inline const char* tree_name;
+ 
+  ImRect RenderTree(Node* n)
+  {
+
+      tree_open = ImGui::TreeNode(n->name);
+      tree_clicked = ImGui::IsItemClicked();
+      tree_name = n->name;
+
+      const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+
+      if (tree_open)
+      {
+          const ImColor TreeLineColor = ImGui::GetColorU32(ImGuiCol_Text);
+          const float SmallOffsetX = 11.0f; //for now, a hardcoded value; should take into account tree indent size
+          ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+          ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
+          verticalLineStart.x += SmallOffsetX; //to nicely line up with the arrow symbol
+          ImVec2 verticalLineEnd = verticalLineStart;
+
+
+          if (ImGui::IsItemFocused()) std::cout << n->name <<std::endl;
+
+          for (Node* child : n->tree)
+          {
+              const float HorizontalTreeLineSize = 8.0f; //chosen arbitrarily
+              const ImRect childRect = RenderTree(child);
+              const float midpoint = (childRect.Min.y + childRect.Max.y) / 2.0f;
+              drawList->AddLine(ImVec2(verticalLineStart.x, midpoint), ImVec2(verticalLineStart.x + HorizontalTreeLineSize, midpoint), TreeLineColor);
+              verticalLineEnd.y = midpoint;
+          }
+
+          drawList->AddLine(verticalLineStart, verticalLineEnd, TreeLineColor);
+
+          ImGui::TreePop();
+      }
+
+      return nodeRect;
+  }
+
 
   std::vector<std::shared_ptr<Element>> elements;
 

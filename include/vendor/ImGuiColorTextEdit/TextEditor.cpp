@@ -52,20 +52,21 @@ TextEditor::TextEditor()
 	, mStartTime(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count())
 {
 	SetPalette(GetDarkPalette());
-	SetLanguageDefinition(LanguageDefinition::HLSL());
+	SetLanguageDefinition(LanguageDefinition::GLSL());
 	mLines.push_back(Line());
 }
 
-TextEditor::TextEditor(const char* fileToEdit) : fileToEdit(fileToEdit) { 
+TextEditor::TextEditor(const char* fileToEdit) : TextEditor() { 
 	
-	TextEditor();
+
+	this->fileToEdit = fileToEdit;
+	
 
 	std::ifstream t(fileToEdit);
-	if (t.good())
-	{
-		std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-		SetText(str);
-	}
+
+	std::cout << "test" <<std::endl;
+	std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+	SetText(str);
 	
 }
 
@@ -75,72 +76,11 @@ TextEditor::~TextEditor()
 
 void TextEditor::render() {
 
-	    auto cpos = GetCursorPosition();
-		ImGui::Begin("Text Editor Demo", nullptr, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_MenuBar);
-		ImGui::SetWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
-		if (ImGui::BeginMenuBar())
-		{
-			if (ImGui::BeginMenu("File"))
-			{
-				if (ImGui::MenuItem("Save"))
-				{
-					auto textToSave = GetText();
-					/// save text....
-				}
-				// if (ImGui::MenuItem("Quit", "Alt-F4"))
-				// 	break;
-				ImGui::EndMenu();
-			}
-			if (ImGui::BeginMenu("Edit"))
-			{
-				bool ro = IsReadOnly();
-				if (ImGui::MenuItem("Read-only mode", nullptr, &ro))
-					SetReadOnly(ro);
-				ImGui::Separator();
+	    // auto cpos = GetCursorPosition();
+		ImGui::Begin(fileToEdit, nullptr, ImGuiWindowFlags_HorizontalScrollbar);
 
-				if (ImGui::MenuItem("Undo", "ALT-Backspace", nullptr, !ro && CanUndo()))
-					Undo();
-				if (ImGui::MenuItem("Redo", "Ctrl-Y", nullptr, !ro && CanRedo()))
-					Redo();
+		Render("fileToEdit");
 
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("Copy", "Ctrl-C", nullptr, HasSelection()))
-					Copy();
-				if (ImGui::MenuItem("Cut", "Ctrl-X", nullptr, !ro && HasSelection()))
-					Cut();
-				if (ImGui::MenuItem("Delete", "Del", nullptr, !ro && HasSelection()))
-					Delete();
-				if (ImGui::MenuItem("Paste", "Ctrl-V", nullptr, !ro && ImGui::GetClipboardText() != nullptr))
-					Paste();
-
-				ImGui::Separator();
-
-				if (ImGui::MenuItem("Select all", nullptr, nullptr))
-					SetSelection(TextEditor::Coordinates(), TextEditor::Coordinates(GetTotalLines(), 0));
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("View"))
-			{
-				if (ImGui::MenuItem("Dark palette"))
-					SetPalette(TextEditor::GetDarkPalette());
-				if (ImGui::MenuItem("Light palette"))
-					SetPalette(TextEditor::GetLightPalette());
-				if (ImGui::MenuItem("Retro blue palette"))
-					SetPalette(TextEditor::GetRetroBluePalette());
-				ImGui::EndMenu();
-			}
-			ImGui::EndMenuBar();
-		}
-
-		ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, GetTotalLines(),
-			IsOverwrite() ? "Ovr" : "Ins",
-			CanUndo() ? "*" : " ",
-			GetLanguageDefinition().mName.c_str(), fileToEdit);
-
-		Render("TextEditor");
         ImGui::End();
 
 }

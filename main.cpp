@@ -8,6 +8,8 @@
 
 #include "vendor/ImGuiColorTextEdit/TextEditor.h"
 
+#include "renderer.hpp"
+
 
 #define DEBUG
 
@@ -40,6 +42,7 @@ bool checkFPS() { if (glfwGetTime() - lastTime <= 1./280. ) { return false; } el
 
 int main() {
 
+    // for (auto* )
 
     Atlas atlas("assets/media/");
     atlas.link(shader);
@@ -105,14 +108,13 @@ int main() {
 
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
-    // TextEditor editor("C:/Users/ebkc/Documents/testmake/web/index.html");
-    TextEditor editor;
-    
-    editor.fileToEdit = "C:/Users/ebkc/Documents/testmake/web/index.html";
+    TextEditor editor("C:/Users/ebkc/Documents/testmake/assets/shader/smartmap.frag");
+    TextEditor editor2("C:/Users/ebkc/Documents/testmake/assets/shader/smartmap.vert");
 
-    std::ifstream t(editor.fileToEdit);
-    std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
-	editor.SetText(str);
+    auto* aaa = new GUI::Node{"aaa"};
+    aaa->tree.push_back(new GUI::Node{"bbb"});
+    aaa->tree.push_back(new GUI::Node{"ccc"});
+
 
     while(true) window->render([&]() {
 
@@ -157,8 +159,12 @@ int main() {
 
         ImGui::End();
 
-
         editor.render();
+        editor2.render();
+
+        gui->RenderTree(aaa);
+
+        //returns the node's rectangle
 
         gui->render();
 
