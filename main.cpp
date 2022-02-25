@@ -1,170 +1,110 @@
-/*
-
-    SMARTMAP v1 beta
-
-                        */
-
-#include "smartmap.hpp"
-
-#include "vendor/ImGuiColorTextEdit/TextEditor.h"
-
-#include "renderer.hpp"
 
 
-#define DEBUG
+#include "src/window.hpp"
+#include "src/gui.hpp"
 
-ArtnetDevice artnet;
 
-int WIDTH = 600, HEIGHT = 300;
-
-int MAT_X = 5; 
-int MAT_Y = 2;
-
-auto* window = new GL::Window(false,WIDTH,HEIGHT,1920-WIDTH);
+auto* window = new GL::Window(false,800,400,1120); 
 
 auto*  gui = new GUI{window->window}; 
 
-auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
-auto* blur_x = new ShaderProgram({"assets/shader/blur_x.comp"});
-auto* blur_y = new ShaderProgram({"assets/shader/blur_x.comp"});
+
+struct Attribute {
+
+    const char * name;
+
+    float val;
+
+    void gui() { ImGui::SliderFloat(name, &val, 0, 1); }
+
+};
+
+struct Effector {
+
+    const char * name;
+    
+    const char* snippet;
+
+    std::set<Attribute> attr;
+
+};
+
+
+struct TreeNode {
+
+    const char * name;
+    
+    std::set<TreeNode> tree;
+
+  };
+
+//   struct GLObject : public TreeNode {
+
+//     // Mesh mesh;
+//     // Shader shader;
+    
+//     std::set<Attribute> attr;
+
+//     Attribute& mesh_src = (attr.insert(Attribute()).first);
+//     std::set<Effector> effectors;
+
+//   };
+
+ TreeNode* current = nullptr;
  
-Quad draw2D;
-void Draw2D(const Texture& tex) {
+//   void RenderTree(TreeNode* n) {
 
-    glBindTexture(GL_TEXTURE_2D, tex.id);
-    shader->use();
-    draw2D.draw();
+//       ImGui::SetNextItemOpen(true, ImGuiCond_Once);
 
-}
+//       bool tn = ImGui::TreeNode(n->name);
 
-double lastTime = glfwGetTime();
-bool checkFPS() { if (glfwGetTime() - lastTime <= 1./280. ) { return false; } else { lastTime = glfwGetTime(); return true; } }
+//       if (ImGui::IsItemClicked()) current = n;
+
+//       if (tn) {
+
+//           for (TreeNode* child : n->tree) RenderTree(child);
+            
+//           ImGui::TreePop();
+          
+//       }
+
+//   }
+
 
 int main() {
 
-    // for (auto* )
-
-    Atlas atlas("assets/media/");
-    atlas.link(shader);
-    
-    // int FW = 1920*MAT_X, FH = 1200*MAT_Y; // GOOD 
-    int FW = WIDTH*MAT_X, FH = HEIGHT*MAT_Y; // TEST ONLY !!!REMOVE FOR RELEASE
-
-    Texture passBuf(FW,FH, GL_RGBA8);
-
-    Texture outBuf(FW,FH, GL_RGBA8); 
-    FrameBuffer outFB(outBuf);
-    Texture outBlur(FW*.5,FH*.5, GL_RGBA8); 
-
-    FrameBuffer winFB(0);
-
-    VBO quad;
-    quad.addQuad(1); // UID #1 in shader (feedback)
-    // quad.addQuad(2); // UID #2 in shader (fixture)
-
-    VBO quad2;
-    quad2.addQuad(2); // UID #2 in shader (fixture)
-
-    auto mat = matrice(MAT_X,MAT_Y);
-    UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
-    matriceUBO.link(shader);
-    matriceUBO.send();
-
-    Fixture fixtures[25];
-    int address = 1;
-
-    for (auto f:fixtures) address += f.DMXpatch(1,address, {
-    
-        "Color.Red",
-        "Color.Green",
-        "Color.Blue",
-        "Position.Horizontal",
-        "Position.Vertical",
-        "Gobo.ID",
-        "Gobo.Fx1",
-        "Gobo.Fx2",
-        "Gobo.Fx3",
-        "Strobe",
-        "Feedback",
-        "Orientation",
-        "Focus.Horizontal",
-        "Focus.Vertical"
-        
-    });
-
-    UBO fixtureUBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
-    fixtureUBO.link(shader);
-    fixtureUBO.send();
-
-    // auto count = gui->add(new GUI::Counter("count"), shader);
-    // auto blur = gui->add(new GUI::SliderF("blurv",   1, .0,  0,  1));
-    // blur->links.insert(blur_x);
-    // blur->links.insert(blur_y);
-
-    glEnable(GL_CLIP_DISTANCE0);
-    glEnable(GL_CLIP_DISTANCE1);
-    glEnable(GL_CLIP_DISTANCE2);
-    glEnable(GL_CLIP_DISTANCE3);
-
-    shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
     TextEditor editor("C:/Users/ebkc/Documents/testmake/assets/shader/smartmap.frag");
     TextEditor editor2("C:/Users/ebkc/Documents/testmake/assets/shader/smartmap.vert");
 
-    auto* aaa = new GUI::Node{"aaa"};
-    aaa->tree.push_back(new GUI::Node{"bbb"});
-    aaa->tree.push_back(new GUI::Node{"ccc"});
-
-
+    auto* aaa = new TreeNode{"aaa"};
+    current = aaa;
+    // current->tree.push_back(new TreeNode{"bbb"});
+    // current->tree.push_back(new TreeNode{"ccc"});
+    // current->tree[0]->tree.push_back(new TreeNode{"ddd"});
+ 
     while(true) window->render([&]() {
 
-        artnet.run();
-
-        // if (!checkFPS()) return;
-
-        // CLUSTER RENDER LOOP
-
-        outFB.clear(); // thus bind
-
-        fixtureUBO.send();
-
-        passBuf.bind();
-        shader->use();
-
-        glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        quad.draw(MAT_X*MAT_Y); // quantity is instances count in shader 
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        quad2.draw(MAT_X*MAT_Y); // quantity is instances count in shader 
-
-        passBuf.copy(outBuf);
-
-        glBindImageTexture(0, outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-        glBindImageTexture(1, outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-        blur_x->use(FW*.5/16,FH*.5/16);
-        blur_y->use(FW*.5/16,FH*.5/16);
-        glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
-
-        winFB.clear(); // thus bind
-
-        // ID 0
-        Draw2D(outBlur);
-
-        // // END OF LOOP
-    
         gui->newframe();  
+
         ImGui::Begin("Uniforms");
         ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-
-        for (auto a:fixtures[0].attributes->childrens) a->gui();
 
         ImGui::End();
 
         editor.render();
-        editor2.render();
 
-        gui->RenderTree(aaa);
+        // RenderTree(aaa);
 
-        //returns the node's rectangle
+        std::string t_name = current->name;
+        t_name += "###attributes";
+
+        ImGui::Begin(t_name.c_str());
+        
+
+        if (current) for (auto& a : current->attr) a.gui();
+
+        ImGui::End();
 
         gui->render();
 

@@ -3,6 +3,10 @@
 
 #include "globals.hpp"
 
+
+
+#include "vendor/ImGuiColorTextEdit/TextEditor.h"
+
 namespace GL {
 
 

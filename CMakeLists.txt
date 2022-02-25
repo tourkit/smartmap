@@ -8,25 +8,13 @@ add_executable(SmartMap
 
     main.cpp
     
-    src/texture.cpp
     src/window.cpp
-    src/shader.cpp
-    src/framebuffer.cpp
-    src/vbo.cpp
-    src/ubo.cpp
-    src/atlas.cpp
-
-    src/device/artnet.cpp
-    
-    src/file.cpp
     
     src/gui.cpp
 
     include/vendor/imgui/imgui.cpp
     include/vendor/imgui/imgui_widgets.cpp
-    include/vendor/imgui/imgui_draw.cpp
-    # include/vendor/imgui/imgui_impl_glfw.cpp
-    # include/vendor/imgui/imgui_impl_opengl3.cpp    
+    include/vendor/imgui/imgui_draw.cpp  
     include/vendor/imgui/imgui_tables.cpp
     include/vendor/imgui/backends/imgui_impl_win32.cpp    
     include/vendor/imgui/backends/imgui_impl_opengl3.cpp    
@@ -34,17 +22,6 @@ add_executable(SmartMap
     include/vendor/ImGuiColorTextEdit/TextEditor.cpp 
     
     include/vendor/gl3w/src/gl3w.c
-
-    include/vendor/RectangleBinPack/GuillotineBinPack.cpp
-    include/vendor/RectangleBinPack/Rect.cpp
-
-    include/vendor/ofxLibArtnet/artnet/artnet.c
-    include/vendor/ofxLibArtnet/artnet/misc.c
-    include/vendor/ofxLibArtnet/artnet/network.c
-    include/vendor/ofxLibArtnet/artnet/receive.c
-    include/vendor/ofxLibArtnet/artnet/tod.c
-    include/vendor/ofxLibArtnet/artnet/transmit.c
-    include/vendor/ofxLibArtnet/ofxLibArtnet.cpp
 
     
 
@@ -59,11 +36,6 @@ include(CPack)
 
 file(COPY assets DESTINATION .)
 
-configure_file(assets/shader/blur_x.comp assets/shader/ COPYONLY)
-configure_file(assets/shader/blur_y.comp assets/shader/ COPYONLY)
-configure_file(assets/shader/smartmap.vert assets/shader/ COPYONLY)
-configure_file(assets/shader/smartmap.frag assets/shader/ COPYONLY)
-
 target_include_directories(SmartMap PRIVATE
     .
     src
@@ -77,8 +49,6 @@ target_link_libraries(SmartMap PRIVATE
     OpenGL::GL
     glfw
     ws2_32
-    netapi32
-    dpnet
     iphlpapi
     imm32
     dwmapi

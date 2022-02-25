@@ -47,36 +47,6 @@ void GUI::render() {
 
 }
 
-void GUI::draw() {
-    
-  newframe();
-
-  ImGui::Begin("Uniforms");
-  ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-
-  for (auto e:elements) {
-    
-    e.get()->draw();
-    e.get()->send();
-
-  }
-
-  ImGui::End();
-
-  render();
-  
-}
- 
-Ref<GUI::Element> GUI::add(Element* elem, ShaderProgram* shader)  {
-
-    elements.push_back(Ref<Element>(elem));
-    if (shader) elements.back()->links.insert(shader);
-    return elements.back();
-
-}
-
-///////////////////////////////////////
-
 
 std::vector<GLenum> GL_BLEND_MODES = {
 
