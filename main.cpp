@@ -102,7 +102,7 @@ int main() {
         ImGui::Begin(t_name.c_str());
         
 
-        if (current) for (auto& a : current->attr) a.gui();
+        // if (current) for (auto& a : current->attr) a.gui();
 
         ImGui::End();
 
