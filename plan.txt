@@ -1,0 +1,151 @@
+
+
+
+struct create
+
+struct TreeNode {
+
+    string name;
+
+    public inline vector<TreeNode*> pool 
+
+    bool canHold();
+
+};
+
+Attribute
+- min {number:min}
+- max {number:max}
+- default {number:default}
+- highlite {number:highlite}
+- programmer {number:programmer}
+- fade {number:fade} ??
+- delay {number:delay} ??
+
+MamaNode are objects, they can have inceptive sub mamanodes that works exactly the same way 
+
+SmartMap Arborescence // each node has a +name that can be auto from something inside
+
+    Project Config
+
+        + Show name {string:name}
+        + framerate {number:hz}
+        + autosave {checkbox:save}
+        
+    Repository [path] [update] [+]
+        
+        File / Folder 
+        + path {string:path}
+        
+        Image
+        + width {number:width}
+        + height {number:height}
+
+        Media
+        + codec {string:codec}
+        + length {time:length}
+
+        Effector EDITABLE
+        + [attributes] (auto from code)
+        + code
+        
+        Geometry EDITABLE
+        + indices {table:indices}
+        + vertices {table:vertices}
+        
+        Showfile
+
+    Attr Links [filter (babynode,..)] [+] COURTESY
+
+        Link // one per link to reason ?
+        + UID {number:uid}
+        + from {string:path (programmer, preset, controler, input, ...)}
+        + phase <---pfaaa <- how ? {degree:phase}
+        + [operators] ( value ) is operator== marker ?
+        + to attr
+        
+    Inputs [+]
+
+        Packet (UDP, TCP, MIDI, OSC, ...) 
+        + structure in a table *_*
+        + conditional check list
+
+        Artnet
+        + chan[512]
+
+        Timecode
+        + audio device
+        + fps
+        + position {time:position}
+
+    Controllers [+]
+
+        Exposed paraterer
+        + [markers]
+            + position
+            + programerstate
+            + function
+        + position
+        + value
+        + clock
+            + playmode (>, < , ><)
+            + looping
+            + speed
+            + length
+
+    Renderers [+]
+
+        Renderer
+        + [geometry]
+        + [effectors] suggest PSR,color,...
+
+        GeometryCloner
+        + instances
+        + instancePhase // or phasable effectors ?
+        + [geometry]
+        + [effectors]
+        
+        RendererCloner <-- hard
+
+        Compo
+        + [renderers]
+        + [effectors]
+
+        Reference
+        + matrice[id]
+
+        Group
+        + + offset in child [effectors] ? how ? 
+
+        Image 
+        + path
+        + dimensions
+
+        Video
+        + posiiton
+
+        VideoMixer
+
+        Output <- here ?!!!
+
+    Drawcalls (is updated on Renderers update, actiavable voodoo magic mode) [+]
+
+        Drawcall
+        + vertices
+        + indices
+        + Fragment shader
+        + Vertex shader
+        + matrice[...]
+
+    Video Outputs (from DC->matrice[ID] data) [+]
+        standard video output dlDraw 
+        NDI video output glReadPixel
+        CITP video output glReadPixel
+        ArtNet video output glReadPixel
+
+
+    BabyNode ATtributes window
+
+    BabyNode Presets window
+
+    Attribute Inspector Window ??
