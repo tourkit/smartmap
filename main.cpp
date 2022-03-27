@@ -4,6 +4,8 @@
 #include "src/gui.hpp"
 
 
+
+
 auto* window = new GL::Window(false,800,400,1120); 
 
 auto*  gui = new GUI{window->window}; 
@@ -74,8 +76,8 @@ struct TreeNode {
 int main() {
 
 
-    TextEditor editor("C:/Users/ebkc/Documents/testmake/assets/shader/smartmap.frag");
-    TextEditor editor2("C:/Users/ebkc/Documents/testmake/assets/shader/smartmap.vert");
+    TextEditor editor("C:/projects/cpp/smartmap/smartmap/assets/shader/smartmap.frag");
+    TextEditor editor2("C:/projects/cpp/smartmap/smartmap/assets/shader/smartmap.vert");
 
     auto* aaa = new TreeNode{"aaa"};
     current = aaa;
