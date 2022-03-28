@@ -1,38 +1,15 @@
-
-
+#include "imgui/imgui.h"
 #include "src/window.hpp"
-#include "src/gui.hpp"
+#include "src/gui.hpp" 
+#include "src/gui/ShadertoyWindow.h" 
+#include "src/gui/TreeviewWindow.h" 
 
-
-
-
+ 
 auto* window = new GL::Window(false,800,400,1120); 
 
-auto*  gui = new GUI{window->window}; 
+auto* gui = new GUI{window->window}; 
 
-
-struct Attribute {
-
-    const char * name;
-
-    float val;
-
-    void gui() { ImGui::SliderFloat(name, &val, 0, 1); }
-
-};
-
-struct Effector {
-
-    const char * name;
-    
-    const char* snippet;
-
-    std::set<Attribute> attr;
-
-};
-
-
-struct TreeNode {
+struct TreeNode { 
 
     const char * name;
     
@@ -40,73 +17,44 @@ struct TreeNode {
 
   };
 
-//   struct GLObject : public TreeNode {
-
-//     // Mesh mesh;
-//     // Shader shader;
-    
-//     std::set<Attribute> attr;
-
-//     Attribute& mesh_src = (attr.insert(Attribute()).first);
-//     std::set<Effector> effectors;
-
-//   };
-
- TreeNode* current = nullptr;
+ TreeNode* current = nullptr; 
  
-//   void RenderTree(TreeNode* n) {
 
-//       ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+struct TEST_GUI : GUI::Renderer {
 
-//       bool tn = ImGui::TreeNode(n->name);
+    void draw() override { 
 
-//       if (ImGui::IsItemClicked()) current = n;
+        // ImGui::Begin("TEST");
+        // ImGui::Text("hello world");
+        // ImGui::BeginChild("child", ImVec2(0,50));
+        // ImGui::Text("youpi");
+        // ImGui::EndChild();
+        // ImGui::BeginChild("child2", ImVec2(0,50));
+        // ImGui::Text("youpi2");
+        // ImGui::EndChild();
+        // ImGui::End();
 
-//       if (tn) {
+     }
 
-//           for (TreeNode* child : n->tree) RenderTree(child);
-            
-//           ImGui::TreePop();
-          
-//       }
-
-//   }
-
+} test_gui;
 
 int main() {
 
+    // ShadertoyWindow shadertoy1("smartmap"); 
+    TreeviewWindow treeview1;
 
-    TextEditor editor("C:/projects/cpp/smartmap/smartmap/assets/shader/smartmap.frag");
-    TextEditor editor2("C:/projects/cpp/smartmap/smartmap/assets/shader/smartmap.vert");
+    treeview1.addNode(new GroupNode{"Repository"});
+    auto* renderers = treeview1.addNode(new GroupNode{"Renderers"});
+    renderers->addNode(new ShadertoyWindow("smartmap"));
+    auto* dc = treeview1.addNode(new GroupNode{"DrawCalls"});
+    dc->addNode(new Node{"DrawCall1"});
+    dc->addNode(new GroupNode{"DrawCall2"});
+    dc->addNode(new GroupNode{"DrawCall3"});
 
-    auto* aaa = new TreeNode{"aaa"};
-    current = aaa;
-    // current->tree.push_back(new TreeNode{"bbb"});
-    // current->tree.push_back(new TreeNode{"ccc"});
-    // current->tree[0]->tree.push_back(new TreeNode{"ddd"});
- 
+
     while(true) window->render([&]() {
 
-        gui->newframe();  
-
-        ImGui::Begin("Uniforms");
-        ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
-
-        ImGui::End();
-
-        editor.render();
-
-        // RenderTree(aaa);
-
-        std::string t_name = current->name;
-        t_name += "###attributes";
-
-        ImGui::Begin(t_name.c_str());
-        
-
-        // if (current) for (auto& a : current->attr) a.gui();
-
-        ImGui::End();
+        // ImGui::ShowDemoWindow();
 
         gui->render();
 

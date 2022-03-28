@@ -5,7 +5,6 @@
 
 
 
-#include "vendor/ImGuiColorTextEdit/TextEditor.h"
 
 namespace GL {
 

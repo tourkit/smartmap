@@ -12,6 +12,7 @@ add_executable(SmartMap
     
     src/gui.cpp
 
+    include/vendor/imgui/imgui_demo.cpp
     include/vendor/imgui/imgui.cpp
     include/vendor/imgui/imgui_widgets.cpp
     include/vendor/imgui/imgui_draw.cpp  

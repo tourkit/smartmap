@@ -16,6 +16,10 @@
 
 struct GUI {
 
+  struct Renderer { Renderer() { renderers.push_back(this); } virtual void draw() = 0; };
+
+  static inline std::vector<Renderer*> renderers;
+
   GUI(GLFWwindow* window);
 
   ~GUI();

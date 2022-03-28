@@ -1,17 +1,23 @@
 
 
+ability to define packing mode per object ?
 
-struct create
 
 struct TreeNode {
 
-    string name;
+    string name; // need to be conseutive ?  can be auto-ed !
 
-    public inline vector<TreeNode*> pool 
+    image icon; // need to be conseutive ?
 
-    bool canHold();
+    vector<Attributes> attributes;
+
+    public inline vector<TreeNode*> pool;
+
+    bool canHold(); // whitelist
 
 };
+
+RenderEngine Object has : GUIengine, <RenderNodes>,  <outputsNodes> 
 
 Attribute
 - min {number:min}
@@ -23,8 +29,11 @@ Attribute
 - delay {number:delay} ??
 
 MamaNode are objects, they can have inceptive sub mamanodes that works exactly the same way 
+Group is a MamaNode ?
+MamaNodes have BabyNodes; // basic inheritance systm ? is this what canHold() for ?
+All Nodes have Attributes;
 
-SmartMap Arborescence // each node has a +name that can be auto from something inside
+SmartMap Arborescence 
 
     Project Config
 
