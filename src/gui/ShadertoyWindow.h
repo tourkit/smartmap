@@ -1,28 +1,30 @@
-#ifndef SHADERTOYWINDOW_H
-#define SHADERTOYWINDOW_H
+#ifndef SHADERTOY_H
+#define SHADERTOY_H
 
 #include "gui.hpp"
 #include "TreeviewWindow.h"
 
 #include <fstream>
+#include <iostream>
 
 #include "vendor/ImGuiColorTextEdit/TextEditor.h"
+#include "src/renderer.hpp"
 
 #pragma once
 
-struct ShadertoyWindow : GUI::Renderer , Node {
+
+struct Shadertoy : Renderer, GUI::Panel {
 
     TextEditor editor[2];
 
     std::vector<float> uniforms{1,2,3};
     
-    
     ImGuiIO& io = ImGui::GetIO();
     ImFont* font = io.Fonts->AddFontFromFileTTF("C:\\projects\\cpp\\smartmap\\smartmap\\include\\vendor\\imgui\\misc\\fonts\\ProggyClean.ttf", 18);
 
+    Shadertoy(const char* label) : Renderer("ShaderToy") {
 
-
-    ShadertoyWindow(const char* label) {
+      std::cout << "new" << std::endl;
 
       editor[0] = TextEditor((std::string("assets/shader/")+label+".vert").c_str());
       editor[1] = TextEditor((std::string("assets/shader/")+label+".frag").c_str());
@@ -51,7 +53,7 @@ struct ShadertoyWindow : GUI::Renderer , Node {
 
     }
 
-    // ~ShadertoyWindow();
+    // ~Shadertoy();
 
 
 };

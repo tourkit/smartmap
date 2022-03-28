@@ -40,7 +40,7 @@ void GUI::render() {
 
   newframe();
 
-  for(auto* renderer : renderers) renderer->draw();
+  for(auto* renderer : GUIRenderer::pool) renderer->draw();
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

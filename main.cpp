@@ -3,6 +3,7 @@
 #include "src/gui.hpp" 
 #include "src/gui/ShadertoyWindow.h" 
 #include "src/gui/TreeviewWindow.h" 
+#include "src/renderer.hpp" 
 
  
 auto* window = new GL::Window(false,800,400,1120); 
@@ -20,7 +21,7 @@ struct TreeNode {
  TreeNode* current = nullptr; 
  
 
-struct TEST_GUI : GUI::Renderer {
+struct TEST_GUI : GUIRenderer {
 
     void draw() override { 
 
@@ -40,12 +41,12 @@ struct TEST_GUI : GUI::Renderer {
 
 int main() {
 
-    // ShadertoyWindow shadertoy1("smartmap"); 
     TreeviewWindow treeview1;
-
     treeview1.addNode(new GroupNode{"Repository"});
-    auto* renderers = treeview1.addNode(new GroupNode{"Renderers"});
-    renderers->addNode(new ShadertoyWindow("smartmap"));
+    treeview1.addNode(new RenderersNode);
+
+    Shadertoy shadertoy1("smartmap"); 
+
     auto* dc = treeview1.addNode(new GroupNode{"DrawCalls"});
     dc->addNode(new Node{"DrawCall1"});
     dc->addNode(new GroupNode{"DrawCall2"});

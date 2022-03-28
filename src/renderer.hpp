@@ -2,56 +2,21 @@
 #define RENDERER_H
 	
 #include <vector>
+#include "gui/TreeviewWindow.h"
 
-struct Drawcall {
-
-	static inline std::vector<Drawcall*> callstack;
-
+struct Renderer : Node { 
+	
+	static inline std::vector<Renderer*> pool; 
+	
+	Renderer(const char* label = "Renderer") : Node(label) { pool.push_back(this); }  
+	
 };
 
-// struct Attribute {
+struct RenderersNode : GroupNode {
 
+	RenderersNode() : GroupNode("Renderers") {};
 
-
-// };
-
-struct Renderer {
-
-	Renderer();
-
-	~Renderer();
-
-	std::vector<Renderer*> tree;
-
-	void execute() { 
-
-		for (auto* r:tree) r->execute();
-
-		callback();
-
-	}
-
-	virtual void callback() = 0;
-		
-};
-
-struct Object : public Renderer {
-
-	Object() {  }
-
-	~Object() {  }
-
-	// Mesh* mesh;
-
-	// ShaderSnippet* shader;
-
-	// BlendingMode blending;
-
-	void execute() {
-
-
-
-	}
+	void drawTree() override { for (auto* child : Renderer::pool) child->draw(); }
 
 };
 

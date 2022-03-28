@@ -11,7 +11,9 @@
 
         // Image icon;  
 
-        virtual void draw() { if (ImGui::TreeNode(name)) ImGui::TreePop(); }
+        virtual void drawNode() { if (ImGui::TreeNode(name)) ImGui::TreePop(); }
+
+        void draw() { drawNode(); }
 
     };
 
@@ -24,9 +26,9 @@
         template <typename T>
         T* addNode(T* node) { tree.push_back(node); return (T*)tree.back(); }
 
-        void drawTree() { for (Node* child : tree) child->draw(); }
+        virtual void drawTree() { for (Node* child : tree) child->draw(); }
 
-        void draw() override {   
+        void drawNode() override {   
             
             ImGui::SetNextItemOpen(true, ImGuiCond_Once); // always open
 
@@ -42,7 +44,8 @@
     };
 
 
-struct TreeviewWindow : GUI::Renderer, GroupNode {
+
+struct TreeviewWindow : GUIRenderer, GroupNode {
 
     TreeviewWindow() {}
 

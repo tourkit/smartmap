@@ -13,12 +13,11 @@
 #include "shader.hpp"
 
 
+struct GUIRenderer { static inline std::vector<GUIRenderer*> pool; GUIRenderer() { pool.push_back(this); } virtual void draw() = 0; };
 
 struct GUI {
 
-  struct Renderer { Renderer() { renderers.push_back(this); } virtual void draw() = 0; };
-
-  static inline std::vector<Renderer*> renderers;
+  struct Panel : GUIRenderer { void draw() override {} };  
 
   GUI(GLFWwindow* window);
 
