@@ -79,32 +79,28 @@
 
     };
 
-    
-    struct MasterNode : GroupNode {
-    
-    	MasterNode() : GroupNode("TREE_MASTER_NODE") { }  
 
-        template <typename T>
-        AnyNode* addPool(const char * label) { return addNode(new PoolNode<T>(label)); }
+struct TreeviewWindow : GUIRenderer, GroupNode {
 
-    };
-    
+    TreeviewWindow() : GroupNode("TREE_MASTER") {}
 
-struct TreeviewWindow : GUIRenderer, MasterNode {
-
-    TreeviewWindow() {}
+    template <typename T>
+    AnyNode* addPool(const char * label) { return addNode(new PoolNode<T>(label)); }
 
     void draw() { 
 
         ImGui::Begin("Tree", NULL, ImGuiWindowFlags_NoCollapse);
-       if (ImGui::BeginTable("3ways", 2, ImGuiTableFlags_RowBg))
-        {   ImGui::TableSetupColumn("Name");
-        ImGui::TableSetupColumn("On/Off");
+        
+        if (ImGui::BeginTable("3ways", 2, ImGuiTableFlags_RowBg)) {   
+           
+            ImGui::TableSetupColumn("Name");
+            ImGui::TableSetupColumn("On/Off");
             ImGui::TableHeadersRow();
 
             GroupNode::drawTree();
 
             ImGui::EndTable();
+
         }
 
         ImGui::End();
