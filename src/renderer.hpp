@@ -4,20 +4,24 @@
 #include <vector>
 #include "gui/TreeviewWindow.h"
 
-struct Renderer : Node { 
-	
-	static inline std::vector<Renderer*> pool; 
-	
-	Renderer(const char* label = "Renderer") : Node(label) { pool.push_back(this); }  
+
+struct Renderer : Node<Renderer> { 
+
+	Renderer(const char * label = "Renderer" ) : Node<Renderer>(label) {};
 	
 };
 
-struct RenderersNode : GroupNode {
+struct Repository : Node<Repository> { 
 
-	RenderersNode() : GroupNode("Renderers") {};
-
-	void drawTree() override { for (auto* child : Renderer::pool) child->draw(); }
-
+	Repository(const char * label = "Repository" ) : Node<Repository>(label) {};
+	
 };
+
+struct DrawCall : Node<DrawCall> { 
+
+	DrawCall(const char * label = "DrawCall" ) : Node<DrawCall>(label) {};
+	
+};
+
 
 #endif

@@ -11,8 +11,16 @@ GUI::GUI(GLFWwindow* window) {
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; 
 
-  
   io.Fonts->AddFontFromFileTTF("C:\\projects\\cpp\\smartmap\\smartmap\\include\\vendor\\imgui\\misc\\fonts\\DroidSans.ttf", 20);
+
+  ImGui::GetStyle().WindowBorderSize = 0;
+  ImGui::GetStyle().WindowPadding = ImVec2(0,2);
+  ImGui::GetStyle().FramePadding = ImVec2(0,0);
+  ImGui::GetStyle().CellPadding = ImVec2(0,0);
+  ImGui::GetStyle().ItemSpacing = ImVec2(0,5);
+  ImGui::GetStyle().ItemInnerSpacing = ImVec2(5,0);
+  ImGui::GetStyle().IndentSpacing = 15;
+  ImGui::GetStyle().ScrollbarSize = 20;
 
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
