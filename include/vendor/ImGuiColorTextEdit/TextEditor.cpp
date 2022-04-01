@@ -64,7 +64,6 @@ TextEditor::TextEditor(const char* fileToEdit) : TextEditor() {
 
 	std::ifstream t(fileToEdit);
 
-	std::cout << "test" <<std::endl;
 	std::string str((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
 	SetText(str);
 	

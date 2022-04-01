@@ -6,16 +6,18 @@
 
     struct AnyNode {    
 
-        const char * name;    
-        AnyNode(const char * name = "null") { this->name = name; }
+        const char * label = "null";    
 
         // Image icon;  
 
-        virtual void drawNode() {                    
+        ImVec4 color = {.1,.1,.1,.4};
+
+        virtual bool drawNode() {                    
         
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
-            ImGui::TreeNode(name); 
+            // ImGui::TableNextRow();
+            // ImGui::TableNextColumn();
+            // ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(color));
+            return ImGui::TreeNode(label); 
         
         }
 
@@ -28,13 +30,11 @@
 
         static inline std::vector<T*> pool; 
 	
-    	Node(const char * label) : AnyNode(label) { pool.push_back((T*)this); }  
+    	Node(const char * label) { pool.push_back((T*)this); }  
     
     };
 
     struct GroupNode : public AnyNode {
-
-        GroupNode(const char * name = "Group") : AnyNode(name) {};
 
         std::vector<AnyNode*> tree;
     
@@ -43,21 +43,28 @@
 
         virtual void drawTree() { for (AnyNode* child : tree) child->draw(); }
 
-        void drawNode() override {   
+        bool drawNode() override {   
             
             ImGui::SetNextItemOpen(true, ImGuiCond_Once); // always open
 
             // if (ImGui::IsItemClicked()) current = this;
 
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
+            // ImGui::TableNextRow();
+            // ImGui::TableNextColumn();
 
-            bool tn = ImGui::TreeNode(name);
+            // ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(color));
+
+            // ImU32 cell_bg_color = ImGui::GetColorU32(color);
+            // ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, cell_bg_color);
+          
+
+            bool tn = AnyNode::drawNode();
             
-                    ImGui::TableNextColumn();
-                    ImGui::Checkbox("", &tn);
-                    ImGui::SameLine();
-                    ImGui::SmallButton("+");
+            // ImGui::TableNextColumn();
+  
+            // ImGui::Checkbox("", &tn);
+            // ImGui::SameLine();
+            // ImGui::SmallButton("+");
 
             if (tn) {
 
@@ -66,14 +73,14 @@
 
             }
 
+            return tn;
+
         }
 
     };
 
     template <typename T>
     struct PoolNode : public GroupNode {
-
-        PoolNode(const char * label = "PoolNode" ) : GroupNode(label) {};
 
 	    void drawTree() override { for (auto* child : T::pool) child->drawNode(); }
 
@@ -82,26 +89,30 @@
 
 struct TreeviewWindow : GUIRenderer, GroupNode {
 
-    TreeviewWindow() : GroupNode("TREE_MASTER") {}
-
     template <typename T>
-    AnyNode* addPool(const char * label) { return addNode(new PoolNode<T>(label)); }
+    AnyNode* addPool(const char * label) { 
+        
+        auto n = new PoolNode<T>();
+        n->label = label;
+        return addNode(n); 
+    
+    }
 
     void draw() { 
 
         ImGui::Begin("Tree", NULL, ImGuiWindowFlags_NoCollapse);
-        
-        if (ImGui::BeginTable("3ways", 2, ImGuiTableFlags_RowBg)) {   
+
+        // if (ImGui::BeginTable("3ways", 2, ImGuiTableFlags_RowBg)) {   
            
-            ImGui::TableSetupColumn("Name");
-            ImGui::TableSetupColumn("On/Off");
-            ImGui::TableHeadersRow();
+        //     ImGui::TableSetupColumn("Name");
+        //     ImGui::TableSetupColumn("On/Off");
+        //     ImGui::TableHeadersRow();
 
             GroupNode::drawTree();
 
-            ImGui::EndTable();
-
-        }
+        //     ImGui::EndTable();
+        
+        // }
 
         ImGui::End();
 
