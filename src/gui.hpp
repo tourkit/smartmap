@@ -1,17 +1,16 @@
 #ifndef IMGUI_H
 #define IMGUI_H
 
-// link with:
-// imgui.cpp imgui_draw.cpp imgui_widgets.cpp imgui_impl_glfw.cpp imgui_impl_opengl3.cpp
-
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 #include "imgui/backends/imgui_impl_win32.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 #include "imgui/backends/imgui_impl_glfw.h"
 
-#include "shader.hpp"
+#include <vector>
+#include <string>
 
+#include "shader.hpp"
 
 struct GUIRenderer { static inline std::vector<GUIRenderer*> pool; GUIRenderer() { pool.push_back(this); } virtual void draw() = 0; };
 
@@ -26,8 +25,10 @@ struct GUI {
   void newframe();
   void render();
 
-  static inline GLint GL_BLEND_MODE_IN = 5;
-  static inline GLint GL_BLEND_MODE_OUT = 2;
+  void loadFont(std::string filename, size_t size = 12);
+
+  static inline int GL_BLEND_MODE_IN = 5;
+  static inline int GL_BLEND_MODE_OUT = 2;
   static void blendTest();
 
 };
