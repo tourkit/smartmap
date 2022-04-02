@@ -3,15 +3,17 @@
 GUI::GUI(GLFWwindow* window) {
 
   const char* glsl_version = "#version 430";
+
   ImGui::CreateContext();
 
   ImGuiIO& io = ImGui::GetIO(); (void)io;
+
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
   //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;           // Enable Docking
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; 
 
-  io.Fonts->AddFontFromFileTTF("C:\\projects\\cpp\\smartmap\\smartmap\\include\\vendor\\imgui\\misc\\fonts\\DroidSans.ttf", 20);
+  loadFont("DroidSans", 20);
 
   ImGui::GetStyle().WindowBorderSize = 0;
   ImGui::GetStyle().WindowPadding = ImVec2(0,2);
@@ -24,6 +26,13 @@ GUI::GUI(GLFWwindow* window) {
 
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
+
+}
+
+void GUI::loadFont(std::string filename, size_t size) {
+
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  io.Fonts->AddFontFromFileTTF( ("C:\\projects\\cpp\\smartmap\\smartmap\\include\\vendor\\imgui\\misc\\fonts\\"+filename+".ttf").c_str(), size);
 
 }
 
