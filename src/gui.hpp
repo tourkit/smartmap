@@ -33,4 +33,37 @@ struct GUI {
 
 };
 
+struct GUIWidget : GUIRenderer {
+
+};
+struct GUITable : GUIWidget {
+
+  std::vector<std::string> columns;
+
+  void addColumn(std::string column) {
+
+    columns.push_back(column);
+
+  }
+
+  virtual void drawTable() {}
+
+  void draw() override {
+
+    if (ImGui::BeginTable("table", columns.size(), ImGuiTableFlags_RowBg)) {   
+
+      for (int i = 0; i < columns.size(); i++) ImGui::TableSetupColumn(columns[i].c_str());
+
+      ImGui::TableHeadersRow();
+
+      drawTable();
+    
+      ImGui::EndTable();
+
+    }
+
+  }
+
+};
+
 #endif
