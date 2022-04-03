@@ -1,8 +1,17 @@
 // add buttons/menu to title bar
+//pickable item
+// icon for item
 
-#include "imgui/imgui.h"
+
+
+// auto adjust table
+
+// pool of object singeltons
+
 #include "src/window.hpp"
 #include "src/gui.hpp" 
+
+#include "src/window.hpp"
 #include "src/gui/ShadertoyWindow.h" 
 #include "src/gui/TreeviewWindow.h" 
 #include "src/renderer.hpp" 
@@ -26,7 +35,7 @@ struct TEST_GUI : GUIRenderer {
 } test_gui;
 
 int main() {
-
+    
     new Shadertoy("smartmap"); 
 
     TreeviewWindow tree;
