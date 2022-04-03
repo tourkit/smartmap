@@ -4,7 +4,7 @@
 #pragma once
 #include "gui.hpp"
 
-    struct AnyNode {    
+    struct AnyNode {
 
         const char * label = "null";    
 
@@ -86,8 +86,7 @@
 
     };
 
-
-struct TreeviewWindow : GUIRenderer, GroupNode {
+struct TreeviewWindow : GUITable, GroupNode {
 
     template <typename T>
     AnyNode* addPool(const char * label) { 
@@ -98,9 +97,28 @@ struct TreeviewWindow : GUIRenderer, GroupNode {
     
     }
 
-    void draw() { 
+    void drawTable() override {
 
-        ImGui::Begin("Tree", NULL, ImGuiWindowFlags_NoCollapse);
+        GroupNode::drawTree();
+
+    }
+
+    void draw() override { 
+
+        ImGui::Begin("Tree", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+
+        if (ImGui::BeginMenuBar()) {
+
+            if (ImGui::BeginMenu("Create")) {
+
+                if (ImGui::MenuItem("ShaderToy")) { std::cout << "ShaderToy" << std::endl; }
+
+                ImGui::EndMenu();
+            }
+ 
+            ImGui::EndMenuBar();
+        }
+
 
         // if (ImGui::BeginTable("3ways", 2, ImGuiTableFlags_RowBg)) {   
            
@@ -115,7 +133,6 @@ struct TreeviewWindow : GUIRenderer, GroupNode {
         // }
 
         ImGui::End();
-
     }
 
     // ~TreeviewWindow();
