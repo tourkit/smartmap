@@ -24,6 +24,8 @@ add_executable(SmartMap
     
     include/vendor/gl3w/src/gl3w.c
 
+    include/vendor/flecs/flecs.c
+
     
 
 )
