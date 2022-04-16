@@ -1,175 +1,133 @@
-// add buttons/menu to title bar
-//pickable item
-// icon for item
-
-
-
-// auto adjust table
-
-// pool of object singeltons
-
-#include "src/window.hpp"
-#include "src/gui.hpp" 
+#include <iostream>
+#include <string>
+#include <vector>
 #include "include/vendor/flecs/flecs.h"
+#include <ctime>
 
-// #include "src/gui/ShadertoyWindow.h" 
-// #include "src/gui/TreeviewWindow.h" 
-// #include "src/renderer.hpp" 
- 
-auto* window = new GL::Window(false,800,400,1120); 
-
-auto* gui = new GUI{window->window}; 
 
 flecs::world ecs;
 
-struct Node { float BGcolor[3] = {255,255,255}; };
+struct Position { float x, y; };
 
-struct TEST_GUI : GUIRenderer {
+struct Node { 
+
+float r,g,b; 
+float id; 
+
+};
+
+void inspector(flecs::entity e) {
+
+    std::cout << "----------------------" << std::endl;
+
+    e.each([e](flecs::id id){
+
+        std::string output = std::to_string((int) id) + " - ";
+        // output += id.ty
+        if (id.has_role()) {
+        
+            output += " [";
+            output += id.role_str();
+            output += ": ";
+
+            if (id.is_pair()) {
+        
+                output += id.first().name();
+                output+= "(";
+                // output+=id.first()-> //.type().str();
+                output += "), ";
+                output += id.second().str();
+
+                const void* ptr = e.get(id);
+                // static_cast<id.first().type()>(ptr)->value;
+
+            } else {
+        
+                output += id.first().name();
+            }
+            
+            output += "]";
+            
+        }else{
+        
+            output += id.str();
+        }
+        
+        std::cout <<  output  << std::endl << "----------------------" << std::endl ; 
+    });
     
-    TEST_GUI() {
+}
 
-    }
+void explorer(flecs::entity parent, std::string offset = "+ ") {
 
-    static void iterate_thru(flecs::entity e, Node& node) {
+    auto q = ecs.query_builder<>().
+        term(flecs::ChildOf, parent).
+        build();
 
-            ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(node.BGcolor[0],node.BGcolor[1],node.BGcolor[2],255));
-
-            ImGui::Text(e.name().c_str());
-
-            ImGui::PopStyleColor();
-
-    }
-
-    void draw() override { 
-
-        ImGui::ShowDemoWindow();
-
-        ImGui::Begin("Tree");
-
-        ecs.each(&iterate_thru);
-
-        ImGui::End();
-
-     }
-
-} test_gui;
-
-flecs::entity newPrefab(flecs::entity e) {
-
-    std::string name = std::string(e.name().c_str());
-    int count = ecs.count(flecs::IsA, e);
-    name += " "+std::to_string(count+1); //cant if, prefab allready named
-    return ecs.entity(name.c_str()).is_a(e);
+    std::cout << "[" << (int)parent << "] ";
+    std::cout << offset;
+    std::cout <<  parent.name() << "(" << parent.get<Node>()->id << ")" << std::endl;
+        
+    q.each([offset](flecs::entity e){ explorer(e, "  "+offset); });
 
 }
 
+int float_sort(float a, float b) { return (a > b) - (a < b); }
+int id_sort(flecs::entity_t e1, const Node *p1, flecs::entity_t e2,const Node *p2) { return float_sort(p1->id, p2->id); }
 
-auto renderers = ecs.prefab("Renderer")
-    .set<Node>({39,160,25});
+int main(int, char *[]) {
 
-auto drawcalls = ecs.prefab("Drawcall")
-    .set<Node>({160,52,25});
+    ecs.component<Position>()
+        .member<float>("x")
+        .member<float>("y");
 
+    auto test = ecs.prefab().
+        set_override<Position>({}).
+        set_override<Node>({1.0f,1.0f,1.0f})
+        ;
 
-struct Vertice { float coord[2]; };
-struct Indice { unsigned int id[3]; };
+    auto ccc = ecs.entity("ooo").add(flecs::IsA,test);
+    ecs.entity("ccc1").add(flecs::IsA, test).add(flecs::ChildOf, ccc);
+    auto bbb = ecs.entity("bbb").add(flecs::IsA,test);
+    ecs.entity("ccc2").add(flecs::IsA, test).add(flecs::ChildOf, ccc);
+    ecs.entity("aaa").add(flecs::IsA,test);
 
-struct Mesh {
+    float pos[2] = {1,2};
+    ecs.each([&](flecs::entity e, Position& p){ p = {pos[0]++,pos[1]++}; });
 
-    std::vector<float> vertices = {{22,33}};
-    std::vector<Indice> indices;
+    std::cout << "----------------------" << std::endl;
 
-};
-
-struct VAO {
-
-    // vector<Mesh*> meshs;
-
-    unsigned int id, vertices, indices;
-
-    ~VAO() { glDeleteBuffers(1, &vertices); glDeleteBuffers(1, &indices); glDeleteVertexArrays(1, &id);  }
-
-    VAO() { glGenBuffers(1, &vertices); glGenBuffers(1, &indices); glGenVertexArrays(1, &id); }
-
-    void send() {
-
-        glBindVertexArray(id);
-
-        // glBindBuffer(GL_ARRAY_BUFFER, vertices);
-        // glBufferData(GL_ARRAY_BUFFER,  mesh.vertices.size()*sizeof(Vertice) , &mesh.vertices[0], GL_DYNAMIC_DRAW );
-
-        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indices);
-        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh.indices.size()*sizeof(Indice) , &mesh.indices[0], GL_DYNAMIC_DRAW );
-
-        // glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertice), (GLvoid *) 0);
-        // glEnableVertexAttribArray(0); 
-
-    }
-    
-};
-
-struct Drawcall {
-
-    // I -
-    //gl VAO , then VAO *ing to Mesh
-    //gl ShaderProgram
-
-    // II - 
-    //gl UBO
-
-    // III -
-    //gl inBuffers
-    //gl OutBuffer
-
-
-};
+    auto q = ecs.query_builder<Node>().
+        term(flecs::ChildOf, flecs::Wildcard).oper(flecs::Not).
+        term<flecs::Component>().oper(flecs::Not).
+        term(flecs::Module).oper(flecs::Not).
+        order_by(id_sort).
+        build();
 
 
 
-using namespace std;
-int main() {
-
-    auto dc1 = ecs.entity("dc1")
-        .is_a<Drawcall>()
-        .set<VAO>({});
-
-    ecs.entity().set<Vertice>({0,0}).child_of(dc1);
-    ecs.entity().set<Vertice>({0,1}).child_of(dc1);
-    ecs.entity().set<Vertice>({1,0}).child_of(dc1);
-    ecs.entity().set<Vertice>({1,1}).child_of(dc1);
-
-    newPrefab(renderers);
-    newPrefab(renderers);
-    newPrefab(drawcalls);
-    newPrefab(renderers);
-
-
-    // Iterathe thru pair
-ecs.filter_builder<Vertice>().term(flecs::ChildOf, dc1).build().each([](flecs::entity e, Vertice& v) { cout << e.str() << endl; });
-
-    // ecs.each(ecs.pair(flecs::ChildOf, dc1), [](flecs::entity e) { cout << e.str() << " - "  << e.get<Vertice>().coord[0] << endl; });
-    // ecs.each([](flecs::entity e, Vertice& vertice) { cout << e.str() << " - " << vertice.coord[0] << endl; });
-    // ecs.each(ecs.is_a(flecs::ChildOf), [](flecs::entity e) { cout << e.str() << endl; });
-
-    // Iterathe thru children
-    // dc1.children([](flecs::entity e) { ... });
-
-
-
-    cout << ecs.count(flecs::ChildOf, dc1);
-    // ecs.each([](flecs::entity e, flecs::pair<flecs:Parent, World> p)
-
-    while(true) window->render([&]() { 
+ ecs.trigger<Node>("OnSetPosition")
         
-        ecs.each([](flecs::entity e, VAO& dc) {
+        .event(flecs::OnSet)
+        .each([](flecs::entity e, Node& n) { std::cout << e.name()  << " has been set" << std::endl; } );
 
-
-
-        });
+        std::cout << "aaaaaaaa" << std::endl;
+        // bbb.get_mut<Node>()->id = -2.0f;
+        bbb.modified<Node>();
+        // bbb.set<Node>({1,1,1});
         
-        gui->render();
-        
-         });
+        std::cout << "bbbbbbbb" << std::endl;
 
-} 
+
+
+    q.each([](flecs::entity e, Node& n) { explorer(e); });
+
+
+        
+    // auto query = ecs.filter_builder<>().term(flecs::ChildOf, flecs::IsA).oper(flecs::Not).build();
+    // query.each([](flecs::iter& it, size_t i) { std::cout << it.entity(i).str() << std::endl; });
+}
+
+
+
 
