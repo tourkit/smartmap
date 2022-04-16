@@ -1,133 +1,115 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "include/vendor/flecs/flecs.h"
 #include <ctime>
 
+#include "include/vendor/entt/entt/src/entt/entt.hpp"
 
-flecs::world ecs;
 
-struct Position { float x, y; };
+#define NO_GLM 1
+#ifndef NO_GLM
+#include "include/vendor/glm/glm/glm.hpp"
+using vec2 = glm::vec2;
+using vec3 = glm::vec3;
+using vec4 = glm::vec4;
+#else
+struct vec2 {vec2(float x, float y) : data(x,y) { } float data[2]; float& x = data[0]; float& y = data[1]; };
+struct vec3 { vec3(float x, float y, float z) : data(x,y,z) { } float data[3]; float& x = data[0]; float& y = data[1]; float& z = data[2]; float& r = data[0]; float& g = data[1]; float& b = data[2]; };
+struct vec4 { vec4(float x, float y, float z, float w) : data(x,y,z,w) { } float data[4]; float& x = data[0]; float& y = data[1]; float& z = data[2]; float& w = data[3]; float& r = data[0]; float& g = data[1]; float& b = data[2]; float& a = data[3]; };
+#endif
+using uint = uint32_t;
+using str = std::string;
+#define to_str(x) std::to_string(x)
 
-struct Node { 
+struct AnyTag {};
+#define EZ_TAG(NAME,TYPE,DEFAULT) \
+struct NAME : Tag<TYPE> { NAME(TYPE value = DEFAULT) : Tag(value) {} };
+template <typename T>
+struct Tag : AnyTag { 
+    
+    T value; 
 
-float r,g,b; 
-float id; 
+    static inline std::vector<AnyTag*> pool;
+
+    Tag(T value = T()) : value(value) { pool.push_back(this); /*std::cout << registry. */ }
+    operator T& () { return value; }
+    void operator=(const T& value) { this->value = value; }
+    T operator-(const Tag<T>& other) { return other.value - value; }
+    T operator+(const Tag<T>& other) { return other.value + value; }
+    bool operator<(const Tag<T>& other) { return other.value < value; }
+    bool operator>(const Tag<T>& other) { return other.value < value; }
+
+    const char* type() { return typeid(T).name(); } 
+    const char* str() { return std::to_string(value).c_str(); } 
 
 };
 
-void inspector(flecs::entity e) {
+entt::registry registry; 
 
-    std::cout << "----------------------" << std::endl;
+EZ_TAG(UID, uint32_t, registry.view<UID>().size());
 
-    e.each([e](flecs::id id){
+EZ_TAG(Label, std::string, "Entity "+to_str((int)registry.view<Label>().size()));
 
-        std::string output = std::to_string((int) id) + " - ";
-        // output += id.ty
-        if (id.has_role()) {
-        
-            output += " [";
-            output += id.role_str();
-            output += ": ";
+EZ_TAG(RGB, vec3, vec3(1,1,1));
 
-            if (id.is_pair()) {
-        
-                output += id.first().name();
-                output+= "(";
-                // output+=id.first()-> //.type().str();
-                output += "), ";
-                output += id.second().str();
+EZ_TAG(RGBA, vec4, vec4(1,1,1,1));
 
-                const void* ptr = e.get(id);
-                // static_cast<id.first().type()>(ptr)->value;
+EZ_TAG(Position, vec3, vec3(1,1,1));
 
-            } else {
-        
-                output += id.first().name();
-            }
-            
-            output += "]";
-            
-        }else{
-        
-            output += id.str();
-        }
-        
-        std::cout <<  output  << std::endl << "----------------------" << std::endl ; 
-    });
-    
+EZ_TAG(Parent, entt::entity, entt::null);
+
+EZ_TAG(Child, entt::entity, entt::null);
+
+// struct MySquare {
+
+
+// };
+
+
+// example template with args...
+
+
+struct Entity { 
+
+    entt::entity e;
+
+    Entity(std::string label) {
+
+        e = registry.create();
+
+        add<UID>();
+        add<Label>(label.c_str());
+
+    }
+
+    template <typename T, typename... Args>
+    T& add(Args&& ... args) { return registry.emplace<T>(e, std::forward<Args>(args)...); }
+
+};
+
+int main(int argc, char *argv[]) {
+
+    // registry.on_update<UID>().connect<&test>(); // see observer as well
+
+    for (int i = 0; i < 4; i++) {
+
+        Entity e("Aaa "+std::to_string(i));
+    }
+
+    auto view = registry.view<UID>() | registry.view<Label>();
+    auto group = registry.group<>(entt::get<UID,Label>);
+
+    registry.get<UID>(group[0]) = 22;
+
+    // entt::meta<UID>().type("ooo"_hs);
+
+    group.sort<UID>([](UID& a, UID& b) { return (a.value > b.value); });
+
+    for (auto entity : group) {
+        std::cout << "entity " << (uint32_t)entity << " has UID " << registry.get<UID>(entity) << std::endl;
+    }
+    // auto group = registry.group<UID>();
+
 }
-
-void explorer(flecs::entity parent, std::string offset = "+ ") {
-
-    auto q = ecs.query_builder<>().
-        term(flecs::ChildOf, parent).
-        build();
- 
-    std::cout << "[" << (int)parent << "] ";
-    std::cout << offset;
-    std::cout <<  parent.name() << "(" << parent.get<Node>()->id << ")" << std::endl;
-        
-    q.each([offset](flecs::entity e){ explorer(e, "  "+offset); });
-
-}
-
-int float_sort(float a, float b) { return (a > b) - (a < b); }
-int id_sort(flecs::entity_t e1, const Node *p1, flecs::entity_t e2,const Node *p2) { return float_sort(p1->id, p2->id); }
-
-int main(int, char *[]) {
-
-    ecs.component<Position>()
-        .member<float>("x")
-        .member<float>("y");
-
-    auto test = ecs.prefab().
-        set_override<Position>({}).
-        set_override<Node>({1.0f,1.0f,1.0f})
-        ;
-
-    auto ccc = ecs.entity("ooo").add(flecs::IsA,test);
-    ecs.entity("ccc1").add(flecs::IsA, test).add(flecs::ChildOf, ccc);
-    auto bbb = ecs.entity("bbb").add(flecs::IsA,test);
-    ecs.entity("ccc2").add(flecs::IsA, test).add(flecs::ChildOf, ccc);
-    ecs.entity("aaa").add(flecs::IsA,test);
-
-    float pos[2] = {1,2};
-    ecs.each([&](flecs::entity e, Position& p){ p = {pos[0]++,pos[1]++}; });
-
-    std::cout << "----------------------" << std::endl;
-
-    auto q = ecs.query_builder<Node>().
-        term(flecs::ChildOf, flecs::Wildcard).oper(flecs::Not).
-        term<flecs::Component>().oper(flecs::Not).
-        term(flecs::Module).oper(flecs::Not).
-        order_by(id_sort).
-        build();
-
-
-
- ecs.trigger<Node>("OnSetPosition")
-        
-        .event(flecs::OnSet)
-        .each([](flecs::entity e, Node& n) { std::cout << e.name()  << " has been set" << std::endl; } );
-
-        std::cout << "aaaaaaaa" << std::endl;
-        // bbb.get_mut<Node>()->id = -2.0f;
-        bbb.modified<Node>();
-        // bbb.set<Node>({1,1,1});
-        
-        std::cout << "bbbbbbbb" << std::endl;
-
-
-
-    q.each([](flecs::entity e, Node& n) { explorer(e); });
-
-
-        
-    // auto query = ecs.filter_builder<>().term(flecs::ChildOf, flecs::IsA).oper(flecs::Not).build();
-    // query.each([](flecs::iter& it, size_t i) { std::cout << it.entity(i).str() << std::endl; });
-}
-
-
 
 

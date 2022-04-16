@@ -6,8 +6,6 @@ add_executable(SmartMap
 
     main.cpp
 
-    include/vendor/flecs/flecs.c
-
 )
 
 target_compile_features(SmartMap PUBLIC cxx_std_20)
