@@ -63,7 +63,7 @@ void explorer(flecs::entity parent, std::string offset = "+ ") {
     auto q = ecs.query_builder<>().
         term(flecs::ChildOf, parent).
         build();
-
+ 
     std::cout << "[" << (int)parent << "] ";
     std::cout << offset;
     std::cout <<  parent.name() << "(" << parent.get<Node>()->id << ")" << std::endl;
