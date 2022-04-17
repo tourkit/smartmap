@@ -5,37 +5,47 @@
 #include <ctime>
 
 
+using uint = uint32_t;
+using string = std::string;
+using entity = flecs::entity;
+
+int float_sort(float a, float b) { return (a > b) - (a < b); }
+
+
 flecs::world ecs;
 
 struct Position { float x, y; };
 
-struct Node { 
+struct UID { /* float id; // no need */ };
 
-float r,g,b; 
-float id; 
+// TODO
+// 1 - get pair value parametricly
 
-};
+// 2 - increment UID
 
-void inspector(flecs::entity e) {
 
-    std::cout << "----------------------" << std::endl;
+// filter query by pair value
+// access pair value ?
 
-    e.each([e](flecs::id id){
+void inspector(flecs::entity e, std::string offset = "") {
 
-        std::string output = std::to_string((int) id) + " - ";
+    e.each([e, offset](flecs::id id){
+
+        std::string output = "["+std::to_string((int) id) + "]    ";
+            output += offset;
+        
         // output += id.ty
         if (id.has_role()) {
         
-            output += " [";
             output += id.role_str();
-            output += ": ";
-
+            output += ": (";
+            
             if (id.is_pair()) {
         
                 output += id.first().name();
-                output+= "(";
-                // output+=id.first()-> //.type().str();
-                output += "), ";
+                output+= ":";
+                output += "value";
+                output += ", ";
                 output += id.second().str();
 
                 const void* ptr = e.get(id);
@@ -46,86 +56,80 @@ void inspector(flecs::entity e) {
                 output += id.first().name();
             }
             
-            output += "]";
+            output += ")";
             
         }else{
-        
+
+            output += "TAG: ";
             output += id.str();
         }
         
-        std::cout <<  output  << std::endl << "----------------------" << std::endl ; 
+        std::cout <<  output  << std::endl;// << "----------------------" << std::endl ; 
     });
     
 }
 
-void explorer(flecs::entity parent, std::string offset = "+ ") {
+void explorer(flecs::entity parent, std::string offset = "") {
 
     auto q = ecs.query_builder<>().
         term(flecs::ChildOf, parent).
         build();
  
-    std::cout << "[" << (int)parent << "] ";
+    std::cout << "[" << (int)parent << "]";
     std::cout << offset;
-    std::cout <<  parent.name() << "(" << parent.get<Node>()->id << ")" << std::endl;
-        
-    q.each([offset](flecs::entity e){ explorer(e, "  "+offset); });
+    std::cout << parent.name();
+    // std::cout <<"(" << parent.get<Node>()->id << ")" << std::endl;
+
+    if (parent.has<UID>()) std::cout << " - UID: " ;//<< parent.get<UID>()->id;
+
+    std::cout << std::endl;
+    inspector(parent, offset); 
+    std::cout << "----------------------"<< std::endl ;
+    q.each([offset](flecs::entity e){ explorer(e, "    "+offset); });
+    
+    std::cout << std::endl;
 
 }
 
-int float_sort(float a, float b) { return (a > b) - (a < b); }
-int id_sort(flecs::entity_t e1, const Node *p1, flecs::entity_t e2,const Node *p2) { return float_sort(p1->id, p2->id); }
+
+int ccount = 1;
+flecs::entity& create(std::string label = "") {
+    
+    if (!label.length()) label = "Entity ";// + std::to_string(ecs.count<UID>());
+    return ecs.entity(label.c_str()).add<UID>((float)ccount++); 
+
+}
 
 int main(int, char *[]) {
 
-    ecs.component<Position>()
-        .member<float>("x")
-        .member<float>("y");
+    auto z1 = create("Zeubi1"); 
+    auto z2 = create("Zeubi2");
+    z2.child_of(z1);
+    
+    // std::cout << std::endl ;
+    // e5.set([](UID& uid) { uid.value = 10; });
+    
+    // refleciton test
+    // ecs.component<Position>().member<float>("x").member<float>("y");
+    // ecs.component<UID>().member<float>("id");
 
-    auto test = ecs.prefab().
-        set_override<Position>({}).
-        set_override<Node>({1.0f,1.0f,1.0f})
-        ;
+    // OnSet event test
+    // ecs.trigger<Node>("OnSetPosition").event(flecs::OnSet).each([](flecs::entity e, Node& n) { std::cout << e.name()  << " has been set" << std::endl; } );
 
-    auto ccc = ecs.entity("ooo").add(flecs::IsA,test);
-    ecs.entity("ccc1").add(flecs::IsA, test).add(flecs::ChildOf, ccc);
-    auto bbb = ecs.entity("bbb").add(flecs::IsA,test);
-    ecs.entity("ccc2").add(flecs::IsA, test).add(flecs::ChildOf, ccc);
-    ecs.entity("aaa").add(flecs::IsA,test);
-
-    float pos[2] = {1,2};
-    ecs.each([&](flecs::entity e, Position& p){ p = {pos[0]++,pos[1]++}; });
+    // quick populating test
+    // float pos[2] = {1,2}; ecs.each([&](flecs::entity e, Position& p){ p = {pos[0]++,pos[1]++}; }); //usefull
 
     std::cout << "----------------------" << std::endl;
 
-    auto q = ecs.query_builder<Node>().
+    auto q = ecs.query_builder<>().
         term(flecs::ChildOf, flecs::Wildcard).oper(flecs::Not).
         term<flecs::Component>().oper(flecs::Not).
         term(flecs::Module).oper(flecs::Not).
-        order_by(id_sort).
+        // order_by(id_sort). // WAS WORKING COOL // int id_sort(flecs::entity_t e1, const Node *p1, flecs::entity_t e2,const Node *p2) { return float_sort(p1->id, p2->id); }
         build();
 
-
-
- ecs.trigger<Node>("OnSetPosition")
-        
-        .event(flecs::OnSet)
-        .each([](flecs::entity e, Node& n) { std::cout << e.name()  << " has been set" << std::endl; } );
-
-        std::cout << "aaaaaaaa" << std::endl;
-        // bbb.get_mut<Node>()->id = -2.0f;
-        bbb.modified<Node>();
-        // bbb.set<Node>({1,1,1});
-        
-        std::cout << "bbbbbbbb" << std::endl;
-
-
-
-    q.each([](flecs::entity e, Node& n) { explorer(e); });
-
-
-        
-    // auto query = ecs.filter_builder<>().term(flecs::ChildOf, flecs::IsA).oper(flecs::Not).build();
-    // query.each([](flecs::iter& it, size_t i) { std::cout << it.entity(i).str() << std::endl; });
+    q.each([](flecs::entity e) { explorer(e); });     
+            
 }
 
 
