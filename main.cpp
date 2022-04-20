@@ -1,76 +1,97 @@
 #include <iostream>
-#include "flecs/flecs.h"
-
-template <typename T>
-T& recast(const void* ptr, size_t offset) { return *(T*)(void*)(((uintptr_t)ptr) + offset); }
-
-void inspect(flecs::world& ecs, flecs::entity& e, flecs::id id) {
-
- const flecs::MetaTypeSerialized *ser = id.object().get<flecs::MetaTypeSerialized>();
-    
-        flecs::vector<ecs_meta_type_op_t> ops(ser->ops);
-    
-        auto ptr = e.get(id.object());
-
-        std::cout << "" << id.str().c_str() << " " << e.str();
-        std::cout << "[" << ops.size() << "]" << std::endl;
-    
-        for (auto op : ops) {
-
-            if (!op.name) continue;
-            
-            std::cout << "  " << ecs.entity(op.type).name() << " " << op.name << ": ";
-            
-            switch (op.kind) {
-
-                case EcsOpBool : std::cout << recast<bool>(ptr, op.offset); break;
-                case EcsOpChar : std::cout << recast<char>(ptr, op.offset); break;
-                case EcsOpU8 : std::cout << recast<uint8_t>(ptr, op.offset); break;
-                case EcsOpU16 : std::cout << recast<uint16_t>(ptr, op.offset); break;
-                case EcsOpU32 : std::cout << recast<uint32_t>(ptr, op.offset); break;
-                case EcsOpU64 : std::cout << recast<uint64_t>(ptr, op.offset); break;
-                case EcsOpI8 : std::cout << recast<int8_t>(ptr, op.offset); break;
-                case EcsOpI16 : std::cout << recast<int16_t>(ptr, op.offset); break;
-                case EcsOpI32 : std::cout << recast<int32_t>(ptr, op.offset); break;
-                case EcsOpI64 : std::cout << recast<int64_t>(ptr, op.offset); break;
-                case EcsOpF32 : std::cout << recast<float>(ptr, op.offset); break;
-                case EcsOpF64 : std::cout << recast<float>(ptr, op.offset); break;
-                case EcsOpString : std::cout << recast<const char*>(ptr, op.offset); break;
-                case EcsOpEntity : std::cout << "entity " << recast<uint32_t>(ptr, op.offset); break;
-
-                default: break;
-            
-            }
-
-            std::cout << std::endl;
-           
-        }
-    
-}
+#include "src/tet.hpp"
 
 //// ImGUI STYLE STRUCT (handwritten reflection ? :( ) TO ENTITY , JSONable to save, an vice versa to load
 // runtime component for parsing
 
-struct Tag {};
+    //inspect() un pair !
 
-struct Foo { float b; int a; std::string r; };
+    // ou rangeer les sytems ?
+    // cueliste de systems
+
+    // add quill
+
+template <typename T>
+T& recast(const void* ptr, size_t offset) { return *(T*)(void*)(((uintptr_t)ptr) + offset); }
+
+
+void inspect(flecs::entity e, flecs::id id) {
+
+    flecs::entity f = id.object();
+
+    std::cout << "  " << id.str().c_str() << " " << f.str();
+            
+
+    const flecs::MetaTypeSerialized *ser = f.get<flecs::MetaTypeSerialized>();
+    if (!ser) { std::cout << std::endl; return;}
+    flecs::vector<ecs_meta_type_op_t> ops(ser->ops);
+
+    std::cout << "[" << ops.size() << "]" << std::endl;
+
+    void* ptr;
+    if (id.is_pair()) {ptr = (void*)e.get(f, flecs::Wildcard); std::cout << "PPP";}
+    else {ptr = (void*)e.get(id.object());}
+
+    for (auto op : ops) {
+
+        if (!op.name) continue;
+        
+        std::cout << "   - " << ecs.entity(op.type).name() << " " << op.name << ": ";
+        
+        switch (op.kind) {
+
+            case EcsOpBool : std::cout << recast<bool>(ptr, op.offset); break;
+            case EcsOpChar : std::cout << recast<char>(ptr, op.offset); break;
+            case EcsOpU8 : std::cout << recast<uint8_t>(ptr, op.offset); break;
+            case EcsOpU16 : std::cout << recast<uint16_t>(ptr, op.offset); break;
+            case EcsOpU32 : std::cout << recast<uint32_t>(ptr, op.offset); break;
+            case EcsOpU64 : std::cout << recast<uint64_t>(ptr, op.offset); break;
+            case EcsOpI8 : std::cout << recast<int8_t>(ptr, op.offset); break;
+            case EcsOpI16 : std::cout << recast<int16_t>(ptr, op.offset); break;
+            case EcsOpI32 : std::cout << recast<int32_t>(ptr, op.offset); break;
+            case EcsOpI64 : std::cout << recast<int64_t>(ptr, op.offset); break;
+            case EcsOpF32 : std::cout << recast<float>(ptr, op.offset); break;
+            case EcsOpF64 : std::cout << recast<float>(ptr, op.offset); break;
+            case EcsOpString : std::cout << recast<const char*>(ptr, op.offset); break;
+            case EcsOpEntity : std::cout << "entity " ;/*<< recast<uint32_t>(ptr, op.offset);*/ break;
+
+            default: break;
+        
+        }
+
+        std::cout << std::endl;
+        
+    }
+
+}
+struct Tag {};
+// struct Object {};
+
+struct Foo { int bar; };
 
 int main(int, char *[]) {
 
     flecs::world ecs;
 
-    ecs.component<Foo>().member<float>("B").member<int>("A").member(flecs::String, "R");
-    // ecs.component<ImGuiStyle>();
+    ecs.component<Foo>().member<int>("bar");
+    ecs.component<EcsIdentifier>().member<char*>("value");
 
-    auto foo = ecs.entity().set<Foo>({1.0f,2,"3"});
+    ecs.entity("jiji").set<Foo>({1});
+    // ecs.entity().set<Object, Foo>({2});
+    ecs.entity().set<Tag, Foo>({3});
+    
+    auto q = ecs.query_builder<>().term<flecs::Component>().oper(flecs::Not).term(flecs::ChildOf, flecs::Wildcard).oper(flecs::Not);
 
-   ecs.each([](flecs::entity e, flecs::Component& c) { std::cout << "entity " << e.str() << std::endl;});
-
-    foo.each([&](flecs::id id) {
-
-        if (id.has_role()) return;
-        inspect(ecs, foo, id.second());
+    q.build().each([](flecs::entity e) {
         
+        std::cout << e.str() << std::endl;
+        e.each([e](flecs::id id){ inspect(e, id); });
     });
 
 }
+
+    // auto e2 = ecs.entity().set<Tag, Foo>({2});
+    // auto e21 = e2.get<Tag,Foo>(); // oui
+    // auto e22 = e2.get(ecs.component("Tag"), ecs.component("Foo")); // oui pareils
+    // auto e23 = e2.get(ecs.component<Tag>(), ecs.component<Foo>()); // oui pareils
+    // // auto e23  = e2.get<Tag>(ecs.component("Foo")); // non
