@@ -4,27 +4,15 @@
 template <typename T>
 T& recast(const void* ptr, size_t offset) { return *(T*)(void*)(((uintptr_t)ptr) + offset); }
 
-struct Foo { float b; int a; std::string r; };
+void inspect(flecs::world& ecs, flecs::entity& e, flecs::id& id) {
 
-int main(int, char *[]) {
-
-    flecs::world ecs;
-    
-    ecs.component<Foo>().member<float>("B").member<int>("A").member(flecs::String, "R");
-
-    auto foo = ecs.entity("foo").set<Foo>({1.0f,2,"3"});
-
-    foo.each([&](flecs::id id) {
-
-        if (id.has_role()) return;
-
-        const flecs::MetaTypeSerialized *ser = id.object().get<flecs::MetaTypeSerialized>();
+ const flecs::MetaTypeSerialized *ser = id.object().get<flecs::MetaTypeSerialized>();
     
         flecs::vector<ecs_meta_type_op_t> ops(ser->ops);
     
-        auto ptr = foo.get(id.object());
+        auto ptr = e.get(id.object());
 
-        std::cout << "" << id.str().c_str() << " " << foo.name() << "[" << ops.size() << "]" << std::endl;
+        std::cout << "" << id.str().c_str() << " " << e.name() << "[" << ops.size() << "]" << std::endl;
     
         for (auto op : ops) {
 
@@ -56,6 +44,24 @@ int main(int, char *[]) {
             std::cout << std::endl;
            
         }
+    
+}
+
+struct Foo { float b; int a; std::string r; };
+
+int main(int, char *[]) {
+
+    flecs::world ecs;
+    
+    ecs.component<Foo>().member<float>("B").member<int>("A").member(flecs::String, "R");
+
+    auto foo = ecs.entity("foo").set<Foo>({1.0f,2,"3"});
+
+    foo.each([&](flecs::id id) {
+
+        if (id.has_role()) return;
+
+       inspect(ecs, foo, id);
         
     });
 
