@@ -5,6 +5,9 @@
 #include "include/vendor/flecs/flecs.h"
 #include <iostream>
 
+#define EZ_TAG(NAME,TYPE,DEFAULT) \
+struct NAME : Tag<TYPE> { NAME(TYPE value = DEFAULT) : Tag(value) {} };
+
 struct ECS {
 
     // static inline flecs::world world_t;
@@ -14,6 +17,31 @@ struct ECS {
 
     template <typename T>
     static T& recast(const void* ptr, size_t offset) { return *(T*)(void*)(((uintptr_t)ptr) + offset); }
+
+    template <typename T>
+    struct Tag  { 
+        
+        T value; 
+
+        Tag(T value = T()) : value(value) {  }
+        operator T& () { return value; }
+        void operator=(const T& value) { this->value = value; }
+        T operator-(const Tag<T>& other) { return other.value - value; }
+        T operator+(const Tag<T>& other) { return other.value + value; }
+        bool operator<(const Tag<T>& other) { return other.value < value; }
+        bool operator>(const Tag<T>& other) { return other.value < value; }
+
+        const char* type() { return typeid(T).name(); } 
+        const char* str() { 
+            
+            if (std::is_same_v<T, float>) return std::to_string(*((float*)&value)).c_str();    
+            if (std::is_same_v<T, int>) return std::to_string(*((int*)&value)).c_str();    
+            if (std::is_same_v<T, std::string>) return value.c_str();    
+            
+            return "";
+        } 
+
+    };
 
     static void inspect(flecs::world& world, flecs::entity& e, flecs::id id) {
         

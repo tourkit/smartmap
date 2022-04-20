@@ -75,7 +75,7 @@ void Window::createView(int8_t windows_border, int8_t window_on_top, int8_t curs
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-void Window::initUidCallbacks() {
+void Window::initHID() {
     glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
         (void)scancode;
         (void)mode;
