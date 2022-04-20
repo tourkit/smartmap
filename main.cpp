@@ -4,7 +4,7 @@
 template <typename T>
 T& recast(const void* ptr, size_t offset) { return *(T*)(void*)(((uintptr_t)ptr) + offset); }
 
-void inspect(flecs::world& ecs, flecs::entity& e, flecs::id& id) {
+void inspect(flecs::world& ecs, flecs::entity& e, flecs::id id) {
 
  const flecs::MetaTypeSerialized *ser = id.object().get<flecs::MetaTypeSerialized>();
     
@@ -12,7 +12,8 @@ void inspect(flecs::world& ecs, flecs::entity& e, flecs::id& id) {
     
         auto ptr = e.get(id.object());
 
-        std::cout << "" << id.str().c_str() << " " << e.name() << "[" << ops.size() << "]" << std::endl;
+        std::cout << "" << id.str().c_str() << " " << e.str();
+        std::cout << "[" << ops.size() << "]" << std::endl;
     
         for (auto op : ops) {
 
@@ -47,21 +48,28 @@ void inspect(flecs::world& ecs, flecs::entity& e, flecs::id& id) {
     
 }
 
+//// ImGUI STYLE STRUCT (handwritten reflection ? :( ) TO ENTITY , JSONable to save, an vice versa to load
+// runtime component for parsing
+
+struct Tag {};
+
 struct Foo { float b; int a; std::string r; };
 
 int main(int, char *[]) {
 
     flecs::world ecs;
-    
-    ecs.component<Foo>().member<float>("B").member<int>("A").member(flecs::String, "R");
 
-    auto foo = ecs.entity("foo").set<Foo>({1.0f,2,"3"});
+    ecs.component<Foo>().member<float>("B").member<int>("A").member(flecs::String, "R");
+    // ecs.component<ImGuiStyle>();
+
+    auto foo = ecs.entity().set<Foo>({1.0f,2,"3"});
+
+   ecs.each([](flecs::entity e, flecs::Component& c) { std::cout << "entity " << e.str() << std::endl;});
 
     foo.each([&](flecs::id id) {
 
         if (id.has_role()) return;
-
-       inspect(ecs, foo, id);
+        inspect(ecs, foo, id.second());
         
     });
 
