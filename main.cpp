@@ -1,71 +1,62 @@
 #include <iostream>
-#include <string>
-#include <vector>
-#include "include/vendor/flecs/flecs.h"
-#include <ctime>
+#include "flecs/flecs.h"
 
+template <typename T>
+T& recast(const void* ptr, size_t offset) { return *(T*)(void*)(((uintptr_t)ptr) + offset); }
 
-using uint = uint32_t;
-using string = std::string;
-using entity = flecs::entity;
+struct Foo { float b; int a; std::string r; };
 
-flecs::world ecs;
+int main(int, char *[]) {
 
+    flecs::world ecs;
+    
+    ecs.component<Foo>().member<float>("B").member<int>("A").member(flecs::String, "R");
 
-struct Object { };
+    auto foo = ecs.entity("foo").set<Foo>({1.0f,2,"3"});
 
+    foo.each([&](flecs::id id) {
 
-struct Test { float a,b,c; };
-
-
-auto inspect(flecs::entity e) {
-
-    e.each([&](flecs::id id) {
+        if (id.has_role()) return;
 
         const flecs::MetaTypeSerialized *ser = id.object().get<flecs::MetaTypeSerialized>();
     
         flecs::vector<ecs_meta_type_op_t> ops(ser->ops);
     
-        auto id_ptr = e.get(id.object());
+        auto ptr = foo.get(id.object());
 
-        std::cout << "" << id.str().c_str() << "[" << ops.size() << "]: {" << std::endl;
+        std::cout << "" << id.str().c_str() << " " << foo.name() << "[" << ops.size() << "]" << std::endl;
     
         for (auto op : ops) {
 
             if (!op.name) continue;
             
-            std::cout << "  " << op.name << ": ";
-
-             void *ptr = (void*)(((uintptr_t)id_ptr) + op.offset);
-             std::cout << *(float*)ptr << ",";
+            std::cout << "  " << ecs.entity(op.type).name() << " " << op.name << ": ";
             
+            switch (op.kind) {
+
+                case EcsOpBool : std::cout << recast<bool>(ptr, op.offset); break;
+                case EcsOpChar : std::cout << recast<char>(ptr, op.offset); break;
+                case EcsOpU8 : std::cout << recast<uint8_t>(ptr, op.offset); break;
+                case EcsOpU16 : std::cout << recast<uint16_t>(ptr, op.offset); break;
+                case EcsOpU32 : std::cout << recast<uint32_t>(ptr, op.offset); break;
+                case EcsOpU64 : std::cout << recast<uint64_t>(ptr, op.offset); break;
+                case EcsOpI8 : std::cout << recast<int8_t>(ptr, op.offset); break;
+                case EcsOpI16 : std::cout << recast<int16_t>(ptr, op.offset); break;
+                case EcsOpI32 : std::cout << recast<int32_t>(ptr, op.offset); break;
+                case EcsOpI64 : std::cout << recast<int64_t>(ptr, op.offset); break;
+                case EcsOpF32 : std::cout << recast<float>(ptr, op.offset); break;
+                case EcsOpF64 : std::cout << recast<float>(ptr, op.offset); break;
+                case EcsOpString : std::cout << recast<const char*>(ptr, op.offset); break;
+                case EcsOpEntity : std::cout << "entity " << recast<uint32_t>(ptr, op.offset); break;
+
+                default: break;
+            
+            }
+
             std::cout << std::endl;
            
         }
         
-        std::cout << "}" << std::endl;
-
     });
 
-}
-
-int main(int, char *[]) {
-
-    std::cout << ecs.count<Test>() << std::endl;
-
-    auto e = ecs.entity().set<Test>({1,2,3});
-    auto e1 = ecs.entity("E1").set<Test>({3,4,5});
-    auto e2 = ecs.entity("E2").is_a(e1);
-
-        auto q = ecs.filter_builder<>().term(flecs::IsA, flecs::Wildcard).build();
-        q.each([&](flecs::entity e) {
-            std::cout << "e.str().c_str() "<< std::endl; 
-        });
-
-
-    ecs.component<Test>().member<int>("A").member<int>("B").member<int>("C");
-
-    inspect(e);
-
-    // return ecs.app().enable_rest().run();
 }

@@ -59,4 +59,9 @@ int main(int, char *[]) {
         
     });
 
+    // Prints : 
+        // Foo foo[8]
+        // f32 B: 1
+        // i32 A: 2
+        // string R: 3
 }
