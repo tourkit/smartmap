@@ -15,29 +15,29 @@ template <typename T>
 T& recast(const void* ptr, size_t offset) { return *(T*)(void*)(((uintptr_t)ptr) + offset); }
 
 
-void inspect(flecs::entity e, flecs::id id) {
+
+
+
+void inspect(flecs::id id, flecs::entity e) {
 
     flecs::entity f = id.object();
 
-    std::cout << "  " << id.str().c_str() << " " << f.str();
-            
-
     const flecs::MetaTypeSerialized *ser = f.get<flecs::MetaTypeSerialized>();
-    if (!ser) { std::cout << std::endl; return;}
+    if (!ser) return;
     flecs::vector<ecs_meta_type_op_t> ops(ser->ops);
 
+    std::cout << "  " << id.str().c_str() << " " << f.str();
     std::cout << "[" << ops.size() << "]" << std::endl;
 
     void* ptr;
-    if (id.is_pair()) {ptr = (void*)e.get(f, flecs::Wildcard); std::cout << "PPP";}
-    else {ptr = (void*)e.get(id.object());}
 
-    for (auto op : ops) {
+    if (id.has_role()) ptr = (void*)e.get(flecs::Wildcard, id.object());
+    else ptr = (void*)e.get(id.object());
 
-        if (!op.name) continue;
+    for (auto op : ops) { if (!op.name) continue;
         
-        std::cout << "   - " << ecs.entity(op.type).name() << " " << op.name << ": ";
-        
+        std::cout << "  - " << ecs.entity(op.type).name() << " " << op.name << ": ";
+
         switch (op.kind) {
 
             case EcsOpBool : std::cout << recast<bool>(ptr, op.offset); break;
@@ -64,8 +64,9 @@ void inspect(flecs::entity e, flecs::id id) {
     }
 
 }
+
 struct Tag {};
-// struct Object {};
+struct Object {};
 
 struct Foo { int bar; };
 
@@ -77,7 +78,7 @@ int main(int, char *[]) {
     ecs.component<EcsIdentifier>().member<char*>("value");
 
     ecs.entity("jiji").set<Foo>({1});
-    // ecs.entity().set<Object, Foo>({2});
+    ecs.entity().set<Object, Foo>({2});
     ecs.entity().set<Tag, Foo>({3});
     
     auto q = ecs.query_builder<>().term<flecs::Component>().oper(flecs::Not).term(flecs::ChildOf, flecs::Wildcard).oper(flecs::Not);
@@ -85,7 +86,7 @@ int main(int, char *[]) {
     q.build().each([](flecs::entity e) {
         
         std::cout << e.str() << std::endl;
-        e.each([e](flecs::id id){ inspect(e, id); });
+        e.each([e](flecs::id id){ inspect(id,e); });
     });
 
 }
