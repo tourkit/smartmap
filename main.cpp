@@ -19,21 +19,20 @@ auto* window = new GL::Window(false,WIDTH,HEIGHT,1920-WIDTH);
 
 auto*  gui = new GUI{window->window}; 
 
-auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
+// auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
+// auto* shader = new ShaderProgram({"assets/shader/basic.vert", "assets/shader/basic.frag"});
  
 Quad quad;
 
-void Draw2D(const Texture& tex) {
+void Draw2D() {
+// void Draw2D(const Texture& tex) {
 
-    glBindTexture(GL_TEXTURE_2D, tex.id);
-    shader->use();
+
+    // glBindTexture(GL_TEXTURE_2D, tex.id);
+    // shader->use();
     quad.draw();
 
 }
-
-double lastTime = glfwGetTime();
-
-bool checkFPS() { if (glfwGetTime() - lastTime <= 1./280. ) { return false; } else { lastTime = glfwGetTime(); return true; } }
 
 int main() {  
     
@@ -44,19 +43,20 @@ int main() {
 
     while(true) window->render([&]() {
 
+        Draw2D();
+
         // artnet.run();
 
-        // if (!checkFPS()) return;
 
         // CLUSTER RENDER LOOP
 
 
         // // END OF LOOP
     
-        // gui->newframe();  
-        // ImGui::Begin("KTRL");
-        // ImGui::End();
-        // gui->render();
+        gui->newframe();  
+        ImGui::Begin("KTRL");
+        ImGui::End();
+        gui->render();
 
  
     });
