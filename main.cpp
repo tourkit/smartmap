@@ -20,7 +20,7 @@ auto* window = new GL::Window(false,WIDTH,HEIGHT,1920-WIDTH);
 auto*  gui = new GUI{window->window}; 
 
 // auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
-// auto* shader = new ShaderProgram({"assets/shader/basic.vert", "assets/shader/basic.frag"});
+auto* shader = new ShaderProgram({"assets/shader/basic.vert", "assets/shader/basic.frag"});
  
 Quad quad;
 
@@ -29,7 +29,7 @@ void Draw2D() {
 
 
     // glBindTexture(GL_TEXTURE_2D, tex.id);
-    // shader->use();
+    shader->use();
     quad.draw();
 
 }
