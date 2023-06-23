@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 project(SmartMap VERSION 0.1.0)
 
 find_package(glfw3 REQUIRED)
+find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_executable(SmartMap 
@@ -71,6 +72,7 @@ target_include_directories(SmartMap PRIVATE
 target_link_libraries(SmartMap PRIVATE
     OpenGL::GL
     glfw
+    glew32
     ws2_32
     netapi32
     dpnet

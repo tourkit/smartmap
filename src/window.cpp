@@ -81,13 +81,12 @@ void Window::initUidCallbacks() {
         (void)mode;
         auto _this = (Window*)glfwGetWindowUserPointer(window);
         if (action == GLFW_PRESS) {
-            std::cout << "keypress : " << (int)key << "\n";
             switch (key) {
             case GLFW_KEY_ESCAPE:
-                _this->stopped = true;
+                exit(0);
                 break;
-            case GLFW_KEY_P:
-                std::cout << "outprout\n";
+            default:
+                std::cout << "keypress : " << (int)key << "\n";
                 break;
             }
         }
