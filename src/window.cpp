@@ -12,14 +12,10 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
 
     : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) {
 
-    createView(0, 1, 0, 1);
-
-
-}
-
-Window::~Window() { glfwTerminate(); }
-
-void Window::createView(int8_t windows_border, int8_t window_on_top, int8_t cursor_visibility, int8_t uid_callbacks) {
+    int8_t windows_border = 0;
+    int8_t window_on_top = 1; 
+    int8_t cursor_visibility = 0;
+    int8_t uid_callbacks = 1;
 
 
     glfwInit();
@@ -73,7 +69,12 @@ void Window::createView(int8_t windows_border, int8_t window_on_top, int8_t curs
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    lastTime = glfwGetTime();
+
 }
+
+Window::~Window() { glfwTerminate(); }
 
 void Window::initUidCallbacks() {
     glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
@@ -109,10 +110,12 @@ void Window::initUidCallbacks() {
 
 void Window::render(std::function<void()> callback) {
 
-    // glfwMakeContextCurrent(window);  glewInit(); // MUTLI WINDOW ATTEMPT
+    if (glfwGetTime() - lastTime <= 1./280. ) return;
+    
+    this->lastTime = glfwGetTime();
 
-    //glClearColor(0.0f, 0.0f, 0.0f, 0.1f); // BG COLOR
-    //  glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
+    glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
     callback();
 
