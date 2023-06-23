@@ -20,13 +20,11 @@ struct VBO {
     
     void upload();
 
-    void addQuad(int id = 0);
-
     void draw(int count = 1);
 
 } ;
 
-struct Quad : public VBO { Quad(int id = 0) { addQuad(id);} };
+struct Quad : public VBO { Quad(int id = 0);  };
 
 
 #endif

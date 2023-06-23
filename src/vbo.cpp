@@ -34,7 +34,8 @@ void VBO::upload() {
 
 }
 
-void VBO::addQuad(int id) {
+Quad::Quad(int id) { 
+
 
     float clip_x = -1, clip_y = 1;
 
@@ -50,7 +51,10 @@ void VBO::addQuad(int id) {
 
     upload();
 
+
+
 }
+
 
 void VBO::draw(int count) {
 

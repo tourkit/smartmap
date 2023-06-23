@@ -37,10 +37,6 @@ bool checkFPS() { if (glfwGetTime() - lastTime <= 1./280. ) { return false; } el
 
 int main() {  
     
-
-    VBO quad;
-    quad.addQuad(1); // UID #1 in shader (feedback)
-
     glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_CLIP_DISTANCE1);
     glEnable(GL_CLIP_DISTANCE2);
