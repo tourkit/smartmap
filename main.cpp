@@ -15,7 +15,7 @@
 
 // ArtnetDevice artnet;
 
-int WIDTH = 1920, HEIGHT = 1080;
+int WIDTH = 420, HEIGHT = 340;
 
 int MAT_X = 5; 
 int MAT_Y = 2;
@@ -30,8 +30,6 @@ const char* frag = "C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\shader\\tes
 auto* shader = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
  
 VBO quad;
-
-
 
 
 void Draw2D(const Texture& tex) {
@@ -63,9 +61,9 @@ int main() {
     float no[100];
     GL_PRINT(sizeof(float));
 
-    Texture tex(4,4,(void*)&nowhite);
+    Texture tex((void*)&nowhite,4,4);
     
-    // tex.upload("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+    tex.upload("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
 
     glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_CLIP_DISTANCE1);
@@ -104,17 +102,7 @@ int main() {
 
             ImGui::PopID();
 
-
         }
-        tex.upload(&nowhite[0],4,4);
-        //  ImGui::ColorPicker4("MyColor##4", (uint*)&nowhite[0]);
-        // if (ImGui::Button("Default: Uint8 + HSV + Hue Bar"))
-        //     ImGui::SetColorEditOptions(ImGuiColorEditFlags_Uint8 );
-        // if (ImGui::Button("Default: Float + HDR + Hue Wheel"))
-        //     ImGui::SetColorEditOptions(ImGuiColorEditFlags_Float);
-
-
-
 
         ImGui::End();
         gui->render();
