@@ -13,7 +13,7 @@ struct Texture {
     GLenum format;
 
 
-    Texture(GLuint width, GLuint height, void* data, GLenum format = GL_RGBA8);
+    Texture(GLuint width, GLuint height, void* data, GLenum format = GL_RGB8);
 
     void upload(void* data, GLuint width = 0, GLuint height = 0, GLuint offset_x = 0, GLuint offset_y = 0);
 
