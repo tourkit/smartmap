@@ -2,7 +2,7 @@
 
 Atlas::Atlas(int width, int height)  
 
-    : atlaspos("mediasCoords"), width(width), buffer(width,height, GL_RGB8), height(height),rbp::GuillotineBinPack(width,height) {  }
+    : atlaspos("mediasCoords"), width(width), buffer(width,height, nullptr, GL_RGB8), height(height),rbp::GuillotineBinPack(width,height) {  }
 
 
 Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {

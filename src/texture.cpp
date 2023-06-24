@@ -1,6 +1,6 @@
 #include "texture.hpp" 
 
-Texture::Texture(GLuint width, GLuint height, GLenum format, void* data) : width(width), height(height), format(format) {
+Texture::Texture(GLuint width, GLuint height, void* data, GLenum format) : width(width), height(height), format(format) {
 
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
