@@ -32,7 +32,7 @@ Shader::Shader(std::string file) {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
 
-        std::cout <<  (infoLog);
+        GL_PRINT(infoLog);
         
     }
 
@@ -40,13 +40,31 @@ Shader::Shader(std::string file) {
 
 Shader::operator GLuint() { return id; }
 
-ShaderProgram::~ShaderProgram() { if (id) glDeleteProgram(id); }
+ShaderProgram::~ShaderProgram() { destroy(); }
 
-ShaderProgram::ShaderProgram(std::vector<std::string> paths) {
+ShaderProgram::ShaderProgram(std::vector<std::string> paths) : paths(paths) {
 
     ShaderProgram::pool.push_back(this);
 
-    id = glCreateProgram();
+    create();
+
+
+}
+
+void ShaderProgram::destroy() {  
+    if (id) glDeleteProgram(id); 
+}
+
+void ShaderProgram::reset() {  
+
+    destroy();
+    create();
+    
+}
+
+  void  ShaderProgram::create() {
+
+        id = glCreateProgram();
 
     std::set<std::shared_ptr<Shader>> shaders;
 
@@ -55,8 +73,10 @@ ShaderProgram::ShaderProgram(std::vector<std::string> paths) {
     for (auto shader:shaders) glAttachShader(id, shader->id);
 
     glLinkProgram( id );
+  }
 
-}
+
+
 
 void ShaderProgram::use() {  glUseProgram(id); }
 void ShaderProgram::use(GLuint x, GLuint y, GLuint z) {  glUseProgram(id); glDispatchCompute(x,y,z); }

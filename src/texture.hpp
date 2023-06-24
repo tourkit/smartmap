@@ -6,13 +6,14 @@
 
 struct Texture {
 
-    static inline uint8_t white[4] = {255,255,0,255};
+    // static inline uint8_t white[4] = {255,255,0,255};
 
     GLuint id, width, height,mipmaps = 1;
 
     GLenum format;
 
-    Texture(GLuint width = 1, GLuint height = 1, void* data = &white, GLenum format = GL_RGBA8);
+
+    Texture(GLuint width, GLuint height, void* data, GLenum format = GL_RGBA8);
 
     void upload(void* data, GLuint width = 0, GLuint height = 0, GLuint offset_x = 0, GLuint offset_y = 0);
 

@@ -1,7 +1,7 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-// #define DEBUG_GL  /// <= DISABLE BEFORE RELEASE
+#define DEBUG_GL  /// <= DISABLE BEFORE RELEASE
 
 #include <iostream>
 

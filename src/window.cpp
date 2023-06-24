@@ -89,7 +89,7 @@ void Window::initUidCallbacks() {
                 break;
             case GLFW_KEY_R:
                 delete ShaderProgram::pool[0];
-                ShaderProgram::pool[0] = new ShaderProgram({"assets/shader/basic.vert", "assets/shader/test.frag"});
+                ShaderProgram::pool[0] = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
                 break;
             default:
                 std::cout << "keypress : " << (int)key << "\n";
