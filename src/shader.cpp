@@ -4,6 +4,7 @@ Shader::~Shader() { glDeleteShader(id);  }
 
 Shader::Shader(std::string file) {
 
+
     std::string ext = file.substr(file.find_first_of(".")+1);
 
     if (ext == "frag") type = GL_FRAGMENT_SHADER;
@@ -42,6 +43,8 @@ Shader::operator GLuint() { return id; }
 ShaderProgram::~ShaderProgram() { if (id) glDeleteProgram(id); }
 
 ShaderProgram::ShaderProgram(std::vector<std::string> paths) {
+
+    ShaderProgram::pool.push_back(this);
 
     id = glCreateProgram();
 

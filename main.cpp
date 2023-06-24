@@ -29,7 +29,7 @@ void Draw2D() {
 
 
     // glBindTexture(GL_TEXTURE_2D, tex.id);
-    shader->use();
+    ShaderProgram::pool[0]->use();
     quad.draw();
 
 }

@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include "shader.hpp"
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -85,6 +86,10 @@ void Window::initUidCallbacks() {
             switch (key) {
             case GLFW_KEY_ESCAPE:
                 exit(0);
+                break;
+            case GLFW_KEY_R:
+                delete ShaderProgram::pool[0];
+                ShaderProgram::pool[0] = new ShaderProgram({"assets/shader/basic.vert", "assets/shader/test.frag"});
                 break;
             default:
                 std::cout << "keypress : " << (int)key << "\n";

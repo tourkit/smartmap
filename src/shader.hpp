@@ -24,6 +24,8 @@ struct Shader {
 
 struct ShaderProgram {
 
+  static inline std::vector<ShaderProgram*> pool;
+
   GLuint id;
 
   ~ShaderProgram();
