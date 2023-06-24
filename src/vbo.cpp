@@ -1,4 +1,7 @@
 #include "vbo.hpp"  
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 VBO::~VBO()  { 
     glDisableVertexAttribArray(0); 
@@ -6,12 +9,6 @@ VBO::~VBO()  {
     glDisableVertexAttribArray(2); 
     glDisableVertexAttribArray(3); 
     }
-
-VBO::VBO() {    
-
-    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
-
-}
 
 void VBO::upload() {
 
@@ -34,20 +31,51 @@ void VBO::upload() {
 
 }
 
-Quad::Quad(int id) { 
+VBO::VBO(std::string path) {    
 
+    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
+
+
+    this->id = VBO::pool.size();
+    VBO::pool.push_back(this);
 
     float clip_x = -1, clip_y = 1;
 
     int pos = vertices.size();
 
-    vertices.push_back({-1,  1, 0, 1, clip_x, clip_y, id});
-    vertices.push_back({1 ,  1, 1, 1, clip_x, clip_y, id});
-    vertices.push_back({-1, -1, 0, 0, clip_x, clip_y, id});
-    vertices.push_back({1 , -1, 1, 0, clip_x, clip_y, id});
+    Assimp::Importer importer;
 
-    indices.push_back({pos+0,pos+1,pos+2});
-    indices.push_back({pos+1,pos+2,pos+3});
+    const aiScene* scene = importer.ReadFile(path, aiProcess_CalcTangentSpace       | 
+		aiProcess_Triangulate            |
+		aiProcess_JoinIdenticalVertices  |
+		aiProcess_SortByPType);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) std::cout << "Failed to load OBJ file: " << importer.GetErrorString() << std::endl;
+
+    auto mesh = scene->mMeshes[0];
+
+    for (int i = 0; i < mesh->mNumVertices; i++) {
+
+        const aiVector3D& vertex = mesh->mVertices[i];
+        
+        vertices.push_back({
+            vertex.x,vertex.y, 
+            mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, 
+            clip_x, clip_y, 
+            this->id
+        });
+    
+    }
+    
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+        
+        const aiFace& face = mesh->mFaces[i];
+
+        indices.push_back({face.mIndices[0],face.mIndices[1],face.mIndices[2]});
+
+
+    }
+
 
     upload();
 

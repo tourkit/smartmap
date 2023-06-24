@@ -71,8 +71,8 @@ target_include_directories(SmartMap PRIVATE
 
 target_link_libraries(SmartMap PRIVATE
     OpenGL::GL
+    ASSIMP
     glfw
-    glew32
     ws2_32
     netapi32
     dpnet

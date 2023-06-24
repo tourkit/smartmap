@@ -5,26 +5,26 @@
 	
 struct VBO {
 
-    struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float clip_x,clip_y; int id; }; 
+    static inline std::vector<VBO*> pool;
+
+    struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float clip_x,clip_y; GLuint id; }; 
+
     struct Indice { int a,b,c; }; 
 
     std::vector<Vertice> vertices;
 
     std::vector<Indice> indices;
 
-    GLuint vao, vbo,ibo;
+    GLuint vao, vbo,ibo, id;
 
-    ~VBO(); // that should be elsewhere I think
+    ~VBO(); 
 
-    VBO();    
-    
     void upload();
+
+    VBO(std::string path = "assets/model/quad.obj") ;
 
     void draw(int count = 1);
 
-} ;
-
-struct Quad : public VBO { Quad(int id = 0);  };
-
+};
 
 #endif

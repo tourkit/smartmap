@@ -22,7 +22,7 @@ auto*  gui = new GUI{window->window};
 // auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
 auto* shader = new ShaderProgram({"assets/shader/basic.vert", "assets/shader/basic.frag"});
  
-Quad quad;
+VBO quad;
 
 void Draw2D() {
 // void Draw2D(const Texture& tex) {
@@ -35,7 +35,7 @@ void Draw2D() {
 }
 
 int main() {  
-    
+
     glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_CLIP_DISTANCE1);
     glEnable(GL_CLIP_DISTANCE2);
