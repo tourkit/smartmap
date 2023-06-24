@@ -71,7 +71,7 @@ VBO::VBO(std::string path) {
         
         const aiFace& face = mesh->mFaces[i];
 
-        indices.push_back({face.mIndices[0],face.mIndices[1],face.mIndices[2]});
+        indices.push_back({(int)face.mIndices[0],(int)face.mIndices[1],(int)face.mIndices[2]});
 
 
     }
