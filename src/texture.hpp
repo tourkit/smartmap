@@ -8,12 +8,15 @@ struct Texture {
 
     // static inline uint8_t white[4] = {255,255,0,255};
 
-    GLuint id, width, height,mipmaps = 1;
+    GLuint id = 0, width, height,mipmaps = 1;
 
-    GLenum format;
+    GLenum format = GL_RGB8;
 
-
-    Texture(GLuint width, GLuint height, void* data, GLenum format = GL_RGB8);
+    Texture();
+    Texture(void* data, GLuint width, GLuint height);
+    Texture(std::string src);
+    
+    ~Texture();
 
     void upload(void* data, GLuint width = 0, GLuint height = 0, GLuint offset_x = 0, GLuint offset_y = 0);
 
@@ -23,6 +26,7 @@ struct Texture {
 
     void bind(int unit);
 
+    void destroy();
     void bind();
 
     operator GLuint();

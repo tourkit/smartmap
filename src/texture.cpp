@@ -1,8 +1,17 @@
 #include "texture.hpp" 
 
-Texture::Texture(GLuint width, GLuint height, void* data, GLenum format) : width(width), height(height), format(format) {
+Texture::Texture() {  }
+Texture::Texture(void* data, GLuint width, GLuint height) { upload(data, width, height); }
+Texture::Texture(std::string src)  { upload(src); } 
 
+Texture::~Texture() { destroy(); }
+void Texture::destroy() { if (id) glDeleteTextures(1, &id); }
+void Texture::upload(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
 
+    this->width = width;
+    this->height = height;
+
+    destroy();
 
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
@@ -13,22 +22,13 @@ Texture::Texture(GLuint width, GLuint height, void* data, GLenum format) : width
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-    upload(data);
-
-}
-
-void Texture::upload(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
-
-    if (!width) width = this->width;
-    if (!height) height = this->height;
-
     glBindTexture(GL_TEXTURE_2D, id);
     
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    glTexSubImage2D(GL_TEXTURE_2D,0,offset_x,offset_y,std::min(width,this->width),std::min(height,this->height),GL_RGB,GL_UNSIGNED_BYTE,data);
+    glTexSubImage2D(GL_TEXTURE_2D,0,offset_x,offset_y,width,height,GL_RGB,GL_UNSIGNED_BYTE,data);
 
-    glGenerateMipmap(GL_TEXTURE_2D); //if(mipmaps>1)?
+    glGenerateMipmap(GL_TEXTURE_2D);
 
 }
 
