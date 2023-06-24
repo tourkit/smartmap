@@ -20,7 +20,6 @@ Shader::Shader(std::string file) {
  
     glCompileShader(id);
 
-
     // Check for errors
 
     GLchar infoLog[512];
@@ -32,7 +31,7 @@ Shader::Shader(std::string file) {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
 
-        GL_PRINT(ext << ": " << infoLog);
+        std::cout <<  (infoLog);
         
     }
 

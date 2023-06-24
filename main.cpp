@@ -1,6 +1,6 @@
 /*
 
-    SMARTMAP v1 beta
+    SMARTMAP (beta)
 
                         */
 
@@ -20,7 +20,7 @@ auto* window = new GL::Window(false,WIDTH,HEIGHT,1920-WIDTH);
 auto*  gui = new GUI{window->window}; 
 
 // auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
-auto* shader = new ShaderProgram({"assets/shader/basic.vert", "assets/shader/basic.frag"});
+auto* shader = new ShaderProgram({"assets/shader/basic.vert", "assets/shader/test.frag"});
  
 VBO quad;
 
@@ -40,6 +40,11 @@ int main() {
     glEnable(GL_CLIP_DISTANCE1);
     glEnable(GL_CLIP_DISTANCE2);
     glEnable(GL_CLIP_DISTANCE3);
+
+
+    // Texture tex_white();
+
+
 
     while(true) window->render([&]() {
 
