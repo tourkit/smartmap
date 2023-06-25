@@ -1,12 +1,15 @@
 #include "texture.hpp" 
 
-Texture::Texture() {  }
-Texture::Texture(void* data, GLuint width, GLuint height) { upload(data, width, height); }
-Texture::Texture(std::string src)  { upload(src); } 
+Texture::Texture() { pool.push_back(this); }
+
+Texture::Texture(void* data, GLuint width, GLuint height) : Texture() { create(data, width, height); }
+Texture::Texture(std::string src) : Texture()   { create(src); } 
 
 Texture::~Texture() { destroy(); }
+
 void Texture::destroy() { if (id) glDeleteTextures(1, &id); }
-void Texture::upload(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
+
+void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
 
     this->width = width;
     this->height = height;
@@ -32,11 +35,11 @@ void Texture::upload(void* data, GLuint width, GLuint height, GLuint offset_x, G
 
 }
 
-void Texture::upload(std::string src, GLuint offset_x, GLuint offset_y) {
+void Texture::create(std::string src, GLuint offset_x, GLuint offset_y) {
 
     Image img;
     img.loadflipped(src);
-    upload(img.i, img.width, img.height, offset_x, offset_y);
+    create(img.i, img.width, img.height, offset_x, offset_y);
 
 }
 

@@ -42,9 +42,11 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     }
     else
     {
+        
         window = glfwCreateWindow(width, height, "OUTPUT", nullptr, nullptr);
-        glfwSetWindowPos(window, offset_x, offset_y);
+        setPos(offset_x, offset_y);
     }
+
 
     glfwSetWindowUserPointer(window, this);
 #ifdef __linux__
@@ -74,6 +76,20 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     lastTime = glfwGetTime();
 
 }
+
+void Window::setPos(uint16_t offset_x, uint16_t offset_y) { glfwSetWindowPos(window, offset_x, offset_y); }
+
+void SetTheFrameBufferSize(GLFWwindow* window, int h, int w)
+{
+	// Resize window
+    // [](GLFWwindow* window, int width, int height){  
+        std::cout << w << std::endl;
+        //  }
+
+}
+
+
+void Window::setSize(uint16_t width, uint16_t height) { glfwSetWindowSize(window, width, height); }
 
 Window::~Window() { glfwTerminate(); }
 

@@ -15,12 +15,13 @@
 
 // ArtnetDevice artnet;
 
-int WIDTH = 420, HEIGHT = 340;
+int WIDTH = 1920, HEIGHT = 1080;
+int OFFX = 0, OFFY = 0;
 
 int MAT_X = 5; 
 int MAT_Y = 2;
 
-auto* window = new GL::Window(false,WIDTH,HEIGHT,1920-WIDTH);
+auto* window = new GL::Window(false,WIDTH,HEIGHT);
 
 auto*  gui = new GUI{window->window}; 
 
@@ -63,7 +64,7 @@ int main() {
 
     Texture tex((void*)&nowhite,4,4);
     
-    tex.upload("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+    tex.create("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
 
     glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_CLIP_DISTANCE1);
@@ -90,7 +91,21 @@ int main() {
     
         gui->newframe();  
         ImGui::ShowDemoWindow();
+        ImGui::Begin("VIEW");
+        for (int i = 0; i < Texture::pool.size(); i++) {
+        
+
+        
+        }
+        ImGui::End();
         ImGui::Begin("KTRL");
+
+        if (ImGui::DragInt2("winsize", &WIDTH,1,0,1920)) window->setSize(WIDTH,HEIGHT);
+        if (ImGui::DragInt2("winpos", &OFFX,1,0,2560)) window->setPos(OFFX,OFFY);
+
+
+        ImGui::End();
+        ImGui::Begin("INSPECTOR");
 
         for (int i = 0; i < 32; i++) {
 

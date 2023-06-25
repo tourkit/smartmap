@@ -8,11 +8,11 @@ in vec2 tex;
 
 void main() { 
 
-    gl_FragCoord.xy;
+    // gl_FragCoord.xy;
     
     vec4 p = texture(buff, tex.xy);
     // p *= vec2(.2,0)
     color = p;
-    // color = vec4(p.x,p.y,p.z,1);
+    // color = vec4(0,1,tex.x,1);
 
 }

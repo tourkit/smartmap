@@ -72,7 +72,7 @@ bool Atlas::add(int width, int height, unsigned char* data){
             
             );
             
-            if (buffered) buffer.upload(&data[0],r.width,r.height,r.x,r.y);
+            if (buffered) buffer.create(&data[0],r.width,r.height,r.x,r.y);
 
             return true;
 
