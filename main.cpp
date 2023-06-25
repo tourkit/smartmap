@@ -80,8 +80,8 @@ int main() {
     
     while(true) window->render([&]() {
 
-        last_mil(frag, [](){ ShaderProgram::pool[0]->reset(); }, fileCheck1);
-        last_mil(quadfile, [](){ VBO::pool[0]->reset(); }, fileCheck2);
+        fileCheck1 = last_mil(frag, [](){ ShaderProgram::pool[0]->reset(); }, fileCheck1);
+        // fileCheck2 = last_mil(quadfile, [](){ VBO::pool[0]->reset(); }, fileCheck2);
 
         Draw2D(tex);
 
@@ -98,9 +98,15 @@ int main() {
         ImGui::Begin("VIEW");
 
         for (int i = 0; i < Texture::pool.size(); i++) {
-        
+
+            
             ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[0]->id, ImVec2(Texture::pool[0]->width,Texture::pool[0]->height));
-        
+            ImGui::PushID(i+100);
+
+            if (ImGui::Button("UPDATE")) VBO::pool[0]->update();
+            if (ImGui::Button("RESET")) VBO::pool[0]->reset();
+                   
+            ImGui::PopID();
         }
 
 

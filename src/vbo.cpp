@@ -20,7 +20,7 @@ void VBO::destroy() {
 
 
 }
-void VBO::reset() { import(path);
+void VBO::reset() { std::cout << "oo" << std::endl; import(path);
 
     
 }
@@ -47,6 +47,7 @@ void VBO::update() {
 }
 
 VBO::VBO(std::string path) : path(path) {    import(path); };
+
 void VBO::import(std::string path) {    
 
     destroy();
