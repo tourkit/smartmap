@@ -9,7 +9,7 @@ void VBO::destroy() {
 
     if (!vao) return;
 
-    VBO::pool.resize(0);
+    // VBO::pool.resize(0);
 
     glDisableVertexAttribArray(0); 
     glDisableVertexAttribArray(1); 
@@ -19,6 +19,9 @@ void VBO::destroy() {
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ibo);
     glDeleteVertexArrays(1, &vao);
+
+    vertices.resize(0);
+    indices.resize(0);
 
 
 }
@@ -46,15 +49,13 @@ void VBO::update() {
 
 }
 
-VBO::VBO(std::string path) : path(path) {   import(path); };
+VBO::VBO(std::string path) : path(path) {  VBO::pool.push_back(this);   import(path); };
 
 void VBO::import(std::string path) {    
 
     destroy();
 
     
-
-    VBO::pool.push_back(this); 
 
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
@@ -63,8 +64,6 @@ void VBO::import(std::string path) {
     
 
     float clip_x = -1, clip_y = 1;
-
-    int pos = vertices.size();
 
     Assimp::Importer importer;
 
