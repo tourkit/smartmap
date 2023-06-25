@@ -41,15 +41,15 @@ struct DMXUniverse {
 
 };
 
-struct ArtnetDevice {
+struct Artnet {
 
   artnet_node artnet;
 
   static inline std::map<uint16_t,DMXUniverse> data;
 
-  ArtnetDevice() {
+  Artnet(const char* ip) {
     
-    artnet = artnet_new("2.0.0.222", 0); // set ip la !
+    artnet = artnet_new(ip, 0);
     artnet_set_short_name(artnet, "SmartMap");
     artnet_set_long_name(artnet, "SmartMap");
     artnet_start(artnet);
@@ -71,7 +71,7 @@ struct ArtnetDevice {
     
   }
 
-  ~ArtnetDevice() { 
+  ~Artnet() { 
 
     artnet_stop(artnet);
     artnet_destroy(artnet);

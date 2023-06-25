@@ -55,6 +55,8 @@ int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0
 
 }
 
+Artnet artnet("2.0.0.222");
+
 int main() {  
 
     uint8_t white[4] = { 255,255,0,255 };
@@ -64,9 +66,8 @@ int main() {
     float no[100];
     GL_PRINT(sizeof(float));
 
-    Texture tex((void*)&nowhite,4,4);
-    
-    tex.create("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+    Texture tex("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+    Texture tex2("C:/msys64/home/SysErr/old/smartmap/assets/media/smile.jpg");
 
     glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_CLIP_DISTANCE1);
@@ -85,7 +86,7 @@ int main() {
 
         Draw2D(tex);
 
-        // artnet.run();
+        artnet.run();
 
 
         // CLUSTER RENDER LOOP
@@ -100,10 +101,11 @@ int main() {
         for (int i = 0; i < Texture::pool.size(); i++) {
 
             
-            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[0]->id, ImVec2(Texture::pool[0]->width,Texture::pool[0]->height));
+            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(Texture::pool[i]->width,Texture::pool[i]->height));
             ImGui::PushID(i+100);
 
             if (ImGui::Button("UPDATE")) VBO::pool[0]->update();
+            ImGui::SameLine();
             if (ImGui::Button("RESET")) VBO::pool[0]->reset();
                    
             ImGui::PopID();
