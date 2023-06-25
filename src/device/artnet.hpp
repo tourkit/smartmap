@@ -53,16 +53,17 @@ struct Artnet {
     artnet_set_short_name(artnet, "SmartMap");
     artnet_set_long_name(artnet, "SmartMap");
     artnet_start(artnet);
-    artnet_set_dmx_handler(artnet, dmx_callback, NULL);
+    artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *d){ store(p->data.admx); return 1; }, NULL);
   
   }
 
-  static int dmx_callback(artnet_node n, artnet_packet p, void *d) {
+  
+  static int store(artnet_dmx_t& dmx) {
 
-    auto& dmx = p->data.admx;
-
+    // create table
     data[dmx.universe]; // ca coute qq chose ca a chaque tcheck une fois qu'il est deja créé ?
 
+   // bitswap lf vs hf
     for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.lengthHi); ++i) data[dmx.universe].chan[i] = dmx.data[i];
 
     for (auto l : data[dmx.universe].links) l->update(&data[dmx.universe].chan[0]); // ou data[dmx.universe].update(); mais pas cool avec 16bit

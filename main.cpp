@@ -78,7 +78,8 @@ int main() {
 
     int fileCheck1 = 0;
     int fileCheck2 = last_mil(quadfile);
-    
+    int perline = 32;
+
     while(true) window->render([&]() {
 
         fileCheck1 = last_mil(frag, [](){ ShaderProgram::pool[0]->reset(); }, fileCheck1);
@@ -89,6 +90,7 @@ int main() {
         artnet.run();
 
 
+
         // CLUSTER RENDER LOOP
 
 
@@ -96,8 +98,40 @@ int main() {
     
         gui->newframe();  
         ImGui::ShowDemoWindow();
-        ImGui::Begin("VIEW");
+        for (auto dmx : Artnet::data) {
 
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+
+            ImGui::Begin(std::string("Artnet Universe "+std::to_string(dmx.first)).c_str());
+
+                int nwidth = (ImGui::GetWindowWidth()-12-(perline*2)) / perline;
+
+                ImGui::SliderInt("perline" , &perline,1,64);
+                
+                for (int i = 0; i < 512; i++) {
+
+                    ImGui::PushID(i);
+
+                    ImGui::VSliderScalar("",  ImVec2(nwidth,40),    ImGuiDataType_U8, &dmx.second.chan[i],  &min,   &max,   "");
+
+                    if ((i + 1) % perline != 0) ImGui::SameLine(0);
+
+                    ImGui::PopID();
+
+                }
+
+            ImGui::End();
+
+            ImGui::PopStyleVar(4);
+
+            break;
+
+        }
+        ImGui::Begin("VIEW");
+    // Draw lines
         for (int i = 0; i < Texture::pool.size(); i++) {
 
             
@@ -109,32 +143,18 @@ int main() {
             if (ImGui::Button("RESET")) VBO::pool[0]->reset();
                    
             ImGui::PopID();
+            ImGui::Separator();
         }
 
 
         ImGui::End();
         ImGui::Begin("KTRL");
 
-        if (ImGui::DragInt2("winsize", &WIDTH,1,0,1920)) window->setSize(WIDTH,HEIGHT);
-        if (ImGui::DragInt2("winpos", &OFFX,1,0,2560)) window->setPos(OFFX,OFFY);
-
-
-        ImGui::End();
-        ImGui::Begin("INSPECTOR");
-
-        for (int i = 0; i < 32; i++) {
-
-            if (i > 0) ImGui::SameLine();
-
-            ImGui::PushID(i);
-
-            ImGui::VSliderScalar("",  ImVec2(25,40),    ImGuiDataType_U8,     &nowhite[i],  &min,   &max,   "");
-
-            ImGui::PopID();
-
-        }
+            if (ImGui::DragInt2("winsize", &WIDTH,1,0,1920)) window->setSize(WIDTH,HEIGHT);
+            if (ImGui::DragInt2("winpos", &OFFX,1,0,2560)) window->setPos(OFFX,OFFY);
 
         ImGui::End();
+
         gui->render();
 
  

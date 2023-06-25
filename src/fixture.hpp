@@ -58,7 +58,7 @@ struct Fixture {
   int DMXpatch(int universe, int address, std::vector<std::string> dmx_chart) {
 
     --address;
-    DMXUniverse& uni = ArtnetDevice::data[--universe];
+    DMXUniverse& uni = Artnet::data[--universe];
 
     int offset = address;
 
