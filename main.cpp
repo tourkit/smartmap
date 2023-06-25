@@ -16,12 +16,12 @@
 // ArtnetDevice artnet;
 
 int WIDTH = 1920, HEIGHT = 1080;
-int OFFX = 0, OFFY = 0;
+int OFFX = 2560, OFFY = 0;
 
 int MAT_X = 5; 
 int MAT_Y = 2;
 
-auto* window = new GL::Window(false,WIDTH,HEIGHT);
+auto* window = new GL::Window(false,WIDTH,HEIGHT,OFFX);
 
 auto*  gui = new GUI{window->window}; 
 
@@ -29,8 +29,9 @@ const char* frag = "C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\shader\\tes
 
 // auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
 auto* shader = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
- 
-VBO quad;
+
+auto quadfile = "C:/msys64/home/SysErr/old/smartmap/assets/model/quad.obj";
+VBO quad(quadfile);
 
 
 void Draw2D(const Texture& tex) {
@@ -41,7 +42,7 @@ void Draw2D(const Texture& tex) {
 
 }
 
-int last_mil(const char* path, std::function<void()> cb, int before) {
+int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0) {
 
     WIN32_FILE_ATTRIBUTE_DATA fileInfo;
     GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
@@ -49,7 +50,8 @@ int last_mil(const char* path, std::function<void()> cb, int before) {
     FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
 
     auto now = st.wMilliseconds;
-    if (before != now ) { cb(); return now; }
+    if (before != now ) cb();
+    return now;
 
 }
 
@@ -74,10 +76,12 @@ int main() {
     uint8_t min = 0, max = 255;
 
     int fileCheck1 = 0;
+    int fileCheck2 = last_mil(quadfile);
     
     while(true) window->render([&]() {
 
         last_mil(frag, [](){ ShaderProgram::pool[0]->reset(); }, fileCheck1);
+        last_mil(quadfile, [](){ VBO::pool[0]->reset(); }, fileCheck2);
 
         Draw2D(tex);
 

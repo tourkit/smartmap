@@ -7,6 +7,8 @@ struct VBO {
 
     static inline std::vector<VBO*> pool;
 
+    std::string path;
+
     struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float clip_x,clip_y; GLuint id; }; 
 
     struct Indice { int a,b,c; }; 
@@ -15,11 +17,15 @@ struct VBO {
 
     std::vector<Indice> indices;
 
-    GLuint vao, vbo,ibo, id;
+    GLuint vao=0, vbo,ibo, id;
 
     ~VBO(); 
 
-    void upload();
+    void import(std::string path);
+
+    void update();
+    void destroy();
+    void reset();
 
     VBO(std::string path = "assets/model/quad.obj") ;
 

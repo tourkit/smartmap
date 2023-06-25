@@ -3,14 +3,29 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-VBO::~VBO()  { 
+VBO::~VBO()  { destroy(); }
+
+void VBO::destroy() {
+
+    if (!vao) return;
+
     glDisableVertexAttribArray(0); 
     glDisableVertexAttribArray(1); 
     glDisableVertexAttribArray(2); 
     glDisableVertexAttribArray(3); 
-    }
 
-void VBO::upload() {
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ibo);
+    glDeleteVertexArrays(1, &vao);
+
+
+}
+void VBO::reset() { import(path);
+
+    
+}
+
+void VBO::update() {
 
     glBindVertexArray(vao);
 
@@ -31,7 +46,10 @@ void VBO::upload() {
 
 }
 
-VBO::VBO(std::string path) {    
+VBO::VBO(std::string path) : path(path) {    import(path); };
+void VBO::import(std::string path) {    
+
+    destroy();
 
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
@@ -77,7 +95,7 @@ VBO::VBO(std::string path) {
     }
 
 
-    upload();
+    update();
 
 
 
