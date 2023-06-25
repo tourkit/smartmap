@@ -9,6 +9,8 @@ void VBO::destroy() {
 
     if (!vao) return;
 
+    VBO::pool.resize(0);
+
     glDisableVertexAttribArray(0); 
     glDisableVertexAttribArray(1); 
     glDisableVertexAttribArray(2); 
@@ -20,10 +22,8 @@ void VBO::destroy() {
 
 
 }
-void VBO::reset() { std::cout << "oo" << std::endl; import(path);
 
-    
-}
+void VBO::reset() {  import(path); }
 
 void VBO::update() {
 
@@ -46,17 +46,21 @@ void VBO::update() {
 
 }
 
-VBO::VBO(std::string path) : path(path) {    import(path); };
+VBO::VBO(std::string path) : path(path) {   import(path); };
 
 void VBO::import(std::string path) {    
 
     destroy();
 
+    
+
+    VBO::pool.push_back(this); 
+
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
 
     this->id = VBO::pool.size();
-    VBO::pool.push_back(this);
+    
 
     float clip_x = -1, clip_y = 1;
 

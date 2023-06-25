@@ -26,7 +26,7 @@ auto* window = new GL::Window(false,WIDTH,HEIGHT,OFFX);
 auto*  gui = new GUI{window->window}; 
 
 static char frag[128] = "test.frag";
-static char boyfile[128] = "assets/media/bo.jpg";
+static char boyfile[128] = "assets/media/boy.jpg";
             
 // auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
 auto* shader = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
@@ -35,13 +35,13 @@ auto quadfile = "C:/msys64/home/SysErr/old/smartmap/assets/model/quad.obj";
 VBO quad(quadfile);
 
 
-void Draw2D(const Texture& tex) {
+// void Draw2D(const Texture& tex) {
 
-    glBindTexture(GL_TEXTURE_2D, tex.id);
-    ShaderProgram::pool[0]->use();
-    quad.draw();
+//     glBindTexture(GL_TEXTURE_2D, tex.id);
+//     ShaderProgram::pool[0]->use();
+//     quad.draw();
 
-}
+// }
 
 int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0) {
 
@@ -55,6 +55,15 @@ int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0
     return now;
 
 }
+
+void DrawCall(VBO& quad, const Texture& tex) {
+
+    glBindTexture(GL_TEXTURE_2D, tex.id);
+    ShaderProgram::pool[0]->use();
+    quad.draw();
+
+}
+
 
 Artnet artnet("2.0.0.222");
 
@@ -79,14 +88,21 @@ int main() {
 
     int fileCheck1 = 0;
     int fileCheck2 = last_mil(quadfile);
-    int perline = 32;
+
+    int cells_count = 32;
 
     while(true) window->render([&]() {
 
         fileCheck1 = last_mil(frag, [](){ ShaderProgram::pool[0]->reset(); }, fileCheck1);
-        // fileCheck2 = last_mil(quadfile, [](){ VBO::pool[0]->reset(); }, fileCheck2);
+        fileCheck2 = last_mil(quadfile, [](){ VBO::pool[0]->reset(); }, fileCheck2);
 
-        Draw2D(tex);
+        // Draw2D(tex);
+        for (auto q : VBO::pool) {
+
+            DrawCall(*q, tex);
+            
+
+        }
 
         artnet.run();
 
@@ -108,22 +124,25 @@ int main() {
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
 
             ImGui::Begin(std::string("Artnet Universe "+std::to_string(dmx.first)).c_str());
-
-                int nwidth = (ImGui::GetWindowWidth()-12-(perline*2)) / perline;
-
-                ImGui::SliderInt("perline" , &perline,1,64);
                 
+                auto window_width = ImGui::GetWindowWidth();
+
+                int cell_width = window_width / cells_count - 2;
+
+
                 for (int i = 0; i < 512; i++) {
 
                     ImGui::PushID(i);
 
-                    ImGui::VSliderScalar("",  ImVec2(nwidth,40),    ImGuiDataType_U8, &dmx.second.chan[i],  &min,   &max,   "");
+                    ImGui::VSliderScalar("",  ImVec2(cell_width,40),    ImGuiDataType_U8, &dmx.second.chan[i],  &min,   &max,   "");
 
-                    if ((i + 1) % perline != 0) ImGui::SameLine(0);
+                    if ((i + 1) % cells_count != 0) ImGui::SameLine(0);
+
 
                     ImGui::PopID();
 
                 }
+
 
             ImGui::End();
 
@@ -133,6 +152,18 @@ int main() {
 
         }
         ImGui::Begin("VIEW");
+
+
+    // std::cout << VBO::pool.size() << std::endl;
+    if (ImGui::Button("UPDATE")) VBO::pool[0]->update();
+    ImGui::SameLine();
+    if (ImGui::Button("RESET")) VBO::pool[0]->reset();
+    ImGui::SameLine();
+    if (ImGui::Button("DESTROY")) VBO::pool[0]->destroy();
+
+    ImGui::Separator();
+
+            
     // Draw lines
         for (int i = 0; i < Texture::pool.size(); i++) {
 
@@ -140,10 +171,6 @@ int main() {
             ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(Texture::pool[i]->width,Texture::pool[i]->height));
             ImGui::PushID(i+100);
 
-            if (ImGui::Button("UPDATE")) VBO::pool[0]->update();
-            ImGui::SameLine();
-            if (ImGui::Button("RESET")) VBO::pool[0]->reset();
-                   
             ImGui::PopID();
             ImGui::Separator();
         }
