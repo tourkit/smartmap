@@ -25,8 +25,9 @@ auto* window = new GL::Window(false,WIDTH,HEIGHT,OFFX);
 
 auto*  gui = new GUI{window->window}; 
 
-const char* frag = "C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\shader\\test.frag";
-
+static char frag[128] = "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag";
+static char boyfile[128] = "assets/media/boy.jpg";
+            
 // auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
 auto* shader = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
 
@@ -66,7 +67,7 @@ int main() {
     float no[100];
     GL_PRINT(sizeof(float));
 
-    Texture tex("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+    Texture tex(boyfile);
     Texture tex2("C:/msys64/home/SysErr/old/smartmap/assets/media/smile.jpg");
 
     glEnable(GL_CLIP_DISTANCE0);
@@ -101,6 +102,7 @@ int main() {
         for (auto dmx : Artnet::data) {
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
@@ -125,7 +127,7 @@ int main() {
 
             ImGui::End();
 
-            ImGui::PopStyleVar(4);
+            ImGui::PopStyleVar(5);
 
             break;
 
@@ -150,8 +152,26 @@ int main() {
         ImGui::End();
         ImGui::Begin("KTRL");
 
+
+            ImGui::SetWindowFontScale(1.5);
             if (ImGui::DragInt2("winsize", &WIDTH,1,0,1920)) window->setSize(WIDTH,HEIGHT);
             if (ImGui::DragInt2("winpos", &OFFX,1,0,2560)) window->setPos(OFFX,OFFY);
+            ImGui::Separator();
+            if (ImGui::InputText(" tex", boyfile, IM_ARRAYSIZE(boyfile))) {
+
+                Texture::pool[0]->create(std::string(boyfile));
+
+
+            }
+            if (ImGui::InputText("input text", frag, IM_ARRAYSIZE(frag))) {
+
+                ShaderProgram::pool[0]->paths[1] =  frag;
+                ShaderProgram::pool[0]->reset();
+
+
+            }
+
+
 
         ImGui::End();
 
