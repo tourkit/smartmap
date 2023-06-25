@@ -96,11 +96,14 @@ int main() {
         gui->newframe();  
         ImGui::ShowDemoWindow();
         ImGui::Begin("VIEW");
+
         for (int i = 0; i < Texture::pool.size(); i++) {
         
-
+            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[0]->id, ImVec2(Texture::pool[0]->width,Texture::pool[0]->height));
         
         }
+
+
         ImGui::End();
         ImGui::Begin("KTRL");
 
