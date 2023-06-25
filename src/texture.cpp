@@ -41,7 +41,6 @@ static uint8_t FULLBLACK[4] = {0,0,0,0};
 void Texture::create(std::string src, GLuint offset_x, GLuint offset_y) {
 
     Image img(src);
-    std::cout << img.width << std::endl;
     if (!img.width) return create(&FULLBLACK,1,1);
     create(img.i, img.width, img.height, offset_x, offset_y);
 

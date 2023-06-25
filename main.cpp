@@ -25,8 +25,8 @@ auto* window = new GL::Window(false,WIDTH,HEIGHT,OFFX);
 
 auto*  gui = new GUI{window->window}; 
 
-static char frag[128] = "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag";
-static char boyfile[128] = "assets/media/boy.jpg";
+static char frag[128] = "test.frag";
+static char boyfile[128] = "assets/media/bo.jpg";
             
 // auto* shader = new ShaderProgram({"assets/shader/smartmap.vert", "assets/shader/smartmap.frag"});
 auto* shader = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
@@ -163,9 +163,9 @@ int main() {
 
 
             }
-            if (ImGui::InputText("input text", frag, IM_ARRAYSIZE(frag))) {
+            if (ImGui::InputText(" frag", frag, IM_ARRAYSIZE(frag))) {
 
-                ShaderProgram::pool[0]->paths[1] =  frag;
+                ShaderProgram::pool[0]->paths[1] =  "C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(frag);
                 ShaderProgram::pool[0]->reset();
 
 

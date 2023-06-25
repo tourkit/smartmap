@@ -82,7 +82,7 @@ class Image {
 public:
 
     unsigned char *i;
-    int width, height, comp, o;  // comp: 1 = lumi, 2 = ?, 3 = rgb, 4 = rgba, 5 = bgra
+    int width = 0, height, comp, o;  // comp: 1 = lumi, 2 = ?, 3 = rgb, 4 = rgba, 5 = bgra
     std::vector<unsigned char> data;
 
     std::string name,extension;

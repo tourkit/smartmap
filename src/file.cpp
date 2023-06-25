@@ -165,7 +165,7 @@ void Image::load(std::string source, IMAGE_ENCODING encoding, int quality) {
 
     File file(source);
 
-    load((unsigned char*)file.data.data(), file.size);
+    if (file.size != -1) load((unsigned char*)file.data.data(), file.size);
 
     if (encoding != RAW) convert(encoding, quality);
 
