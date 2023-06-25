@@ -13,6 +13,7 @@ void main() {
     vec4 p = texture(buff, tex.xy);
     // p *= vec2(.2,0)
     color = p;
+    // color = vec4(.1);
     // color = vec4(0,1,tex.x,1);
 
 }

@@ -93,7 +93,7 @@ int main() {
 
     while(true) window->render([&]() {
 
-        fileCheck1 = last_mil(frag, [](){ ShaderProgram::pool[0]->reset(); }, fileCheck1);
+        fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(frag)).c_str(), [](){ ShaderProgram::pool[0]->reset(); }, fileCheck1);
         fileCheck2 = last_mil(quadfile, [](){ VBO::pool[0]->reset(); }, fileCheck2);
 
         // Draw2D(tex);
@@ -160,6 +160,8 @@ int main() {
     if (ImGui::Button("RESET")) VBO::pool[0]->reset();
     ImGui::SameLine();
     if (ImGui::Button("DESTROY")) VBO::pool[0]->destroy();
+    ImGui::SameLine();
+    if (ImGui::Button("CREATE")) VBO::pool[0]->import(VBO::pool[0]->path);
 
     ImGui::Separator();
 
