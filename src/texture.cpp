@@ -37,8 +37,7 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
 
 void Texture::create(std::string src, GLuint offset_x, GLuint offset_y) {
 
-    Image img;
-    img.loadflipped(src);
+    Image img(src);
     create(img.i, img.width, img.height, offset_x, offset_y);
 
 }
