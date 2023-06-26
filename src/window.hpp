@@ -22,6 +22,8 @@ struct Window {
     
     void setSize(uint16_t width = 0, uint16_t height = 0);
     void setPos(uint16_t offset_x = 0, uint16_t offset_y = 0);
+    void updateSize();
+    void updatePos();
 
     ~Window();
 

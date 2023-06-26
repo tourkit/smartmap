@@ -174,8 +174,8 @@ static int  min = 0, max = 255, cells_count = 32;
             
             uint16_t min = 1, max = 2560;
 
-            if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &sm.window.width,  2, 1, &min,&max)) sm.window.setSize();
-            if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &sm.window.offset_x,  2, 1, &min,&max)) sm.window.setPos();
+            if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &sm.window.width,  2, 1, &min,&max)) sm.window.updateSize();
+            if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &sm.window.offset_x,  2, 1, &min,&max)) sm.window.updatePos();
 
             ImGui::Separator();
 
