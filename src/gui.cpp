@@ -97,7 +97,7 @@ void GUI::blendTest() {
 
 }
  
-static int  min = 1, max = 64, cells_count = 32;
+static int  min = 0, max = 255, cells_count = 32;
 
  void GUI::draw2() {
 

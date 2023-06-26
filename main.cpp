@@ -36,6 +36,8 @@ int main() {
         sm.quad.draw();
         sm.gui.draw2();
 
+        sm.artnet.run();
+
     }); 
 
     // uint8_t min = 0, max = 255;
