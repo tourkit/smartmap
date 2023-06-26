@@ -1,4 +1,5 @@
-#include "gui.hpp"
+#include "smartmap.hpp"
+
 GUI::GUI(GLFWwindow* window) {
 
   const char* glsl_version = "#version 430";
@@ -91,8 +92,99 @@ std::vector<GLenum> GL_BLEND_MODES = {
 void GUI::blendTest() {
 
   ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
-  ImGui::SliderInt("GL_BLEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size());
+  ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size());
   glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]); // OR  
 
 }
  
+static int  min = 1, max = 64, cells_count = 32;
+
+ void GUI::draw2() {
+
+        newframe();  
+        ImGui::ShowDemoWindow();
+        for (auto dmx : Artnet::data) {
+
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+
+            ImGui::Begin(std::string("Artnet Universe "+std::to_string(dmx.first)).c_str());
+                
+                auto window_width = ImGui::GetWindowWidth();
+
+                int cell_width = window_width / cells_count - 2;
+
+
+                for (int i = 0; i < 512; i++) {
+
+                    ImGui::PushID(i);
+
+                    ImGui::VSliderScalar("",  ImVec2(cell_width,40),    ImGuiDataType_U8, &dmx.second.chan[i],  &min,   &max,   "");
+
+                    if ((i + 1) % cells_count != 0) ImGui::SameLine(0);
+
+
+                    ImGui::PopID();
+
+                }
+
+
+            ImGui::End();
+
+            ImGui::PopStyleVar(5);
+
+            break;
+
+        }
+        ImGui::Begin("VIEW");
+
+
+    // std::cout << VBO::pool.size() << std::endl;
+    if (ImGui::Button("UPDATE")) VBO::pool[0]->update();
+    ImGui::SameLine();
+    if (ImGui::Button("RESET")) VBO::pool[0]->reset();
+    ImGui::SameLine();
+    if (ImGui::Button("DESTROY")) VBO::pool[0]->destroy();
+    ImGui::SameLine();
+    if (ImGui::Button("CREATE")) VBO::pool[0]->import(VBO::pool[0]->path);
+
+    ImGui::Separator();
+
+            
+    // Draw lines
+        for (int i = 0; i < Texture::pool.size(); i++) {
+
+            
+            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(Texture::pool[i]->width,Texture::pool[i]->height));
+            ImGui::PushID(i+100);
+
+            ImGui::PopID();
+            ImGui::Separator();
+        }
+
+
+        ImGui::End();
+        ImGui::Begin("KTRL");
+
+
+            ImGui::SetWindowFontScale(1.5);
+            
+            uint16_t min = 1, max = 2560;
+
+            if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &sm.window.width,  2, 1, &min,&max)) sm.window.setSize();
+            if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &sm.window.offset_x,  2, 1, &min,&max)) sm.window.setPos();
+
+            ImGui::Separator();
+
+            if (ImGui::InputText(" tex", (char*)&sm.tex.path[0], IM_ARRAYSIZE((char*)&sm.tex.path[0]))) sm.tex.reset();
+            if (ImGui::InputText(" frag", (char*)&sm.shader.paths[1][0], IM_ARRAYSIZE((char*)&sm.shader.paths[1][0]))) sm.shader.reset();
+
+        ImGui::End();
+
+        render();
+
+
+ }

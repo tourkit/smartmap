@@ -67,7 +67,7 @@ void VBO::import(std::string path) {
 
     Assimp::Importer importer;
 
-    const aiScene* scene = importer.ReadFile(path, aiProcess_CalcTangentSpace       | 
+    const aiScene* scene = importer.ReadFile("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(path), aiProcess_CalcTangentSpace       | 
 		aiProcess_Triangulate            |
 		aiProcess_JoinIdenticalVertices  |
 		aiProcess_SortByPType);

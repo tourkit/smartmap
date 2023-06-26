@@ -4,13 +4,14 @@ Shader::~Shader() { glDeleteShader(id);  }
 
 Shader::Shader(std::string file) {
 
+    file = "C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(file);
 
     std::string ext = file.substr(file.find_first_of(".")+1);
 
     if (ext == "frag") type = GL_FRAGMENT_SHADER;
     else if (ext == "vert") type = GL_VERTEX_SHADER;
     else if (ext == "comp") type = GL_COMPUTE_SHADER;
-    else std::cout << "shadertype error in Shader::compile" << std::endl;
+    else std::cout << "SMARTMAP FILENAME ERROR" << std::endl;
 
     file = readFile(file.c_str());
 

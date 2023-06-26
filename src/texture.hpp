@@ -14,6 +14,8 @@ struct Texture {
 
     GLenum format = GL_RGB8;
 
+    std::string path;
+
     Texture();
     Texture(void* data, GLuint width, GLuint height);
     Texture(std::string src);
@@ -28,6 +30,7 @@ struct Texture {
 
     void bind(int unit);
 
+    void reset();
     void destroy();
     void bind();
 

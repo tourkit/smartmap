@@ -77,7 +77,14 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
 
 }
 
-void Window::setPos(uint16_t offset_x, uint16_t offset_y) { glfwSetWindowPos(window, offset_x, offset_y); }
+void Window::setPos(uint16_t offset_x, uint16_t offset_y) { 
+    
+    if (!offset_y) {
+        offset_x = this->offset_x;
+        offset_y = this->offset_y;
+    }  
+    
+    glfwSetWindowPos(window, offset_x, offset_y); }
 
 void SetTheFrameBufferSize(GLFWwindow* window, int h, int w)
 {
@@ -89,7 +96,16 @@ void SetTheFrameBufferSize(GLFWwindow* window, int h, int w)
 }
 
 
-void Window::setSize(uint16_t width, uint16_t height) { glfwSetWindowSize(window, width, height); }
+void Window::setSize(uint16_t width, uint16_t height) { 
+    
+    if (!width) {
+        width = this->width;
+        height = this->height;
+    }
+
+    glfwSetWindowSize(window, width, height); 
+
+}
 
 Window::~Window() { glfwTerminate(); }
 
@@ -135,7 +151,7 @@ void Window::render(std::function<void()> callback) {
     
     this->lastTime = glfwGetTime();
 
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
+    glClearColor(0.0f, 0.0f, 0.1f, 1.0f); // BG COLOR
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
     callback();

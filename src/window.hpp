@@ -20,8 +20,8 @@ struct Window {
 
     Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset_x = 0, uint16_t offset_y = 0);
     
-    void setSize(uint16_t width, uint16_t height);
-    void setPos(uint16_t offset_x, uint16_t offset_y);
+    void setSize(uint16_t width = 0, uint16_t height = 0);
+    void setPos(uint16_t offset_x = 0, uint16_t offset_y = 0);
 
     ~Window();
 

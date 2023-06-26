@@ -38,9 +38,12 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
 static uint8_t FULLBLACK[4] = {0,0,0,0};
 // static uint8_t FULLBLACK[4] = {255,255,255,255};
 
+void Texture::reset() {create(path); }
 void Texture::create(std::string src, GLuint offset_x, GLuint offset_y) {
 
-    Image img(src);
+    this->path = src; 
+
+    Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/"+std::string(src));
     if (!img.width) return create(&FULLBLACK,1,1);
     create(img.i, img.width, img.height, offset_x, offset_y);
 
