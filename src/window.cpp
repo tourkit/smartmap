@@ -84,7 +84,10 @@ void Window::setPos(uint16_t offset_x, uint16_t offset_y) {
     updatePos();
 }
 
-void Window::updateSize() { glfwSetWindowSize(window, width, height); }
+void Window::updateSize() { 
+    glfwSetWindowSize(window, width, height);
+    glViewport(0, 0, width, height);
+}
 void Window::setSize(uint16_t width, uint16_t height) { 
     this->width = width;
     this->height = height;
