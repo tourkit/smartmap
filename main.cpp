@@ -30,8 +30,8 @@ int fileCheck3 = 0;
 
 int main() {  
 
-    // DMXUniverse uni;
-    // uni.links.push_back(new DMXAttribute(0));
+    DMXUniverse uni;
+    uni.links.push_back(new DMXAttribute(0));
 
     while(true) sm.window.render([&]() {
 
