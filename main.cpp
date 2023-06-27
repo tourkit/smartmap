@@ -30,22 +30,18 @@ int fileCheck3 = 0;
 
 int main() {  
 
-    auto nn = new DMXAttribute(0);
-    // sm.artnet.u.links.push_back(nn);
-    sm.artnet.data[0]->links.push_back(nn);
+    while(true) sm.window->render([&]() {
 
-    while(true) sm.window.render([&]() {
+        fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[0])).c_str(), [](){ sm.basic->reset(); }, fileCheck1);
+        fileCheck2 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[1])).c_str(), [&](){ sm.basic->reset(); }, fileCheck2);
+        fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(sm.quadA->path)).c_str(), [](){ VBO::pool[0]->reset(); }, fileCheck3);
 
-        fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic.paths[0])).c_str(), [](){ sm.basic.reset(); }, fileCheck1);
-        fileCheck2 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic.paths[1])).c_str(), [&](){ sm.basic.reset(); }, fileCheck2);
-        fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(sm.quadA.path)).c_str(), [](){ VBO::pool[0]->reset(); }, fileCheck3);
+        glBindTexture(GL_TEXTURE_2D, sm.tex->id);
+        sm.basic->use();
+        sm.quadA->draw();
+        sm.gui->draw2();
 
-        glBindTexture(GL_TEXTURE_2D, sm.tex.id);
-        sm.basic.use();
-        sm.quadA.draw();
-        sm.gui.draw2();
-
-        sm.artnet.run();
+        sm.artnet->run();
 
     }); 
 
