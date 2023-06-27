@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.12)
 project(SmartMap VERSION 0.1.0)
 
 find_package(glfw3 REQUIRED)
-find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
 
 add_executable(SmartMap 
@@ -26,11 +25,12 @@ add_executable(SmartMap
     src/gui.cpp
 
     include/vendor/imgui/imgui.cpp
+    include/vendor/imgui/imgui_tables.cpp
     include/vendor/imgui/imgui_widgets.cpp
     include/vendor/imgui/imgui_demo.cpp
     include/vendor/imgui/imgui_draw.cpp
-    include/vendor/imgui/imgui_impl_glfw.cpp
-    include/vendor/imgui/imgui_impl_opengl3.cpp    
+    include/vendor/imgui/backends/imgui_impl_glfw.cpp
+    include/vendor/imgui/backends/imgui_impl_opengl3.cpp    
     
     include/vendor/gl3w/src/gl3w.c
 
@@ -67,7 +67,8 @@ target_include_directories(SmartMap PRIVATE
     .
     src
     include
-    include/vendor
+    include/vendor/
+    include/vendor/imgui/
     include/vendor/gl3w/include
     
     )

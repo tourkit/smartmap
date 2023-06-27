@@ -6,7 +6,10 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::CreateContext();
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
+  ImGuiIO& io = ImGui::GetIO();
 
+// Enable docking
+io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
 
 GUI::~GUI() {   
@@ -15,6 +18,8 @@ GUI::~GUI() {
   ImGui_ImplGlfw_Shutdown();
 
   ImGui::DestroyContext(); 
+
+
   
 }
 
