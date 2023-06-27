@@ -108,7 +108,7 @@ static int  min = 0, max = 255, cells_count = 32;
 
         newframe();  
         ImGui::ShowDemoWindow();
-        for (auto dmx : sm.artnet.data) {
+        for (auto dmx : sm.artnet->data) {
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
@@ -184,13 +184,13 @@ static int  min = 0, max = 255, cells_count = 32;
             
             uint16_t min = 1, max = 2560;
 
-            if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &sm.window.width,  2, 1, &min,&max)) sm.window.updateSize();
-            if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &sm.window.offset_x,  2, 1, &min,&max)) sm.window.updatePos();
+            if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &sm.window->width,  2, 1, &min,&max)) sm.window->updateSize();
+            if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &sm.window->offset_x,  2, 1, &min,&max)) sm.window->updatePos();
 
             ImGui::Separator();
 
-            if (ImGui::InputText(" tex", (char*)&sm.tex.path[0], IM_ARRAYSIZE((char*)&sm.tex.path[0]))) sm.tex.reset();
-            if (ImGui::InputText(" frag", (char*)&sm.basic.paths[1][0], IM_ARRAYSIZE((char*)&sm.basic.paths[1][0]))) sm.basic.reset();
+            if (ImGui::InputText(" tex", (char*)&sm.tex->path[0], IM_ARRAYSIZE((char*)&sm.tex->path[0]))) sm.tex->reset();
+            if (ImGui::InputText(" frag", (char*)&sm.basic->paths[1][0], IM_ARRAYSIZE((char*)&sm.basic->paths[1][0]))) sm.basic->reset();
 
         ImGui::End();
 

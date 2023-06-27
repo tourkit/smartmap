@@ -1,7 +1,7 @@
 #include "smartmap.hpp"  
 
 
-FrameBuffer::FrameBuffer(GLuint id) : id(0), width(sm.window.width), height(sm.window.height) { }
+FrameBuffer::FrameBuffer(GLuint id) : id(0), width(sm.window->width), height(sm.window->height) { }
 
 FrameBuffer::FrameBuffer() { glGenFramebuffers(1, &id); }
 FrameBuffer::FrameBuffer(const Texture& tex) : FrameBuffer() { attach(tex); }
