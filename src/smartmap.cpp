@@ -22,7 +22,12 @@ SmartMap::SmartMap() :
     window.setSize(1920,1080);
 
     atlas.link(&shader);
-    
+
+    int MAT_X = 5,MAT_Y = 2;
+    auto mat = matrice(MAT_X,MAT_Y);
+    UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
+    matriceUBO.link(&shader);
+    matriceUBO.send(); 
 } 
 
 SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }
