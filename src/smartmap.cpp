@@ -28,6 +28,9 @@ SmartMap::SmartMap() :
     UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
     matriceUBO.link(&shader);
     matriceUBO.send(); 
+
+    Fixture fixtures[25];
+    int address = 1;
 } 
 
 SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }
