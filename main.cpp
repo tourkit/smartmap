@@ -30,7 +30,13 @@ int fileCheck3 = 0;
 
 int main() {  
 
-    Atlas atlas("assets/media/");
+    int MAT_X = 5,MAT_Y = 2;
+    auto mat = matrice(MAT_X,MAT_Y);
+    UBO matriceUBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
+    matriceUBO.link(&sm.shader);
+    matriceUBO.send();
+
+    // atlas.link(&sm.shader);
 
     while(true) sm.window.render([&]() {
 
