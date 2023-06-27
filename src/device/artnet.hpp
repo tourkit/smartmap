@@ -75,18 +75,9 @@ struct Artnet {
     
   }
 
-  ~Artnet() { 
-
-    artnet_stop(artnet);
-    artnet_destroy(artnet);
-
-  }
+  ~Artnet() { artnet_stop(artnet); artnet_destroy(artnet); }
   
-  void run() {
-
-    artnet_read(artnet, .1);  
-
-  }
+  void run() { artnet_read(artnet, .1);  }
 
 } ;
 

@@ -17,6 +17,8 @@ add_executable(SmartMap
     src/vbo.cpp
     src/ubo.cpp
     src/atlas.cpp
+    src/fixture.cpp
+    src/attribute.cpp
 
     src/device/artnet.cpp
     

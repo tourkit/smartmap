@@ -29,28 +29,28 @@ SmartMap::SmartMap() :
     matriceUBO.link(&shader);
     matriceUBO.send(); 
 
-    Fixture fixtures[1];
-    int address = 1;
+    // Fixture fixtures[1];
+    // int address = 1;
 
 
-    for (auto f:fixtures) address += f.DMXpatch(1,address, {
+    // for (auto f:fixtures) address += f.DMXpatch(1,address, {
     
-        // "Color.Red",
-        // "Color.Green",
-        // "Color.Blue",
-        // "Position.Horizontal",
-        // "Position.Vertical",
-        // "Gobo.ID",
-        // "Gobo.Fx1",
-        // "Gobo.Fx2",
-        // "Gobo.Fx3",
-        // "Strobe",
-        // "Feedback",
-        // "Orientation",
-        // "Focus.Horizontal",
-        // "Focus.Vertical"
+    //     // "Color.Red",
+    //     // "Color.Green",
+    //     // "Color.Blue",
+    //     // "Position.Horizontal",
+    //     // "Position.Vertical",
+    //     // "Gobo.ID",
+    //     // "Gobo.Fx1",
+    //     // "Gobo.Fx2",
+    //     // "Gobo.Fx3",
+    //     // "Strobe",
+    //     // "Feedback",
+    //     // "Orientation",
+    //     // "Focus.Horizontal",
+    //     // "Focus.Vertical"
         
-    });
+    // });
 
     UBO fixtureUBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
     fixtureUBO.link(&shader);
