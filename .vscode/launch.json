@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "DEBUG",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/SmartMap.exe",
+        "cwd": "${workspaceFolder}",
+        "preLaunchTask": "build"
+      }
+    ]
+  }
