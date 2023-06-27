@@ -188,7 +188,7 @@ static int  min = 0, max = 255, cells_count = 32;
             ImGui::Separator();
 
             if (ImGui::InputText(" tex", (char*)&sm.tex.path[0], IM_ARRAYSIZE((char*)&sm.tex.path[0]))) sm.tex.reset();
-            if (ImGui::InputText(" frag", (char*)&sm.shader.paths[1][0], IM_ARRAYSIZE((char*)&sm.shader.paths[1][0]))) sm.shader.reset();
+            if (ImGui::InputText(" frag", (char*)&sm.basic.paths[1][0], IM_ARRAYSIZE((char*)&sm.basic.paths[1][0]))) sm.basic.reset();
 
         ImGui::End();
 

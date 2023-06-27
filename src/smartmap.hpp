@@ -18,9 +18,9 @@ struct SmartMap {
 
     GL::Window window;
 
-    VBO quad;
+    VBO quadA,quadB;
     Texture tex;
-    ShaderProgram shader;
+    ShaderProgram basic,shader,blur_x,blur_y;
 
     GUI gui;
 

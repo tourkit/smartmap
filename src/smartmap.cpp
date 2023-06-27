@@ -5,9 +5,13 @@ SmartMap::SmartMap() :
 
     artnet("2.0.0.222"),
     window(false,400,300),
-    quad("quad.obj"),
+    quadA("quad.obj"),
+    quadB("quad.obj"),
     tex("boy.jpg"),
-    shader({"test.frag", "basic.vert"}),
+    basic({"test.frag", "basic.vert"}),
+    shader({"smartmap.frag", "smartmap.vert"}),
+    blur_x({"blur_x.comp"}),
+    blur_y({"blur_y.comp"}),
     gui(window.window)
     
 {

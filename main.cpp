@@ -31,20 +31,21 @@ int fileCheck3 = 0;
 int main() {  
 
     Atlas atlas("assets/media/");
-    
+
     while(true) sm.window.render([&]() {
 
-        fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader.paths[0])).c_str(), [](){ sm.shader.reset(); }, fileCheck1);
-        fileCheck2 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader.paths[1])).c_str(), [&](){ sm.shader.reset(); }, fileCheck2);
-        fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(sm.quad.path)).c_str(), [](){ VBO::pool[0]->reset(); }, fileCheck3);
+        fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic.paths[0])).c_str(), [](){ sm.basic.reset(); }, fileCheck1);
+        fileCheck2 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic.paths[1])).c_str(), [&](){ sm.basic.reset(); }, fileCheck2);
+        fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(sm.quadA.path)).c_str(), [](){ VBO::pool[0]->reset(); }, fileCheck3);
 
         glBindTexture(GL_TEXTURE_2D, sm.tex.id);
-        sm.shader.use();
-        sm.quad.draw();
+        sm.basic.use();
+        sm.quadA.draw();
         sm.gui.draw2();
 
         sm.artnet.run();
 
     }); 
+
  
 }
