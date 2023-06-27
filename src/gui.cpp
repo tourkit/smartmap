@@ -127,7 +127,7 @@ static int  min = 0, max = 255, cells_count = 32;
 
                     ImGui::PushID(i);
 
-                    ImGui::VSliderScalar("",  ImVec2(cell_width,40),    ImGuiDataType_U8, &dmx.second.chan[i],  &min,   &max,   "");
+                    ImGui::VSliderScalar("",  ImVec2(cell_width,40),    ImGuiDataType_U8, &dmx.second->chan[i],  &min,   &max,   "");
 
                     if ((i + 1) % cells_count != 0) ImGui::SameLine(0);
 
@@ -144,6 +144,8 @@ static int  min = 0, max = 255, cells_count = 32;
             break;
 
         }
+
+
         ImGui::Begin("VIEW");
 
     ImGui::Text(std::to_string(Texture::pool.size()).c_str());

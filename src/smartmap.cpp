@@ -5,6 +5,7 @@ SmartMap::SmartMap() :
 
     artnet("2.0.0.222"),
     window(false,400,300),
+    gui(window.window),
     atlas("assets/media/"), // order matter, should happen after window
     quadA("quad.obj"),
     quadB("quad.obj"),
@@ -12,8 +13,7 @@ SmartMap::SmartMap() :
     basic({"test.frag", "basic.vert"}),
     shader({"smartmap.frag", "smartmap.vert"}),
     blur_x({"blur_x.comp"}),
-    blur_y({"blur_y.comp"}),
-    gui(window.window)
+    blur_y({"blur_y.comp"})
     
 
 {

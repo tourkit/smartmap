@@ -56,7 +56,7 @@ Attribute* Fixture::attr(const char* t) {
 int Fixture::DMXpatch(int universe, int address, std::vector<std::string> dmx_chart)  {
 
     --address;
-    DMXUniverse& uni = sm.artnet.data[--universe];
+    DMXUniverse* uni = sm.artnet.data[--universe];
 
     int offset = address;
 
@@ -68,19 +68,19 @@ int Fixture::DMXpatch(int universe, int address, std::vector<std::string> dmx_ch
       
         dmx_chart[i].resize(dmx_chart[i].length()-strlen(finestr)); // suffisant ?
 
-        uni.links.push_back(new DMXAttributeFine(address));
+        uni->links.push_back(new DMXAttributeFine(address));
 
         address+=2;
 
       }else{
 
-        uni.links.push_back(new DMXAttribute(address));
+        uni->links.push_back(new DMXAttribute(address));
        
         address+=1;
       
       } 
         
-      uni.links.back()->linkTo(attributes->child(&dmx_chart[i][0]));
+      uni->links.back()->linkTo(attributes->child(&dmx_chart[i][0]));
 
     }
 

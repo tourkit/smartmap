@@ -24,6 +24,8 @@ struct SmartMap {
 
     GUI gui;
 
+    DMXUniverse u;
+
     Atlas atlas;
 
     static SmartMap& getInstance();

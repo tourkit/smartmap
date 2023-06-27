@@ -43,11 +43,14 @@ struct DMXUniverse {
 
 struct Artnet {
 
+  DMXUniverse u;
   artnet_node artnet;
 
-  std::map<uint16_t,DMXUniverse> data;
+  std::map<uint16_t,DMXUniverse*> data;
 
   Artnet(const char* ip) {
+
+    data[0] = new DMXUniverse();
     
     artnet = artnet_new(ip, 0);
     artnet_set_short_name(artnet, "SmartMap");
@@ -64,12 +67,12 @@ struct Artnet {
   int store(artnet_dmx_t& dmx) {
 
     // create table
-    data[dmx.universe]; // ca coute qq chose ca a chaque tcheck une fois qu'il est deja créé ?
+    data[dmx.universe] = new DMXUniverse(); // ca coute qq chose ca a chaque tcheck une fois qu'il est deja créé ?
 
    // bitswap lf vs hf
-    for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.lengthHi); ++i) data[dmx.universe].chan[i] = dmx.data[i];
+    for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.lengthHi); ++i) data[dmx.universe]->chan[i] = dmx.data[i];
 
-    for (auto l : data[dmx.universe].links) l->update(&data[dmx.universe].chan[0]); // ou data[dmx.universe].update(); mais pas cool avec 16bit
+    for (auto l : data[dmx.universe]->links) l->update(&data[dmx.universe]->chan[0]); // ou data[dmx.universe].update(); mais pas cool avec 16bit
 
     return 0;
     
