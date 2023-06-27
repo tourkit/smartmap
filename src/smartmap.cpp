@@ -5,6 +5,7 @@ SmartMap::SmartMap() :
 
     artnet("2.0.0.222"),
     window(false,400,300),
+    atlas("assets/media/"), // order matter, should happen after window
     quadA("quad.obj"),
     quadB("quad.obj"),
     tex("boy.jpg"),
@@ -14,16 +15,14 @@ SmartMap::SmartMap() :
     blur_y({"blur_y.comp"}),
     gui(window.window)
     
+
 {
+
     window.setPos(2560,290);
     window.setSize(1920,1080);
 
-    glEnable(GL_CLIP_DISTANCE0);
-    glEnable(GL_CLIP_DISTANCE1);
-    glEnable(GL_CLIP_DISTANCE2);
-    glEnable(GL_CLIP_DISTANCE3);
-
-
+    atlas.link(&shader);
+    
 } 
 
 SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }

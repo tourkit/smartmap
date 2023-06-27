@@ -24,6 +24,8 @@ struct SmartMap {
 
     GUI gui;
 
+    Atlas atlas;
+
     static SmartMap& getInstance();
 
 private:

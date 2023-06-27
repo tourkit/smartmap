@@ -75,6 +75,8 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     
     lastTime = glfwGetTime();
 
+    
+
 }
 
 void Window::updatePos() {  glfwSetWindowPos(window, offset_x, offset_y); }

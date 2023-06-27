@@ -36,8 +36,6 @@ int main() {
     matriceUBO.link(&sm.shader);
     matriceUBO.send();
 
-    // atlas.link(&sm.shader);
-
     while(true) sm.window.render([&]() {
 
         fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic.paths[0])).c_str(), [](){ sm.basic.reset(); }, fileCheck1);
