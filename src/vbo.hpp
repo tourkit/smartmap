@@ -27,7 +27,7 @@ struct VBO {
     void destroy();
     void reset();
 
-    VBO(std::string path = "assets/model/quad.obj") ;
+    VBO(std::string path = "quad.obj") ;
 
     void draw(int count = 1);
 

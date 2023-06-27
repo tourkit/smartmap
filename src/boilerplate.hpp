@@ -6,7 +6,7 @@
 
 
 
-#define BOILl
+#define BOILs
 #ifdef BOIL
 
 #include <chrono>
@@ -27,7 +27,7 @@ int Boilerplate() {
     // SET OPENGL
 
     GLuint width = 400, height = 300;
-
+    auto lastTime = glfwGetTime();
 #ifdef BOIL
     glfwInit();
 
@@ -43,11 +43,9 @@ int Boilerplate() {
     glfwSwapInterval(0);
 
     gl3wInit();
-#else
-    auto* window = (new GL::Window(false,width,height,1920-width))->window;
-#endif   
+  
     // SET QUAD
-#ifdef BOIL
+
     std::vector<std::array<float, 4>> vertices;
     vertices.push_back({-1,  1, 0, 1});
     vertices.push_back({1 ,  1, 1, 1});
@@ -74,12 +72,9 @@ int Boilerplate() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, 16, (GLvoid *) (8));
     glEnableVertexAttribArray(1);
-#else
-    VBO quad;
-#endif   
 
     // SET SHADER
-#ifdef BOIL
+
     auto shader = glCreateProgram();
 
     // std::ifstream fragFile("assets/shader/basic.frag");
@@ -108,18 +103,11 @@ int Boilerplate() {
 
     glUseProgram(shader); 
 
-#else
-   auto* shader = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
- 
-    shader->use();
-#endif   
-
     // SET TEXTURE
 
     Image img;
     img.loadflipped("C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\media\\boy.jpg");
 
-#ifdef BOIL
 
     GLuint tex;
 
@@ -142,19 +130,9 @@ int Boilerplate() {
 
     glBindTexture(GL_TEXTURE_2D, tex);
 
-#else
-
-    uint8_t p[3] = {255,0,255};
-    Texture tex(&p[0],1,1);
-    tex.upload(img.i,img.width,img.height);
-    tex.bind();
-    
-
-#endif   
-
     // RENDER
 
-    auto lastTime = glfwGetTime();
+    
 
     while (true) {
 
@@ -168,13 +146,10 @@ int Boilerplate() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-#ifdef BOIL
+
         glBindVertexArray(vao); 
 
         glDrawElementsInstanced(GL_TRIANGLES, indices.size()*12, GL_UNSIGNED_INT, 0, 1);
-#else
-        quad.draw();
-#endif
 
         glfwPollEvents();
 
@@ -185,3 +160,43 @@ int Boilerplate() {
 
 } 
 
+#else
+
+
+    auto* window = (new GL::Window(false,width,height,1920-width))->window;
+    VBO quad;
+    auto* shader = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
+
+    shader->use();
+    uint8_t p[3] = {255,0,255};
+    Texture tex(&p[0],1,1);
+
+    Image img("C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\media\\boy.jpg");
+    tex.create(img.i,img.width,img.height);
+    tex.bind();
+
+
+    while (true) {
+
+        if (glfwGetTime() - lastTime <= 1./280. ) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            continue;
+        }
+    
+        lastTime = glfwGetTime();
+
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
+        glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
+
+        quad.draw();
+
+        glfwPollEvents();
+
+        glfwSwapBuffers(window);
+
+    }
+
+} 
+
+
+#endif
