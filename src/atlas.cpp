@@ -9,14 +9,16 @@ Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
     init();
 
-    buffer.mipmaps = 10;
+    texture.create (&data[0],width,height);
+
+    texture.mipmaps = 10;
 
     TourKit::Directory dir(path);
 
     for (auto file:dir.list) {
 
-        TourKit::Image img;
-        img.loadflipped(dir.path_str+file);
+        std::string filepath = dir.path_str+file;
+        TourKit::Image img(filepath);
 
         if (!add(img.width,img.height,&img.data[0])) std::cout << "need new atlas for that" <<std::endl;
     
@@ -38,7 +40,7 @@ void Atlas::link(ShaderProgram* shader) {
 
 
     shader->sendUniform("mediasAtlas", 1);
-    buffer.bind(1);
+    texture.bind(1);
 
 }
 
@@ -72,7 +74,7 @@ bool Atlas::add(int width, int height, unsigned char* data){
             
             );
             
-            if (buffered) buffer.create(&data[0],r.width,r.height,r.x,r.y);
+            if (buffered) texture.update(&data[0],r.width,r.height,r.x,r.y);
 
             return true;
 

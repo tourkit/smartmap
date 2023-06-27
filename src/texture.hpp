@@ -22,7 +22,8 @@ struct Texture {
     
     ~Texture();
 
-    void create(void* data, GLuint width = 0, GLuint height = 0, GLuint offset_x = 0, GLuint offset_y = 0);
+    void create(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0);
+    void update(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0);
 
     void create(std::string src, GLuint offset_x = 0, GLuint offset_y = 0);
 

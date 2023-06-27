@@ -26,7 +26,7 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
-#include <RectangleBinPack/GuillotineBinPack.h> 
+
 
 #include "file.hpp"
 

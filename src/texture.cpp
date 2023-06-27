@@ -11,6 +11,7 @@ void Texture::destroy() { if (id) glDeleteTextures(1, &id); }
 
 void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
 
+
     this->width = width;
     this->height = height;
 
@@ -19,6 +20,13 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
     glTexStorage2D(GL_TEXTURE_2D, mipmaps, format, width, height);
+
+
+    update(data, width, height, offset_x, offset_y);
+
+}
+
+void Texture::update(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -33,7 +41,10 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
+
 }
+
+
 
 static uint8_t FULLBLACK[4] = {0,0,0,0};
 // static uint8_t FULLBLACK[4] = {255,255,255,255};

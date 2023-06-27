@@ -146,6 +146,7 @@ static int  min = 0, max = 255, cells_count = 32;
         }
         ImGui::Begin("VIEW");
 
+    ImGui::Text(std::to_string(Texture::pool.size()).c_str());
 
     // std::cout << VBO::pool.size() << std::endl;
     if (ImGui::Button("UPDATE")) VBO::pool[0]->update();
@@ -162,6 +163,8 @@ static int  min = 0, max = 255, cells_count = 32;
     // Draw lines
         for (int i = 0; i < Texture::pool.size(); i++) {
 
+            ImGui::Text(("width: " + std::to_string(Texture::pool[i]->width)).c_str());
+            ImGui::Text(("height: " + std::to_string(Texture::pool[i]->height)).c_str());
             
             ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(Texture::pool[i]->width,Texture::pool[i]->height));
             ImGui::PushID(i+100);

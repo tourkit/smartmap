@@ -1,6 +1,6 @@
 #ifndef ATLAS_H
 #define ATLAS_H  
- 
+ #include <RectangleBinPack/GuillotineBinPack.h> 
 #include "globals.hpp"
 #include "texture.hpp"
 #include "ubo.hpp"
@@ -17,7 +17,7 @@ struct Atlas : public rbp::GuillotineBinPack{
     
     std::vector<vec4> normalized;
 
-    Texture buffer;
+    Texture texture;
          
     UBO atlaspos; 
 

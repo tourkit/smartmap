@@ -29,6 +29,8 @@ int fileCheck2 = 0;
 int fileCheck3 = 0;
 
 int main() {  
+
+    Atlas atlas("assets/media/");
     
     while(true) sm.window.render([&]() {
 
