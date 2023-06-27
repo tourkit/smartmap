@@ -28,15 +28,9 @@ struct Attribute {
 
   Attribute(const char* name, float val, float min_val = 0, float max_val = 1, std::vector<float>* dst = nullptr) 
   
-    : name(name), min_val(min_val), max_val(max_val), def_val(val), range_val(max_val-min_val) { 
+     { 
 
-      if (dst) buffer = dst; 
 
-      id = buffer->size();
-      
-      buffer->push_back(0);
-
-      set(val);
     
   }
 

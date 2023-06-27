@@ -13,7 +13,7 @@ struct DMXAttribute : public Attribute {
 
 	int address;
 
-	DMXAttribute(int address) : address(address), Attribute(std::to_string(address).c_str(), 0) {  }
+	DMXAttribute(int address) : Attribute(std::to_string(address).c_str(), 0) {  }
 
 	virtual void update(uint8_t* data) { set(GMAui2f[data[address]]); }
 
@@ -45,7 +45,7 @@ struct Artnet {
 
   artnet_node artnet;
 
-  static inline std::map<uint16_t,DMXUniverse> data;
+  std::map<uint16_t,DMXUniverse> data;
 
   Artnet(const char* ip) {
     
@@ -53,12 +53,15 @@ struct Artnet {
     artnet_set_short_name(artnet, "SmartMap");
     artnet_set_long_name(artnet, "SmartMap");
     artnet_start(artnet);
-    artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *d){ store(p->data.admx); return 1; }, NULL);
+    artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this){
+      ((Artnet*)_this)->store(p->data.admx);  
+      return 1; 
+    }, this);
   
   }
 
   
-  static int store(artnet_dmx_t& dmx) {
+  int store(artnet_dmx_t& dmx) {
 
     // create table
     data[dmx.universe]; // ca coute qq chose ca a chaque tcheck une fois qu'il est deja créé ?

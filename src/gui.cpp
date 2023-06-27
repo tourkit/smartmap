@@ -108,7 +108,7 @@ static int  min = 0, max = 255, cells_count = 32;
 
         newframe();  
         ImGui::ShowDemoWindow();
-        for (auto dmx : Artnet::data) {
+        for (auto dmx : sm.artnet.data) {
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
