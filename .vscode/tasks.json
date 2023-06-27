@@ -10,7 +10,7 @@
 		{
 			"type": "shell",
 			"label": "buildandrun",
-			"command": "cd build; cmake ..; ninja; ",
+			"command": "cd build; cmake ..; ninja; ./SmartMap.exe ",
 			"problemMatcher": ["$gcc"]
 		}
 	]
