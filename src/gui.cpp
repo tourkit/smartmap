@@ -170,7 +170,11 @@ static int  min = 0, max = 255, cells_count = 32;
             ImGui::Text(("width: " + std::to_string(Texture::pool[i]->width)).c_str());
             ImGui::Text(("height: " + std::to_string(Texture::pool[i]->height)).c_str());
             
-            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(Texture::pool[i]->width,Texture::pool[i]->height));
+            float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
+            auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
+
+            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
+            
             ImGui::PushID(i+100);
 
             ImGui::PopID();
