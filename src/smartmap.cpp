@@ -11,8 +11,8 @@ SmartMap::SmartMap() {
     window = new GL::Window(false,400,300);
     window->setPos(2560,290);
     window->setSize(1920,1080);
-    MAT_X = 5; 
-    MAT_Y = 2;
+    MAT_X = 1; 
+    MAT_Y = 1;
     MATS = MAT_X*MAT_Y;
     FW = window->width*MAT_X;
     FH = window->height*MAT_Y;
@@ -73,9 +73,9 @@ void SmartMap::createFixtures(int count) {
         
     // });
 
-    fixtureUBO = new UBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
-    fixtureUBO->link(shader);
-    fixtureUBO->send();
+    // fixtureUBO = new UBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
+    // fixtureUBO->link(shader);
+    // fixtureUBO->send();
 
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 

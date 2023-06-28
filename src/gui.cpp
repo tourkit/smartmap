@@ -102,7 +102,7 @@ void GUI::blendTest() {
 
 }
  
-static int  min = 0, max = 255, cells_count = 32;
+static int  min = 0, max = 255, cells_count = 48;
 
  void GUI::draw2() {
 
@@ -129,7 +129,7 @@ static int  min = 0, max = 255, cells_count = 32;
 
                     ImGui::PushID(i);
 
-                    ImGui::VSliderScalar("",  ImVec2(cell_width,40),    ImGuiDataType_U8, &dmx.second->chan[i],  &min,   &max,   "");
+                    ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second->chan[i],  &min,   &max,   "");
 
                     if ((i + 1) % cells_count != 0) ImGui::SameLine(0);
 
@@ -174,7 +174,7 @@ static int  min = 0, max = 255, cells_count = 32;
             auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
 
             ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
-            
+
             ImGui::PushID(i+100);
 
             ImGui::PopID();
@@ -184,9 +184,8 @@ static int  min = 0, max = 255, cells_count = 32;
 
         ImGui::End();
         ImGui::Begin("KTRL");
-
-
-            ImGui::SetWindowFontScale(1.5);
+        
+            // ImGui::SetWindowFontScale(1.5);
             
             uint16_t min = 1, max = 2560;
 

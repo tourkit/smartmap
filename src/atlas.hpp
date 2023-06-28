@@ -23,13 +23,13 @@ struct Atlas : public rbp::GuillotineBinPack{
 
     bool buffered = false;
 
-    Atlas(int width = 4096, int height = 4096);
+    Atlas(int width = 2048, int height = 2048);
 
     void init();
 
     void normalize();
 
-    Atlas(std::string path, int width = 4096, int height = 4096);
+    Atlas(std::string path, int width = 2048, int height = 2048);
 
     bool add(int width, int height, unsigned char* data);
 

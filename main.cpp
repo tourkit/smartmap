@@ -27,28 +27,39 @@ int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0
 int fileCheck1 = 0;
 int fileCheck2 = 0;
 int fileCheck3 = 0;
+int fileCheck4 = 0;
+int fileCheck5 = 0;
 
 int main() {  
 
     sm.createFixtures(1);
 
+    std::vector<float> ddd;
+    ddd.resize(24*64);
+
+    UBO* fixtureUBO = new UBO(&ddd, ddd.size(), "FixtureUBO"); 
+    fixtureUBO->link(sm.shader);
+    fixtureUBO->send();
+
     while(true) sm.window->render([&]() {
 
-        fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [](){ sm.shader->reset(); }, fileCheck1);
-        fileCheck2 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ sm.shader->reset(); }, fileCheck2);
-        // fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(sm.quadA->path)).c_str(), [](){ VBO::pool[0]->reset(); }, fileCheck3);
+        fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[0])).c_str(), [&](){ sm.basic->reset(); }, fileCheck1);
+        fileCheck2 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[1])).c_str(), [&](){ sm.basic->reset(); }, fileCheck2);
+        fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ sm.shader->reset(); }, fileCheck3);
+        fileCheck4 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ sm.shader->reset(); }, fileCheck4);
+        // fileCheck5 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(sm.quadA->path)).c_str(), [](){ VBO::pool[0]->reset(); }, fileCheck5);
 
         sm.outFB->clear(); // thus bind
 
-        sm.fixtureUBO->send();
+        fixtureUBO->send();
 
-        sm.passBuf->bind();
-        sm.shader->use();
+        // sm.passBuf->bind();
+        // sm.shader->use();
 
-        glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        sm.quadA->draw(sm.MATS); // quantity is instances count in shader 
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        sm.quadB->draw(sm.MATS); // quantity is instances count in shader 
+        // glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
+        // sm.quadA->draw(sm.MATS); // quantity is instances count in shader 
+        // glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        // sm.quadB->draw(sm.MATS); // quantity is instances count in shader 
 
         // sm.passBuf->copy(*sm.outBuf);
 
@@ -60,8 +71,9 @@ int main() {
 
         sm.winFB->clear(); 
         
-        glBindTexture(GL_TEXTURE_2D, sm.outBuf->id);
+        glBindTexture(GL_TEXTURE_2D, sm.tex->id);
         sm.basic->use();
+        sm.shader->use();
         sm.quadA->draw();
 
         sm.gui->draw2();
