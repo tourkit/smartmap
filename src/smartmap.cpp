@@ -6,6 +6,11 @@ SmartMap::SmartMap() {
     ddd[0] = .9;
     ddd[1] = .7;
     ddd[2] = .5;
+    ddd[5] = .0;
+    ddd[6] = .5;
+    ddd[7] = .5;
+    ddd[8] = .028;
+    ddd[9] = .283;
     std::cout << "deb" << std::endl;
 
     // VBO quadC("quad.obj");
