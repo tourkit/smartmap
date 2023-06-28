@@ -2,7 +2,7 @@
 	
 
 
-Attribute::Attribute(const char* name, float val, float min_val, float max_val, std::vector<float>* dst) {  }
+Attribute::Attribute(std::string name, float val, float min_val, float max_val, std::vector<float>* dst) {  }
 
 float* Attribute::ptr() { if (id <0) return child(0)->ptr(); else return &(*buffer)[id]; }
 
@@ -11,16 +11,16 @@ void Attribute::gui() {
     int size = childrens.size();
     if (!size) size = 1;
 
-    if (size == 1) ImGui::SliderFloat(name,ptr(),min_val,max_val); 
-    else if (size == 2) ImGui::SliderFloat2(name,ptr(),child(0)->min_val,child(0)->max_val); 
-    else if (size == 3) ImGui::SliderFloat3(name,ptr(),child(0)->min_val,child(0)->max_val); 
-    else if (size == 4) ImGui::SliderFloat4(name,ptr(),child(0)->min_val,child(0)->max_val); 
+    if (size == 1) ImGui::SliderFloat(name.c_str(),ptr(),min_val,max_val); 
+    else if (size == 2) ImGui::SliderFloat2(name.c_str(),ptr(),child(0)->min_val,child(0)->max_val); 
+    else if (size == 3) ImGui::SliderFloat3(name.c_str(),ptr(),child(0)->min_val,child(0)->max_val); 
+    else if (size == 4) ImGui::SliderFloat4(name.c_str(),ptr(),child(0)->min_val,child(0)->max_val); 
 
 }
 
-Attribute::Attribute(const char* name, std::set<Attribute*> childrens, float min_val, float max_val) : name(name) { for (auto c:childrens) this->childrens.push_back(c); }
+Attribute::Attribute(std::string name, std::vector<Attribute*> childrens, float min_val, float max_val) : name(name) { for (auto c:childrens) this->childrens.push_back(c); }
 
-Attribute::Attribute(std::set<Attribute*> childrens) : Attribute("", childrens) { }
+Attribute::Attribute(std::vector<Attribute*> childrens) : Attribute("", childrens) { }
 
 float Attribute::get() { return (*buffer)[id]; }
 
@@ -30,11 +30,11 @@ void Attribute::setNormalized(float val) { set(val*(range_val)+min_val); }
 
 Attribute* Attribute::child(int id) { return childrens[id]; }
 
-Attribute* Attribute::child(const char* name) { 
+Attribute* Attribute::child(std::string name) { 
 
     Attribute* output = this;
 
-    char* t_attr = strdup(name);
+    char* t_attr = strdup(name.c_str());
 
     char * pch = strtok (t_attr, " ,.-");
 
@@ -44,7 +44,7 @@ Attribute* Attribute::child(const char* name) {
 
         for (auto c:childrens) { 
 
-            if (!strcmp(pch,c->name)) {
+            if (!strcmp(pch,c->name.c_str())) {
 
                 found = c; 
                 break;
@@ -69,7 +69,7 @@ Attribute* Attribute::child(const char* name) {
 
 void Attribute::linkFrom(Attribute* src) {
 
-src->links_dst.insert(this);
+src->links_dst.push_back(this);
 
 link_src = src;
 

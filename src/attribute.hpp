@@ -16,7 +16,7 @@ struct Attribute {
 
   int id = -1;
 
-  const char* name;
+  std::string name;
 
   std::vector<Attribute*> childrens;
 
@@ -26,19 +26,19 @@ struct Attribute {
 
   std::vector<float>* buffer = &UBO; 
 
-  Attribute(const char* name, float val, float min_val = 0, float max_val = 1, std::vector<float>* dst = nullptr) ;
+  Attribute(std::string name, float val, float min_val = 0, float max_val = 1, std::vector<float>* dst = nullptr) ;
 
   void gui();
 
   float* ptr();
 
-  Attribute(const char* name, std::set<Attribute*> childrens, float min_val = 0, float max_val = 1);
+  Attribute(std::string name, std::vector<Attribute*> childrens, float min_val = 0, float max_val = 1);
 
-  Attribute(std::set<Attribute*> childrens);
+  Attribute(std::vector<Attribute*> childrens);
 
   Attribute* link_src = nullptr;
 
-  std::set<Attribute*> links_dst;
+  std::vector<Attribute*> links_dst;
 
   float get() ;
 
@@ -48,7 +48,7 @@ struct Attribute {
  
   Attribute* child(int id = 0);
  
-  Attribute* child(const char* name);
+  Attribute* child(std::string name);
  
   void linkFrom(Attribute* src);
 

@@ -64,25 +64,24 @@ void SmartMap::createFixtures(int count) {
 
     for (auto f:fixtures) address += f.DMXpatch(1,address, {
     
-        //  "Color.Red",
-    // //     // "Color.Green",
-    // //     // "Color.Blue",
-    // //     // "Position.Horizontal",
-    // //     // "Position.Vertical",
-    // //     // "Gobo.ID",
-    // //     // "Gobo.Fx1",
-    // //     // "Gobo.Fx2",
-    // //     // "Gobo.Fx3",
-    // //     // "Strobe",
-    // //     // "Feedback",
-    // //     // "Orientation",
-    // //     // "Focus.Horizontal",
-    // //     // "Focus.Vertical"
+         "Color.Red",
+        // "Color.Green",
+        // "Color.Blue",
+        // "Position.Horizontal",
+        // "Position.Vertical",
+        // "Gobo.ID",
+        // "Gobo.Fx1",
+        // "Gobo.Fx2",
+        // "Gobo.Fx3",
+        // "Strobe",
+        // "Feedback",
+        // "Orientation",
+        // "Focus.Horizontal",
+        // "Focus.Vertical"
         
     });
 
-    // fixtureUBO = new UBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
-    fixtureUBO = new UBO(&ddd[0], 24*64, "FixtureUBO"); 
+    fixtureUBO = new UBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
     fixtureUBO->link(shader);
     fixtureUBO->send();
 
