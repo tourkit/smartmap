@@ -30,6 +30,8 @@ int fileCheck3 = 0;
 
 int main() {  
 
+    
+
     while(true) sm.window->render([&]() {
 
         fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[0])).c_str(), [](){ sm.basic->reset(); }, fileCheck1);

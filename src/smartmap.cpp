@@ -2,6 +2,9 @@
 #include "smartmap.hpp"
 
 SmartMap::SmartMap() {
+
+    std::cout << "deb" << std::endl;
+
     artnet = new Artnet("2.0.0.222");
     window = new GL::Window(false,400,300);
     gui = new GUI(window->window);
@@ -15,8 +18,10 @@ SmartMap::SmartMap() {
     blur_y = new ShaderProgram({"blur_y.comp"});
     
 
-    window->setPos(2560,290);
-    window->setSize(1920,1080);
+    // window->setPos(2560,290);
+    // window->setSize(1920,1080);
+
+    auto& x = sm;
 
     atlas->link(shader);
 
@@ -26,32 +31,35 @@ SmartMap::SmartMap() {
     matriceUBO.link(shader);
     matriceUBO.send(); 
 
-    // Fixture fixtures[1];
-    // int address = 1;
+    Fixture fixtures[1];
+    int address = 1;
 
 
-    // for (auto f:fixtures) address += f.DMXpatch(1,address, {
+    for (auto f:fixtures) address += f.DMXpatch(1,address, {
     
-    // //     // "Color.Red",
-    // //     // "Color.Green",
-    // //     // "Color.Blue",
-    // //     // "Position.Horizontal",
-    // //     // "Position.Vertical",
-    // //     // "Gobo.ID",
-    // //     // "Gobo.Fx1",
-    // //     // "Gobo.Fx2",
-    // //     // "Gobo.Fx3",
-    // //     // "Strobe",
-    // //     // "Feedback",
-    // //     // "Orientation",
-    // //     // "Focus.Horizontal",
-    // //     // "Focus.Vertical"
+    // // // //     // "Color.Red",
+    // // // //     // "Color.Green",
+    // // // //     // "Color.Blue",
+    // // // //     // "Position.Horizontal",
+    // // // //     // "Position.Vertical",
+    // // // //     // "Gobo.ID",
+    // // // //     // "Gobo.Fx1",
+    // // // //     // "Gobo.Fx2",
+    // // // //     // "Gobo.Fx3",
+    // // // //     // "Strobe",
+    // // // //     // "Feedback",
+    // // // //     // "Orientation",
+    // // // //     // "Focus.Horizontal",
+    // // // //     // "Focus.Vertical"
         
-    // });
+    });
 
-    UBO fixtureUBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
-    fixtureUBO.link(shader);
-    fixtureUBO.send();
+    // UBO fixtureUBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
+    // fixtureUBO.link(shader);
+    // fixtureUBO.send();
+
+    std::cout << "fin" << std::endl;
+    
 } 
 
 SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }

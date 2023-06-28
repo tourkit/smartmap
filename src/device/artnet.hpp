@@ -41,10 +41,26 @@ struct DMXUniverse {
 
 };
 
+struct DMXWorld {
+
+  std::map<uint16_t,DMXUniverse*> uni;
+
+  DMXUniverse* get(int id) { 
+
+    if (uni.find(id)!=uni.end()) uni[id] = new DMXUniverse();
+
+    return uni[id];
+
+  }
+
+};
+
 struct Artnet {
 
   DMXUniverse u;
   artnet_node artnet;
+
+  DMXWorld world;
 
   std::map<uint16_t,DMXUniverse*> data;
 
