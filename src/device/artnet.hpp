@@ -47,7 +47,7 @@ struct DMXWorld {
 
   DMXUniverse* get(int id) { 
 
-    if (uni.find(id)!=uni.end()) uni[id] = new DMXUniverse();
+    if (uni.find(id)==uni.end())uni[id] = new DMXUniverse();
 
     return uni[id];
 
@@ -57,7 +57,6 @@ struct DMXWorld {
 
 struct Artnet {
 
-  DMXUniverse u;
   artnet_node artnet;
 
   DMXWorld world;
@@ -82,13 +81,13 @@ struct Artnet {
   
   int store(artnet_dmx_t& dmx) {
 
-    // create table
-    data[dmx.universe] = new DMXUniverse(); // ca coute qq chose ca a chaque tcheck une fois qu'il est deja créé ?
+  //   // create table
+    DMXUniverse* uni = world.get(dmx.universe);
 
-   // bitswap lf vs hf
-    for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.lengthHi); ++i) data[dmx.universe]->chan[i] = dmx.data[i];
+  //  // bitswap lf vs hf
+    for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.lengthHi); ++i) uni->chan[i] = dmx.data[i];
 
-    for (auto l : data[dmx.universe]->links) l->update(&data[dmx.universe]->chan[0]); // ou data[dmx.universe].update(); mais pas cool avec 16bit
+    // for (auto l : uni->links) l->update(&uni->chan[0]);
 
     return 0;
     

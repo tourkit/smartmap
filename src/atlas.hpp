@@ -1,6 +1,6 @@
 #ifndef ATLAS_H
 #define ATLAS_H  
- #include <RectangleBinPack/GuillotineBinPack.h> 
+#include "RectangleBinPack/GuillotineBinPack.h"
 #include "globals.hpp"
 #include "texture.hpp"
 #include "ubo.hpp"

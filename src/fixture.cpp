@@ -2,9 +2,9 @@
 #include "attribute.hpp"  
 #include "smartmap.hpp"  
 
-Attribute* Fixture::attr(const char* t) { 
-    
-    attributes = new Attribute("Attributes", {
+Fixture::Fixture() { 
+
+  attributes = new Attribute("Attributes", {
 
     new Attribute("Color", {
 
@@ -50,47 +50,46 @@ Attribute* Fixture::attr(const char* t) {
     // new Attribute(0,"Control")
 
   });
+}
+Attribute* Fixture::attr(const char* t) { 
     
-    return attributes->child(t); }
+    
+    
+    return attributes->child(t); 
+    
+  }
 
 int Fixture::DMXpatch(int universe, int address, std::vector<std::string> dmx_chart)  {
 
     --address;
-  DMXUniverse* uni = sm.artnet->world.get(0);
-  // std::cout << "size: " << sm.artnet->world.uni.size() << std::endl;
 
-    
-  // std::cout << "size: " << sm.artnet->world.uni.size() << std::endl;
-  //   DMXUniverse* uni = sm.artnet->world.get(--universe);
-    
-    // DMXUniverse* uni = new DMXUniverse();
-    // sm.artnet->data[--universe] =  new DMXUniverse();
+    DMXUniverse* uni = sm.artnet->world.get(--universe);
 
     int offset = address;
 
-    // for ( int i = 0; i < dmx_chart.size(); ++i)  {
+    for ( int i = 0; i < dmx_chart.size(); ++i)  {
   
-    //   char* finestr = strrchr(&dmx_chart[i][0], ' ');
+      char* finestr = strrchr(&dmx_chart[i][0], ' ');
 
-    //   if (finestr && !strcmp(finestr," --FINE")) {
+      if (finestr && !strcmp(finestr," --FINE")) {
       
-    //     dmx_chart[i].resize(dmx_chart[i].length()-strlen(finestr)); // suffisant ?
+        dmx_chart[i].resize(dmx_chart[i].length()-strlen(finestr)); // suffisant ?
 
-    //     uni->links.push_back(new DMXAttributeFine(address));
+        uni->links.push_back(new DMXAttributeFine(address));
 
-    //     address+=2;
+        address+=2;
 
-    //   }else{
+      }else{
 
-    //     uni->links.push_back(new DMXAttribute(address));
+        uni->links.push_back(new DMXAttribute(address));
        
-    //     address+=1;
+        address+=1;
       
-    //   } 
+      } 
         
-    //   uni->links.back()->linkTo(attributes->child(&dmx_chart[i][0]));
+      uni->links.back()->linkTo(attributes->child(&dmx_chart[i][0]));
 
-    // }
+    }
 
 
     return address-offset;

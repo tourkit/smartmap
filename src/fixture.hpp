@@ -6,6 +6,8 @@
 
 struct Fixture {
 
+  Fixture();
+  
   Attribute* attributes;
 
   Attribute* attr(const char* t);

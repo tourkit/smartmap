@@ -30,7 +30,10 @@ int fileCheck3 = 0;
 
 int main() {  
 
-    
+    sm.createFixtures(1);
+
+    // DMXUniverse* uni = sm.artnet->world.get(1);
+    // uni->links.push_back(nullptr);
 
     while(true) sm.window->render([&]() {
 

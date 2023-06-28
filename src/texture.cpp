@@ -1,8 +1,8 @@
 #include "texture.hpp" 
 
-Texture::Texture() { pool.push_back(this); }
+Texture::Texture() { }
 
-Texture::Texture(void* data, GLuint width, GLuint height) : Texture() { create(data, width, height); }
+Texture::Texture(void* data, GLuint width, GLuint height)  { pool.push_back(this); create(data, width, height); }
 Texture::Texture(std::string src) : Texture()   { create(src); } 
 
 Texture::~Texture() { destroy(); }

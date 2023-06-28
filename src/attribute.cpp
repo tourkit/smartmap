@@ -40,30 +40,30 @@ Attribute* Attribute::child(const char* name) {
 
     while (pch != NULL) {
 
-    Attribute* found = nullptr;
+        Attribute* found = nullptr;
 
-    for (auto c:output->childrens) { 
+        for (auto c:childrens) { 
 
-        if (!strcmp(pch,c->name)) {
+            if (!strcmp(pch,c->name)) {
 
-            found = c; 
-            break;
+                found = c; 
+                break;
+
+            } 
 
         } 
 
-    } 
+        if (!found) std::cout << "\"" << pch << "\"" << " not found !" << std::endl; 
+        else output = found;
 
-    if (!found) std::cout << "\"" << pch << "\"" << " not found !" << std::endl; 
-    else output = found;
+        pch = strtok (NULL, ",.-");
 
-    pch = strtok (NULL, ",.-");
+    }
 
-}
+    free(t_attr);
 
-free(t_attr);
-
-if (output == this) return nullptr;
-else return output; 
+    if (output == this) return nullptr;
+    else return output; 
 
 }
 
@@ -75,6 +75,8 @@ link_src = src;
 
 }
 
-void Attribute::linkTo(Attribute* dst) { dst->linkFrom(this); }
+void Attribute::linkTo(Attribute* dst) { 
+    dst->linkFrom(this); 
+    }
 
 Attribute::~Attribute() { for (auto l:links_dst) l->link_src = nullptr; }

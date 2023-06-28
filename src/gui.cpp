@@ -106,9 +106,11 @@ static int  min = 0, max = 255, cells_count = 32;
 
  void GUI::draw2() {
 
+
+// return;
         newframe();  
         ImGui::ShowDemoWindow();
-        for (auto dmx : sm.artnet->data) {
+        for (auto dmx : sm.artnet->world.uni) {
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);

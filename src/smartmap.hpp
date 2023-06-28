@@ -8,27 +8,33 @@
 #include "atlas.hpp"
 #include "ubo.hpp"
 #include "gui.hpp"
-#include "fixture.hpp" 
-#include "device/artnet.hpp" 
+#include "fixture.hpp"
+#include "device/artnet.hpp"
 
- 
+
 struct SmartMap {
 
-    DMXUniverse* te;
+    Artnet *artnet;
 
-    Artnet* artnet;
+    GL::Window *window;
 
-    GL::Window* window;
+    VBO *quadA, *quadB;
 
-    VBO* quadA,*quadB;
-    Texture *tex;
-    ShaderProgram *basic,*shader,*blur_x,*blur_y;
+    Texture *tex, *passBuf, *outBuf, *outBlur;
+
+    FrameBuffer outFB, winFB;
+
+    ShaderProgram *basic, *shader, *blur_x, *blur_y;
 
     GUI *gui;
 
-    DMXUniverse u;
+    uint16_t FW, FH, MAT_X, MAT_Y;
 
     Atlas *atlas;
+
+    std::vector<Fixture> fixtures;
+
+    void createFixtures(int count);
 
     static SmartMap& getInstance();
 
