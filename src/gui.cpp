@@ -195,8 +195,12 @@ static int  min = 0, max = 255, cells_count = 48;
             ImGui::Separator();
 
             if (ImGui::InputText(" tex", (char*)&sm.tex->path[0], IM_ARRAYSIZE((char*)&sm.tex->path[0]))) sm.tex->reset();
-            if (ImGui::InputText(" frag", (char*)&sm.basic->paths[1][0], IM_ARRAYSIZE((char*)&sm.basic->paths[1][0]))) sm.basic->reset();
+            // if (ImGui::InputText(" frag", (char*)&sm.basic->paths[1][0], IM_ARRAYSIZE((char*)&sm.basic->paths[1][0]))) sm.basic->reset();
 
+        ImGui::End();
+        
+        ImGui::Begin("FixtureUBO");
+        for (int i = 0; i < 20; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &sm.ddd[i], -1, 1);
         ImGui::End();
 
         render();

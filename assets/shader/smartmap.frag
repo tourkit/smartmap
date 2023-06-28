@@ -28,8 +28,8 @@ struct Fixture {
 
 };
 
-layout (std140) uniform mediasCoords { Rect[16] mediaCoord;};
-layout(std140) uniform FixtureUBO  { Fixture fix[24];} ;
+layout (binding = 0, std140) uniform mediasCoords { Rect[16] mediaCoord;};
+layout(binding = 2, std140) uniform FixtureUBO  { Fixture fix[24];} ;
 
 layout(std140) uniform MatriceUBO  { Rect mat[24]; };
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
@@ -98,8 +98,6 @@ float grid(vec2 uv, float thickness, float columns, float rows) {
 
 }
 
-
-
 vec4 border(vec2 t_uv, float thickness) {
 
     t_uv+=.5;
@@ -155,6 +153,7 @@ vec2 rotate(vec2 v, float a) {
 
 
 }
+
 float burst(vec2 uv, float inratio, float shape, float petals) {
 
     shape = 1-shape;
@@ -260,7 +259,6 @@ vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
 }
 
 
-
 vec4 smartmap(int instance) {
 
 
@@ -285,7 +283,7 @@ vec4 smartmap(int instance) {
 
 void main() {
 
-    // color = vec4(1); return;
+    color = vec4(fix[0].rgba.r,texcoord.x*fix[0].rgba.g,fix[0].rgba.b,1); return;
 
     if (obj == 0) { 
 

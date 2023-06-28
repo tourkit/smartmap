@@ -35,11 +35,6 @@ int main() {
     sm.createFixtures(1);
 
     std::vector<float> ddd;
-    ddd.resize(24*64);
-
-    UBO* fixtureUBO = new UBO(&ddd, ddd.size(), "FixtureUBO"); 
-    fixtureUBO->link(sm.shader);
-    fixtureUBO->send();
 
     while(true) sm.window->render([&]() {
 
@@ -51,7 +46,7 @@ int main() {
 
         sm.outFB->clear(); // thus bind
 
-        fixtureUBO->send();
+        sm.fixtureUBO->send();
 
         // sm.passBuf->bind();
         // sm.shader->use();
@@ -72,7 +67,7 @@ int main() {
         sm.winFB->clear(); 
         
         glBindTexture(GL_TEXTURE_2D, sm.tex->id);
-        sm.basic->use();
+        // sm.basic->use();
         sm.shader->use();
         sm.quadA->draw();
 

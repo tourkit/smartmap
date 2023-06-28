@@ -6,7 +6,7 @@
 
 
 
-#define BOILs
+#define BOIL
 #ifdef BOIL
 
 #include <chrono>
@@ -47,10 +47,11 @@ int Boilerplate() {
     // SET QUAD
 
     std::vector<std::array<float, 4>> vertices;
-    vertices.push_back({-1,  1, 0, 1});
-    vertices.push_back({1 ,  1, 1, 1});
-    vertices.push_back({-1, -1, 0, 0});
-    vertices.push_back({1 , -1, 1, 0});
+    vertices.push_back({-1, -1, 0, 1});
+    vertices.push_back({1, -1, 1, 1});
+    vertices.push_back({-1, 1, 0, 0});
+    vertices.push_back({1, 1, 1, 0});
+
 
     std::vector<std::array<int, 3>> indices;
     indices.push_back({0,1,2});
@@ -105,8 +106,7 @@ int Boilerplate() {
 
     // SET TEXTURE
 
-    Image img;
-    img.loadflipped("C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\media\\boy.jpg");
+    Image imgloadflipped("C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\media\\boy.jpg");
 
 
     GLuint tex;

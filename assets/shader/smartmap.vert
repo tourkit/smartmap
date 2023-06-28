@@ -20,8 +20,8 @@ struct Fixture {
 
 };
 
-layout(std140) uniform MatriceUBO  { Rect mat[24]; };
-layout(std140) uniform FixtureUBO  { Fixture fix[24];} ;
+layout(std140, binding = 1) uniform MatriceUBO  { Rect mat[24]; };
+layout(std140, binding = 2) uniform FixtureUBO  { Fixture fix[24];} ;
 
 flat out int obj;
 flat out int id;
@@ -29,7 +29,7 @@ out vec2 texcoord;
 
 
 vec2 rotate(vec2 v, float a, vec2 r2) {
-
+    
     float ratio = 2*r2.x/r2.y;
 
     float s = sin(a);
@@ -51,9 +51,10 @@ void main() {
     id = gl_InstanceID;
 
     texcoord = TEXCOORD;
+    // fix[0];
     
     gl_Position = vec4(POSITION,0,1);
-
+    return;
     gl_ClipDistance[0] = 1;
     gl_ClipDistance[1] = 1;
     gl_ClipDistance[2] = 1;

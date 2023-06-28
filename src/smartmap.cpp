@@ -2,7 +2,7 @@
 #include "smartmap.hpp"
 
 SmartMap::SmartMap() {
-
+    ddd.resize(24*64);
     std::cout << "deb" << std::endl;
 
 
@@ -39,8 +39,6 @@ SmartMap::SmartMap() {
     blur_y = new ShaderProgram({"blur_y.comp"});
     basic = new ShaderProgram({"test.frag", "basic.vert"});
 
-
-
     atlas->link(shader);
 }
 void SmartMap::createFixtures(int count) {
@@ -73,9 +71,9 @@ void SmartMap::createFixtures(int count) {
         
     // });
 
-    // fixtureUBO = new UBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
-    // fixtureUBO->link(shader);
-    // fixtureUBO->send();
+    fixtureUBO = new UBO(&ddd[0], 24*64, "FixtureUBO"); 
+    fixtureUBO->link(shader);
+    fixtureUBO->send();
 
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
