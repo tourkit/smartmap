@@ -21,7 +21,7 @@ struct SmartMap {
 
     GL::Window *window;
 
-    VBO *quadA, *quadB;
+    VBO *quadA, *quadB, *quadC;
 
     Texture *tex, *passBuf, *outBuf, *outBlur;
 

@@ -49,7 +49,7 @@ void VBO::update() {
 
 }
 
-VBO::VBO(std::string path) : path(path) {  VBO::pool.push_back(this);   import(path); };
+VBO::VBO(std::string path, int id) : path(path) , id(id) {  VBO::pool.push_back(this);   import(path); };
 
 void VBO::import(std::string path) {    
 

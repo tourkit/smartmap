@@ -3,8 +3,12 @@
 
 SmartMap::SmartMap() {
     ddd.resize(24*64);
+    ddd[0] = .9;
+    ddd[1] = .7;
+    ddd[2] = .5;
     std::cout << "deb" << std::endl;
 
+    // VBO quadC("quad.obj");
 
     // order matters for some
     artnet = new Artnet("2.0.0.222");
@@ -19,8 +23,9 @@ SmartMap::SmartMap() {
     gui = new GUI(window->window);
     atlas = new Atlas("assets/media/"), 
     tex = new Texture("boy.jpg");
-    quadA = new VBO("quad.obj");
-    quadB = new VBO("quad.obj");
+    quadC = new VBO();
+    quadA = new VBO("quad.obj",2);
+    quadB = new VBO("quad.obj",1);
     passBuf = new Texture(nullptr,FW,FH);
     passBuf->format = GL_RGBA8;
     
@@ -52,9 +57,9 @@ void SmartMap::createFixtures(int count) {
     
     int address = 1;
 
-    // for (auto f:fixtures) address += f.DMXpatch(1,address, {
+    for (auto f:fixtures) address += f.DMXpatch(1,address, {
     
-    //      "Color.Red",
+        //  "Color.Red",
     // //     // "Color.Green",
     // //     // "Color.Blue",
     // //     // "Position.Horizontal",
@@ -69,8 +74,9 @@ void SmartMap::createFixtures(int count) {
     // //     // "Focus.Horizontal",
     // //     // "Focus.Vertical"
         
-    // });
+    });
 
+    // fixtureUBO = new UBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
     fixtureUBO = new UBO(&ddd[0], 24*64, "FixtureUBO"); 
     fixtureUBO->link(shader);
     fixtureUBO->send();

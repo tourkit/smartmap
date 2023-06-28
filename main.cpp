@@ -48,13 +48,13 @@ int main() {
 
         sm.fixtureUBO->send();
 
-        // sm.passBuf->bind();
-        // sm.shader->use();
+        sm.passBuf->bind();
+        sm.shader->use();
 
-        // glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        // sm.quadA->draw(sm.MATS); // quantity is instances count in shader 
-        // glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        // sm.quadB->draw(sm.MATS); // quantity is instances count in shader 
+        glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
+        sm.quadA->draw(sm.MATS); // quantity is instances count in shader 
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        sm.quadB->draw(sm.MATS); // quantity is instances count in shader 
 
         // sm.passBuf->copy(*sm.outBuf);
 
@@ -66,7 +66,7 @@ int main() {
 
         sm.winFB->clear(); 
         
-        glBindTexture(GL_TEXTURE_2D, sm.tex->id);
+        glBindTexture(GL_TEXTURE_2D, sm.outFB->id);
         // sm.basic->use();
         sm.shader->use();
         sm.quadA->draw();
