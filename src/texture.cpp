@@ -1,8 +1,8 @@
 #include "texture.hpp" 
 
-Texture::Texture() { }
+Texture::Texture() { pool.push_back(this); }
 
-Texture::Texture(void* data, GLuint width, GLuint height)  { pool.push_back(this); create(data, width, height); }
+Texture::Texture(void* data, GLuint width, GLuint height) : Texture() { create(data, width, height); }
 Texture::Texture(std::string src) : Texture()   { create(src); } 
 
 Texture::~Texture() { destroy(); }
@@ -22,7 +22,7 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
     glTexStorage2D(GL_TEXTURE_2D, mipmaps, format, width, height);
 
 
-    update(data, width, height, offset_x, offset_y);
+    if (data) update(data, width, height, offset_x, offset_y);
 
 }
 

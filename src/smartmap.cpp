@@ -9,6 +9,8 @@ SmartMap::SmartMap() {
     // order matters for some
     artnet = new Artnet("2.0.0.222");
     window = new GL::Window(false,400,300);
+    window->setPos(2560,290);
+    window->setSize(1920,1080);
     MAT_X = 5; 
     MAT_Y = 2;
     FW = window->width*MAT_X;
@@ -18,13 +20,13 @@ SmartMap::SmartMap() {
     quadA = new VBO("quad.obj");
     quadB = new VBO("quad.obj");
     tex = new Texture("boy.jpg");
+    // passBuf = new Texture(nullptr,FW,FH);
+    // passBuf->format = GL_RGBA8;
     basic = new ShaderProgram({"test.frag", "basic.vert"});
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     blur_x = new ShaderProgram({"blur_x.comp"});
     blur_y = new ShaderProgram({"blur_y.comp"});
 
-    window->setPos(2560,290);
-    window->setSize(1920,1080);
 
 
     atlas->link(shader);
