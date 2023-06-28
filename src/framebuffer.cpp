@@ -3,8 +3,8 @@
 
 FrameBuffer::FrameBuffer(GLuint id) : id(0), width(sm.window->width), height(sm.window->height) { }
 
-FrameBuffer::FrameBuffer() {  }
-FrameBuffer::FrameBuffer(const Texture& tex) { glGenFramebuffers(1, &id); attach(tex); }
+FrameBuffer::FrameBuffer() { glGenFramebuffers(1, &id); }
+FrameBuffer::FrameBuffer(const Texture& tex) {  attach(tex); }
 FrameBuffer::~FrameBuffer() { if (id) glDeleteFramebuffers(1, &id); }
 void FrameBuffer::bind() { glViewport(0,0,width,height); glBindFramebuffer(GL_FRAMEBUFFER, id);}
 void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {

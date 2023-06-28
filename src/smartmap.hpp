@@ -22,13 +22,15 @@ struct SmartMap {
 
     Texture *tex, *passBuf, *outBuf, *outBlur;
 
-    FrameBuffer outFB, winFB;
+    FrameBuffer *outFB, *winFB;
 
     ShaderProgram *basic, *shader, *blur_x, *blur_y;
 
     GUI *gui;
 
-    uint16_t FW, FH, MAT_X, MAT_Y;
+    UBO *matriceUBO, *fixtureUBO; 
+
+    uint16_t FW, FH, MAT_X, MAT_Y, MATS;
 
     Atlas *atlas;
 
