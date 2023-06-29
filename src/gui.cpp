@@ -110,7 +110,7 @@ static int  min = 0, max = 255, cells_count = 48;
 // return;
         newframe();  
         ImGui::ShowDemoWindow();
-        for (auto dmx : sm.artnet->world.uni) {
+        for (auto dmx : sm.artnet->universes) {
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
@@ -129,7 +129,7 @@ static int  min = 0, max = 255, cells_count = 48;
 
                     ImGui::PushID(i);
 
-                    ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second->chan[i],  &min,   &max,   "");
+                    ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.raw[i],  &min,   &max,   "");
 
                     if ((i + 1) % cells_count != 0) ImGui::SameLine(0);
 
@@ -200,7 +200,7 @@ static int  min = 0, max = 255, cells_count = 48;
         ImGui::End();
         
         ImGui::Begin("FixtureUBO");
-        for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(sm.fixtureUBO->ptr+i),  &min,   &max,   "");
+        // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(sm.fixtureUBO->ptr+i),  &min,   &max,   "");
         // ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &sm.artnet->world.get(0)->chan[i], -1, 1);
         ImGui::End();
 

@@ -29,29 +29,35 @@ struct DMXAttributeFine : public DMXAttribute {
 
 };
 
-struct DMXUniverse {
+struct DMXUniverse { 
+    
+    uint8_t raw[512]; 
+    DMXUniverse() { memset(&raw[0],0,512); } 
 
-  uint8_t chan[512];
+    uint16_t get16(uint16_t i) { return ((raw[i] << 8) | raw[i+1]);  }
+    uint32_t get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }
+    uint32_t get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1] << 16) | (raw[i+2] << 8) | raw[i+3]);  }
 
-  std::vector<DMXAttribute*> links;
+    std::vector<float> floatify(std::vector<uint8_t> chan_combinings) { std::vector<float> output; return floatify(output, chan_combinings); }
 
-  void update() { for (auto l:links) l->set(chan[l->address]); }
+    std::vector<float>& floatify(std::vector<float>& output, std::vector<uint8_t>& chan_combinings) {
 
-  ~DMXUniverse() {for(auto l:links) delete l;}
+        uint16_t i = 0;
 
-};
+        for (auto c:chan_combinings) { 
 
-struct DMXWorld {
+            if (c==1) output.push_back(raw[i]/255.0f);
+            else if (c==2) output.push_back(get16(i)/65535.0f);
+            else if (c==3) output.push_back(get24(i)/16777215.0f);
+            else if (c==4) output.push_back(get32(i)/4294967295.0f);
 
-  std::map<uint16_t,DMXUniverse*> uni;
+            i += std::max((uint8_t)1,c);
 
-  DMXUniverse* get(int id) { 
+        }   
 
-    if (uni.find(id)==uni.end())uni[id] = new DMXUniverse();
+        return output;
 
-    return uni[id];
-
-  }
+    }
 
 };
 
@@ -59,8 +65,8 @@ struct Artnet {
 
   artnet_node artnet;
 
-  DMXWorld world;
-
+  std::map<uint16_t, DMXUniverse> universes;
+  
   std::map<uint16_t,DMXUniverse*> data;
 
   Artnet(const char* ip) {
@@ -81,13 +87,7 @@ struct Artnet {
   
   int store(artnet_dmx_t& dmx) {
 
-  //   // create table
-    DMXUniverse* uni = world.get(dmx.universe);
-
-  //  // bitswap lf vs hf
-    for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.lengthHi); ++i) uni->chan[i] = dmx.data[i];
-
-    // for (auto l : uni->links) l->update(&uni->chan[0]);
+    for(int i = 0; i < __builtin_bswap16((uint16_t&)dmx.lengthHi); ++i) universes[dmx.universe].raw[i] = dmx.data[i];
 
     return 0;
     

@@ -19,7 +19,7 @@ SmartMap::SmartMap() {
     artnet = new Artnet("2.0.0.222");
     window = new GL::Window(false,400,300);
     window->setPos(2560,290);
-    window->setSize(1920,1080);
+    window->setSize(1920,1200);
     MAT_X = 1; 
     MAT_Y = 1;
     MATS = MAT_X*MAT_Y;
@@ -59,29 +59,11 @@ void SmartMap::createFixtures(int count) {
     matriceUBO = new UBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
     matriceUBO->link(shader);
     matriceUBO->send(); 
-    
-    int address = 1;
 
-    for (auto f:fixtures) address += f.DMXpatch(1,address, {
-    
-         "Color.Red",
-        // "Color.Green",
-        // "Color.Blue",
-        // "Position.Horizontal",
-        // "Position.Vertical",
-        // "Gobo.ID",
-        // "Gobo.Fx1",
-        // "Gobo.Fx2",
-        // "Gobo.Fx3",
-        // "Strobe",
-        // "Feedback",
-        // "Orientation",
-        // "Focus.Horizontal",
-        // "Focus.Vertical"
-        
-    });
+    auto zzz = sm.artnet->universes[0].floatify({1,1,1,1,1,1,1,1,1});
+    fixtureUBO = new UBO(nullptr, 24*64, "FixtureUBO"); 
 
-    fixtureUBO = new UBO(&Attribute::UBO[0], 24*64, "FixtureUBO"); 
+    // fixtureUBO = new UBO(&sm.artnet->world.get(0)->chan[0], 24*64, "FixtureUBO"); 
     fixtureUBO->link(shader);
     fixtureUBO->send();
 
