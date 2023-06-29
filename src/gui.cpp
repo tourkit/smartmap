@@ -200,8 +200,8 @@ static int  min = 0, max = 255, cells_count = 48;
         ImGui::End();
         
         ImGui::Begin("FixtureUBO");
-        // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(sm.fixtureUBO->ptr+i),  &min,   &max,   "");
-        // ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &sm.artnet->world.get(0)->chan[i], -1, 1);
+        // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(&sm.artnet->universes[0].raw[i]),  &min,   &max,   "");
+        for (int i = 0; i < 20; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &sm.fixtureUBO->data[i], -1, 1);
         ImGui::End();
 
         render();

@@ -28,19 +28,19 @@ Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
 void Atlas::link(ShaderProgram* shader) {
 
-    normalize(); 
+    // normalize(); 
     
 
-    atlaspos.resize(list.size()*4*4); 
-    atlaspos.data.resize(0);
-    atlaspos.ptr = &normalized[0];
+    // atlaspos.resize(list.size()*4*4); 
+    // atlaspos.data.resize(0);
+    // atlaspos.ptr = &normalized[0];
 
-    atlaspos.link(shader);
-    atlaspos.send();
+    // atlaspos.link(shader);
+    // atlaspos.send();
 
 
-    shader->sendUniform("mediasAtlas", 1);
-    texture.bind(1);
+    // shader->sendUniform("mediasAtlas", 1);
+    // texture.bind(1);
 
 }
 

@@ -9,41 +9,19 @@ struct UBO {
 
     static inline GLuint count = 0;
 
-    std::vector<float> data;
-
-    void* ptr;
-
-    std::string name;
-
-    GLuint id = 0;
-    
     GLuint binding = count++;
 
-    size_t ubo_size = 0;
+    std::vector<float> data;
 
-    std::set<ShaderProgram*> links;
+    GLuint id = 0;
+
+    const char* name;
 
     ~UBO() { destroy(); }
 
-    UBO(std::string name = "ubo") : name(name) { } 
-
-    UBO(void* data, size_t size, std::string name = "ubo") : ptr(data), name(name), ubo_size(std::ceil(size/4.0f)*4) {  create(); } 
-
-    UBO(size_t size, std::string name = "ubo") : name(name), ubo_size(std::ceil(size/4.0f)*4) {
-
-        data.resize(ubo_size);
-
-        if (ubo_size) ptr = &data[0];
-
-        create();
-
-    } 
+    UBO(const char* name, size_t size = 0, std::vector<GLuint> subscribers = {}) : name(name) { data.resize(size); create(); for (auto shader:subscribers) link(shader); } 
 
     void destroy() { if (id) glDeleteBuffers(1, &id); }
-
-    void set(void* src) {  memcpy(&data[0], src, ubo_size);   }
-    
-    void set(void* src, size_t size = 0, int offset = 0) {   memcpy(&data[0]+offset, src, size);   }
 
     void create() {
 
@@ -52,45 +30,24 @@ struct UBO {
          // can do better ^^
         if (binding > 100) std::cout << "MAX_UBO might soon be reached";
 
-        if (name == "ubo") name += std::to_string(binding);
-
         glGenBuffers(1, &id);
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glBufferData(GL_UNIFORM_BUFFER, ubo_size, NULL, GL_DYNAMIC_COPY);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(float)*4, NULL, GL_DYNAMIC_COPY);
 
-        std::cout << "RTFM /!\\ put good bindings in shader !! layout(std140, binding = " << binding << ") uniform " << name << " { size:" << ubo_size << " };" << std::endl;
-
-        for (auto l:links) { link(l); }
-        
+        std::cout << "RTFM /!\\ put good bindings in shader !! layout(std140, binding = " << binding << ") uniform " << name << " { size:" << data.size() << " };" << std::endl;
         
     }
 
-    void link(ShaderProgram* shader) {
-
-        links.insert(shader);
+    void link(GLuint shader) {
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name.c_str()), binding);
+        glUniformBlockBinding(shader, glGetUniformBlockIndex(shader, name), binding);
         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
     }
 
-    void resize(GLuint size) { 
-        
-        ubo_size = size;
 
-        // std::vector<float>  t_data = std::move(data); 
-        
-        create(); 
-
-        data.resize(size);
-        // data = std::move(t_data); 
-
-        if (size) ptr = &data[0];
-        
-    } 
-
-    void send(){ send(ptr, ubo_size); }
+    void send(){ send(&data[0], data.size()); }
 
     void send(GLvoid* data, size_t size, GLuint offset = 0){
 

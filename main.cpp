@@ -36,7 +36,13 @@ int main() {
 
     std::vector<float> ddd;
 
+    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{1,1,1,1,1,1}); std::cout <<"monkey"; };
+
     while(true) sm.window->render([&]() {
+
+        sm.artnet->run();
+        
+        sm.fixtureUBO->send();
 
         fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[0])).c_str(), [&](){ sm.basic->reset(); }, fileCheck1);
         fileCheck2 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[1])).c_str(), [&](){ sm.basic->reset(); }, fileCheck2);
@@ -46,7 +52,7 @@ int main() {
 
         sm.outFB->clear(); // thus bind
 
-        // sm.fixtureUBO->send();
+
 
         sm.passBuf->bind();
         sm.shader->use();
@@ -72,8 +78,6 @@ int main() {
         sm.quadA->draw();
 
         sm.gui->draw2();
-
-        sm.artnet->run();
 
     }); 
 

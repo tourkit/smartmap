@@ -55,17 +55,17 @@ void SmartMap::createFixtures(int count) {
     winFB = new FrameBuffer(0); 
     fixtures.resize(count);
     
-    auto mat = matrice(MAT_X,MAT_Y);
-    matriceUBO = new UBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
-    matriceUBO->link(shader);
-    matriceUBO->send(); 
+    // auto mat = matrice(MAT_X,MAT_Y);
+    // matriceUBO = new UBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
+    // matriceUBO->link(shader);
+    // matriceUBO->send(); 
 
-    auto zzz = sm.artnet->universes[0].floatify({1,1,1,1,1,1,1,1,1});
-    fixtureUBO = new UBO(nullptr, 24*64, "FixtureUBO"); 
+    // auto zzz = sm.artnet->universes[0].floatify({1,1,1,1,1,1,1,1,1});
+    // fixtureUBO = new UBO(nullptr, 24*64, "FixtureUBO"); 
 
-    // fixtureUBO = new UBO(&sm.artnet->world.get(0)->chan[0], 24*64, "FixtureUBO"); 
-    fixtureUBO->link(shader);
-    fixtureUBO->send();
+    fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
+    // fixtureUBO->link(shader);
+    // fixtureUBO->send();
 
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
