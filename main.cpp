@@ -46,7 +46,7 @@ int main() {
 
         sm.outFB->clear(); // thus bind
 
-        sm.fixtureUBO->send();
+        // sm.fixtureUBO->send();
 
         sm.passBuf->bind();
         sm.shader->use();
