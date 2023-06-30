@@ -79,7 +79,7 @@ int Boilerplate() {
     auto shader = glCreateProgram();
 
     // std::ifstream fragFile("assets/shader/basic.frag");
-    std::ifstream fragFile("C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\shader\\test.frag");
+    std::ifstream fragFile("C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag");
     std::string fragCode((std::istreambuf_iterator<char>(fragFile)), (std::istreambuf_iterator<char>()));
     auto fragptr = (const GLchar* const ) fragCode.c_str();
 
@@ -87,7 +87,7 @@ int Boilerplate() {
     glShaderSource(frag, 1, &fragptr, nullptr);
     glCompileShader(frag);
 
-    std::ifstream vertFile("C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\shader\\basic.vert");
+    std::ifstream vertFile("C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert");
     // std::ifstream vertFile("assets/shader/basic.vert");
     std::string vertCode((std::istreambuf_iterator<char>(vertFile)), (std::istreambuf_iterator<char>()));
     auto vertptr = (const GLchar* const ) vertCode.c_str();
@@ -106,7 +106,7 @@ int Boilerplate() {
 
     // SET TEXTURE
 
-    Image imgloadflipped("C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\media\\boy.jpg");
+    Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
 
 
     GLuint tex;
@@ -171,7 +171,7 @@ int Boilerplate() {
     uint8_t p[3] = {255,0,255};
     Texture tex(&p[0],1,1);
 
-    Image img("C:\\msys64\\home\\SysErr\\old\\smartmap\\assets\\media\\boy.jpg");
+    Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
     tex.create(img.i,img.width,img.height);
     tex.bind();
 
