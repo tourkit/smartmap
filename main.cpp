@@ -36,7 +36,7 @@ int main() {
 
     std::vector<float> ddd;
 
-    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{1,1,1,1,1,1}); std::cout <<"monkey"; };
+    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{1,1,1,1,1,1}); };
 
     while(true) sm.window->render([&]() {
 
@@ -53,7 +53,7 @@ int main() {
         sm.outFB->clear(); // thus bind
 
 
-
+1
         sm.passBuf->bind();
         sm.shader->use();
 
