@@ -34,7 +34,7 @@ layout(binding = 2, std140) uniform FixtureUBO  { Fixture fix[24];} ;
 layout(std140) uniform MatriceUBO  { Rect mat[24]; };
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
-vec4 fromAtlas(vec2 uv, int id) { return texture(mediasAtlas,texcoord*mediaCoord[id].size+mediaCoord[id].pos+texcoord); }
+vec4 fromAtlas(vec2 uv, int id) { return texture(pass,vec2(.1)); }//vec4(texcoord*mediaCoord[id].size+mediaCoord[id].pos+texcoord,0,1); } //texture(mediasAtlas,uv);}//texcoord*mediaCoord[id].size+mediaCoord[id].pos+texcoord); }
 
 float t_ratio = 1;
 
@@ -244,7 +244,7 @@ float simplex3d(vec3 p) {
     d *= w;
     return dot(d, vec4(52.0));
 }
-
+    
 vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
     return vec4(pow(simplex3d(vec3(uv * (101.0 - zoom * 100.0), height * 5.0)), 1.0 + contrast * 8.0));
 }

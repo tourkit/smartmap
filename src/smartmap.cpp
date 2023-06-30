@@ -18,8 +18,7 @@ SmartMap::SmartMap() {
     FW = window->width*MAT_X;
     FH = window->height*MAT_Y;
     gui = new GUI(window->window);
-    atlas = new Atlas("assets/media/"), 
-    tex = new Texture("boy.jpg");
+    atlas = new Atlas("assets/media/");
     quadC = new VBO();
     quadA = new VBO("quad.obj",2);
     quadB = new VBO("quad.obj",1);

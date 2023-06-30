@@ -20,7 +20,7 @@ struct SmartMap {
 
     VBO *quadA, *quadB, *quadC;
 
-    Texture *tex, *passBuf, *outBuf, *outBlur;
+    Texture *passBuf, *outBuf, *outBlur;
 
     FrameBuffer *outFB, *winFB;
 

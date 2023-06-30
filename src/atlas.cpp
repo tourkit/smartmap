@@ -2,14 +2,14 @@
 
 Atlas::Atlas(int width, int height)  
 
-    : atlaspos("mediasCoords"), width(width), height(height),rbp::GuillotineBinPack(width,height) {  }
+    : atlaspos("mediasCoords", 100), width(width), height(height),rbp::GuillotineBinPack(width,height) {  }
 
 
 Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
     init();
 
-    texture.create (&data[0],width,height);
+    texture.create(&data[0],width,height);
 
     texture.mipmaps = 10;
 
@@ -28,19 +28,27 @@ Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
 void Atlas::link(ShaderProgram* shader) {
 
-    // normalize(); 
+    std::vector<std::array<float,4>> normalized;
+
+    for (auto r:list) {
     
+        normalized.push_back({r.width/(float)width, r.height/(float)height, r.x/(float)width, r.y/(float)height});
+        std::cout << r.width/(float)width << " " << r.height/(float)height << " " << r.x/(float)width << " " << r.y/(float)height << std::endl;
+    
+    }
 
-    // atlaspos.resize(list.size()*4*4); 
-    // atlaspos.data.resize(0);
-    // atlaspos.ptr = &normalized[0];
-
-    // atlaspos.link(shader);
-    // atlaspos.send();
+    for (int i = 0; i < 10; i++) { std::cout << (GLuint)data[i] << " "; }
+    std::cout << std::endl;
 
 
-    // shader->sendUniform("mediasAtlas", 1);
-    // texture.bind(1);
+    atlaspos.data.resize(list.size()*4*4);
+
+    atlaspos.link(shader->id);
+
+    atlaspos.update(&normalized[0], list.size()*4*4);
+
+    shader->sendUniform("mediasAtlas", 1);
+    texture.bind(1);
 
 }
 
@@ -51,14 +59,7 @@ void Atlas::init() {
     data.resize(width*height*3); 
 
 }
-
-void Atlas::normalize() {
-
-    normalized.resize(0);
-
-    for (auto r:list) normalized.push_back(vec4{r.width/(float)width, r.height/(float)height, r.x/(float)width, r.y/(float)height});
-}
-    
+ 
 bool Atlas::add(int width, int height, unsigned char* data){ 
 
     for (auto cell : GetFreeRectangles() )  {

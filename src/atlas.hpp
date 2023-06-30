@@ -14,8 +14,6 @@ struct Atlas : public rbp::GuillotineBinPack{
     std::vector<unsigned char> data;
 
     std::vector<rbp::Rect> &list = GetUsedRectangles();
-    
-    std::vector<vec4> normalized;
 
     Texture texture;
          
@@ -26,8 +24,6 @@ struct Atlas : public rbp::GuillotineBinPack{
     Atlas(int width = 2048, int height = 2048);
 
     void init();
-
-    void normalize();
 
     Atlas(std::string path, int width = 2048, int height = 2048);
 
