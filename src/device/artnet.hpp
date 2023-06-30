@@ -17,7 +17,7 @@ struct Artnet {
     uint8_t raw[512]; 
     Universe() { memset(&raw[0],0,512); } 
 
-    std::function<void()> callback;
+    std::function<void()> callback = [](){};
 
     uint16_t get16(uint16_t i) { return ((raw[i] << 8) | raw[i+1]);  }
     uint32_t get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }

@@ -14,9 +14,6 @@
 
 struct SmartMap {
 
-    std::vector<float> ddd;
-
-
     Artnet *artnet;
 
     GL::Window *window;

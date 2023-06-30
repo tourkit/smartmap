@@ -51,10 +51,10 @@ void main() {
     id = gl_InstanceID;
 
     texcoord = TEXCOORD;
-    // fix[0];
     
+    gl_Position = vec4(POSITION+vec2(.1),0,1); return;
     gl_Position = vec4(POSITION,0,1);
-    // return;
+    
     gl_ClipDistance[0] = 1;
     gl_ClipDistance[1] = 1;
     gl_ClipDistance[2] = 1;

@@ -47,7 +47,7 @@ struct UBO {
     }
 
 
-    void send(){ send(&data[0], data.size()); }
+    void update(){ send(&data[0], data.size()); }
 
     void send(GLvoid* data, size_t size, GLuint offset = 0){
 

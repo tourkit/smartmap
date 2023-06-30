@@ -2,15 +2,7 @@
 #include "smartmap.hpp"
 
 SmartMap::SmartMap() {
-    ddd.resize(24*64);
-    ddd[0] = .9;
-    ddd[1] = .7;
-    ddd[2] = .5;
-    ddd[5] = .0;
-    ddd[6] = .5;
-    ddd[7] = .5;
-    ddd[8] = .028;
-    ddd[9] = .283;
+
     std::cout << "deb" << std::endl;
 
     // VBO quadC("quad.obj");
@@ -42,8 +34,6 @@ SmartMap::SmartMap() {
     outBlur = new Texture(nullptr, FW*.5,FH*.5); 
     outBlur->format = GL_RGBA8;
 
-
-
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     blur_x = new ShaderProgram({"blur_x.comp"});
     blur_y = new ShaderProgram({"blur_y.comp"});
@@ -52,24 +42,17 @@ SmartMap::SmartMap() {
     atlas->link(shader);
 }
 void SmartMap::createFixtures(int count) {
+
     winFB = new FrameBuffer(0); 
+
     fixtures.resize(count);
     
-    // auto mat = matrice(MAT_X,MAT_Y);
-    // matriceUBO = new UBO(&mat[0], mat.size()*sizeof(RectF), "MatriceUBO"); 
-    // matriceUBO->link(shader);
-    // matriceUBO->send(); 
-
-    // auto zzz = sm.artnet->universes[0].floatify({1,1,1,1,1,1,1,1,1});
-    // fixtureUBO = new UBO(nullptr, 24*64, "FixtureUBO"); 
-
-    fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
-    // fixtureUBO->link(shader);
-    // fixtureUBO->send();
-
+    auto mat = matrice(MAT_X,MAT_Y);
+    matriceUBO = new UBO("MatriceUBO", mat.size()*sizeof(RectF), {shader->id}); 
+    matriceUBO->update(); 
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
-    
+    fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
 
     std::cout << "fin" << std::endl;
     

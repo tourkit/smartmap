@@ -28,26 +28,21 @@ int fileCheck1 = 0;
 int fileCheck2 = 0;
 int fileCheck3 = 0;
 int fileCheck4 = 0;
-int fileCheck5 = 0;
-
 
 int main() {  
 
     sm.createFixtures(1);
 
-    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{2,2,2,2,2,2,2,2,2,2}); };
+    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{2,2,2,2,2,2,2,2,2,2}); sm.fixtureUBO->update(); };
 
     while(true) sm.window->render([&]() {
 
         sm.artnet->run();
-        
-        sm.fixtureUBO->send();
 
         fileCheck1 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[0])).c_str(), [&](){ sm.basic->reset(); }, fileCheck1);
         fileCheck2 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.basic->paths[1])).c_str(), [&](){ sm.basic->reset(); }, fileCheck2);
         fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ sm.shader->reset(); }, fileCheck3);
         fileCheck4 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ sm.shader->reset(); }, fileCheck4);
-        // fileCheck5 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(sm.quadA->path)).c_str(), [](){ VBO::pool[0]->reset(); }, fileCheck5);
 
         sm.outFB->clear(); // thus bind
 
@@ -69,14 +64,12 @@ int main() {
 
         sm.winFB->clear(); 
         
-        glBindTexture(GL_TEXTURE_2D, sm.outFB->id);
+        glBindTexture(GL_TEXTURE_2D, sm.tex->id);
         // sm.basic->use();
         sm.shader->use();
         sm.quadA->draw();
 
-        sm.gui->draw2();
-
-        // for (auto d:ddd) std::cout << d << " ";
+        sm.gui->draw2();  
 
     }); 
 
