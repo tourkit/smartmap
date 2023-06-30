@@ -27,18 +27,21 @@ struct Artnet {
     std::vector<float>* floatify(std::vector<uint8_t> chan_combinings) { floatify(&floats, chan_combinings); return &floats; }
     void floatify(std::vector<float>* output, std::vector<uint8_t> chan_combinings) {
 
-        uint16_t i = 0;
+        uint16_t chan_id = 0;
+        uint16_t attr_id = 0;
+        for (int i = 0; i < chan_combinings.size(); i++) { 
 
-        for (auto c:chan_combinings) { 
+            auto c = chan_combinings[i];
 
-            if (c==1) output->push_back(raw[i]/255.0f);
-            else if (c==2) output->push_back(get16(i)/65535.0f);
-            else if (c==3) output->push_back(get24(i)/16777215.0f);
-            else if (c==4) output->push_back(get32(i)/4294967295.0f);
+            if (c==1) (*output)[attr_id] = (raw[chan_id]/255.0f);
+            else if (c==2) (*output)[attr_id] = (get16(chan_id)/65535.0f);
+            else if (c==3) (*output)[attr_id] = (get24(chan_id)/16777215.0f);
+            else if (c==4) (*output)[attr_id] = (get32(chan_id)/4294967295.0f);
 
-            i += std::max((uint8_t)1,c);
+            attr_id += std::min((uint8_t)1,c);
+            chan_id += std::max((uint8_t)1,c);
 
-        }   
+        } 
 
     }
 

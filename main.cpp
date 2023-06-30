@@ -30,13 +30,12 @@ int fileCheck3 = 0;
 int fileCheck4 = 0;
 int fileCheck5 = 0;
 
+
 int main() {  
 
     sm.createFixtures(1);
 
-    std::vector<float> ddd;
-
-    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{1,1,1,1,1,1}); };
+    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{2,2,2,2,2,2,2,2,2,2}); };
 
     while(true) sm.window->render([&]() {
 
@@ -51,8 +50,6 @@ int main() {
         // fileCheck5 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/model/"+std::string(sm.quadA->path)).c_str(), [](){ VBO::pool[0]->reset(); }, fileCheck5);
 
         sm.outFB->clear(); // thus bind
-
-
 
         sm.passBuf->bind();
         sm.shader->use();
@@ -78,6 +75,8 @@ int main() {
         sm.quadA->draw();
 
         sm.gui->draw2();
+
+        // for (auto d:ddd) std::cout << d << " ";
 
     }); 
 
