@@ -9,7 +9,7 @@ Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
     init();
 
-    texture.create(&data[0],width,height);
+    texture.create(&data[0],width,height,0,0,1);
 
     texture.mipmaps = 10;
 
@@ -47,8 +47,9 @@ void Atlas::link(ShaderProgram* shader) {
 
     atlaspos.update(&normalized[0], list.size()*4*4);
 
-    shader->sendUniform("mediasAtlas", 1);
-    texture.bind(1);
+    // shader->sendUniform("mediasAtlas", 1);
+    GLuint textureUniformLoc = glGetUniformLocation(shader->id, "mediasAtlas");
+    glUniform1i(textureUniformLoc, 1);
 
 }
 

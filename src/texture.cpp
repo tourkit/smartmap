@@ -9,17 +9,28 @@ Texture::~Texture() { destroy(); }
 
 void Texture::destroy() { if (id) glDeleteTextures(1, &id); }
 
-void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
+void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit) {
 
-
+    this->unit = unit; 
     this->width = width;
     this->height = height;
 
     destroy();
 
     glGenTextures(1, &id);
-    glBindTexture(GL_TEXTURE_2D, id);
+
+    glActiveTexture(GL_TEXTURE0+unit); 
+    
+    glBindTexture(GL_TEXTURE_2D, id); 
+
     glTexStorage2D(GL_TEXTURE_2D, mipmaps, format, width, height);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    glActiveTexture(GL_TEXTURE0); 
 
 
     if (data) update(data, width, height, offset_x, offset_y);
@@ -28,11 +39,8 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
 
 void Texture::update(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
+    glActiveTexture(GL_TEXTURE0+unit); 
+    
     glBindTexture(GL_TEXTURE_2D, id);
     
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -41,10 +49,9 @@ void Texture::update(void* data, GLuint width, GLuint height, GLuint offset_x, G
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
+    glActiveTexture(GL_TEXTURE0);
 
 }
-
-
 
 static uint8_t FULLBLACK[4] = {0,0,0,0};
 // static uint8_t FULLBLACK[4] = {255,255,255,255};
@@ -68,9 +75,8 @@ void Texture::copy(const Texture& texture, GLuint offset_x, GLuint offset_y) {
 
 }
 
-void Texture::bind(int unit) { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0); }
+void Texture::bind(int unit) { this->unit = unit; bind(); }
 
-void Texture::bind() { glBindTexture(GL_TEXTURE_2D, id); }
-
+void Texture::bind() { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0); }
 
 Texture::operator GLuint() { return id; }
