@@ -33,7 +33,7 @@ struct UBO {
         glGenBuffers(1, &id);
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glBufferData(GL_UNIFORM_BUFFER, sizeof(float)*4, NULL, GL_DYNAMIC_COPY);
+        glBufferData(GL_UNIFORM_BUFFER, sizeof(float)*data.size(), NULL, GL_DYNAMIC_COPY);
 
         std::cout << "RTFM /!\\ put good bindings in shader !! layout(std140, binding = " << binding << ") uniform " << name << " { size:" << data.size() << " };" << std::endl;
         
