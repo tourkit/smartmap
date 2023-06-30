@@ -283,8 +283,6 @@ vec4 smartmap(int instance) {
 
 void main() {
 
-    color = vec4(.1)+vec4(fix[0].rgba.r,texcoord.x*fix[0].rgba.g,fix[0].rgba.b,1); return;
-
     if (obj == 0) { 
 
         color = vec4(0);

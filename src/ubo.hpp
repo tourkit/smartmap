@@ -19,7 +19,15 @@ struct UBO {
 
     ~UBO() { destroy(); }
 
-    UBO(const char* name, size_t size = 0, std::vector<GLuint> subscribers = {}) : name(name) { data.resize(size); create(); for (auto shader:subscribers) link(shader); } 
+    UBO(const char* name, size_t size = 0, std::vector<GLuint> subscribers = {}, bool own = true) : name(name) { 
+
+        if (own) data.resize(size);
+
+        create(); 
+
+        for (auto shader:subscribers) link(shader); 
+        
+    } 
 
     void destroy() { if (id) glDeleteBuffers(1, &id); }
 
@@ -47,9 +55,9 @@ struct UBO {
     }
 
 
-    void update(){ send(&data[0], data.size()); }
+    void update(){ update(&data[0], data.size()); }
 
-    void send(GLvoid* data, size_t size, GLuint offset = 0){
+    void update(GLvoid* data, size_t size, GLuint offset = 0){
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 

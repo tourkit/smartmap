@@ -48,8 +48,9 @@ void SmartMap::createFixtures(int count) {
     fixtures.resize(count);
     
     auto mat = matrice(MAT_X,MAT_Y);
-    matriceUBO = new UBO("MatriceUBO", mat.size()*sizeof(RectF), {shader->id}); 
-    matriceUBO->update(); 
+    matriceUBO = new UBO("MatriceUBO", mat.size()*16, {shader->id}); 
+    matriceUBO->update(&mat[0][0],mat.size()*16); 
+
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
     fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 

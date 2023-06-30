@@ -52,7 +52,6 @@ void main() {
 
     texcoord = TEXCOORD;
     
-    gl_Position = vec4(POSITION+vec2(.1),0,1); return;
     gl_Position = vec4(POSITION,0,1);
     
     gl_ClipDistance[0] = 1;
@@ -68,13 +67,17 @@ void main() {
         size *= fix[id].size;
 
         vec2 pos = fix[id].pos;
+        pos*=vec2(2);
+        pos-=vec2(1);
         pos *= mat[id].size+size;
         pos +=  mat[id].pos;
+
 
         gl_Position.xy = rotate(gl_Position.xy,fix[id].orientation,size);
 
         gl_Position.xy *= size;
         gl_Position.xy += pos;
+        return;
 
         vec2 mins = mat[id].pos-mat[id].size;
         vec2 maxs = mat[id].pos+mat[id].size;
