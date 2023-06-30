@@ -60,10 +60,10 @@ include(CPack)
 
 file(COPY assets DESTINATION .)
 
-configure_file(assets/shader/blur_x.comp assets/shader/ COPYONLY)
-configure_file(assets/shader/blur_y.comp assets/shader/ COPYONLY)
-configure_file(assets/shader/smartmap.vert assets/shader/ COPYONLY)
-configure_file(assets/shader/smartmap.frag assets/shader/ COPYONLY)
+# configure_file(assets/shader/blur_x.comp assets/shader/ COPYONLY)
+# configure_file(assets/shader/blur_y.comp assets/shader/ COPYONLY)
+# configure_file(assets/shader/smartmap.vert assets/shader/ COPYONLY)
+# configure_file(assets/shader/smartmap.frag assets/shader/ COPYONLY)
 
 target_include_directories(SmartMap PRIVATE
     .

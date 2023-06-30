@@ -32,8 +32,7 @@ int fileCheck4 = 0;
 int main() {  
 
     sm.createFixtures(1);
-
-    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{2,2,2,2,2,2,2,2,2,2}); sm.fixtureUBO->update(); };
+    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}); sm.fixtureUBO->update(); };
 
     while(true) sm.window->render([&]() {
 

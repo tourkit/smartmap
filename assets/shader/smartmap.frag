@@ -34,7 +34,7 @@ layout(binding = 2, std140) uniform FixtureUBO  { Fixture fix[24];} ;
 layout(std140) uniform MatriceUBO  { Rect mat[24]; };
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
-vec4 fromAtlas(int id) { return texture(mediasAtlas,texcoord*mediaCoord[id].size+mediaCoord[id].pos); }
+vec4 fromAtlas(vec2 uv, int id) { return texture(mediasAtlas,texcoord*mediaCoord[id].size+mediaCoord[id].pos+texcoord); }
 
 float t_ratio = 1;
 
@@ -116,8 +116,6 @@ vec4 border(vec2 t_uv, float thickness) {
 
 vec4 flower(vec2 t_uv, float inratio, float shape, float petals) {
 
-    
-
      float c = length(t_uv)+.5;
 
      float a = atan(t_uv.x,t_uv.y);//+iTime;
@@ -134,23 +132,17 @@ vec4 flower(vec2 t_uv, float inratio, float shape, float petals) {
 
     return vec4(r);
 
-
-
 }
 
 vec2 rotate(vec2 v, float a) {
 
-        a *= 6.28318530718;
+    a *= 6.28318530718;
 
     float s = sin(a);
     float c = cos(a);
     mat2 m = mat2(c, -s, s, c);
 
-
-       return m*v;
-
-
-
+    return m*v;
 
 }
 
@@ -192,7 +184,6 @@ vec4 gradient(vec2 uv, float aaaa, float inratio, float angle) {
 
 
 }
-//uniform sampler2D tex;
 
 vec3 random3(vec3 c) {
     float j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));
@@ -273,7 +264,7 @@ vec4 smartmap(int instance) {
     if (gobo_id == 5) return fix[instance].rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 1, fix[instance].gobo[2]);
     if (gobo_id == 6) return fix[instance].rgba*flower(t_uv*(1/fix[instance].size), fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
     if (gobo_id == 7) return fix[instance].rgba*border(t_uv, fix[instance].gobo[1]);
-    if (gobo_id == 8) return fix[instance].rgba*fromAtlas(int(fix[instance].gobo[1]*255));
+    if (gobo_id == 8) return fix[instance].rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*255));
     if (gobo_id == 9) return fix[instance].rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
 
     return fix[instance].rgba*vec4(1);
