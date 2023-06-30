@@ -7,7 +7,8 @@ Texture::Texture(std::string src) : Texture()   { create(src); }
 
 Texture::~Texture() { destroy(); }
 
-void Texture::destroy() { if (id) glDeleteTextures(1, &id); }
+// TODO : check if need bind unit to delete
+void Texture::destroy() { if (id)  glActiveTexture(GL_TEXTURE0+unit);  glDeleteTextures(1, &id);  glActiveTexture(GL_TEXTURE0);  }
 
 void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit) {
 

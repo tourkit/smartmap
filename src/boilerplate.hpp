@@ -5,8 +5,9 @@
                         */
 
 
+#pragma once
 
-#define BOIL
+#define BOILq
 #ifdef BOIL
 
 #include <chrono>
@@ -18,9 +19,6 @@
 #include <GLFW/glfw3.h>
 #include "src/file.hpp"
 
-#else
-#include "smartmap.hpp"
-#endif
 
 int Boilerplate() {  
 
@@ -28,7 +26,6 @@ int Boilerplate() {
 
     GLuint width = 400, height = 300;
     auto lastTime = glfwGetTime();
-#ifdef BOIL
     glfwInit();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -79,7 +76,7 @@ int Boilerplate() {
     auto shader = glCreateProgram();
 
     // std::ifstream fragFile("assets/shader/basic.frag");
-    std::ifstream fragFile("C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag");
+    std::ifstream fragFile("test.frag");
     std::string fragCode((std::istreambuf_iterator<char>(fragFile)), (std::istreambuf_iterator<char>()));
     auto fragptr = (const GLchar* const ) fragCode.c_str();
 
@@ -87,7 +84,7 @@ int Boilerplate() {
     glShaderSource(frag, 1, &fragptr, nullptr);
     glCompileShader(frag);
 
-    std::ifstream vertFile("C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert");
+    std::ifstream vertFile("basic.vert");
     // std::ifstream vertFile("assets/shader/basic.vert");
     std::string vertCode((std::istreambuf_iterator<char>(vertFile)), (std::istreambuf_iterator<char>()));
     auto vertptr = (const GLchar* const ) vertCode.c_str();
@@ -184,19 +181,34 @@ int Boilerplate() {
 
 #else
 
+#include "smartmap.hpp"
+
+int Boilerplate() {  
+
+    // SET OPENGL
+
+    GLuint width = 400, height = 300;
+    auto lastTime = glfwGetTime();
 
     auto* window = (new GL::Window(false,width,height,1920-width))->window;
+    
     VBO quad;
-    auto* shader = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
 
-    shader->use();
-    uint8_t p[3] = {255,0,255};
-    Texture tex(&p[0],1,1);
+    ShaderProgram shader({"basic.vert", "test.frag"});
+    shader.use(); 
 
+    // FIX THIS !!
+    
+    Texture tex;
     Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
     tex.create(img.i,img.width,img.height);
-    tex.bind();
-
+    // tex.bind();
+    Image img2("C:/msys64/home/SysErr/old/smartmap/assets/media/container.jpg");
+    Texture tex2;
+    tex2.create(img2.i,img2.width,img2.height,0,0,1);
+    // tex2.bind();
+    GLuint textureUniformLoc = glGetUniformLocation(shader, "mediaAtlas");
+    glUniform1i(textureUniformLoc, 1);
 
     while (true) {
 
