@@ -34,7 +34,16 @@ layout(binding = 2, std140) uniform FixtureUBO  { Fixture fix[24];} ;
 layout(std140) uniform MatriceUBO  { Rect mat[24]; };
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
-vec4 fromAtlas(vec2 uv, int id) { return texture(pass,vec2(.1)); }//vec4(texcoord*mediaCoord[id].size+mediaCoord[id].pos+texcoord,0,1); } //texture(mediasAtlas,uv);}//texcoord*mediaCoord[id].size+mediaCoord[id].pos+texcoord); }
+vec4 fromAtlas(vec2 uv, int id) { 
+    
+    uv = texcoord;
+    uv *= mediaCoord[id].size;
+    uv += mediaCoord[id].pos;
+    // uv += texcoord;
+
+    return vec4(texcoord,0,1)+texture(mediasAtlas,texcoord);
+ 
+ }
 
 float t_ratio = 1;
 
