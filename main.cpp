@@ -53,7 +53,7 @@ int main() {
         sm.outFB->clear(); // thus bind
 
 
-1
+
         sm.passBuf->bind();
         sm.shader->use();
 
