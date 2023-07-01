@@ -10,11 +10,12 @@
 #include "gui.hpp"
 #include "device/artnet.hpp"
 
-using Fixture = std::vector<Artnet::Universe::Attribute<float>>;
+using Fixture = std::vector<Artnet::Universe::Attribute>;
 
 struct SmartMap {
 
 uint8_t DMX_FREQUENCY = 44;
+uint8_t CURRENT_FPS = 0;
 
  GLint GL_BLEND_MODE_IN = 6;
  GLint GL_BLEND_MODE_OUT = 13;

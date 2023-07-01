@@ -52,7 +52,7 @@ void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixtu
 
     fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
 
-    artnet->universes[uni].callback = [&](Artnet::Universe* _this) { _this->remap<float>(&fixtureUBO->data, *fixture); fixtureUBO->update(); };
+    artnet->universes[0].callback = [&](Artnet::Universe* _this) {  artnet->universes[0].remap(&fixtureUBO->data[0], *fixture); fixtureUBO->update(); };
     
 } 
 
@@ -97,6 +97,8 @@ void SmartMap::render() {
 
     while(true) sm.window->render([&]() {
 
+        // for each attr in FixturesUBO += attr.val
+
 #ifdef SM_DEBUG
         survey_count = 0;
         survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
@@ -104,6 +106,7 @@ void SmartMap::render() {
 #endif
 
         sm.artnet->run(); 
+        sm.artnet->universes[0].update(); 
 
         sm.outFB->clear(); // thus bind
 

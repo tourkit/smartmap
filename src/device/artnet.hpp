@@ -13,45 +13,24 @@ static inline float GMAui2f[256] = {0, 0.00390625, 0.0078125, 0.0117188, 0.01562
 struct Artnet {
 
   struct Universe { 
-      
+
     uint8_t raw[512]; 
-    Universe() { memset(&raw[0],0,512); } 
+    Universe();
 
     std::function<void(Universe*)> callback = [](Universe* uni){};
 
-    uint16_t get16(uint16_t i) { return ((raw[i] << 8) | raw[i+1]);  }
-    uint32_t get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }
-    uint32_t get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1] << 16) | (raw[i+2] << 8) | raw[i+3]);  }
+    uint16_t get16(uint16_t i);
+    uint32_t get24(uint16_t i);
+    uint32_t get32(uint16_t i);
 
-    template<typename T>
-    struct Attribute { uint8_t combining; T min=0,max=1; };
+    struct Attribute { uint8_t combining; float min=0,max=1; };
 
-    template<typename T>
-    std::vector<T> remap(std::vector<Attribute<T>> attributes) { std::vector<T> remapped; remapped.resize(attributes.size()); remap(&remapped, attributes); return remapped; }
+    std::vector<float> steps;
+    float* output;
 
-    template<typename T>
-    void remap(std::vector<T>* output, std::vector<Attribute<T>> attributes) {
+    void update();
 
-        uint16_t chan = 0;
-        uint16_t id = 0;
-        for (int i = 0; i < attributes.size(); i++) { 
-
-            auto c = attributes[i].combining;
-
-            if (c==1) (*output)[id] = (raw[chan]/255.0f);
-            else if (c==2) (*output)[id] = (get16(chan)/65535.0f);
-            else if (c==3) (*output)[id] = (get24(chan)/16777215.0f);
-            else if (c==4) (*output)[id] = (get32(chan)/4294967295.0f);
-
-            (*output)[id] = ((*output)[id] * (attributes[i].max - attributes[i].min)) + attributes[i].min;
-
-            id += std::min((uint8_t)1,c); // or remapNoZero(std::vector<T>* output, std::vector<Attribute> attributes) 
-            chan += std::max((uint8_t)1,c); 
-
-        } 
-
-    }
-    
+    void remap(float* output, std::vector<Attribute> attributes);
 
   };
 
@@ -61,7 +40,7 @@ struct Artnet {
   Artnet(const char* ip);
 
   ~Artnet();
-  
+
   void run();
 
 } ;
