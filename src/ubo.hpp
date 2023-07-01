@@ -19,9 +19,9 @@ struct UBO {
 
     ~UBO() { destroy(); }
 
-    UBO(const char* name, size_t size = 0, std::vector<GLuint> subscribers = {}, bool own = true) : name(name) { 
+    UBO(const char* name, size_t size = 0, std::vector<GLuint> subscribers = {}) : name(name) { 
 
-        if (own) data.resize(size);
+        data.resize(size);
 
         create(); 
 

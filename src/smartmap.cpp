@@ -3,10 +3,6 @@
 
 SmartMap::SmartMap() {
 
-    std::cout << "deb" << std::endl;
-
-    // VBO quadC("quad.obj");
-
     // order matters for some
     artnet = new Artnet("2.0.0.222");
     window = new GL::Window(false,400,300);
@@ -57,8 +53,6 @@ void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixtu
     fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
 
     artnet->universes[uni].callback = [&](Artnet::Universe* _this) { _this->remap<float>(&fixtureUBO->data, *fixture); fixtureUBO->update(); };
-
-    std::cout << "fin" << std::endl;
     
 } 
 

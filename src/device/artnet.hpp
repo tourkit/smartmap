@@ -60,8 +60,6 @@ struct Artnet {
   std::map<uint16_t, Universe> universes;
 
   Artnet(const char* ip) {
-
-    std::cout << "nezniverse "  << std::endl; 
     
     artnet = artnet_new(ip, 0);
     artnet_set_short_name(artnet, "SmartMap");
