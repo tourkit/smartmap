@@ -23,23 +23,30 @@ struct Artnet {
     uint32_t get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }
     uint32_t get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1] << 16) | (raw[i+2] << 8) | raw[i+3]);  }
 
-    std::vector<float> floats;
-    std::vector<float>* floatify(std::vector<uint8_t> chan_combinings) { floatify(&floats, chan_combinings); return &floats; }
-    void floatify(std::vector<float>* output, std::vector<uint8_t> chan_combinings) {
+    template<typename T>
+    struct Attribute { uint8_t combining; T min=0,max=1; };
 
-        uint16_t chan_id = 0;
-        uint16_t attr_id = 0;
-        for (int i = 0; i < chan_combinings.size(); i++) { 
+    template<typename T>
+    std::vector<T> remap(std::vector<Attribute<T>> attributes) { std::vector<T> remapped; remapped.resize(attributes.size()); remap(&remapped, attributes); return remapped; }
 
-            auto c = chan_combinings[i];
+    template<typename T>
+    void remap(std::vector<T>* output, std::vector<Attribute<T>> attributes) {
 
-            if (c==1) (*output)[attr_id] = (raw[chan_id]/255.0f);
-            else if (c==2) (*output)[attr_id] = (get16(chan_id)/65535.0f);
-            else if (c==3) (*output)[attr_id] = (get24(chan_id)/16777215.0f);
-            else if (c==4) (*output)[attr_id] = (get32(chan_id)/4294967295.0f);
+        uint16_t chan = 0;
+        uint16_t id = 0;
+        for (int i = 0; i < attributes.size(); i++) { 
 
-            attr_id += std::min((uint8_t)1,c);
-            chan_id += std::max((uint8_t)1,c);
+            auto c = attributes[i].combining;
+
+            if (c==1) (*output)[id] = (raw[chan]/255.0f);
+            else if (c==2) (*output)[id] = (get16(chan)/65535.0f);
+            else if (c==3) (*output)[id] = (get24(chan)/16777215.0f);
+            else if (c==4) (*output)[id] = (get32(chan)/4294967295.0f);
+
+            (*output)[id] = ((*output)[id] * (attributes[i].max - attributes[i].min)) + attributes[i].min;
+
+            id += std::min((uint8_t)1,c); // or remapNoZero(std::vector<T>* output, std::vector<Attribute> attributes) 
+            chan += std::max((uint8_t)1,c); 
 
         } 
 
