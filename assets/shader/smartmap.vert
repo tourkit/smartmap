@@ -29,6 +29,8 @@ out vec2 texcoord;
 
 
 vec2 rotate(vec2 v, float a, vec2 r2) {
+
+    // return v;
     
     float ratio = 2*r2.x/r2.y;
 
@@ -67,8 +69,6 @@ void main() {
         size *= fix[id].size;
 
         vec2 pos = fix[id].pos;
-        pos*=vec2(2);
-        pos-=vec2(1);
         pos *= mat[id].size+size;
         pos +=  mat[id].pos;
 
