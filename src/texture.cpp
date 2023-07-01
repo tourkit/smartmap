@@ -64,7 +64,7 @@ void Texture::create(std::string src, GLuint offset_x, GLuint offset_y) {
 
     Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/"+std::string(src));
     if (!img.width) return create(&FULLBLACK,1,1);
-    create(img.i, img.width, img.height, offset_x, offset_y);
+    create(&img.data[0], img.width, img.height, offset_x, offset_y);
 
 }
 
