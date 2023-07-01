@@ -3,7 +3,7 @@
 Texture::Texture() { pool.push_back(this); }
 
 Texture::Texture(void* data, GLuint width, GLuint height) : Texture() { create(data, width, height); }
-Texture::Texture(std::string src) : Texture()   { create(src); } 
+Texture::Texture(std::string src) : Texture()  { create(src); } 
 
 Texture::~Texture() { destroy(); }
 
@@ -58,11 +58,10 @@ static uint8_t FULLBLACK[4] = {0,0,0,0};
 // static uint8_t FULLBLACK[4] = {255,255,255,255};
 
 void Texture::reset() {create(path); }
-void Texture::create(std::string src, GLuint offset_x, GLuint offset_y) {
+void Texture::create(std::string path, GLuint offset_x, GLuint offset_y) {
 
-    this->path = src; 
-
-    Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/"+std::string(src));
+    this->path = path; 
+    Image img(path);
     if (!img.width) return create(&FULLBLACK,1,1);
     create(&img.data[0], img.width, img.height, offset_x, offset_y);
 

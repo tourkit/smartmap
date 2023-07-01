@@ -35,7 +35,7 @@ SmartMap::SmartMap() {
 
     
     shader->use();
-    atlas = new Atlas("assets/media/");
+    atlas = new Atlas("");
     atlas->link(shader);
 
 }
