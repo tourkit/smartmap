@@ -190,7 +190,7 @@ int Boilerplate() {
     
     auto lastTime = glfwGetTime();
 
-    auto* window = (new GL::Window(false,width,height,pos_x,pos_y))->window;
+    GL::Window window(false,width,height,pos_x,pos_y);
     
     VBO quad;
 
@@ -203,10 +203,7 @@ int Boilerplate() {
 
     while (true) {
 
-        if (glfwGetTime() - lastTime <= 1./280. ) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            continue;
-        }
+        if (glfwGetTime() - lastTime <= 1./280. ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
 
         lastTime = glfwGetTime();
 
@@ -217,7 +214,7 @@ int Boilerplate() {
 
         glfwPollEvents();
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(window.window);
 
     }
 
