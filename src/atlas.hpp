@@ -7,23 +7,17 @@
 
 struct UBO;
  
-struct Atlas : public rbp::GuillotineBinPack{
-
-    int width, height;
+struct Atlas {
 
     std::vector<unsigned char> data;
 
-    std::vector<rbp::Rect> &list = GetUsedRectangles();
+    rbp::GuillotineBinPack binpack;
 
     std::vector<std::array<float,4>> normalized_list;
 
     Texture texture;
          
     UBO ubo; 
-
-    bool buffered = false;
-
-    Atlas(int width = 4096, int height = 4096);
 
     void init();
 
