@@ -37,8 +37,8 @@ vec2 rotate(vec2 v, float a, vec2 r2) {
     float s = sin(a);
     float c = cos(a);
     mat2 m = mat2(c, -s, s, c);
-
-    vec2 AR = vec2(1);
+    
+    vec2 AR = vec2(1.222222222);//1.0f+(1.0f-((1920.0f/1080.0f)-1.0f)));
 
     if (ratio > 1.) {   AR.x = ratio;  return (m*(v*AR))*(1./AR);  } 
 
