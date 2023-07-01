@@ -56,7 +56,7 @@ int main() {
         
         sm.outBuf->bind();
         sm.shader->use();
-        sm.quadC->draw();
+        sm.quadA->draw();
 
         sm.gui->draw2();  
 
