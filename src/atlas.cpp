@@ -10,7 +10,7 @@ Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)
 
     for (auto file:dir.list) { 
 
-        Image img(dir.path+file);
+        Image img(file);
 
         auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
 
