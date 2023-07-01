@@ -10,6 +10,8 @@
 #include "gui.hpp"
 #include "device/artnet.hpp"
 
+using Fixture = std::vector<Artnet::Universe::Attribute<float>>;
+
 struct SmartMap {
 
     Artnet *artnet;
@@ -32,7 +34,7 @@ struct SmartMap {
 
     Atlas *atlas;
 
-    void createFixtures(int count);
+    void createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture);
 
     static SmartMap& getInstance();
 

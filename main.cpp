@@ -11,9 +11,9 @@
 
 int main() {  
 
-    sm.createFixtures(1);
+    Fixture basic =  {{2},{2},{2},{2},{2},{2},{2},{2},{2},{2},{2},{2},{2,0,3.6},{2}};
 
-    sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].remap<float>(&sm.fixtureUBO->data, {{2},{2},{2},{2},{2},{2},{2},{2},{2},{2},{2},{2},{2,0,3.6},{2}}); sm.fixtureUBO->update(); };
+    sm.createFixtures(1,0,0,&basic);
 
     sm.render();
  

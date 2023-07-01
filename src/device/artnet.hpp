@@ -17,7 +17,7 @@ struct Artnet {
     uint8_t raw[512]; 
     Universe() { memset(&raw[0],0,512); } 
 
-    std::function<void()> callback = [](){};
+    std::function<void(Universe*)> callback = [](Universe* uni){};
 
     uint16_t get16(uint16_t i) { return ((raw[i] << 8) | raw[i+1]);  }
     uint32_t get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }
@@ -76,7 +76,7 @@ struct Artnet {
 
   ~Artnet() { artnet_stop(artnet); artnet_destroy(artnet); }
   
-  void run() { artnet_read(artnet, .1); for (auto u:universes)  u.second.callback(); }
+  void run() { artnet_read(artnet, .1); for (auto u:universes)  u.second.callback(&u.second); }
 
 } ;
 

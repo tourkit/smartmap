@@ -80,11 +80,9 @@ void SmartMap::render() {
     }); 
 }
 
-void SmartMap::createFixtures(int count) {
+void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture) {
 
     winFB = new FrameBuffer(0); 
-
-    // fixtures.resize(count);
     
     auto mat = matrice(MAT_X,MAT_Y);
     matriceUBO = new UBO("MatriceUBO", mat.size()*16, {shader->id}); 
@@ -95,6 +93,8 @@ void SmartMap::createFixtures(int count) {
     fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
 
     std::cout << "fin" << std::endl;
+
+    artnet->universes[uni].callback = [&](Artnet::Universe* _this) { _this->remap<float>(&fixtureUBO->data, *fixture); fixtureUBO->update(); };
     
 } 
 
