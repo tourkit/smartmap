@@ -44,12 +44,70 @@ SmartMap::SmartMap() {
 
 }
 
+void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture) {
+
+    winFB = new FrameBuffer(0); 
+    
+    auto mat = matrice(MAT_X,MAT_Y);
+    matriceUBO = new UBO("MatriceUBO", mat.size()*16, {shader->id}); 
+    matriceUBO->update(&mat[0][0],mat.size()*16); 
+
+    shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
+
+    fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
+
+    artnet->universes[uni].callback = [&](Artnet::Universe* _this) { _this->remap<float>(&fixtureUBO->data, *fixture); fixtureUBO->update(); };
+
+    std::cout << "fin" << std::endl;
+    
+} 
+
+#ifdef SM_DEBUG
+#include <windows.h>
+#include <ctime>
+#include <cstdint>
+
+static inline std::map<int,int> filechecks;
+
+static int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0) {
+
+    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
+    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
+
+    auto now = st.wMilliseconds;
+    if (before != now ) cb();
+    return now;
+
+}
+
+static inline int survey_count = 0;
+
+static inline void survey(const char* path, std::function<void()> cb = [](){}) {
+
+    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
+    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
+
+    auto now = st.wMilliseconds;
+
+    if (filechecks[survey_count] != now ) cb();
+
+    filechecks[survey_count] = now;
+
+}
+
+#endif
+
 void SmartMap::render() {
+
     while(true) sm.window->render([&]() {
 
-        // debug.run();
+#ifdef SM_DEBUG
+        survey_count = 0;
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader);          }); // do shader reset but atlas aswell !!!
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){  shader->reset(); atlas->link(shader);           });
+#endif
 
-        sm.artnet->run();
+        sm.artnet->run(); 
 
         sm.outFB->clear(); // thus bind
 
@@ -78,25 +136,8 @@ void SmartMap::render() {
         sm.gui->draw2();  
 
     }); 
+
 }
-
-void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture) {
-
-    winFB = new FrameBuffer(0); 
-    
-    auto mat = matrice(MAT_X,MAT_Y);
-    matriceUBO = new UBO("MatriceUBO", mat.size()*16, {shader->id}); 
-    matriceUBO->update(&mat[0][0],mat.size()*16); 
-
-    shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
-
-    fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
-
-    std::cout << "fin" << std::endl;
-
-    artnet->universes[uni].callback = [&](Artnet::Universe* _this) { _this->remap<float>(&fixtureUBO->data, *fixture); fixtureUBO->update(); };
-    
-} 
 
 SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }
 SmartMap& sm = SmartMap::getInstance();
