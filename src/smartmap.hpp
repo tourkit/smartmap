@@ -8,9 +8,7 @@
 #include "atlas.hpp"
 #include "ubo.hpp"
 #include "gui.hpp"
-#include "fixture.hpp"
 #include "device/artnet.hpp"
-
 
 struct SmartMap {
 
@@ -34,11 +32,11 @@ struct SmartMap {
 
     Atlas *atlas;
 
-    std::vector<Fixture> fixtures;
-
     void createFixtures(int count);
 
     static SmartMap& getInstance();
+
+    void render();
 
 private:
 

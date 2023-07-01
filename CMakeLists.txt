@@ -17,7 +17,6 @@ add_executable(SmartMap
     src/vbo.cpp
     src/ubo.cpp
     src/atlas.cpp
-    src/fixture.cpp
     src/attribute.cpp
 
     src/device/artnet.cpp
@@ -46,8 +45,6 @@ add_executable(SmartMap
     include/vendor/ofxLibArtnet/artnet/tod.c
     include/vendor/ofxLibArtnet/artnet/transmit.c
     include/vendor/ofxLibArtnet/ofxLibArtnet.cpp
-
-    
 
 )
 
