@@ -8,11 +8,24 @@
 #include "smartmap.hpp"
 
 #include "debug.hpp"
+#include "boilerplate.hpp"
 Debug debug;
 
 int main() {  
 
+    sm.shader->use();
+    // Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+    // Texture tex;
+    // tex.create(img.i,img.width,img.height,0,0);
+
+    // Image img2("C:/msys64/home/SysErr/old/smartmap/assets/media/container.jpg");
+    // Texture tex2;
+    // tex2.create(img2.i,img2.width,img2.height,0,0,1);
+    // GLuint textureUniformLoc = glGetUniformLocation(sm.shader->id, "mediasAtlas");
+    // glUniform1i(textureUniformLoc, 1);
+
     sm.createFixtures(1);
+    
     sm.artnet->universes[0].callback = [&]() { sm.artnet->universes[0].floatify(&sm.fixtureUBO->data, std::vector<uint8_t>{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}); sm.fixtureUBO->update(); };
 
     while(true) sm.window->render([&]() {
@@ -20,8 +33,6 @@ int main() {
         debug.run();
 
         sm.artnet->run();
-
-
 
         sm.outFB->clear(); // thus bind
 
@@ -45,7 +56,7 @@ int main() {
         
         sm.outBuf->bind();
         sm.shader->use();
-        sm.quadA->draw();
+        sm.quadC->draw();
 
         sm.gui->draw2();  
 

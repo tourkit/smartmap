@@ -18,7 +18,6 @@ SmartMap::SmartMap() {
     FW = window->width*MAT_X;
     FH = window->height*MAT_Y;
     gui = new GUI(window->window);
-    atlas = new Atlas("assets/media/");
     quadC = new VBO();
     quadA = new VBO("quad.obj",2);
     quadB = new VBO("quad.obj",1);
@@ -38,8 +37,13 @@ SmartMap::SmartMap() {
     blur_y = new ShaderProgram({"blur_y.comp"});
     basic = new ShaderProgram({"test.frag", "basic.vert"});
 
+    
+    shader->use();
+    atlas = new Atlas("assets/media/");
     atlas->link(shader);
+
 }
+
 void SmartMap::createFixtures(int count) {
 
     winFB = new FrameBuffer(0); 

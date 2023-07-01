@@ -23,10 +23,19 @@ int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0
 
 }
 
+void reset() {
+
+    sm.shader->reset();     
+
+    GLuint textureUniformLoc = glGetUniformLocation(sm.shader->id, "mediasAtlas");
+    glUniform1i(textureUniformLoc, 1);
+
+}
+
 void run() {
 
-    fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ sm.shader->reset(); }, fileCheck3);
-    fileCheck4 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ sm.shader->reset(); }, fileCheck4);
+    // fileCheck3 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ reset(); }, fileCheck3);
+    // fileCheck4 = last_mil(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ reset(); }, fileCheck4);
 
 }
 

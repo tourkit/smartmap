@@ -30,16 +30,10 @@ void Atlas::link(ShaderProgram* shader) {
 
     std::vector<std::array<float,4>> normalized;
 
-    for (auto r:list) {
-    
-        normalized.push_back({r.width/(float)width, r.height/(float)height, r.x/(float)width, r.y/(float)height});
-        std::cout << r.width/(float)width << " " << r.height/(float)height << " " << r.x/(float)width << " " << r.y/(float)height << std::endl;
-    
-    }
-
+    for (auto r:list) normalized.push_back({r.width/(float)width, r.height/(float)height, r.x/(float)width, r.y/(float)height});
+   
     for (int i = 0; i < 10; i++) { std::cout << (GLuint)data[i] << " "; }
     std::cout << std::endl;
-
 
     atlaspos.data.resize(list.size()*4*4);
 
@@ -47,9 +41,7 @@ void Atlas::link(ShaderProgram* shader) {
 
     atlaspos.update(&normalized[0], list.size()*4*4);
 
-    // shader->sendUniform("mediasAtlas", 1);
-    GLuint textureUniformLoc = glGetUniformLocation(shader->id, "mediasAtlas");
-    glUniform1i(textureUniformLoc, 1);
+    shader->sendUniform("mediasAtlas", 1);
 
 }
 

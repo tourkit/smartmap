@@ -37,11 +37,12 @@ uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 vec4 fromAtlas(vec2 uv, int id) { 
     
     uv = texcoord;
-    uv *= mediaCoord[id].size;
-    uv += mediaCoord[id].pos;
-    // uv += texcoord;
+    // uv *= mediaCoord[id].size;
+    // uv += mediaCoord[id].pos;
+    // uv -= texcoord;
+    // uv += .5;
 
-    return vec4(texcoord,0,1)+texture(mediasAtlas,texcoord);
+    return vec4(uv,0,1)+texture(mediasAtlas,texcoord)+texture(pass,texcoord);
  
  }
 
@@ -282,6 +283,10 @@ vec4 smartmap(int instance) {
 }
 
 void main() {
+
+     color = fromAtlas(texcoord-.5, 0); return;
+
+        // color = vec4(.5);return;
 
     if (obj == 0) { 
 
