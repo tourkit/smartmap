@@ -14,8 +14,8 @@ using Fixture = std::vector<Artnet::Universe::Attribute>;
 
 struct SmartMap {
 
-uint8_t DMX_FREQUENCY = 44;
-uint8_t CURRENT_FPS = 0;
+float DMX_FREQUENCY = 44;
+float CURRENT_FPS = 280;
 
  GLint GL_BLEND_MODE_IN = 6;
  GLint GL_BLEND_MODE_OUT = 13;

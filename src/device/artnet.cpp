@@ -19,7 +19,7 @@ Artnet::~Artnet() { artnet_stop(artnet); artnet_destroy(artnet); }
 
 void Artnet::run() { artnet_read(artnet, .1); for (auto u:universes)  u.second.callback(&u.second); }
 
-Artnet::Universe::Universe() { memset(&raw[0],0,512); steps.resize(4); for (int i = 0; i < 4; i++) { steps[i] = .0001; } } 
+Artnet::Universe::Universe() { memset(&raw[0],0,512); steps.resize(4); for (int i = 0; i < 4; i++) { steps[i] = .000; } } 
 
 uint16_t Artnet::Universe::get16(uint16_t i) { return ((raw[i] << 8) | raw[i+1]);  }
 uint32_t Artnet::Universe::get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }
@@ -40,15 +40,14 @@ void Artnet::Universe::update() {
 void Artnet::Universe::remap(float* output, std::vector<Attribute> attributes) {
 
     this->output = output;
-    // steps.resize(attributes.size());
+    steps.resize(attributes.size());
 
     uint16_t chan = 0;
     uint16_t id = 0;
     for (int i = 0; i < attributes.size(); i++) { 
 
         auto c = attributes[i].combining;
-        float val = *(output+id);
-        float target;
+        float val,target;
 
         if (c==1) target      = GMAui2f[raw[chan]];
         else if (c==2) target = get16(chan)/65535.0f;
@@ -58,13 +57,10 @@ void Artnet::Universe::remap(float* output, std::vector<Attribute> attributes) {
         // range remap
         target = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
 
-        val = (float)target-val;
-        val *= (float)sm.DMX_FREQUENCY/(float)sm.CURRENT_FPS; // DMX_FREQUENCY should be realtime
-        if (i==0) {
-            // steps[i] = val;
-            std::cout  << " " << (float)sm.CURRENT_FPS/sm.DMX_FREQUENCY  << " "<< val<< " " << (unsigned int)sm.CURRENT_FPS << " "<<  (float)sm.DMX_FREQUENCY << " " << steps.size()  << " " ;
-            
-        }
+        val = target-*(output+id);
+        val /= sm.CURRENT_FPS/sm.DMX_FREQUENCY; // DMX_FREQUENCY should be realtime
+        steps[i] = val;
+
 
         id += std::min((uint8_t)1,c); // or remapNoZero(std::vector<T>* output, std::vector<Attribute> attributes) 
         chan += std::max((uint8_t)1,c); 

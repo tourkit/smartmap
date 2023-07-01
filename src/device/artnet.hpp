@@ -26,6 +26,7 @@ struct Artnet {
     struct Attribute { uint8_t combining; float min=0,max=1; };
 
     std::vector<float> steps;
+    std::vector<float> ssss;
     float* output;
 
     void update();
