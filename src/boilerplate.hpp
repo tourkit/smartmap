@@ -7,6 +7,9 @@
 
 #pragma once
 
+unsigned int width = 400, height = 300, pos_x = 2560-width, pos_y = 0;
+//unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
+
 #define BOILq
 #ifdef BOIL
 
@@ -184,31 +187,19 @@ int Boilerplate() {
 #include "smartmap.hpp"
 
 int Boilerplate() {  
-
-    // SET OPENGL
-
-    GLuint width = 400, height = 300;
+    
     auto lastTime = glfwGetTime();
 
-    auto* window = (new GL::Window(false,width,height,1920-width))->window;
+    auto* window = (new GL::Window(false,width,height,pos_x,pos_y))->window;
     
     VBO quad;
 
     ShaderProgram shader({"basic.vert", "test.frag"});
-    shader.use(); 
-
-    // FIX THIS !!
     
-    Texture tex;
-    Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
-    tex.create(img.i,img.width,img.height);
-    // tex.bind();
-    Image img2("C:/msys64/home/SysErr/old/smartmap/assets/media/container.jpg");
-    Texture tex2;
-    tex2.create(img2.i,img2.width,img2.height,0,0,1);
-    // tex2.bind();
-    GLuint textureUniformLoc = glGetUniformLocation(shader, "mediaAtlas");
-    glUniform1i(textureUniformLoc, 1);
+    Texture tex("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+
+    Atlas atlas("assets/media/");
+    atlas.link(&shader);
 
     while (true) {
 
@@ -216,7 +207,7 @@ int Boilerplate() {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
             continue;
         }
-    
+
         lastTime = glfwGetTime();
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
