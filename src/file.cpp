@@ -65,31 +65,33 @@ Directory::Directory(std::string path) : path(path) {
 
 File::~File() { }
 
+File::File() {  }
 File::File(std::string path) { read(path); }
 
-char* File::read(std::string path) {
+std::string File::read(std::string path, bool binary) {
 
-    data.clear();
+    auto flags = std::ifstream::in;
+    if (binary) flags |= std::ifstream::binary;
 
-    path = path;
+    std::ifstream file(path, flags);
 
-    std::ifstream file(path.c_str(), std::ifstream::in | std::ifstream::binary);
-    file.seekg(0, std::ios::end);
-    std::streampos length(file.tellg());
+    if (file) {
 
-    if (length) {
+        file.seekg(0, std::ios::end);
+        std::streamsize size = file.tellg();
 
-        auto len = (size_t)length;
         file.seekg(0, std::ios::beg);
-        data.resize(len + 1);
-        memset(data.data(),0,len+1);
-        file.read(data.data(), len);
+        data.resize(size);
 
+        if (file.read(&data[0], size)) {
+            file.close();
+            return data;
+        }
     }
+    
+    else std::cerr << "File Error : " << path << std::endl;
 
-    file.clear();
-
-    return data.data();
+    return data;
 
 }
 

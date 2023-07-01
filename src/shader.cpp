@@ -13,11 +13,11 @@ Shader::Shader(std::string file) {
     else if (ext == "comp") type = GL_COMPUTE_SHADER;
     else std::cout << "SMARTMAP FILENAME ERROR" << std::endl;
 
-    file = readFile(file.c_str());
-
     id = glCreateShader(type);
  
-    auto ptr = file.data(); // J'arive pas a juste ecire (const GLchar* const*)code.data() dans glShaderSource a la place de &ptr ca m'eneeeeeerve
+    File source;
+    source.read(file);
+    auto ptr = source.data.c_str(); // J'arive pas a juste ecire (const GLchar* const*)code.data() dans glShaderSource a la place de &ptr ca m'eneeeeeerve
     glShaderSource(id, 1, &ptr, nullptr);
  
     glCompileShader(id);

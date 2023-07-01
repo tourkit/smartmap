@@ -8,29 +8,6 @@
 #include <string>
 #include <vector>
 
-static std::string readFile(const char* path) {
-
-  std::string data;
-
-  std::ifstream file(path, std::ifstream::in | std::ifstream::binary);
-  file.seekg(0, std::ios::end);
-  std::streampos length(file.tellg());
-
-  if (length) {
-
-      file.seekg(0, std::ios::beg);
-      data.resize(length);
-      file.read(&data[0], length);
-
-  }
-
-  file.clear();
-
-  return data;
-
-};
-
-
 struct Directory {
 
     std::string path;
@@ -48,17 +25,15 @@ struct Directory {
 struct File {
 
     std::string path;
-    std::vector<char> data;
+    std::string data;
 
+    File();
     File(std::string source);
     ~File();
 
-    char* read(std::string source);
+    std::string read(std::string source, bool binary = true);
     void write(const char* path);
-
-    const char& operator[](int x) { return data[x]; }
-    operator std::vector<char>&() { return data; }
-
+    
 };
 
 
