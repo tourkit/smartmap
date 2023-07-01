@@ -184,7 +184,15 @@ int Boilerplate() {
 
 #else
 
-#include "smartmap.hpp"
+#include "window.hpp"
+#include "shader.hpp"
+#include "texture.hpp"
+#include "vbo.hpp"
+// #include "framebuffer.hpp"
+#include "atlas.hpp"
+#include "ubo.hpp"
+// #include "gui.hpp"
+// #include "device/artnet.hpp"
 
 int Boilerplate() {  
     
@@ -197,6 +205,8 @@ int Boilerplate() {
     ShaderProgram shader({"basic.vert", "test.frag"});
     
     Texture tex("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+
+    // image1.jpg 800 339 0 0
 
     Atlas atlas("assets/media/");
     atlas.link(&shader);
