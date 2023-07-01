@@ -1,6 +1,6 @@
 #include "atlas.hpp"  
 
-Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0), ubo("mediasCoords", 100)  {
+Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)  {
 
     texture.create(nullptr,width,height,0,0,1);
 
@@ -22,15 +22,15 @@ Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)
 
     }
 
+    ubo = new UBO("mediasCoords", 4*normalized_list.size());
+
 }
 
 void Atlas::link(ShaderProgram* shader) {
-  
-    // should resize ubo herer to fit sieof(rect)*normalized.size()
 
-    ubo.link(shader->id);
+    ubo->link(shader->id);
 
-    ubo.update(&normalized_list[0], normalized_list.size()*16); // 16 is size of Rect
+    ubo->update(&normalized_list[0], normalized_list.size()*16); // 16 is size of Rect
 
     shader->sendUniform("mediasAtlas", 1);
 

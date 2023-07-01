@@ -15,7 +15,7 @@ struct Atlas {
 
     Texture texture;
          
-    UBO ubo; 
+    UBO *ubo; 
 
     Atlas(std::string path, int width = 4096, int height = 4096);
 
