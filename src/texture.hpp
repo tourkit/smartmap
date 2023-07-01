@@ -27,7 +27,7 @@ struct Texture {
 
     void create(std::string src, GLuint offset_x = 0, GLuint offset_y = 0);
 
-    void copy(const Texture& texture, GLuint offset_x = 0, GLuint offset_y = 0);
+    void copy(const Texture *texture, GLuint offset_x = 0, GLuint offset_y = 0);
 
     void bind(int unit);
 

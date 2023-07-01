@@ -68,9 +68,9 @@ void Texture::create(std::string src, GLuint offset_x, GLuint offset_y) {
 
 }
 
-void Texture::copy(const Texture& texture, GLuint offset_x, GLuint offset_y) {
+void Texture::copy(const Texture* texture, GLuint offset_x, GLuint offset_y) {
     
-    glCopyImageSubData(texture.id, GL_TEXTURE_2D, 0, 0,0, 0, id, GL_TEXTURE_2D, 0, offset_x, offset_y, 0, texture.width,texture.height, 1);
+    glCopyImageSubData(texture->id, GL_TEXTURE_2D, 0, 0,0, 0, id, GL_TEXTURE_2D, 0, offset_x, offset_y, 0, texture->width,texture->height, 1);
 
     GL_ERROR();
 
