@@ -15,17 +15,19 @@ struct Atlas : public rbp::GuillotineBinPack{
 
     std::vector<rbp::Rect> &list = GetUsedRectangles();
 
+    std::vector<std::array<float,4>> normalized_list;
+
     Texture texture;
          
-    UBO atlaspos; 
+    UBO ubo; 
 
     bool buffered = false;
 
-    Atlas(int width = 2048, int height = 2048);
+    Atlas(int width = 4096, int height = 4096);
 
     void init();
 
-    Atlas(std::string path, int width = 2048, int height = 2048);
+    Atlas(std::string path, int width = 4096, int height = 4096);
 
     bool add(int width, int height, unsigned char* data);
 

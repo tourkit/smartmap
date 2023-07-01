@@ -272,7 +272,7 @@ vec4 smartmap(int instance) {
     if (gobo_id == 5) return fix[instance].rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 1, fix[instance].gobo[2]);
     if (gobo_id == 6) return fix[instance].rgba*flower(t_uv*(1/fix[instance].size), fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
     if (gobo_id == 7) return fix[instance].rgba*border(t_uv, fix[instance].gobo[1]);
-    if (gobo_id == 8) return fix[instance].rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*10));
+    if (gobo_id == 8) return fix[instance].rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*12)); // 12 is assets/media file count
     if (gobo_id == 9) return fix[instance].rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
 
     return fix[instance].rgba*vec4(1);

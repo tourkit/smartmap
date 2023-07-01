@@ -49,10 +49,11 @@ ShaderProgram::ShaderProgram(std::vector<std::string> paths) : paths(paths) {
 
     create();
 
+    use();
 
 }
 
-void ShaderProgram::destroy() {  
+void ShaderProgram::destroy() {  // add pool mgmt
     if (id) glDeleteProgram(id); 
 }
 

@@ -2,7 +2,7 @@
 
 Atlas::Atlas(int width, int height)  
 
-    : atlaspos("mediasCoords", 100), width(width), height(height),rbp::GuillotineBinPack(width,height) {  }
+    : ubo("mediasCoords", 100), width(width), height(height),rbp::GuillotineBinPack(width,height) {  }
 
 
 Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
@@ -15,7 +15,7 @@ Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
     TourKit::Directory dir(path);
 
-    for (auto file:dir.list) {
+    for (auto file:dir.list) { // add dir.list.sort.by bigger px count (w*h) first
 
         std::string filepath = dir.path_str+file;
         TourKit::Image img(filepath);
@@ -28,18 +28,13 @@ Atlas::Atlas(std::string path, int width, int height) : Atlas(width,height) {
 
 void Atlas::link(ShaderProgram* shader) {
 
-    std::vector<std::array<float,4>> normalized;
+    // for (auto r:list) normalized_list.push_back({r.width/(float)width, r.height/(float)height, r.x/(float)width, r.y/(float)height});
 
-    for (auto r:list) normalized.push_back({r.width/(float)width, r.height/(float)height, r.x/(float)width, r.y/(float)height});
-   
-    for (int i = 0; i < 10; i++) { std::cout << (GLuint)data[i] << " "; }
-    std::cout << std::endl;
+    ubo.data.resize(list.size()*4*4);
 
-    atlaspos.data.resize(list.size()*4*4);
+    ubo.link(shader->id);
 
-    atlaspos.link(shader->id);
-
-    atlaspos.update(&normalized[0], list.size()*4*4);
+    ubo.update(&normalized_list[0], list.size()*4*4);
 
     shader->sendUniform("mediasAtlas", 1);
 
@@ -67,6 +62,8 @@ bool Atlas::add(int width, int height, unsigned char* data){
                 rbp::GuillotineBinPack::SplitShorterAxis
             
             );
+
+            normalized_list.push_back({r.width/(float)this->width, r.height/(float)this->height, r.x/(float)this->width, r.y/(float)this->height});
             
             if (buffered) texture.update(&data[0],r.width,r.height,r.x,r.y);
 
