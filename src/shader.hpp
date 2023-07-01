@@ -7,7 +7,6 @@ enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
 
 struct Shader {
 
-
   GLuint id;
 
   GLenum type;

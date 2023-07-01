@@ -14,7 +14,7 @@ SmartMap::SmartMap() {
     FW = window->width*MAT_X;
     FH = window->height*MAT_Y;
     gui = new GUI(window->window);
-    quadC = new VBO();
+    quadC = new VBO("quad.obj",0);
     quadA = new VBO("quad.obj",2);
     quadB = new VBO("quad.obj",1);
     passBuf = new Texture(nullptr,FW,FH);
@@ -23,7 +23,7 @@ SmartMap::SmartMap() {
     outBuf = new Texture(nullptr, FW,FH); 
     outBuf->format = GL_RGBA8;
     
-    outFB = new FrameBuffer(*outBuf); 
+    outFB = new FrameBuffer(outBuf); 
 
     outBlur = new Texture(nullptr, FW*.5,FH*.5); 
     outBlur->format = GL_RGBA8;
@@ -42,7 +42,7 @@ SmartMap::SmartMap() {
 
 void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture) {
 
-    winFB = new FrameBuffer(0); 
+    winFB = new FrameBuffer(80085); 
     
     auto mat = matrice(MAT_X,MAT_Y);
     matriceUBO = new UBO("MatriceUBO", mat.size()*16, {shader->id}); 
@@ -93,12 +93,14 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 void SmartMap::render() {
 
+    Texture zeubi("smile.jpg");
+
     while(true) sm.window->render([&]() {
 
 #ifdef SM_DEBUG
         survey_count = 0;
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader);          }); // do shader reset but atlas aswell !!!
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){  shader->reset(); atlas->link(shader);           });
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); });
 #endif
 
         sm.artnet->run(); 
@@ -106,15 +108,16 @@ void SmartMap::render() {
         sm.outFB->clear(); // thus bind
 
         sm.passBuf->bind();
-        sm.shader->use();
 
         // feedback
         glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        sm.quadA->draw(sm.MATS); // quantity is instances count in shader 
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-        sm.quadB->draw(sm.MATS); // quantity is instances count in shader 
+        sm.quadA->draw(); // quantity is instances count in shader 
+        glBlendFunc(GUI::GL_BLEND_MODES[GUI::GL_BLEND_MODE_IN], GUI::GL_BLEND_MODES[GUI::GL_BLEND_MODE_OUT]);
+        
+        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        sm.quadB->draw(); // quantity is instances count in shader 
 
-        // sm.passBuf->copy(sm.outBuf);
+        sm.passBuf->copy(sm.outBuf);
 
         // glBindImageTexture(0, *sm.outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
         // glBindImageTexture(1, *sm.outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
@@ -124,9 +127,9 @@ void SmartMap::render() {
 
         sm.winFB->clear(); 
         
-        sm.passBuf->bind();
+        sm.outBuf->bind();
         sm.shader->use();
-        sm.quadA->draw();
+        sm.quadC->draw();
 
         sm.gui->draw2();  
 

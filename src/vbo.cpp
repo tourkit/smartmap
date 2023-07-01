@@ -3,6 +3,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+VBO::VBO(std::string path, int id) : path(path) , id(id) {  VBO::pool.push_back(this);   import(path); };
+
 VBO::~VBO()  { destroy(); }
 
 void VBO::destroy() {
@@ -49,19 +51,11 @@ void VBO::update() {
 
 }
 
-VBO::VBO(std::string path, int id) : path(path) , id(id) {  VBO::pool.push_back(this);   import(path); };
-
 void VBO::import(std::string path) {    
 
     destroy();
 
-    
-
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
-
-
-    this->id = VBO::pool.size();
-    
 
     float clip_x = -1, clip_y = 1;
 
