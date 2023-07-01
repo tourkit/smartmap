@@ -282,7 +282,12 @@ vec4 smartmap(int instance) {
 void main() {
 
     
-        // color = vec4(.5);return;
+
+    //  if (obj == 0) { color = vec4(1); return; }
+    // //  if (obj == 1) color *= fix[id].orientation;
+     
+     
+    //  return;
 
     if (obj == 0) { 
 
@@ -291,13 +296,14 @@ void main() {
          
     }
     else if (obj == 1) {
-
+        color = vec4(0);
+        // return;
         float feedback = 1;
+        feedback -= fix[id].feedback;
 
-        // missing fix[id].beam[0]!= 0 // for ????
-        if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
+        //if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
         
-        color =  texture(pass,texcoord)-max(.002,feedback); 
+        color = texture(pass,texcoord)-max(.002,feedback); 
         
 
     }

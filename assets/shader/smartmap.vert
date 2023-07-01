@@ -47,7 +47,6 @@ vec2 rotate(vec2 v, float a, vec2 r2) {
 }
 
 void main() {
-
     obj = OBJ;
 
     id = gl_InstanceID;

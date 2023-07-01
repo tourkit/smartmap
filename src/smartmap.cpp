@@ -112,7 +112,7 @@ void SmartMap::render() {
         // feedback
         glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
         sm.quadA->draw(); // quantity is instances count in shader 
-        glBlendFunc(GUI::GL_BLEND_MODES[GUI::GL_BLEND_MODE_IN], GUI::GL_BLEND_MODES[GUI::GL_BLEND_MODE_OUT]);
+        glBlendFunc(sm.GL_BLEND_MODES[sm.GL_BLEND_MODE_IN], sm.GL_BLEND_MODES[sm.GL_BLEND_MODE_OUT]);
         
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         sm.quadB->draw(); // quantity is instances count in shader 

@@ -67,39 +67,27 @@ Ref<GUI::Element> GUI::add(Element* elem, ShaderProgram* shader)  {
 ///////////////////////////////////////
 
 
-std::vector<GLenum> GL_BLEND_MODES = {
-
-    GL_ZERO,
-    GL_ONE,
-    GL_SRC_COLOR,
-    GL_ONE_MINUS_SRC_COLOR,	
-    GL_DST_COLOR,
-    GL_ONE_MINUS_DST_COLOR,
-    GL_SRC_ALPHA,
-    GL_ONE_MINUS_SRC_ALPHA,
-    GL_DST_ALPHA,
-    GL_ONE_MINUS_DST_ALPHA,
-    GL_CONSTANT_COLOR,
-    GL_ONE_MINUS_CONSTANT_COLOR,
-    GL_CONSTANT_ALPHA,
-    GL_ONE_MINUS_CONSTANT_ALPHA,
-    GL_SRC_ALPHA_SATURATE,
-    GL_SRC1_COLOR,
-    GL_ONE_MINUS_SRC1_COLOR,
-    GL_SRC1_ALPHA,
-    GL_ONE_MINUS_SRC1_ALPHA
-
-};
 
 
 void GUI::blendTest() {
 
-  ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
-  ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size());
-  glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]); // OR  
+  ImGui::SliderInt("GL_BLEND_MODE_IN",&sm.GL_BLEND_MODE_IN,0,sm.GL_BLEND_MODES.size());
+  ImGui::SliderInt("GL_B2LEND_MODE_OUT",&sm.GL_BLEND_MODE_OUT,0,sm.GL_BLEND_MODES.size());
+   // OR  
 
 }
- 
+// static inline std::map<int> blendingmodes;
+//         blendingmodes["GL_ZERO"] = GL_ZERO;
+//         blendingmodes["GL_ONE"] = GL_ONE;
+//         blendingmodes["GL_SRC_COLOR"] = GL_SRC_COLOR;
+//         blendingmodes["GL_ONE_MINUS_SRC_COLOR"] = GL_ONE_MINUS_SRC_COLOR;
+//         blendingmodes["GL_SRC_ALPHA"] = GL_SRC_ALPHA;
+//         blendingmodes["GL_ONE_MINUS_SRC_ALPHA"] = GL_ONE_MINUS_SRC_ALPHA;
+//         blendingmodes["GL_DST_ALPHA"] = GL_DST_ALPHA;
+//         blendingmodes["GL_ONE_MINUS_DST_ALPHA"] = GL_ONE_MINUS_DST_ALPHA;
+//         blendingmodes["GL_DST_COLOR"] = GL_DST_COLOR;
+//         blendingmodes["GL_ONE_MINUS_DST_COLOR"] = GL_ONE_MINUS_DST_COLOR;
+//         blendingmodes["GL_SRC_ALPHA_SATURATE"] = GL_SRC_ALPHA_SATURATE;
 static int  min = 0, max = 255, cells_count = 48;
 
  void GUI::draw2() {
@@ -202,8 +190,13 @@ static int  min = 0, max = 255, cells_count = 48;
         // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(&sm.artnet->universes[0].raw[i]),  &min,   &max,   "");
         for (int i = 0; i < 20; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &sm.fixtureUBO->data[i], 0, 1);
         ImGui::End();
+        ImGui::Begin("Blending Mode");
+        blendTest();
+        // for (int i = 0; i < 20; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &sm.fixtureUBO->data[i], 0, 1);
+        ImGui::End();
 
         render();
 
 
  }
+
