@@ -36,7 +36,7 @@ add_executable(SmartMap
     
     include/vendor/gl3w/src/gl3w.c
 
-    include/vendor/RectangleBinPack/GuillotineBinPack.cpp
+    include/vendor/RectangleBinPack/MaxRectsBinPack.cpp
     include/vendor/RectangleBinPack/Rect.cpp
 
     include/vendor/ofxLibArtnet/artnet/artnet.c
