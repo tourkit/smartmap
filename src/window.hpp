@@ -5,7 +5,6 @@
 
 namespace GL {
 
-
 struct Window {
 
     GLFWwindow *window;
@@ -14,9 +13,9 @@ struct Window {
 
     bool stopped = false;
 
-    double lastTime;
+    float time = 0, fps = 1;
 
-    uint16_t width, height, fps, mouse_x, mouse_y, offset_x, offset_y;
+    uint16_t width, height, mouse_x, mouse_y, offset_x, offset_y;
 
     Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset_x = 0, uint16_t offset_y = 0);
     

@@ -93,11 +93,7 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 void SmartMap::render() {
 
-    Texture zeubi("smile.jpg");
-
     while(true) sm.window->render([&]() {
-
-        // for each attr in FixturesUBO += attr.val
 
 #ifdef SM_DEBUG
         survey_count = 0;

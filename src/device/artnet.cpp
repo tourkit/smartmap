@@ -26,16 +26,8 @@ uint32_t Artnet::Universe::get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1
 uint32_t Artnet::Universe::get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1] << 16) | (raw[i+2] << 8) | raw[i+3]);  }
 
 void Artnet::Universe::update() { 
-
-    for (int i = 0; i < steps.size(); i++) { 
-    
-        *(output+i) += steps[i];
-
+    for (int i = 0; i < steps.size(); i++) *(output+i) += steps[i]; 
     }
-        
-    std::cout << *(output+1) << " " << steps[1] <<std::endl;
-    
-}
 
 void Artnet::Universe::remap(float* output, std::vector<Attribute> attributes) {
 
@@ -58,9 +50,8 @@ void Artnet::Universe::remap(float* output, std::vector<Attribute> attributes) {
         target = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
 
         val = target-*(output+id);
-        val /= sm.CURRENT_FPS/sm.DMX_FREQUENCY; // DMX_FREQUENCY should be realtime
+        val /= sm.window->fps/44; // DMX_FREQUENCY should be realtime
         steps[i] = val;
-
 
         id += std::min((uint8_t)1,c); // or remapNoZero(std::vector<T>* output, std::vector<Attribute> attributes) 
         chan += std::max((uint8_t)1,c); 

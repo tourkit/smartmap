@@ -14,9 +14,6 @@ using Fixture = std::vector<Artnet::Universe::Attribute>;
 
 struct SmartMap {
 
-float DMX_FREQUENCY = 44;
-float CURRENT_FPS = 280;
-
  GLint GL_BLEND_MODE_IN = 6;
  GLint GL_BLEND_MODE_OUT = 13;
  std::vector<GLenum> GL_BLEND_MODES = {
@@ -42,8 +39,6 @@ float CURRENT_FPS = 280;
 
 };
 
-
-
     Artnet *artnet;
 
     GL::Window *window;
@@ -63,6 +58,8 @@ float CURRENT_FPS = 280;
     uint16_t FW, FH, MAT_X, MAT_Y, MATS;
 
     Atlas *atlas;
+
+    float time,fps;
 
     void createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture);
 

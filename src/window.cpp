@@ -1,5 +1,5 @@
 #include "window.hpp"
-#include "shader.hpp"
+#include "smartmap.hpp"
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -72,10 +72,6 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-    lastTime = glfwGetTime();
-
-    
 
 }
 
@@ -120,10 +116,6 @@ void Window::initUidCallbacks() {
             case GLFW_KEY_ESCAPE:
                 exit(0);
                 break;
-            case GLFW_KEY_R:
-                delete ShaderProgram::pool[0];
-                ShaderProgram::pool[0] = new ShaderProgram({"C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert", "C:/msys64/home/SysErr/old/smartmap/assets/shader/test.frag"});
-                break;
             default:
                 std::cout << "keypress : " << (int)key << "\n";
                 break;
@@ -148,9 +140,10 @@ void Window::initUidCallbacks() {
 
 void Window::render(std::function<void()> callback) {
 
-    if (glfwGetTime() - lastTime <= 1./280. ) return;
-    
-    this->lastTime = glfwGetTime();
+    float now = glfwGetTime()  ;
+    fps = 1./(now-time);
+    if (fps > 240. ) return;
+    time = now;
 
     glClearColor(0.0f, 0.0f, 0.1f, 1.0f); // BG COLOR
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
