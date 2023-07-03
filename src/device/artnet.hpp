@@ -20,21 +20,19 @@ struct Artnet {
     uint8_t raw[512]; 
     Universe();
 
-    std::function<void(Universe*)> callback = [](Universe* uni){};
-
     uint16_t get16(uint16_t i);
     uint32_t get24(uint16_t i);
     uint32_t get32(uint16_t i);
 
     struct Attribute { uint8_t combining; float min=0,max=1; };
 
+    float* output = nullptr;
+    std::vector<Attribute> remap_specs;
     std::vector<float> steps;
-    std::vector<float> ssss;
-    float* output;
 
     void update();
 
-    void remap(float* output, std::vector<Attribute> attributes);
+    void remap();
 
   };
 

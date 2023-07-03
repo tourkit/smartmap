@@ -1,6 +1,43 @@
 
 #include "smartmap.hpp"
 
+#ifdef SM_DEBUG
+#include <windows.h>
+#include <ctime>
+#include <cstdint>
+
+static inline std::map<int,int> filechecks;
+
+static int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0) {
+
+    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
+    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
+
+    auto now = st.wMilliseconds;
+    if (before != now ) cb();
+    return now;
+
+}
+
+static inline int survey_count = 0;
+
+static inline void survey(const char* path, std::function<void()> cb = [](){}) {
+
+    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
+    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
+
+    auto now = st.wMilliseconds;
+
+    if (filechecks[survey_count] != now ) cb();
+
+    filechecks[survey_count] = now;
+
+}
+
+#endif
+
+
+
 SmartMap::SmartMap() {
 
     // order matters for some
@@ -52,57 +89,19 @@ void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixtu
 
     fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
 
-    artnet->universes[0].callback = [&](Artnet::Universe* _this) {  artnet->universes[0].remap(&fixtureUBO->data[0], *fixture); fixtureUBO->update(); };
+    artnet->universes[uni].output = &fixtureUBO->data[0];
+    artnet->universes[uni].remap_specs = *fixture;
     
 } 
-
-#ifdef SM_DEBUG
-#include <windows.h>
-#include <ctime>
-#include <cstdint>
-
-static inline std::map<int,int> filechecks;
-
-static int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0) {
-
-    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
-    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
-
-    auto now = st.wMilliseconds;
-    if (before != now ) cb();
-    return now;
-
-}
-
-static inline int survey_count = 0;
-
-static inline void survey(const char* path, std::function<void()> cb = [](){}) {
-
-    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
-    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
-
-    auto now = st.wMilliseconds;
-
-    if (filechecks[survey_count] != now ) cb();
-
-    filechecks[survey_count] = now;
-
-}
-
-#endif
 
 void SmartMap::render() {
 
     while(true) sm.window->render([&]() {
 
-#ifdef SM_DEBUG
-        // survey_count = 0;
-        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
-        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); });
-#endif
-
         sm.artnet->run(); 
-        sm.artnet->universes[0].update(); 
+        if (artnet->universes.size()) artnet->universes[0].update(); 
+
+        fixtureUBO->update();
 
         sm.outFB->clear(); // thus bind
 
@@ -131,6 +130,13 @@ void SmartMap::render() {
         sm.quadC->draw();
 
         sm.gui->draw2();  
+
+
+#ifdef SM_DEBUG
+        // survey_count = 0;
+        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
+        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); });
+#endif
 
     }); 
 
