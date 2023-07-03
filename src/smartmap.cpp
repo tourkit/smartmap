@@ -48,20 +48,18 @@ SmartMap::SmartMap() {
     MAT_X = 1; 
     MAT_Y = 1;
     MATS = MAT_X*MAT_Y;
-    FW = window->width*MAT_X;
-    FH = window->height*MAT_Y;
+    float scale = .5;
+    FW = window->width*MAT_X*scale;
+    FH = window->height*MAT_Y*scale;
     gui = new GUI(window->window);
     quadC = new VBO("quad.obj",0);
     quadA = new VBO("quad.obj",2);
     quadB = new VBO("quad.obj",1);
     passBuf = new Texture(nullptr,FW,FH);
     passBuf->format = GL_RGBA8;
-    
     outBuf = new Texture(nullptr, FW,FH); 
     outBuf->format = GL_RGBA8;
-    
     outFB = new FrameBuffer(outBuf); 
-
     outBlur = new Texture(nullptr, FW*.5,FH*.5); 
     outBlur->format = GL_RGBA8;
 
