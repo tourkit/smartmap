@@ -15,6 +15,8 @@ struct Artnet {
 
   struct Universe { 
 
+    FPS fps;
+
     uint8_t raw[512]; 
     Universe();
 
@@ -38,8 +40,6 @@ struct Artnet {
 
   artnet_node artnet;
   std::map<uint16_t, Universe> universes;
-
-  FPS fps;
 
   Artnet(const char* ip);
 

@@ -9,8 +9,14 @@ artnet_set_short_name(artnet, "SmartMap");
 artnet_set_long_name(artnet, "SmartMap");
 artnet_start(artnet);
 artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this){
-    for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) ((Artnet*)_this)->universes[p->data.admx.universe].raw[i] = p->data.admx.data[i]; 
-    ((Artnet*)_this)->fps.run();
+
+    auto &u = ((Artnet*)_this)->universes[p->data.admx.universe];
+    u.fps.name = std::to_string(p->data.admx.universe).c_str();
+
+    for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) u.raw[i] = p->data.admx.data[i]; 
+
+    u.fps.run();
+
     return 1; 
 }, this);
 

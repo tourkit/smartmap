@@ -167,7 +167,7 @@ static int  min = 0, max = 255, cells_count = 48;
             ImGui::Separator();
         }
         
-        ImGui::End();
+        ImGui::End(); 
         ImGui::Begin("KTRL");
         
             // ImGui::SetWindowFontScale(1.5);
@@ -182,7 +182,7 @@ static int  min = 0, max = 255, cells_count = 48;
             // if (ImGui::InputText(" tex", (char*)&sm.tex->path[0], IM_ARRAYSIZE((char*)&sm.tex->path[0]))) sm.tex->reset();
             // if (ImGui::InputText(" frag", (char*)&sm.basic->paths[1][0], IM_ARRAYSIZE((char*)&sm.basic->paths[1][0]))) sm.basic->reset();
             
-            for (auto fps:FPS::pool) ImGui::Text((std::to_string((GLuint)(fps->fps))+" FPS").c_str());
+            for (auto fps:FPS::pool) ImGui::Text((fps->name+" "+std::to_string((GLuint)(fps->fps))+" FPS").c_str());
 
 
         ImGui::End();

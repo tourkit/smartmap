@@ -10,7 +10,7 @@ namespace GL {
 
 Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offset_y)
 
-    : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) {
+    : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) , fps("Window") {
 
     int8_t windows_border = 0;
     int8_t window_on_top = 1; 
@@ -155,10 +155,15 @@ void Window::render(std::function<void()> callback) {
 
 }
 
-FPS::FPS() { pool.push_back(this); }
+FPS::FPS(std::string name ) : name(name) { 
+    
+    pool.push_back(this); 
+    
+}
+
 float FPS::run(float max) {
 
-    float current_time = glfwGetTime()  ;
+    current_time = glfwGetTime()  ;
     fps = 1./(current_time-last_time);
     if (max && fps > max) return fps;
     last_time = current_time;

@@ -6,9 +6,11 @@
 
 struct FPS {
 
+    std::string name;
+
     static inline std::vector<FPS*> pool;
 
-    FPS();
+    FPS(std::string name = "FPS");
 
     float current_time = 0, last_time = 0, fps = 1;
 
@@ -23,7 +25,7 @@ struct Window {
 
     GLFWwindow *window;
 
-    FPS fps;
+    FPS fps; 
     
     bool fullscreen;
 
