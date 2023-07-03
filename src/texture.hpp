@@ -8,9 +8,7 @@ struct Texture {
 
     static inline std::vector<Texture*> pool;
 
-    // static inline uint8_t white[4] = {255,255,0,255};
-
-    GLuint id = 0, width, height,mipmaps = 1, unit = 0;
+    GLuint id = 0, width, height, mipmaps = 1, unit = 0;
 
     GLenum format = GL_RGB8;
 
@@ -22,18 +20,17 @@ struct Texture {
     
     ~Texture();
 
-    void create(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0, GLuint unit= 0);
-    void update(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0);
-
     void create(std::string src, GLuint offset_x = 0, GLuint offset_y = 0);
+    void create(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0, GLuint unit= 0);
 
-    void copy(const Texture *texture, GLuint offset_x = 0, GLuint offset_y = 0);
+    void read(const Texture *texture, GLuint offset_x = 0, GLuint offset_y = 0);
+    void write(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0);
 
     void bind(int unit);
+    void bind();
 
     void reset();
     void destroy();
-    void bind();
 
     operator GLuint();
 

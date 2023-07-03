@@ -3,12 +3,20 @@
 Texture::Texture() { pool.push_back(this); }
 
 Texture::Texture(void* data, GLuint width, GLuint height) : Texture() { create(data, width, height); }
+
 Texture::Texture(std::string src) : Texture()  { create(src); } 
 
 Texture::~Texture() { destroy(); }
 
-// TODO : check if need bind unit to delete
-void Texture::destroy() { if (id)  glActiveTexture(GL_TEXTURE0+unit);  glDeleteTextures(1, &id);  glActiveTexture(GL_TEXTURE0);  }
+void Texture::destroy() { if (id) glDeleteTextures(1, &id);  }
+
+void Texture::reset() {create(path); }
+
+void Texture::bind(int unit) { this->unit = unit; bind(); }
+
+void Texture::bind() { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0); }
+
+Texture::operator GLuint() { return id; }
 
 void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit) {
 
@@ -33,12 +41,11 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
 
     glActiveTexture(GL_TEXTURE0); 
 
-
-    if (data) update(data, width, height, offset_x, offset_y);
+    if (data) write(data, width, height, offset_x, offset_y);
 
 }
 
-void Texture::update(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
+void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
 
     glActiveTexture(GL_TEXTURE0+unit); 
     
@@ -56,8 +63,6 @@ void Texture::update(void* data, GLuint width, GLuint height, GLuint offset_x, G
 
 static uint8_t FULLBLACK[4] = {0,0,0,0};
 // static uint8_t FULLBLACK[4] = {255,255,255,255};
-
-void Texture::reset() {create(path); }
 void Texture::create(std::string path, GLuint offset_x, GLuint offset_y) {
 
     this->path = path; 
@@ -67,16 +72,10 @@ void Texture::create(std::string path, GLuint offset_x, GLuint offset_y) {
 
 }
 
-void Texture::copy(const Texture* texture, GLuint offset_x, GLuint offset_y) {
+void Texture::read(const Texture* texture, GLuint offset_x, GLuint offset_y) {
     
     glCopyImageSubData(texture->id, GL_TEXTURE_2D, 0, 0,0, 0, id, GL_TEXTURE_2D, 0, offset_x, offset_y, 0, texture->width,texture->height, 1);
 
     GL_ERROR();
 
 }
-
-void Texture::bind(int unit) { this->unit = unit; bind(); }
-
-void Texture::bind() { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0); }
-
-Texture::operator GLuint() { return id; }
