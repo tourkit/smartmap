@@ -7,9 +7,15 @@ namespace GL {
 
 struct FPS {
 
+    static inline std::vector<FPS*> pool;
+
+    FPS();
+
     float current_time = 0, last_time = 0, fps = 1;
 
     float run(float max);
+
+    operator float() { return fps; }
 
 };
 

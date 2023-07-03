@@ -184,7 +184,11 @@ static int  min = 0, max = 255, cells_count = 48;
             // if (ImGui::InputText(" frag", (char*)&sm.basic->paths[1][0], IM_ARRAYSIZE((char*)&sm.basic->paths[1][0]))) sm.basic->reset();
             
             // sm.fps  =ImGui::GetIO().Framerate;
-            ImGui::Text((std::to_string(ImGui::GetIO().Framerate )+" FPS").c_str());
+            for (auto fps:GL::FPS::pool) {  
+
+                  ImGui::Text((std::to_string(fps->fps)+" FPS").c_str());
+
+            }
 
         ImGui::End();
         

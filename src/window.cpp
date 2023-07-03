@@ -138,6 +138,7 @@ void Window::initUidCallbacks() {
     });
 }
 
+FPS::FPS() { pool.push_back(this); }
 float FPS::run(float max) {
 
     float current_time = glfwGetTime()  ;
