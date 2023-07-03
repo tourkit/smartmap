@@ -3,7 +3,6 @@
 
 #include "globals.hpp"
 
-namespace GL {
 
 struct FPS {
 
@@ -13,11 +12,12 @@ struct FPS {
 
     float current_time = 0, last_time = 0, fps = 1;
 
-    float run(float max);
+    float run(float max = 0);
 
     operator float() { return fps; }
 
 };
+namespace GL {
 
 struct Window {
 

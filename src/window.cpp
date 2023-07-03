@@ -1,5 +1,4 @@
 #include "window.hpp"
-#include "smartmap.hpp"
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -138,16 +137,6 @@ void Window::initUidCallbacks() {
     });
 }
 
-FPS::FPS() { pool.push_back(this); }
-float FPS::run(float max) {
-
-    float current_time = glfwGetTime()  ;
-    fps = 1./(current_time-last_time);
-    if (max && fps > max) return fps;
-    last_time = current_time;
-    return fps;
-
-}
 
 void Window::render(std::function<void()> callback) {
 
@@ -163,5 +152,16 @@ void Window::render(std::function<void()> callback) {
     glfwSwapBuffers(window);
 
 }
+
+}
+
+FPS::FPS() { pool.push_back(this); }
+float FPS::run(float max) {
+
+    float current_time = glfwGetTime()  ;
+    fps = 1./(current_time-last_time);
+    if (max && fps > max) return fps;
+    last_time = current_time;
+    return fps;
 
 }

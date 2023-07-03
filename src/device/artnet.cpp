@@ -10,6 +10,7 @@ artnet_set_long_name(artnet, "SmartMap");
 artnet_start(artnet);
 artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this){
     for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) ((Artnet*)_this)->universes[p->data.admx.universe].raw[i] = p->data.admx.data[i]; 
+    ((Artnet*)_this)->fps.run();
     return 1; 
 }, this);
 

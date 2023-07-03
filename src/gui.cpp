@@ -166,8 +166,7 @@ static int  min = 0, max = 255, cells_count = 48;
             ImGui::PopID();
             ImGui::Separator();
         }
-
-
+        
         ImGui::End();
         ImGui::Begin("KTRL");
         
@@ -183,12 +182,8 @@ static int  min = 0, max = 255, cells_count = 48;
             // if (ImGui::InputText(" tex", (char*)&sm.tex->path[0], IM_ARRAYSIZE((char*)&sm.tex->path[0]))) sm.tex->reset();
             // if (ImGui::InputText(" frag", (char*)&sm.basic->paths[1][0], IM_ARRAYSIZE((char*)&sm.basic->paths[1][0]))) sm.basic->reset();
             
-            // sm.fps  =ImGui::GetIO().Framerate;
-            for (auto fps:GL::FPS::pool) {  
+            for (auto fps:FPS::pool) ImGui::Text((std::to_string((GLuint)(fps->fps))+" FPS").c_str());
 
-                  ImGui::Text((std::to_string(fps->fps)+" FPS").c_str());
-
-            }
 
         ImGui::End();
         

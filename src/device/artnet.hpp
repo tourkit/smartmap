@@ -5,6 +5,7 @@
 #include <map>
 #include <functional>
 #include <iostream>
+#include "window.hpp"
 
 #include "../../include/vendor/ofxLibArtnet/artnet/artnet.h"
 
@@ -37,6 +38,8 @@ struct Artnet {
 
   artnet_node artnet;
   std::map<uint16_t, Universe> universes;
+
+  FPS fps;
 
   Artnet(const char* ip);
 
