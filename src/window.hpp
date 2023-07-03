@@ -5,15 +5,23 @@
 
 namespace GL {
 
+struct FPS {
+
+    float current_time = 0, last_time = 0, fps = 1;
+
+    float run(float max);
+
+};
+
 struct Window {
 
     GLFWwindow *window;
 
+    FPS fps;
+    
     bool fullscreen;
 
     bool stopped = false;
-
-    float time = 0, fps = 1;
 
     uint16_t width, height, mouse_x, mouse_y, offset_x, offset_y;
 
@@ -35,6 +43,8 @@ struct Window {
     std::function<void()> clickCallBack = []() { /* std::cout << "click" <<std::endl; */ };
 
 };
+
+
 
 }
 

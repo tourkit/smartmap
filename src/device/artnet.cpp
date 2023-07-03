@@ -50,7 +50,7 @@ void Artnet::Universe::remap(float* output, std::vector<Attribute> attributes) {
         target = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
 
         val = target-*(output+id);
-        val /= sm.window->fps/44; // DMX_FREQUENCY should be realtime
+        val /= sm.window->fps.fps/44; // DMX_FREQUENCY should be realtime
         steps[i] = val;
 
         id += std::min((uint8_t)1,c); // or remapNoZero(std::vector<T>* output, std::vector<Attribute> attributes) 

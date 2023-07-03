@@ -138,12 +138,19 @@ void Window::initUidCallbacks() {
     });
 }
 
+float FPS::run(float max) {
+
+    float current_time = glfwGetTime()  ;
+    fps = 1./(current_time-last_time);
+    if (max && fps > max) return fps;
+    last_time = current_time;
+    return fps;
+
+}
+
 void Window::render(std::function<void()> callback) {
 
-    float now = glfwGetTime()  ;
-    fps = 1./(now-time);
-    if (fps > 240. ) return;
-    time = now;
+    fps.run(280);
 
     glClearColor(0.0f, 0.0f, 0.1f, 1.0f); // BG COLOR
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
