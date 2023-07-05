@@ -171,6 +171,8 @@ static int  min = 0, max = 255, cells_count = 48;
         ImGui::Begin("KTRL");
         
             // ImGui::SetWindowFontScale(1.5);
+
+            ImGui::Checkbox("Debug mode", &sm.debug);
             
             uint16_t min = 1, max = 2560;
 

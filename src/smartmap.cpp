@@ -92,7 +92,6 @@ void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixtu
     artnet->universes[uni].remap_specs = *fixture;
     
 } 
-
 void SmartMap::render() {
 
     while(true) sm.window->render([&]() {
@@ -130,12 +129,12 @@ void SmartMap::render() {
         sm.gui->draw2();  
 
 
-#ifdef SM_DEBUG
-        survey_count = 0;
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); });
-#endif
-
+        if (sm.debug) { 
+            survey_count = 0;
+            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
+            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); });
+        }
+        
     }); 
 
 }

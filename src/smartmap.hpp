@@ -39,6 +39,8 @@ struct SmartMap {
 
 };
 
+    bool debug = false;
+
     Artnet *artnet;
 
     GL::Window *window;
