@@ -25,24 +25,36 @@ Artnet::~Artnet() { artnet_stop(artnet); artnet_destroy(artnet); }
 
 void Artnet::run() { artnet_read(artnet, .1); }
 
-Artnet::Universe::Universe() { memset(&raw[0],0,512); steps.resize(4); for (int i = 0; i < 4; i++) { steps[i] = .000; } } 
+Artnet::Universe::Universe() { memset(&raw[0],0,512); } 
 
 uint16_t Artnet::Universe::get16(uint16_t i) { return ((raw[i] << 8) | raw[i+1]);  }
 uint32_t Artnet::Universe::get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }
 uint32_t Artnet::Universe::get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1] << 16) | (raw[i+2] << 8) | raw[i+3]);  }
 
-void Artnet::Universe::update() { for (int i = 0; i < steps.size(); i++) *(output+i) += steps[i]; }
+void Artnet::Universe::update() { 
+    
+    if (frames) {
+        
+        for (int i = 0; i < steps.size(); i++) *(output+i) += steps[i]; 
+        
+        frames--; 
+        
+    }
+    
+}
+
 
 void Artnet::Universe::remap() {
 
     steps.resize(remap_specs.size());
 
+    frames = sm.window->fps/fps;
+
     uint16_t chan = 0;
     uint16_t id = 0;
     for (int i = 0; i < remap_specs.size(); i++) { 
 
-        float val,target;
-
+        float target;
         auto c = remap_specs[i].combining;
         if (c==1) target      = GMAui2f[raw[chan]];
         else if (c==2) target = get16(chan)/65535.0f;
@@ -52,10 +64,7 @@ void Artnet::Universe::remap() {
         // range remap
         target = (target * (remap_specs[i].max - remap_specs[i].min)) + remap_specs[i].min;
 
-        // calc step
-        val = target-*(output+id);
-        val /= sm.window->fps/fps; 
-        steps[i] = val;
+        steps[i] = (target-*(output+id)) / frames; 
 
         id += std::min((uint8_t)1,c); // or remapNoZero(std::vector<T>* output, std::vector<Attribute> remap_specs) 
         chan += std::max((uint8_t)1,c); 
