@@ -100,6 +100,7 @@ void SmartMap::render() {
         if (artnet->universes.size()) artnet->universes[0].update(); 
         fixtureUBO->update();
 
+        
         sm.outFB->clear(); // thus bind
 
         sm.passBuf->bind();
