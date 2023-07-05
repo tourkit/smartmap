@@ -1,6 +1,7 @@
 
 #include "smartmap.hpp"
 
+// #define SM_DEBUG
 #ifdef SM_DEBUG
 #include <windows.h>
 #include <ctime>
@@ -42,13 +43,13 @@ SmartMap::SmartMap() {
 
     // order matters for some
     artnet = new Artnet("2.0.0.222");
-    window = new GL::Window(false,400,300);
+    window = new GL::Window(false,800,600,1140);
     window->setPos(2560,290);
     window->setSize(1920,1200);
     MAT_X = 1; 
     MAT_Y = 1;
     MATS = MAT_X*MAT_Y;
-    float scale = .5;
+    float scale = 1;
     FW = window->width*MAT_X*scale;
     FH = window->height*MAT_Y*scale;
     gui = new GUI(window->window);
@@ -108,7 +109,7 @@ void SmartMap::render() {
         glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
         sm.quadA->draw(); // quantity is instances count in shader 
         glBlendFunc(sm.GL_BLEND_MODES[sm.GL_BLEND_MODE_IN], sm.GL_BLEND_MODES[sm.GL_BLEND_MODE_OUT]);
-        
+
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         sm.quadB->draw(); // quantity is instances count in shader 
 
@@ -130,9 +131,9 @@ void SmartMap::render() {
 
 
 #ifdef SM_DEBUG
-        // survey_count = 0;
-        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
-        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); });
+        survey_count = 0;
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(sm.shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); });
 #endif
 
     }); 

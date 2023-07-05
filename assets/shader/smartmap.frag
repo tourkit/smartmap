@@ -299,9 +299,9 @@ void main() {
         color = vec4(0);
         // return;
         float feedback = 1;
-        // feedback -= fix[id].feedback;
+        feedback -= fix[id].feedback;
 
-        if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
+        //if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
         
         color = texture(pass,texcoord)-max(.002,feedback); 
         
