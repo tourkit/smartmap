@@ -75,5 +75,3 @@ private:
     SmartMap(const SmartMap&) = delete;
     SmartMap& operator=(const SmartMap&) = delete;
 };
-
-extern SmartMap& sm;

@@ -9,6 +9,8 @@
 // #include "debug.hpp"
 // Debug debug;
 
+SmartMap& sm = SmartMap::getInstance();
+
 int main() { 
 
     // Boilerplate();

@@ -276,5 +276,3 @@ void SmartMap::render() {
 }
 
 SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }
-
-SmartMap& sm = SmartMap::getInstance();
