@@ -9,7 +9,7 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) , fps("Window") {
 
     int8_t windows_border = 0;
-    int8_t window_on_top = 1; 
+    int8_t window_on_top = 0; 
     int8_t cursor_visibility = 0;
     int8_t uid_callbacks = 1;
 

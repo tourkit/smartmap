@@ -194,11 +194,14 @@ int Boilerplate() {
 #include "gui.hpp"
 #include "device/artnet.hpp"
 
+#include "imgui/imgui.h"
+
+
 int Boilerplate() {  
     
     auto lastTime = glfwGetTime();
 
-    GL::Window window(false,width,height,pos_x,pos_y);
+    Window window(false,width,height,pos_x,pos_y);
     
     GUI gui(window.window);
 
@@ -215,6 +218,8 @@ int Boilerplate() {
 
     while (true) {
 
+        glfwPollEvents();
+
         if (glfwGetTime() - lastTime <= 1./280. ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
 
         lastTime = glfwGetTime();
@@ -223,14 +228,103 @@ int Boilerplate() {
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
         quad.draw();
-        
-        glfwPollEvents();
+        gui.newframe();
+
+        ImGui::Begin("test");
+        ImGui::Text("olqqqqqqqq");
+        ImGui::End();
+
+        gui.render();
 
         glfwSwapBuffers(window.window);
 
     }
 
 } 
+
+
+#endif
+
+#ifdef ddsddnot
+
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+#include <stdio.h>
+
+#include <GL/gl3w.h> 
+#include <GLFW/glfw3.h>
+
+int main(int, char**) {
+
+    glfwInit();
+
+    const char* glsl_version = "#version 430";
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+
+    // Create window with graphics context
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
+    if (window == NULL)
+        return 1;
+    glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // Enable vsync
+
+    gl3wInit();
+
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;  
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // Main loop
+    while (!glfwWindowShouldClose(window)) {
+        
+         glfwPollEvents();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("Another Window"); 
+        ImGui::Text("Hello from another window!");
+        ImGui::End();
+    
+        // Rendering
+        ImGui::Render();
+        int display_w, display_h;
+        glfwGetFramebufferSize(window, &display_w, &display_h);
+        glViewport(0, 0, display_w, display_h);
+        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
+
+        glfwSwapBuffers(window);
+    }
+
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+
+    return 0;
+}
 
 
 #endif

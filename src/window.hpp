@@ -26,7 +26,6 @@ struct FPS {
 
 };
 
-namespace GL {
 
 struct Window {
 
@@ -61,6 +60,5 @@ struct Window {
 
 
 
-}
 
 #endif
