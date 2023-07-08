@@ -9,7 +9,10 @@ struct Rect { vec2 size, pos; };
 
 struct Fixture {
 
-    vec4 rgba;
+    float alpha;
+    float r;
+    float g;
+    float b;
     vec2 pos;
     vec2 size;
     vec4 gobo;
@@ -53,7 +56,7 @@ void main() {
 
     texcoord = TEXCOORD;
     
-    gl_Position = vec4(POSITION,0,1);
+    gl_Position = vec4(POSITION.x,POSITION.y,0,1);
     
     gl_ClipDistance[0] = 1;
     gl_ClipDistance[1] = 1;

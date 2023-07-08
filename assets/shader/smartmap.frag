@@ -17,7 +17,10 @@ uniform float texchoice = 0;
 struct Rect { vec2 size;vec2 pos;  };
 struct Fixture {
 
-    vec4 rgba;
+    float alpha;
+    float r;
+    float g;
+    float b;
     vec2 pos;
     vec2 size;
     vec4 gobo;
@@ -265,29 +268,25 @@ vec4 smartmap(int instance) {
 
     int gobo_id = int(fix[instance].gobo[0]*255);
 
-    if (gobo_id == 1) return fix[instance].rgba*grid(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 2) return fix[instance].rgba*grid2(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 3) return fix[instance].rgba*gradient(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 4) return fix[instance].rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 0, fix[instance].gobo[2]);
-    if (gobo_id == 5) return fix[instance].rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 1, fix[instance].gobo[2]);
-    if (gobo_id == 6) return fix[instance].rgba*flower(t_uv*(1/fix[instance].size), fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 7) return fix[instance].rgba*border(t_uv, fix[instance].gobo[1]);
-    if (gobo_id == 8) return fix[instance].rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*12)); // 12 is assets/media file count
-    if (gobo_id == 9) return fix[instance].rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    vec4 rgba = vec4(fix[instance].r,fix[instance].g,fix[instance].b,fix[instance].alpha);
 
-    return fix[instance].rgba*vec4(1);
+    if (gobo_id == 1) return rgba*grid(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 2) return rgba*grid2(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 3) return rgba*gradient(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 4) return rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 0, fix[instance].gobo[2]);
+    if (gobo_id == 5) return rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 1, fix[instance].gobo[2]);
+    if (gobo_id == 6) return rgba*flower(t_uv*(1/fix[instance].size), fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 7) return rgba*border(t_uv, fix[instance].gobo[1]);
+    if (gobo_id == 8) return rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*12)); // 12 is assets/media file count
+    if (gobo_id == 9) return rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+
+    return rgba*vec4(1);
 
 }
 
 void main() {
 
-    
-
-    //  if (obj == 0) { color = vec4(1); return; }
-    // //  if (obj == 1) color *= fix[id].orientation;
-     
-     
-    //  return;
+    // color = vec4(1); return; 
 
     if (obj == 0) { 
 
