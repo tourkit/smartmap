@@ -130,14 +130,14 @@ void Window::initUidCallbacks() {
 
 void Window::render(std::function<void()> callback) {
 
+    glfwPollEvents();
+
     fps.run(280);
 
     glClearColor(0.0f, 0.0f, 0.1f, 1.0f); // BG COLOR
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
     callback();
-
-    glfwPollEvents();
 
     glfwSwapBuffers(window);
 
