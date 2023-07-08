@@ -59,14 +59,8 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
 
     glfwMakeContextCurrent(window);
     glfwSwapInterval(0); // VSYNC KILL VOUDOUJOUJOU
-    if (gl3wInit()) {
-        std::cout <<  "failed to initialize OpenGL" << std::endl;
-        return;
-    }
-    if (!gl3wIsSupported(3, 2)) {
-        std::cout <<  "OpenGL 3.2 not supported" << std::endl;
-        return;
-    }
+    
+    gl3wInit();
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);

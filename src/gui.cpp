@@ -6,14 +6,17 @@
 
 GUI::GUI(GLFWwindow* window) {
 
-  const char* glsl_version = "#version 430";
   ImGui::CreateContext();
-  ImGui_ImplGlfw_InitForOpenGL(window, true);
-  ImGui_ImplOpenGL3_Init(glsl_version);
-  ImGuiIO& io = ImGui::GetIO();
 
-// Enable docking
-io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+  ImGuiIO& io = ImGui::GetIO(); (void)io;
+  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;  
+  io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;  
+
+  ImGui_ImplGlfw_InitForOpenGL(window, true);
+
+  const char* glsl_version = "#version 430";
+  ImGui_ImplOpenGL3_Init(glsl_version);
+  
 }
 
 GUI::~GUI() {   
