@@ -63,8 +63,8 @@ SmartMap::SmartMap() {
     outBuf = new Texture(nullptr, FW,FH); 
     outBuf->format = GL_RGBA8;
     outFB = new FrameBuffer(outBuf); 
-    outBlur = new Texture(nullptr, FW*.5,FH*.5); 
-    outBlur->format = GL_RGBA8;
+    // outBlur = new Texture(nullptr, FW*.5,FH*.5); 
+    // outBlur->format = GL_RGBA8;
 
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     blur_x = new ShaderProgram({"blur_x.comp"});
@@ -164,7 +164,7 @@ void SmartMap::render() {
 
                 
         // Draw lines
-        for (int i = 0; i < Texture::pool.size(); i++) {
+        for (int i = Texture::pool.size()-1; i != 0; i--) {
 
             ImGui::Text(("width: " + std::to_string(Texture::pool[i]->width)).c_str());
             ImGui::Text(("height: " + std::to_string(Texture::pool[i]->height)).c_str());
