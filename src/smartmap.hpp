@@ -8,7 +8,7 @@
 #include "atlas.hpp"
 #include "ubo.hpp"
 #include "gui.hpp"
-#include "device/artnet.hpp"
+#include "artnet.hpp"
 
 using Fixture = std::vector<Artnet::Universe::Attribute>;
 

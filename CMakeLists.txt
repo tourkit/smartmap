@@ -19,7 +19,7 @@ add_executable(SmartMap
     src/atlas.cpp
     src/attribute.cpp
 
-    src/device/artnet.cpp
+    src/artnet.cpp
     
     src/file.cpp
     
