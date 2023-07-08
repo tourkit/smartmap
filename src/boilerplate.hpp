@@ -192,7 +192,7 @@ int Boilerplate() {
 #include "atlas.hpp"
 #include "ubo.hpp"
 #include "gui.hpp"
-#include "device/artnet.hpp"
+#include "artnet.hpp"
 
 #include "imgui/imgui.h"
 
@@ -227,11 +227,11 @@ int Boilerplate() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-        quad.draw();
+        quad.draw(4);
         gui.newframe();
 
         ImGui::Begin("test");
-        ImGui::Text("olqqqqqqqq");
+        ImGui::Text("olqqqqqqqq");  
         ImGui::End();
 
         gui.render();
