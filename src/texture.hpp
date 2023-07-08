@@ -31,7 +31,7 @@ struct Texture {
 
     void reset();
     void destroy();
-
+    
     operator GLuint();
 
 };

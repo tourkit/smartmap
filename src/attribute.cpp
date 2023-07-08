@@ -1,5 +1,6 @@
 #include "attribute.hpp"  
 	
+#include "imgui/imgui.h"
 
 
 Attribute::Attribute(std::string name, float val, float min_val, float max_val, std::vector<float>* dst) {  }
