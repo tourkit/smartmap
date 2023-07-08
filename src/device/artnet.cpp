@@ -1,7 +1,5 @@
 #include "artnet.hpp"  
 
-#include "smartmap.hpp"
-
 Artnet::Artnet(const char* ip) {
 
     artnet = artnet_new(ip, 0);
@@ -48,7 +46,7 @@ void Artnet::Universe::remap() {
 
     steps.resize(remap_specs.size());
 
-    frames = sm.window->fps/std::max(44.0f,fps.fps);
+    frames = FPS::pool[0]->fps/std::max(44.0f,fps.fps);
 
     uint16_t chan = 0;
     uint16_t id = 0;

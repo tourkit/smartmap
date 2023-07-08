@@ -1,4 +1,5 @@
 #include "framebuffer.hpp"  
+#include "texture.hpp"  
 
 FrameBuffer::~FrameBuffer() { if (id) glDeleteFramebuffers(1, &id); }
 

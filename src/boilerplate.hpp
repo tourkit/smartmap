@@ -191,7 +191,7 @@ int Boilerplate() {
 // #include "framebuffer.hpp"
 #include "atlas.hpp"
 #include "ubo.hpp"
-// #include "gui.hpp"
+#include "gui.hpp"
 // #include "device/artnet.hpp"
 
 int Boilerplate() {  
@@ -200,11 +200,13 @@ int Boilerplate() {
 
     GL::Window window(false,width,height,pos_x,pos_y);
     
+    GUI gui(window.window);
+
     VBO quad;
 
     ShaderProgram shader({"basic.vert", "test.frag"});
     
-    Texture tex("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
+    Texture tex("boy.jpg");
 
     // image1.jpg 800 339 0 0
 
@@ -221,7 +223,7 @@ int Boilerplate() {
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
         quad.draw();
-
+        
         glfwPollEvents();
 
         glfwSwapBuffers(window.window);
