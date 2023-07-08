@@ -45,7 +45,7 @@ SmartMap::SmartMap() {
 
     // order matters for some
     artnet = new Artnet("2.0.0.222");
-    window = new GL::Window(false,800,600,1140);
+    window = new Window(false,800,600,1140);
     window->setPos(2560,290);
     window->setSize(1920,1200);
     MAT_X = 1; 

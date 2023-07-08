@@ -43,7 +43,7 @@ struct SmartMap {
 
     Artnet *artnet;
 
-    GL::Window *window;
+    Window *window;
 
     VBO *quadA, *quadB, *quadC;
 
