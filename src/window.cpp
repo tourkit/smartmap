@@ -1,9 +1,6 @@
 #include "window.hpp"
 
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
 #include <chrono>
-#include <iostream>
 #include <thread>
 
 namespace GL {

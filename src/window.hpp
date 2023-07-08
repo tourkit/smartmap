@@ -1,7 +1,13 @@
 #ifndef __ENGINE_GL_WINDOW_HPP__
 #define __ENGINE_GL_WINDOW_HPP__
 
-#include "globals.hpp"
+#include <cstring>
+#include <iostream>
+#include <vector>
+#include <functional>
+
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
 
 
 struct FPS {
@@ -19,6 +25,7 @@ struct FPS {
     operator float() { return fps; }
 
 };
+
 namespace GL {
 
 struct Window {

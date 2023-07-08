@@ -1,4 +1,5 @@
 #include "artnet.hpp"  
+#include <cmath>
 
 Artnet::Artnet(const char* ip) {
 
