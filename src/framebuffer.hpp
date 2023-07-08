@@ -8,7 +8,7 @@ struct Texture;
 struct FrameBuffer {
 
     GLuint id, width, height, attachments = 0;
-    FrameBuffer(GLuint id);
+    FrameBuffer(GLuint id, GLuint width, GLuint height);
     FrameBuffer(Texture *tex);
     ~FrameBuffer();
     void bind();

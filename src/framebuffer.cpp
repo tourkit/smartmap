@@ -1,8 +1,8 @@
-#include "smartmap.hpp"  
+#include "framebuffer.hpp"  
 
 FrameBuffer::~FrameBuffer() { if (id) glDeleteFramebuffers(1, &id); }
 
-FrameBuffer::FrameBuffer(GLuint id) : id(0), width(sm.window->width), height(sm.window->height) { }
+FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height) : id(id), width(width), height(height) { }
 
 FrameBuffer::FrameBuffer(Texture *tex) {  glGenFramebuffers(1, &id); 
 

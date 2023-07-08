@@ -80,7 +80,7 @@ SmartMap::SmartMap() {
 
 void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture) {
 
-    winFB = new FrameBuffer(80085); 
+    winFB = new FrameBuffer(0,window->width,window->height); 
     
     auto mat = matrice(MAT_X,MAT_Y);
     matriceUBO = new UBO("MatriceUBO", mat.size()*16, {shader->id}); 
@@ -276,4 +276,5 @@ void SmartMap::render() {
 }
 
 SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }
+
 SmartMap& sm = SmartMap::getInstance();
