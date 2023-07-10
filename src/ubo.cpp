@@ -28,7 +28,7 @@ void UBO::create(const char* name, size_t size, std::vector<GLuint> &subscribers
     glGenBuffers(1, &id);
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(float)*data.size(), NULL, GL_DYNAMIC_COPY);
+    glBufferData(GL_UNIFORM_BUFFER, 4*data.size(), NULL, GL_DYNAMIC_COPY);
 
     std::cout << "RTFM /!\\ put good bindings in shader !! layout(std140, binding = " << binding << ") uniform " << name << " { size:" << data.size() << " };" << std::endl;
     
@@ -42,7 +42,7 @@ void UBO::link(GLuint shader) {
 }
 
 
-void UBO::update(){ update(&data[0], data.size()); }
+void UBO::update(){ update(&data[0], 4*data.size()); }
 
 void UBO::update(GLvoid* data, size_t size, GLuint offset){
 
