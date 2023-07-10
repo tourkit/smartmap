@@ -103,21 +103,20 @@ void SmartMap::render() {
     while(true) window->render([&]() {
 
         artnet->run(); 
-        if (artnet->universes.size()) artnet->universes[0].update(); 
+
         fixtureUBO->update();
 
-        
         outFB->clear(); // thus bind
 
         passBuf->bind();
 
         // feedback
         glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        quadA->draw(); // quantity is instances count in shader 
+        quadA->draw(2); // quantity is instances count in shader 
         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
 
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        quadB->draw(); // quantity is instances count in shader 
+        quadB->draw(2); // quantity is instances count in shader 
 
         passBuf->read(outBuf);
 
@@ -249,7 +248,7 @@ void SmartMap::render() {
         
         ImGui::Begin("FixtureUBO");
         // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(&artnet->universes[0].raw[i]),  &min,   &max,   "");
-        for (int i = 0; i < 20; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &fixtureUBO->data[i], 0, 1);
+        for (int i = 0; i < 32; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &fixtureUBO->data[i], 0, 1);
         ImGui::End();
 
         gui->render();  

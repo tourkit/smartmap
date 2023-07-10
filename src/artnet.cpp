@@ -30,19 +30,6 @@ uint16_t Artnet::Universe::get16(uint16_t i) { return ((raw[i] << 8) | raw[i+1])
 uint32_t Artnet::Universe::get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }
 uint32_t Artnet::Universe::get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1] << 16) | (raw[i+2] << 8) | raw[i+3]);  }
 
-void Artnet::Universe::update() { 
-    
-    if (frames>0) {
-        
-        for (int i = 0; i < steps.size(); i++) *(output+i) += steps[i]; 
-        
-        frames--; 
-        
-    }
-
-}
-
-
 void Artnet::Universe::remap() {
 
     steps.resize(remap_specs.size());
@@ -63,7 +50,7 @@ void Artnet::Universe::remap() {
         // range remap
         target = (target * (remap_specs[i].max - remap_specs[i].min)) + remap_specs[i].min;
 
-        steps[i] = (target-*(output+id)) / frames; 
+        (*(output+i))= target;
 
         id += std::min((uint8_t)1,c); // or remapNoZero(std::vector<T>* output, std::vector<Attribute> remap_specs) 
         chan += std::max((uint8_t)1,c); 
