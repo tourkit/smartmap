@@ -88,7 +88,9 @@ void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixtu
 
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
-    fixtureUBO = new UBO("FixtureUBO", 24*64, {shader->id}); 
+    fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
+
+    new UBO("FixtureUBO2", 24*16, {shader->id}); 
 
     artnet->universes[uni].output = &fixtureUBO->data[0];
     artnet->universes[uni].remap_specs = *fixture;
@@ -97,7 +99,7 @@ void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixtu
 
 
 static int  cell_min = 0, cell_max = 255, cells_count = 48;
-
+ 
 void SmartMap::render() {
 
     while(true) window->render([&]() {
@@ -112,11 +114,11 @@ void SmartMap::render() {
 
         // feedback
         glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        quadA->draw(2); // quantity is instances count in shader 
+        quadA->draw(10); // quantity is instances count in shader 
         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
 
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        quadB->draw(2); // quantity is instances count in shader 
+        quadB->draw(10); // quantity is instances count in shader 
 
         passBuf->read(outBuf);
 

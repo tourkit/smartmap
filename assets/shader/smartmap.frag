@@ -33,6 +33,7 @@ struct Fixture {
 
 layout (binding = 0, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 layout(binding = 2, std140) uniform FixtureUBO  { Fixture fix[24];} ;
+layout(binding = 3, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
 
 layout(std140) uniform MatriceUBO  { Rect mat[24]; };
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
