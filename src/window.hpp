@@ -20,6 +20,7 @@ struct FPS {
 
     float current_time = 0, last_time = 0, fps = 1;
 
+    float get();
     float run(float max = 0);
 
     operator float() { return fps; }

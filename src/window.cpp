@@ -132,7 +132,7 @@ void Window::render(std::function<void()> callback) {
 
     glfwPollEvents();
 
-    fps.run(280);
+    fps.run(60);
 
     glClearColor(0.0f, 0.0f, 0.1f, 1.0f); // BG COLOR
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
@@ -149,11 +149,15 @@ FPS::FPS(std::string name ) : name(name) {
     
 }
 
+float FPS::get() {
+    current_time = glfwGetTime();    
+    fps = 1./(current_time-last_time);
+    return fps;
+}
+
 float FPS::run(float max) {
 
-    current_time = glfwGetTime()  ;
-    fps = 1./(current_time-last_time);
-    if (max && fps > max) return fps;
+    if (max) while ( get() > max+1) std::this_thread::sleep_for(std::chrono::microseconds(10));
     last_time = current_time;
     return fps;
 
