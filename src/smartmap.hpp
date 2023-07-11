@@ -39,6 +39,8 @@ struct SmartMap {
 
 };
 
+    std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
+
     bool debug = false;
 
     Artnet *artnet;

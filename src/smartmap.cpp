@@ -45,9 +45,9 @@ SmartMap::SmartMap() {
 
     // order matters for some
     artnet = new Artnet("2.0.0.222");
-    window = new Window(false,800,600,1140);
-    window->setPos(2560,290);
-    window->setSize(1920,1200);
+    window = new Window(false,400,300,1540);
+    window->setPos(2560,1440-1080);
+    window->setSize(1920,1080);
     MAT_X = 2; 
     MAT_Y = 1;
     MATS = MAT_X*MAT_Y;
@@ -82,7 +82,11 @@ void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixtu
 
     winFB = new FrameBuffer(0,window->width,window->height); 
     
-    auto mat = matrice(MAT_X,MAT_Y);
+    // std::vector<std::array<float, 4>> mat = matrice(MAT_X,MAT_Y);
+    // std::cout << mat[1][0] << std::endl;
+
+    std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
+    
     matriceUBO = new UBO("MatriceUBO", mat.size()*16, {shader->id}); 
     matriceUBO->update(&mat[0][0],mat.size()*16); 
 
@@ -146,43 +150,35 @@ void SmartMap::render() {
 
         gui->newframe();  
 
+        ///// BUFFERS
 
-        ///// TEXTURES
-
-        ImGui::Begin("VIEW");
-
-        ImGui::Text(std::to_string(Texture::pool.size()).c_str());
-
-        // std::cout << VBO::pool.size() << std::endl;
-        if (ImGui::Button("UPDATE")) VBO::pool[0]->update();
-        ImGui::SameLine();
-        if (ImGui::Button("RESET")) VBO::pool[0]->reset();
-        ImGui::SameLine();
-        if (ImGui::Button("DESTROY")) VBO::pool[0]->destroy();
-        ImGui::SameLine();
-        if (ImGui::Button("CREATE")) VBO::pool[0]->import(VBO::pool[0]->path);
-
-        ImGui::Separator();
-
-                
-        // Draw lines
-        for (int i = Texture::pool.size()-1; i != 0; i--) {
-
-            ImGui::Text(("width: " + std::to_string(Texture::pool[i]->width)).c_str());
-            ImGui::Text(("height: " + std::to_string(Texture::pool[i]->height)).c_str());
-            
-            float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
-            auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
-
-            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
-
-            ImGui::PushID(i+100);
-
-            ImGui::PopID();
-            ImGui::Separator();
-        }
+        ImGui::Begin("KTRL");
         
-        ImGui::End(); 
+            // ImGui::SetWindowFontScale(1.5);
+
+            ImGui::Checkbox("Debug mode", &debug);
+            
+            uint16_t min = 1, max = 2560;
+
+            if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &window->width,  2, 1, &min,&max)) window->updateSize();
+            if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &window->offset_x,  2, 1, &min,&max)) window->updatePos();
+
+            ImGui::Separator();
+            
+            for (int i = 0; i < 10; i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0, 1);
+
+            ImGui::Separator();
+
+            ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
+            ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size()); 
+
+            ImGui::Separator();
+
+            // if (ImGui::InputText(" tex", (char*)&tex->path[0], IM_ARRAYSIZE((char*)&tex->path[0]))) tex->reset();
+            // if (ImGui::InputText(" frag", (char*)&basic->paths[1][0], IM_ARRAYSIZE((char*)&basic->paths[1][0]))) basic->reset();
+            
+            for (auto fps:FPS::pool) ImGui::Text((fps->name+": "+std::to_string((GLuint)(fps->fps))+" FPS").c_str());
+
 
         ///// ARTNET
 
@@ -219,42 +215,42 @@ void SmartMap::render() {
 
             ImGui::PopStyleVar(5);
 
-            break;
-
-        } 
-
-        ImGui::Begin("KTRL");
-        
-            // ImGui::SetWindowFontScale(1.5);
-
-            ImGui::Checkbox("Debug mode", &debug);
-            
-            uint16_t min = 1, max = 2560;
-
-            if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &window->width,  2, 1, &min,&max)) window->updateSize();
-            if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &window->offset_x,  2, 1, &min,&max)) window->updatePos();
-
-            ImGui::Separator();
-
-            ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
-            ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size()); 
-
-            ImGui::Separator();
-
-            // if (ImGui::InputText(" tex", (char*)&tex->path[0], IM_ARRAYSIZE((char*)&tex->path[0]))) tex->reset();
-            // if (ImGui::InputText(" frag", (char*)&basic->paths[1][0], IM_ARRAYSIZE((char*)&basic->paths[1][0]))) basic->reset();
-            
-            for (auto fps:FPS::pool) ImGui::Text((fps->name+": "+std::to_string((GLuint)(fps->fps))+" FPS").c_str());
-
-
         ImGui::End();
+
+        ///// UBO
         
         ImGui::Begin("FixtureUBO");
         // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(&artnet->universes[0].raw[i]),  &min,   &max,   "");
         for (int i = 0; i < 32; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &fixtureUBO->data[i], 0, 1);
         ImGui::End();
 
+        ///// TEXTURES
+
+        ImGui::Begin("VIEW");
+
+        for (int i = Texture::pool.size()-1; i != 0; i--) {
+
+            ImGui::Text(("width: " + std::to_string(Texture::pool[i]->width)).c_str());
+            ImGui::Text(("height: " + std::to_string(Texture::pool[i]->height)).c_str());
+            
+            float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
+            auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
+
+            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
+
+            ImGui::PushID(i+100);
+
+            ImGui::PopID();
+            ImGui::Separator();
+        }
+        
+        ImGui::End(); 
+
         gui->render();  
+
+            break;
+
+        } 
 
 
 
