@@ -293,7 +293,6 @@ vec4 smartmap(int instance) {
     if (gobo_id == 9) return rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
 
     return rgba*vec4(1);
-
 }
 
 void main() {
@@ -303,7 +302,8 @@ void main() {
     if (obj == 0) { 
 
         color = vec4(0);
-        for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, texcoord*mat[i].size+((mat[i].pos+(1-mat[i].size))*.5) );  
+        // for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, texcoord*mat[i].size+((mat[i].pos+(1-mat[i].size))*.5) );  
+        for (int i = 0; i < 1; i++) color += texture(pass, texcoord) ;  
          
     }
     else if (obj == 1) {
@@ -318,7 +318,12 @@ void main() {
         
 
     }
-    else if (obj == 2) { color = smartmap(id);  }
+    else if (obj == 2) { 
+        
+        // for (int i = 0; i < 10; i++) 
+        color = smartmap(id);  
+        
+    }
 
     return;
 

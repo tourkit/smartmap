@@ -69,10 +69,10 @@ void main() {
     
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);
     
-    gl_ClipDistance[0] = 1;
-    gl_ClipDistance[1] = 1;
-    gl_ClipDistance[2] = 1;
-    gl_ClipDistance[3] = 1;
+    // gl_ClipDistance[0] = 1;
+    // gl_ClipDistance[1] = 1;
+    // gl_ClipDistance[2] = 1;
+    // gl_ClipDistance[3] = 1;
 // return;
     if (obj == 0) return;
 
@@ -85,25 +85,12 @@ void main() {
         pos *= mat[id].size+size;
         pos +=  mat[id].pos;
 
-
-        gl_Position.xy = rotate(gl_Position.xy,fix[id].orientation,size);
-
         gl_Position.xy *= size;
         gl_Position.xy += pos;
         return;
 
-        vec2 mins = mat[id].pos-mat[id].size;
-        vec2 maxs = mat[id].pos+mat[id].size;
-        gl_ClipDistance[0] = gl_Position.x-mins.x; 
-        gl_ClipDistance[1] = maxs.x-gl_Position.x;
-        gl_ClipDistance[2] = gl_Position.y -mins.y;
-        gl_ClipDistance[3] = maxs.y-gl_Position.y;
-
 
     } else if (obj  == 1) {
-
-        gl_Position.xy *= mat[id].size;
-        gl_Position.xy += mat[id].pos;
 
         texcoord = gl_Position.xy*.5+.5;
 
