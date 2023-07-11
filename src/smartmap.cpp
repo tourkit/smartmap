@@ -15,16 +15,9 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
     WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
     SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
-
     auto last = st.wMilliseconds;
 
-    if (filechecks[survey_count] != last) { 
-        
-        filechecks[survey_count] = last; 
-        cb();
-        
-    }
-
+    if (filechecks[survey_count] != last) { filechecks[survey_count] = last;  cb(); }
     survey_count++;
 
 }

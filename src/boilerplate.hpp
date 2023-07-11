@@ -7,6 +7,23 @@
 
 #pragma once
 
+#include <windows.h>
+#include <ctime>
+#include <cstdint>
+
+static inline std::map<int,int> filechecks;
+static inline int survey_count = 0;
+static inline void survey(const char* path, std::function<void()> cb = [](){}) {
+
+    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
+    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
+    auto last = st.wMilliseconds;
+
+    if (filechecks[survey_count] != last) { filechecks[survey_count] = last;  cb(); }
+    survey_count++;
+
+}
+
 unsigned int width = 400, height = 300, pos_x = 2560-width, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
@@ -216,7 +233,17 @@ int Boilerplate() {
     Atlas atlas("assets/media/");
     atlas.link(&shader);
 
+    std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
+    UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
+    matriceUBO.update(&mat[0][0],mat.size()*16); 
+
+
     while (true) {
+
+        survey_count = 0;
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
+
 
         glfwPollEvents();
 
@@ -241,90 +268,6 @@ int Boilerplate() {
     }
 
 } 
-
-
-#endif
-
-#ifdef ddsddnot
-
-#include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
-#include <stdio.h>
-
-#include <GL/gl3w.h> 
-#include <GLFW/glfw3.h>
-
-int main(int, char**) {
-
-    glfwInit();
-
-    const char* glsl_version = "#version 430";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
-    // Create window with graphics context
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", NULL, NULL);
-    if (window == NULL)
-        return 1;
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
-
-    gl3wInit();
-
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;  
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   
-
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    // Main loop
-    while (!glfwWindowShouldClose(window)) {
-        
-         glfwPollEvents();
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("Another Window"); 
-        ImGui::Text("Hello from another window!");
-        ImGui::End();
-    
-        // Rendering
-        ImGui::Render();
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            GLFWwindow* backup_current_context = glfwGetCurrentContext();
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-            glfwMakeContextCurrent(backup_current_context);
-        }
-
-        glfwSwapBuffers(window);
-    }
-
-    // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-
-    return 0;
-}
 
 
 #endif
