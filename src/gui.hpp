@@ -1,6 +1,8 @@
 #ifndef IMGUI_H
 #define IMGUI_H
 
+#include "imgui/imgui.h"
+
 struct GLFWwindow;
 
 struct GUI {
