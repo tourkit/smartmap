@@ -30,7 +30,16 @@ flat out int obj;
 flat out int id;
 out vec2 texcoord;
 
-uniform float debug[10];
+uniform float debug0 = 0;
+uniform float debug1 = 0;
+uniform float debug2 = 0;
+uniform float debug3 = 0;
+uniform float debug4 = 0;
+uniform float debug5 = 0;
+uniform float debug6 = 0;
+uniform float debug7 = 0;
+uniform float debug8 = 0;
+uniform float debug9 = 0;
 
 
 vec2 rotate(vec2 v, float a, vec2 r2) {

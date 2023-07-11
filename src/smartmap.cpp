@@ -10,30 +10,22 @@
 #include <cstdint>
 
 static inline std::map<int,int> filechecks;
-
-static int last_mil(const char* path, std::function<void()> cb = [](){}, int before = 0) {
-
-    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
-    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
-
-    auto now = st.wMilliseconds;
-    if (before != now ) cb();
-    return now;
-
-}
-
 static inline int survey_count = 0;
-
 static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
     WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
     SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
 
-    auto now = st.wMilliseconds;
+    auto last = st.wMilliseconds;
 
-    if (filechecks[survey_count] != now ) cb();
+    if (filechecks[survey_count] != last) { 
+        
+        filechecks[survey_count] = last; 
+        cb();
+        
+    }
 
-    filechecks[survey_count] = now;
+    survey_count++;
 
 }
 
@@ -108,6 +100,8 @@ static int  cell_min = 0, cell_max = 255, cells_count = 48;
 void SmartMap::render() {
 
     while(true) window->render([&]() {
+
+        for (int i = 0; i < 10; i++) shader->sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         artnet->run(); 
 
@@ -264,9 +258,13 @@ void SmartMap::render() {
         //////////////////////////////////////////////
 
         if (debug) { 
+
             survey_count = 0;
-            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); }); 
-            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); });
+            std::vector<std::array<float, 4>> mat = matrice(MAT_X,MAT_Y);
+
+            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(&mat[0][0],mat.size()*16); shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y); }); 
+            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(&mat[0][0],mat.size()*16); shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y); }); 
+
         }
         
     }); 

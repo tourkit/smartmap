@@ -31,6 +31,17 @@ struct Fixture {
 
 };
 
+uniform float debug0 = 0;
+uniform float debug1 = 0;
+uniform float debug2 = 0;
+uniform float debug3 = 0;
+uniform float debug4 = 0;
+uniform float debug5 = 0;
+uniform float debug6 = 0;
+uniform float debug7 = 0;
+uniform float debug8 = 0;
+uniform float debug9 = 0;
+
 layout (binding = 0, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 layout(binding = 2, std140) uniform FixtureUBO  { Fixture fix[24];} ;
 layout(binding = 3, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
