@@ -10,10 +10,15 @@ Artnet::Artnet(const char* ip) {
     artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this){
 
         auto *u = &((Artnet*)_this)->universes[p->data.admx.universe];
+
         for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) u->raw[i] = p->data.admx.data[i]; 
+
+        auto frames = FPS::pool[0]->fps/std::max(44.0f,u->fps.fps);
         u->fps.name = ("Universe "+std::to_string(p->data.admx.universe)).c_str();
         u->fps.run();
+
         u->remap();
+
         return 1;   
 
     }, this);
@@ -32,32 +37,34 @@ uint32_t Artnet::Universe::get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1
 
 void Artnet::Universe::remap() {
 
-    steps.resize(remap_specs.size());
-
-    frames = FPS::pool[0]->fps/std::max(44.0f,fps.fps);
+    // auto frames = FPS::pool[0]->fps/std::max(44.0f,fps.fps);
+    // frames = std::ceil(frames);
 
     uint16_t chan = 0;
-    uint16_t id = 0;
-    for (int i = 0; i < remap_specs.size(); i++) { 
 
-        float target;
-        auto c = remap_specs[i].combining;
-        if (c==1) target      = GMAui2f[raw[chan]];
-        else if (c==2) target = get16(chan)/65535.0f;
-        else if (c==3) target = get24(chan)/16777215.0f;
-        else if (c==4) target = get32(chan)/4294967295.0f;
+    for (int offset = 0; offset < quantity; offset++) {  
+        
+        auto pos = (offset*remap_specs.size());
 
-        // range remap
-        target = (target * (remap_specs[i].max - remap_specs[i].min)) + remap_specs[i].min;
+        for (int i = 0; i < remap_specs.size(); i++) { 
 
-        (*(output+i))= target;
+            float target;
+            auto c = remap_specs[i].combining;
+            if (c==1) target      = GMAui2f[raw[chan]];
+            else if (c==2) target = get16(chan)/65535.0f;
+            else if (c==3) target = get24(chan)/16777215.0f;
+            else if (c==4) target = get32(chan)/4294967295.0f;
 
-        id += std::min((uint8_t)1,c); // or remapNoZero(std::vector<T>* output, std::vector<Attribute> remap_specs) 
-        chan += std::max((uint8_t)1,c); 
+            // range remap
+            target = (target * (remap_specs[i].max - remap_specs[i].min)) + remap_specs[i].min;
+
+            (*(output+i+pos))= target;
+            chan += c;
+            
+        }
 
     } 
 
-    frames = std::ceil(frames);
 }
 
 

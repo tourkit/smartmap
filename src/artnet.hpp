@@ -28,10 +28,7 @@ struct Artnet {
 
     float* output = nullptr;
     std::vector<Attribute> remap_specs;
-    std::vector<float> steps;
-    float frames = 0;
-
-    void update();
+    size_t quantity = 1;
 
     void remap();
 

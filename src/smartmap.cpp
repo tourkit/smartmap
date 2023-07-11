@@ -94,6 +94,7 @@ void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixtu
 
     artnet->universes[uni].output = &fixtureUBO->data[0];
     artnet->universes[uni].remap_specs = *fixture;
+    artnet->universes[uni].quantity = 2;
     
 }
 
