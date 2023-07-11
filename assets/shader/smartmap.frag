@@ -269,7 +269,7 @@ vec4 smartmap(int instance) {
 
     int gobo_id = int(fix[instance].gobo[0]*255);
 
-    vec4 rgba = vec4(fix[instance].r,fix[instance].g,fix[instance].b,fix[instance].alpha);
+    vec4 rgba = vec4(fix[instance].r,fix[instance].g,fix[instance].b,fix[instance].alpha)*fix[instance].alpha;
 
     if (gobo_id == 1) return rgba*grid(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
     if (gobo_id == 2) return rgba*grid2(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
