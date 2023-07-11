@@ -205,9 +205,9 @@ int Boilerplate() {
     
     GUI gui(window.window);
 
-    VBO quad;
+    VBO quad("quad.obj",2);
 
-    ShaderProgram shader({"basic.vert", "test.frag"});
+    ShaderProgram shader({"basic.vert", "basic.frag"});
     
     Texture tex("boy.jpg");
 
