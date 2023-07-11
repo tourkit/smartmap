@@ -48,7 +48,7 @@ SmartMap::SmartMap() {
     window = new Window(false,800,600,1140);
     window->setPos(2560,290);
     window->setSize(1920,1200);
-    MAT_X = 1; 
+    MAT_X = 2; 
     MAT_Y = 1;
     MATS = MAT_X*MAT_Y;
     float scale = 1;
@@ -115,11 +115,11 @@ void SmartMap::render() {
 
         // feedback
         glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        quadA->draw(10); // quantity is instances count in shader 
+        quadA->draw(2); // quantity is instances count in shader 
         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
 
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        quadB->draw(10); // quantity is instances count in shader 
+        quadB->draw(2); // quantity is instances count in shader 
 
         passBuf->read(outBuf);
 
