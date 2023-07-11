@@ -80,7 +80,7 @@ void main() {
 
         vec2 size = mat[id].size;
         size *= fix[id].size;
-
+ 
         vec2 pos = fix[id].pos;
         pos *= mat[id].size+size;
         pos +=  mat[id].pos;
@@ -91,6 +91,9 @@ void main() {
 
 
     } else if (obj  == 1) {
+
+        gl_Position.xy *= mat[id].size;
+        gl_Position.xy += mat[id].pos;
 
         texcoord = gl_Position.xy*.5+.5;
 

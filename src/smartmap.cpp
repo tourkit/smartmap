@@ -111,7 +111,7 @@ void SmartMap::render() {
         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
 
         // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        quadB->draw(); // quantity is instances count in shader 
+        quadB->draw(q); // quantity is instances count in shader 
 
         passBuf->read(outBuf);
 
