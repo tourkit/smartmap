@@ -51,6 +51,7 @@ struct SmartMap {
         Mode mode;
 
         unsigned int width, height;
+        unsigned int offset_x, offset_y;
 
         unsigned int quantity_x, quantity_y, quantity;
 
@@ -64,8 +65,8 @@ struct SmartMap {
 
             auto FW = width*quantity_x*scale;
             auto FH = height*quantity_y*scale;
-            buffer = new Texture(nullptr, FW, FH);
-            pass = new Texture(nullptr, FW, FH);
+            buffer = new Texture(nullptr, FW, FH, GL_RGBA8);
+            pass = new Texture(nullptr, FW, FH, GL_RGBA8);
             fb = new FrameBuffer(buffer);
             
         }
