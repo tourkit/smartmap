@@ -2,9 +2,9 @@
 
 Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)  {
 
-    texture.create(nullptr,width,height,0,0,1);
+    texture = new Texture(nullptr,width,height,0,0,1);
 
-    texture.mipmaps = 10;
+    texture->mipmaps = 10;
 
     Directory dir(path);
 
@@ -16,9 +16,9 @@ Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)
 
         if (!r.width) {std::cout << "needniouatlas" << std::endl; continue;}
 
-        normalized_list.push_back({r.width/(float)this->texture.width, r.height/(float)this->texture.height, r.x/(float)this->texture.width, r.y/(float)this->texture.height});
+        normalized_list.push_back({r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height});
         
-        texture.write(&img.data[0],r.width,r.height,r.x,r.y);
+        texture->write(&img.data[0],r.width,r.height,r.x,r.y);
 
     }
 

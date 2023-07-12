@@ -49,8 +49,8 @@ SmartMap::SmartMap() {
     float scale = 1;
     FW = window->width*MAT_X*scale;
     FH = window->height*MAT_Y*scale;
-    passBuf = new Texture(nullptr,FW,FH,GL_RGBA8);
-    outBuf = new Texture(nullptr, FW,FH,GL_RGBA8);
+    passBuf = new Texture(nullptr,FW,FH,0,0,0,GL_RGBA8);
+    outBuf = new Texture(nullptr, FW,FH,0,0,0,GL_RGBA8);
     outFB = new FrameBuffer(outBuf); 
 
     // blur_x = new ShaderProgram({"blur_x.comp"});
@@ -208,7 +208,7 @@ void SmartMap::render() {
 
         ImGui::Begin("VIEW");
 
-        for (int i = Texture::pool.size(); i != 0; i--) {
+        for (int i = 0; i < Texture::pool.size(); i++) {
 
             ImGui::Text(("width: " + std::to_string(Texture::pool[i]->width)).c_str());
             ImGui::Text(("height: " + std::to_string(Texture::pool[i]->height)).c_str());

@@ -15,21 +15,21 @@ struct Texture {
     std::string path;
 
     Texture();
-    Texture(void* data, GLuint width, GLuint height, GLenum format = GL_RGB8);
-    Texture(std::string src);
+
+    Texture(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0, GLuint unit = 0, GLenum format = GL_RGB8);
+
+    Texture(std::string path);
     
     ~Texture();
 
-    void create(std::string src, GLuint offset_x = 0, GLuint offset_y = 0);
-    void create(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0, GLuint unit= 0);
+    void create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum format);
 
     void read(const Texture *texture, GLuint offset_x = 0, GLuint offset_y = 0);
     void write(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0);
 
     void bind(int unit);
     void bind();
-
-    void reset();
+    
     void destroy();
     
     operator GLuint();

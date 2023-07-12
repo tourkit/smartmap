@@ -15,7 +15,7 @@ struct SmartMap {
 
     using Fixture = std::vector<Artnet::Universe::Attribute>;
 
-    GLint GL_BLEND_MODE_IN = 6;
+    GLint GL_BLEND_MODE_IN = 1;
     GLint GL_BLEND_MODE_OUT = 13;
     std::vector<GLenum> GL_BLEND_MODES = {
         GL_ZERO,
@@ -65,9 +65,9 @@ struct SmartMap {
 
             auto FW = width*quantity_x*scale;
             auto FH = height*quantity_y*scale;
-            buffer = new Texture(nullptr, FW, FH, GL_RGBA8);
-            pass = new Texture(nullptr, FW, FH, GL_RGBA8);
-            fb = new FrameBuffer(buffer);
+            // buffer = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
+            // pass = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
+            // fb = new FrameBuffer(buffer);
             
         }
 

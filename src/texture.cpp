@@ -2,15 +2,24 @@
 
 Texture::Texture() { pool.push_back(this); }
 
-Texture::Texture(void* data, GLuint width, GLuint height,GLenum format) : Texture() { create(data, width, height); this->format = format;  }
+Texture::Texture(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum format) 
+: Texture() { create(data, width, height, offset_x, offset_y, unit, format); 
 
-Texture::Texture(std::string src) : Texture()  { create(src); } 
+    this->format = format; }
+
+static uint8_t FULLBLACK[4] = {0,0,0,0};
+Texture::Texture(std::string path) : Texture()  {
+
+    this->path = path; 
+    Image img(path);
+    if (!img.width) create(&FULLBLACK,1,1,0,0,0,GL_RGB8);
+    else create(&img.data[0], img.width, img.height,0,0,0,GL_RGB8);
+
+} 
 
 Texture::~Texture() { destroy(); }
 
 void Texture::destroy() { if (id) glDeleteTextures(1, &id);  }
-
-void Texture::reset() {create(path); }
 
 void Texture::bind(int unit) { this->unit = unit; bind(); }
 
@@ -18,7 +27,7 @@ void Texture::bind() { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTU
 
 Texture::operator GLuint() { return id; }
 
-void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit) {
+void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum format) {
 
     this->unit = unit; 
     this->width = width;
@@ -45,6 +54,7 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
 
 }
 
+
 void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
 
     glActiveTexture(GL_TEXTURE0+unit); 
@@ -58,17 +68,6 @@ void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GL
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glActiveTexture(GL_TEXTURE0);
-
-}
-
-static uint8_t FULLBLACK[4] = {0,0,0,0};
-// static uint8_t FULLBLACK[4] = {255,255,255,255};
-void Texture::create(std::string path, GLuint offset_x, GLuint offset_y) {
-
-    this->path = path; 
-    Image img(path);
-    if (!img.width) return create(&FULLBLACK,1,1);
-    create(&img.data[0], img.width, img.height, offset_x, offset_y);
 
 }
 

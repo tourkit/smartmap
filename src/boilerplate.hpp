@@ -7,23 +7,6 @@
 
 #pragma once
 
-#include <windows.h>
-#include <ctime>
-#include <cstdint>
-
-static inline std::map<int,int> filechecks;
-static inline int survey_count = 0;
-static inline void survey(const char* path, std::function<void()> cb = [](){}) {
-
-    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
-    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
-    auto last = st.wMilliseconds;
-
-    if (filechecks[survey_count] != last) { filechecks[survey_count] = last;  cb(); }
-    survey_count++;
-
-}
-
 unsigned int width = 400, height = 300, pos_x = 2560-width, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
@@ -201,6 +184,27 @@ int Boilerplate() {
 
 #else
 
+#include "artnet.hpp"
+
+#include <ctime>
+#include <cstdint>
+#include <map>
+#include <functional>
+
+static inline std::map<int,int> filechecks;
+static inline int survey_count = 0;
+static inline void survey(const char* path, std::function<void()> cb = [](){}) {
+
+    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
+    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
+    auto last = st.wMilliseconds;
+
+    if (filechecks[survey_count] != last) { filechecks[survey_count] = last;  cb(); }
+    survey_count++;
+
+}
+
+
 #include "window.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
@@ -209,7 +213,6 @@ int Boilerplate() {
 #include "atlas.hpp"
 #include "ubo.hpp"
 #include "gui.hpp"
-#include "artnet.hpp"
 
 #include "imgui/imgui.h"
 
@@ -248,9 +251,9 @@ int Boilerplate() {
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
-        survey_count = 0;
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
+        // survey_count = 0;
+        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
+        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
 
 
         glfwPollEvents();

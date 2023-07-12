@@ -13,7 +13,7 @@ struct Atlas {
 
     std::vector<std::array<float,4>> normalized_list;
 
-    Texture texture;
+    Texture *texture;
          
     UBO *ubo; 
 
