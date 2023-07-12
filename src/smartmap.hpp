@@ -10,34 +10,67 @@
 #include "gui.hpp"
 #include "artnet.hpp"
 
-using Fixture = std::vector<Artnet::Universe::Attribute>;
 
 struct SmartMap {
 
- GLint GL_BLEND_MODE_IN = 6;
- GLint GL_BLEND_MODE_OUT = 13;
- std::vector<GLenum> GL_BLEND_MODES = {
-    GL_ZERO,
-    GL_ONE,
-    GL_SRC_COLOR,
-    GL_ONE_MINUS_SRC_COLOR,	
-    GL_DST_COLOR,
-    GL_ONE_MINUS_DST_COLOR,
-    GL_SRC_ALPHA,
-    GL_ONE_MINUS_SRC_ALPHA,
-    GL_DST_ALPHA,
-    GL_ONE_MINUS_DST_ALPHA,
-    GL_CONSTANT_COLOR,
-    GL_ONE_MINUS_CONSTANT_COLOR,
-    GL_CONSTANT_ALPHA,
-    GL_ONE_MINUS_CONSTANT_ALPHA,
-    GL_SRC_ALPHA_SATURATE,
-    GL_SRC1_COLOR,
-    GL_ONE_MINUS_SRC1_COLOR,
-    GL_SRC1_ALPHA,
-    GL_ONE_MINUS_SRC1_ALPHA
+    using Fixture = std::vector<Artnet::Universe::Attribute>;
 
-};
+    GLint GL_BLEND_MODE_IN = 6;
+    GLint GL_BLEND_MODE_OUT = 13;
+    std::vector<GLenum> GL_BLEND_MODES = {
+        GL_ZERO,
+        GL_ONE,
+        GL_SRC_COLOR,
+        GL_ONE_MINUS_SRC_COLOR,	
+        GL_DST_COLOR,
+        GL_ONE_MINUS_DST_COLOR,
+        GL_SRC_ALPHA,
+        GL_ONE_MINUS_SRC_ALPHA,
+        GL_DST_ALPHA,
+        GL_ONE_MINUS_DST_ALPHA,
+        GL_CONSTANT_COLOR,
+        GL_ONE_MINUS_CONSTANT_COLOR,
+        GL_CONSTANT_ALPHA,
+        GL_ONE_MINUS_CONSTANT_ALPHA,
+        GL_SRC_ALPHA_SATURATE,
+        GL_SRC1_COLOR,
+        GL_ONE_MINUS_SRC1_COLOR,
+        GL_SRC1_ALPHA,
+        GL_ONE_MINUS_SRC1_ALPHA
+
+    };
+
+    struct Layer {
+
+        enum Mode { Free, Grid };
+    
+        std::vector<Layer*> pool;
+
+        Fixture fixture;
+ 
+        Mode mode;
+
+        unsigned int width, height;
+
+        unsigned int quantity_x, quantity_y, quantity;
+
+        float* output = nullptr;
+
+        Texture *buffer, *pass;
+        FrameBuffer *fb;
+
+        Layer(GLuint chan, GLuint uni, Fixture fixture, GLuint width, GLuint height, Layer::Mode mode, GLuint quantity_x, GLuint quantity_y, float scale = 1) 
+            : fixture(fixture), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
+
+            auto FW = width*quantity_x*scale;
+            auto FH = height*quantity_y*scale;
+            buffer = new Texture(nullptr, FW, FH);
+            pass = new Texture(nullptr, FW, FH);
+            fb = new FrameBuffer(buffer);
+            
+        }
+
+    };
 
     std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
 
@@ -47,7 +80,7 @@ struct SmartMap {
 
     Window *window;
 
-    VBO *quadA, *quadB, *quadC;
+    VBO  *quad, *quadA, *quadB;
 
     Texture *passBuf, *outBuf, *outBlur;
 
@@ -65,7 +98,7 @@ struct SmartMap {
 
     float time,fps;
 
-    void createLayer(GLuint chan, GLuint uni, Fixture *fixture, int count=1, float mode=0);
+    void createLayer(GLuint chan, GLuint uni, Fixture *fixture, GLuint width, GLuint height, Layer::Mode mode = Layer::Mode::Free, GLuint quantity_x=1, GLuint quantity_y=1);
 
     static SmartMap& getInstance();
 

@@ -33,38 +33,38 @@ SmartMap::SmartMap() {
     window = new Window(false,400,300,1540);
     window->setPos(2560,1440-1080);
     window->setSize(1920,1080);
+    gui = new GUI(window->window);
+    quad = new VBO("quad.obj",0);
+    quadA = new VBO("quad.obj",2);
+    quadB = new VBO("quad.obj",1);
+    shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
+    shader->use();
+    atlas = new Atlas("assets/media/");
+    atlas->link(shader);
+    winFB = new FrameBuffer(0,window->width,window->height); 
+    
+    
     MAT_X = 8; 
     MAT_Y = 2;
     float scale = 1;
     FW = window->width*MAT_X*scale;
     FH = window->height*MAT_Y*scale;
-    gui = new GUI(window->window);
-    quadC = new VBO("quad.obj",0);
-    quadA = new VBO("quad.obj",2);
-    quadB = new VBO("quad.obj",1);
     passBuf = new Texture(nullptr,FW,FH);
     passBuf->format = GL_RGBA8;
     outBuf = new Texture(nullptr, FW,FH); 
     outBuf->format = GL_RGBA8;
     outFB = new FrameBuffer(outBuf); 
+
+    // blur_x = new ShaderProgram({"blur_x.comp"});
+    // blur_y = new ShaderProgram({"blur_y.comp"});
+    // basic = new ShaderProgram({"test.frag", "basic.vert"});
     // outBlur = new Texture(nullptr, FW*.5,FH*.5); 
     // outBlur->format = GL_RGBA8;
-
-    shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
-    blur_x = new ShaderProgram({"blur_x.comp"});
-    blur_y = new ShaderProgram({"blur_y.comp"});
-    basic = new ShaderProgram({"test.frag", "basic.vert"});
-
     
-    shader->use();
-    atlas = new Atlas("assets/media/");
-    atlas->link(shader);
 
-
-    winFB = new FrameBuffer(0,window->width,window->height); 
 }
 
-void SmartMap::createLayer(GLuint chan, GLuint uni, Fixture *fixture, int count, float mode) {
+void SmartMap::createLayer(GLuint chan, GLuint uni, Fixture *fixture, GLuint width, GLuint height, Layer::Mode mode, GLuint quantity_x, GLuint quantity_y) {
 
     std::vector<std::array<float, 4>> mat = matrice(MAT_X,MAT_Y);
     matriceUBO = new UBO("MatriceUBO", mat.size()*32, {shader->id}); 
@@ -76,8 +76,8 @@ void SmartMap::createLayer(GLuint chan, GLuint uni, Fixture *fixture, int count,
 
     artnet->universes[uni].output = &fixtureUBO->data[0];
     artnet->universes[uni].remap_specs = *fixture;
-    artnet->universes[uni].quantity = count;
-    artnet->universes[uni].mode = mode;
+    artnet->universes[uni].quantity = quantity_x*quantity_y;
+    artnet->universes[uni].mode = ((mode==Layer::Mode::Free)?1.0f:0.0f);
     
 }
 
@@ -117,7 +117,7 @@ void SmartMap::render() {
         winFB->bind(); 
         outBuf->bind();
         shader->use();
-        quadC->draw();
+        quad->draw();
 
 
 
