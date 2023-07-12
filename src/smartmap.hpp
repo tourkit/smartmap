@@ -93,13 +93,11 @@ struct SmartMap {
 
     UBO *matriceUBO, *fixtureUBO; 
 
-    uint16_t FW, FH, MAT_X, MAT_Y;
-
     Atlas *atlas;
 
     float time,fps;
 
-    void createLayer(GLuint chan, GLuint uni, Fixture *fixture, GLuint width, GLuint height, Layer::Mode mode = Layer::Mode::Free, GLuint quantity_x=1, GLuint quantity_y=1);
+    void createLayer(uint16_t chan, uint16_t uni, Fixture *fixture, uint16_t width, uint16_t height, Layer::Mode mode = Layer::Mode::Free, uint16_t quantity_x=1, uint16_t quantity_y=1);
 
     static SmartMap& getInstance();
 

@@ -17,7 +17,7 @@ int main() {
     
     SmartMap::Fixture basic =  {{1},{1},{1},{1},{2,-1,1},{2,-1,1},{2},{2},{1},{1},{1},{1},{1,0,360*(M_PI / 180.0)},{1},{1},{0}}; // le dernier zero permet buffer alignment vec4 dans glsl
 
-    sm.createLayer(0,0,&basic,sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 16, 1);
+    sm.createLayer(0,0,&basic,sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 1, 1);
 
     // SmartMap::Layer lay();
 

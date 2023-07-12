@@ -44,14 +44,6 @@ SmartMap::SmartMap() {
     winFB = new FrameBuffer(0,window->width,window->height); 
     
     
-    MAT_X = 8; 
-    MAT_Y = 2;
-    float scale = 1;
-    FW = window->width*MAT_X*scale;
-    FH = window->height*MAT_Y*scale;
-    passBuf = new Texture(nullptr,FW,FH,0,0,0,GL_RGBA8);
-    outBuf = new Texture(nullptr, FW,FH,0,0,0,GL_RGBA8);
-    outFB = new FrameBuffer(outBuf); 
 
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});
@@ -62,12 +54,19 @@ SmartMap::SmartMap() {
 
 }
 
-void SmartMap::createLayer(GLuint chan, GLuint uni, Fixture *fixture, GLuint width, GLuint height, Layer::Mode mode, GLuint quantity_x, GLuint quantity_y) {
+void SmartMap::createLayer(uint16_t chan, uint16_t uni, Fixture *fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y) {
 
-    std::vector<std::array<float, 4>> mat = matrice(MAT_X,MAT_Y);
+    float scale = 1;
+    uint16_t FW = width*quantity_x*scale;
+    uint16_t FH = height*quantity_y*scale;
+    passBuf = new Texture(nullptr,FW,FH,0,0,0,GL_RGBA8);
+    outBuf = new Texture(nullptr, FW,FH,0,0,0,GL_RGBA8);
+    outFB = new FrameBuffer(outBuf); 
+
+    std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);
     matriceUBO = new UBO("MatriceUBO", mat.size()*32, {shader->id}); 
     matriceUBO->update(&mat[0][0],mat.size()*32); 
-    shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
+    shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
     fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
     new UBO("FixtureUBO2", 24*16, {shader->id}); 
@@ -243,15 +242,15 @@ void SmartMap::render() {
         //////////////////////////////////////////////
         //////////////////////////////////////////////
 
-        if (debug) { 
+        // if (debug) { 
 
-            survey_count = 0;
-            std::vector<std::array<float, 4>> mat = matrice(MAT_X,MAT_Y);
+        //     survey_count = 0;
+        //     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);
 
-            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(&mat[0][0],mat.size()*16); shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y); }); 
-            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(&mat[0][0],mat.size()*16); shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y); }); 
+        //     survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(&mat[0][0],mat.size()*16); shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y); }); 
+        //     survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(&mat[0][0],mat.size()*16); shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y); }); 
 
-        }
+        // }
         
     }); 
 
