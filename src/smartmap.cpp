@@ -66,9 +66,6 @@ SmartMap::SmartMap() {
 void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture) {
 
     winFB = new FrameBuffer(0,window->width,window->height); 
-    
-    // std::vector<std::array<float, 4>> mat = matrice(MAT_X,MAT_Y);
-    // std::cout << mat[1][0] << std::endl;
 
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
     
