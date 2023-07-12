@@ -35,7 +35,6 @@ SmartMap::SmartMap() {
     window->setSize(1920,1080);
     MAT_X = 8; 
     MAT_Y = 2;
-    MATS = MAT_X*MAT_Y;
     float scale = 1;
     FW = window->width*MAT_X*scale;
     FH = window->height*MAT_Y*scale;
@@ -61,26 +60,24 @@ SmartMap::SmartMap() {
     atlas = new Atlas("assets/media/");
     atlas->link(shader);
 
-}
-
-void SmartMap::createFixtures(int count, GLuint chan, GLuint uni, Fixture *fixture) {
 
     winFB = new FrameBuffer(0,window->width,window->height); 
+}
 
-    std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
-    
+void SmartMap::createLayer(GLuint chan, GLuint uni, Fixture *fixture, int count, float mode) {
+
+    std::vector<std::array<float, 4>> mat = matrice(MAT_X,MAT_Y);
     matriceUBO = new UBO("MatriceUBO", mat.size()*32, {shader->id}); 
     matriceUBO->update(&mat[0][0],mat.size()*32); 
-
     shader->sendUniform("MatriceUBOSize", MAT_X*MAT_Y);
 
     fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
-
     new UBO("FixtureUBO2", 24*16, {shader->id}); 
 
     artnet->universes[uni].output = &fixtureUBO->data[0];
     artnet->universes[uni].remap_specs = *fixture;
-    artnet->universes[uni].quantity = 16;
+    artnet->universes[uni].quantity = count;
+    artnet->universes[uni].mode = mode;
     
 }
 
@@ -97,18 +94,16 @@ void SmartMap::render() {
 
         fixtureUBO->update();
 
+        winFB->clear(); 
         outFB->clear(); // thus bind
 
         passBuf->bind();
 
-        int q = 16;
-        // feedback
+        shader->sendUniform("mode", debuguniforms[artnet->universes[0].mode]);
         glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        quadA->draw(q); // quantity is instances count in shader 
+        quadA->draw(artnet->universes[0].quantity); 
         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-
-        // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        quadB->draw(q); // quantity is instances count in shader 
+        quadB->draw(artnet->universes[0].quantity);
 
         passBuf->read(outBuf);
 
@@ -118,8 +113,8 @@ void SmartMap::render() {
         // blur_y->use(FW*.5/16,FH*.5/16);
         // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
 
-        winFB->clear(); 
         
+        winFB->bind(); 
         outBuf->bind();
         shader->use();
         quadC->draw();

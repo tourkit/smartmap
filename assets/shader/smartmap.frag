@@ -9,7 +9,9 @@ flat in int obj;
 flat in int id;
 in vec2 texcoord;
 
-uniform float fixcount = 1;
+uniform int fixcount = 1;
+
+uniform float mode = 1;
 
 uniform float feedback = 0;
 uniform float texchoice = 0;
@@ -302,10 +304,8 @@ void main() {
     if (obj == 0) { 
 
         color = vec4(0);
-
-        int grid=1;
         
-        if (grid==0)  {color = texture(pass, texcoord); return;}
+        if (mode==1)  {color = texture(pass, texcoord); return;}
         
         for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, texcoord *mat[i].size+((mat[i].pos+(1-mat[i].size))*.5));  
          

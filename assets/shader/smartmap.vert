@@ -73,7 +73,7 @@ void main() {
     gl_ClipDistance[1] = 1;
     gl_ClipDistance[2] = 1;
     gl_ClipDistance[3] = 1;
-// return;
+
     if (obj == 0) return;
 
     if (obj  == 2){

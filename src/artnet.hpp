@@ -29,6 +29,7 @@ struct Artnet {
     float* output = nullptr;
     std::vector<Attribute> remap_specs;
     size_t quantity = 1;
+    float mode = 0;
 
     void remap();
 
