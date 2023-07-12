@@ -219,6 +219,11 @@ int Boilerplate() {
     auto lastTime = glfwGetTime();
 
     Window window(false,width,height,pos_x,pos_y);
+
+    glEnable(GL_CLIP_DISTANCE0);
+    glEnable(GL_CLIP_DISTANCE1);
+    glEnable(GL_CLIP_DISTANCE2);
+    glEnable(GL_CLIP_DISTANCE3);
     
     GUI gui(window.window);
 
@@ -237,8 +242,11 @@ int Boilerplate() {
     UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
     matriceUBO.update(&mat[0][0],mat.size()*16); 
 
+    std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
 
     while (true) {
+
+        for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         survey_count = 0;
         survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
@@ -258,7 +266,7 @@ int Boilerplate() {
         gui.newframe();
 
         ImGui::Begin("test");
-        ImGui::Text("olqqqqqqqq");  
+        for (int i = 0; i < debuguniforms.size(); i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0, 1); 
         ImGui::End();
 
         gui.render();
