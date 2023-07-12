@@ -208,7 +208,7 @@ void SmartMap::render() {
 
         ImGui::Begin("VIEW");
 
-        for (int i = Texture::pool.size()-1; i != 0; i--) {
+        for (int i = Texture::pool.size(); i != 0; i--) {
 
             ImGui::Text(("width: " + std::to_string(Texture::pool[i]->width)).c_str());
             ImGui::Text(("height: " + std::to_string(Texture::pool[i]->height)).c_str());
