@@ -85,6 +85,8 @@ void main() {
         pos *= mat[id].size+size;
         pos +=  mat[id].pos;
 
+        gl_Position.xy = rotate(gl_Position.xy,fix[id].orientation,size);
+
         gl_Position.xy *= size;
         gl_Position.xy += pos;
         

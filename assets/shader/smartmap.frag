@@ -302,8 +302,12 @@ void main() {
     if (obj == 0) { 
 
         color = vec4(0);
-        // for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, texcoord*mat[i].size+((mat[i].pos+(1-mat[i].size))*.5) );  
-        for (int i = 0; i < 1; i++) color += texture(pass, texcoord) ;  
+
+        int grid=1;
+        
+        if (grid==0)  {color = texture(pass, texcoord); return;}
+        
+        for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, texcoord *mat[i].size+((mat[i].pos+(1-mat[i].size))*.5));  
          
     }
     else if (obj == 1) {
