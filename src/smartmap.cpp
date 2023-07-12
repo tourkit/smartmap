@@ -153,7 +153,7 @@ void SmartMap::render() {
 
             ImGui::Separator();
             
-            for (auto fps:FPS::pool) ImGui::Text((fps->name+": "+std::to_string((GLuint)(fps->fps))+" FPS").c_str());
+            for (auto fps:FPS::pool) if (fps->fps > 1) ImGui::Text((fps->name+": "+std::to_string((GLuint)(fps->fps))+" FPS").c_str());
             
             ImGui::Separator();
             
