@@ -15,7 +15,7 @@ struct Texture {
     std::string path;
 
     Texture();
-    Texture(void* data, GLuint width, GLuint height);
+    Texture(void* data, GLuint width, GLuint height, GLenum format = GL_RGB8);
     Texture(std::string src);
     
     ~Texture();

@@ -49,10 +49,8 @@ SmartMap::SmartMap() {
     float scale = 1;
     FW = window->width*MAT_X*scale;
     FH = window->height*MAT_Y*scale;
-    passBuf = new Texture(nullptr,FW,FH);
-    passBuf->format = GL_RGBA8;
-    outBuf = new Texture(nullptr, FW,FH); 
-    outBuf->format = GL_RGBA8;
+    passBuf = new Texture(nullptr,FW,FH,GL_RGBA8);
+    outBuf = new Texture(nullptr, FW,FH,GL_RGBA8);
     outFB = new FrameBuffer(outBuf); 
 
     // blur_x = new ShaderProgram({"blur_x.comp"});

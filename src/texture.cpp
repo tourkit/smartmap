@@ -2,7 +2,7 @@
 
 Texture::Texture() { pool.push_back(this); }
 
-Texture::Texture(void* data, GLuint width, GLuint height) : Texture() { create(data, width, height); }
+Texture::Texture(void* data, GLuint width, GLuint height,GLenum format) : Texture() { create(data, width, height); this->format = format;  }
 
 Texture::Texture(std::string src) : Texture()  { create(src); } 
 
