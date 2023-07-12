@@ -40,11 +40,15 @@ struct SmartMap {
 
     };
 
+    static inline UBO *matriceUBO;
+    static inline UBO *fixtureUBO; 
+    static inline ShaderProgram *shader;
+
     struct Layer {
 
         enum Mode { Free, Grid };
     
-        std::vector<Layer*> pool;
+        static inline std::vector<Layer*> pool;
 
         Fixture fixture;
  
@@ -60,15 +64,21 @@ struct SmartMap {
         Texture *buffer, *pass;
         FrameBuffer *fb;
 
-        Layer(GLuint chan, GLuint uni, Fixture fixture, GLuint width, GLuint height, Layer::Mode mode, GLuint quantity_x, GLuint quantity_y, float scale = 1) 
+        Layer(uint16_t chan, uint16_t uni, Fixture fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1) 
             : fixture(fixture), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
+
+            pool.push_back(this);
 
             auto FW = width*quantity_x*scale;
             auto FH = height*quantity_y*scale;
-            // buffer = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
-            // pass = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
-            // fb = new FrameBuffer(buffer);
-            
+            buffer = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
+            pass = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
+            fb = new FrameBuffer(buffer);
+
+            std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);    
+            matriceUBO->update(&mat[0][0],mat.size()*32); 
+            shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
+
         }
 
     };
@@ -83,15 +93,11 @@ struct SmartMap {
 
     VBO  *quad, *quadA, *quadB;
 
-    Texture *passBuf, *outBuf, *outBlur;
+    FrameBuffer *winFB;
 
-    FrameBuffer *outFB, *winFB;
-
-    ShaderProgram *basic, *shader, *blur_x, *blur_y;
+    // ShaderProgram *blur_x, *blur_y;
 
     GUI *gui;
-
-    UBO *matriceUBO, *fixtureUBO; 
 
     Atlas *atlas;
 

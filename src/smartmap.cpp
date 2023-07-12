@@ -24,8 +24,6 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 #endif
 
-
-
 SmartMap::SmartMap() {
 
     // order matters for some
@@ -42,42 +40,29 @@ SmartMap::SmartMap() {
     atlas = new Atlas("assets/media/");
     atlas->link(shader);
     winFB = new FrameBuffer(0,window->width,window->height); 
-    
-    
 
+    matriceUBO = new UBO("MatriceUBO", 24*32, {shader->id});  // 24*32 correspond a R
+    fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
+    new UBO("FixtureUBO2", 24*16, {shader->id}); 
+    
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});
     // basic = new ShaderProgram({"test.frag", "basic.vert"});
     // outBlur = new Texture(nullptr, FW*.5,FH*.5); 
-    // outBlur->format = GL_RGBA8;
-    
+    // outBlur->format = GL_RGBA8; 
 
 }
 
 void SmartMap::createLayer(uint16_t chan, uint16_t uni, Fixture *fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y) {
 
-    float scale = 1;
-    uint16_t FW = width*quantity_x*scale;
-    uint16_t FH = height*quantity_y*scale;
-    passBuf = new Texture(nullptr,FW,FH,0,0,0,GL_RGBA8);
-    outBuf = new Texture(nullptr, FW,FH,0,0,0,GL_RGBA8);
-    outFB = new FrameBuffer(outBuf); 
+    new Layer( chan,  uni,  *fixture,  width,  height, mode,  quantity_x,  quantity_y);
 
-    std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);
-    matriceUBO = new UBO("MatriceUBO", mat.size()*32, {shader->id}); 
-    matriceUBO->update(&mat[0][0],mat.size()*32); 
-    shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
-
-    fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
-    new UBO("FixtureUBO2", 24*16, {shader->id}); 
-
-    artnet->universes[uni].output = &fixtureUBO->data[0];
-    artnet->universes[uni].remap_specs = *fixture;
-    artnet->universes[uni].quantity = quantity_x*quantity_y;
-    artnet->universes[uni].mode = ((mode==Layer::Mode::Free)?1.0f:0.0f);
+    // artnet->universes[uni].output = &fixtureUBO->data[0];
+    // artnet->universes[uni].remap_specs = *fixture;
+    // artnet->universes[uni].quantity = quantity_x*quantity_y;
+    // artnet->universes[uni].mode = ((mode==Layer::Mode::Free)?1.0f:0.0f);
     
 }
-
 
 static int  cell_min = 0, cell_max = 255, cells_count = 48;
  
@@ -92,30 +77,34 @@ void SmartMap::render() {
         fixtureUBO->update();
 
         winFB->clear(); 
-        outFB->clear(); // thus bind
 
-        passBuf->bind();
+        for (auto layer:SmartMap::Layer::pool) { 
 
-        shader->sendUniform("mode", debuguniforms[artnet->universes[0].mode]);
-        glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-        quadA->draw(artnet->universes[0].quantity); 
-        glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-        quadB->draw(artnet->universes[0].quantity);
+            layer->fb->clear(); // thus bind
 
-        passBuf->read(outBuf);
+            layer->pass->bind();
+                
+            shader->sendUniform("mode", debuguniforms[artnet->universes[0].mode]);
+            glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
+            quadA->draw(artnet->universes[0].quantity); 
+            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
+            quadB->draw(artnet->universes[0].quantity);
 
-        // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-        // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-        // blur_x->use(FW*.5/16,FH*.5/16);
-        // blur_y->use(FW*.5/16,FH*.5/16);
-        // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
+            layer->pass->read(layer->buffer);
 
-        
-        winFB->bind(); 
-        outBuf->bind();
-        shader->use();
-        quad->draw();
+            // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+            // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+            // blur_x->use(FW*.5/16,FH*.5/16);
+            // blur_y->use(FW*.5/16,FH*.5/16);
+            // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
 
+            
+            winFB->bind(); 
+            layer->buffer->bind();
+            shader->use();
+            quad->draw();
+
+        }
 
 
         //////////////////////////////////////////////
@@ -158,6 +147,8 @@ void SmartMap::render() {
             // if (ImGui::InputText(" frag", (char*)&basic->paths[1][0], IM_ARRAYSIZE((char*)&basic->paths[1][0]))) basic->reset();
             
 
+        ImGui::End();
+
 
         ///// ARTNET
 
@@ -194,7 +185,9 @@ void SmartMap::render() {
 
             ImGui::PopStyleVar(5);
 
-        ImGui::End();
+            break;
+
+        } 
 
         ///// UBO
         
@@ -225,13 +218,9 @@ void SmartMap::render() {
         
         ImGui::End(); 
 
+
+
         gui->render();  
-
-            break;
-
-        } 
-
-
 
 
 
