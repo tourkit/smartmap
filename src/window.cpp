@@ -62,6 +62,11 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     glBlendFunc(GL_ONE, GL_ONE);
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    glEnable(GL_CLIP_DISTANCE0);
+    glEnable(GL_CLIP_DISTANCE1);
+    glEnable(GL_CLIP_DISTANCE2);
+    glEnable(GL_CLIP_DISTANCE3);
+
 }
 
 void Window::updatePos() {  glfwSetWindowPos(window, offset_x, offset_y); }
