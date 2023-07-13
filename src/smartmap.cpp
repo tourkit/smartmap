@@ -61,8 +61,14 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     for (auto l:pool) { matoffset+=l->quantity*4; }
     pool.push_back(this);
     
-    auto FW = width*quantity_x*scale;
-    auto FH = height*quantity_y*scale;
+    GLuint FW = width*scale, FH = height*scale;
+    if (mode == Layer::Mode::Free) {
+
+        FW *= quantity_x;
+        FH *= quantity_y;
+
+    }
+
     buffer = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
     pass = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
     fb = new FrameBuffer(buffer);
