@@ -37,7 +37,7 @@ SmartMap::SmartMap() {
     quadB = new VBO("quad.obj",1);
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     shader->use();
-    atlas = new Atlas("assets/media/");
+    atlas = new Atlas("assets/media/",4096,2048);
     atlas->link(shader);
     winFB = new FrameBuffer(0,window->width,window->height); 
 
@@ -67,12 +67,17 @@ void SmartMap::render() {
 
         winFB->clear(); 
 
+        int offset = 0;
+
         for (auto layer:SmartMap::Layer::pool) { 
 
             layer->fb->clear(); // thus bind
 
             layer->pass->bind();
                 
+            // shader->sendUniform("matoffset", layer->offset);
+            shader->sendUniform("offset", offset);
+            offset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
             glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
             quadA->draw(layer->quantity); 
@@ -175,7 +180,7 @@ void SmartMap::render() {
         
         ImGui::Begin("FixtureUBO");
         // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(&artnet->universes[0].raw[i]),  &min,   &max,   "");
-        for (int i = 0; i < 32; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &fixtureUBO->data[i], 0, 1);
+        for (int i = 0; i < 48; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &fixtureUBO->data[i], 0, 1);
         ImGui::End();
 
         ///// TEXTURES

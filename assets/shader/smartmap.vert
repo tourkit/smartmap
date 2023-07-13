@@ -30,6 +30,8 @@ flat out int obj;
 flat out int id;
 out vec2 texcoord;
 
+uniform int offset = 0;
+
 uniform float debug0 = 0;
 uniform float debug1 = 0;
 uniform float debug2 = 0;
@@ -63,7 +65,7 @@ vec2 rotate(vec2 v, float a, vec2 r2) {
 void main() {
     obj = OBJ;
 
-    id = gl_InstanceID;
+    id = gl_InstanceID+offset;
 
     texcoord = TEXCOORD;
     
