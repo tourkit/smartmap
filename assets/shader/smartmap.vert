@@ -25,12 +25,14 @@ struct Fixture {
 
 layout(std140, binding = 1) uniform MatriceUBO  { Rect mat[24]; };
 layout(std140, binding = 2) uniform FixtureUBO  { Fixture fix[24];} ;
+layout(binding = 3, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
 
 flat out int obj;
 flat out int id;
 out vec2 texcoord;
 
 uniform int offset = 0;
+uniform int current_ubo = 0;
 
 uniform float debug0 = 0;
 uniform float debug1 = 0;
@@ -79,14 +81,17 @@ void main() {
 
     if (obj  == 2){
 
+        Fixture fixture = fix[id];
+        if (current_ubo == 1) { fixture = fix2[id]; }
+
         vec2 size = mat[id].size;
-        size *= fix[id].size;
+        size *= fixture.size;
  
-        vec2 pos = fix[id].pos;
+        vec2 pos = fixture.pos;
         pos *= mat[id].size+size;
         pos +=  mat[id].pos;
 
-        gl_Position.xy = rotate(gl_Position.xy,fix[id].orientation,size);
+        gl_Position.xy = rotate(gl_Position.xy,fixture.orientation,size);
 
         gl_Position.xy *= size;
         gl_Position.xy += pos;

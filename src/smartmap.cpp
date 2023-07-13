@@ -90,7 +90,7 @@ void SmartMap::render() {
         artnet->run(); 
 
         if (current_ubo) { fixtureUBO->update(); current_ubo = 0; }
-        else { fixtureUBO2->update(); current_ubo = 1; }
+        else { fixtureUBO2->update(&fixtureUBO->data[0],fixtureUBO->data.size()*4); current_ubo = 1; }
 
         winFB->clear(); 
 
@@ -102,6 +102,7 @@ void SmartMap::render() {
 
             layer->pass->bind();
                 
+            shader->sendUniform("current_ubo", current_ubo);
             shader->sendUniform("offset", offset);
             offset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
