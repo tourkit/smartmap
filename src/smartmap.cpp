@@ -43,7 +43,7 @@ SmartMap::SmartMap() {
 
     matriceUBO = new UBO("MatriceUBO", 24*32, {shader->id});  // 24*32 correspond a R
     fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
-    new UBO("FixtureUBO2", 24*16, {shader->id}); 
+    fixtureUBO2 = new UBO("FixtureUBO2", 24*16, {shader->id}); 
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});
@@ -62,12 +62,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     pool.push_back(this);
     
     GLuint FW = width*scale, FH = height*scale;
-    if (mode == Layer::Mode::Free) {
-
-        FW *= quantity_x;
-        FH *= quantity_y;
-
-    }
+    if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
     buffer = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
     pass = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
@@ -86,13 +81,16 @@ static int  cell_min = 0, cell_max = 255, cells_count = 48;
  
 void SmartMap::render() {
 
+    bool current_ubo = 1; 
+
     while(true) window->render([&]() {
 
         for (int i = 0; i < 10; i++) shader->sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         artnet->run(); 
 
-        fixtureUBO->update();
+        if (current_ubo) { fixtureUBO->update(); current_ubo = 0; }
+        else { fixtureUBO2->update(); current_ubo = 1; }
 
         winFB->clear(); 
 
@@ -104,10 +102,11 @@ void SmartMap::render() {
 
             layer->pass->bind();
                 
-            // shader->sendUniform("matoffset", layer->offset);
             shader->sendUniform("offset", offset);
             offset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
+            shader->sendUniform("MatriceUBOSize", layer->quantity);
+
             glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
             quadA->draw(layer->quantity); 
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
@@ -243,15 +242,14 @@ void SmartMap::render() {
         //////////////////////////////////////////////
         //////////////////////////////////////////////
 
-        // if (debug) { 
+        if (debug) { 
 
-        //     survey_count = 0;
-        //     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);
+            survey_count = 0;
 
-        //     survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(&mat[0][0],mat.size()*16); shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y); }); 
-        //     survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(&mat[0][0],mat.size()*16); shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y); }); 
+            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
+            survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
 
-        // }
+        }
         
     }); 
 

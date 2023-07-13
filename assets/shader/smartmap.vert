@@ -43,7 +43,6 @@ uniform float debug7 = 0;
 uniform float debug8 = 0;
 uniform float debug9 = 0;
 
-
 vec2 rotate(vec2 v, float a, vec2 r2) {
 
     // return v;
