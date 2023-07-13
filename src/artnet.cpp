@@ -17,9 +17,7 @@ Artnet::Artnet(const char* ip) {
         u->fps.name = ("Universe "+std::to_string(p->data.admx.universe)).c_str();
         u->fps.run();
 
-        // u->remap(); // per layer
-
-        // for (auto cb:u->callbacks) cb(u);  
+        for (auto cb:u->callbacks) cb(u);  
 
         return 1;   
 
@@ -38,58 +36,27 @@ uint32_t Artnet::Universe::get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1
 uint32_t Artnet::Universe::get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1] << 16) | (raw[i+2] << 8) | raw[i+3]);  }
 
 
-// void Artnet::Universe::remap(uint16_t chan, uint16_t quantity, std::vector<Attribute> attributes, float* dest) {
+void Artnet::Universe::remap(uint16_t chan, uint16_t quantity, std::vector<Attribute>& attributes, float* dest) {
 
-//     for (int offset = 0; offset < quantity; offset++) {  
-        
-//         auto pos = (offset*attributes.size());
-
-//         for (int i = 0; i < attributes.size(); i++) { 
-
-//             float target;
-//             auto c = attributes[i].combining;
-//             if (c==1) target      = GMAui2f[raw[chan]];
-//             else if (c==2) target = get16(chan)/65535.0f;
-//             else if (c==3) target = get24(chan)/16777215.0f;
-//             else if (c==4) target = get32(chan)/4294967295.0f;
-
-//             // range remap
-//             target = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
-
-//             (*(dest+i+pos))= target;
-//             chan += c;
-            
-//         }
-
-//     } 
-
-// }
-
-
-void Artnet::Universe::remap() {
-
-    // auto frames = FPS::pool[0]->fps/std::max(44.0f,fps.fps);
-    // frames = std::ceil(frames);
-
-    uint16_t chan = 0;
-
+    // attributes = remap_specs;
+    // dest = output;  
     for (int offset = 0; offset < quantity; offset++) {  
         
-        auto pos = (offset*remap_specs.size());
+        auto pos = (offset*attributes.size());
 
-        for (int i = 0; i < remap_specs.size(); i++) { 
+        for (int i = 0; i < attributes.size(); i++) { 
 
             float target;
-            auto c = remap_specs[i].combining;
+            auto c = attributes[i].combining;
             if (c==1) target      = GMAui2f[raw[chan]];
             else if (c==2) target = get16(chan)/65535.0f;
             else if (c==3) target = get24(chan)/16777215.0f;
             else if (c==4) target = get32(chan)/4294967295.0f;
 
             // range remap
-            target = (target * (remap_specs[i].max - remap_specs[i].min)) + remap_specs[i].min;
+            target = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
 
-            (*(output+i+pos))= target;
+            (*(dest+i+pos))= target;
             chan += c;
             
         }
@@ -97,6 +64,4 @@ void Artnet::Universe::remap() {
     } 
 
 }
-
-
 
