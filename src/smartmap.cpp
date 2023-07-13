@@ -53,6 +53,29 @@ SmartMap::SmartMap() {
 
 }
 
+SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
+
+    : chan(chan), uni(uni), fixture(fixture), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
+
+    for (auto l:pool) { attroffset+=l->quantity*l->fixture.size(); }
+    for (auto l:pool) { matoffset+=l->quantity*4; }
+    pool.push_back(this);
+    
+    auto FW = width*quantity_x*scale;
+    auto FH = height*quantity_y*scale;
+    buffer = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
+    pass = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
+    fb = new FrameBuffer(buffer);
+
+    std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);    
+    memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
+    matriceUBO->update(); 
+    shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
+    
+    artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); });
+
+}
+
 static int  cell_min = 0, cell_max = 255, cells_count = 48;
  
 void SmartMap::render() {
