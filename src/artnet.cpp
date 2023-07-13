@@ -17,7 +17,9 @@ Artnet::Artnet(const char* ip) {
         u->fps.name = ("Universe "+std::to_string(p->data.admx.universe)).c_str();
         u->fps.run();
 
-        u->remap();
+        // u->remap(); // per layer
+
+        // for (auto cb:u->callbacks) cb(u);  
 
         return 1;   
 
@@ -34,6 +36,35 @@ Artnet::Universe::Universe() { memset(&raw[0],0,512); }
 uint16_t Artnet::Universe::get16(uint16_t i) { return ((raw[i] << 8) | raw[i+1]);  }
 uint32_t Artnet::Universe::get24(uint16_t i) { return ((raw[i] << 16) | (raw[i+1] << 8) | raw[i+2]);  }
 uint32_t Artnet::Universe::get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1] << 16) | (raw[i+2] << 8) | raw[i+3]);  }
+
+
+// void Artnet::Universe::remap(uint16_t chan, uint16_t quantity, std::vector<Attribute> attributes, float* dest) {
+
+//     for (int offset = 0; offset < quantity; offset++) {  
+        
+//         auto pos = (offset*attributes.size());
+
+//         for (int i = 0; i < attributes.size(); i++) { 
+
+//             float target;
+//             auto c = attributes[i].combining;
+//             if (c==1) target      = GMAui2f[raw[chan]];
+//             else if (c==2) target = get16(chan)/65535.0f;
+//             else if (c==3) target = get24(chan)/16777215.0f;
+//             else if (c==4) target = get32(chan)/4294967295.0f;
+
+//             // range remap
+//             target = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
+
+//             (*(dest+i+pos))= target;
+//             chan += c;
+            
+//         }
+
+//     } 
+
+// }
+
 
 void Artnet::Universe::remap() {
 

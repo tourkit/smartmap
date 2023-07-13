@@ -26,12 +26,16 @@ struct Artnet {
 
     struct Attribute { uint8_t combining; float min=0,max=1; };
 
+
     float* output = nullptr;
     std::vector<Attribute> remap_specs;
     size_t quantity = 1;
     float mode = 0;
 
     void remap();
+    // std::vector<std::function<void(Universe*)>> callbacks;
+    // void remap(uint16_t chan, uint16_t quantity, std::vector<Attribute> attributes, float* dest);
+
 
   };
 

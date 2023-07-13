@@ -53,17 +53,6 @@ SmartMap::SmartMap() {
 
 }
 
-void SmartMap::createLayer(uint16_t chan, uint16_t uni, Fixture *fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y) {
-
-    new Layer( chan,  uni,  *fixture,  width,  height, mode,  quantity_x,  quantity_y);
-
-    // artnet->universes[uni].output = &fixtureUBO->data[0];
-    // artnet->universes[uni].remap_specs = *fixture;
-    // artnet->universes[uni].quantity = quantity_x*quantity_y;
-    // artnet->universes[uni].mode = ((mode==Layer::Mode::Free)?1.0f:0.0f);
-    
-}
-
 static int  cell_min = 0, cell_max = 255, cells_count = 48;
  
 void SmartMap::render() {
@@ -84,11 +73,11 @@ void SmartMap::render() {
 
             layer->pass->bind();
                 
-            shader->sendUniform("mode", debuguniforms[artnet->universes[0].mode]);
+            shader->sendUniform("mode", ((layer->mode==Layer::Mode::Free)?1.0f:0.0f));
             glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-            quadA->draw(artnet->universes[0].quantity); 
+            quadA->draw(layer->quantity); 
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-            quadB->draw(artnet->universes[0].quantity);
+            quadB->draw(layer->quantity);
 
             layer->pass->read(layer->buffer);
 
@@ -97,7 +86,6 @@ void SmartMap::render() {
             // blur_x->use(FW*.5/16,FH*.5/16);
             // blur_y->use(FW*.5/16,FH*.5/16);
             // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
-
             
             winFB->bind(); 
             layer->buffer->bind();
@@ -141,12 +129,7 @@ void SmartMap::render() {
 
             ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
             ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size()); 
-
-
-            // if (ImGui::InputText(" tex", (char*)&tex->path[0], IM_ARRAYSIZE((char*)&tex->path[0]))) tex->reset();
-            // if (ImGui::InputText(" frag", (char*)&basic->paths[1][0], IM_ARRAYSIZE((char*)&basic->paths[1][0]))) basic->reset();
             
-
         ImGui::End();
 
 
@@ -174,7 +157,6 @@ void SmartMap::render() {
                     ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.raw[i],  &cell_min,   &cell_max,   "");
 
                     if ((i + 1) % cells_count != 0) ImGui::SameLine(0);
-
 
                     ImGui::PopID();
 
@@ -218,11 +200,7 @@ void SmartMap::render() {
         
         ImGui::End(); 
 
-
-
         gui->render();  
-
-
 
         //////////////////////////////////////////////
         //////////////////////////////////////////////
