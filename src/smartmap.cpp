@@ -73,7 +73,7 @@ void SmartMap::render() {
 
             layer->pass->bind();
                 
-            shader->sendUniform("mode", ((layer->mode==Layer::Mode::Free)?1.0f:0.0f));
+            shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
             glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
             quadA->draw(layer->quantity); 
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
