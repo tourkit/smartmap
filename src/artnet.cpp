@@ -38,8 +38,6 @@ uint32_t Artnet::Universe::get32(uint16_t i) { return ((raw[i] << 24) | (raw[i+1
 
 void Artnet::Universe::remap(uint16_t chan, uint16_t quantity, std::vector<Attribute>& attributes, float* dest) {
 
-    // attributes = remap_specs;
-    // dest = output;  
     for (int offset = 0; offset < quantity; offset++) {  
         
         auto pos = (offset*attributes.size());

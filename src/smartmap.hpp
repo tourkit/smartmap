@@ -55,21 +55,22 @@ struct SmartMap {
 
         unsigned int width, height;
         
-        unsigned int offset_x, offset_y;
+        unsigned int offset_x = 0, offset_y =0;
 
         unsigned int quantity_x, quantity_y, quantity;
-
-        float* output = nullptr;
 
         Texture *buffer, *pass;
 
         FrameBuffer *fb;
 
+        uint16_t chan,uni,offset = 0;
+
         Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1) 
-            : fixture(fixture), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
+            : chan(chan), uni(uni), fixture(fixture), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
+            for (auto l:pool) { offset+=l->quantity*l->fixture.size(); }
             pool.push_back(this);
-
+            
             auto FW = width*quantity_x*scale;
             auto FH = height*quantity_y*scale;
             buffer = new Texture(nullptr, FW, FH, 0,0,0,GL_RGBA8);
@@ -79,8 +80,8 @@ struct SmartMap {
             std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);    
             matriceUBO->update(&mat[0][0],mat.size()*32); 
             shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
-
-            artnet->universes[uni].callbacks.push_back([&](Artnet::Universe* u){ u->remap(chan, quantity ,fixture ,&fixtureUBO->data[0]); });
+            
+            artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->offset]); });
 
         }
 
