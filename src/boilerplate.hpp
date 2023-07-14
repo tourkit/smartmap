@@ -7,7 +7,7 @@
 
 #pragma once
 
-unsigned int width = 400, height = 300, pos_x = 2560-width, pos_y = 0;
+unsigned int width = 400, height = 200, pos_x = 2560-width, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
 #define BOILq

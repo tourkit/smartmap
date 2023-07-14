@@ -16,7 +16,7 @@ uniform float debug5 = 0;
 uniform float debug6 = 0;
 uniform float debug7 = 0;
 uniform float debug8 = 0;
-uniform float debug9 = 0;
+uniform float debug9 = 0; 
 
 vec2 rotate(vec2 v, float a) {
 
@@ -24,10 +24,30 @@ vec2 rotate(vec2 v, float a) {
 
     float s = sin(a);
     float c = cos(a);
-    mat2 m = mat2(c, -s, s, c);
 
-    return m*v;
+    return v * mat2(c, -s, s, c);
+}
 
+vec2 iResolution = vec2(400,200);
+
+vec4 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle) {
+
+    vec2 AR = vec2(1.);
+
+    float ratio = iResolution.x/iResolution.y; // screen size;
+
+    if (ratio > 1.) AR.x = ratio;
+    else AR.y = ratio;
+
+    texcoord -= pos; 
+    texcoord = rotate(texcoord*AR,angle)*(1./AR);
+    texcoord /= size;
+    texcoord += .5;
+    
+    if (texcoord.x > 1. || texcoord.y > 1. || texcoord.x < 0. || texcoord.y < 0. ) return vec4(0.);
+    
+    return vec4(1);
+    
 }
 
 float window_width = 400;
@@ -35,17 +55,14 @@ float window_height = 200;
 
 void main() { 
 
-    vec2 uv = (2.0 * gl_FragCoord.xy - vec2(window_width, window_height)) / vec2(window_width, window_height);
+    vec2 size = vec2(.1, .5);
     
-    // float angle = debug0;
-    uv += pos * (1.0 + size);
-    // uv = rotate(uv,angle);
+    vec2 pos = vec2(.5, .5);
+ 
+    float angle = debug0;
 
-    vec2 clampedUV = clamp(uv, -size, size) / (2.0 * size) + 0.5;
+    vec2 texcoord = gl_FragCoord.xy/iResolution.xy;
 
-    vec2 delta = abs(uv) - size;
-    float box = sign(-(length(max(delta, vec2(0.0))) + min(max(delta.x, delta.y), 0.0)));
-
-    color = vec4(clampedUV, 0.0, 1.0) * box;
+    for (int i = 0; i < 10000; i++) color = rectangle(texcoord,size,pos,angle);
 
 }

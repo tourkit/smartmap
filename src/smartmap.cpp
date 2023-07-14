@@ -31,6 +31,7 @@ SmartMap::SmartMap() {
     window = new Window(false,400,300,1540);
     window->setPos(2560,1440-1080);
     window->setSize(1920,1080);
+    window->setSize(1000,500);
     gui = new GUI(window->window);
     quad = new VBO("quad.obj",0);
     quadA = new VBO("quad.obj",2);
@@ -73,7 +74,19 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     matriceUBO->update(); 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
     
-    artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); });
+    artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ 
+        
+        bool current_ubo = 1;     
+        
+        u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]);
+        
+        if (current_ubo) { fixtureUBO->update(); current_ubo = 0; }
+        
+        else { fixtureUBO2->update(&fixtureUBO->data[0],fixtureUBO->data.size()*4); current_ubo = 1; }
+                
+        shader->sendUniform("current_ubo", current_ubo);
+        
+    });
 
 }
 
@@ -81,16 +94,11 @@ static int  cell_min = 0, cell_max = 255, cells_count = 48;
  
 void SmartMap::render() {
 
-    bool current_ubo = 1; 
-
     while(true) window->render([&]() {
 
         for (int i = 0; i < 10; i++) shader->sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         artnet->run(); 
-
-        if (current_ubo) { fixtureUBO->update(); current_ubo = 0; }
-        else { fixtureUBO2->update(&fixtureUBO->data[0],fixtureUBO->data.size()*4); current_ubo = 1; }
 
         winFB->clear(); 
 
@@ -101,8 +109,6 @@ void SmartMap::render() {
             layer->fb->clear(); // thus bind
 
             layer->pass->bind();
-                
-            shader->sendUniform("current_ubo", current_ubo);
             shader->sendUniform("offset", offset);
             offset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));

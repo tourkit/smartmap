@@ -5,7 +5,7 @@
                         */
 
 #include "smartmap.hpp"
-// #include "boilerplate.hpp"
+#include "boilerplate.hpp"
 // #include "debug.hpp"
 // Debug debug;
 
@@ -24,8 +24,30 @@ int main() {
         {0} // pr buffer alignment vec4 dans glsl
     }; 
 
-    SmartMap::Layer l1(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 2, 1);
-    SmartMap::Layer l2(38, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 1, 1);
+    std::vector<float> a1 = {
+        1,1,1,1,   
+        -.3,0, 
+        .2,.2,           
+        0,0,0,0, 
+        0,0,0, 
+        0 
+    }; 
+    std::vector<float> a2 = {
+        1,1,1,1,   
+        0.3,0, 
+        .2,.2,           
+        0,0,0,0, 
+        0,0,0, 
+        0 
+    }; 
+
+    sm.fixtureUBO->update(&a1[0],a1.size()*4);
+    sm.fixtureUBO2->update(&a2[0],a2.size()*4);
+
+    // SmartMap::Layer l1(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 2, 1);
+    // SmartMap::Layer l2(38, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 1, 1);
+    
+    SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 1, 1);
 
     sm.render();
  

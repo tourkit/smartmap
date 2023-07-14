@@ -53,7 +53,6 @@ uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
 vec4 fromAtlas(vec2 uv, int id) { 
     
-    uv = texcoord;
     uv *= mediaCoord[id].size;
     uv += mediaCoord[id].pos;
 
@@ -165,10 +164,30 @@ vec2 rotate(vec2 v, float a) {
 
     float s = sin(a);
     float c = cos(a);
-    mat2 m = mat2(c, -s, s, c);
 
-    return m*v;
+    return v * mat2(c, -s, s, c);
+}
 
+vec2 iResolution = vec2(1000,500);
+
+vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle) {
+
+    vec2 AR = vec2(1.);
+
+    float ratio = iResolution.x/iResolution.y; // screen size;
+
+    if (ratio > 1.) AR.x = ratio;
+    else AR.y = ratio;
+
+    texcoord -= pos; 
+    texcoord = rotate(texcoord*AR,angle)*(1./AR);
+    texcoord /= size;
+    texcoord += .5;
+    
+    if (texcoord.x > 1. || texcoord.y > 1. || texcoord.x < 0. || texcoord.y < 0. ) return vec2(0.);
+    
+    return texcoord;
+    
 }
 
 float burst(vec2 uv, float inratio, float shape, float petals) {
@@ -197,7 +216,6 @@ float burst(vec2 uv, float inratio, float shape, float petals) {
 
         return r;
 }
-
 vec4 gradient(vec2 uv, float aaaa, float inratio, float angle) {
 
     uv = rotate(uv, angle);
@@ -209,7 +227,6 @@ vec4 gradient(vec2 uv, float aaaa, float inratio, float angle) {
 
 
 }
-
 vec3 random3(vec3 c) {
     float j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));
     vec3 r;
@@ -221,7 +238,6 @@ vec3 random3(vec3 c) {
     j *= 0.125;
     return r - 0.5;
 }
-
 const float F3 = 0.333333333333;
 const float G3 = 0.166666666667;
 
@@ -268,33 +284,37 @@ float simplex3d(vec3 p) {
     w *= w;
     d *= w;
     return dot(d, vec4(52.0));
-}
-    
+}  
 vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
     return vec4(pow(simplex3d(vec3(uv * (101.0 - zoom * 100.0), height * 5.0)), 1.0 + contrast * 8.0));
 }
 
 
+
 vec4 smartmap(int instance) {
 
+    vec2 size = fix[instance].size;
+    vec2 pos = fix[instance].pos;
+    float angle = debug0;
 
-    vec2 t_uv = texcoord-.5;
+    vec2 t_uv = rectangle(gl_FragCoord.xy/iResolution.xy, size, pos, angle); 
 
     int gobo_id = int(fix[instance].gobo[0]*255);
 
     vec4 rgba = vec4(fix[instance].r,fix[instance].g,fix[instance].b,fix[instance].alpha)*fix[instance].alpha;
 
-    if (gobo_id == 1) return rgba*grid(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 2) return rgba*grid2(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 3) return rgba*gradient(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 4) return rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 0, fix[instance].gobo[2]);
-    if (gobo_id == 5) return rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 1, fix[instance].gobo[2]);
-    if (gobo_id == 6) return rgba*flower(t_uv*(1/fix[instance].size), fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 7) return rgba*border(t_uv, fix[instance].gobo[1]);
-    if (gobo_id == 8) return rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*12)); // 12 is assets/media file count
-    if (gobo_id == 9) return rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 1) return sign(t_uv.x)*rgba*grid(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 2) return sign(t_uv.x)*rgba*grid2(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 3) return sign(t_uv.x)*rgba*gradient(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 4) return sign(t_uv.x)*rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 0, fix[instance].gobo[2]);
+    if (gobo_id == 5) return sign(t_uv.x)*rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 1, fix[instance].gobo[2]);
+    if (gobo_id == 6) return sign(t_uv.x)*rgba*flower(t_uv*(1/fix[instance].size), fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 7) return sign(t_uv.x)*rgba*border(t_uv, fix[instance].gobo[1]);
+    if (gobo_id == 8) return sign(t_uv.x)*rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*12)); // 12 is assets/media file count
+    if (gobo_id == 9) return sign(t_uv.x)*rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
 
     return rgba*vec4(1);
+
 }
 
 void main() {
@@ -324,8 +344,7 @@ void main() {
     }
     else if (obj == 2) { 
         
-        // for (int i = 0; i < 10; i++) 
-        color = smartmap(id);  
+        for (int i = 0; i < 10; i++)  color = smartmap(id);  
         
     }
 

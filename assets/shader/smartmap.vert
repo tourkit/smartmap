@@ -81,27 +81,27 @@ void main() {
 
     if (obj  == 2){
 
-        Fixture fixture = fix[id];
-        if (current_ubo == 1) { fixture = fix2[id]; }
+        // Fixture fixture = fix[id];
+        // if (current_ubo == 1) { fixture = fix2[id]; }
 
-        vec2 size = mat[id].size;
-        size *= fixture.size;
+        // vec2 size = mat[id].size;
+        // size *= fixture.size;
  
-        vec2 pos = fixture.pos;
-        pos *= mat[id].size+size;
-        pos +=  mat[id].pos;
+        // vec2 pos = fixture.pos;
+        // pos *= mat[id].size+size;
+        // pos +=  mat[id].pos;
 
-        gl_Position.xy = rotate(gl_Position.xy,fixture.orientation,size);
+        // gl_Position.xy = rotate(gl_Position.xy,fixture.orientation,size);
 
-        gl_Position.xy *= size;
-        gl_Position.xy += pos;
+        // gl_Position.xy *= size;
+        // gl_Position.xy += pos;
         
-        vec2 mins = mat[id].pos-mat[id].size;
-        vec2 maxs = mat[id].pos+mat[id].size;
-        gl_ClipDistance[0] = gl_Position.x-mins.x; 
-        gl_ClipDistance[1] = maxs.x-gl_Position.x;
-        gl_ClipDistance[2] = gl_Position.y -mins.y;
-        gl_ClipDistance[3] = maxs.y-gl_Position.y;
+        // vec2 mins = mat[id].pos-mat[id].size;
+        // vec2 maxs = mat[id].pos+mat[id].size;
+        // gl_ClipDistance[0] = gl_Position.x-mins.x; 
+        // gl_ClipDistance[1] = maxs.x-gl_Position.x;
+        // gl_ClipDistance[2] = gl_Position.y -mins.y;
+        // gl_ClipDistance[3] = maxs.y-gl_Position.y;
 
     } else if (obj  == 1) {
 
