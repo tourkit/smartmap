@@ -1,26 +1,60 @@
+// FRAGMENT SHADER
+
 #version 430 core
 
-uniform sampler2D buff;
-uniform sampler2D mediasAtlas;
+vec2 size = vec2(.2);
+vec2 pos = vec2(.2);
 
 out vec4 color;
 
-flat in int obj;
-flat in int id;
-in vec2 tex;
+
+
+uniform float debug0 = 0;
+uniform float debug1 = 0;
+uniform float debug2 = 0;
+uniform float debug3 = 0;
+uniform float debug4 = 0;
+uniform float debug5 = 0;
+uniform float debug6 = 0;
+uniform float debug7 = 0;
+uniform float debug8 = 0;
+uniform float debug9 = 0;
+
+float calculateBoxSDF(vec2 point, vec2 boxRect)
+{
+   vec2 delta = abs(point) - boxRect;
+   return length(max(delta, 0.0)) + min(max(delta.x,delta.y),0.0); 
+}
+
+
+vec2 rotate(vec2 v, float a) {
+
+    a *= 6.28318530718;
+
+    float s = sin(a);
+    float c = cos(a);
+    mat2 m = mat2(c, -s, s, c);
+
+    return m*v;
+
+}
+
 
 void main() { 
 
-    // color = vec4(0,0,0,1); return; 
 
-    if (obj == 2) { 
-        
-        float r = 0;
-        if (id == 0) { r=1; }
-        float g = 0;
-        if (id == 1) { g=1; }
-        color = vec4(r,g,0,1); return; 
+    vec2 uv = (2.0 * gl_FragCoord.xy) / vec2(400, 300) - vec2(1);
 
-    }
+    uv = rotate(uv,debug0);
+
+    float distField = calculateBoxSDF(uv, size);
+
+
+    distField = sign(distField);
+    // distField = sign(distField);
+
+
+
+    color = vec4(distField,0,0, 1.0);
 
 }

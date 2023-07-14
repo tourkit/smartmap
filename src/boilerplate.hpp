@@ -251,9 +251,9 @@ int Boilerplate() {
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
-        // survey_count = 0;
-        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
-        // survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
+        survey_count = 0;
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
 
 
         glfwPollEvents();
@@ -265,7 +265,7 @@ int Boilerplate() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-        quad.draw(4);
+        quad.draw();
         gui.newframe();
 
         ImGui::Begin("test");
