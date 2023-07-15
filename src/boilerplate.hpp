@@ -10,7 +10,7 @@
 unsigned int width = 400, height = 200, pos_x = 2560-width, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
-#define BOILq
+#define BOIL
 #ifdef BOIL
 
 #include <chrono>
@@ -22,6 +22,23 @@ unsigned int width = 400, height = 200, pos_x = 2560-width, pos_y = 0;
 #include <GLFW/glfw3.h>
 #include "src/file.hpp"
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
+
+void debug() {
+
+GLenum code = glGetError();
+
+  if (code == GL_NO_ERROR) return;
+
+  std::string code_string = "unknown";
+
+  if (GL_errors.find(code) != GL_errors.end()) code_string  = GL_errors[code];
+
+  std::cout << code_string << std::endl;
+
+}
 
 int Boilerplate() {  
 
@@ -78,8 +95,7 @@ int Boilerplate() {
 
     auto shader = glCreateProgram();
 
-    // std::ifstream fragFile("assets/shader/basic.frag");
-    std::ifstream fragFile("test.frag");
+    std::ifstream fragFile("C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.frag");
     std::string fragCode((std::istreambuf_iterator<char>(fragFile)), (std::istreambuf_iterator<char>()));
     auto fragptr = (const GLchar* const ) fragCode.c_str();
 
@@ -87,8 +103,7 @@ int Boilerplate() {
     glShaderSource(frag, 1, &fragptr, nullptr);
     glCompileShader(frag);
 
-    std::ifstream vertFile("basic.vert");
-    // std::ifstream vertFile("assets/shader/basic.vert");
+    std::ifstream vertFile("C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert");
     std::string vertCode((std::istreambuf_iterator<char>(vertFile)), (std::istreambuf_iterator<char>()));
     auto vertptr = (const GLchar* const ) vertCode.c_str();
 
@@ -106,8 +121,19 @@ int Boilerplate() {
 
     // SET TEXTURE
 
-    Image img("C:/msys64/home/SysErr/old/smartmap/assets/media/boy.jpg");
 
+      FT_Library library;
+  FT_Init_FreeType(&library);
+  
+  FT_Face face;
+  FT_New_Face(library, "C:/msys64/home/SysErr/old/smartmap/assets/Anonymous.ttf", 0, &face); 
+
+  FT_Set_Pixel_Sizes(face, 0, 48);
+  
+  FT_GlyphSlot slot = face->glyph;
+  FT_Load_Char(face, 'A', FT_LOAD_RENDER);
+
+    Image img("boy.jpg");
 
     GLuint tex;
 
@@ -124,11 +150,11 @@ int Boilerplate() {
     
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img.width, img.height,GL_RGB,GL_UNSIGNED_BYTE,img.i);
+    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img.width, img.height,GL_RGB,GL_UNSIGNED_BYTE,&img.data[0]);
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
-    Image img2("C:/msys64/home/SysErr/old/smartmap/assets/media/container.jpg");
+    Image img2("container.jpg");
     GLuint tex2;
 
     glGenTextures(1, &tex2);
@@ -145,7 +171,7 @@ int Boilerplate() {
 
     glActiveTexture(GL_TEXTURE0+1);
     glBindTexture(GL_TEXTURE_2D, tex2);
-    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img2.width, img2.height,GL_RGB,GL_UNSIGNED_BYTE,img2.i);
+    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img2.width, img2.height,GL_RGB,GL_UNSIGNED_BYTE,&img2.data[0]);
     glGenerateMipmap(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE0); 
 
@@ -165,13 +191,10 @@ int Boilerplate() {
     
         lastTime = glfwGetTime();
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
+        glClearColor(0.5f, 0.0f, 0.0f, 1.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-
-        glBindVertexArray(vao); 
-
-        glDrawElementsInstanced(GL_TRIANGLES, indices.size()*12, GL_UNSIGNED_INT, 0, 1);
+        glDrawElementsInstanced(GL_TRIANGLES, indices.size()*6, GL_UNSIGNED_INT, 0, 1);
 
         glfwPollEvents();
 
@@ -216,8 +239,26 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 #include "imgui/imgui.h"
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 int Boilerplate() {  
+
+  FT_Library library;
+  FT_Init_FreeType(&library);
+  
+  FT_Face face;
+  FT_New_Face(library, "C:/msys64/home/SysErr/old/smartmap/assets/Anonymous.ttf", 0, &face); 
+
+  FT_Set_Pixel_Sizes(face, 0, 48);
+  
+  FT_GlyphSlot slot = face->glyph;
+  FT_Load_Char(face, 'A', FT_LOAD_RENDER);
+
+
+
+
+  
     
     auto lastTime = glfwGetTime();
 
@@ -241,11 +282,14 @@ int Boilerplate() {
     Atlas atlas("assets/media/");
     atlas.link(&shader);
 
+    Texture frr(slot->bitmap.buffer,11,slot->bitmap.rows,0,0,0,GL_RGBA8);
+
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
     UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
     matriceUBO.update(&mat[0][0],mat.size()*16); 
 
     std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
+    debuguniforms[0] = slot->bitmap.width;
 
     while (true) {
 
@@ -265,6 +309,7 @@ int Boilerplate() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
+        frr.bind();
         quad.draw();
         gui.newframe();
 
@@ -277,6 +322,12 @@ int Boilerplate() {
         glfwSwapBuffers(window.window);
 
     }
+
+    
+  FT_Done_Face(face);
+  FT_Done_FreeType(library);
+
+
 
 } 
 
