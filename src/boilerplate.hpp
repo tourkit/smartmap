@@ -308,7 +308,7 @@ int Boilerplate() {
     Atlas atlas("assets/media/");
     atlas.link(&shader);
 
-    Texture frr(slot->bitmap.buffer,11,slot->bitmap.rows,0,0,0,GL_RGBA8,GL_RED);
+    Texture frr(slot->bitmap.buffer,slot->bitmap.width,slot->bitmap.rows,0,0,0,GL_RGB8,GL_RED);
 
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
     UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
