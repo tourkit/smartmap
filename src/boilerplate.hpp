@@ -10,7 +10,7 @@
 unsigned int width = 400, height = 200, pos_x = 2560-width, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
-#define BOIL
+#define BOILNO
 #ifdef BOIL
 
 #include <chrono>
@@ -163,7 +163,7 @@ int Boilerplate() {
 
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, img.width, img.height);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, img.width, img.height);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -308,7 +308,7 @@ int Boilerplate() {
     Atlas atlas("assets/media/");
     atlas.link(&shader);
 
-    Texture frr(slot->bitmap.buffer,11,slot->bitmap.rows,0,0,0,GL_RGBA8);
+    Texture frr(slot->bitmap.buffer,11,slot->bitmap.rows,0,0,0,GL_RGBA8,GL_RED);
 
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
     UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
