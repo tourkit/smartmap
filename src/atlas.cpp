@@ -2,7 +2,7 @@
 
 Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)  {
 
-    texture = new Texture(nullptr,width,height,0,0,1);
+    texture = new Texture(width,height,1,1);
 
     texture->mipmaps = 10;
 
