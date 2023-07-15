@@ -3,6 +3,8 @@ project(SmartMap VERSION 0.1.0)
 
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(Freetype REQUIRED) 
+
 
 add_executable(SmartMap 
 
@@ -69,8 +71,12 @@ target_include_directories(SmartMap PRIVATE
     include/vendor/
     include/vendor/imgui/
     include/vendor/gl3w/include
+
+    ${FREETYPE_INCLUDE_DIRS}
     
     )
+
+    link_directories(${FREETYPE_LIBRARY_DIRS})
 
 target_link_libraries(SmartMap PRIVATE
     OpenGL::GL
@@ -80,4 +86,5 @@ target_link_libraries(SmartMap PRIVATE
     netapi32
     dpnet
     iphlpapi
+    ${FREETYPE_LIBRARIES}
 )
