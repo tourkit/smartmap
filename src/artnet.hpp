@@ -36,7 +36,7 @@ struct Artnet {
 
   std::vector<uint16_t> listening = {0};
 
-  std::function<void(Artnet*)> callback = [](Artnet *_this){  std::cout << (unsigned int)_this->universes[0].raw[0] << std::endl; };
+  std::function<void(Artnet*)> callback = [](Artnet *_this){ };
 
   Artnet(const char* ip);
 
