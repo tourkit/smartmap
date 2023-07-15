@@ -121,25 +121,49 @@ int Boilerplate() {
 
     // SET TEXTURE
 
-
-      FT_Library library;
-  FT_Init_FreeType(&library);
-  
-  FT_Face face;
-  FT_New_Face(library, "C:/msys64/home/SysErr/old/smartmap/assets/Anonymous.ttf", 0, &face); 
-
-  FT_Set_Pixel_Sizes(face, 0, 48);
-  
-  FT_GlyphSlot slot = face->glyph;
-  FT_Load_Char(face, 'A', FT_LOAD_RENDER);
-
-    Image img("boy.jpg");
-
     GLuint tex;
+
+    struct FT { 
+
+        FT_Library library;
+        FT_Face face;
+        FT_GlyphSlot slot;
+
+        GLuint width;
+        GLuint height;
+        
+        void* buffer;
+
+        FT() {
+            
+            FT_Init_FreeType(&library);
+            
+            FT_New_Face(library, "C:/msys64/home/SysErr/old/smartmap/assets/Anonymous.ttf", 0, &face); 
+
+            FT_Set_Pixel_Sizes(face, 0, 200);
+            
+            slot = face->glyph;
+            FT_Load_Char(face, 'A', FT_LOAD_RENDER);
+
+            buffer = slot->bitmap.buffer;
+            width = slot->bitmap.width;
+            height = slot->bitmap.rows;
+
+        }
+
+        ~FT() {
+           
+            FT_Done_Face(face);
+            FT_Done_FreeType(library);
+
+        }
+
+    } img;
+
 
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, img.width, img.height);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, img.width, img.height);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -150,7 +174,7 @@ int Boilerplate() {
     
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img.width, img.height,GL_RGB,GL_UNSIGNED_BYTE,&img.data[0]);
+    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img.width, img.height,GL_RED,GL_UNSIGNED_BYTE,img.buffer);
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -201,6 +225,8 @@ int Boilerplate() {
         glfwSwapBuffers(window);
 
     }
+
+
 
 
 } 
