@@ -52,6 +52,16 @@ SmartMap::SmartMap() {
     // outBlur = new Texture(nullptr, FW*.5,FH*.5); 
     // outBlur->format = GL_RGBA8; 
 
+    bool current_ubo = 1; 
+
+    artnet->callback = [&](Artnet* an){
+
+        // fixtureUBO2->update(&fixtureUBO->data[0],fixtureUBO->data.size()*4);
+        // memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
+        // fixtureUBO->update();
+
+    };
+
 }
 
 SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
@@ -78,15 +88,9 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     
     artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ 
         
-        bool current_ubo = 1;     
-        
         u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]);
-        
-        if (current_ubo) { fixtureUBO->update(); current_ubo = 0; }
-        
-        else { fixtureUBO2->update(&fixtureUBO->data[0],fixtureUBO->data.size()*4); current_ubo = 1; }
-                
-        shader->sendUniform("current_ubo", current_ubo);
+
+        fixtureUBO->update();
         
     });
 

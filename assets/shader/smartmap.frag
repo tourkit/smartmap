@@ -297,7 +297,10 @@ vec4 smartmap(int instance) {
     vec2 pos = fix[instance].pos;
     float angle = debug0;
 
-    vec2 t_uv = rectangle(gl_FragCoord.xy/iResolution.xy, size, pos, angle); 
+    vec2 t_uv = gl_FragCoord.xy/iResolution.xy;
+    t_uv = rectangle(t_uv, size, pos, angle); 
+
+    // return vec4(t_uv,0,1);
 
     int gobo_id = int(fix[instance].gobo[0]*255);
 
@@ -313,7 +316,7 @@ vec4 smartmap(int instance) {
     if (gobo_id == 8) return sign(t_uv.x)*rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*12)); // 12 is assets/media file count
     if (gobo_id == 9) return sign(t_uv.x)*rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
 
-    return rgba*vec4(1);
+    return sign(t_uv.x)*rgba*vec4(1);
 
 }
 
