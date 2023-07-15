@@ -23,7 +23,9 @@ struct Texture {
     
     ~Texture();
 
-    void create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum informat, GLenum outformat);
+    void write(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum informat, GLenum outformat);
+
+    void fromImage(std::string path, GLuint offset_x = 0, GLuint offset_y= 0);
 
     void read(const Texture *texture, GLuint offset_x = 0, GLuint offset_y = 0);
     void write(void* data, GLuint width, GLuint height, GLuint offset_x = 0, GLuint offset_y = 0);

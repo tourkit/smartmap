@@ -1,17 +1,19 @@
 #include "texture.hpp" 
 
-Texture::Texture() { pool.push_back(this); }
+Texture::Texture() { pool.push_back(this); glGenTextures(1, &id); }
 
 Texture::Texture(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum informat, GLenum outformat) 
-: Texture() { create(data, width, height, offset_x, offset_y, unit, informat, outformat); }
+: Texture() { write(data, width, height, offset_x, offset_y, unit, informat, outformat); }
 
 static uint8_t FULLBLACK[4] = {0,0,0,0};
-Texture::Texture(std::string path) : Texture()  {
+Texture::Texture(std::string path) : Texture()  { fromImage(path); }
+
+void Texture::fromImage(std::string path, GLuint offset_x, GLuint offset_y) { 
 
     this->path = path; 
-    Image img(path);
-    if (!img.width) create(&FULLBLACK,1,1,0,0,0,GL_RGB8,GL_RGB);
-    else create(&img.data[0], img.width, img.height,0,0,0,GL_RGB8,GL_RGB);
+    Image img(path);  
+    if (!img.width) write(&FULLBLACK,1,1,0,0,0,GL_RGB8,GL_RGB);
+    else write(&img.data[0], img.width, img.height,offset_x, offset_y,0,GL_RGB8,GL_RGB);
 
 } 
 
@@ -25,7 +27,7 @@ void Texture::bind() { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTU
 
 Texture::operator GLuint() { return id; }
 
-void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum informat, GLenum outformat) {
+void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum informat, GLenum outformat) {
 
     this->unit = unit; 
     this->width = width;
@@ -33,9 +35,9 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
     this->informat = informat;
     this->outformat = outformat;
 
-    destroy();
+    // destroy();
 
-    glGenTextures(1, &id);
+    
 
     glActiveTexture(GL_TEXTURE0+unit); 
     
