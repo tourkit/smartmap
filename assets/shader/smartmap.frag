@@ -291,10 +291,10 @@ vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
 
 
 
-vec4 smartmap(int instance) {
+vec4 smartmap(Fixture f) {
 
-    vec2 size = fix[instance].size;
-    vec2 pos = fix[instance].pos;
+    vec2 size = f.size;
+    vec2 pos = f.pos;
     float angle = debug0;
 
     vec2 t_uv = gl_FragCoord.xy/iResolution.xy;
@@ -302,19 +302,19 @@ vec4 smartmap(int instance) {
 
     // return vec4(t_uv,0,1);
 
-    int gobo_id = int(fix[instance].gobo[0]*255);
+    int gobo_id = int(f.gobo[0]*255);
 
-    vec4 rgba = vec4(fix[instance].r,fix[instance].g,fix[instance].b,fix[instance].alpha)*fix[instance].alpha;
+    vec4 rgba = vec4(f.r,f.g,f.b,f.alpha)*f.alpha;
 
-    if (gobo_id == 1) return sign(t_uv.x)*rgba*grid(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 2) return sign(t_uv.x)*rgba*grid2(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 3) return sign(t_uv.x)*rgba*gradient(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 4) return sign(t_uv.x)*rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 0, fix[instance].gobo[2]);
-    if (gobo_id == 5) return sign(t_uv.x)*rgba*burst(rotate(t_uv, fix[instance].gobo[3]), fix[instance].gobo[1], 1, fix[instance].gobo[2]);
-    if (gobo_id == 6) return sign(t_uv.x)*rgba*flower(t_uv*(1/fix[instance].size), fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
-    if (gobo_id == 7) return sign(t_uv.x)*rgba*border(t_uv, fix[instance].gobo[1]);
-    if (gobo_id == 8) return sign(t_uv.x)*rgba*fromAtlas(t_uv, int(fix[instance].gobo[1]*12)); // 12 is assets/media file count
-    if (gobo_id == 9) return sign(t_uv.x)*rgba*s1plx(t_uv, fix[instance].gobo[1], fix[instance].gobo[2], fix[instance].gobo[3]);
+    if (gobo_id == 1) return sign(t_uv.x)*rgba*grid(t_uv, f.gobo[1], f.gobo[2], f.gobo[3]);
+    if (gobo_id == 2) return sign(t_uv.x)*rgba*grid2(t_uv, f.gobo[1], f.gobo[2], f.gobo[3]);
+    if (gobo_id == 3) return sign(t_uv.x)*rgba*gradient(t_uv, f.gobo[1], f.gobo[2], f.gobo[3]);
+    if (gobo_id == 4) return sign(t_uv.x)*rgba*burst(rotate(t_uv, f.gobo[3]), f.gobo[1], 0, f.gobo[2]);
+    if (gobo_id == 5) return sign(t_uv.x)*rgba*burst(rotate(t_uv, f.gobo[3]), f.gobo[1], 1, f.gobo[2]);
+    if (gobo_id == 6) return sign(t_uv.x)*rgba*flower(t_uv*(1/f.size), f.gobo[1], f.gobo[2], f.gobo[3]);
+    if (gobo_id == 7) return sign(t_uv.x)*rgba*border(t_uv, f.gobo[1]);
+    if (gobo_id == 8) return sign(t_uv.x)*rgba*fromAtlas(t_uv, int(f.gobo[1]*12)); // 12 is assets/media file count
+    if (gobo_id == 9) return sign(t_uv.x)*rgba*s1plx(t_uv, f.gobo[1], f.gobo[2], f.gobo[3]);
 
     return sign(t_uv.x)*rgba*vec4(1);
 
@@ -347,7 +347,21 @@ void main() {
     }
     else if (obj == 2) { 
         
-        for (int i = 0; i < 10; i++)  color = smartmap(id);  
+        for (float i = 0; i < 10; i++)  {
+            
+            Fixture f = fix[id];
+
+            f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/10.0);
+            f.size = mix(fix[id].size,fix2[id].size,i/10.0);
+            f.pos = mix(fix[id].pos,fix2[id].pos,i/10.0);
+            f.r = mix(fix[id].r,fix2[id].r,i/10.0);
+            f.g = mix(fix[id].g,fix2[id].r,i/10.0);
+            f.b = mix(fix[id].b,fix2[id].r,i/10.0);
+            f.alpha = mix(fix[id].alpha,fix2[id].r,i/10.0);
+
+            color += smartmap(f);  
+            
+        }
         
     }
 
