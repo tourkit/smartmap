@@ -262,10 +262,13 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 #include "atlas.hpp"
 #include "ubo.hpp"
 #include "gui.hpp"
+#include "artnet.hpp"
 
 #include "imgui/imgui.h"
 
 int Boilerplate() {  
+
+    Artnet artnet("2.0.0.222");
 
     auto lastTime = glfwGetTime();
 
@@ -289,7 +292,7 @@ int Boilerplate() {
 
     Texture frr(128,64);
     frr.addImage("scare.jpg",100,50);
-    frr.addChar("X",20);
+    
 
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
     UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
@@ -297,7 +300,34 @@ int Boilerplate() {
 
     std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
 
+    std::array<uint8_t,512> dmx;
+    std::array<uint8_t,512> dmx2;
+
+
+    artnet.callback = [&](Artnet* an){
+
+        auto t = dmx2[0];
+
+        memcpy(&dmx2[0], &dmx[0], 512);
+
+
+        std::cout << (GLuint)t << " - " << (GLuint)dmx[0] << std::endl;
+
+    };
+
+
+    artnet.universes[0].callbacks.push_back([&](Artnet::Universe* u){ 
+
+        memcpy(&dmx[0],&u->raw[0],512);
+        
+    });
+    const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
+
     while (true) {
+
+        artnet.run();
+
+        frr.addChar((chars+(int)(debuguniforms[0]*61)),200);
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
