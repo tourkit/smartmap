@@ -35,7 +35,7 @@ struct SmartMap {
 
         uint16_t quantity_x, quantity_y, quantity;
 
-        Texture *buffer, *pass;
+        Texture *buffer, *pass, *FTbuffer;
 
         FrameBuffer *fb;
 

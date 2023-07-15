@@ -67,6 +67,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
 
     buffer = new Texture(FW, FH, 0,1,GL_RGBA8);
     pass = new Texture(FW, FH, 0,1, GL_RGBA8);
+    FTbuffer = new Texture(FW, FH, 0,1, GL_RGBA8,GL_RGB);
+    
     fb = new FrameBuffer(buffer);
 
     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);    
