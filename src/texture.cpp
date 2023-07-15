@@ -2,16 +2,16 @@
 
 Texture::Texture() { pool.push_back(this); }
 
-Texture::Texture(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum format) 
-: Texture() { create(data, width, height, offset_x, offset_y, unit, format); }
+Texture::Texture(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum informat, GLenum outformat) 
+: Texture() { create(data, width, height, offset_x, offset_y, unit, informat, outformat); }
 
 static uint8_t FULLBLACK[4] = {0,0,0,0};
 Texture::Texture(std::string path) : Texture()  {
 
     this->path = path; 
     Image img(path);
-    if (!img.width) create(&FULLBLACK,1,1,0,0,0,GL_RGB8);
-    else create(&img.data[0], img.width, img.height,0,0,0,GL_RGB8);
+    if (!img.width) create(&FULLBLACK,1,1,0,0,0,GL_RGB8,GL_RGB);
+    else create(&img.data[0], img.width, img.height,0,0,0,GL_RGB8,GL_RGB);
 
 } 
 
@@ -25,12 +25,13 @@ void Texture::bind() { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTU
 
 Texture::operator GLuint() { return id; }
 
-void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum format) {
+void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum informat, GLenum outformat) {
 
     this->unit = unit; 
     this->width = width;
-    this->height = height;
-    this->format = format;
+    this->height = height; 
+    this->informat = informat;
+    this->outformat = outformat;
 
     destroy();
 
@@ -40,7 +41,7 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
     
     glBindTexture(GL_TEXTURE_2D, id); 
 
-    glTexStorage2D(GL_TEXTURE_2D, mipmaps, format, width, height);
+    glTexStorage2D(GL_TEXTURE_2D, mipmaps, informat, width, height);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -63,7 +64,7 @@ void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GL
     
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-    glTexSubImage2D(GL_TEXTURE_2D,0,offset_x,offset_y,width,height,GL_RGB,GL_UNSIGNED_BYTE,data);
+    glTexSubImage2D(GL_TEXTURE_2D,0,offset_x,offset_y,width,height,outformat,GL_UNSIGNED_BYTE,data);
 
     glGenerateMipmap(GL_TEXTURE_2D);
 
