@@ -19,6 +19,8 @@ Artnet::Artnet(const char* ip) {
 
         for (auto cb:u->callbacks) cb(u);  
 
+        if (((Artnet*)_this)->listening.size()) if (p->data.admx.universe == ((Artnet*)_this)->listening.back()) ((Artnet*)_this)->callback((Artnet*)_this);
+
         return 1;   
 
     }, this);

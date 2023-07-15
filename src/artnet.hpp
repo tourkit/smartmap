@@ -34,6 +34,10 @@ struct Artnet {
   artnet_node artnet;
   std::map<uint16_t, Universe> universes;
 
+  std::vector<uint16_t> listening = {0};
+
+  std::function<void(Artnet*)> callback = [](Artnet *_this){  std::cout << (unsigned int)_this->universes[0].raw[0] << std::endl; };
+
   Artnet(const char* ip);
 
   ~Artnet();
