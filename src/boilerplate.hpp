@@ -265,27 +265,8 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 #include "imgui/imgui.h"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 int Boilerplate() {  
 
-  FT_Library library;
-  FT_Init_FreeType(&library);
-  
-  FT_Face face;
-  FT_New_Face(library, "C:/msys64/home/SysErr/old/smartmap/assets/Anonymous.ttf", 0, &face); 
-
-  FT_Set_Pixel_Sizes(face, 0, 48);
-  
-  FT_GlyphSlot slot = face->glyph;
-  FT_Load_Char(face, 'A', FT_LOAD_RENDER);
-
-
-
-
-  
-    
     auto lastTime = glfwGetTime();
 
     Window window(false,width,height,pos_x,pos_y);
@@ -303,28 +284,26 @@ int Boilerplate() {
     
     Texture tex("boy.jpg");
 
-    // image1.jpg 800 339 0 0
-
     Atlas atlas("assets/media/");
     atlas.link(&shader);
 
-    Texture frr(slot->bitmap.buffer,slot->bitmap.width,slot->bitmap.rows,0,0,0,GL_RGB8,GL_RED);
-    frr.fromImage("scare.jpg",4,8);
+    Texture frr(128,64);
+    frr.addImage("scare.jpg",100,50);
+    frr.addChar("X",20);
 
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
     UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
     matriceUBO.update(&mat[0][0],mat.size()*16); 
 
     std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
-    debuguniforms[0] = slot->bitmap.width;
 
     while (true) {
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         survey_count = 0;
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset(); atlas.link(&shader); matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); }); 
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); });  // atlas.link(&shader);
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); });  // atlas.link(&shader);
 
 
         glfwPollEvents();
@@ -349,12 +328,6 @@ int Boilerplate() {
         glfwSwapBuffers(window.window);
 
     }
-
-    
-  FT_Done_Face(face);
-  FT_Done_FreeType(library);
-
-
 
 } 
 
