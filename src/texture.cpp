@@ -3,9 +3,7 @@
 Texture::Texture() { pool.push_back(this); }
 
 Texture::Texture(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, GLenum format) 
-: Texture() { create(data, width, height, offset_x, offset_y, unit, format); 
-
-    this->format = format; }
+: Texture() { create(data, width, height, offset_x, offset_y, unit, format); }
 
 static uint8_t FULLBLACK[4] = {0,0,0,0};
 Texture::Texture(std::string path) : Texture()  {
@@ -32,6 +30,7 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
     this->unit = unit; 
     this->width = width;
     this->height = height;
+    this->format = format;
 
     destroy();
 
@@ -51,6 +50,7 @@ void Texture::create(void* data, GLuint width, GLuint height, GLuint offset_x, G
     glActiveTexture(GL_TEXTURE0); 
 
     if (data) write(data, width, height, offset_x, offset_y);
+
 
 }
 
