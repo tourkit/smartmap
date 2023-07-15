@@ -306,12 +306,11 @@ int Boilerplate() {
 
     artnet.callback = [&](Artnet* an){
 
-        auto t = dmx2[0];
+        std::cout << (GLuint)dmx2[0] ;
 
         memcpy(&dmx2[0], &dmx[0], 512);
 
-
-        std::cout << (GLuint)t << " - " << (GLuint)dmx[0] << std::endl;
+        std::cout << " - " << (GLuint)dmx[0] << std::endl;
 
     };
 
@@ -321,6 +320,7 @@ int Boilerplate() {
         memcpy(&dmx[0],&u->raw[0],512);
         
     });
+
     const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
 
     while (true) {
