@@ -1,9 +1,21 @@
 #include "texture.hpp" 
 
 
-Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat)
+Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
 
-    : unit(unit), width(width), height(height), informat(informat), outformat(outformat), mipmaps(mipmaps) {
+    create(width,height,unit,mipmaps,informat,outformat);
+
+}
+
+void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+
+    this->unit = unit;
+    this->width = width;
+    this->height = height;
+    this->informat = informat;
+    this->outformat = outformat;
+    this->mipmaps = mipmaps;
+
 
     pool.push_back(this); 
 
@@ -22,11 +34,13 @@ Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum i
 
     glActiveTexture(GL_TEXTURE0); 
 
+    std::cout << "NIOU--------------------------------" << std::endl;
+
 }
 
-Texture::Texture(void* data, GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat)  
+Texture::Texture(void* data, GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) { 
 
-    : Texture(width,height,unit,mipmaps,informat,outformat) { 
+        create(width,height,unit,mipmaps,informat,outformat);
         
         write(data, width, height, 0, 0, unit, 1, informat, outformat); 
         
@@ -38,9 +52,11 @@ Texture::Texture(std::string path)   {
 
     if (!img.width) { std::cout << "error in Texture creation" << std::endl; return; }
     
-    Texture(img.width, img.height);
+    create(img.width, img.height,0,1,GL_RGB8,GL_RGB);
 
     write(&img.data[0], img.width, img.height,0, 0,0,1,GL_RGB8,GL_RGB);
+
+    std::cout << "DROPUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
 
  }
 

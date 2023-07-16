@@ -23,6 +23,8 @@ struct Texture {
     
     ~Texture();
 
+    void create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat);
+
     void write(void* data, GLuint width, GLuint height, GLuint offset_x = 0 , GLuint offset_y = 0, GLuint unit = 0, int mipmaps = 1, GLenum informat = GL_RGB8, GLenum outformat = GL_RGB);
 
     void addImage(std::string path, GLuint offset_x = 0, GLuint offset_y= 0);
