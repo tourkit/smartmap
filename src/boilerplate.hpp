@@ -316,12 +316,10 @@ int Boilerplate() {
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
         fb1.clear();
-        shader.sendUniform("iResolution", 200,100);
         quad1.draw(3);
 
         buff1.bind();
         fb2.clear();
-        shader.sendUniform("iResolution", 400,200);
         quad0.draw();
 
         gui.newframe();

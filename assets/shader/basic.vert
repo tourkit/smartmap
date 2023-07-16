@@ -10,18 +10,18 @@ layout (location = 3) in int OBJ;
 out vec2 uv;
 flat out int id;
 flat out int obj;
-flat out vec2 iResolution2;
+flat out vec2 FBResolution;
 flat out float FBratio;
-
 
 void main() { 
     
     uv = TEX;
+
     obj = OBJ;
 
     FBratio = RES.x/RES.y;
 
-    iResolution2 = vec2(RES.x, RES.y);
+    FBResolution = vec2(RES.x, RES.y);
     
     id = gl_InstanceID;
 
