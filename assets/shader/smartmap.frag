@@ -179,6 +179,9 @@ vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle) {
     if (ratio > 1.) AR.x = ratio;
     else AR.y = ratio;
 
+    pos*=vec2(1)+size;
+    pos-=size*.5;
+
     texcoord -= pos; 
     texcoord = rotate(texcoord*AR,angle)*(1./AR);
     texcoord /= size;
