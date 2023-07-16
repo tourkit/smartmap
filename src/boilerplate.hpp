@@ -273,8 +273,7 @@ int Boilerplate() {
     atlas.link(&shader);
 
     Texture frr(200,200);
-    frr.addChar("A",100);
-    // frr.addImage("scare.jpg",100,50);
+    frr.addImage("scare.jpg",100,50);
     
 
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
@@ -296,7 +295,7 @@ int Boilerplate() {
         
         artnet.run();
         
-        // frr.addChar((chars+(int)(debuguniforms[0]*61)),100);
+        frr.addChar((chars+(int)(debuguniforms[0]*61)),100);
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
