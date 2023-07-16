@@ -272,7 +272,8 @@ int Boilerplate() {
     Atlas atlas("assets/media/");
     atlas.link(&shader);
 
-    // Texture frr(128,64);
+    Texture frr(200,200);
+    frr.addChar("A",100);
     // frr.addImage("scare.jpg",100,50);
     
 
@@ -295,7 +296,7 @@ int Boilerplate() {
         
         artnet.run();
         
-        // frr.addChar((chars+(int)(debuguniforms[0]*61)),200);
+        // frr.addChar((chars+(int)(debuguniforms[0]*61)),100);
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
