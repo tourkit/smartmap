@@ -19,6 +19,8 @@ struct VBO {
 
     GLuint vao=0, vbo,ibo, id;
 
+    uint16_t width, height;
+
     ~VBO(); 
 
     void import(std::string path);
@@ -27,7 +29,7 @@ struct VBO {
     void destroy();
     void reset();
 
-    VBO(std::string path = "quad.obj", int id = 0) ;
+    VBO(std::string path = "quad.obj", int id = 0, uint16_t width=1, uint16_t height=1) ;
 
     void draw(int count = 1);
 

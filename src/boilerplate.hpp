@@ -7,7 +7,7 @@
 
 #pragma once
 
-unsigned int width = 400, height = 200, pos_x = 2560-width, pos_y = 0;
+unsigned int width = 400, height = 200, pos_x = 2560-400, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
 #define BOILNO
@@ -263,17 +263,23 @@ int Boilerplate() {
     
     GUI gui(window.window);
 
-    VBO quad("quad.obj",2);
+    VBO quad0("quad.obj",0, 400, 200);
+    VBO quad1("quad.obj",1, 200, 100);
 
     ShaderProgram shader({"basic.vert", "basic.frag"});
-    
-    Texture tex("boy.jpg");
+
+    Texture buff1(200,100);
+    FrameBuffer fb1(&buff1);
+
+    FrameBuffer fb2(0,400,200);
+
+    // Texture tex("boy.jpg");
 
     Atlas atlas("assets/media/");
     atlas.link(&shader);
 
-    Texture frr(200,200);
-    frr.addImage("scare.jpg",100,50);
+    // Texture frr(200,200);
+    // frr.addImage("scare.jpg",100,50);
     
 
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
@@ -290,12 +296,13 @@ int Boilerplate() {
 
     while (true) {
 
+
         if (glfwGetTime() - lastTime <= 1./60 ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
         lastTime = glfwGetTime();
         
         artnet.run();
         
-        frr.addChar((chars+(int)(debuguniforms[0]*61)),100);
+        // frr.addChar((chars+(int)(debuguniforms[0]*61)),100);
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
@@ -308,11 +315,21 @@ int Boilerplate() {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-        // frr.bind();
-        quad.draw(3);
+        fb1.clear();
+        shader.sendUniform("iResolution", 200,100);
+        quad1.draw(3);
+
+        buff1.bind();
+        fb2.clear();
+        shader.sendUniform("iResolution", 400,200);
+        quad0.draw();
+
         gui.newframe();
 
         ImGui::Begin("test");
+
+        // ImGui::SliderInt2(("resize framebuffer ", &debuguniforms[i], 0,1); 
+
         for (int i = 0; i < debuguniforms.size(); i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0,1); 
         ImGui::End();
 

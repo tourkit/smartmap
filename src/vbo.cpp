@@ -3,7 +3,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-VBO::VBO(std::string path, int id) : path(path) , id(id) {  VBO::pool.push_back(this);   import(path); };
+VBO::VBO(std::string path, int id, uint16_t width, uint16_t height) : path(path) , id(id), width(width), height(height) {  VBO::pool.push_back(this);  import(path); };
 
 VBO::~VBO()  { destroy(); }
 
@@ -57,7 +57,6 @@ void VBO::import(std::string path) {
 
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
-    float clip_x = -1, clip_y = 1;
 
     Assimp::Importer importer;
 
@@ -77,7 +76,7 @@ void VBO::import(std::string path) {
         vertices.push_back({
             vertex.x,vertex.y, 
             mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, 
-            clip_x, clip_y, 
+            (float)this->width, (float)this->height, 
             this->id
         });
     

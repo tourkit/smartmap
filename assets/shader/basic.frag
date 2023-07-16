@@ -29,8 +29,13 @@ vec2 rotate(vec2 v, float a) {
     return v * mat2(c, -s, s, c);
 }
 
-vec2 iResolution = vec2(400,200);
+uniform vec2 iResolution = vec2(1);
+flat in vec2 iResolution2;
+
+flat in float FBratio;
+
 flat in int id;
+flat in int obj;
 struct Rect { vec2 size,pos; };
 
 vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle, vec2 AR) {
@@ -62,8 +67,12 @@ Rect mat[3] = {
 };
 
 void main() { 
+// color = vec4(1,0,0,1); return; 
+    vec2 uv = gl_FragCoord.xy/iResolution2.xy;
+    if (obj==0) { color = texture(buff, uv); return; }
 
-    vec2 uv = gl_FragCoord.xy/iResolution.xy;
+    // if (obj==1) { color = vec4(1,0,0,1); return; }
+
 
     if(id == 0) { color = vec4(vec3(uv.y+uv.x)*.5,1); }
 
@@ -87,7 +96,7 @@ void main() {
 
 
     vec2 AR = vec2(1.);
-    float ratio = iResolution.x/iResolution.y;
+    float ratio = iResolution2.x/iResolution2.y;
     if (ratio > 1.) AR.x = ratio;
     else AR.y = ratio;
 

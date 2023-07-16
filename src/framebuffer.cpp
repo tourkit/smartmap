@@ -19,7 +19,7 @@ FrameBuffer::FrameBuffer(Texture *tex) {  glGenFramebuffers(1, &id);
  
 }
 
-void FrameBuffer::bind() { glViewport(0,0,width,height); glBindFramebuffer(GL_FRAMEBUFFER, id);}
+void FrameBuffer::bind() { glViewport(0,0,width,height); glBindFramebuffer(GL_FRAMEBUFFER, id); }
 
 void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {
     
