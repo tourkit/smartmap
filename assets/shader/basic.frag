@@ -30,15 +30,10 @@ vec2 rotate(vec2 v, float a) {
 }
 
 vec2 iResolution = vec2(400,200);
+flat in int id;
+struct Rect { vec2 size,pos; };
 
-vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle) {
-
-    vec2 AR = vec2(1.);
-
-    float ratio = iResolution.x/iResolution.y; // screen size;
-
-    if (ratio > 1.) AR.x = ratio;
-    else AR.y = ratio;
+vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle, vec2 AR) {
 
     texcoord -= pos; 
     texcoord = rotate(texcoord*AR,angle)*(1./AR);
@@ -52,48 +47,57 @@ vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle) {
 }
 
 
-flat in int id;
 
-struct Rect { vec2 size,pos; };
+vec2 size = vec2(debug0,debug1);
+vec2 pos = vec2(debug2,debug3);
 
-
-
-float col = 1./2;
+float col = 1./3;
 
 Rect mat[3] = {
 
-
-    Rect(vec2(col),vec2(0*col)),
-    Rect(vec2(col),vec2(1*col)),
-    Rect(vec2(col),vec2(2*col))
+    Rect(vec2(col),vec2(0*col,0*col)),
+    Rect(vec2(col),vec2(0*col,1*col)),
+    Rect(vec2(col),vec2(1*col,1*col))
 
 };
 
-
 void main() { 
 
-    vec2 size = vec2(debug0,1);
-    vec2 pos = vec2(debug1,.5);
+    vec2 uv = gl_FragCoord.xy/iResolution.xy;
 
-    if(id == 0) {
+    if(id == 0) { color = vec4(vec3(uv.y+uv.x)*.5,1); }
+
+    // CLIP
+    if ( uv.x < mat[id].pos.x  || uv.x > mat[id].pos.x+mat[id].size.x || uv.y < mat[id].pos.y|| uv.y > mat[id].pos.y+mat[id].size.y) return; 
+
+    if(id != 1) {
 
         size=vec2(1);
         pos=vec2(.5);
 
     }
 
-    pos*=vec2(1+size.x,1);
-    pos -= vec2(size.x*.5,0);
+    pos*=vec2(1)+size;
+    pos -= size*.5;
 
     size*=mat[id].size;
     pos*=mat[id].size;
     pos+=mat[id].pos;
 
+
+
+    vec2 AR = vec2(1.);
+    float ratio = iResolution.x/iResolution.y;
+    if (ratio > 1.) AR.x = ratio;
+    else AR.y = ratio;
+
     float angle = 0;
 
-    vec2 t_uv = gl_FragCoord.xy/iResolution.xy;
-    t_uv = sign(rectangle(t_uv, size, pos, angle))*.5; 
-    color = vec4(t_uv,0,1); 
+
+
+    uv = sign(rectangle(uv, size, pos, angle, AR))*.5; 
+
+    color += vec4(uv,0,1); 
 
 
     // color = texture(buff,uv)+vec4(uv.x,0,0,1)+texture(mediasAtlas,uv);
