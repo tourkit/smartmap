@@ -280,7 +280,7 @@ int Boilerplate() {
     UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
     matriceUBO.update(&mat[0][0],mat.size()*16); 
 
-    std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
+    std::vector<float> debuguniforms{1,.5,0,0,0,0,0,0,0,0,0,0,0,0};
 
     std::array<uint8_t,512> dmx;
     std::array<uint8_t,512> dmx2;
@@ -309,11 +309,11 @@ int Boilerplate() {
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
         // frr.bind();
-        quad.draw();
+        quad.draw(2);
         gui.newframe();
 
         ImGui::Begin("test");
-        for (int i = 0; i < debuguniforms.size(); i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0, 1); 
+        for (int i = 0; i < debuguniforms.size(); i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0,1); 
         ImGui::End();
 
         gui.render();
