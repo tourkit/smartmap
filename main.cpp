@@ -17,7 +17,7 @@ int main() {
     
     SmartMap::Fixture basic = {
         {1},{1},{1},{1},    // DIM RGB
-        {2,-1,1},{2,-1,1},  // POSITION
+        {2},{2},  // POSITION
         {2},{2},            // FOCUS
         {1},{1},{1},{1},    // GOBO
         {1,0,360*(M_PI / 180.0)},{1},{1}, // BEAM : Orientation, Strobe, Feedback
