@@ -25,21 +25,6 @@ unsigned int width = 400, height = 200, pos_x = 2560-width, pos_y = 0;
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-
-void debug() {
-
-GLenum code = glGetError();
-
-  if (code == GL_NO_ERROR) return;
-
-  std::string code_string = "unknown";
-
-  if (GL_errors.find(code) != GL_errors.end()) code_string  = GL_errors[code];
-
-  std::cout << code_string << std::endl;
-
-}
-
 int Boilerplate() {  
 
     // SET OPENGL
@@ -169,13 +154,10 @@ int Boilerplate() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-    glBindTexture(GL_TEXTURE_2D, tex);
-    
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+    glBindTexture(GL_TEXTURE_2D, tex);
     glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img.width, img.height,GL_RED,GL_UNSIGNED_BYTE,img.buffer);
-
     glGenerateMipmap(GL_TEXTURE_2D);
 
     Image img2("container.jpg");
@@ -290,8 +272,8 @@ int Boilerplate() {
     Atlas atlas("assets/media/");
     atlas.link(&shader);
 
-    Texture frr(128,64);
-    frr.addImage("scare.jpg",100,50);
+    // Texture frr(128,64);
+    // frr.addImage("scare.jpg",100,50);
     
 
     std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
@@ -304,23 +286,6 @@ int Boilerplate() {
     std::array<uint8_t,512> dmx2;
 
 
-    artnet.callback = [&](Artnet* an){
-
-        // std::cout << (GLuint)dmx2[0] ;
-
-        // memcpy(&dmx2[0], &dmx[0], 512);
-
-        // std::cout << " - " << (GLuint)dmx[0] << std::endl;
-
-    };
-
-
-    artnet.universes[0].callbacks.push_back([&](Artnet::Universe* u){ 
-
-        memcpy(&dmx[0],&u->raw[0],512);
-        
-    });
-
     const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
 
     while (true) {
@@ -329,25 +294,21 @@ int Boilerplate() {
         lastTime = glfwGetTime();
         
         artnet.run();
-
-        std::cout << (GLuint)dmx2[0] << " - " << (GLuint)dmx[0] << std::endl;
-
-        memcpy(&dmx2[0], &dmx[0], 512);
         
-        frr.addChar((chars+(int)(debuguniforms[0]*61)),200);
+        // frr.addChar((chars+(int)(debuguniforms[0]*61)),200);
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         survey_count = 0;
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); });  // atlas.link(&shader);
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); });  // atlas.link(&shader);
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); atlas.link(&shader); });
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); atlas.link(&shader); });
 
         glfwPollEvents();
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-        frr.bind();
+        // frr.bind();
         quad.draw();
         gui.newframe();
 
