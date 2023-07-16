@@ -38,7 +38,7 @@ struct Window {
 
     bool stopped = false;
 
-    uint16_t width, height, mouse_x, mouse_y, offset_x, offset_y;
+    uint16_t width, height, mouse_x, mouse_y, offset_x, offset_y, max_fps = 60;
 
     Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset_x = 0, uint16_t offset_y = 0);
     
