@@ -47,7 +47,18 @@ int main() {
     // SmartMap::Layer l1(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 2, 1);
     // SmartMap::Layer l2(38, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 1, 1);
     
-    SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 1, 1);
+    SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 2, 2);
+
+    for (int i = 0; i < sm.matriceUBO->data.size()*.25; i++) { 
+
+        auto j = i*4;
+
+        for (int k = 0; k < 4; k++) { std::cout << sm.matriceUBO->data[j+k] << " ";  }
+
+        std::cout << "" << std::endl;
+
+
+     }
 
     sm.render();
  

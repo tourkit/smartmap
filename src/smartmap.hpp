@@ -10,6 +10,37 @@
 #include "gui.hpp"
 #include "artnet.hpp"
 
+struct Quads {
+
+    Quads() { vbo.destroy(); }
+
+    std::vector<uint16_t> list;
+
+    VBO vbo;
+
+    void add(uint16_t id,uint16_t width,uint16_t height) { 
+        
+        list.push_back(id); 
+
+        vbo.import("quad.obj",id,width, height); 
+        
+    }
+
+    void remove(uint16_t id) {  
+
+        for (int i = 0; i < list.size(); i++) if (list[i] == id) {list.erase(list.begin()+i); break;}
+
+        vbo.destroy(); 
+
+        for (auto id:list) vbo.import("quad.obj",id); 
+        
+        vbo.update(); 
+        
+    }
+
+    void draw(uint16_t quantity) { vbo.draw(quantity); }
+
+};
 
 struct SmartMap {
 
@@ -39,6 +70,8 @@ struct SmartMap {
 
         FrameBuffer *fb;
 
+        VBO *quadA, *quadB;
+
         uint16_t chan,uni,attroffset = 0, matoffset = 0;
 
         Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
@@ -47,9 +80,11 @@ struct SmartMap {
 
     Window *window;
 
-    VBO  *quad, *quadA, *quadB;
+    VBO *quad;
 
     FrameBuffer *winFB;
+
+    // Quads* quads1;
 
     // ShaderProgram *blur_x, *blur_y;
 

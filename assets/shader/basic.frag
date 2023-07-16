@@ -37,6 +37,11 @@ flat in int id;
 flat in int obj;
 struct Rect { vec2 size,pos; };
 
+
+vec2 size = vec2(debug0,debug1);
+vec2 pos = vec2(debug2,debug3);
+
+
 vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle, vec2 AR) {
 
     texcoord -= pos; 
@@ -52,9 +57,7 @@ vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle, vec2 AR) {
 
 
 
-vec2 size = vec2(debug0,debug1);
-vec2 pos = vec2(debug2,debug3);
-
+struct Rect { vec2 size,pos; };
 float col = 1./3;
 
 Rect mat[3] = {
@@ -87,17 +90,16 @@ void main() {
 
     pos*=vec2(1)+size;
     pos -= size*.5;
-
     size*=mat[id].size;
     pos*=mat[id].size;
     pos+=mat[id].pos;
-
 
 
     vec2 AR = vec2(1.);
     float ratio = FBResolution.x/FBResolution.y;
     if (ratio > 1.) AR.x = ratio;
     else AR.y = ratio;
+
 
     float angle = 0;
 

@@ -33,18 +33,17 @@ SmartMap::SmartMap() {
     window->setSize(1920,1080);
     window->setSize(1000,500);
     gui = new GUI(window->window);
-    quad = new VBO("quad.obj",0);
-    quadA = new VBO("quad.obj",2);
-    quadB = new VBO("quad.obj",1);
+    quad = new VBO("quad.obj",0,window->width,window->height);
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     shader->use();
     atlas = new Atlas("assets/media/",4096,2048);
     atlas->link(shader);
     winFB = new FrameBuffer(0,window->width,window->height); 
 
-    matriceUBO = new UBO("MatriceUBO", 24*32, {shader->id});  // 24*32 correspond a R
+    matriceUBO = new UBO("MatriceUBO", 4*4, {shader->id});  // 24*32 correspond a R
     fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
     fixtureUBO2 = new UBO("FixtureUBO2", 24*16, {shader->id}); 
+    
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});
@@ -68,10 +67,13 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
     buffer = new Texture(FW, FH, 0,1,GL_RGBA8);
-    pass = new Texture(FW, FH, 0,1, GL_RGBA8);
-    FTbuffer = new Texture(FW, FH, 0,1, GL_RGBA8,GL_RGB);
+    // pass = new Texture(FW, FH, 0,1, GL_RGBA8);
+    // FTbuffer = new Texture(FW, FH, 0,1, GL_RGBA8,GL_RGB);
     
     fb = new FrameBuffer(buffer);
+
+    quadB = new VBO("quad.obj",VBO::pool.size(),width,height);
+    quadA = new VBO("quad.obj",VBO::pool.size(),width,height);
 
     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);    
     memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
@@ -103,18 +105,18 @@ void SmartMap::render() {
 
             layer->fb->clear(); // thus bind
 
-            layer->pass->bind();
+            // layer->pass->bind();
             shader->sendUniform("offset", offset);
             offset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
             shader->sendUniform("MatriceUBOSize", layer->quantity);
 
-            glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
-            quadA->draw(layer->quantity); 
+            // glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
+            layer->quadA->draw(layer->quantity); 
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-            quadB->draw(layer->quantity);
+            // quadB->draw(layer->quantity);
 
-            layer->pass->read(layer->buffer);
+            // layer->pass->read(layer->buffer);
 
             // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
             // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);

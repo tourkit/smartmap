@@ -86,7 +86,7 @@ static std::vector<std::array<float, 4>> matrice(unsigned int x, unsigned int y)
 
     for (int row = 0; row < x; ++row) // for in for not in wrong order for opti ?
       for (int col = 0; col < y; ++col) 
-        mat.push_back({xsize, ysize, xsize * row*2-(1-xsize),  ysize * col*2-(1-ysize)});
+        mat.push_back({xsize, ysize, xsize * row,  ysize * col});
 
     return mat;
 

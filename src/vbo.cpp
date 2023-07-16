@@ -3,12 +3,22 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-VBO::VBO(std::string path, int id, uint16_t width, uint16_t height) : path(path) , id(id), width(width), height(height) {  VBO::pool.push_back(this);  import(path); };
+VBO::VBO(std::string path, int id, uint16_t width, uint16_t height) : path(path) , id(id), width(width), height(height) {  
+    
+    VBO::pool.push_back(this);  
+    
+    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
-VBO::~VBO()  { destroy(); }
+    import(path, id, width, height); 
 
-void VBO::destroy() {
+    update();
+    
+};
 
+VBO::~VBO()  { 
+
+    destroy(); 
+    
     if (!vao) return;
 
     // VBO::pool.resize(0);
@@ -21,6 +31,11 @@ void VBO::destroy() {
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ibo);
     glDeleteVertexArrays(1, &vao);
+
+}
+
+void VBO::destroy() {
+
 
     vertices.resize(0);
     indices.resize(0);
@@ -51,12 +66,7 @@ void VBO::update() {
 
 }
 
-void VBO::import(std::string path) {    
-
-    destroy();
-
-    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
-
+void VBO::import(std::string path, uint16_t id, uint16_t width, uint16_t height) {    
 
     Assimp::Importer importer;
 
@@ -76,7 +86,7 @@ void VBO::import(std::string path) {
         vertices.push_back({
             vertex.x,vertex.y, 
             mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, 
-            (float)this->width, (float)this->height, 
+            (float)width, (float)height, 
             this->id
         });
     
@@ -90,11 +100,6 @@ void VBO::import(std::string path) {
 
 
     }
-
-
-    update();
-
-
 
 }
 

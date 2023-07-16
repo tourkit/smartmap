@@ -9,7 +9,7 @@ struct VBO {
 
     std::string path;
 
-    struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float clip_x,clip_y; GLuint id; }; 
+    struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float dim_x,dim_y; GLuint id; }; 
 
     struct Indice { int a,b,c; }; 
 
@@ -23,7 +23,7 @@ struct VBO {
 
     ~VBO(); 
 
-    void import(std::string path);
+    void import(std::string path, uint16_t id = 0, uint16_t width = 1, uint16_t height = 1);
 
     void update();
     void destroy();

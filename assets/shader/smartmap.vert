@@ -2,7 +2,7 @@
 
 layout (location = 0) in vec2 POSITION;
 layout (location = 1) in vec2 TEXCOORD;
-layout (location = 2) in vec2 CLIPRECT;
+layout (location = 2) in vec2 RESOLUTION;
 layout (location = 3) in int OBJ;
 
 struct Rect { vec2 size, pos; };
@@ -30,6 +30,8 @@ layout(binding = 3, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
 flat out int obj;
 flat out int id;
 out vec2 texcoord;
+flat out vec2 FBResolution;
+flat out float FBratio;
 
 uniform int offset = 0;
 uniform int current_ubo = 0;
@@ -64,6 +66,11 @@ vec2 rotate(vec2 v, float a, vec2 r2) {
 }
 
 void main() {
+
+    FBratio = RESOLUTION.x/RESOLUTION.y;
+
+    FBResolution = vec2(RESOLUTION.x, RESOLUTION.y);
+
     obj = OBJ;
 
     id = gl_InstanceID+offset;
@@ -72,10 +79,10 @@ void main() {
     
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);
     
-    gl_ClipDistance[0] = 1;
-    gl_ClipDistance[1] = 1;
-    gl_ClipDistance[2] = 1;
-    gl_ClipDistance[3] = 1;
+    // gl_ClipDistance[0] = 1;
+    // gl_ClipDistance[1] = 1;
+    // gl_ClipDistance[2] = 1;
+    // gl_ClipDistance[3] = 1;
 
     if (obj == 0) return;
 

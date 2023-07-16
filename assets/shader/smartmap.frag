@@ -300,8 +300,11 @@ vec4 smartmap(Fixture f) {
     vec2 pos = f.pos;
     float angle = debug0;
 
+    
+
     vec2 t_uv = gl_FragCoord.xy/iResolution.xy;
     t_uv = rectangle(t_uv, size, pos, angle); 
+    return vec4(t_uv,0,1);
 
     // return vec4(t_uv,0,1);
 
@@ -325,7 +328,6 @@ vec4 smartmap(Fixture f) {
 
 void main() {
 
-    // color = vec4(1); return; 
 
     if (obj == 0) { 
 
@@ -349,20 +351,22 @@ void main() {
 
     }
     else if (obj == 2) { 
+
+        if (id!= 0) { color = vec4(0); return; }
         
-        for (float i = 0; i < 10; i++)  {
+        for (float i = 0; i < 1; i++)  {
             
             Fixture f = fix[id];
 
-            f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/10.0);
-            f.size = mix(fix[id].size,fix2[id].size,i/10.0);
-            f.pos = mix(fix[id].pos,fix2[id].pos,i/10.0);
-            f.r = mix(fix[id].r,fix2[id].r,i/10.0);
-            f.g = mix(fix[id].g,fix2[id].r,i/10.0);
-            f.b = mix(fix[id].b,fix2[id].r,i/10.0);
-            f.alpha = mix(fix[id].alpha,fix2[id].r,i/10.0);
+            // f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/10.0);
+            // f.size = mix(fix[id].size,fix2[id].size,i/10.0);
+            // f.pos = mix(fix[id].pos,fix2[id].pos,i/10.0);
+            // f.r = mix(fix[id].r,fix2[id].r,i/10.0);
+            // f.g = mix(fix[id].g,fix2[id].r,i/10.0);
+            // f.b = mix(fix[id].b,fix2[id].r,i/10.0);
+            // f.alpha = mix(fix[id].alpha,fix2[id].r,i/10.0);
 
-            color += smartmap(f);  
+            color = smartmap(f);  
             
         }
         
