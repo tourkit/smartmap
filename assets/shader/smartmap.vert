@@ -112,8 +112,8 @@ void main() {
 
     } else if (obj  == 1) {
 
-        // gl_Position.xy *= mat[id].size;
-        // gl_Position.xy += mat[id].pos;
+        gl_Position.xy *= mat[id].size;
+        gl_Position.xy += mat[id].pos;
 
         texcoord = gl_Position.xy*.5+.5;
 

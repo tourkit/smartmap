@@ -111,10 +111,11 @@ void SmartMap::render() {
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
             shader->sendUniform("MatriceUBOSize", layer->quantity);
 
-            glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
+            shader->sendUniform("iResolution", layer->width, layer->height);
+            // glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
             layer->quadA->draw(layer->quantity); 
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-            layer->quadB->draw(layer->quantity);
+            // layer->quadB->draw(layer->quantity);
 
             layer->pass->read(layer->buffer);
 
@@ -124,6 +125,7 @@ void SmartMap::render() {
             // blur_y->use(FW*.5/16,FH*.5/16);
             // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
             
+            shader->sendUniform("iResolution", window->width, window->height);
             winFB->bind(); 
             layer->buffer->bind();
             shader->use();

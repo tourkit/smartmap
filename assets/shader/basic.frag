@@ -78,15 +78,15 @@ void main() {
 
     if(id == 0) { color = vec4(vec3(uv.y+uv.x)*.5,1); }
 
-    // CLIP
-    if ( uv.x < mat[id].pos.x  || uv.x > mat[id].pos.x+mat[id].size.x || uv.y < mat[id].pos.y|| uv.y > mat[id].pos.y+mat[id].size.y) return; 
+    // // CLIP
+    // if ( uv.x < mat[id].pos.x  || uv.x > mat[id].pos.x+mat[id].size.x || uv.y < mat[id].pos.y|| uv.y > mat[id].pos.y+mat[id].size.y) return; 
 
-    if(id != 1) {
+    // if(id != 1) {
 
-        size=vec2(1);
-        pos=vec2(.5);
+    //     size=vec2(1);
+    //     pos=vec2(.5);
 
-    }
+    // }
 
     pos*=vec2(1)+size;
     pos -= size*.5;
