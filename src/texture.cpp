@@ -34,8 +34,6 @@ void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLen
 
     glActiveTexture(GL_TEXTURE0); 
 
-    std::cout << "NIOU--------------------------------" << std::endl;
-
 }
 
 Texture::Texture(void* data, GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) { 
