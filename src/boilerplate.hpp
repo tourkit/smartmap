@@ -306,11 +306,11 @@ int Boilerplate() {
 
     artnet.callback = [&](Artnet* an){
 
-        std::cout << (GLuint)dmx2[0] ;
+        // std::cout << (GLuint)dmx2[0] ;
 
-        memcpy(&dmx2[0], &dmx[0], 512);
+        // memcpy(&dmx2[0], &dmx[0], 512);
 
-        std::cout << " - " << (GLuint)dmx[0] << std::endl;
+        // std::cout << " - " << (GLuint)dmx[0] << std::endl;
 
     };
 
@@ -325,8 +325,15 @@ int Boilerplate() {
 
     while (true) {
 
+        if (glfwGetTime() - lastTime <= 1./60 ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
+        lastTime = glfwGetTime();
+        
         artnet.run();
 
+        std::cout << (GLuint)dmx2[0] << " - " << (GLuint)dmx[0] << std::endl;
+
+        memcpy(&dmx2[0], &dmx[0], 512);
+        
         frr.addChar((chars+(int)(debuguniforms[0]*61)),200);
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
@@ -335,12 +342,7 @@ int Boilerplate() {
         survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); });  // atlas.link(&shader);
         survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); });  // atlas.link(&shader);
 
-
         glfwPollEvents();
-
-        if (glfwGetTime() - lastTime <= 1./280. ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
-
-        lastTime = glfwGetTime();
 
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
