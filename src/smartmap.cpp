@@ -67,7 +67,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
     buffer = new Texture(FW, FH, 0,1,GL_RGBA8);
-    // pass = new Texture(FW, FH, 0,1, GL_RGBA8);
+    pass = new Texture(FW, FH, 0,1, GL_RGBA8);
     // FTbuffer = new Texture(FW, FH, 0,1, GL_RGBA8,GL_RGB);
     
     fb = new FrameBuffer(buffer);
@@ -105,18 +105,18 @@ void SmartMap::render() {
 
             layer->fb->clear(); // thus bind
 
-            // layer->pass->bind();
+            layer->pass->bind();
             shader->sendUniform("offset", offset);
             offset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
             shader->sendUniform("MatriceUBOSize", layer->quantity);
 
-            // glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
+            glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
             layer->quadA->draw(layer->quantity); 
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-            // quadB->draw(layer->quantity);
+            layer->quadB->draw(layer->quantity);
 
-            // layer->pass->read(layer->buffer);
+            layer->pass->read(layer->buffer);
 
             // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
             // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);

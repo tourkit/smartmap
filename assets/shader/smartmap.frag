@@ -168,13 +168,16 @@ vec2 rotate(vec2 v, float a) {
     return v * mat2(c, -s, s, c);
 }
 
-vec2 iResolution = vec2(1000,500);
+
+
+flat in vec2 FBResolution;
+flat in float FBratio;
 
 vec2 rectangle(vec2 texcoord, vec2 size, vec2 pos, float angle) {
 
     vec2 AR = vec2(1.);
 
-    float ratio = iResolution.x/iResolution.y; // screen size;
+    float ratio = FBResolution.x/FBResolution.y; // screen size;
 
     if (ratio > 1.) AR.x = ratio;
     else AR.y = ratio;
@@ -302,9 +305,9 @@ vec4 smartmap(Fixture f) {
 
     
 
-    vec2 t_uv = gl_FragCoord.xy/iResolution.xy;
+    vec2 t_uv = gl_FragCoord.xy/FBResolution.xy;
     t_uv = rectangle(t_uv, size, pos, angle); 
-    return vec4(t_uv,0,1);
+    // return vec4(t_uv,0,1);
 
     // return vec4(t_uv,0,1);
 
@@ -358,15 +361,15 @@ void main() {
             
             Fixture f = fix[id];
 
-            // f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/10.0);
-            // f.size = mix(fix[id].size,fix2[id].size,i/10.0);
-            // f.pos = mix(fix[id].pos,fix2[id].pos,i/10.0);
-            // f.r = mix(fix[id].r,fix2[id].r,i/10.0);
-            // f.g = mix(fix[id].g,fix2[id].r,i/10.0);
-            // f.b = mix(fix[id].b,fix2[id].r,i/10.0);
-            // f.alpha = mix(fix[id].alpha,fix2[id].r,i/10.0);
+            f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/10.0);
+            f.size = mix(fix[id].size,fix2[id].size,i/10.0);
+            f.pos = mix(fix[id].pos,fix2[id].pos,i/10.0);
+            f.r = mix(fix[id].r,fix2[id].r,i/10.0);
+            f.g = mix(fix[id].g,fix2[id].r,i/10.0);
+            f.b = mix(fix[id].b,fix2[id].r,i/10.0);
+            f.alpha = mix(fix[id].alpha,fix2[id].r,i/10.0);
 
-            color = smartmap(f);  
+            color += smartmap(f);  
             
         }
         
