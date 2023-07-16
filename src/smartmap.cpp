@@ -50,19 +50,9 @@ SmartMap::SmartMap() {
     // blur_y = new ShaderProgram({"blur_y.comp"});
     // basic = new ShaderProgram({"test.frag", "basic.vert"});
     // outBlur = new Texture(nullptr, FW*.5,FH*.5); 
-    // outBlur->format = GL_RGBA8; 
+    // outBlur->format = GL_RGBA8;
 
-    bool current_ubo = 1; 
-
-    artnet->callback = [&](Artnet* an){
-
-        std::cout << fixtureUBO2->data[0];  
-
-        fixtureUBO->update(&fixtureUBO2->data[0],fixtureUBO->data.size()*4);
-        memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
-        fixtureUBO->update();
-        
-    };
+    artnet->callback = [&](Artnet* an){ fixtureUBO->update(); };
 
 }
 
@@ -88,11 +78,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     matriceUBO->update(); 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
     
-    artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ 
-        
-        u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]);
-        
-    });
+    artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); });
 
 }
 
@@ -105,6 +91,9 @@ void SmartMap::render() {
         for (int i = 0; i < 10; i++) shader->sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         artnet->run(); 
+
+        memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
+        fixtureUBO2->update();
 
         winFB->clear(); 
 
@@ -263,8 +252,6 @@ void SmartMap::render() {
             survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
 
         }
-
-        memcpy(&fixtureUBO->data[0],&fixtureUBO2->data[0],fixtureUBO->data.size()*4);
         
     }); 
 
