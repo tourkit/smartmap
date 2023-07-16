@@ -56,10 +56,12 @@ SmartMap::SmartMap() {
 
     artnet->callback = [&](Artnet* an){
 
-        // fixtureUBO2->update(&fixtureUBO->data[0],fixtureUBO->data.size()*4);
-        // memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
-        // fixtureUBO->update();
+        std::cout << fixtureUBO2->data[0];  
 
+        fixtureUBO->update(&fixtureUBO2->data[0],fixtureUBO->data.size()*4);
+        memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
+        fixtureUBO->update();
+        
     };
 
 }
@@ -89,8 +91,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ 
         
         u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]);
-
-        // fixtureUBO->update();
         
     });
 
@@ -263,6 +263,8 @@ void SmartMap::render() {
             survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
 
         }
+
+        memcpy(&fixtureUBO->data[0],&fixtureUBO2->data[0],fixtureUBO->data.size()*4);
         
     }); 
 
