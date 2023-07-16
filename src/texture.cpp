@@ -54,15 +54,13 @@ Texture::Texture(std::string path)   {
 
     write(&img.data[0], img.width, img.height,0, 0,0,1,GL_RGB8,GL_RGB);
 
-    std::cout << "DROPUUUUUUUUUUUUUUUUUUUUUUUU" << std::endl;
-
  }
 
 void Texture::addChar(const char* chr,  int size, GLuint offset_x, GLuint offset_y) { 
 
     FT fr(chr, size);
 
-     write(fr.buffer, fr.width, fr.height,offset_x, offset_y,0,1,GL_RGB8,GL_RED); 
+    write(fr.buffer, fr.width, fr.height,offset_x, offset_y,0,1,GL_RGB8,GL_RED); 
 
 }
 
