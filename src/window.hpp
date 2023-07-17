@@ -48,8 +48,6 @@ struct Window {
 
     ~Window();
 
-    void createView(int8_t windows_border = 1, int8_t window_on_top = 0, int8_t cursor_visibility = 1, int8_t uid_callbacks = 0);
-
     void render(std::function<void()> callback = [](){});
 
     void initUidCallbacks();

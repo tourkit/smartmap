@@ -45,7 +45,6 @@ SmartMap::SmartMap() {
     fixtureUBO = new UBO("FixtureUBO", 24*100, {shader->id}); 
     fixtureUBO2 = new UBO("FixtureUBO2", 24*100, {shader->id}); 
     
-    
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});
     // basic = new ShaderProgram({"test.frag", "basic.vert"});
@@ -67,16 +66,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     GLuint FW = width*scale, FH = height*scale;
     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
-    quadB = new VBO("quad.obj",VBO::pool.size(), FW, FH);
-    quadA = new VBO("quad.obj",VBO::pool.size(), FW, FH);
-
-    buffer = new Texture(FW, FH, 0,1,GL_RGB8);
-    pass = new Texture(FW, FH, 0,1, GL_RGB8);
-    // FTbuffer = new Texture(FW, FH, 0,1, GL_RGBA8,GL_RGB);
-    
-    fb = new FrameBuffer(buffer);
-
-
     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);    
     memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
     matriceUBO->update(); 
@@ -87,7 +76,49 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     matriceUBO2->update(); 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
     
-    artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); });
+
+    quadB = new VBO("quad.obj",VBO::pool.size(), FW, FH);
+    quadA = new VBO("quad.obj",VBO::pool.size(), FW, FH);
+
+    buffer = new Texture(FW, FH, 0,1,GL_RGB8);
+    pass = new Texture(FW, FH, 0,1, GL_RGB8);
+    FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
+
+    black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
+    memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
+
+    fb = new FrameBuffer(buffer);
+    
+    artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ 
+        
+        u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); 
+
+        const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
+
+        for (int i = 0; i < this->quantity; i++) { 
+
+            int w = *(8+&fixtureUBO->data[this->attroffset]+(i*this->fixture.size()))*255;
+
+            if (w == 19) {
+
+                float *l = &matriceUBO->data[i*4+this->matoffset];
+                int x = *(9+&fixtureUBO->data[this->attroffset]+(i*this->fixture.size()))*(strlen(chars)-1);
+
+                FT fr((chars+x), (this->height/this->quantity_y)*.9);
+
+                GLuint offset_x = this->width**(l+2)+(((this->width/this->quantity_x)-fr.width)*.5);
+
+                this->FTbuffer->write(&black[0], l[0]*this->buffer->width,l[1]*this->buffer->height,this->buffer->width*l[2],this->buffer->height*l[3],0,1,GL_R8,GL_RED); 
+                this->FTbuffer->write(fr.buffer, fr.width, fr.height,offset_x,this->height**(l+3),0,1,GL_R8,GL_RED); 
+
+
+
+            }
+            
+
+         }  
+        
+    });
 
 }
 
@@ -103,7 +134,6 @@ void SmartMap::render() {
 
         memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
 
-
         winFB->clear(); 
 
         shader->sendUniform("strobe", frame++%256);
@@ -114,15 +144,16 @@ void SmartMap::render() {
 
             layer->fb->clear(); // thus bind
 
-            layer->pass->bind();
             shader->sendUniform("offset", offset);
             offset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
             shader->sendUniform("MatriceUBOSize", layer->quantity);
             
+            layer->FTbuffer->bind();
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
             layer->quadA->draw(layer->quantity); 
 
+            layer->pass->bind();
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
             layer->quadB->draw(layer->quantity);
 

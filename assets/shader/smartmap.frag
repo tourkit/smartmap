@@ -343,6 +343,7 @@ void main() {
 
         int gobo_id = int(fix[id].gobo[0]*255);
         if (gobo_id == 0) color = vec4(sss)*rgba*vec4(1);
+        if (gobo_id == 19) color = vec4(sss)*rgba*texture(pass,outuv*mat[id].size+mat[id].pos).r;
         if (gobo_id == 8) color = sss*rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
         
         outuv *=2;

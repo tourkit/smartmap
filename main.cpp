@@ -29,6 +29,17 @@ int main() {
     
     // SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 4,2);
 
+    for (int i = 0; i < 5; i++) { 
+
+        auto j = i*4;
+
+        for (int k = 0; k < 4; k++) { std::cout << sm.matriceUBO->data[j+k] << " ";  }
+
+        std::cout << "" << std::endl;
+
+
+     }
+
     sm.render();
  
 }

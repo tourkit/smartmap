@@ -61,7 +61,7 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
 
     glfwMakeContextCurrent(window);
 
-    glfwSwapInterval(1); // VSYNC 
+    glfwSwapInterval(0); // VSYNC 
     
     gl3wInit();
 
@@ -95,17 +95,6 @@ void Window::setSize(uint16_t width, uint16_t height) {
     this->height = height;
     updateSize();
 }
-
-
-void SetTheFrameBufferSize(GLFWwindow* window, int h, int w)
-{
-	// Resize window
-    // [](GLFWwindow* window, int width, int height){  
-        std::cout << w << std::endl;
-        //  }
-
-}
-
 
 
 Window::~Window() { glfwTerminate(); }
@@ -147,7 +136,7 @@ void Window::render(std::function<void()> callback) {
 
     glfwPollEvents();
 
-    // fps.run(max_fps);
+    fps.run(max_fps);
 
     glClearColor(0.0f, 0.0f, 0.1f, 1.0f); // BG COLOR
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
@@ -174,7 +163,7 @@ float FPS::run(float max) {
 
     if (max) while ( get() > max+1) std::this_thread::sleep_for(std::chrono::microseconds(10));
     last_time = current_time;
-    if (fps<max) std::cout << "DROP FRAME " << fps << "fps" << std::endl;
+    if (fps<max) std::cout << "DROP FRAME " << (int)fps << " fps" << std::endl;
     return fps;
 
 }
