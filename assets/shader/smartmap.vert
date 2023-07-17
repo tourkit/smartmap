@@ -19,7 +19,7 @@ struct Fixture {
     float orientation; 
     float feedback; 
     float strobe;  
-    float ratio; 
+    float ratio; // unused for now mostly for alignment
 
 };
 
@@ -29,47 +29,20 @@ layout(binding = 3, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
 
 flat out int obj;
 flat out int id;
-out vec2 texcoord;
 flat out vec2 FBResolution;
-flat out float FBratio;
+
+out vec2 texcoord;
+out float FBratio;
 
 uniform int offset = 0;
-uniform int current_ubo = 0;
-
-uniform float debug0 = 0;
-uniform float debug1 = 0;
-uniform float debug2 = 0;
-uniform float debug3 = 0;
-uniform float debug4 = 0;
-uniform float debug5 = 0;
-uniform float debug6 = 0;
-uniform float debug7 = 0;
-uniform float debug8 = 0;
-uniform float debug9 = 0;
-
-vec2 rotate(vec2 v, float a, vec2 r2) {
-
-    // return v;
-    
-    float ratio = 2*r2.x/r2.y;
-
-    float s = sin(a);
-    float c = cos(a);
-    mat2 m = mat2(c, -s, s, c);
-    
-    vec2 AR = vec2(1.222222222);//1.0f+(1.0f-((1920.0f/1080.0f)-1.0f)));
-
-    if (ratio > 1.) {   AR.x = ratio;  return (m*(v*AR))*(1./AR);  } 
-
-    else { AR.y = ratio; return (m*(v/AR))/(1./AR); }
-
-}
 
 void main() {
 
     FBratio = RESOLUTION.x/RESOLUTION.y;
 
     FBResolution = vec2(RESOLUTION.x, RESOLUTION.y);
+    if (obj  == 0) FBResolution = vec2(1000,500);
+    FBResolution = vec2(2000,1000);
 
     obj = OBJ;
 
@@ -78,46 +51,7 @@ void main() {
     texcoord = TEXCOORD;
     
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);
-    
-    // gl_ClipDistance[0] = 1;
-    // gl_ClipDistance[1] = 1;
-    // gl_ClipDistance[2] = 1;
-    // gl_ClipDistance[3] = 1;
 
-    if (obj == 0) return;
-
-    if (obj  == 2){
-
-        // Fixture fixture = fix[id];
-        // if (current_ubo == 1) { fixture = fix2[id]; }
-
-        // vec2 size = mat[id].size;
-        // size *= fixture.size;
- 
-        // vec2 pos = fixture.pos;
-        // pos *= mat[id].size+size;
-        // pos +=  mat[id].pos;
-
-        // gl_Position.xy = rotate(gl_Position.xy,fixture.orientation,size);
-
-        // gl_Position.xy *= size;
-        // gl_Position.xy += pos;
-        
-        // vec2 mins = mat[id].pos-mat[id].size;
-        // vec2 maxs = mat[id].pos+mat[id].size;
-        // gl_ClipDistance[0] = gl_Position.x-mins.x; 
-        // gl_ClipDistance[1] = maxs.x-gl_Position.x;
-        // gl_ClipDistance[2] = gl_Position.y -mins.y;
-        // gl_ClipDistance[3] = maxs.y-gl_Position.y;
-
-    } else if (obj  == 1) {
-
-        gl_Position.xy *= mat[id].size;
-        gl_Position.xy += mat[id].pos;
-
-        texcoord = gl_Position.xy*.51+.5;
-
-    }
-    
+    if (obj  == 1) gl_Position.xy *= mat[id].size*(.2*10)*vec2(1,-1);
 
 }
