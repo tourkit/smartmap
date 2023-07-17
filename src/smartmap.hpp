@@ -48,6 +48,7 @@ struct SmartMap {
 
     static inline Artnet *artnet;
     static inline UBO *matriceUBO;
+    static inline UBO *matriceUBO2;
     static inline UBO *fixtureUBO; 
     static inline UBO *fixtureUBO2; 
     static inline ShaderProgram *shader;

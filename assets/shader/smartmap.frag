@@ -48,10 +48,12 @@ uniform float debug8 = 0;
 uniform float debug9 = 0;
 
 layout (binding = 0, std140) uniform mediasCoords { Rect[16] mediaCoord;};
-layout(binding = 2, std140) uniform FixtureUBO  { Fixture fix[24];} ;
-layout(binding = 3, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
+layout(binding = 3, std140) uniform FixtureUBO  { Fixture fix[24];} ;
+layout(binding = 4, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
 
-layout(std140) uniform MatriceUBO  { Rect mat[24]; };
+layout(binding = 1, std140) uniform MatriceUBO  { Rect mat[24]; };
+layout(binding = 2, std140) uniform MatriceUBO2  { Rect matrice2[24]; };
+
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
 vec2 rotate(vec2 v, float a) {
@@ -302,13 +304,13 @@ void main() {
          
     }
     
-    // if (id!=1) return;
+    // if (id!=0) return;
     // color = vec4(uv.x); return;
     
     if (mod(obj-1,2) == 0) {
 
         color = texture(pass,uv)-(1-min(.998,fix[id].feedback)); 
-        
+        // color = vec4(1);
         return;
 
     }
@@ -327,15 +329,6 @@ void main() {
             vec2 pos = fix[id].pos;
             if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,i/steps);
 
-            // CLIP
-            if ( uv.x < mat[id].pos.x  || uv.x > mat[id].pos.x+mat[id].size.x || uv.y < mat[id].pos.y|| uv.y > mat[id].pos.y+mat[id].size.y ) continue; 
-
-            pos*=vec2(1)+size;
-            pos -= size*.5;
-            size*=mat[id].size;
-            pos*=mat[id].size;
-            pos+=mat[id].pos;
-
             vec2 AR = vec2(1);
             if (FBratio > 1.) AR.x = FBratio;
             else AR.y = FBratio;
@@ -344,11 +337,11 @@ void main() {
             
         }
 
-        outuv *= .0666;
-
         float sss = sign(outuv.x+outuv.y);
-        
         vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
+        color = rgba*sss; return;
+
+        outuv *= .0666;
 
         int gobo_id = int(fix[id].gobo[0]*255);
 
@@ -362,7 +355,6 @@ void main() {
         if (gobo_id == 7) color = sss*rgba*border(outuv, fix[id].gobo[1]);
         if (gobo_id == 8) color = sss*rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
         if (gobo_id == 9) color = sss*rgba*s1plx(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-
         
     }
 

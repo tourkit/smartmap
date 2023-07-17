@@ -41,6 +41,7 @@ SmartMap::SmartMap() {
     winFB = new FrameBuffer(0,window->width,window->height); 
 
     matriceUBO = new UBO("MatriceUBO", 32*4, {shader->id});  // 24*32 correspond a R
+    matriceUBO2 = new UBO("MatriceUBO2", 32*4, {shader->id});  
     fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
     fixtureUBO2 = new UBO("FixtureUBO2", 24*16, {shader->id}); 
     
@@ -79,6 +80,11 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);    
     memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
     matriceUBO->update(); 
+    shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
+
+    std::vector<std::array<float, 4>> mat2 = matrice2(quantity_x,quantity_y);    
+    memcpy(&matriceUBO2->data[0+matoffset],&mat2[0][0],quantity*16);
+    matriceUBO2->update(); 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
     
     artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); });

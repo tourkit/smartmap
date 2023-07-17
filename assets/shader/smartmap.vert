@@ -24,8 +24,10 @@ struct Fixture {
 };
 
 layout(std140, binding = 1) uniform MatriceUBO  { Rect mat[24]; };
-layout(std140, binding = 2) uniform FixtureUBO  { Fixture fix[24];} ;
-layout(binding = 3, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
+layout(std140, binding = 2) uniform MatriceUBO2  { Rect matrice2[24]; };
+
+layout(std140, binding = 3) uniform FixtureUBO  { Fixture fix[24];} ;
+layout(binding = 4, std140) uniform FixtureUBO2  { Fixture fix2[24];} ;
 
 flat out int obj;
 flat out int id;
@@ -58,13 +60,18 @@ void main() {
     
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);
 
+    if (obj==0) return;
+    
+    if (mod(obj-1,2)  == 1) {
+    
+        gl_Position.xy *= matrice2[id].size;
+        gl_Position.xy += matrice2[id].pos;
+
+    }
     if (mod(obj-1,2)  == 0) {
     
-        gl_Position.xy *= mat[id].size;
-
-        gl_Position.xy -= mat[id].size*(vec2(1/mat[offset].size)-1); // pourrait etre cpp
-        
-        gl_Position.xy += mat[id].pos*2;
+        gl_Position.xy *= matrice2[id].size;
+        gl_Position.xy += matrice2[id].pos;
 
         texcoord = gl_Position.xy*.5+.5;
 
