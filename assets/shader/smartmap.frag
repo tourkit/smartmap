@@ -80,45 +80,6 @@ vec2 rectangle(vec2 uv, vec2 size, vec2 pos, float angle, vec2 AR) {
 }
 
 
-struct Rect { vec2 size,pos; };
-
-vec4 smartmap(Fixture f) {
-
-    vec2 t_uv = gl_FragCoord.xy/FBResolution.xy;
-    // CLIP
-    if ( 
-        t_uv.x < mat[id].pos.x  || t_uv.x > mat[id].pos.x+mat[id].size.x 
-        || t_uv.y < mat[id].pos.y|| t_uv.y > mat[id].pos.y+mat[id].size.y
-    ) return vec4(0); 
-    // return vec4(t_uv.x);
-
-    vec2 size = f.size;
-    vec2 pos = f.pos;
-    float angle = debug0;
-    // size = vec2(1);
-    // pos = vec2(0.5);
-
-    pos*=vec2(1)+size;
-    pos -= size*.5;
-    size*=mat[id].size;
-    pos*=mat[id].size;
-    pos+=mat[id].pos;
-
-    vec2 AR = vec2(1);
-
-    t_uv = rectangle(t_uv, size, pos, angle, AR); 
-
-    // return vec4(t_uv,0,1);
-
-    // return vec4(t_uv,0,1);
-
-    int gobo_id = int(f.gobo[0]*255);
-
-    vec4 rgba = vec4(f.r,f.g,f.b,f.alpha)*f.alpha;
-    return sign(t_uv.x)*rgba*vec4(1);
-
-}
-
 void main() {
 
     vec2 uv = gl_FragCoord.xy/FBResolution.xy;
@@ -155,9 +116,12 @@ void main() {
 
         float steps = 10;
 
+        vec2 outuv;
+
+        Fixture f = fix[id];
+
         for (float i = 0; i < steps; i++)  {
             
-            Fixture f = fix[id];
 
             // f.pos = mix(fix[id].pos,fix[id].pos+.1,i/steps);
             // // f.pos+=vec2(debug1);
@@ -170,9 +134,39 @@ void main() {
             // f.b = mix(fix[id].b,fix2[id].r,i/steps);
             // f.alpha = mix(fix[id].alpha,fix2[id].r,i/steps);
 
-            color += smartmap(f);  
+            // CLIP
+            if ( 
+                uv.x < mat[id].pos.x  || uv.x > mat[id].pos.x+mat[id].size.x 
+                || uv.y < mat[id].pos.y|| uv.y > mat[id].pos.y+mat[id].size.y
+            ) continue; 
+
+            vec2 size = f.size;
+            vec2 pos = f.pos;
+            float angle = debug0;
+            // size = vec2(1);
+            // pos = vec2(0.5);
+
+            pos*=vec2(1)+size;
+            pos -= size*.5;
+            size*=mat[id].size;
+            pos*=mat[id].size;
+            pos+=mat[id].pos;
+
+            vec2 AR = vec2(1);
+
+            outuv += (rectangle(uv, size, pos, angle, AR)); 
+            // uv  = sign(uv);
+
+
+
             
         }
+
+        float sss = sign(outuv.x+outuv.y);
+        
+        vec4 rgba = vec4(f.r,f.g,f.b,f.alpha)*f.alpha;
+
+        color = vec4(sss)*rgba*vec4(1);
         
     }
 
