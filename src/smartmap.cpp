@@ -113,7 +113,9 @@ void SmartMap::render() {
 
             shader->sendUniform("iResolution", layer->width, layer->height);
             glBlendFunc(GL_BLEND_MODES[2], GL_BLEND_MODES[1]);
+            //  glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
             
+            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
             quadA->draw(layer->quantity); 
 
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
@@ -164,12 +166,14 @@ void SmartMap::render() {
             
             ImGui::Separator();
             
-            for (int i = 0; i < 10; i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0, 1);
+            for (int i = 0; i < 5; i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0, 1);
 
             ImGui::Separator();
 
             ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
             ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size()); 
+            ImGui::SliderInt("GL_BLEND_MODE_IN2",&GL_BLEND_MODE_IN2,0,GL_BLEND_MODES.size());
+            ImGui::SliderInt("GL_B2LEND_MODE_OUT2",&GL_BLEND_MODE_OUT2,0,GL_BLEND_MODES.size()); 
             
         ImGui::End();
 
