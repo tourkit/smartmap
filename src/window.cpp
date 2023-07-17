@@ -39,7 +39,7 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     {
         
         window = glfwCreateWindow(width, height, "OUTPUT", nullptr, nullptr);
-        setPos(offset_x, offset_y);
+        
     }
 
 
@@ -58,6 +58,8 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     
     gl3wInit();
 
+    if (!fullscreen)setPos(offset_x, offset_y);
+
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -67,9 +69,18 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     glEnable(GL_CLIP_DISTANCE2);
     glEnable(GL_CLIP_DISTANCE3);
 
+
 }
 
-void Window::updatePos() {  glfwSetWindowPos(window, offset_x, offset_y); }
+static void framebuffer_size_callback(GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); }
+
+void Window::updatePos() {  
+
+    glfwSetWindowPos(window, offset_x, offset_y); 
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetWindowSize(window, width, height); 
+    
+}
 void Window::setPos(uint16_t offset_x, uint16_t offset_y) { 
     this->offset_x = offset_x;
     this->offset_y = offset_y;

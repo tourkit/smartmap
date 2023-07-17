@@ -27,7 +27,6 @@ struct FPS {
 
 };
 
-
 struct Window {
 
     GLFWwindow *window;
