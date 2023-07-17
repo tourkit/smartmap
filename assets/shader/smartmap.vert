@@ -61,20 +61,10 @@ void main() {
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);
 
     if (obj==0) return;
-    
-    if (mod(obj-1,2)  == 1) {
-    
-        gl_Position.xy *= matrice2[id].size;
-        gl_Position.xy += matrice2[id].pos;
 
-    }
-    if (mod(obj-1,2)  == 0) {
-    
-        gl_Position.xy *= matrice2[id].size;
-        gl_Position.xy += matrice2[id].pos;
+    gl_Position.xy *= matrice2[id].size;
+    gl_Position.xy += matrice2[id].pos;
 
-        texcoord = gl_Position.xy*.5+.5;
-
-    }
+    if (mod(obj-1,2)  == 0) texcoord = gl_Position.xy*.5+.5;
 
 }

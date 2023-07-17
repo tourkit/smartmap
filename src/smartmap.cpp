@@ -31,7 +31,7 @@ SmartMap::SmartMap() {
     window = new Window(false,400,300,1540);
     window->setPos(2560,1440-1080);
     window->setSize(1920,1080);
-    window->setSize(1000,500);
+    // window->setSize(1000,500);
     gui = new GUI(window->window);
     quad = new VBO("quad.obj",0,window->width,window->height);
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
@@ -40,10 +40,10 @@ SmartMap::SmartMap() {
     atlas->link(shader);
     winFB = new FrameBuffer(0,window->width,window->height); 
 
-    matriceUBO = new UBO("MatriceUBO", 32*4, {shader->id});  // 24*32 correspond a R
-    matriceUBO2 = new UBO("MatriceUBO2", 32*4, {shader->id});  
-    fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
-    fixtureUBO2 = new UBO("FixtureUBO2", 24*16, {shader->id}); 
+    matriceUBO = new UBO("MatriceUBO", 24*100, {shader->id});  // 24*32 correspond a R
+    matriceUBO2 = new UBO("MatriceUBO2", 24*100, {shader->id});  
+    fixtureUBO = new UBO("FixtureUBO", 24*100, {shader->id}); 
+    fixtureUBO2 = new UBO("FixtureUBO2", 24*100, {shader->id}); 
     
     
     // blur_x = new ShaderProgram({"blur_x.comp"});

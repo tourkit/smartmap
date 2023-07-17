@@ -175,6 +175,7 @@ float FPS::run(float max) {
 
     if (max) while ( get() > max+1) std::this_thread::sleep_for(std::chrono::microseconds(10));
     last_time = current_time;
+    if (fps<max) std::cout << "DROP FRAME " << fps << "fps" << std::endl;
     return fps;
 
 }

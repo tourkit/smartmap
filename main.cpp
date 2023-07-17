@@ -24,10 +24,10 @@ int main() {
         {0} // pr buffer alignment vec4 dans glsl
     }; 
 
-    // SmartMap::Layer l1(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 2, 1);
-    // SmartMap::Layer l2(38, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 2, 1);
+    SmartMap::Layer l1(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 5, 5);
+    // SmartMap::Layer l2(0, 1, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 2,2);
     
-    SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 2,2);
+    // SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 4,2);
 
     sm.render();
  

@@ -310,7 +310,7 @@ void main() {
     if (mod(obj-1,2) == 0) {
 
         color = texture(pass,uv)-(1-min(.998,fix[id].feedback)); 
-        // color = vec4(1);
+
         return;
 
     }
