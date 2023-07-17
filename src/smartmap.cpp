@@ -113,9 +113,11 @@ void SmartMap::render() {
 
             shader->sendUniform("iResolution", layer->width, layer->height);
             glBlendFunc(GL_BLEND_MODES[2], GL_BLEND_MODES[1]);
+            
             quadA->draw(layer->quantity); 
-            // glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-            // quadB->draw(layer->quantity);
+
+            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
+            quadB->draw(layer->quantity);
 
             layer->pass->read(layer->buffer);
 

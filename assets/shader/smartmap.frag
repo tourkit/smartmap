@@ -147,7 +147,7 @@ void main() {
     }
     else if (obj == 1) {
 
-         color = vec4(uv.x); return;
+        //  color = vec4(uv.x); return;
         color = vec4(0);
         // return;
         float feedback = 1;

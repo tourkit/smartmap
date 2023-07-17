@@ -115,7 +115,7 @@ void main() {
         gl_Position.xy *= mat[id].size;
         gl_Position.xy += mat[id].pos;
 
-        texcoord = gl_Position.xy*.5+.5;
+        texcoord = gl_Position.xy*.51+.5;
 
     }
     
