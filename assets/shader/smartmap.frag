@@ -141,10 +141,14 @@ void main() {
         if (mode==1)  {color = texture(pass, uv); return;}
 
         for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, uv*mat[i].size+mat[i].pos);
+
+        return;
          
     }
     
-    else if (obj == 1) {
+    // if (id!=0) return;
+    
+    if (obj == 1) {
 
         //  color = vec4(uv.x); return;
         color = vec4(0);
@@ -153,13 +157,13 @@ void main() {
         feedback -= fix[id].feedback;
 
         //if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
+        color = texture(pass,uv)*debug3; 
         
-        // color = texture(pass,uv)-vec4(.2); 
-        
+        return;
 
     }
-        //  color = vec4(uv.x); return;
-    else if (obj == 2) { 
+    
+    if (obj == 2) { 
 
         // color = vec4(uv.x); return;
         
