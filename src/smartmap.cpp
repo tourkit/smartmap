@@ -126,7 +126,6 @@ void SmartMap::render() {
             // blur_y->use(FW*.5/16,FH*.5/16);
             // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
             
-            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN3], GL_BLEND_MODES[GL_BLEND_MODE_OUT3]);
             winFB->bind(); 
             layer->buffer->bind();
             shader->use();
