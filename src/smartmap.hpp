@@ -102,7 +102,7 @@ struct SmartMap {
 
     std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
 
-    GLint GL_BLEND_MODE_IN = 1;
+    GLint GL_BLEND_MODE_IN = 11;
     GLint GL_BLEND_MODE_OUT = 13;
     GLint GL_BLEND_MODE_IN2 = 2;
     GLint GL_BLEND_MODE_OUT2 = 1;

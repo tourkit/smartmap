@@ -25,16 +25,16 @@ int main() {
     }; 
 
     std::vector<float> a1 = {
-        1,1,1,1,   
-        -.3,0, 
+        1,0,1,1,   
+        .3,.3, 
         .2,.2,           
         0,0,0,0, 
         0,0,0, 
         0 
     }; 
     std::vector<float> a2 = {
-        1,1,1,1,   
-        0.3,0, 
+        1,1,0,1,   
+        0.6,0.6, 
         .2,.2,           
         0,0,0,0, 
         0,0,0, 
@@ -47,7 +47,7 @@ int main() {
     // SmartMap::Layer l1(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 2, 1);
     // SmartMap::Layer l2(38, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 1, 1);
     
-    SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 4,1);
+    SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 3,2);
 
     for (int i = 0; i < 9; i++) { 
 

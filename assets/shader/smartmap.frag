@@ -148,7 +148,7 @@ void main() {
         // feedback -= fix[id].feedback;
         // if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
 
-        color+=texture(pass,uv)*fix[id].feedback; 
+        color+=texture(pass,uv)-.002;//*min(.975,fix[id].feedback); 
         
         return;
 
@@ -158,19 +158,25 @@ void main() {
 
         // color = vec4(uv.x); return;
         
-        for (float i = 0; i < 1; i++)  {
+
+        float steps = 10;
+
+        for (float i = 0; i < steps; i++)  {
             
             Fixture f = fix[id];
 
-            // f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/10.0);
-            // f.size = mix(fix[id].size,fix2[id].size,i/10.0);
-            // f.pos = mix(fix[id].pos,fix2[id].pos,i/10.0);
-            // f.r = mix(fix[id].r,fix2[id].r,i/10.0);
-            // f.g = mix(fix[id].g,fix2[id].r,i/10.0);
-            // f.b = mix(fix[id].b,fix2[id].r,i/10.0);
-            // f.alpha = mix(fix[id].alpha,fix2[id].r,i/10.0);
+            // f.pos = mix(fix[id].pos,fix[id].pos+.1,i/steps);
+            // // f.pos+=vec2(debug1);
 
-            color = smartmap(f);  
+            // f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/steps);
+            // f.size = mix(fix[id].size,fix2[id].size,i/steps);
+            // f.pos = mix(fix[id].pos,fix2[id].pos,i/steps);
+            // f.r = mix(fix[id].r,fix2[id].r,i/steps);
+            // f.g = mix(fix[id].g,fix2[id].r,i/steps);
+            // f.b = mix(fix[id].b,fix2[id].r,i/steps);
+            // f.alpha = mix(fix[id].alpha,fix2[id].r,i/steps);
+
+            color += smartmap(f);  
             
         }
         

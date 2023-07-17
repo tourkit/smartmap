@@ -45,10 +45,7 @@ uniform float debug4 = 0;
 void main() {
 
     FBratio = RESOLUTION.x/RESOLUTION.y;
-
     FBResolution = vec2(RESOLUTION.x, RESOLUTION.y);
-    // if (obj  == 0) FBResolution = vec2(1000,500);
-    // FBResolution = vec2(2000,1000);
 
     obj = OBJ;
 
@@ -59,12 +56,10 @@ void main() {
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);
 
     if (obj  == 1) {
-
-        vec2 r = vec2(1+debug1);
     
         gl_Position.xy *= mat[id].size;
 
-        gl_Position.xy -= mat[id].size*(vec2(int(1/mat[0].size.x),int(1/mat[0].size.y))-1);
+        gl_Position.xy -= mat[id].size*(vec2(1/mat[0].size)-1); // pourrait etre cpp
         
         gl_Position.xy += mat[id].pos*2;
 
