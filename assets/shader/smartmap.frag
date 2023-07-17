@@ -64,8 +64,6 @@ vec2 rotate(vec2 v, float a) {
     return v * mat2(c, -s, s, c);
 }
 
-
-
 vec2 rectangle(vec2 uv, vec2 size, vec2 pos, float angle, vec2 AR) {
 
     uv -= pos; 
@@ -79,14 +77,10 @@ vec2 rectangle(vec2 uv, vec2 size, vec2 pos, float angle, vec2 AR) {
     
 }
 
-
-
 vec4 fromAtlas(vec2 uv, int id) { 
     
     uv *= mediaCoord[id].size;
     uv += mediaCoord[id].pos;
-
-    // uv*= tex[id].size;
 
     return texture(mediasAtlas,uv);
  
@@ -293,8 +287,8 @@ vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
 
 void main() {
 
-    vec2 uv = gl_FragCoord.xy/FBResolution.xy;
-    uv = texcoord;
+    // vec2 uv = gl_FragCoord.xy/FBResolution.xy;
+    vec2 uv = texcoord;
 
     if (obj == 0) { 
 
@@ -308,11 +302,10 @@ void main() {
          
     }
     
-    // if (id!=1 && id!=2) return;
+    // if (id!=1) return;
+    // color = vec4(uv.x); return;
     
     if (mod(obj-1,2) == 0) {
-
-        //  color = vec4(uv.x); return;
 
         color = texture(pass,uv)-(1-min(.998,fix[id].feedback)); 
         
@@ -322,28 +315,20 @@ void main() {
     
     if (mod(obj-1,2) == 1) { 
 
-        // color = vec4(uv.x); return;
-
-        float steps =15;
-
         vec2 outuv;
 
-        Fixture f = fix[id];
-
+        float steps = 15;
         for (float i = 0; i < steps; i++)  {
         
-            f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/steps);
-            f.size = mix(fix[id].size,fix2[id].size,i/steps);
-            f.pos = mix(fix[id].pos,fix2[id].pos,i/steps);
+            float angle = fix[id].orientation;
+            if (abs(angle-fix2[id].orientation)<.05) angle = mix(angle,fix2[id].orientation,i/steps);
+            vec2 size = fix[id].size;
+            if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,i/steps);
+            vec2 pos = fix[id].pos;
+            if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,i/steps);
 
             // CLIP
             if ( uv.x < mat[id].pos.x  || uv.x > mat[id].pos.x+mat[id].size.x || uv.y < mat[id].pos.y|| uv.y > mat[id].pos.y+mat[id].size.y ) continue; 
-
-            vec2 size = f.size;
-            vec2 pos = f.pos;
-            float angle = f.orientation;
-            // size = vec2(1);
-            // pos = vec2(0.5);
 
             pos*=vec2(1)+size;
             pos -= size*.5;
@@ -352,32 +337,32 @@ void main() {
             pos+=mat[id].pos;
 
             vec2 AR = vec2(1);
+            if (FBratio > 1.) AR.x = FBratio;
+            else AR.y = FBratio;
+
             outuv += (rectangle(uv, size, pos, angle, AR)); 
-            // uv  = sign(uv);
             
         }
 
-    
         outuv *= .0666;
 
         float sss = sign(outuv.x+outuv.y);
         
-        vec4 rgba = vec4(f.r,f.g,f.b,f.alpha)*f.alpha;
+        vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
 
-        int gobo_id = int(f.gobo[0]*255);
-
-        if (gobo_id == 1) color = sss*rgba*grid(outuv, f.gobo[1], f.gobo[2], f.gobo[3]);
-        if (gobo_id == 2) color = sss*rgba*grid2(outuv, f.gobo[1], f.gobo[2], f.gobo[3]);
-        if (gobo_id == 3) color = sss*rgba*gradient(outuv, f.gobo[1], f.gobo[2], f.gobo[3]);
-        if (gobo_id == 4) color = sss*rgba*burst(rotate(outuv, f.gobo[3]), f.gobo[1], 0, f.gobo[2]);
-        if (gobo_id == 5) color = sss*rgba*burst(rotate(outuv, f.gobo[3]), f.gobo[1], 1, f.gobo[2]);
-        if (gobo_id == 6) color = sss*rgba*flower(outuv*(1/f.size), f.gobo[1], f.gobo[2], f.gobo[3]);
-        if (gobo_id == 7) color = sss*rgba*border(outuv, f.gobo[1]);
-        if (gobo_id == 8) color = sss*rgba*fromAtlas(outuv, int(f.gobo[1]*12)); // 12 is assets/media file count
-        if (gobo_id == 9) color = sss*rgba*s1plx(outuv, f.gobo[1], f.gobo[2], f.gobo[3]);
-
+        int gobo_id = int(fix[id].gobo[0]*255);
 
         if (gobo_id == 0) color = vec4(sss)*rgba*vec4(1);
+        if (gobo_id == 1) color = sss*rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+        if (gobo_id == 2) color = sss*rgba*grid2(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+        if (gobo_id == 3) color = sss*rgba*gradient(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+        if (gobo_id == 4) color = sss*rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 0, fix[id].gobo[2]);
+        if (gobo_id == 5) color = sss*rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 1, fix[id].gobo[2]);
+        if (gobo_id == 6) color = sss*rgba*flower(outuv*(1/fix[id].size), fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+        if (gobo_id == 7) color = sss*rgba*border(outuv, fix[id].gobo[1]);
+        if (gobo_id == 8) color = sss*rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
+        if (gobo_id == 9) color = sss*rgba*s1plx(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+
         
     }
 
