@@ -138,23 +138,17 @@ void main() {
     
     // if (id!=1 && id!=2) return;
     
-    if (obj == 1) {
+    if (mod(obj-1,2) == 0) {
 
         //  color = vec4(uv.x); return;
 
-        color = vec4(0);
-        // return;
-        // float feedback = 1;
-        // feedback -= fix[id].feedback;
-        // if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
-
-        color+=texture(pass,uv)-.002;//*min(.975,fix[id].feedback); 
+        color = texture(pass,uv)-(1-min(.998,fix[id].feedback)); 
         
         return;
 
     }
     
-    if (obj == 2) { 
+    if (mod(obj-1,2) == 1) { 
 
         // color = vec4(uv.x); return;
         

@@ -46,20 +46,23 @@ void main() {
 
     FBratio = RESOLUTION.x/RESOLUTION.y;
     FBResolution = vec2(RESOLUTION.x, RESOLUTION.y);
+    if (obj == 3 || obj == 4) FBResolution*=4;
 
     obj = OBJ;
 
     id = gl_InstanceID+offset;
+    // if (obj == 3) id+=2;
+    // if (obj == 4) id+=2;
 
     texcoord = TEXCOORD;
     
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);
 
-    if (obj  == 1) {
+    if (mod(obj-1,2)  == 0) {
     
         gl_Position.xy *= mat[id].size;
 
-        gl_Position.xy -= mat[id].size*(vec2(1/mat[0].size)-1); // pourrait etre cpp
+        gl_Position.xy -= mat[id].size*(vec2(1/mat[offset].size)-1); // pourrait etre cpp
         
         gl_Position.xy += mat[id].pos*2;
 

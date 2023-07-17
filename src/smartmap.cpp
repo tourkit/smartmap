@@ -228,8 +228,8 @@ void SmartMap::render() {
 
         for (int i = 0; i < Texture::pool.size(); i++) {
 
-            ImGui::Text(("width: " + std::to_string(Texture::pool[i]->width)).c_str());
-            ImGui::Text(("height: " + std::to_string(Texture::pool[i]->height)).c_str());
+            std::string wh = std::to_string(Texture::pool[i]->width) + " x " + std::to_string(Texture::pool[i]->height);
+            ImGui::Text(wh.c_str());
             
             float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
             auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
