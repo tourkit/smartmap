@@ -114,21 +114,20 @@ void main() {
         // color = vec4(uv.x); return;
         
 
-        float steps = 10;
+        float steps =15;
 
         vec2 outuv;
 
         Fixture f = fix[id];
 
+        // if (fix[id].pos == fix2[id].pos) return;
+
         for (float i = 0; i < steps; i++)  {
-            
+        
 
-            // f.pos = mix(fix[id].pos,fix[id].pos+.1,i/steps);
-            // // f.pos+=vec2(debug1);
-
-            // f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/steps);
-            // f.size = mix(fix[id].size,fix2[id].size,i/steps);
-            // f.pos = mix(fix[id].pos,fix2[id].pos,i/steps);
+            f.orientation = mix(fix[id].orientation,fix2[id].orientation,i/steps);
+            f.size = mix(fix[id].size,fix2[id].size,i/steps);
+            f.pos = mix(fix[id].pos,fix2[id].pos,i/steps);
             // f.r = mix(fix[id].r,fix2[id].r,i/steps);
             // f.g = mix(fix[id].g,fix2[id].r,i/steps);
             // f.b = mix(fix[id].b,fix2[id].r,i/steps);

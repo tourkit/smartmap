@@ -96,7 +96,7 @@ void SmartMap::render() {
         artnet->run(); 
 
         memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
-        fixtureUBO2->update();
+
 
         winFB->clear(); 
 
@@ -134,7 +134,7 @@ void SmartMap::render() {
 
         }
 
-
+        fixtureUBO2->update();
         //////////////////////////////////////////////
         //////////////////////////////////////////////
         //////////////////////////////////////////////
