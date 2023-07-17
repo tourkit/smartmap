@@ -58,8 +58,6 @@ uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
 vec2 rotate(vec2 v, float a) {
 
-    a *= 6.28318530718;
-
     float s = sin(a);
     float c = cos(a);
 
@@ -88,7 +86,6 @@ vec4 fromAtlas(vec2 uv, int id) {
  
  }
 
-float t_ratio = 1;
 
 float l(float val, float count, float thickness) {
 
@@ -113,8 +110,8 @@ float grid2(vec2 uv, float thickness, float columns, float rows) {
     rows = (1-rows)*.8+.2;
     thickness = 1-thickness;
 
-    float rx = min((rows/columns)/t_ratio,1.);
-    float ry = min((columns/rows)*t_ratio,1.);
+    float rx = min((rows/columns)/FBratio,1.);
+    float ry = min((columns/rows)*FBratio,1.);
 
     float x = l(uv.x,columns, thickness*rx);
     float y = l(uv.y,rows,thickness*ry);
@@ -135,8 +132,8 @@ float grid(vec2 uv, float thickness, float columns, float rows) {
     columns = 1./(columns+(thickness*.5));
    rows = 1./(rows+thickness*.5);
 
-   float tx = thickness*min((rows/columns)/t_ratio,1.);
-   float ty = thickness*min((columns/rows)*t_ratio,1.);
+   float tx = thickness*min((rows/columns)/FBratio,1.);
+   float ty = thickness*min((columns/rows)*FBratio,1.);
 
 
    uv = 1.-abs(uv)*2.;
@@ -286,6 +283,7 @@ vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
     return vec4(pow(simplex3d(vec3(uv * (101.0 - zoom * 100.0), height * 5.0)), 1.0 + contrast * 8.0));
 }
 
+uniform int strobe = 0;
 
 void main() {
 
@@ -316,7 +314,7 @@ void main() {
     }
     
     if (mod(obj-1,2) == 1) { 
-
+                
         vec2 outuv;
 
         float steps = 15;
@@ -339,13 +337,17 @@ void main() {
 
         float sss = sign(outuv.x+outuv.y);
         vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
-        color = rgba*sss; return;
 
-        outuv *= .0666;
+        outuv *= .0666; // dunno why gotta do this, works for all ....
+        outuv = vec2(1-outuv.x,outuv.y); // dunno why got flip here
 
         int gobo_id = int(fix[id].gobo[0]*255);
-
         if (gobo_id == 0) color = vec4(sss)*rgba*vec4(1);
+        if (gobo_id == 8) color = sss*rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
+        
+        outuv *=2;
+        outuv -=1;
+
         if (gobo_id == 1) color = sss*rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
         if (gobo_id == 2) color = sss*rgba*grid2(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
         if (gobo_id == 3) color = sss*rgba*gradient(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
@@ -353,9 +355,10 @@ void main() {
         if (gobo_id == 5) color = sss*rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 1, fix[id].gobo[2]);
         if (gobo_id == 6) color = sss*rgba*flower(outuv*(1/fix[id].size), fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
         if (gobo_id == 7) color = sss*rgba*border(outuv, fix[id].gobo[1]);
-        if (gobo_id == 8) color = sss*rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
         if (gobo_id == 9) color = sss*rgba*s1plx(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
         
+        if (fix[id].strobe>0) color *= mod(strobe,2+(1-fix[id].strobe)*20); 
+
     }
 
     return;

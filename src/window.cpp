@@ -23,6 +23,12 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     glfwWindowHint(GLFW_DECORATED, (windows_border ? GLFW_TRUE : GLFW_FALSE));
     glfwWindowHint(GLFW_FLOATING, (window_on_top ? GLFW_TRUE : GLFW_FALSE));
 
+    int count;
+    GLFWmonitor** monitors = glfwGetMonitors(&count);
+    const GLFWvidmode* mode = glfwGetVideoMode(monitors[count-1]);
+    double refreshRate = glfwGetVideoMode(monitors[count-1])->refreshRate;
+    std::cout  << " Display @ " << refreshRate << "Hz " << mode->width << "x" << mode->height << std::endl;
+
     if (fullscreen)
     {
         auto monitor = glfwGetPrimaryMonitor();
@@ -54,21 +60,14 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     }
 
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(0); // VSYNC KILL VOUDOUJOUJOU
+
+    glfwSwapInterval(1); // VSYNC 
     
     gl3wInit();
 
     if (!fullscreen)setPos(offset_x, offset_y);
 
     glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-    glEnable(GL_CLIP_DISTANCE0);
-    glEnable(GL_CLIP_DISTANCE1);
-    glEnable(GL_CLIP_DISTANCE2);
-    glEnable(GL_CLIP_DISTANCE3);
-
 
 }
 
@@ -148,7 +147,7 @@ void Window::render(std::function<void()> callback) {
 
     glfwPollEvents();
 
-    fps.run(max_fps);
+    // fps.run(max_fps);
 
     glClearColor(0.0f, 0.0f, 0.1f, 1.0f); // BG COLOR
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??

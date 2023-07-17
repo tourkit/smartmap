@@ -106,6 +106,8 @@ void SmartMap::render() {
 
         winFB->clear(); 
 
+        shader->sendUniform("strobe", frame++%256);
+
         int offset = 0;
 
         for (auto layer:SmartMap::Layer::pool) { 

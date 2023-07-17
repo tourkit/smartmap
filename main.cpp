@@ -20,7 +20,7 @@ int main() {
         {2},{2},  // POSITION
         {2},{2},            // FOCUS
         {1},{1},{1},{1},    // GOBO
-        {1},{1},{1}, // BEAM : Orientation, Strobe, Feedback
+        {1,0,6.28318530718},{1},{1}, // BEAM : Orientation, Strobe, Feedback
         {0} // pr buffer alignment vec4 dans glsl
     }; 
 

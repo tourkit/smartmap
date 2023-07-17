@@ -48,7 +48,7 @@ void main() {
 
     FBratio = RESOLUTION.x/RESOLUTION.y;
     FBResolution = vec2(RESOLUTION.x, RESOLUTION.y);
-    if (obj == 3 || obj == 4) FBResolution*=4;
+    // if (obj == 3 || obj == 4) FBResolution*=4;
 
     obj = OBJ;
 

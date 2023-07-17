@@ -101,6 +101,8 @@ struct SmartMap {
 
     bool debug = true;
 
+    int frame = 0;
+
     std::vector<float> debuguniforms{0,0,0,0,0,0,0,0,0,0};
 
     GLint GL_BLEND_MODE_IN = 11;
