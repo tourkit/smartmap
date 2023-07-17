@@ -40,7 +40,7 @@ SmartMap::SmartMap() {
     atlas->link(shader);
     winFB = new FrameBuffer(0,window->width,window->height); 
 
-    matriceUBO = new UBO("MatriceUBO", 4*4, {shader->id});  // 24*32 correspond a R
+    matriceUBO = new UBO("MatriceUBO", 32*4, {shader->id});  // 24*32 correspond a R
     fixtureUBO = new UBO("FixtureUBO", 24*16, {shader->id}); 
     fixtureUBO2 = new UBO("FixtureUBO2", 24*16, {shader->id}); 
     

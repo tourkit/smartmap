@@ -81,24 +81,14 @@ vec2 rectangle(vec2 uv, vec2 size, vec2 pos, float angle, vec2 AR) {
 
 
 struct Rect { vec2 size,pos; };
-float col = 1./2;
-
-Rect mmat[4] = {
-
-    Rect(vec2(col),vec2(0*col,0*col)),
-    Rect(vec2(col),vec2(0*col,1*col)),
-    Rect(vec2(col),vec2(1*col,0*col)),
-    Rect(vec2(col),vec2(1*col,1*col))
-
-};
 
 vec4 smartmap(Fixture f) {
 
     vec2 t_uv = gl_FragCoord.xy/FBResolution.xy;
     // CLIP
     if ( 
-        t_uv.x < mmat[id].pos.x  || t_uv.x > mmat[id].pos.x+mmat[id].size.x 
-        || t_uv.y < mmat[id].pos.y|| t_uv.y > mmat[id].pos.y+mmat[id].size.y
+        t_uv.x < mat[id].pos.x  || t_uv.x > mat[id].pos.x+mat[id].size.x 
+        || t_uv.y < mat[id].pos.y|| t_uv.y > mat[id].pos.y+mat[id].size.y
     ) return vec4(0); 
     // return vec4(t_uv.x);
 
@@ -110,9 +100,9 @@ vec4 smartmap(Fixture f) {
 
     pos*=vec2(1)+size;
     pos -= size*.5;
-    size*=mmat[id].size;
-    pos*=mmat[id].size;
-    pos+=mmat[id].pos;
+    size*=mat[id].size;
+    pos*=mat[id].size;
+    pos+=mat[id].pos;
 
     vec2 AR = vec2(1);
 
