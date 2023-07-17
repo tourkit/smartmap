@@ -136,18 +136,19 @@ void main() {
          
     }
     
-    // if (id!=0) return;
+    // if (id!=1 && id!=2) return;
     
     if (obj == 1) {
 
         //  color = vec4(uv.x); return;
+
         color = vec4(0);
         // return;
-        float feedback = 1;
-        feedback -= fix[id].feedback;
+        // float feedback = 1;
+        // feedback -= fix[id].feedback;
+        // if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
 
-        //if (!(fix[id].rgba.r == 0 && fix[id].rgba.g == 0 && fix[id].rgba.b == 0)) feedback -= 1-pow(abs((fix[id].feedback*.5+.5)-1),3);
-        color = texture(pass,uv)*debug3; 
+        color+=texture(pass,uv)*fix[id].feedback; 
         
         return;
 

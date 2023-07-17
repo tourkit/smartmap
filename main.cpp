@@ -47,9 +47,9 @@ int main() {
     // SmartMap::Layer l1(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 2, 1);
     // SmartMap::Layer l2(38, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 1, 1);
     
-    SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 3,3);
+    SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 4,1);
 
-    for (int i = 0; i < sm.matriceUBO->data.size()*.25; i++) { 
+    for (int i = 0; i < 9; i++) { 
 
         auto j = i*4;
 

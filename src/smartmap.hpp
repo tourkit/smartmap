@@ -106,6 +106,8 @@ struct SmartMap {
     GLint GL_BLEND_MODE_OUT = 13;
     GLint GL_BLEND_MODE_IN2 = 2;
     GLint GL_BLEND_MODE_OUT2 = 1;
+    GLint GL_BLEND_MODE_IN3 = 2;
+    GLint GL_BLEND_MODE_OUT3 = 1;
     std::vector<GLenum> GL_BLEND_MODES = {
         GL_ZERO,
         GL_ONE,

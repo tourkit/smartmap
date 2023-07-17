@@ -111,10 +111,6 @@ void SmartMap::render() {
             offset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
             shader->sendUniform("MatriceUBOSize", layer->quantity);
-
-            shader->sendUniform("iResolution", layer->width, layer->height);
-            glBlendFunc(GL_BLEND_MODES[2], GL_BLEND_MODES[1]);
-            //  glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
             
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
             layer->quadA->draw(layer->quantity); 
@@ -130,7 +126,7 @@ void SmartMap::render() {
             // blur_y->use(FW*.5/16,FH*.5/16);
             // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
             
-            shader->sendUniform("iResolution", window->width, window->height);
+            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN3], GL_BLEND_MODES[GL_BLEND_MODE_OUT3]);
             winFB->bind(); 
             layer->buffer->bind();
             shader->use();
@@ -171,10 +167,12 @@ void SmartMap::render() {
 
             ImGui::Separator();
 
-            ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
-            ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size()); 
             ImGui::SliderInt("GL_BLEND_MODE_IN2",&GL_BLEND_MODE_IN2,0,GL_BLEND_MODES.size());
             ImGui::SliderInt("GL_B2LEND_MODE_OUT2",&GL_BLEND_MODE_OUT2,0,GL_BLEND_MODES.size()); 
+            ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
+            ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size()); 
+            ImGui::SliderInt("GL_BLEND_MODE_IN3",&GL_BLEND_MODE_IN3,0,GL_BLEND_MODES.size());
+            ImGui::SliderInt("GL_B2LEND_MODE_OUT3",&GL_BLEND_MODE_OUT3,0,GL_BLEND_MODES.size()); 
             
         ImGui::End();
 
