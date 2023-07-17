@@ -123,27 +123,23 @@ float grid2(vec2 uv, float thickness, float columns, float rows) {
 
 float grid(vec2 uv, float thickness, float columns, float rows) {
 
+    columns = clamp(columns*10., 0.5, 100.);
+    rows = clamp(rows*10., 0.5, 100.);
 
-    thickness = 1-thickness;
+    float tx = thickness*min((rows/columns)/ratio,1.);
+    float ty = thickness*min((columns/rows)*ratio,1.); 
 
-   columns = clamp(columns*10., 0.5, 100.);
-   rows = clamp(rows*10., 0.5, 100.);
-
-    columns = 1./(columns+(thickness*.5));
-   rows = 1./(rows+thickness*.5);
-
-   float tx = thickness*min((rows/columns)/FBratio,1.);
-   float ty = thickness*min((columns/rows)*FBratio,1.);
-
-
-   uv = 1.-abs(uv)*2.;
-
-   float o = 0.;
-
-   o += step(mod(uv.x,columns)/columns,tx);
-   o += step(mod(uv.y,rows)/rows,ty);
-
-   return clamp(o, 0.0, 1.0);
+    columns = 1./(columns+(tx*.5));
+    rows = 1./(rows+ty*.5);
+    
+    uv = 1.-abs(uv-.5)*2.;
+    
+    float o = 0.;
+    
+    o += step(mod(uv.x,columns)/columns,tx);
+    o += step(mod(uv.y,rows)/rows,ty);
+  
+    return o;
 
 }
 
