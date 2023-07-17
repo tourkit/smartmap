@@ -99,7 +99,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
 
             int w = *(8+&fixtureUBO->data[this->attroffset]+(i*this->fixture.size()))*255;
 
-            if (w == 19) {
+            if (w == 10) {
 
                 float *l = &matriceUBO->data[i*4+this->matoffset];
                 int x = *(9+&fixtureUBO->data[this->attroffset]+(i*this->fixture.size()))*(strlen(chars)-1);

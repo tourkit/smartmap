@@ -341,10 +341,10 @@ void main() {
         outuv *= .0666; // dunno why gotta do this, works for all ....
         outuv = vec2(1-outuv.x,outuv.y); // dunno why got flip here
 
-        int gobo_id = int(fix[id].gobo[0]*255);
+        int gobo_id = int(fix[id].gobo[0]*255)%127;
         if (gobo_id == 0) color = vec4(sss)*rgba*vec4(1);
-        if (gobo_id == 19) color = vec4(sss)*rgba*texture(pass,outuv*mat[id].size+mat[id].pos).r;
         if (gobo_id == 8) color = sss*rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
+        if (gobo_id == 10) color = vec4(sss)*rgba*texture(pass,outuv*mat[id].size+mat[id].pos).r;
         
         outuv *=2;
         outuv -=1;
@@ -358,6 +358,7 @@ void main() {
         if (gobo_id == 7) color = sss*rgba*border(outuv, fix[id].gobo[1]);
         if (gobo_id == 9) color = sss*rgba*s1plx(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
         
+        if (fix[id].gobo[0] > .5) color = vec4(1)-color;
         if (fix[id].strobe>0) color *= mod(strobe,2+(1-fix[id].strobe)*20); 
 
     }
