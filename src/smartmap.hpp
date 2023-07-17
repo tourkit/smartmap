@@ -70,7 +70,7 @@ struct SmartMap {
 
         FrameBuffer *fb;
 
-        
+        VBO *quadA, *quadB;
 
         uint16_t chan,uni,attroffset = 0, matoffset = 0;
 
@@ -80,7 +80,7 @@ struct SmartMap {
 
     Window *window;
 
-    VBO *quad; VBO *quadA, *quadB;
+    VBO *quad; 
 
     FrameBuffer *winFB;
 

@@ -52,8 +52,6 @@ SmartMap::SmartMap() {
     // outBlur->format = GL_RGBA8;
 
     artnet->callback = [&](Artnet* an){ fixtureUBO->update(); };
-    quadB = new VBO("quad.obj",VBO::pool.size(),window->width,window->height);
-    quadA = new VBO("quad.obj",VBO::pool.size(),window->width,window->height);
 
 }
 
@@ -68,8 +66,11 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     GLuint FW = width*scale, FH = height*scale;
     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
-    buffer = new Texture(FW, FH, 0,1,GL_RGBA8);
-    pass = new Texture(FW, FH, 0,1, GL_RGBA8);
+    quadB = new VBO("quad.obj",VBO::pool.size(), FW, FH);
+    quadA = new VBO("quad.obj",VBO::pool.size(), FW, FH);
+
+    buffer = new Texture(FW, FH, 0,1,GL_RGB8);
+    pass = new Texture(FW, FH, 0,1, GL_RGB8);
     // FTbuffer = new Texture(FW, FH, 0,1, GL_RGBA8,GL_RGB);
     
     fb = new FrameBuffer(buffer);
@@ -116,10 +117,10 @@ void SmartMap::render() {
             //  glBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_SRC_COLOR);
             
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
-            quadA->draw(layer->quantity); 
+            layer->quadA->draw(layer->quantity); 
 
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-            quadB->draw(layer->quantity);
+            layer->quadB->draw(layer->quantity);
 
             layer->pass->read(layer->buffer);
 
