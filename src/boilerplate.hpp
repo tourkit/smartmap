@@ -256,7 +256,7 @@ void Boilerplate() {
 
 
     // GLuint width = 400, height = 200;
-    // GLuint pos_x = 1920-400, pos_y = 0;
+    // GLuint pos_x = 1920-400, pos_y = 0;  
 
     // Artnet artnet("2.0.0.222");
 
@@ -276,11 +276,9 @@ void Boilerplate() {
 
     NDI::Sender ndi(width,height);
 
-    // CITP citp(width,height);
+    CITP citp(width,height);
 
-    MulticastSocket socket(CITP_MULTICAST_IP, CITP_MULTICAST_PORT);
-
-    socket.send("Hello", 5);
+    
 
     // char buffer[1024];
     // socket.receive(buffer, 1024);
@@ -294,7 +292,7 @@ void Boilerplate() {
 
         ndi.send();
 
-        // citp.send();
+        citp.send();
 
         if (glfwGetTime() - lastTime <= 1./60 ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
         lastTime = glfwGetTime();

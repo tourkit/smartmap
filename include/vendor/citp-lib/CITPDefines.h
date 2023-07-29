@@ -1,320 +1,113 @@
-// -*- mode: C++ -*-
-#ifndef _CITPDEFINES_H_
-#define _CITPDEFINES_H_
+#pragma once
 
-//
-// The CITP data structures and constants
-//
+#define COOKIE_RGB8       0x38424752 // RGB8
 
-//
-// Datatypes
-//
-
-typedef int8_t   int8;
-typedef int16_t  int16;
-typedef int32_t  int32;
-typedef int64_t  int64;
-
-typedef uint8_t  uint8;
-typedef uint16_t uint16;
-typedef uint32_t uint32;
-typedef uint64_t uint64;
-
-typedef unsigned char ucs1;
-
-
-// 
-// Content Type cookies
-//
-
-//#define COOKIE_CITP       0x43495450    // 'CITP'
-#define COOKIE_CITP       0x50544943    // 'CITP'
-
-//#define COOKIE_PINF       0x50494e46    // 'PINF'
-#define COOKIE_PINF       0x464e4950    // 'PINF'
-#define COOKIE_PINF_PNAM  0x504e616d    // 'PNam'
-//#define COOKIE_PINF_PLOC  0x504c6f63    // 'PLoc'
-#define COOKIE_PINF_PLOC  0x636f4c50    // 'PLoc'
-
-//#define COOKIE_SDMX       0x53444d58    // 'SDMX'
-#define COOKIE_SDMX       0x584d4453    // 'SDMX'
-#define COOKIE_SDMX_ENID  0x456e4964    // 'EnId'
-//#define COOKIE_SDMX_UNAM  0x554e616d    // 'UNam'
-#define COOKIE_SDMX_UNAM  0x6d614e55    // 'UNam'
-//#define COOKIE_SDMX_CHBK  0x4368426b    // 'ChBk'
-#define COOKIE_SDMX_CHBK  0x6b426843    // 'ChBk'
-//#define COOKIE_SDMX_SXSR 0x53585372     // 'SXSr'
-#define COOKIE_SDMX_SXSR 0x72535853     // 'SXSr'
-
-//#define COOKIE_FPTC  0x46505443 // 'FTPC'
-#define COOKIE_FPTC  0x43545046 // 'FPTC'
-//#define COOKIE_FPTC_PTCH 0x50746368 // 'Ptch'
-#define COOKIE_FPTC_PTCH 0x68637450 // 'Ptch'
-//#define COOKIE_FPTC_UPTC 0x55507463 // 'UPtc'
-#define COOKIE_FPTC_UPTC 0x63745055 // 'UPtc'
-//#define COOKIE_FPTC_SPTC 0x53507463 // 'SPtc'
-#define COOKIE_FPTC_SPTC 0x63745053 // 'SPtc'
-
-//#define COOKIE_FSEL 0x4653454c // 'FSEL'
-#define COOKIE_FSEL 0x4c455346 // 'FSEL'
-//#define COOKIE_FSEL_SELE 0x53656c65 // 'Sele'
-#define COOKIE_FSEL_SELE 0x656c6553 // 'Sele'
-//#define COOKIE_FSEL_DESE 0x44655365 // 'DeSe'
-#define COOKIE_FSEL_DESE 0x65536544 // 'DeSe'
-
-//#define COOKIE_FINF       0x46494e46 // 'FINF'
-#define COOKIE_FINF       0x464e4946 // 'FINF'
-//#define COOKIE_FINF_SFRA  0x53467261 // 'SFra'
-#define COOKIE_FINF_SFRA  0x61724653 // 'SFra'
-//#define COOKIE_FINF_FRAM  0x4672616d // 'Fram'
-#define COOKIE_FINF_FRAM  0x6d617246 // 'Fram'
-//#define COOKIE_FINF_LSTA  0x4c537461 // 'LSta'
-#define COOKIE_FINF_LSTA  0x6174534c // 'LSta'
-
-
-
-// #define COOKIE_MSEX  0x4e534558 // 'MSEX'
-#define COOKIE_MSEX  0x5845534e // 'MSEX'
-
-// #define COOKIE_MSEX_STFR  0x53744672 // 'MSEX::StFr'
-#define COOKIE_MSEX_STFR  0x72467453 // 'MSEX::StFr'
-
-// #define COOKIE_RGB8  0x52474238 // RGB8
-#define COOKIE_RGB8  0x38424752 // RGB8
-
-
-
-
-
-
-#pragma pack(1)
-
-//
-// CITP, Base Layer
-//
-struct CITP_Header 
-{ 
-  uint32      Cookie;                        // Set to "CITP".      
-  uint8       VersionMajor;                  // Set to 1. 
-  uint8       VersionMinor;                  // Set to 0.       
-  uint8       Reserved[2];                   // 4-byte alignment       
-  uint32      MessageSize;                   // The size of the entire message, including this header.      
-  uint16      MessagePartCount;              // Number of message fragments.      
-  uint16      MessagePart;                   // Index of this message fragment (0-based).      
-  uint32      ContentType;                   // Cookie identifying the type of contents (the name of the second layer). 
-}; 
-
-
-//
-// CITP/PINF, Peer Information Layer
-//
 
 #define CITP_MULTICAST_IP   "224.0.0.180"
 #define CITP_MULTICAST_PORT 4809
 
-struct CITP_PINF_Header 
-{ 
-  CITP_Header CITPHeader;    // The CITP header. CITP ContentType is "PINF". 
-  uint32      ContentType;   // A cookie defining which PINF message it is. 
+#include <cstring>
+#include <array>
+
+struct CITP_Header { 
+
+  CITP_Header(uint32_t ContentType) : ContentType(ContentType) {}
+
+  uint32_t      Cookie            = 0x50544943; // CITP    
+  uint8_t       VersionMajor      = 0x01;       
+  uint8_t       VersionMinor      = 0x00;                    
+  uint8_t       Reserved[2]       = {0x00,0x00};       
+  uint32_t      MessageSize       = 20;           // The size of the entire message, including this header.      
+  uint16_t      MessagePartCount  = 0x01;         // Number of message fragments.      
+  uint16_t      MessagePart       = 0x00;         // Index of this message fragment (0-based). 
+  uint32_t      ContentType;                      // Cookie identifying the type of contents
+
 }; 
 
-// DEPRECATED, USE PLoc instead
-// Peer Name message
-struct CITP_PINF_PNam 
-{ 
-  CITP_PINF_Header  CITPPINFHeader;   // The CITP PINF header. PINF ContentType is "PNam".          
-  //ucs1              Name[];           // The display name of the peer (null terminated). 
-                                      // This could be anything from a 
-				      // user defined alias for the peer of the name of the 
-                                      // product, or a combination. 
+struct CITP_PINF_Header { 
+
+  CITP_Header   CITPHeader; 
+  uint32_t      ContentType;                      // Cookie identifying the type of contents
+
+  CITP_PINF_Header(uint32_t ContentType) : ContentType(ContentType), CITPHeader(0x464e4950) { CITPHeader.MessageSize += 4; }
+
 }; 
 
-// Peer Location message
-struct CITP_PINF_PLoc 
-{ 
-  CITP_PINF_Header  CITPPINFHeader;     // The CITP PINF header. PINF ContentType is "PLoc". 
-  uint16            ListeningTCPPort;   // The port on which the peer is listening for 
-                                        // incoming TCP connections. 0 if not listening. 
-  //ucs1              Type[];             // Can be "LightingConsole", "MediaServer", 
-                                        // "Visualizer" or "OperationHub". 
-  //ucs1              Name[];             // The display name of the peer. Corresponds to the 
-                                        //     PINF/PNam/Name field. 
-  //ucs1              State[];            // The display state of the peer. This can be any 
-                                        //     descriptive string presentable to the user such 
-                                        //     as "Idle", "Running" etc. 
-};
+struct CITP_PINF_PLoc {
 
+  CITP_PINF_Header  CITPPINFHeader; 
 
-//
-// CITP, SDMX - Send DMX Layer
-//
+  uint16_t          ListeningTCPPort;   
+                                        
+  char type_name_state[120];      
+  size_t pos = 0;
 
-struct CITP_SDMX_Header 
-{ 
-  CITP_Header CITPHeader;    // CITP header. CITP ContentType is "SDMX". 
-  uint32      ContentType;   // Cookie defining which SDMX message it is. 
-}; 
+  CITP_PINF_PLoc(const char *Type, const char *Name, const char *State) : CITPPINFHeader(0x636f4c50) {
 
-// Encryption Identifier message
-struct CITP_SDMX_EnId 
-{ 
-  CITP_SDMX_Header  CITPSDMXHeader;    // CITP SDMX header. SDMX ContentType is "EnId". 
-  //ucs1              Identifier[];      // Encryption scheme identifier. 
-}; 
+    memset(&type_name_state[0],0,120);
 
-// Universe Name message
-struct CITP_SDMX_UNam 
-{ 
-  CITP_SDMX_Header  CITPSDMXHeader;    // CITP SDMX header. SDMX ContentType is "UNam". 
-  uint8             UniverseIndex;     // 0-based index of the universe. 
-  //ucs1              UniverseName[];    // Name of the universe. 
-}; 
+    strcpy(&type_name_state[pos], Type);
+    pos+=strlen(Type)+1;
 
-// Channel Block message
-struct CITP_SDMX_ChBk 
-{ 
-  CITP_SDMX_Header  CITPSDMXHeader;    // CITP SDMX header. SDMX ContentType is "ChBk". 
-  uint8             Blind;             // Set to 1 for blind preview dmx, 0 otherwise. 
-  uint8             UniverseIndex;     // 0-based index of the universe. 
-  uint16            FirstChannel;      // 0-based index of first channel in the universe. 
-  uint16            ChannelCount;      // Number of channels. 
-  //uint8             ChannelLevels[];   // Raw channel levels. 
-}; 
+    strcpy(&type_name_state[pos], Name);
+    pos+=strlen(Name)+1;
 
+    strcpy(&type_name_state[pos], State);
+    pos+=strlen(State)+1;
 
-// DMX Connection Strings
+    CITPPINFHeader.CITPHeader.MessageSize += pos+2;
 
-// ArtNet "ArtNet/<net>/<universe>/<channel>" 
-// "ArtNet/0/0/1" - The first channel of the first universe on the first network. 
-#define ARTNET_STRING tr("ArtNet/%1/%2/%3")
-
-// Avab IPX "AvabIPX/<net>/<universe>/<channel>" 
-// "AvabIPX/0/0/1" - The first channel of the first universe on the first network. 
-#define AVAB_STRING tr("AvabIPX/%1/%2/%3")
-
-// BSR E1.31 "BSRE1.31/<universe>/<channel>" 
-// "BSRE1.31/0/1" - The first channel of the first universe. 
-#define E131_STRING tr("BSRE1.31/%1/%2")
-
-// ETC Net2 "ETCNet2/<channel>" 
-// "ETCNet2/1" - The first ETCNet2 channel.
-#define ETCNET2_STRING tr("ETCNet2/%1")
-
-// Set External Source message
-struct CITP_SDMX_SXSr
-{ 
-  CITP_SDMX_Header  CITPSDMXHeader;       // CITP SDMX header. SDMX ContentType is "SXSr". 
-  //ucs1              ConnectionString[];   // DMX-source connection string. See DMX 
-                                          // Connection Strings in Definitions. 
-};
-
-
-//
-// CITP, FPTC - Fixture Patch Layer
-//
-
-struct CITP_FPTC_Header 
-{ 
-  CITP_Header CITPHeader;    // The CITP header. CITP ContentType is "FPTC". 
-  uint32      ContentType;   // A cookie defining which FPTC message it is. 
-  uint32      ContentHint;   // Content hint flags. 
-                             // 0x00000001    Message part of a sequence of messages. 
-                             // 0x00000002    Message part of and ends a sequence of messages. 
-}; 
-
-// Fixture Patch message
-struct CITP_FPTC_Ptch 
-{ 
-  CITP_FPTC_Header  CITPFPTCHeader;      // The CITP FPTC header. FPTC ContentType is "Ptch". 
-  uint16            FixtureIdentifier;   // Fixture identifier. 
-  uint8             Universe;            // Patch universe (0-based). 
-  uint8             Reserved[1];         // 4-byte alignment. 
-  uint16            Channel;             // Patch channel (0-based). 
-  uint16            ChannelCount;        // Patch channel count (1-512). 
-  //ucs1              FixtureMake[];       // Fixture make (only null if omitted). 
-  //ucs1              FixtureName[];       // Fixture name (never omitted). 
-}; 
-
-// Fixture Unpatch message
-struct CITP_FPTC_UPtc 
-{ 
-  CITP_FPTC_Header  CITPFPTCHeader;          // The CITP FPTC header. FPTC ContentType is "UPtc". 
-  uint16            FixtureCount;            // Fixture count (0 to unpatch all). 
-  //uint16            FixtureIdentifiers[];    // Fixture identifiers 
-}; 
-
-// Fixture Send Patch message
-struct CITP_FPTC_SPtc 
-{ 
-  CITP_FPTC_Header  CITPFPTCHeader;          // The CITP FPTC header. FPTC ContentType is "SPtc". 
-  uint16            FixtureCount;            // Fixture count (0 to request all). 
-  //uint16            FixtureIdentifiers[];    // Fixture identifiers. 
-};
-
-
-//
-// CITP, FSEL - Fixture Selection Layer
-//
-
-struct CITP_FSEL_Header 
-{ 
-  CITP_Header CITPHeader;    // The CITP header. CITP ContentType is "FSEL". 
-  uint32      ContentType;   // A cookie defining which FSEL message it is. 
-}; 
-
-// Fixture Select message
-struct CITP_FSEL_Sele 
-{ 
-  CITP_FSEL_Header  CITPFSELHeader;          // The CITP FSEL header. FSEL ContentType is  "Sele".                  
-  uint8             Complete;                // Set to non-zero for complete selection              
-  uint8             Reserved[1];             // 4-byte alignment                            
-  uint16            FixtureCount;            // Greater than 0                           
-  //uint16            FixtureIdentifiers[];    // Fixture identifiers 
-};
-
-// Fixture Deselect message
-struct CITP_FSEL_DeSe 
-{ 
-  CITP_FSEL_Header  CITPFSELHeader;          // The CITP FSEL header. FSEL ContentType is  "DeSe".                  
-  uint16            FixtureCount;            // 0 for complete deselection                          
-  //uint16            FixtureIdentifiers[];    // Fixture identifiers 
+  }
+                                                                             
 };
 
 struct CITP_MSEX_Header {  
 
   CITP_Header CITPHeader;
-  uint8 VersionMajor;
-  uint8 VersionMinor;
-  uint32 COntentType;
+
+  uint8_t VersionMajor = 0x01;
+  uint8_t VersionMinor = 0x01;
+  uint32_t ContentType;
+
+  CITP_MSEX_Header(uint32_t ContentType) : ContentType(ContentType), CITPHeader(0x5845534d) { CITPHeader.MessageSize += 6; }
 
 };
 
+template<size_t SIZE>
 struct CITP_MSEX_StFr { 
 
   CITP_MSEX_Header CITPMSEXHeader;
-  uint16 SourceIdentifier;
-  uint32 FrameFormat;
-  uint16 FrameWidth;
-  uint16 FrameHeight;
-  uint16 FrameBufferSize; 
-  uint8 FrameBuffer[12] = {
-    
-    255,0,0,
-    0,255,0,
-    0,0,255,
-    255,255,255
-    
-    }; 
 
- };
+  uint16_t SourceIdentifier;
+  uint32_t FrameFormat;
+  uint16_t FrameWidth;
+  uint16_t FrameHeight;
+  uint16_t FrameBufferSize; 
+  std::array<uint8_t, SIZE> FrameBuffer;
 
-#endif // _CITPDEFINES_H_
+  CITP_MSEX_StFr(uint16_t SourceIdentifier, uint32_t FrameFormat, uint16_t FrameWidth, uint16_t FrameHeight) 
+  
+    : CITPMSEXHeader(0x72467453), SourceIdentifier(SourceIdentifier), FrameFormat(FrameFormat), FrameWidth(FrameWidth), FrameHeight(FrameHeight), FrameBufferSize(SIZE+1) {
 
+      CITPMSEXHeader.CITPHeader.MessageSize += 12+FrameBufferSize;
 
+      memset(&FrameBuffer[0],0,FrameBufferSize);
 
-// citp header size 20
-// citp msex header size 6
-// citp msex stfr header size 12
+      if (SIZE == 12) {
 
-// 38
-// + buffer size
+        std::vector<uint8_t> TestFrameBuffer = {  
+
+          255,0,0,
+          0,255,0,
+          0,0,255,
+          255,255,255
+
+        };
+
+        memcpy(&FrameBuffer[0],&TestFrameBuffer[0],12);
+
+      }
+
+  }
+
+};
