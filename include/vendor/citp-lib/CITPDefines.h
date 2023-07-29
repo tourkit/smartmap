@@ -1,6 +1,6 @@
 #pragma once
 
-#define COOKIE_RGB8       0x38424752 // RGB8
+#define CITP_RGB8       0x38424752 // RGB8
 
 
 #define CITP_MULTICAST_IP   "224.0.0.180"

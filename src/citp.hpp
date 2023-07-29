@@ -72,8 +72,8 @@ struct CITP {
 
     CITP(uint16_t width, uint16_t height) 
     
-      : frame(0x00, COOKIE_RGB8, 0x02 ,0x02), ploc("Visualizer", "SmartMapCITP", "BeingAwesome") {
-      // : frame(0x00, COOKIE_RGB8, 0x02 ,0x02), ploc("LightingConsole", "Sistom", "Moster") {
+      : frame(0x01, CITP_RGB8, 0x02 ,0x02), ploc("Visualizer", "SmartMapCITP", "BeingAwesome") {
+      // : frame(0x00, CITP_RGB8, 0x02 ,0x02), ploc("LightingConsole", "Sistom", "Moster") {
 
         socket = new MulticastSocket(CITP_MULTICAST_IP, CITP_MULTICAST_PORT);
 
