@@ -69,47 +69,53 @@ Rect mat[3] = {
 };
 
 void main() { 
-// color = vec4(1,0,0,1); return; 
-    vec2 uv = gl_FragCoord.xy/FBResolution.xy;
-    if (obj==0) { color = texture(buff, uv); return; }
 
-    // if (obj==1) { color = vec4(1,0,0,1); return; }
+   vec2 uv = gl_FragCoord.xy/FBResolution.xy;
+
+   vec2 max_lines = vec2(4);
+
+   vec2 aspect_ractio = vec2(1.0);
+
+   vec2 resolution = FBResolution.xy;
+   resolution/=max_lines*vec2(debug0,debug1)+1;
+   if (resolution.y < resolution.x) aspect_ractio =  vec2(resolution.y/resolution.x,1);
+   else aspect_ractio = vec2(1,resolution.x/resolution.y);
+
+   vec2 thickness = vec2(debug2);
+   thickness *= aspect_ractio;
+
+   thickness.x += debug3;
+   // thickness.y -= debug3;
+
+   vec2 lines_count = vec2(debug0,debug1)*(max_lines-2.0)+1.0;
 
 
-    if(id == 0) { color = vec4(vec3(uv.y+uv.x)*.5,1); }
+   vec2 grid;
+   grid = abs(uv*2.0-1.0);    
+   grid*=(lines_count+thickness);
+   grid = abs(mod(grid,2.0)-1.0);
+   grid = step(grid,thickness); 
 
-    // // CLIP
-    // if ( uv.x < mat[id].pos.x  || uv.x > mat[id].pos.x+mat[id].size.x || uv.y < mat[id].pos.y|| uv.y > mat[id].pos.y+mat[id].size.y) return; 
 
-    // if(id != 1) {
+   color += vec4(0);
+   float carre = debug5*FBResolution.y;
+   float offset = debug6*FBResolution.y;
+   if (
 
-    //     size=vec2(1);
-    //     pos=vec2(.5);
+      gl_FragCoord.x > FBResolution.x-carre-offset && 
+      gl_FragCoord.y > FBResolution.y-carre-offset &&
+      gl_FragCoord.x < FBResolution.x-offset && 
+      gl_FragCoord.y < FBResolution.y
+      
+   ) color-=vec4(1.8);
 
-    // }
-
-    pos*=vec2(1)+size;
-    pos -= size*.5;
-    size*=mat[id].size;
-    pos*=mat[id].size;
-    pos+=mat[id].pos;
-
+   // color += vec4(grid.x,grid.y,0,1); return; 
+   color += vec4(vec3(grid.x+grid.y),1); 
 
     vec2 AR = vec2(1.);
     float ratio = FBResolution.x/FBResolution.y;
     if (ratio > 1.) AR.x = ratio;
     else AR.y = ratio;
 
-
-    float angle = 0;
-
-
-
-    uv = sign(rectangle(uv, size, pos, angle, AR))*.5; 
-
-    color += vec4(uv,0,1); 
-
-
-    // color = texture(buff,uv)+vec4(uv.x,0,0,1)+texture(mediasAtlas,uv);
 
 }

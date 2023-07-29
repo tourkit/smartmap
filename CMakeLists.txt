@@ -51,7 +51,11 @@ add_executable(SmartMap
 )
 
 target_compile_features(SmartMap PUBLIC cxx_std_20)
-set_target_properties(SmartMap PROPERTIES COMPILE_FLAGS "-DIMGUI_IMPL_OPENGL_LOADER_GL3W  ")
+set_target_properties(SmartMap PROPERTIES COMPILE_FLAGS "-DIMGUI_IMPL_OPENGL_LOADER_GL3W -Xlinker --verbose ")
+
+target_link_directories(SmartMap PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/vendor/NDI/Lib/ )
+
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/include/vendor/NDI/Lib/Processing.NDI.Lib.x64.dll DESTINATION .)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
@@ -59,19 +63,14 @@ include(CPack)
 
 file(COPY assets DESTINATION .)
 
-# configure_file(assets/shader/blur_x.comp assets/shader/ COPYONLY)
-# configure_file(assets/shader/blur_y.comp assets/shader/ COPYONLY)
-# configure_file(assets/shader/smartmap.vert assets/shader/ COPYONLY)
-# configure_file(assets/shader/smartmap.frag assets/shader/ COPYONLY)
-
 target_include_directories(SmartMap PRIVATE
     .
     src
     include
     include/vendor/
     include/vendor/imgui/
-    include/vendor/gl3w/include
-
+    include/vendor/gl3w/include/
+    /include/vendor/NDI/Include/
     ${FREETYPE_INCLUDE_DIRS}
     
     )
@@ -86,5 +85,6 @@ target_link_libraries(SmartMap PRIVATE
     netapi32
     dpnet
     iphlpapi
+    Processing.NDI.Lib.x64
     ${FREETYPE_LIBRARIES}
 )

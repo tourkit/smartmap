@@ -30,19 +30,36 @@ void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {
 
 }
 
-std::vector<unsigned char> FrameBuffer::read(GLuint width, GLuint height, GLuint x, GLuint y, GLenum format) {
+unsigned char* FrameBuffer::read(GLuint width, GLuint height, GLuint x, GLuint y, GLenum format, unsigned char *data) {
 
     if (!width) width = this->width;
     if (!height) height = this->height;
 
-    std::vector<unsigned char> data;
+    std::vector<unsigned char> local_data;
 
-    data.resize(width*height*3);
+    if (!data) {
+    
+        local_data.resize(width*height*3);
+        data = &data[0];
+
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
     
-    glReadPixels(x, y, width, height, format, GL_UNSIGNED_BYTE, &data[0]);
+    
+    glReadPixels(x, y, width, height, format, GL_UNSIGNED_BYTE, data);
 
+    // need to FLIP image
+
+    // for(int line = 0; line != h/2; ++line) {
+    //     std::swap_ranges(
+    //             local_data.begin() + 3 * w * line,
+    //             local_data.begin() + 3 * w * (line+1),
+    //             local_data.begin() + 3 * w * (h-line-1));
+    // }
+
+
+    
     return data;
  
 }

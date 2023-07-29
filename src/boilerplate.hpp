@@ -10,7 +10,7 @@
 unsigned int width = 400, height = 200, pos_x = 2560-400, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
-#define BOILNO
+#define BOILNOT
 #ifdef BOIL
 
 #include <chrono>
@@ -30,6 +30,8 @@ int Boilerplate() {
     // SET OPENGL
 
     GLuint width = 400, height = 300;
+    GLuint pos_x = 0, pos_y = 0;
+
     auto lastTime = glfwGetTime();
     glfwInit();
 
@@ -188,7 +190,7 @@ int Boilerplate() {
 
     
 
-    while (true) {
+    while (!glfwWindowShouldClose(window)) {
 
         if (glfwGetTime() - lastTime <= 1./280. ) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
@@ -245,93 +247,71 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 #include "ubo.hpp"
 #include "gui.hpp"
 #include "artnet.hpp"
+#include "ndi.hpp"
 
 #include "imgui/imgui.h"
 
-int Boilerplate() {  
+void Boilerplate() {  
 
-    Artnet artnet("2.0.0.222");
+
+    // GLuint width = 400, height = 200;
+    // GLuint pos_x = 1920-400, pos_y = 0;
+
+    // Artnet artnet("2.0.0.222");
 
     auto lastTime = glfwGetTime();
 
     Window window(false,width,height,pos_x,pos_y);
-
-    glEnable(GL_CLIP_DISTANCE0);
-    glEnable(GL_CLIP_DISTANCE1);
-    glEnable(GL_CLIP_DISTANCE2);
-    glEnable(GL_CLIP_DISTANCE3);
     
     GUI gui(window.window);
 
-    VBO quad0("quad.obj",0, 400, 200);
-    VBO quad1("quad.obj",1, 200, 100);
+    VBO quad0("quad.obj",0, width,height);
+
+    Texture img("boy.jpg");
 
     ShaderProgram shader({"basic.vert", "basic.frag"});
 
-    Texture buff1(200,100);
-    FrameBuffer fb1(&buff1);
+    std::vector<float> debuguniforms{0,1,.5,0,0,.15,0,0,0,0,0,0,0,0,0,0};
 
-    FrameBuffer fb2(0,400,200);
+    NDI::Sender ndi(width,height);
 
-    // Texture tex("boy.jpg");
+    FrameBuffer fb(0,width,height);
 
-    Atlas atlas("assets/media/");
-    atlas.link(&shader);
-
-    // Texture frr(200,200);
-    // frr.addImage("scare.jpg",100,50);
-    
-
-    std::vector<std::array<float, 4>> mat = { {0.5 ,1 ,-0.5 ,0}, {0.5 ,1 ,0.5 ,0} };
-    UBO matriceUBO("MatriceUBO", mat.size()*16, {shader.id}); 
-    matriceUBO.update(&mat[0][0],mat.size()*16); 
-
-    std::vector<float> debuguniforms{1,1,.5,.5,0,0,0,0,0,0,0,0,0,0,0,0};
-
-    std::array<uint8_t,512> dmx;
-    std::array<uint8_t,512> dmx2;
-
-
-    const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
-
-    while (true) {
-
+    while (!glfwWindowShouldClose(window.window)) {
 
         if (glfwGetTime() - lastTime <= 1./60 ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
         lastTime = glfwGetTime();
         
-        artnet.run();
+        // artnet.run();    
         
         // frr.addChar((chars+(int)(debuguniforms[0]*61)),100);
 
         for (int i = 0; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         survey_count = 0;
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); atlas.link(&shader); });
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  matriceUBO.update(&mat[0][0],mat.size()*16); shader.use(); atlas.link(&shader); });
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  shader.use(); });
+        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  shader.use(); });
 
-        glfwPollEvents();
+        glfwPollEvents(); 
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // BG COLOR
+        glClearColor(0.1f, 0.0f, 0.0f, 0.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-        fb1.clear();
-        quad1.draw(3);
-
-        buff1.bind();
-        fb2.clear();
         quad0.draw();
 
         gui.newframe();
 
         ImGui::Begin("test");
 
-        // ImGui::SliderInt2(("resize framebuffer ", &debuguniforms[i], 0,1); 
-
         for (int i = 0; i < debuguniforms.size(); i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0,1); 
+
         ImGui::End();
 
         gui.render();
+
+        fb.read(width,height,0,0,GL_RGBA,ndi.NDI_video_frame->p_data);
+
+        ndi.send();
 
         glfwSwapBuffers(window.window);
 
