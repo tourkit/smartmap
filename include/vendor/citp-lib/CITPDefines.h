@@ -10,15 +10,15 @@
 // Datatypes
 //
 
-typedef qint8   int8;
-typedef qint16  int16;
-typedef qint32  int32;
-typedef qint64  int64;
+typedef int8_t   int8;
+typedef int16_t  int16;
+typedef int32_t  int32;
+typedef int64_t  int64;
 
-typedef quint8  uint8;
-typedef quint16 uint16;
-typedef quint32 uint32;
-typedef quint64 unit64;
+typedef uint8_t  uint8;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
+typedef uint64_t uint64;
 
 typedef unsigned char ucs1;
 
@@ -71,6 +71,22 @@ typedef unsigned char ucs1;
 //#define COOKIE_FINF_LSTA  0x4c537461 // 'LSta'
 #define COOKIE_FINF_LSTA  0x6174534c // 'LSta'
 
+
+
+// #define COOKIE_MSEX  0x4e534558 // 'MSEX'
+#define COOKIE_MSEX  0x5845534e // 'MSEX'
+
+// #define COOKIE_MSEX_STFR  0x53744672 // 'MSEX::StFr'
+#define COOKIE_MSEX_STFR  0x72467453 // 'MSEX::StFr'
+
+// #define COOKIE_RGB8  0x52474238 // RGB8
+#define COOKIE_RGB8  0x38424752 // RGB8
+
+
+
+
+
+
 #pragma pack(1)
 
 //
@@ -93,8 +109,8 @@ struct CITP_Header
 // CITP/PINF, Peer Information Layer
 //
 
-#define CITP_PINF_MULTICAST_IP   "224.0.0.180"
-#define CITP_PINF_MULTICAST_PORT 4809
+#define CITP_MULTICAST_IP   "224.0.0.180"
+#define CITP_MULTICAST_PORT 4809
 
 struct CITP_PINF_Header 
 { 
@@ -264,4 +280,41 @@ struct CITP_FSEL_DeSe
   //uint16            FixtureIdentifiers[];    // Fixture identifiers 
 };
 
+struct CITP_MSEX_Header {  
+
+  CITP_Header CITPHeader;
+  uint8 VersionMajor;
+  uint8 VersionMinor;
+  uint32 COntentType;
+
+};
+
+struct CITP_MSEX_StFr { 
+
+  CITP_MSEX_Header CITPMSEXHeader;
+  uint16 SourceIdentifier;
+  uint32 FrameFormat;
+  uint16 FrameWidth;
+  uint16 FrameHeight;
+  uint16 FrameBufferSize; 
+  uint8 FrameBuffer[12] = {
+    
+    255,0,0,
+    0,255,0,
+    0,0,255,
+    255,255,255
+    
+    }; 
+
+ };
+
 #endif // _CITPDEFINES_H_
+
+
+
+// citp header size 20
+// citp msex header size 6
+// citp msex stfr header size 12
+
+// 38
+// + buffer size
