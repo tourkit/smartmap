@@ -248,6 +248,7 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 #include "gui.hpp"
 #include "artnet.hpp"
 #include "ndi.hpp"
+#include "citp.hpp"
 
 #include "imgui/imgui.h"
 
@@ -275,9 +276,25 @@ void Boilerplate() {
 
     NDI::Sender ndi(width,height);
 
+    // CITP citp(width,height);
+
+    MulticastSocket socket(CITP_MULTICAST_IP, CITP_MULTICAST_PORT);
+
+    socket.send("Hello", 5);
+
+    // char buffer[1024];
+    // socket.receive(buffer, 1024);
+
+
     FrameBuffer fb(0,width,height);
 
     while (!glfwWindowShouldClose(window.window)) {
+
+        fb.read(width,height,0,0,GL_RGBA,ndi.NDI_video_frame->p_data);
+
+        ndi.send();
+
+        // citp.send();
 
         if (glfwGetTime() - lastTime <= 1./60 ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
         lastTime = glfwGetTime();
@@ -308,10 +325,6 @@ void Boilerplate() {
         ImGui::End();
 
         gui.render();
-
-        fb.read(width,height,0,0,GL_RGBA,ndi.NDI_video_frame->p_data);
-
-        ndi.send();
 
         glfwSwapBuffers(window.window);
 
