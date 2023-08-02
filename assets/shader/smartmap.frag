@@ -126,6 +126,8 @@ float grid(vec2 uv, float thickness, float columns, float rows) {
     columns = clamp(columns*10., 0.5, 100.);
     rows = clamp(rows*10., 0.5, 100.);
 
+
+    float ratio = 1; 
     float tx = thickness*min((rows/columns)/ratio,1.);
     float ty = thickness*min((columns/rows)*ratio,1.); 
 
