@@ -25,7 +25,9 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
     int count;
     GLFWmonitor** monitors = glfwGetMonitors(&count);
     const GLFWvidmode* mode = glfwGetVideoMode(monitors[count-1]);
-    double refreshRate = glfwGetVideoMode(monitors[count-1])->refreshRate;
+    uint16_t refreshRate = glfwGetVideoMode(monitors[count-1])->refreshRate;
+
+    displays.push_back(Display(mode->width, mode->height,refreshRate));
     std::cout  << " Display @ " << refreshRate << "Hz " << mode->width << "x" << mode->height << std::endl;
 
     if (fullscreen)

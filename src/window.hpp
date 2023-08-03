@@ -29,6 +29,9 @@ struct FPS {
 
 struct Window {
 
+    struct Display { uint16_t width, height, rate; };
+    std::vector<Display> displays;
+
     GLFWwindow *window;
 
     FPS fps; 
