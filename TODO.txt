@@ -1,0 +1,30 @@
+# Priority
+
+JSON show config parsing
+NDI out latency
+Multi Layer (?)
+split threads (?)
+killwswitch on DMX stop
+
+Gobos : 
+
+    GRIDS [thickness,col,row]
+    - Normal odd 
+    - Normal even 
+    - Borderless odd 
+    - Borderless even 
+
+    GRADIENT [type,center,contrast]
+
+    STARS/NOISE [quantity,size,speed]
+
+    NDI in [source_id,brightness,contrast]
+
+
+# Extra
+
+Shader Builder
+CITP integration (WIP)
+PLOG
+frame interpolation for orientation with media gobo 
+UBO partial update only (instead of full when no need to be)
