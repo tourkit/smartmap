@@ -117,7 +117,7 @@ void Image::read(std::string path) {
     extension = std::move(filename.back());
 
     // add ext check here
-    File file("C:/msys64/home/SysErr/old/smartmap/assets/media/"+std::string(path));
+    File file("assets/media/"+std::string(path));
 
     if (file.data.size() != -1) {
 

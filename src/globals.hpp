@@ -48,7 +48,7 @@ struct FT {
         
         FT_Init_FreeType(&library);
         
-        FT_New_Face(library, "C:/msys64/home/SysErr/old/smartmap/assets/Anonymous.ttf", 0, &face); 
+        FT_New_Face(library, "assets/Anonymous.ttf", 0, &face); 
 
         FT_Set_Pixel_Sizes(face, 0, size);
         

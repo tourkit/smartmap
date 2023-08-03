@@ -82,7 +82,7 @@ int Boilerplate() {
 
     auto shader = glCreateProgram();
 
-    std::ifstream fragFile("C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.frag");
+    std::ifstream fragFile("shader/basic.frag");
     std::string fragCode((std::istreambuf_iterator<char>(fragFile)), (std::istreambuf_iterator<char>()));
     auto fragptr = (const GLchar* const ) fragCode.c_str();
 
@@ -90,7 +90,7 @@ int Boilerplate() {
     glShaderSource(frag, 1, &fragptr, nullptr);
     glCompileShader(frag);
 
-    std::ifstream vertFile("C:/msys64/home/SysErr/old/smartmap/assets/shader/basic.vert");
+    std::ifstream vertFile("shader/basic.vert");
     std::string vertCode((std::istreambuf_iterator<char>(vertFile)), (std::istreambuf_iterator<char>()));
     auto vertptr = (const GLchar* const ) vertCode.c_str();
 
@@ -125,7 +125,7 @@ int Boilerplate() {
             
             FT_Init_FreeType(&library);
             
-            FT_New_Face(library, "C:/msys64/home/SysErr/old/smartmap/assets/Anonymous.ttf", 0, &face); 
+            FT_New_Face(library, "Anonymous.ttf", 0, &face); 
 
             FT_Set_Pixel_Sizes(face, 0, 200);
             
@@ -255,7 +255,7 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 void Boilerplate() {  
 
 
-    // GLuint width = 400, height = 200;
+    GLuint width = 400, height = 200;
     // GLuint pos_x = 1920-400, pos_y = 0;  
 
     // Artnet artnet("2.0.0.222");
