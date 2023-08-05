@@ -36,6 +36,8 @@ add_executable(SmartMap
     include/vendor/imgui/backends/imgui_impl_opengl3.cpp    
     
     include/vendor/gl3w/src/gl3w.c
+    
+    include/vendor/flecs/flecs.c
 
     include/vendor/RectangleBinPack/MaxRectsBinPack.cpp
     include/vendor/RectangleBinPack/Rect.cpp

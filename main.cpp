@@ -5,6 +5,7 @@
                         */
 
 #include "smartmap.hpp"
+#include "ecs.hpp"
 // #include "boi/lerplate.hpp"
 // #include "debug.hpp"
 // Debug debug;
@@ -12,6 +13,10 @@
 SmartMap& sm = SmartMap::getInstance();
 
 int main() { 
+
+
+    ECS ecs;
+
 
     // Boilerplate();
     
