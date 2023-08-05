@@ -1,7 +1,7 @@
 #ifndef ATLAS_H
 #define ATLAS_H  
 #include "RectangleBinPack/MaxRectsBinPack.h"
-#include "globals.hpp"
+#include "pch.hpp"
 #include "texture.hpp"
 #include "ubo.hpp"
 

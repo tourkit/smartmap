@@ -1,7 +1,7 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 	
-#include "globals.hpp"
+#include "pch.hpp"
 
 struct Texture;
 	

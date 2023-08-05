@@ -1,7 +1,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include "globals.hpp"
+#include "pch.hpp"
 
 enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
 

@@ -1,6 +1,6 @@
 
 #pragma once
-#include "globals.hpp"
+#include "pch.hpp"
 #include "include/vendor/NDI/Include/Processing.NDI.Lib.h"
 
 namespace NDI {
