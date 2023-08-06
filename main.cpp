@@ -5,7 +5,7 @@
                         */
 
 #include "smartmap.hpp"
-#include "ecs.hpp"
+#include "attribute.hpp"
 // #include "boi/lerplate.hpp"
 // #include "debug.hpp"
 // Debug debug;
@@ -14,15 +14,11 @@ SmartMap& sm = SmartMap::getInstance();
 
 int main() { 
 
-
-    ECS ecs;
-
-
     // Boilerplate();
     
     SmartMap::Fixture basic = {
         {1},{1},{1},{1},    // DIM RGB
-        {2},{2},  // POSITION
+        {2},{2},            // POSITION
         {2},{2},            // FOCUS
         {1},{1},{1},{1},    // GOBO
         {1,0,6.28318530718},{1},{1}, // BEAM : Orientation, Strobe, Feedback
