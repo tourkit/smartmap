@@ -24,8 +24,8 @@ int main() {
 
     for (auto c : Reflection::components) {
         
-        std::cout << c.second.name << std::endl;
-        for (auto m : c.second.members) std::cout << " - " << m.name << " (" << m.range_from << "," << m.range_to << ")" << std::endl;
+        std::cout << c.name << std::endl;
+        for (auto m : c.members) std::cout << " - " << m.name << " (" << m.range_from << "," << m.range_to << ")" << std::endl;
         
     }
 

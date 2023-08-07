@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.hpp"
-#include "components2.hpp"
 #include <typeinfo>
 
 
@@ -25,14 +24,29 @@ struct Reflection {
         template <typename T>
         Component& member(std::string name = "") {
 
-            Member::Type type = Member::Type::UNDEFINED;
-            if (typeid(T) == typeid(float)) type = Member::Type::F16;
-            else if (typeid(T) == typeid(uint8_t)) type = Member::Type::UI8;
-            else if (typeid(T) == typeid(uint16_t)) type = Member::Type::UI16;
-            else if (typeid(T) == typeid(int8_t)) type = Member::Type::I8;
-            else if (typeid(T) == typeid(int16_t)) type = Member::Type::I16;
+            float range_to = 1;
 
-            members.push_back({name, sizeof(T), 0,1, type});
+            Member::Type type = Member::Type::UNDEFINED;
+            if (typeid(T) == typeid(float)) { 
+                type = Member::Type::F16; 
+
+            }else if (typeid(T) == typeid(uint8_t)) { 
+                type = Member::Type::UI8; 
+                range_to = 255;
+
+            }else if (typeid(T) == typeid(uint16_t)) { 
+                type = Member::Type::UI16; 
+
+            }else if (typeid(T) == typeid(int8_t)) { 
+                type = Member::Type::I8; 
+
+            }else if (typeid(T) == typeid(int16_t)) { 
+                type = Member::Type::I16; 
+            }
+            
+            this->size += sizeof(T);
+            
+            members.push_back({name, sizeof(T), 0,range_to, type});
 
             return *this;
 
@@ -49,39 +63,18 @@ struct Reflection {
 
     };
 
-    static inline std::map<size_t, Component> components2;
-    static inline std::map<const char*, Component> components;
-
-    std::vector<Component> definition;
-
-    template <typename T>
-    static Component &component(std::string name) {
-
-        size_t uid = typeid(T).hash_code();
-
-        components2[uid] = {name,sizeof(T)};
-
-        return components2[uid];
-
-    }
-
-    template <typename T>
-    static Component &component() { 
-
-        size_t uid = typeid(T).hash_code();
-        
-        if (components2.find(uid) != components2.end()) components2[uid] = {typeid(T).name(),sizeof(T)};
-
-        return components2[uid];
-    
-    }
+    static inline std::vector<Component> components;
 
     static Component &component(const char* name) {
 
-        if (components.find(name) != components.end()) components[name] = {sizeof(T)};
+        for (int i = 0; i < components.size(); i++) if (!strcmp(components[i].name.c_str(),name)) return components[i];
 
-        return components[name];
+        components.push_back({name,0});
+
+        return components.back();
 
     }
+
+    std::vector<Component> structure;
 
 };
