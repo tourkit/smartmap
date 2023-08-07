@@ -1,13 +1,18 @@
 #include "attribute.hpp"  
 
-Attribute::Attribute(std::string name, float range_from, float range_to, float default_value)
-: Attribute(name, nullptr, range_from, range_to, default_value) {  }
+// Attribute::Attribute(std::string name, float range_from, float range_to, float default_value)
+// : Attribute(name, nullptr, range_from, range_to, default_value) {  }
 
-Attribute::Attribute(std::string name, float *data, float range_from, float range_to, float default_value)
-: name(name), data(data), range_from(range_from), range_to(range_to), default_value(default_value) {  }
+// Attribute::Attribute(std::string name, float *data, float range_from, float range_to, float default_value)
+// : name(name), data(data), range_from(range_from), range_to(range_to), default_value(default_value) {  }
 
 Attribute::Attribute(std::string name, std::vector<Attribute> childrens) 
 : name(name) { for (auto c:childrens) this->childrens.push_back(c); }
+
+Attribute* Attribute::add(std::vector<Attribute> &attrs) { 
+
+
+}
 
 Attribute* Attribute::child(std::string name) { 
 

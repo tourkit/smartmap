@@ -1,4 +1,4 @@
-# pragma once
+#pragma once
 
 #include "pch.hpp"
 
@@ -12,14 +12,16 @@ struct Attribute {
 
   float *data;
 
-  Attribute(std::string name, float range_from = 0, float range_to = 1, float default_value = 1) ;
+  // Attribute(std::string name, float range_from = 0, float range_to = 1, float default_value = 1) ;
   
-  Attribute(std::string name, float *ptr, float range_from = 0, float range_to = 1, float default_value = 1) ;
+  // Attribute(std::string name, float *ptr, float range_from = 0, float range_to = 1, float default_value = 1) ;
 
   Attribute(std::string name, std::vector<Attribute> childrens);
 
+  Attribute* add(std::vector<Attribute> &attrs);
+
   Attribute* child(std::string name);
  
-  Attribute* operator[] (uint16_t id);
+  // Attribute* operator[] (uint16_t id);
 
 };

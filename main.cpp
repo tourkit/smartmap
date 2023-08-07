@@ -5,34 +5,32 @@
                         */
 
 #include "smartmap.hpp"
-#include "attribute.hpp"
 // #include "boi/lerplate.hpp"
 // #include "debug.hpp"
 // Debug debug;
 
-SmartMap& sm = SmartMap::getInstance();
+// SmartMap& sm = SmartMap::getInstance();
+
+
+#include "components.hpp"
+
+
+
 
 int main() { 
 
-    // Boilerplate();
-    
-    SmartMap::Fixture basic = {
-        {1},{1},{1},{1},    // DIM RGB
-        {2},{2},            // POSITION
-        {2},{2},            // FOCUS
-        {1},{1},{1},{1},    // GOBO
-        {1,0,6.28318530718},{1},{1}, // BEAM : Orientation, Strobe, Feedback
-        {0} // pr buffer alignment vec4 dans glsl
-    }; 
+    Components components;
+    Reflection meta;
 
-    SmartMap::Layer l1(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Grid, 5, 5);
-    // SmartMap::Layer l2(0, 1, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 2,2);
-    
-    // SmartMap::Layer l2(0, 0, basic, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 4,2);
+    for (auto c : Reflection::components) {
+        
+        std::cout << c.second.name << std::endl;
+        for (auto m : c.second.members) std::cout << " - " << m.name << " (" << m.range_from << "," << m.range_to << ")" << std::endl;
+        
+    }
 
-    sm.render();
- 
 }
+
 
 
 
