@@ -310,11 +310,17 @@ void SmartMap::render() {
 
         } 
 
+        ImGui::ShowDemoWindow();
+
         ///// UBO
         
         ImGui::Begin("FixtureUBO");
-        // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(&artnet->universes[0].dmx.data[i]),  &min,   &max,   "");
-        for (int i = 0; i < 48; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &fixtureUBO->data[i], 0, 1);
+        int uniform_id = 0;
+        for (auto c:fixtureUBO->definition) {
+            
+            if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) ImGui::SliderFloat(m.name.c_str(), &fixtureUBO->data[uniform_id++], 0, 1);
+                 
+        }
         ImGui::End();
 
         ///// TEXTURES
