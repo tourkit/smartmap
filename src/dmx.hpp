@@ -30,9 +30,19 @@ struct DMX {
 
     void update();
     
-    struct Remap { uint8_t combining; float min=0,max=1; };
+    struct Remap { 
 
-    void remap(uint16_t chan, uint16_t quantity, std::vector<Remap>& remaps, float* dest);
+        uint16_t first_chan;
+        uint16_t quantity;
+        float *dest;
+
+        struct Attribute { uint8_t combining; float min=0,max=1; };
+
+        std::vector<Attribute> attributes;
+        
+    };
+    
+    std::vector<Remap> remaps; 
 
     DMX();
 

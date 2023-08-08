@@ -95,26 +95,13 @@ SmartMap::SmartMap() {
 
     };
 
-    for (auto c:fixtureUBO->definition) { 
-
-        for (auto m :c->members) { 
-
-            uint8_t combining = 0;
-
-            for (auto p:basic_fixture.presets) for (auto f:p.features) for (auto a:f.attributes) if (&m == a.member) combining = a.combining;
-
-            basic_dmxremap.push_back({combining, m.range_from, m.range_to}); 
-        
-        }
-    }
-
     artnet->callback = [&](Artnet* an){ fixtureUBO->update(); };
 
 }
 
-SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, std::vector<DMX::Remap> &dmxremap, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
+SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
 
-    : chan(chan), uni(uni), dmxremap(dmxremap), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
+    : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
     for (auto l:pool) { attroffset+=l->quantity*l->dmxremap.size(); }
     for (auto l:pool) { matoffset+=l->quantity*4; }
@@ -144,11 +131,25 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, std::vector<DMX::Remap> &dmx
     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
 
-    fb = new FrameBuffer(buffer);
+    fb = new FrameBuffer(buffer); 
+        
+    artnet->universes[uni].remaps.push_back({chan, quantity, &fixtureUBO->data[attroffset] });
+    auto remap = artnet->universes[uni].remaps.back();
+
+    for (auto c:fixtureUBO->definition) { 
+
+        for (auto m :c->members) { 
+
+            uint8_t combining = 0;
+
+            for (auto p:fixture.presets) for (auto f:p.features) for (auto a:f.attributes) if (&m == a.member) combining = a.combining;
+
+            remap.attributes.push_back({combining, m.range_from, m.range_to});  
+        
+        }
+    }
     
     artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
-        
-        dmx->remap(this->chan, this->quantity, this->dmxremap, &fixtureUBO->data[this->attroffset]); 
 
         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
 

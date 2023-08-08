@@ -12,33 +12,34 @@ void DMX::update() {
 
     fps.run();
 
-    for (auto cb:callbacks) cb(this); 
+    for (auto r : remaps) {
 
-}
+        auto chan = r.first_chan;
 
-void DMX::remap(uint16_t chan, uint16_t quantity, std::vector<Remap>& remaps, float* dest) {
-
-    for (int offset = 0; offset < quantity; offset++) {  
-        
-        auto pos = (offset*remaps.size());
-
-        for (int i = 0; i < remaps.size(); i++) { 
-
-            float target;
-            auto c = remaps[i].combining;
-            if (c==1) target      = GMAui2f[data[chan]];
-            else if (c==2) target = get16(chan)/65535.0f;
-            else if (c==3) target = get24(chan)/16777215.0f;
-            else if (c==4) target = get32(chan)/4294967295.0f;
-
-            // range remap
-            target = (target * (remaps[i].max - remaps[i].min)) + remaps[i].min;
-
-            (*(dest+i+pos))= target;
-            chan += c;
+        for (int offset = 0; offset < r.quantity; offset++) {  
             
-        }
+            auto pos = (offset*r.attributes.size());
 
-    } 
+            for (int i = 0; i < r.attributes.size(); i++) { 
+
+                float target;
+                auto c = r.attributes[i].combining;
+                if (c==1) target      = GMAui2f[data[chan]];
+                else if (c==2) target = get16(chan)/65535.0f;
+                else if (c==3) target = get24(chan)/16777215.0f;
+                else if (c==4) target = get32(chan)/4294967295.0f;
+
+                // range remap
+                target = (target * (r.attributes[i].max - r.attributes[i].min)) + r.attributes[i].min;
+
+                (*(r.dest+i+pos))= target;
+                chan += c;
+                
+            }
+
+        } 
+    }
+
+    for (auto cb:callbacks) cb(this); 
 
 }
