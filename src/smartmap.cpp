@@ -85,8 +85,8 @@ SmartMap::SmartMap() {
 
         {"Focus", {
             {"Focus", {
-                {"Focus_X",     2,  &Component::id("Focus")->members[1]}, 
-                {"Focus_Y",     2,  &Component::id("Focus")->members[1]},                                  
+                {"Focus_X",     2,  &Component::id("Size")->members[1]}, 
+                {"Focus_Y",     2,  &Component::id("Size")->members[1]},                                  
         }}}},
 
         {"Gobo", {
