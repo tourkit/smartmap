@@ -2,6 +2,7 @@
 
 
 #include "window.hpp"
+#include "component.hpp"
 #include "pch.hpp"
 
 
@@ -11,7 +12,7 @@ struct DMX {
     
     FPS fps{"DMX"};
 
-    struct Attribute { const char * name; uint8_t combining; };
+    struct Attribute { const char * name; uint8_t combining; Component::Member *member = nullptr; };
 
     struct Feature { const char * name; std::vector<Attribute> attributes; };
 

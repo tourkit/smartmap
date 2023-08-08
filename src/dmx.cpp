@@ -16,7 +16,6 @@ void DMX::update() {
 
 }
 
-
 void DMX::remap(uint16_t chan, uint16_t quantity, std::vector<Remap>& remaps, float* dest) {
 
     for (int offset = 0; offset < quantity; offset++) {  

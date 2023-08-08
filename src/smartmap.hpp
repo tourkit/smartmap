@@ -44,9 +44,8 @@ struct Quads {
 
 struct SmartMap {
 
-    using Fixture = std::vector<DMX::Remap>; // change to component !
-
-    DMX::Fixture fixtureDMX;
+    DMX::Fixture basic_fixture;
+    std::vector<DMX::Remap> basic_dmxremap;
 
     static inline Artnet *artnet;
     static inline UBO *matriceUBO;
@@ -60,8 +59,8 @@ struct SmartMap {
         static inline std::vector<Layer*> pool;
 
         enum Mode { Free, Grid } mode;
-    
-        Fixture fixture;
+
+        std::vector<DMX::Remap> dmxremap;
 
         uint16_t width, height;
         
@@ -79,7 +78,7 @@ struct SmartMap {
 
         uint16_t chan,uni,attroffset = 0, matoffset = 0;
 
-        Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
+        Layer(uint16_t chan, uint16_t uni, std::vector<DMX::Remap> &dmxremap, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
 
     };
 

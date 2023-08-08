@@ -26,30 +26,6 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 SmartMap::SmartMap() {
 
-    fixtureDMX.presets = { 
-
-        {"DIMMER",   {{"DIMMER",   { {"Dim",1},                                                     }}}},
-        {"COLOR",    {{"RGB",      { {"Red",1}, {"Green",1}, {"Blue",1},                            }}}},
-        {"Position", {{"Position", { {"Pos_X",2}, {"Pos_Y",2},                                      }}}},
-        {"Focus",    {{"Focus",    { {"Focus_X",2}, {"Focus_Y",2},                                  }}}},
-        {"Gobo",     {{"Gobo",     { {"Gobo_ID",1}, {"Gobo_FX1",1}, {"Gobo_FX2",1}, {"Gobo_FX3",1}, }}}},
-        {"Beam",     {{"Beam",     { {"Orientation",1}, {"Feedback",1}, {"Strobe",1},               }}}},
-
-    };
-
-    fixtureUBO->definition = {
-
-        Component::id("RGBA"),
-        Component::id("Position"),
-        Component::id("Size"),
-        Component::id("Gobo"),
-        Component::id("Orientation"),
-        Component::id("Feedback"),
-        Component::id("Strobe"),
-
-    };
-
-
     // order matters for some
     artnet = new Artnet("2.0.0.222");
     window = new Window(false,400,300,1540);
@@ -75,15 +51,72 @@ SmartMap::SmartMap() {
     // outBlur = new Texture(nullptr, FW*.5,FH*.5); 
     // outBlur->format = GL_RGBA8;
 
+        basic_fixture.presets = { 
+
+        {"DIMMER",   {{"DIMMER",   { 
+            {"Dim",         1,  &Component::id("RGBA")->members[3]},
+        }}}},
+        {"COLOR",    {{"RGB",      { 
+            {"Red",         1,  &Component::id("RGBA")->members[0]}, 
+            {"Green",       1,  &Component::id("RGBA")->members[1]}, 
+            {"Blue",        1,  &Component::id("RGBA")->members[2]},                            
+        }}}},
+        {"Position", {{"Position", { 
+            {"Pos_X",       2,  &Component::id("Position")->members[0]}, 
+            {"Pos_Y",       2,  &Component::id("Position")->members[1]},                                      
+        }}}},
+        {"Focus",    {{"Focus",    { 
+            {"Focus_X",     2,  &Component::id("Focus")->members[1]}, 
+            {"Focus_Y",     2,  &Component::id("Focus")->members[1]},                                  
+        }}}},
+        {"Gobo",     {{"Gobo",     { 
+            {"Gobo_ID",     1,  &Component::id("Gobo")->members[0]}, 
+            {"Gobo_FX1",    1,  &Component::id("Gobo")->members[1]}, 
+            {"Gobo_FX2",    1,  &Component::id("Gobo")->members[2]}, 
+            {"Gobo_FX3",    1,  &Component::id("Gobo")->members[3]},
+        }}}},
+        {"Beam",     {{"Beam",     { 
+            {"Orientation", 1,  &Component::id("Orientation")->members[0]}, 
+            {"Feedback",    1,  &Component::id("Feedback")->members[0]}, 
+            {"Strobe",      1,  &Component::id("Strobe")->members[0]},               
+        }}}},
+
+    };
+
+    fixtureUBO->definition = {
+
+        Component::id("RGBA"),
+        Component::id("Position"),
+        Component::id("Size"),
+        Component::id("Gobo"),
+        Component::id("Orientation"),
+        Component::id("Feedback"),
+        Component::id("Strobe"),
+
+    };
+
+    for (auto c:fixtureUBO->definition) { 
+
+        for (auto m :c->members) { 
+
+            uint8_t combining = 0;
+
+            for (auto p:basic_fixture.presets) for (auto f:p.features) for (auto a:f.attributes) if (&m == a.member) combining = a.combining;
+
+            basic_dmxremap.push_back({combining, m.range_from, m.range_to}); 
+        
+        }
+    }
+
     artnet->callback = [&](Artnet* an){ fixtureUBO->update(); };
 
 }
 
-SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
+SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, std::vector<DMX::Remap> &dmxremap, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
 
-    : chan(chan), uni(uni), fixture(fixture), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
+    : chan(chan), uni(uni), dmxremap(dmxremap), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-    for (auto l:pool) { attroffset+=l->quantity*l->fixture.size(); }
+    for (auto l:pool) { attroffset+=l->quantity*l->dmxremap.size(); }
     for (auto l:pool) { matoffset+=l->quantity*4; }
     pool.push_back(this);
     
@@ -115,18 +148,18 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
     
     artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
         
-        dmx->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); 
+        dmx->remap(this->chan, this->quantity, this->dmxremap, &fixtureUBO->data[this->attroffset]); 
 
         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
 
         for (int i = 0; i < this->quantity; i++) { 
 
-            int w = *(8+&fixtureUBO->data[this->attroffset]+(i*this->fixture.size()))*255;
+            int w = *(8+&fixtureUBO->data[this->attroffset]+(i*this->dmxremap.size()))*255;
 
             if (w == 10) {
 
                 float *l = &matriceUBO->data[i*4+this->matoffset];
-                int x = *(9+&fixtureUBO->data[this->attroffset]+(i*this->fixture.size()))*(strlen(chars)-1);
+                int x = *(9+&fixtureUBO->data[this->attroffset]+(i*this->dmxremap.size()))*(strlen(chars)-1);
 
                 FT fr((chars+x), (this->height/this->quantity_y)*.9);
 

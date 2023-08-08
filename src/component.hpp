@@ -78,6 +78,8 @@ struct Component {
 
     static void init() {
 
+        pool.resize(0);
+
         create("RGBA")
             .member<float>("red")
             .member<float>("green")
