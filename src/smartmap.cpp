@@ -43,6 +43,18 @@ SmartMap::SmartMap() {
     matriceUBO = new UBO("MatriceUBO", 24*100, {shader->id});  // 24*32 correspond a R
     matriceUBO2 = new UBO("MatriceUBO2", 24*100, {shader->id});  
     fixtureUBO = new UBO("FixtureUBO", 24*100, {shader->id}); 
+    fixtureUBO->definition = {
+
+        Component::id("RGBA"),
+        Component::id("Position"),
+        Component::id("Size"),
+        Component::id("Gobo"),
+        Component::id("Orientation"),
+        Component::id("Feedback"),
+        Component::id("Strobe"),
+
+    };
+
     fixtureUBO2 = new UBO("FixtureUBO2", 24*100, {shader->id}); 
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
@@ -53,45 +65,44 @@ SmartMap::SmartMap() {
 
         basic_fixture.presets = { 
 
-        {"DIMMER",   {{"DIMMER",   { 
-            {"Dim",         1,  &Component::id("RGBA")->members[3]},
-        }}}},
-        {"COLOR",    {{"RGB",      { 
-            {"Red",         1,  &Component::id("RGBA")->members[0]}, 
-            {"Green",       1,  &Component::id("RGBA")->members[1]}, 
-            {"Blue",        1,  &Component::id("RGBA")->members[2]},                            
-        }}}},
-        {"Position", {{"Position", { 
-            {"Pos_X",       2,  &Component::id("Position")->members[0]}, 
-            {"Pos_Y",       2,  &Component::id("Position")->members[1]},                                      
-        }}}},
-        {"Focus",    {{"Focus",    { 
-            {"Focus_X",     2,  &Component::id("Focus")->members[1]}, 
-            {"Focus_Y",     2,  &Component::id("Focus")->members[1]},                                  
-        }}}},
-        {"Gobo",     {{"Gobo",     { 
-            {"Gobo_ID",     1,  &Component::id("Gobo")->members[0]}, 
-            {"Gobo_FX1",    1,  &Component::id("Gobo")->members[1]}, 
-            {"Gobo_FX2",    1,  &Component::id("Gobo")->members[2]}, 
-            {"Gobo_FX3",    1,  &Component::id("Gobo")->members[3]},
-        }}}},
-        {"Beam",     {{"Beam",     { 
-            {"Orientation", 1,  &Component::id("Orientation")->members[0]}, 
-            {"Feedback",    1,  &Component::id("Feedback")->members[0]}, 
-            {"Strobe",      1,  &Component::id("Strobe")->members[0]},               
+        {"DIMMER", {
+            {"DIMMER", {
+                {"Dim",         1,  &Component::id("RGBA")->members[3]},
         }}}},
 
-    };
+        {"COLOR", {
+            {"RGB", {
+                {"Red",         1,  &Component::id("RGBA")->members[0]}, 
+                {"Green",       1,  &Component::id("RGBA")->members[1]}, 
+                {"Blue",        1,  &Component::id("RGBA")->members[2]},                            
+        }}}},
 
-    fixtureUBO->definition = {
+        {"Position", {
+            {"Position", { 
+                {"Pos_X",       2,  &Component::id("Position")->members[0]}, 
+                {"Pos_Y",       2,  &Component::id("Position")->members[1]},                                      
+        }}}},
 
-        Component::id("RGBA"),
-        Component::id("Position"),
-        Component::id("Size"),
-        Component::id("Gobo"),
-        Component::id("Orientation"),
-        Component::id("Feedback"),
-        Component::id("Strobe"),
+        {"Focus", {
+            {"Focus", {
+                {"Focus_X",     2,  &Component::id("Focus")->members[1]}, 
+                {"Focus_Y",     2,  &Component::id("Focus")->members[1]},                                  
+        }}}},
+
+        {"Gobo", {
+            {"Gobo", {
+                {"Gobo_ID",     1,  &Component::id("Gobo")->members[0]}, 
+                {"Gobo_FX1",    1,  &Component::id("Gobo")->members[1]}, 
+                {"Gobo_FX2",    1,  &Component::id("Gobo")->members[2]}, 
+                {"Gobo_FX3",    1,  &Component::id("Gobo")->members[3]},
+        }}}},
+
+        {"Beam", {
+            {"Beam", {
+                {"Orientation", 1,  &Component::id("Orientation")->members[0]}, 
+                {"Feedback",    1,  &Component::id("Feedback")->members[0]}, 
+                {"Strobe",      1,  &Component::id("Strobe")->members[0]},               
+        }}}},
 
     };
 
