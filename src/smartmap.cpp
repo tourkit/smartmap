@@ -26,6 +26,30 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 SmartMap::SmartMap() {
 
+    fixtureDMX.presets = { 
+
+        {"DIMMER",   {{"DIMMER",   { {"Dim",1},                                                     }}}},
+        {"COLOR",    {{"RGB",      { {"Red",1}, {"Green",1}, {"Blue",1},                            }}}},
+        {"Position", {{"Position", { {"Pos_X",2}, {"Pos_Y",2},                                      }}}},
+        {"Focus",    {{"Focus",    { {"Focus_X",2}, {"Focus_Y",2},                                  }}}},
+        {"Gobo",     {{"Gobo",     { {"Gobo_ID",1}, {"Gobo_FX1",1}, {"Gobo_FX2",1}, {"Gobo_FX3",1}, }}}},
+        {"Beam",     {{"Beam",     { {"Orientation",1}, {"Feedback",1}, {"Strobe",1},               }}}},
+
+    };
+
+    fixtureUBO->definition = {
+
+        Component::id("RGBA"),
+        Component::id("Position"),
+        Component::id("Size"),
+        Component::id("Gobo"),
+        Component::id("Orientation"),
+        Component::id("Feedback"),
+        Component::id("Strobe"),
+
+    };
+
+
     // order matters for some
     artnet = new Artnet("2.0.0.222");
     window = new Window(false,400,300,1540);
@@ -89,9 +113,9 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, Fixture& fixture, uint16_t w
 
     fb = new FrameBuffer(buffer);
     
-    artnet->universes[uni].callbacks.push_back([this](Artnet::Universe* u){ 
+    artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
         
-        u->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); 
+        dmx->remap(this->chan, this->quantity ,this->fixture ,&fixtureUBO->data[this->attroffset]); 
 
         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
 
@@ -236,7 +260,7 @@ void SmartMap::render() {
 
                     ImGui::PushID(i);
 
-                    ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.raw[i],  &cell_min,   &cell_max,   "");
+                    ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.data[i],  &cell_min,   &cell_max,   "");
 
                     if ((i + 1) % cells_count != 0) ImGui::SameLine(0);
 
@@ -256,7 +280,7 @@ void SmartMap::render() {
         ///// UBO
         
         ImGui::Begin("FixtureUBO");
-        // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(&artnet->universes[0].raw[i]),  &min,   &max,   "");
+        // for (int i = 0; i < 20; i++) ImGui::SliderScalar(std::to_string(i).c_str(), ImGuiDataType_U8, (uint8_t*)(&artnet->universes[0].dmx.data[i]),  &min,   &max,   "");
         for (int i = 0; i < 48; i++) ImGui::SliderFloat(("uniform "+std::to_string(i)).c_str(), &fixtureUBO->data[i], 0, 1);
         ImGui::End();
 

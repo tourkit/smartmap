@@ -4,6 +4,7 @@
 #include "pch.hpp"
 
 #include "shader.hpp"
+#include "component.hpp"
 
 struct UBO {
 
@@ -16,6 +17,8 @@ struct UBO {
     GLuint id = 0;
 
     std::vector<GLuint> subscribers;
+
+    std::vector<Component*> definition;
 
     const char* name;
 

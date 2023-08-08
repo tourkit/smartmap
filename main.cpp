@@ -11,21 +11,16 @@
 
 // SmartMap& sm = SmartMap::getInstance();
 
-
-#include "components.hpp"
-
-
-
+#include "component.hpp"
 
 int main() { 
 
-    Components components;
-    Reflection meta;
+    Component::init();
 
-    for (auto c : Reflection::components) {
+    for (auto c : Component::pool) {
         
-        std::cout << c.name << std::endl;
-        for (auto m : c.members) std::cout << " - " << m.name << " (" << m.range_from << "," << m.range_to << ")" << std::endl;
+        std::cout << c->name << std::endl;
+        for (auto m : c->members) std::cout << " - " << m.name << " (" << m.range_from << "," << m.range_to << ")" << std::endl;
         
     }
 

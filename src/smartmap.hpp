@@ -44,7 +44,9 @@ struct Quads {
 
 struct SmartMap {
 
-    using Fixture = std::vector<Artnet::Universe::Attribute>;
+    using Fixture = std::vector<DMX::Remap>; // change to component !
+
+    DMX::Fixture fixtureDMX;
 
     static inline Artnet *artnet;
     static inline UBO *matriceUBO;
