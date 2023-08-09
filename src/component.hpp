@@ -92,8 +92,8 @@ struct Component {
         ;
 
         create("Position")
-            .member<float>("x").range(-1,1)
-            .member<float>("y").range(-1,1)
+            .member<float>("x")//.range(-1,1)
+            .member<float>("y")//.range(-1,1)
         ;
 
         create("Size")
@@ -108,7 +108,7 @@ struct Component {
         ;
 
         create("Orientation")
-            .member<float>("angle")
+            .member<float>("angle").range(-3.14159265359,3.14159265359)
         ;
 
         create("Feedback")

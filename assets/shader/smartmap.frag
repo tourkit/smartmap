@@ -66,6 +66,8 @@ vec2 rotate(vec2 v, float a) {
 
 vec2 rectangle(vec2 uv, vec2 size, vec2 pos, float angle, vec2 AR) {
 
+    pos *= 1+size;
+    pos -= size*.5;
     uv -= pos; 
     uv = rotate(uv*AR,angle)*(1./AR);
     uv /= size;
@@ -315,7 +317,7 @@ void main() {
                 
         vec2 outuv;
 
-        float steps = 15;
+        float steps = 1;
         for (float i = 0; i < steps; i++)  {
         
             float angle = fix[id].orientation;
@@ -329,9 +331,13 @@ void main() {
             if (FBratio > 1.) AR.x = FBratio;
             else AR.y = FBratio;
 
+            // pos = vec2(debug2,debug3);
+            // angle = debug4*10;
             outuv += (rectangle(uv, size, pos, angle, AR)); 
             
         }
+
+        // outuv = rectangle(uv,vec2(debug0,debug1),vec2(debug2,debug3),debug4,vec2(1));
 
         float sss = sign(outuv.x+outuv.y);
         vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
