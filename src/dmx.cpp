@@ -39,7 +39,7 @@ void DMX::update() {
 
         } 
     }
-
+    
     for (auto cb:callbacks) cb(this); 
 
 }

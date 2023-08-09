@@ -59,8 +59,6 @@ struct SmartMap {
 
         enum Mode { Free, Grid } mode;
 
-        std::vector<DMX::Remap> dmxremap;
-
         uint16_t width, height;
         
         uint16_t offset_x = 0, offset_y =0;

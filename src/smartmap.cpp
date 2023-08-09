@@ -116,14 +116,14 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-    for (auto &l:pool) { attroffset+=l->quantity*l->dmxremap.size(); }
-    for (auto &l:pool) { matoffset+=l->quantity*4; }
+    // for (auto &l:pool) { attroffset+=l->quantity*l->dmxremap.size(); } // multi layer pb
+    // for (auto &l:pool) { matoffset+=l->quantity*4; } // multi layer pb
     pool.push_back(this);
     
     GLuint FW = width*scale, FH = height*scale;
     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
-    std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);    
+    std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);   
     memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
     matriceUBO->update(); 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
@@ -180,14 +180,14 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
         for (int i = 0; i < this->quantity; i++) { 
 
-            int w = *(8+&fixtureUBO->data[this->attroffset]+(i*this->dmxremap.size()))*255;
+            int gobo_id = *(8+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*255;
 
-            if (w == 10) {
+            if (gobo_id == 10) {
 
                 float *l = &matriceUBO->data[i*4+this->matoffset];
-                int x = *(9+&fixtureUBO->data[this->attroffset]+(i*this->dmxremap.size()))*(strlen(chars)-1);
+                int char_id = *(9+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*(strlen(chars)-1);
 
-                FT fr((chars+x), (this->height/this->quantity_y)*.9);
+                FT fr((chars+char_id), (this->height/this->quantity_y)*.9);
 
                 GLuint offset_x = this->width**(l+2)+(((this->width/this->quantity_x)-fr.width)*.5);
 

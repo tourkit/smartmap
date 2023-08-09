@@ -72,6 +72,7 @@ target_include_directories(SmartMap PRIVATE
     include/vendor/
     include/vendor/imgui/
     include/vendor/gl3w/include/
+    include/vendors/glm/
     /include/vendor/NDI/Include/
     ${FREETYPE_INCLUDE_DIRS}
     

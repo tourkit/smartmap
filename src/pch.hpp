@@ -26,7 +26,8 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
-// #include "include/vendors/glm/glm.hpp"
+#include "include/vendor/glm/glm.hpp"
+
 // 
 #define ROCH
 #ifdef ROCH
@@ -82,7 +83,7 @@ struct FT {
 struct vec2 { float x = 0, y = 0; };
 struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
 
-
+// 0 to 1
 // std::array<float, 4> is width height pos_x pos_y 
 static std::vector<std::array<float, 4>> matrice(unsigned int x, unsigned int y) {
 
@@ -99,6 +100,8 @@ static std::vector<std::array<float, 4>> matrice(unsigned int x, unsigned int y)
 
 }
 
+
+// -1 to 1
 // std::array<float, 4> is width height pos_x pos_y 
 static std::vector<std::array<float, 4>> matrice2(unsigned int x, unsigned int y) {
 
