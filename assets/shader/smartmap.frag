@@ -320,6 +320,8 @@ void main() {
         vec2 size = fix[id].size;
         vec2 pos = fix[id].pos;
         vec2 AR = vec2(1);
+        if (FBratio > 1.) AR.x = FBratio;
+        else AR.y = FBratio;
         vec2 outuv = rectangle(uv, size, pos, angle, AR);
         float steps = 4 ;
         for (float i = 1; i < steps; i++)  {
@@ -334,8 +336,7 @@ void main() {
             if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,i/steps);
             if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,i/steps);
 
-            if (FBratio > 1.) AR.x = FBratio;
-            else AR.y = FBratio;
+
             
             outuv += (rectangle(uv, size, pos, angle, AR)); 
             
@@ -346,18 +347,18 @@ void main() {
 
         int gobo_id = int(fix[id].gobo[0]*255)%127;
 
-        if (gobo_id == 10) { 
             outuv.y = 1-outuv.y;
+        if (gobo_id == 10) { 
             // color = vec4(outuv.x); return;
             color = rgba*texture(pass,(outuv*mat[id].size*.99+mat[id].pos)).r;
             //color = 1-color;
             return; 
         }
+        if (gobo_id == 8) color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
         outuv *= .0666; // dunno why gotta do this, works for all ....
         outuv = vec2(1-outuv.x,outuv.y); // dunno why got flip here
 
         if (gobo_id == 0) color = vec4(sss)*rgba*vec4(1);
-        if (gobo_id == 8) color = sss*rgba*fromAtlas(outuv*debug0*10, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
             
             
         
