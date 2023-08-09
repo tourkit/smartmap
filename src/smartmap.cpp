@@ -45,13 +45,15 @@ SmartMap::SmartMap() {
     fixtureUBO = new UBO("FixtureUBO", 24*100, {shader->id}); 
     fixtureUBO->definition = {
 
-        Component::id("RGBA"),
+        Component::id("Opacity"),
+        Component::id("RGB"),
         Component::id("Position"),
         Component::id("Size"),
         Component::id("Gobo"),
         Component::id("Orientation"),
         Component::id("Feedback"),
         Component::id("Strobe"),
+        Component::id("float"), // for alignmentr
 
     };
 
@@ -67,14 +69,14 @@ SmartMap::SmartMap() {
 
         {"DIMMER", {
             {"DIMMER", {
-                {"Dim",         1,  &Component::id("RGBA")->members[3]},
+                {"Dim",         1,  &Component::id("Opacity")->members[0]},
         }}}},
 
         {"COLOR", {
             {"RGB", {
-                {"Red",         1,  &Component::id("RGBA")->members[0]}, 
-                {"Green",       1,  &Component::id("RGBA")->members[1]}, 
-                {"Blue",        1,  &Component::id("RGBA")->members[2]},                            
+                {"Red",         1,  &Component::id("RGB")->members[0]}, 
+                {"Green",       1,  &Component::id("RGB")->members[1]}, 
+                {"Blue",        1,  &Component::id("RGB")->members[2]},                            
         }}}},
 
         {"Position", {
@@ -85,7 +87,7 @@ SmartMap::SmartMap() {
 
         {"Focus", {
             {"Focus", {
-                {"Focus_X",     2,  &Component::id("Size")->members[1]}, 
+                {"Focus_X",     2,  &Component::id("Size")->members[0]}, 
                 {"Focus_Y",     2,  &Component::id("Size")->members[1]},                                  
         }}}},
 
@@ -212,7 +214,6 @@ void SmartMap::render() {
         for (int i = 0; i < 10; i++) shader->sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         artnet->run(); 
-        // artnet->universes[0].update();
 
         memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
 
@@ -318,9 +319,8 @@ void SmartMap::render() {
 
                     ImGui::PushID(i);
 
-                    ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.data[i],  &cell_min,   &cell_max,   "");
-
-                    if ((i + 1) % cells_count != 0) ImGui::SameLine(0);
+                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.data[i],  &cell_min,   &cell_max,   "")) { artnet->universes[0].update(); }
+                    if ((i + 1) % cells_count != 0) { ImGui::SameLine(0); }
 
                     ImGui::PopID();
 
@@ -343,7 +343,8 @@ void SmartMap::render() {
         int uniform_id = 0;
         for (auto c:fixtureUBO->definition) {
             
-            if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) ImGui::SliderFloat(m.name.c_str(), &fixtureUBO->data[uniform_id++], 0, 1);
+            if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) ImGui::SliderFloat(m.name.c_str(), &fixtureUBO->data[uniform_id++], m.range_from, m.range_to);
+            else uniform_id += c->members.size();
                  
         }
         ImGui::End();

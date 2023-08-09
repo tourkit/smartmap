@@ -82,10 +82,12 @@ struct Component {
 
         pool.resize(0);
 
-        create("RGBA")
+        create("RGB")
             .member<float>("red")
             .member<float>("green")
             .member<float>("blue")
+        ;
+        create("Opacity")
             .member<float>("alpha")
         ;
 
@@ -114,6 +116,9 @@ struct Component {
         ;
         create("Strobe")
             .member<float>("speed")
+        ;
+        create("float")
+            .member<float>("")
         ;
 
     }
