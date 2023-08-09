@@ -4,7 +4,7 @@ Shader::~Shader() { glDeleteShader(id);  }
 
 Shader::Shader(std::string file) {
 
-    file = "assets/shader/"+std::string(file);
+    file = REPO_DIR+"assets/shader/"+std::string(file);
 
     std::string ext = file.substr(file.find_first_of(".")+1);
 

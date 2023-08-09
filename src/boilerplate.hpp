@@ -310,8 +310,8 @@ void Boilerplate() {
         for (int i = 4; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         survey_count = 0;
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  shader.use(); });
-        survey(("C:/msys64/home/SysErr/old/smartmap/assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  shader.use(); });
+        survey((REPO_DIR+"assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  shader.use(); });
+        survey((REPO_DIR+"assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  shader.use(); });
 
         glfwPollEvents(); 
 

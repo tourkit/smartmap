@@ -118,7 +118,7 @@ struct Component {
             .member<float>("speed")
         ;
         create("float")
-            .member<float>("")
+            .member<float>("value")
         ;
 
     }
