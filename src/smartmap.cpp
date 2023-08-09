@@ -319,7 +319,7 @@ void SmartMap::render() {
 
                     ImGui::PushID(i);
 
-                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.data[i],  &cell_min,   &cell_max,   "")) { artnet->universes[0].update(); }
+                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.data[i],  &cell_min,   &cell_max,   "")) { artnet->universes[0].update(); fixtureUBO->update(); }
                     if ((i + 1) % cells_count != 0) { ImGui::SameLine(0); }
 
                     ImGui::PopID();
@@ -345,8 +345,8 @@ void SmartMap::render() {
             
             if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) {
 
-                ImGui::SliderFloat((m.name+"##"+c->name+m.name).c_str(), &fixtureUBO->data[uniform_id++], m.range_from, m.range_to);
-
+                if (ImGui::SliderFloat((m.name+"##"+c->name+m.name).c_str(), &fixtureUBO->data[uniform_id++], m.range_from, m.range_to))  { artnet->universes[0].update(); fixtureUBO->update(); }
+                
             }else { uniform_id += c->members.size(); }
                  
         }
