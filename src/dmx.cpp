@@ -32,7 +32,7 @@ void DMX::update() {
                 // range remap
                 target = (target * (r.attributes[i].max - r.attributes[i].min)) + r.attributes[i].min;
 
-                (*(r.dest+i+pos))= target;
+                (*(r.dest+i+pos)) = target;
                 chan += c;
                 
             }

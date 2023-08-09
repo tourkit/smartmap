@@ -114,8 +114,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-    for (auto l:pool) { attroffset+=l->quantity*l->dmxremap.size(); }
-    for (auto l:pool) { matoffset+=l->quantity*4; }
+    for (auto &l:pool) { attroffset+=l->quantity*l->dmxremap.size(); }
+    for (auto &l:pool) { matoffset+=l->quantity*4; }
     pool.push_back(this);
     
     GLuint FW = width*scale, FH = height*scale;
@@ -145,15 +145,27 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     fb = new FrameBuffer(buffer); 
         
     artnet->universes[uni].remaps.push_back({chan, quantity, &fixtureUBO->data[attroffset] });
-    auto remap = artnet->universes[uni].remaps.back();
+    auto &remap = artnet->universes[uni].remaps.back();
 
-    for (auto c:fixtureUBO->definition) { 
+    for (auto &c:fixtureUBO->definition) { 
 
-        for (auto m :c->members) { 
+        for (auto &m :c->members) { 
 
             uint8_t combining = 0;
 
-            for (auto p:fixture.presets) for (auto f:p.features) for (auto a:f.attributes) if (&m == a.member) combining = a.combining;
+            bool breaker = false;
+            for (auto &p:fixture.presets) { if (breaker) { break; }
+                for (auto &f:p.features) { if (breaker) { break; }
+                    for (auto &a:f.attributes) { 
+                      if (&m == a.member) {
+                          combining = a.combining; 
+                          breaker = true;
+                          break;
+
+                        }
+                    }
+                }
+            }
 
             remap.attributes.push_back({combining, m.range_from, m.range_to});  
         
@@ -200,6 +212,7 @@ void SmartMap::render() {
         for (int i = 0; i < 10; i++) shader->sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         artnet->run(); 
+        // artnet->universes[0].update();
 
         memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
 
@@ -286,7 +299,7 @@ void SmartMap::render() {
 
         ///// ARTNET
 
-        for (auto dmx : artnet->universes) {
+        for (auto &dmx : artnet->universes) {
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
