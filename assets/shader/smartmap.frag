@@ -315,29 +315,31 @@ void main() {
     
     if (mod(obj-1,2) == 1) { 
                 
-        vec2 outuv;
-
-        float steps = 1;
-        for (float i = 0; i < steps; i++)  {
         
+        float angle = fix[id].orientation;
+        vec2 size = fix[id].size;
+        vec2 pos = fix[id].pos;
+        vec2 AR = vec2(1);
+        vec2 outuv = rectangle(uv, size, pos, angle, AR);
+        float steps = 4 ;
+        for (float i = 1; i < steps; i++)  {
+        
+            if (outuv.x+outuv.y>0) continue;
+            
             float angle = fix[id].orientation;
-            if (abs(angle-fix2[id].orientation)<.05) angle = mix(angle,fix2[id].orientation,i/steps);
             vec2 size = fix[id].size;
-            if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,i/steps);
             vec2 pos = fix[id].pos;
+            vec2 AR = vec2(1);
+            if (abs(angle-fix2[id].orientation)<.05) angle = mix(angle,fix2[id].orientation,i/steps);
+            if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,i/steps);
             if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,i/steps);
 
-            vec2 AR = vec2(1);
             if (FBratio > 1.) AR.x = FBratio;
             else AR.y = FBratio;
-
-            // pos = vec2(debug2,debug3);
-            // angle = debug4*10;
+            
             outuv += (rectangle(uv, size, pos, angle, AR)); 
             
         }
-
-        // outuv = rectangle(uv,vec2(debug0,debug1),vec2(debug2,debug3),debug4,vec2(1));
 
         float sss = sign(outuv.x+outuv.y);
         vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
@@ -346,7 +348,9 @@ void main() {
 
         if (gobo_id == 10) { 
             outuv.y = 1-outuv.y;
-            color = rgba*texture(pass,(outuv*mat[id].size+mat[id].pos)).r;
+            // color = vec4(outuv.x); return;
+            color = rgba*texture(pass,(outuv*mat[id].size*.99+mat[id].pos)).r;
+            //color = 1-color;
             return; 
         }
         outuv *= .0666; // dunno why gotta do this, works for all ....
