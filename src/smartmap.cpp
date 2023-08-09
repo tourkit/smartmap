@@ -343,8 +343,11 @@ void SmartMap::render() {
         int uniform_id = 0;
         for (auto c:fixtureUBO->definition) {
             
-            if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) ImGui::SliderFloat(m.name.c_str(), &fixtureUBO->data[uniform_id++], m.range_from, m.range_to);
-            else uniform_id += c->members.size();
+            if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) {
+
+                ImGui::SliderFloat((m.name+"##"+c->name+m.name).c_str(), &fixtureUBO->data[uniform_id++], m.range_from, m.range_to);
+
+            }else { uniform_id += c->members.size(); }
                  
         }
         ImGui::End();
