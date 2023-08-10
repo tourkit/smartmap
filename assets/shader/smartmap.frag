@@ -125,23 +125,29 @@ float grid2(vec2 uv, float thickness, float columns, float rows) {
 
 float grid(vec2 uv, float thickness, float columns, float rows) {
 
-    columns = clamp(columns*10., 0.5, 100.);
-    rows = clamp(rows*10., 0.5, 100.);
+    vec2 max_lines = vec2(10);
 
+    vec2 grid = vec2(columns,rows);
+    grid = 1.0+grid*max_lines;
 
-    float ratio = 1; 
-    float tx = thickness*min((rows/columns)/ratio,1.);
-    float ty = thickness*min((columns/rows)*ratio,1.); 
+    vec2 res = vec2(1920,1080) / grid ;
+    // vec2 res = vec2(1);
+    // if (FBratio > 1.) res.x = FBratio;
+    // else res.y = FBratio;
+    // res /= grid ;    
+    
+    vec2 aspect = vec2(min(1.0,res.y/res.x),min(1.0,res.x/res.y)); 
+    
+    vec2 vthickness = vec2(thickness);
+    vthickness *= aspect;
 
-    columns = 1./(columns+(tx*.5));
-    rows = 1./(rows+ty*.5);
-    
-    uv = 1.-abs(uv-.5)*2.;
-    
-    float o = 0.;
-    
-    o += step(mod(uv.x,columns)/columns,tx);
-    o += step(mod(uv.y,rows)/rows,ty);
+    vec2 pixel = uv;
+    pixel = abs(pixel*2.0-1.0);    
+    pixel*= grid;
+    pixel = abs(mod(pixel,2.0)-1.0);
+    pixel = step(pixel,vthickness); 
+
+    float o = min(1.0,pixel.x+pixel.y);
   
     return o;
 
@@ -316,9 +322,12 @@ void main() {
     if (mod(obj-1,2) == 1) { 
                 
         color = vec4(0);
+
+        // could be in matrice or some UBO ?
         vec2 AR = vec2(1);
         if (FBratio > 1.) AR.x = FBratio;
         else AR.y = FBratio;
+
         vec2 outuv = rectangle(uv, fix[id].size, fix[id].pos, fix[id].orientation, AR);
         float steps = 12;
         float feedback_smoothing = 1;
@@ -332,9 +341,9 @@ void main() {
             
             float step = i/steps;
 
-            // feedback_smoothing = 1-step*debug0; // should be based on frame distance , maybe abs(pos.x-fix2[id].pos.x) ?
+            feedback_smoothing -= step*debug0; // should be based on frame distance , maybe abs(pos.x-fix2[id].pos.x) ?
             
-            if (abs(angle-fix2[id].orientation)<.05) angle = mix(angle,fix2[id].orientation,step);
+            if (abs(angle-fix2[id].orientation)<.0) angle = mix(angle,fix2[id].orientation,step);
             if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,step);
             if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,step);
 
@@ -356,14 +365,14 @@ void main() {
 
         else { if (gobo_id == 8) { color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); }
 
+        else {     if (gobo_id == 1) { color = rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]); }
         else {
 
             outuv *= .0666; // dunno why gotta do this, works for all ....
             outuv *=2;
             outuv -=1;
 
-            if (gobo_id == 1) color = rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-            else if (gobo_id == 2) color = rgba*grid2(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+            if (gobo_id == 2) color = rgba*grid2(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
             else if (gobo_id == 3) color = rgba*gradient(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
             else if (gobo_id == 4) color = rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 0, fix[id].gobo[2]);
             else if (gobo_id == 5) color = rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 1, fix[id].gobo[2]);
@@ -371,10 +380,10 @@ void main() {
             else if (gobo_id == 7) color = rgba*border(outuv, fix[id].gobo[1]);
             else if (gobo_id == 9) color = rgba*s1plx(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
 
-        }}}
+        }}}}
         
         if (fix[id].gobo[0] > .5) color = vec4(1)-color;
-        
+
         if (fix[id].strobe>0) color *= mod(strobe,2+(1-fix[id].strobe)*20); 
 
         color *= feedback_smoothing;
