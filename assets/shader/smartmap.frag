@@ -315,26 +315,27 @@ void main() {
     
     if (mod(obj-1,2) == 1) { 
                 
-        
+        color = vec4(0);
         vec2 AR = vec2(1);
         if (FBratio > 1.) AR.x = FBratio;
         else AR.y = FBratio;
         vec2 outuv = rectangle(uv, fix[id].size, fix[id].pos, fix[id].orientation, AR);
-        float steps = 4 ;
-        for (float i = 1; i <= steps; i++)  {
+        float steps = 12;
+        if (fix[id].feedback != 0) for (float i = 1; i <= steps; i++)  {
         
             if (outuv.x+outuv.y>0) break;
             
             float angle = fix[id].orientation;
             vec2 size = fix[id].size;
             vec2 pos = fix[id].pos;
-            vec2 AR = vec2(1);
             if (abs(angle-fix2[id].orientation)<.05) angle = mix(angle,fix2[id].orientation,i/steps);
             if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,i/steps);
             if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,i/steps);
-            outuv = (rectangle(uv, size, pos, angle, AR)); 
+            outuv = rectangle(uv, size, pos, angle, AR); 
             
         }
+
+        if (outuv.x+outuv.y==0) return;
 
         float sss = sign(outuv.x+outuv.y);
         vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
@@ -344,11 +345,11 @@ void main() {
             outuv.y = 1-outuv.y;
         if (gobo_id == 10) { 
             // color = vec4(outuv.x); return;
-            if (outuv.x+outuv.y>0) color = rgba*texture(pass,(outuv*mat[id].size*.99+mat[id].pos)).r;
+            color = rgba*texture(pass,(outuv*mat[id].size*.99+mat[id].pos)).r;
             //color = 1-color;
             return; 
         }
-        if (gobo_id == 8) if (outuv.x+outuv.y>0) color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); // 12 is assets/media file count
+        if (gobo_id == 8) {color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); return; }
         outuv *= .0666; // dunno why gotta do this, works for all ....
         outuv = vec2(1-outuv.x,outuv.y); // dunno why got flip here
 

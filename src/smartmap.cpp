@@ -101,7 +101,7 @@ SmartMap::SmartMap() {
 
         {"Beam", {
             {"Beam", {
-                {"Orientation", 1,  &Component::id("Orientation")->members[0]}, 
+                {"Orientation", 2,  &Component::id("Orientation")->members[0]}, 
                 {"Feedback",    1,  &Component::id("Feedback")->members[0]}, 
                 {"Strobe",      1,  &Component::id("Strobe")->members[0]},               
         }}}},
