@@ -321,56 +321,63 @@ void main() {
         else AR.y = FBratio;
         vec2 outuv = rectangle(uv, fix[id].size, fix[id].pos, fix[id].orientation, AR);
         float steps = 12;
-        if (fix[id].feedback != 0) for (float i = 1; i <= steps; i++)  {
+        float feedback_smoothing = 1;
+        if (fix[id].feedback != 0) for (float i = 1; i < steps; i++)  {
         
             if (outuv.x+outuv.y>0) break;
-            
+
             float angle = fix[id].orientation;
             vec2 size = fix[id].size;
             vec2 pos = fix[id].pos;
-            if (abs(angle-fix2[id].orientation)<.05) angle = mix(angle,fix2[id].orientation,i/steps);
-            if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,i/steps);
-            if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,i/steps);
+            
+            float step = i/steps;
+
+            // feedback_smoothing = 1-step*debug0; // should be based on frame distance , maybe abs(pos.x-fix2[id].pos.x) ?
+            
+            if (abs(angle-fix2[id].orientation)<.05) angle = mix(angle,fix2[id].orientation,step);
+            if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,step);
+            if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,step);
+
             outuv = rectangle(uv, size, pos, angle, AR); 
             
         }
 
         if (outuv.x+outuv.y==0) return;
 
-        float sss = sign(outuv.x+outuv.y);
+        outuv.y = 1-outuv.y; // flip for buffers
+
         vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
 
         int gobo_id = int(fix[id].gobo[0]*255)%127;
 
-            outuv.y = 1-outuv.y;
-        if (gobo_id == 10) { 
-            // color = vec4(outuv.x); return;
-            color = rgba*texture(pass,(outuv*mat[id].size*.99+mat[id].pos)).r;
-            //color = 1-color;
-            return; 
-        }
-        if (gobo_id == 8) {color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); return; }
-        outuv *= .0666; // dunno why gotta do this, works for all ....
-        outuv = vec2(1-outuv.x,outuv.y); // dunno why got flip here
+        if (gobo_id == 0) { color = rgba*vec4(1); }
 
-        if (gobo_id == 0) color = vec4(sss)*rgba*vec4(1);
-            
-            
-        
-        outuv *=2;
-        outuv -=1;
+        else { if (gobo_id == 10) { color = rgba*texture(pass,(outuv*mat[id].size*.99+mat[id].pos)).r; }
 
-        if (gobo_id == 1) color = sss*rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-        if (gobo_id == 2) color = sss*rgba*grid2(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-        if (gobo_id == 3) color = sss*rgba*gradient(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-        if (gobo_id == 4) color = sss*rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 0, fix[id].gobo[2]);
-        if (gobo_id == 5) color = sss*rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 1, fix[id].gobo[2]);
-        if (gobo_id == 6) color = sss*rgba*flower(outuv*(1/fix[id].size), fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-        if (gobo_id == 7) color = sss*rgba*border(outuv, fix[id].gobo[1]);
-        if (gobo_id == 9) color = sss*rgba*s1plx(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+        else { if (gobo_id == 8) { color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); }
+
+        else {
+
+            outuv *= .0666; // dunno why gotta do this, works for all ....
+            outuv *=2;
+            outuv -=1;
+
+            if (gobo_id == 1) color = rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+            else if (gobo_id == 2) color = rgba*grid2(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+            else if (gobo_id == 3) color = rgba*gradient(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+            else if (gobo_id == 4) color = rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 0, fix[id].gobo[2]);
+            else if (gobo_id == 5) color = rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 1, fix[id].gobo[2]);
+            else if (gobo_id == 6) color = rgba*flower(outuv*(1/fix[id].size), fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+            else if (gobo_id == 7) color = rgba*border(outuv, fix[id].gobo[1]);
+            else if (gobo_id == 9) color = rgba*s1plx(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
+
+        }}}
         
         if (fix[id].gobo[0] > .5) color = vec4(1)-color;
+        
         if (fix[id].strobe>0) color *= mod(strobe,2+(1-fix[id].strobe)*20); 
+
+        color *= feedback_smoothing;
 
     }
 
