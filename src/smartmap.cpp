@@ -319,7 +319,12 @@ void SmartMap::render() {
 
                     ImGui::PushID(i);
 
-                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.data[i],  &cell_min,   &cell_max,   "")) { artnet->universes[0].update(); fixtureUBO->update(); }
+                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.data[i],  &cell_min,   &cell_max,   "")) { 
+                        
+                        for (auto &dmx : artnet->universes) { dmx.second.update(); } 
+                        fixtureUBO->update(); 
+                        
+                    }
                     if ((i + 1) % cells_count != 0) { ImGui::SameLine(0); }
 
                     ImGui::PopID();
@@ -345,7 +350,12 @@ void SmartMap::render() {
             
             if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) {
 
-                if (ImGui::SliderFloat((m.name+"##"+c->name+m.name).c_str(), &fixtureUBO->data[uniform_id++], m.range_from, m.range_to))  { artnet->universes[0].update(); fixtureUBO->update(); }
+                if (ImGui::SliderFloat((m.name+"##"+c->name+m.name).c_str(), &fixtureUBO->data[uniform_id++], m.range_from, m.range_to)) { 
+                    
+                    for (auto &dmx : artnet->universes) { for (auto &cb :dmx.second.callbacks) cb(&dmx.second); }
+                    fixtureUBO->update(); 
+                
+                }
                 
             }else { uniform_id += c->members.size(); }
                  
