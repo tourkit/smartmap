@@ -8,6 +8,8 @@
 
 struct UBO {
 
+    static inline std::vector<UBO*> pool;
+
     static inline GLuint count = 0;
 
     GLuint binding = count++;
@@ -18,15 +20,32 @@ struct UBO {
 
     std::vector<GLuint> subscribers;
 
-    std::vector<Component*> definition;
+    struct Definition {
+
+        std::vector<Component*> components;
+        std::vector<Component::Member*> members;
+
+        int quantity;
+
+        Definition() {}
+
+        Definition(std::vector<Component*> components, int quantity = 1) : components(components), quantity(quantity) {
+
+            for (auto &c:components) for (auto &m:c->members) members.push_back(&m);
+
+        }
+
+    };
+
+    Definition definition;
 
     const char* name;
 
     ~UBO();
-
-    UBO();
     
-    UBO(const char* name, size_t size = 0, std::vector<GLuint> subscribers = {});
+    UBO(const char* name, size_t size = 0, std::vector<GLuint> subscribers = {}); // vestige 4 conpatibility, to remove
+    
+    UBO(const char* name, std::vector<Component*> components, size_t quantity = 1, std::vector<GLuint> subscribers = {});
 
     void destroy();
 

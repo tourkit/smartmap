@@ -4,9 +4,19 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO() { }
+UBO::UBO(const char* name, size_t size, std::vector<GLuint> subscribers) 
 
-UBO::UBO(const char* name, size_t size, std::vector<GLuint> subscribers) { create(name,size,subscribers); for (auto shader:subscribers) link(shader); } 
+: UBO(name, {Component::id("float")}, size, subscribers) { }
+
+UBO::UBO(const char* name, std::vector<Component*> components, size_t quantity, std::vector<GLuint> subscribers) : definition(components, quantity) { 
+    
+    pool.push_back(this); 
+
+    create(name,definition.members.size()*quantity,subscribers); 
+    
+    for (auto shader:subscribers) link(shader); 
+    
+} 
 
 void UBO::destroy() { data.resize(0); subscribers.resize(0);  if (id) glDeleteBuffers(1, &id); } // delete name; ?
 
