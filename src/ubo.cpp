@@ -4,10 +4,6 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(const char* name, size_t size, std::vector<GLuint> subscribers) 
-
-: UBO(name, {Component::id("float")}, size, subscribers) { }
-
 UBO::UBO(const char* name, std::vector<Component*> components, size_t quantity, std::vector<GLuint> subscribers) : definition(components, quantity) { 
     
     pool.push_back(this); 

@@ -22,7 +22,12 @@ Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)
 
     }
 
-    ubo = new UBO("mediasCoords", 4*normalized_list.size());
+    ubo = new UBO("mediasCoords", {
+
+        Component::id("Size"),
+        Component::id("Position"),
+
+    }, normalized_list.size());
 
 }
 

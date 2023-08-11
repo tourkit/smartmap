@@ -32,7 +32,6 @@ SmartMap::SmartMap() {
     window->setPos(2560,1440-1080);
     window->setSize(1920,1080);
     // window->setSize(1000,500);
-    gui = new GUI(window->window);
     quad = new VBO("quad.obj",0,window->width,window->height);
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     shader->use();
@@ -40,10 +39,15 @@ SmartMap::SmartMap() {
     atlas->link(shader);
     winFB = new FrameBuffer(0,window->width,window->height); 
 
-    matriceUBO = new UBO("MatriceUBO", 24*100, {shader->id});  // 24*32 correspond a R
-    matriceUBO2 = new UBO("MatriceUBO2", 24*100, {shader->id});  
-    fixtureUBO = new UBO("FixtureUBO", 24*100, {shader->id}); 
-    fixtureUBO->definition.components = {
+    matriceUBO = new UBO("MatriceUBO", {
+
+        Component::id("Size"),
+        Component::id("Position"),
+
+    }, 100, {shader->id});  
+
+    matriceUBO2 = new UBO("MatriceUBO2", matriceUBO->definition.components, 100, {shader->id});  
+    fixtureUBO = new UBO("FixtureUBO", {
 
         Component::id("Opacity"),
         Component::id("RGB"),
@@ -55,9 +59,11 @@ SmartMap::SmartMap() {
         Component::id("Strobe"),
         Component::id("float"), // for alignmentr
 
-    };
+    },
+    100, {shader->id}); 
 
-    fixtureUBO2 = new UBO("FixtureUBO2", 24*100, {shader->id}); 
+
+    fixtureUBO2 = new UBO("FixtureUBO2", fixtureUBO->definition.components, 100, {shader->id}); 
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});
@@ -109,6 +115,10 @@ SmartMap::SmartMap() {
     };
 
     artnet->callback = [&](Artnet* an){ fixtureUBO->update(); };
+    
+    gui = new GUI(window->window);
+
+    new UBOWindow();
 
 }
 
@@ -116,8 +126,15 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-    // for (auto &l:pool) { attroffset+=l->quantity*l->dmxremap.size(); } // multi layer pb
-    // for (auto &l:pool) { matoffset+=l->quantity*4; } // multi layer pb
+    for (auto &layer:pool) { 
+
+        int attr_quantity = 0;
+        for (auto &p:fixture.presets) for (auto &f:p.features) for (auto &a:f.attributes) attr_quantity++;
+        attroffset+=layer->quantity*attr_quantity; 
+    
+    }
+    for (auto &layer:pool) { matoffset+=layer->quantity*4; }
+
     pool.push_back(this);
     
     GLuint FW = width*scale, FH = height*scale;
@@ -342,25 +359,7 @@ void SmartMap::render() {
 
         ImGui::ShowDemoWindow();
 
-        ///// UBO
-        
-        ImGui::Begin("FixtureUBO");
-        int uniform_id = 0;
-        for (auto c:fixtureUBO->definition.components) {
-            
-            if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) {
-
-                if (ImGui::SliderFloat((m.name+"##"+c->name+m.name).c_str(), &fixtureUBO->data[uniform_id++], m.range_from, m.range_to)) { 
-                    
-                    for (auto &dmx : artnet->universes) { for (auto &cb :dmx.second.callbacks) cb(&dmx.second); }
-                    fixtureUBO->update(); 
-                
-                }
-                
-            }else { uniform_id += c->members.size(); }
-                 
-        }
-        ImGui::End();
+        for (auto w:GUI::Window::pool) { w->drawFull(); }
 
         ///// TEXTURES
 
