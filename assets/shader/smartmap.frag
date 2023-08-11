@@ -324,9 +324,9 @@ void main() {
         color = vec4(0);
 
         // could be in matrice or some UBO ?
-        vec2 AR = vec2(1);
-        if (FBratio > 1.) AR.x = FBratio;
-        else AR.y = FBratio;
+        vec2 AR = vec2(1,.5625);
+        // if (FBratio > 1.) AR.x = FBratio;
+        // else AR.y = FBratio;
 
         vec2 outuv = rectangle(uv, fix[id].size, fix[id].pos, fix[id].orientation, AR);
         float steps = 12;
@@ -343,7 +343,8 @@ void main() {
 
             feedback_smoothing -= step*debug0; // should be based on frame distance , maybe abs(pos.x-fix2[id].pos.x) ?
             
-            if (abs(angle-fix2[id].orientation)<.0) angle = mix(angle,fix2[id].orientation,step);
+            // 3.14159265359 // 6.2831853072
+            if (abs(angle-fix2[id].orientation)<.25) angle = mix(angle,fix2[id].orientation,step);
             if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,step);
             if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,step);
 
@@ -363,7 +364,7 @@ void main() {
 
         else { if (gobo_id == 10) { color = rgba*texture(pass,(outuv*mat[id].size*.99+mat[id].pos)).r; }
 
-        else { if (gobo_id == 8) { color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*12)); }
+        else { if (gobo_id == 8) { color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*15)); }
 
         else {     if (gobo_id == 1) { color = rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]); }
         else {
