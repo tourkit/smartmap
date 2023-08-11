@@ -70,12 +70,16 @@ struct UBOWindow : GUI::Window {
   void draw() override {
 
         ImGui::Combo("Select UBO", &ubo_current, buffer);
+        
+        // ImGui::Text(("Conponents : "+std::to_string(UBO::pool[ubo_current]->definition.components.size())
+        //   +" | Members : "+std::to_string(UBO::pool[ubo_current]->definition.members.size())
+        //   +" | Quantity : "+std::to_string(UBO::pool[ubo_current]->definition.quantity)).c_str());
 
         int uniform_offset = 0;
-        ImGui::InputInt("current##uibocurrent", &elem_current);
+        ImGui::SliderInt("current##uibocurrent", &elem_current,0,UBO::pool[ubo_current]->definition.quantity);
         for (auto c:UBO::pool[ubo_current]->definition.components) {
             
-            if (ImGui::CollapsingHeader(c->name.c_str())) {
+            if (ImGui::CollapsingHeader(c->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
             
                 for (auto m:c->members) {
 
