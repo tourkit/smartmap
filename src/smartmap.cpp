@@ -43,7 +43,7 @@ SmartMap::SmartMap() {
     matriceUBO = new UBO("MatriceUBO", 24*100, {shader->id});  // 24*32 correspond a R
     matriceUBO2 = new UBO("MatriceUBO2", 24*100, {shader->id});  
     fixtureUBO = new UBO("FixtureUBO", 24*100, {shader->id}); 
-    fixtureUBO->definition = {
+    fixtureUBO->definition.components = {
 
         Component::id("Opacity"),
         Component::id("RGB"),
@@ -149,7 +149,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     artnet->universes[uni].remaps.push_back({chan, quantity, &fixtureUBO->data[attroffset] });
     auto &remap = artnet->universes[uni].remaps.back();
 
-    for (auto &c:fixtureUBO->definition) { 
+    for (auto &c:fixtureUBO->definition.components) { 
 
         for (auto &m :c->members) { 
 
@@ -346,7 +346,7 @@ void SmartMap::render() {
         
         ImGui::Begin("FixtureUBO");
         int uniform_id = 0;
-        for (auto c:fixtureUBO->definition) {
+        for (auto c:fixtureUBO->definition.components) {
             
             if (ImGui::CollapsingHeader(c->name.c_str())) for (auto m:c->members) {
 
