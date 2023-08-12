@@ -126,13 +126,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-    for (auto &layer:pool) { 
-
-        int attr_quantity = 0;
-        for (auto &p:fixture.presets) for (auto &f:p.features) for (auto &a:f.attributes) attr_quantity++;
-        attroffset+=layer->quantity*attr_quantity; 
+    for (auto &layer:pool) { attroffset+=layer->quantity*fixtureUBO->definition.members.size(); }
     
-    }
     for (auto &layer:pool) { matoffset+=layer->quantity*4; }
 
     pool.push_back(this);
