@@ -27,9 +27,13 @@ GUI::GUI(GLFWwindow* window) {
   auto color_lightgrey   = ImVec4(.25,.25,.25,1);
   auto color_lightergrey   = ImVec4(.4,.4,.4,1);
 
+  ImGui::PushStyleColor(ImGuiCol_CheckMark,color_white);
   ImGui::PushStyleColor(ImGuiCol_FrameBg,color_darkgrey);
   ImGui::PushStyleColor(ImGuiCol_HeaderHovered,color_lightergrey);
   ImGui::PushStyleColor(ImGuiCol_Header,color_lightergrey);
+  ImGui::PushStyleColor(ImGuiCol_Tab,color_lightergrey);
+  ImGui::PushStyleColor(ImGuiCol_TabUnfocused,color_lightergrey);
+  ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive,color_lightergrey);
   ImGui::PushStyleColor(ImGuiCol_FrameBgHovered,color_lightgrey);
   ImGui::PushStyleColor(ImGuiCol_FrameBgActive,color_lightgrey);
   ImGui::PushStyleColor(ImGuiCol_TitleBg,color_lightgrey);
@@ -41,6 +45,8 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::PushStyleColor(ImGuiCol_SliderGrabActive,color_orange);
   ImGui::PushStyleColor(ImGuiCol_Button,color_lightgrey);
   ImGui::PushStyleColor(ImGuiCol_ButtonHovered,color_orange);
+  ImGui::PushStyleColor(ImGuiCol_TabHovered,color_orange);
+  ImGui::PushStyleColor(ImGuiCol_TabActive,color_orange);
   // ImGui::PushStyleVar(ImGuiCol_FrameBg,ImVec)
   
 }
