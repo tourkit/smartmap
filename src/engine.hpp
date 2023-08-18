@@ -11,7 +11,6 @@
 #include "shader.hpp"
 #include "framebuffer.hpp"
 
-
 struct Engine {
 
     Window window;
@@ -71,16 +70,6 @@ struct Engine {
             engine.stack.run();
 
             engine.gui.draw();
-            // engine.gui.newframe();
-
-            // ImGui::ShowDemoWindow();
-
-            // ImGui::Begin("tabletest");
-
-
-            // ImGui::End();
-            
-            // engine.gui.render();
 
         });
 
