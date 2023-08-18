@@ -27,6 +27,8 @@ add_executable(SmartMap
     
     src/gui.cpp
 
+    src/widgets/artnet_widget.cpp
+
     include/vendor/imgui/imgui.cpp
     include/vendor/imgui/imgui_tables.cpp
     include/vendor/imgui/imgui_widgets.cpp

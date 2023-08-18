@@ -4,7 +4,7 @@
 #include <thread>
 
 
-Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offset_y)
+Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offset_y, bool fullscreen)
 
     : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) , fps("Window") {
     int8_t windows_border = 0;
@@ -39,18 +39,18 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
         glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
         glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 //        window = glfwCreateWindow(mode->width, mode->height, "OUTPUT", monitor, nullptr);
-        window = glfwCreateWindow(1920, 1200, "OUTPUT", monitor, nullptr);
+        id = glfwCreateWindow(1920, 1200, "OUTPUT", monitor, nullptr);
         cursor_visibility = false;
     }
     else
     {
         
-        window = glfwCreateWindow(width, height, "OUTPUT", nullptr, nullptr);
+        id = glfwCreateWindow(width, height, "OUTPUT", nullptr, nullptr);
         
     }
 
 
-    glfwSetWindowUserPointer(window, this);
+    glfwSetWindowUserPointer(id, this);
 #ifdef __linux__
 #ifdef NDEBUG
     glfwSetInputMode(window, GLFW_CURSOR, (cursor_visibility ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED));
@@ -60,7 +60,7 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
         initUidCallbacks();
     }
 
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(id);
 
     glfwSwapInterval(0); // VSYNC 
     
@@ -72,13 +72,13 @@ Window::Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset
 
 }
 
-static void framebuffer_size_callback(GLFWwindow* window, int width, int height) { glViewport(0, 0, width, height); }
+static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { glViewport(0, 0, width, height); }
 
 void Window::updatePos() {  
 
-    glfwSetWindowPos(window, offset_x, offset_y); 
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetWindowSize(window, width, height); 
+    glfwSetWindowPos(id, offset_x, offset_y); 
+    glfwSetFramebufferSizeCallback(id, framebuffer_size_callback);
+    glfwSetWindowSize(id, width, height); 
     
 }
 void Window::setPos(uint16_t offset_x, uint16_t offset_y) { 
@@ -88,7 +88,7 @@ void Window::setPos(uint16_t offset_x, uint16_t offset_y) {
 }
 
 void Window::updateSize() { 
-    glfwSetWindowSize(window, width, height);
+    glfwSetWindowSize(id, width, height);
     glViewport(0, 0, width, height);
 }
 void Window::setSize(uint16_t width, uint16_t height) { 
@@ -101,10 +101,10 @@ void Window::setSize(uint16_t width, uint16_t height) {
 Window::~Window() { glfwTerminate(); }
 
 void Window::initUidCallbacks() {
-    glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mode) {
+    glfwSetKeyCallback(id, [](GLFWwindow* id, int key, int scancode, int action, int mode) {
         (void)scancode;
         (void)mode;
-        auto _this = (Window*)glfwGetWindowUserPointer(window);
+        auto _this = (Window*)glfwGetWindowUserPointer(id);
         if (action == GLFW_PRESS) {
             switch (key) {
             case GLFW_KEY_ESCAPE:
@@ -116,15 +116,15 @@ void Window::initUidCallbacks() {
             }
         }
     });
-    glfwSetCursorPosCallback(window, [](GLFWwindow* window, double mouse_x, double mouse_y) {
-        auto _this = (Window*)glfwGetWindowUserPointer(window);
+    glfwSetCursorPosCallback(id, [](GLFWwindow* id, double mouse_x, double mouse_y) {
+        auto _this = (Window*)glfwGetWindowUserPointer(id);
         _this->mouse_x = mouse_x;
         _this->mouse_y = mouse_y;
     });
-    glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
+    glfwSetMouseButtonCallback(id, [](GLFWwindow* id, int button, int action, int mods) {
         (void)button;
         (void)mods;
-        auto _this = (Window*)glfwGetWindowUserPointer(window);
+        auto _this = (Window*)glfwGetWindowUserPointer(id);
         if (action == GLFW_PRESS) {
             // mouse click
              _this->clickCallBack();
@@ -144,7 +144,7 @@ void Window::render(std::function<void()> callback) {
 
     callback();
 
-    glfwSwapBuffers(window);
+    glfwSwapBuffers(id);
 
 }
 

@@ -266,7 +266,7 @@ void Boilerplate() {
     GLuint pos_x = window.displays[0].width-400;
     window.setPos(pos_x,pos_y);
     
-    GUI gui(window.window);
+    GUI gui(window.id);
 
     VBO quad0("quad.obj",0, width,height);
 
@@ -288,7 +288,7 @@ void Boilerplate() {
 
     FrameBuffer fb(0,width,height);
 
-    while (!glfwWindowShouldClose(window.window)) {
+    while (!glfwWindowShouldClose(window.id)) {
 
         fb.read(width,height,0,0,GL_RGBA,ndi.NDI_video_frame->p_data);
 
@@ -334,7 +334,7 @@ void Boilerplate() {
 
         gui.render();
 
-        glfwSwapBuffers(window.window);
+        glfwSwapBuffers(window.id);
 
     }
 

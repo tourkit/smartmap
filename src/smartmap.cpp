@@ -28,9 +28,9 @@ SmartMap::SmartMap() {
 
     // order matters for some
     artnet = new Artnet("2.0.0.222");
-    window = new Window(false,400,300,1540);
-    window->setPos(2560,1440-1080);
-    window->setSize(1920,1080);
+    window = new Window(false,400,300,2560-400);
+    // window->setPos(2560,1440-1080);
+    // window->setSize(1920,1080);
     // window->setSize(1000,500);
     quad = new VBO("quad.obj",0,window->width,window->height);
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
@@ -116,7 +116,7 @@ SmartMap::SmartMap() {
 
     artnet->callback = [&](Artnet* an){ fixtureUBO->update(); };
     
-    gui = new GUI(window->window);
+    gui = new GUI(window->id);
 
     new UBOWindow();
 
@@ -217,7 +217,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
 }
 
-static int  cell_min = 0, cell_max = 255, cells_count = 48;
+
  
 void SmartMap::render() {
 
@@ -310,47 +310,6 @@ void SmartMap::render() {
         ImGui::End();
 
 
-        ///// ARTNET
-
-        for (auto &dmx : artnet->universes) {
-
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
-
-            ImGui::Begin(std::string("Artnet Universe "+std::to_string(dmx.first)).c_str());
-                
-                auto window_width = ImGui::GetWindowWidth();
-
-                int cell_width = window_width / cells_count - 2;
-
-
-                for (int i = 0; i < 512; i++) {
-
-                    ImGui::PushID(i);
-
-                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.second.data[i],  &cell_min,   &cell_max,   "")) { 
-                        
-                        for (auto &dmx : artnet->universes) { dmx.second.update(); } 
-                        fixtureUBO->update(); 
-                        
-                    }
-                    if ((i + 1) % cells_count != 0) { ImGui::SameLine(0); }
-
-                    ImGui::PopID();
-
-                }
-
-
-            ImGui::End();
-
-            ImGui::PopStyleVar(5);
-
-            break;
-
-        } 
 
         ImGui::ShowDemoWindow();
 

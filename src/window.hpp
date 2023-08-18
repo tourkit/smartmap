@@ -32,7 +32,7 @@ struct Window {
     struct Display { uint16_t width, height, rate; };
     std::vector<Display> displays;
 
-    GLFWwindow *window;
+    GLFWwindow *id;
 
     FPS fps; 
     
@@ -42,7 +42,7 @@ struct Window {
 
     uint16_t width, height, mouse_x, mouse_y, offset_x, offset_y, max_fps = 60;
 
-    Window(bool fullscreen, uint16_t width, uint16_t height, uint16_t offset_x = 0, uint16_t offset_y = 0);
+    Window(uint16_t width, uint16_t height, uint16_t offset_x = 0, uint16_t offset_y = 0, bool fullscreen = false);
     
     void setSize(uint16_t width = 0, uint16_t height = 0);
     void setPos(uint16_t offset_x = 0, uint16_t offset_y = 0);

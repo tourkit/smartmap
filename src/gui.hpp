@@ -40,36 +40,73 @@ struct GUI {
 
 };
 
+
+struct StringsBuffer {
+
+  char* buffer = nullptr;
+  const char** pointers = nullptr;
+
+  ~StringsBuffer() { destroy(); }
+
+  void destroy() {
+
+      if (buffer) delete[] buffer;
+      if (pointers) delete[] pointers;
+
+  }
+
+  void create(std::vector<const char*> strings) {
+
+        size_t names_length = 0; 
+        
+        for (auto string:strings) names_length += strlen(string) + 1; 
+
+        if (!names_length) names_length+=1;
+        buffer = new char[names_length+1];
+
+        memset(buffer,0,names_length+1);
+
+        char* ptr = buffer;
+
+        for (auto string:strings) { strcpy(ptr, string); ptr += strlen(string) + 1; }
+
+        pointers = new const char*[strings.size()];
+
+        for (size_t i = 0; i < strings.size(); i++) { pointers[i] = ptr; ptr += strlen(strings[i]) + 1; }
+
+        // if (strings.size()) {
+        //   if (!strcmp(strings.back(), "6")){ 
+            
+        //     // std::cout << "yolo " << strings.back() << std::endl;
+        //     for (auto s:strings) { std::cout << s << std::endl; }
+
+        //   }
+        //   // else {  std::cout << "yala " << strings.back() << std::endl;}
+        // }
+  }
+
+};
+
 #include "ubo.hpp"
 
 struct UBOWindow : GUI::Window {
 
   int ubo_current = 3;
   int elem_current = 0;
-  char* buffer;
-  const char** pointers;
 
-  ~UBOWindow() { 
+  StringsBuffer options;
 
-      delete[] buffer;
-      delete[] pointers;
-
-  }
   UBOWindow() : Window("UBOs") {
 
-        size_t names_length = 0; 
-        for (auto ubo:UBO::pool) names_length += strlen(ubo->name) + 1; 
-        buffer = new char[names_length+1]; 
-        char* ptr = buffer;
-        for (auto ubo:UBO::pool) { strcpy(ptr, ubo->name); ptr += strlen(ubo->name) + 1; }
-        pointers = new const char*[UBO::pool.size()];
-        for (size_t i = 0; i < UBO::pool.size(); i++) { pointers[i] = ptr; ptr += strlen(UBO::pool[i]->name) + 1; }
+      std::vector<const char*> names;
+      for (auto ubo:UBO::pool) { names.push_back(ubo->name); }
+      options.create(names);
 
   }
 
   void draw() override {
 
-        ImGui::Combo("Select UBO", &ubo_current, buffer);
+        ImGui::Combo("Select UBO", &ubo_current, options.buffer);
         
         // ImGui::Text(("Conponents : "+std::to_string(UBO::pool[ubo_current]->definition.components.size())
         //   +" | Members : "+std::to_string(UBO::pool[ubo_current]->definition.members.size())
@@ -98,5 +135,7 @@ struct UBOWindow : GUI::Window {
   }
 
 };
+
+
 
 #endif

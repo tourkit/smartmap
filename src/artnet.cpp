@@ -1,21 +1,27 @@
 #include "artnet.hpp"  
 #include <cmath>
 
-Artnet::Artnet(const char* ip) {
+Artnet::Artnet(const char* ip) 
+: gui(this) 
+{
 
     artnet = artnet_new(ip, 0);
     artnet_set_short_name(artnet, "SmartMap");
     artnet_set_long_name(artnet, "SmartMap");
     artnet_start(artnet);
-    artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this){
+    artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this) {
 
-        auto *u = &((Artnet*)_this)->universes[p->data.admx.universe];
+        auto *an = (Artnet*)_this;
+
+        an->gui.updateList(p->data.admx.universe); 
+
+        auto *u = &an->universes[p->data.admx.universe];
 
         for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) u->data[i] = p->data.admx.data[i]; 
 
         u->update(); 
 
-        if (((Artnet*)_this)->listening.size()) if (p->data.admx.universe == ((Artnet*)_this)->listening.back()) ((Artnet*)_this)->callback((Artnet*)_this);
+        if (an->listening.size()) if (p->data.admx.universe == an->listening.back()) an->callback(an);
 
         return 1;   
 

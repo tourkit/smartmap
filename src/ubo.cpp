@@ -54,5 +54,4 @@ void UBO::update(GLvoid* data, size_t size, GLuint offset){
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 
-
 }

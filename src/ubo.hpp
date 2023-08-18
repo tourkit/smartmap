@@ -43,7 +43,7 @@ struct UBO {
 
     ~UBO();
     
-    UBO(const char* name, std::vector<Component*> components, size_t quantity = 1, std::vector<GLuint> subscribers = {});
+    UBO(const char* name, std::vector<Component*> components = {}, size_t quantity = 1, std::vector<GLuint> subscribers = {});
 
     void destroy();
 
