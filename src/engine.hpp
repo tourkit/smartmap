@@ -15,12 +15,12 @@
 struct Engine {
 
     Window window;
+    
+    GUI gui;
 
     UBO dynamic_ubo, static_ubo;
 
     FrameBuffer fb;
-
-    GUI gui;
 
     struct Stack {
 
@@ -69,9 +69,17 @@ struct Engine {
 
             engine.stack.run();
 
-            engine.gui.newframe();
+            engine.gui.draw();
+            // engine.gui.newframe();
 
-            engine.gui.render();
+            // ImGui::ShowDemoWindow();
+
+            // ImGui::Begin("tabletest");
+
+
+            // ImGui::End();
+            
+            // engine.gui.render();
 
         });
 
@@ -84,6 +92,8 @@ private:
         : window(width,height), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), fb(0,width,height), gui(window.id) {
 
         Component::init();
+
+        UBO::widget.updateCompList();
 
     }
 

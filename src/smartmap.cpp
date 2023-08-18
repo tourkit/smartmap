@@ -46,7 +46,7 @@ SmartMap::SmartMap() {
 
     }, 100, {shader->id});  
 
-    matriceUBO2 = new UBO("MatriceUBO2", matriceUBO->definition.components, 100, {shader->id});  
+    matriceUBO2 = new UBO("MatriceUBO2", matriceUBO->definition[0].components, 100, {shader->id});  
     fixtureUBO = new UBO("FixtureUBO", {
 
         Component::id("Opacity"),
@@ -63,7 +63,7 @@ SmartMap::SmartMap() {
     100, {shader->id}); 
 
 
-    fixtureUBO2 = new UBO("FixtureUBO2", fixtureUBO->definition.components, 100, {shader->id}); 
+    fixtureUBO2 = new UBO("FixtureUBO2", fixtureUBO->definition[0].components, 100, {shader->id}); 
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});
@@ -118,7 +118,7 @@ SmartMap::SmartMap() {
     
     gui = new GUI(window->id);
 
-    new UBOWindow();
+    // new UBOWindow();
 
 }
 
@@ -126,7 +126,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-    for (auto &layer:pool) { attroffset+=layer->quantity*fixtureUBO->definition.members.size(); }
+    for (auto &layer:pool) { attroffset+=layer->quantity*fixtureUBO->definition[0].members.size(); }
     
     for (auto &layer:pool) { matoffset+=layer->quantity*4; }
 
@@ -161,7 +161,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     artnet->universes[uni].remaps.push_back({chan, quantity, &fixtureUBO->data[attroffset] });
     auto &remap = artnet->universes[uni].remaps.back();
 
-    for (auto &c:fixtureUBO->definition.components) { 
+    for (auto &c:fixtureUBO->definition[0].components) { 
 
         for (auto &m :c->members) { 
 

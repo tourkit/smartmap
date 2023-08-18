@@ -15,6 +15,8 @@ struct GUI {
   void newframe();
   void render();
 
+  void draw() { newframe(); for (auto window : Window::pool) { window->drawFull(); } render(); }
+
   struct Window {
 
     static inline std::vector<Window*> pool;
@@ -57,6 +59,8 @@ struct StringsBuffer {
 
   void create(std::vector<const char*> strings) {
 
+        destroy(); 
+
         size_t names_length = 0; 
         
         for (auto string:strings) names_length += strlen(string) + 1; 
@@ -74,67 +78,10 @@ struct StringsBuffer {
 
         for (size_t i = 0; i < strings.size(); i++) { pointers[i] = ptr; ptr += strlen(strings[i]) + 1; }
 
-        // if (strings.size()) {
-        //   if (!strcmp(strings.back(), "6")){ 
-            
-        //     // std::cout << "yolo " << strings.back() << std::endl;
-        //     for (auto s:strings) { std::cout << s << std::endl; }
-
-        //   }
-        //   // else {  std::cout << "yala " << strings.back() << std::endl;}
-        // }
   }
 
 };
 
-#include "ubo.hpp"
-
-struct UBOWindow : GUI::Window {
-
-  int ubo_current = 3;
-  int elem_current = 0;
-
-  StringsBuffer options;
-
-  UBOWindow() : Window("UBOs") {
-
-      std::vector<const char*> names;
-      for (auto ubo:UBO::pool) { names.push_back(ubo->name); }
-      options.create(names);
-
-  }
-
-  void draw() override {
-
-        ImGui::Combo("Select UBO", &ubo_current, options.buffer);
-        
-        // ImGui::Text(("Conponents : "+std::to_string(UBO::pool[ubo_current]->definition.components.size())
-        //   +" | Members : "+std::to_string(UBO::pool[ubo_current]->definition.members.size())
-        //   +" | Quantity : "+std::to_string(UBO::pool[ubo_current]->definition.quantity)).c_str());
-
-        int uniform_offset = 0;
-        ImGui::SliderInt("current##uibocurrent", &elem_current,0,UBO::pool[ubo_current]->definition.quantity);
-        for (auto c:UBO::pool[ubo_current]->definition.components) {
-            
-            if (ImGui::CollapsingHeader(c->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-            
-                for (auto m:c->members) {
-
-                  if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid).c_str(), &UBO::pool[ubo_current]->data[uniform_offset+++(elem_current*UBO::pool[ubo_current]->definition.members.size())], m.range_from, m.range_to)) { 
-                      
-                      UBO::pool[ubo_current]->update(); 
-                  }
-                
-                }
-                
-            }else { uniform_offset += c->members.size(); }
-                 
-        }
-
-
-  }
-
-};
 
 
 

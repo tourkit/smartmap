@@ -10,7 +10,7 @@ add_executable(SmartMap
 
     main.cpp
     
-    src/smartmap.cpp
+    # src/smartmap.cpp
 
     src/texture.cpp
     src/window.cpp

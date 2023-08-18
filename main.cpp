@@ -26,6 +26,8 @@ int main() {
     // SmartMap::Layer l2(0, 0, sm.basic_fixture, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 4,2);
 
 
+    auto &engine = Engine::getInstance();
+    engine.dynamic_ubo.addStruct("Test1",{Component::id("float")},3);
 
     Engine::Run();
 
