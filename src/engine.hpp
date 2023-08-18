@@ -66,6 +66,8 @@ struct Engine {
         while (!glfwWindowShouldClose(window.id)) window.render([](){
             
             auto &engine = Engine::getInstance();
+            
+            engine.dynamic_ubo.update();
 
             engine.stack.run();
 

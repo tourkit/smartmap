@@ -57,13 +57,13 @@ struct StringsBuffer {
 
   }
 
-  void create(std::vector<const char*> strings) {
+  void create(std::vector<std::string> strings) {
 
         destroy(); 
 
         size_t names_length = 0; 
         
-        for (auto string:strings) names_length += strlen(string) + 1; 
+        for (auto string:strings) names_length += string.size() + 1; 
 
         if (!names_length) names_length+=1;
         buffer = new char[names_length+1];
@@ -72,11 +72,11 @@ struct StringsBuffer {
 
         char* ptr = buffer;
 
-        for (auto string:strings) { strcpy(ptr, string); ptr += strlen(string) + 1; }
+        for (auto string:strings) { strcpy(ptr, string.c_str()); ptr += string.size() + 1; }
 
         pointers = new const char*[strings.size()];
 
-        for (size_t i = 0; i < strings.size(); i++) { pointers[i] = ptr; ptr += strlen(strings[i]) + 1; }
+        for (size_t i = 0; i < strings.size(); i++) { pointers[i] = ptr; ptr += strings[i].size() + 1; }
 
   }
 

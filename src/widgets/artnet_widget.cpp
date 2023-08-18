@@ -21,12 +21,9 @@
     if(exist) return;
 
     std::vector<std::string> stdstr;
-    std::vector<const char*> constchar;
-
     for (auto &u : universes) stdstr.push_back(std::to_string(u)); 
-    for (auto &s:stdstr) { constchar.push_back(s.c_str()); }
 
-    options.create(constchar);
+    options.create(stdstr);
 
   }
 

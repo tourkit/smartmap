@@ -39,8 +39,6 @@ void UBO::resize() {
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferData(GL_UNIFORM_BUFFER, 4*data.size(), NULL, GL_DYNAMIC_COPY);
 
-    std::cout << "RTFM /!\\ put good bindings in shader !! layout(std140, binding = " << binding << ") uniform " << name << " { size:" << data.size() << " };" << std::endl;
-
     subscribers = t_subscribers;
     for (auto shader:subscribers) link(shader->id); 
 
@@ -84,8 +82,6 @@ void UBO::fromJSON(){
 
         if (!ubo.HasMember("name")) { std::cout << "Missing ubo name" << std::endl; return; }
         if (!ubo.HasMember("definition")) { std::cout << "Missing ubo definition" << std::endl; return; }
-
-        std::cout << ubo["name"].GetString() << std::endl;
 
         UBO* target = nullptr;
         for (auto &existing_ubo:UBO::pool) { 

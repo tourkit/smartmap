@@ -68,9 +68,9 @@ struct UBO {
 
         void updateUBOList() {
 
-            std::vector<const char*> names;
+            std::vector<std::string> names;
             for (auto ubo:UBO::pool) { 
-                names.push_back(ubo->name.c_str()); 
+                names.push_back((ubo->name+" (binding:"+std::to_string(ubo->binding)+")")); 
             }
             ubo_list.create(names);
             
@@ -80,24 +80,24 @@ struct UBO {
 
         void updateStructList() {
 
-            std::vector<const char*> names;
-            for (auto &def:UBO::pool[ubo_current]->definition) { names.push_back(def.name.c_str()); }
+            std::vector<std::string> names;
+            for (auto &def:UBO::pool[ubo_current]->definition) { names.push_back(def.name); }
             struct_list.create(names);
 
         }
         
         void updateCompList() {
 
-            std::vector<const char*> names;
-            for (auto &comp:Component::pool) { names.push_back(comp->name.c_str()); }
+            std::vector<std::string> names;
+            for (auto &comp:Component::pool) { names.push_back(comp->name); }
             comp_list.create(names);
 
         }
 
         void updateSubsList() {
 
-            std::vector<const char*> names;
-            for (auto &sub:UBO::pool[ubo_current]->subscribers) { names.push_back(("Shader "+std::to_string(sub->id)).c_str()); }
+            std::vector<std::string> names;
+            for (auto &sub:UBO::pool[ubo_current]->subscribers) { names.push_back(("Shader "+std::to_string(sub->id))); }
             subs_list.create(names);
 
         }
