@@ -46,6 +46,8 @@ void UBO::resize() {
     subscribers = t_subscribers;
     for (auto shader:subscribers) link(shader); 
 
+    save();
+
 }
 
 void UBO::link(GLuint shader) {
@@ -55,6 +57,69 @@ void UBO::link(GLuint shader) {
     glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 }
 
+#include "include/vendor/rapidjson/document.h"
+#include "include/vendor/rapidjson/stringbuffer.h"
+#include "include/vendor/rapidjson/prettywriter.h"
+
+void UBO::save(){ 
+
+    using namespace rapidjson;
+
+    StringBuffer sb;
+    PrettyWriter<StringBuffer> writer(sb);
+
+    writer.StartObject();
+
+    writer.String("ubo_list");
+    writer.StartArray();
+
+    for (auto &ubo:UBO::pool) { 
+
+        writer.StartObject();
+        
+        writer.String("name");
+        writer.String(ubo->name);
+        writer.String("definition");
+        writer.StartArray();
+        for (auto &def:ubo->definition) { 
+            
+            writer.StartObject();
+            writer.String("name");
+            writer.String(def.name.c_str());
+            writer.String("components");
+            writer.StartArray();
+            for (auto &comp:def.components) { 
+                
+                writer.StartObject();
+                writer.String("name");
+                writer.String(comp->name.c_str());
+
+                writer.EndObject();
+
+            }
+            writer.EndArray();
+            writer.String("quantity");
+            writer.Int(def.quantity);
+
+            writer.EndObject();
+
+        }
+        writer.EndArray();
+
+        // writer.String(ubo->name);
+        
+        writer.EndObject();
+
+
+    }
+
+    writer.EndArray();
+
+    writer.EndObject();
+
+    std::cout << sb.GetString() << std::endl;
+
+}
 
 void UBO::update(){ update(&data[0], 4*data.size()); }
 

@@ -56,6 +56,8 @@ struct UBO {
     void link(GLuint shader);
 
     void update();
+    
+    static void save();
 
     void update(GLvoid* data, size_t size, GLuint offset = 0);
 
@@ -64,8 +66,7 @@ struct UBO {
         int ubo_current = 0;
         int struct_current = 0;
         int elem_current = 0;
-        
-        std::string struct_name = "NewStruct";
+        std::string struct_name;
          
         StringsBuffer ubo_list, struct_list, comp_list;
 
@@ -95,7 +96,7 @@ struct UBO {
 
         }
 
-        Widget() : GUI::Window("UBOs") { updateUBOList(); struct_name.resize(60); memset(&struct_name[0],0,60); }
+        Widget() : GUI::Window("UBO Editor") { updateUBOList(); struct_name.resize(60); memset(&struct_name[0],0,60); }
 
         void draw() override;
 
