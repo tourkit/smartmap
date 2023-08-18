@@ -27,15 +27,8 @@ struct UBO {
         std::string name;
 
         std::vector<Component*> components;
-        // std::vector<Component::Member*> members;
 
         int quantity;
-
-        Struct(std::string name, std::vector<Component*> components, int quantity = 1) : name(name), components(components), quantity(quantity) {
-
-            // for (auto &c:components) for (auto &m:c->members) members.push_back(&m);
-
-        }
 
     };
 
@@ -57,7 +50,8 @@ struct UBO {
 
     void update();
     
-    static void save();
+    static void toJSON();
+    static void fromJSON();
 
     void update(GLvoid* data, size_t size, GLuint offset = 0);
 
@@ -66,7 +60,9 @@ struct UBO {
         int ubo_current = 0;
         int struct_current = 0;
         int elem_current = 0;
-        std::string struct_name;
+        int add_comp = 0;
+
+        std::string add_struct, add_ubo;
          
         StringsBuffer ubo_list, struct_list, comp_list;
 
@@ -90,13 +86,16 @@ struct UBO {
         
         void updateCompList() {
 
-            std::vector<const char*> names = {"Add Component"};
+            std::vector<const char*> names;
             for (auto &comp:Component::pool) { names.push_back(comp->name.c_str()); }
             comp_list.create(names);
 
         }
 
-        Widget() : GUI::Window("UBO Editor") { updateUBOList(); struct_name.resize(60); memset(&struct_name[0],0,60); }
+        Widget() : GUI::Window("UBO Editor") { updateUBOList(); 
+        add_struct.resize(60); memset(&add_struct[0],0,60); 
+        add_ubo.resize(60); memset(&add_ubo[0],0,60); 
+        }
 
         void draw() override;
 

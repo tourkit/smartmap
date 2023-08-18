@@ -46,8 +46,6 @@ void UBO::resize() {
     subscribers = t_subscribers;
     for (auto shader:subscribers) link(shader); 
 
-    save();
-
 }
 
 void UBO::link(GLuint shader) {
@@ -57,11 +55,20 @@ void UBO::link(GLuint shader) {
     glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 }
 
+void UBO::update(){ update(&data[0], 4*data.size()); }
+
+void UBO::update(GLvoid* data, size_t size, GLuint offset){
+
+    glBindBuffer(GL_UNIFORM_BUFFER, id);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 
+}
+
+
 #include "include/vendor/rapidjson/document.h"
 #include "include/vendor/rapidjson/stringbuffer.h"
 #include "include/vendor/rapidjson/prettywriter.h"
 
-void UBO::save(){ 
+void UBO::toJSON(){ 
 
     using namespace rapidjson;
 
@@ -121,89 +128,101 @@ void UBO::save(){
 
 }
 
-void UBO::update(){ update(&data[0], 4*data.size()); }
-
-void UBO::update(GLvoid* data, size_t size, GLuint offset){
-
-    glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 
-}
-
-
 
 void UBO::Widget::draw() {
 
+    ImGui::InputText("##NewUBO", &add_ubo[0], add_ubo.size());
+    ImGui::SameLine();
+    if (ImGui::Button("Add UBO")) { 
+        
+        new UBO(add_ubo.c_str());
+
+        ubo_current = UBO::pool.size()-1;  
+        
+        memset(&add_ubo[0],0,add_ubo.size());
+    
+    }
+    ImGui::Spacing();
     if (ImGui::Combo("UBO", &ubo_current, ubo_list.buffer)) updateStructList();
 
-    ImGui::Spacing();
+    ImGui::NewLine();
 
     if (!UBO::pool.size()) return;
 
     auto *ubo = UBO::pool[ubo_current];
 
-    if (ubo->definition.size()) {
-
-        ImGui::Combo("struct", &struct_current, struct_list.buffer);
-
-        auto &def = ubo->definition[struct_current];
+    ImGui::InputText("##NewStruct", &add_struct[0], add_struct.size());
+    ImGui::SameLine();
+    if (ImGui::Button("Add Struct")) { 
         
-        if (ImGui::InputInt("quantity##structquantity", &def.quantity)) {
-            
-            if (!def.quantity) {
-                
-                ubo->definition.erase(ubo->definition.begin()+struct_current);
-                widget.updateUBOList();
-                ubo->resize();
-                return;
-            }
+        ubo->addStruct(add_struct.c_str()); 
 
-            ubo->resize();
-            
-        }
-
-        int uniform_offset = 0;
-        ImGui::SliderInt("current##uibocurrent", &elem_current,0,def.quantity-1);
+        struct_current = ubo->definition.size()-1;  
         
-        ImGui::NewLine();
-
-        int members_size = 0;
-        for (auto &c:def.components) { members_size+= c->members.size(); }
-
-        for (auto c:def.components) {
-            
-            if (ImGui::CollapsingHeader(c->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-            
-                for (auto m:c->members) {
-
-                if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid).c_str(), &ubo->data[uniform_offset+++(elem_current*members_size)], m.range_from, m.range_to)) { 
-                    
-                    ubo->update(); 
-                }
-                
-                }
-                
-            } else { uniform_offset += c->members.size(); }
-                
-        }
-
-        ImGui::NewLine();
-
-        int comp_current = 0;
-        if (ImGui::Combo("##AddComponent", &comp_current, comp_list.buffer)) {
-
-            if (comp_current) {
-                
-                def.components.push_back(Component::pool[comp_current-1]); 
-                ubo->resize(); 
-            }
-
-        }
+        memset(&add_struct[0],0,add_struct.size());
+    
     }
+    ImGui::Spacing();
+
+    if (!ubo->definition.size()) return;
+
+    ImGui::Combo("struct", &struct_current, struct_list.buffer);
+
+    auto &def = ubo->definition[struct_current];
+    
+    if (ImGui::InputInt("quantity##structquantity", &def.quantity)) {
+        
+        if (!def.quantity) {
+            
+            ubo->definition.erase(ubo->definition.begin()+struct_current);
+            widget.updateUBOList();
+            ubo->resize();
+            return;
+        }
+
+        ubo->resize();
+        
+    }
+
+    int uniform_offset = 0;
+    ImGui::SliderInt("current##uibocurrent", &elem_current,0,def.quantity-1);
     
     ImGui::NewLine();
-    ImGui::InputText("##NewStruct", &struct_name[0], 60);
+    
+    ImGui::Combo("##AddComponent", &add_comp, comp_list.buffer);
     ImGui::SameLine();
-    if (ImGui::Button("Add Struct")) { ubo->addStruct(struct_name.c_str()); }
+    if (ImGui::Button("Add Component")) {
+
+        def.components.push_back(Component::pool[add_comp]); 
+        ubo->resize(); 
+
+    }
+
+    ImGui::Spacing();
+    int members_size = 0;
+    for (auto &c:def.components) { members_size+= c->members.size(); }
+
+    for (auto c:def.components) {
+        
+        if (ImGui::CollapsingHeader(c->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+        
+            for (auto m:c->members) {
+
+            if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid).c_str(), &ubo->data[uniform_offset+++(elem_current*members_size)], m.range_from, m.range_to)) { 
+                
+                ubo->update(); 
+            }
+            
+            }
+            
+        } else { uniform_offset += c->members.size(); }
+            
+    }
+
+    ImGui::NewLine();
+    
+    ImGui::NewLine();
+
 
 }
     
