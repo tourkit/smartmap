@@ -73,8 +73,6 @@ void UBO::update(GLvoid* data, size_t size, GLuint offset){
 
 void UBO::fromJSON(){ 
 
-    // using namespace rapidjson;
-
     rapidjson::Document json;
     json.Parse(File(REPO_DIR+"show/ubo.json").data.data());
 
@@ -250,12 +248,12 @@ void UBO::Widget::draw() {
             
             ubo->definition.erase(ubo->definition.begin()+struct_current);
             widget.updateUBOList();
-            ubo->resize();
+            ubo->resize();        
+            UBO::toJSON();
             return;
         }
 
         ubo->resize();
-
         UBO::toJSON();
         
     }
