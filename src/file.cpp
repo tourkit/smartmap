@@ -103,6 +103,14 @@ void File::write(const char* filename){
 
 }
 
+void File::write(std::string path, std::string data){
+
+    std::fstream bin (path.c_str(), std::ios :: out | std::ios :: binary);
+    bin.write(&data[0],data.size());
+    bin.close();
+
+}
+
 
 //////////////////////////////////////
 // IMAGE
