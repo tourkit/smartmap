@@ -62,6 +62,7 @@ struct Engine {
     static void Run() {
 
         auto &window = getInstance().window;
+        window.max_fps = 20;
 
         while (!glfwWindowShouldClose(window.id)) window.render([](){
             

@@ -6,21 +6,18 @@
 #include "pch.cpp"
 
 #include "file.cpp"
+#include "ubo.cpp"
 
 
 // extern Output* hdmi,* monitor;
 
 struct Config {
 
-    rapidjson::Document json;
 
-    std::string ip;
-    
-    uint8_t subnet;
+    static void load(const char* filename) {
+        
+        rapidjson::Document json;
 
-    uint16_t width, height;
-
-    Config(const char* filename) {
 
         File file(filename);
         json.Parse(file->data.data());
@@ -43,16 +40,10 @@ struct Config {
 
     }
 
-    int count = 0;
-
-    std::map<std::string, Output*> outputs;
-    std::vector<Fixture*> fixtures;
+    static void save() {
 
 
-    void addGridLayer(int columns, int rows, int address, int universe, float width, float height, float offset_x, float offset_y, FixtureMode fixture_mode, const char *layer_mode, Output* output);
-    int addFreeLayer(int quantity, int address, int universe, float width, float height, float offset_x, float offset_y, FixtureMode fixture_mode, const char *layer_mode, Output* output);
-    int addFixture(int address, int universe, float width, float height, float offset_x, float offset_y, FixtureMode fixture_mode, const char *layer_mode, Output* output);
 
-    void createShow();
+    }
 
 };

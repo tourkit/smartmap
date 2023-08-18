@@ -27,7 +27,9 @@ int main() {
 
 
     auto &engine = Engine::getInstance();
-    engine.dynamic_ubo.addStruct("Test1",{Component::id("float")},3);
+
+    UBO::fromJSON();
+    
 
     Engine::Run();
 

@@ -2,15 +2,13 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(const char* name, std::vector<GLuint> subscribers) : name(name), subscribers(subscribers) { 
+UBO::UBO(std::string name, std::vector<Shader*> subscribers) : name(name), subscribers(subscribers) { 
     
     pool.push_back(this); 
-
-    widget.updateUBOList();
     
 } 
 
-void UBO::addStruct(const char* name, std::vector<Component*> components = {}, size_t quantity) {
+void UBO::addStruct(std::string name, std::vector<Component*> components = {}, size_t quantity) {
 
     definition.push_back(Struct(name, components, quantity));
 
@@ -44,14 +42,14 @@ void UBO::resize() {
     std::cout << "RTFM /!\\ put good bindings in shader !! layout(std140, binding = " << binding << ") uniform " << name << " { size:" << data.size() << " };" << std::endl;
 
     subscribers = t_subscribers;
-    for (auto shader:subscribers) link(shader); 
+    for (auto shader:subscribers) link(shader->id); 
 
 }
 
 void UBO::link(GLuint shader) {
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glUniformBlockBinding(shader, glGetUniformBlockIndex(shader, name), binding);
+    glUniformBlockBinding(shader, glGetUniformBlockIndex(shader, name.c_str()), binding);
     glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 }
 
@@ -80,6 +78,8 @@ void UBO::fromJSON(){
     rapidjson::Document json;
     json.Parse(File(REPO_DIR+"show/ubo.json").data.data());
 
+    if(json.HasParseError()) { std::cout << "ubo parse error" << std::endl; return; }
+
     if (!json.HasMember("ubo_list")) { std::cout << "Missing ubo_list" << std::endl; return; }
 
     for (auto &ubo : json["ubo_list"].GetArray()) { 
@@ -91,7 +91,7 @@ void UBO::fromJSON(){
 
         UBO* target = nullptr;
         for (auto &existing_ubo:UBO::pool) { 
-            if (!strcmp(existing_ubo->name,ubo["name"].GetString())) {
+            if (!strcmp(existing_ubo->name.c_str(),ubo["name"].GetString())) {
                 target = existing_ubo;
                 break;
             }
@@ -118,6 +118,8 @@ void UBO::fromJSON(){
 
     }
 
+    widget.updateUBOList();
+
 }
 
 #include "include/vendor/rapidjson/prettywriter.h"
@@ -133,15 +135,15 @@ void UBO::toJSON(){
     writer.String("ubo_list");
     writer.StartArray();
 
-    for (auto &ubo:UBO::pool) { 
+    for (auto ubo : UBO::pool) { 
 
         writer.StartObject();
         writer.String("name");
-        writer.String(ubo->name);
+        writer.String(ubo->name.c_str());
         writer.String("definition");
         writer.StartArray();
 
-        for (auto &def:ubo->definition) { 
+        for (auto def:ubo->definition) { 
             
             writer.StartObject();
             writer.String("name");
@@ -149,7 +151,7 @@ void UBO::toJSON(){
             writer.String("components");
             writer.StartArray();
 
-            for (auto &comp:def.components) { 
+            for (auto comp:def.components) { 
                 
                 writer.StartObject();
                 writer.String("name");
@@ -188,13 +190,15 @@ void UBO::Widget::draw() {
 
     ImGui::InputText("##NewUBO", &add_ubo[0], add_ubo.size());
     ImGui::SameLine();
-    if (ImGui::Button("Add UBO")) { 
+    if (ImGui::Button("Add UBO") && strlen(&add_ubo[0])) { 
         
-        new UBO(add_ubo.c_str());
+        UBO *tmp = new UBO(add_ubo.c_str());
 
         ubo_current = UBO::pool.size()-1;  
         
         memset(&add_ubo[0],0,add_ubo.size());
+
+        UBO::toJSON();
     
     }
     ImGui::Spacing();
@@ -202,15 +206,28 @@ void UBO::Widget::draw() {
 
     ImGui::NewLine();
 
+    if (subs_list.buffer) {
+        
+        ImGui::Combo("##subscriberzzz", &add_sub, subs_list.buffer);
+        ImGui::SameLine();
+        if (ImGui::Button("Add sub")) { 
+        
+        
+        }
+
+        ImGui::NewLine();
+        
+    }
+
     if (!UBO::pool.size()) return;
 
     auto *ubo = UBO::pool[ubo_current];
 
     ImGui::InputText("##NewStruct", &add_struct[0], add_struct.size());
     ImGui::SameLine();
-    if (ImGui::Button("Add Struct")) { 
+    if (ImGui::Button("Add Struct") && strlen(&add_struct[0])) { 
         
-        ubo->addStruct(add_struct.c_str()); 
+        ubo->addStruct(add_struct); 
 
         struct_current = ubo->definition.size()-1;  
         

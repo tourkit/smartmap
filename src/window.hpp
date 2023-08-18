@@ -16,9 +16,9 @@ struct FPS {
 
     static inline std::vector<FPS*> pool;
 
-    FPS(std::string name = "FPS");
+    FPS(std::string name = "FPS", float max_fps = 0);
 
-    float current_time = 0, last_time = 0, fps = 1;
+    float current_time = 0, last_time = 0, fps = 1, max_fps = 0;
 
     float get();
     float run(float max = 0);

@@ -148,7 +148,7 @@ void Window::render(std::function<void()> callback) {
 
 }
 
-FPS::FPS(std::string name ) : name(name) { 
+FPS::FPS(std::string name, float max_fps) : name(name), max_fps(max_fps) { 
     
     pool.push_back(this); 
     
@@ -162,6 +162,7 @@ float FPS::get() {
 
 float FPS::run(float max) {
 
+    if (!max) max = max_fps;
     if (max) while ( get() > max+1) std::this_thread::sleep_for(std::chrono::microseconds(10));
     last_time = current_time;
     if (fps<max) std::cout << "DROP FRAME " << (int)fps << " fps" << std::endl;
