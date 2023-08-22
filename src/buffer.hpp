@@ -189,9 +189,8 @@ struct Buffer {
                 
             }
 
-            if (ImGui::SliderInt("current##uibocurrent", &elem_current,0,obj.quantity-1)) UBO::toJSON();
-            
-            ImGui::NewLine();
+  
+            ImGui::Spacing();
             
             ImGui::Combo("##AddComponent", &add_comp, comp_list.buffer);
             ImGui::SameLine();
@@ -203,83 +202,27 @@ struct Buffer {
 
             }
 
-            ImGui::Spacing();
+            ImGui::NewLine();
 
             ImGui::ShowDemoWindow();
 
-            int members_size = 0;
-            for (auto &c:obj.components) { members_size+= c->members.size(); }
+            if (ImGui::CollapsingHeader("Single view")) {
 
-            if (ImGui::BeginTable("items", obj.components.size(),  ImGuiTableFlags_BordersOuterH )) {
+                ImGui::NewLine();
 
-                for (auto &c:obj.components) {ImGui::TableSetupColumn(c->name.c_str()); }
-                ImGui::TableHeadersRow();
-                
-
-                int comp_offset = 0;
-                int members_offset = 0;
-
-                for (auto &c:obj.components) {
-                    ImGui::TableNextColumn();
-                
-                    if (ImGui::BeginTable("items", c->members.size(), ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+                if (ImGui::SliderInt("current##uibocurrent", &elem_current,0,obj.quantity-1)) UBO::toJSON();
+            
+                int uniform_offset = 0;
+                for (auto c:obj.components) {
                     
-                        for (auto &m:c->members) ImGui::TableSetupColumn(m.name.c_str()); 
-                        ImGui::TableHeadersRow();
-
-                        for (int id = 0; id < obj.quantity; id++) {
- 
-                            ImGui::TableNextRow(ImGuiTableRowFlags_None, 20);
-                            for (int i = 0; i < c->members.size(); i++) {
-                                
-                                //nexttrow 
-                                ImGui::TableNextColumn();
-                                ;
-                                ImGui::Text((std::to_string(members_offset)+ " + "+std::to_string(comp_offset)).c_str());
-                                members_offset++;
-
-                            }
-                        }
-
-                        ImGui::EndTable();
-                        
-                    }
-
-                    comp_offset += c->size;
-
-                }
-
-
-            //     for (int row = 0; row < 5; row++)
-            //     {
-            //         ImGui::TableNextRow();
-            //         for (int column = 0; column < 3; column++)
-            //         {
-            //             ImGui::TableSetColumnIndex(column);
-            //             char buf[32];
-            //             sprintf(buf, "Hello %d,%d", column, row);
-            //             if (contents_type == CT_Text)
-            //                 ImGui::TextUnformatted(buf);
-            //             else if (contents_type == CT_FillButton)
-            //                 ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
-            //         }
-            //     }
-                ImGui::EndTable();
-            }
-
-            ImGui::Spacing();
-
-            int uniform_offset = 0;
-            for (auto c:obj.components) {
-                
-                ImGui::Text((std::to_string(elem_current)+" - "+std::to_string(obj.size)).c_str());
-                if (ImGui::CollapsingHeader(c->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-                
+                    // ImGui::Text((std::to_string(elem_current)+" - "+std::to_string(obj.size)).c_str());
+                    ImGui::SeparatorText(c->name.c_str());
+                    
                     for (auto m:c->members) {
 
                         float *value = (float*)&buffer->data[uniform_offset+(elem_current*obj.size)];
 
-                        if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid).c_str(), value, m.range_from, m.range_to)) { 
+                        if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str(), value, m.range_from, m.range_to)) { 
                             
                             // ubo->update(); 
                         }
@@ -287,43 +230,128 @@ struct Buffer {
                         uniform_offset += m.size; 
                     }
                     
-                } 
-                   
-                    // break; 
-            }
-
-            ImGui::NewLine();
-            
-            
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
-
-            auto window_width = ImGui::GetWindowWidth();
-
-            int cells_count = 48, cell_min = 0, cell_max = 255;
-            int cell_width = window_width / cells_count - 2;
-
-            for (int i = 0; i < buffer->data.size(); i++) {
-
-                ImGui::PushID(i);
-
-                if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &buffer->data[i],  &cell_min,   &cell_max,   "")) { 
                     
-                    // fixtureUBO->update(); 
-                    
+                        // break; 
                 }
-                if ((i + 1) % cells_count != 0) { ImGui::SameLine(0); }
-
-                ImGui::PopID();
-
             }
 
-            ImGui::PopStyleVar(5);
-            
             ImGui::NewLine();
+            
+            //////////////// LIST VIEW ////////////////////
+            if (ImGui::CollapsingHeader("List view", ImGuiTreeNodeFlags_DefaultOpen)) {
+
+                ImGui::NewLine();
+
+                int members_size = 0;
+                for (auto &c:obj.components) { members_size+= c->members.size(); }
+
+                if (ImGui::BeginTable("items", obj.components.size(),   ImGuiTableFlags_Borders |  ImGuiTableFlags_NoPadOuterX | ImGuiTableFlags_NoPadInnerX )) {
+
+                    for (auto &c:obj.components) {ImGui::TableSetupColumn(c->name.c_str()); }
+                    ImGui::TableHeadersRow();
+                    
+
+                    int comp_offset = 0;
+                    int members_offset = 0;
+                    int col_members_offset = 0;
+
+                    for (auto &c:obj.components) {
+                        ImGui::TableNextColumn();
+                    
+                        if (ImGui::BeginTable("items", c->members.size(), ImGuiTableFlags_RowBg  | ImGuiTableFlags_BordersInner |  ImGuiTableFlags_NoPadOuterX | ImGuiTableFlags_NoPadInnerX )) {
+                        
+                            for (auto &m:c->members){
+
+                                ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing, 10.0f);
+                                
+                                ImGui::TableSetupColumn(m.name.c_str()); 
+
+                                ImGui::PopStyleVar();
+
+                                }
+                            ImGui::TableHeadersRow();
+
+                            for (int id = 0; id < obj.quantity; id++) {
+    
+                                col_members_offset = 0;
+
+                                ImGui::TableNextRow(ImGuiTableRowFlags_None, 20);
+                                for (int i = 0; i < c->members.size(); i++) {
+                                    
+                                    //nexttrow 
+                                    ImGui::TableNextColumn();
+                                    ;ImGui::SetNextItemWidth(-1);
+                                    ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 );
+                                    // ImGui::Text((std::to_string(id*obj.size+members_offset+col_members_offset)).c_str());
+
+                                    col_members_offset+=c->members[i].size;
+
+                                }
+
+                            }
+
+                            members_offset+=col_members_offset;
+
+                            ImGui::EndTable();
+                            
+                        }
+
+                        comp_offset += c->size;
+
+                    }
+
+                    ImGui::EndTable();
+
+                }
+            }
+
+            ImGui::NewLine();
+
+            if (ImGui::CollapsingHeader("Raw view")) {
+
+                ImGui::NewLine();
+
+                //////////////// TABLE VIEW //////////////////////
+                
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
+                ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+                ImGui::SetWindowFontScale(.6666);
+
+                auto window_width = ImGui::GetWindowWidth();
+
+                int cells_count = 48, cell_min = 0, cell_max = 255;
+                int cell_width = window_width / cells_count - 2;
+                for (int i = 0; i < buffer->data.size(); i++) {
+
+                    ImGui::PushID(i);
+
+                    if (!(i%cells_count)) ImGui::NewLine();
+                    ImGui::SameLine(((i%cells_count)*20)+8); 
+
+                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &buffer->data[i],  &cell_min,   &cell_max,   "")) { 
+                        
+                        // fixtureUBO->update(); 
+                        
+                    }
+
+                    ImGui::SameLine(0);
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
+                    ImGui::Text(std::to_string(i).c_str());
+
+                    ImGui::PopID();
+
+                }
+                ImGui::SetWindowFontScale(1);
+
+                ImGui::PopStyleVar(5);
+                
+                ImGui::NewLine();
+            
+            }
+
         }
 
     } widget;
