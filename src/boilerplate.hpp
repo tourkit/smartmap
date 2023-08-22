@@ -268,7 +268,7 @@ void Boilerplate() {
     
     GUI gui(window.id);
 
-    VBO quad0("quad.obj",0, width,height);
+    VBO quad0("quad.obj", width,height);
 
     Texture img("boy.jpg");
 

@@ -4,20 +4,20 @@
 #include <typeinfo>
 
 struct Component {
-   
+
     static inline std::vector<Component*> pool;
 
     struct Member {
 
         std::string name;
-        size_t size;
+        int size;
         float range_from,range_to;  
         enum Type { UNDEFINED, F16, I8, I16, UI8, UI16 } type;
 
     };
 
     std::string name;
-    size_t size;
+    int size;
     std::vector<Member> members;
 
     template <typename T>
@@ -42,7 +42,7 @@ struct Component {
         }else if (typeid(T) == typeid(int16_t)) { 
             type = Member::Type::I16; 
         }
-        
+
         this->size += sizeof(T);
         
         members.push_back({name, sizeof(T), 0,range_to, type});
@@ -95,6 +95,14 @@ struct Component {
             .member<float>("x")//.range(-1,1)
             .member<float>("y")//.range(-1,1)
         ;
+        create("Di,ention")
+            .member<float>("width")//.range(-1,1)
+            .member<float>("height")//.range(-1,1)
+        ;
+        create("UV")
+            .member<float>("x")
+            .member<float>("y")
+        ;
 
         create("Size")
             .member<float>("x")
@@ -120,8 +128,33 @@ struct Component {
         create("float")
             .member<float>("value")
         ;
+        create("Vertex")
+            .member<float>("ptr")
+            ;
+        create("Dimention")
+            .member<uint16_t>("width")
+            .member<uint16_t>("height")
+            ;
+        create("ID")
+            .member<uint32_t>("value")
+            ;
 
     }
 
 };
 
+struct Object {
+
+    std::string name;
+
+    std::vector<Component*> components;
+
+    int quantity,size = 0;
+    
+    // int get(int id, int comp, int member) { 
+        
+    //     return size*id; 
+    
+    // }
+
+};

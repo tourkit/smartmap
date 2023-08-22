@@ -3,13 +3,24 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-VBO::VBO(std::string path, int id, uint16_t width, uint16_t height) : path(path) , id(id), width(width), height(height) {  
+#include "engine.hpp"  
+
+VBO::VBO(std::string path, uint16_t width, uint16_t height) : path(path) {  
     
+    id = VBO::pool.size();
+
     VBO::pool.push_back(this);  
     
+    if (!width || !height) {
+
+        this->width = Engine::getInstance().window.width;
+        this->height = Engine::getInstance().window.height;
+
+    }
+
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
-    import(path, id, width, height); 
+    import(path, width, height); 
 
     update();
     
@@ -17,11 +28,8 @@ VBO::VBO(std::string path, int id, uint16_t width, uint16_t height) : path(path)
 
 VBO::~VBO()  { 
 
-    destroy(); 
-    
-    if (!vao) return;
-
-    // VBO::pool.resize(0);
+    for (auto vbo : VBO::pool) { if (vbo->id > id) { vbo->id-=1; } }
+    VBO::pool.erase(VBO::pool.begin()+id);
 
     glDisableVertexAttribArray(0); 
     glDisableVertexAttribArray(1); 
@@ -34,16 +42,7 @@ VBO::~VBO()  {
 
 }
 
-void VBO::destroy() {
-
-
-    vertices.resize(0);
-    indices.resize(0);
-
-
-}
-
-void VBO::reset() {  import(path); }
+void VBO::reset() {  import(path, width, height); }
 
 void VBO::update() {
 
@@ -66,7 +65,10 @@ void VBO::update() {
 
 }
 
-void VBO::import(std::string path, uint16_t id, uint16_t width, uint16_t height) {    
+void VBO::import(std::string path, uint16_t width, uint16_t height) {    
+
+    vertices.resize(0);
+    indices.resize(0);
 
     Assimp::Importer importer;
 
@@ -86,7 +88,7 @@ void VBO::import(std::string path, uint16_t id, uint16_t width, uint16_t height)
         vertices.push_back({
             vertex.x,vertex.y, 
             mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, 
-            (float)width, (float)height, 
+            (float)width, (float)height, // maybe useless // is it == glfragcoord ?
             this->id
         });
     

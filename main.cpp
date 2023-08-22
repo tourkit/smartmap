@@ -10,12 +10,17 @@
 // #include "debug.hpp"
 // Debug debug;
 
+#include "buffer.hpp"
+
 
 
 int main() { 
 
     // Boilerplate();
 
+    Buffer buffer("VBO");
+    buffer.add("Vertex", {"Position", "UV", "Dimention", "ID"});
+    buffer.add("Indice", {"Vertex", "Vertex", "Vertex"});
 
     // SmartMap& sm = SmartMap::getInstance();
 

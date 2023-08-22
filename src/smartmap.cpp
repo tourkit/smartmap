@@ -27,17 +27,16 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 SmartMap::SmartMap() {
 
     // order matters for some
-    artnet = new Artnet("2.0.0.222");
-    window = new Window(false,400,300,2560-400);
-    // window->setPos(2560,1440-1080);
-    // window->setSize(1920,1080);
-    // window->setSize(1000,500);
-    quad = new VBO("quad.obj",0,window->width,window->height);
+    // artnet = new Artnet("2.0.0.222");
+    auto &window = Engine::getInstance().window;
+    window.setPos(2560-400,0);
+    window.setSize(400,300);
+    
+    quad = new VBO("quad.obj",0,window.width,window.height);
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     shader->use();
-    atlas = new Atlas("assets/media/",4096,2048);
-    atlas->link(shader);
-    winFB = new FrameBuffer(0,window->width,window->height); 
+    // atlas = new Atlas("assets/media/",4096,2048);
+    // atlas->link(shader);
 
     matriceUBO = new UBO("MatriceUBO", {
 

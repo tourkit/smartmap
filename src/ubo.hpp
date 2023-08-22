@@ -12,17 +12,15 @@ struct UBO {
 
     static inline std::vector<UBO*> pool;
 
-    static inline GLuint count = 0;
+    std::string name;
 
-    GLuint binding = count++;
+    GLuint id;
 
-    std::vector<float> data;
-
-    GLuint id = 0;
+    GLuint binding;
 
     std::vector<Shader*> subscribers;
 
-    struct Struct {
+    struct Object {
 
         std::string name;
 
@@ -32,9 +30,9 @@ struct UBO {
 
     };
 
-    std::vector<Struct> definition;
+    std::vector<Object> definition;
 
-    std::string name;
+    std::vector<float> data;
 
     ~UBO();
     
@@ -44,13 +42,14 @@ struct UBO {
 
     void resize();
 
-    void addStruct(std::string name, std::vector<Component*> components, size_t quantity = 1);
+    void addObject(std::string name, std::vector<Component*> components, size_t quantity = 1);
 
     void link(GLuint shader);
 
     void update();
     
     static void toJSON();
+    
     static void fromJSON();
 
     void update(GLvoid* data, size_t size, GLuint offset = 0);
@@ -70,6 +69,7 @@ struct UBO {
 
             std::vector<std::string> names;
             for (auto ubo:UBO::pool) { 
+                // names.push_back(ubo->name); 
                 names.push_back((ubo->name+" (binding:"+std::to_string(ubo->binding)+")")); 
             }
             ubo_list.create(names);

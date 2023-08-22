@@ -2,21 +2,21 @@
 
 UBO::~UBO() { destroy(); }
 
+void UBO::addObject(std::string name, std::vector<Component*> components = {}, size_t quantity) {
+
+    definition.push_back(Object(name, components, quantity));
+
+    resize(); 
+    
+}
+
 UBO::UBO(std::string name, std::vector<Shader*> subscribers) : name(name), subscribers(subscribers) { 
     
+    binding = pool.size();
     pool.push_back(this); 
     
 } 
 
-void UBO::addStruct(std::string name, std::vector<Component*> components = {}, size_t quantity) {
-
-    definition.push_back(Struct(name, components, quantity));
-
-    resize(); 
-
-    widget.updateStructList(); 
-    
-}
 void UBO::destroy() { data.resize(0); subscribers.resize(0);  if (id) glDeleteBuffers(1, &id); } // delete name; ?
 
 void UBO::resize() {
@@ -106,7 +106,7 @@ void UBO::fromJSON(){
 
             }
 
-            target->addStruct(def["name"].GetString(), components, def["quantity"].GetInt());
+            target->addObject(def["name"].GetString(), components, def["quantity"].GetInt());
 
         }
 
@@ -186,13 +186,15 @@ void UBO::Widget::draw() {
     ImGui::SameLine();
     if (ImGui::Button("Add UBO") && strlen(&add_ubo[0])) { 
         
-        UBO *tmp = new UBO(add_ubo.c_str());
+        new UBO(add_ubo.c_str());
 
         ubo_current = UBO::pool.size()-1;  
         
         memset(&add_ubo[0],0,add_ubo.size());
 
         UBO::toJSON();
+
+        updateStructList(); 
     
     }
     ImGui::Spacing();
@@ -221,7 +223,7 @@ void UBO::Widget::draw() {
     ImGui::SameLine();
     if (ImGui::Button("Add Struct") && strlen(&add_struct[0])) { 
         
-        ubo->addStruct(add_struct); 
+        ubo->addObject(add_struct); 
 
         struct_current = ubo->definition.size()-1;  
         
