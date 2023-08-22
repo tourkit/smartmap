@@ -132,8 +132,8 @@ struct Component {
             .member<float>("ptr")
             ;
         create("Dimention")
-            .member<uint16_t>("width")
-            .member<uint16_t>("height")
+            .member<uint32_t>("width")
+            .member<uint32_t>("height")
             ;
         create("ID")
             .member<uint32_t>("value")

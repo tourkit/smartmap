@@ -12,7 +12,7 @@ struct Buffer {
 
         std::vector<Component*> components;
 
-        int quantity,size = 0;
+        int quantity,size = 0,offset = 0;
         
         // int get(int id, int comp, int member) { 
             
@@ -29,7 +29,7 @@ struct Buffer {
 
     std::vector<Object> objects;
 
-    std::vector<float> data;  
+    std::vector<char> data;  
 
     std::vector<Buffer*> pool;
 
@@ -70,12 +70,12 @@ struct Buffer {
         int size = 0;
         for (auto &obj:objects) {
             
-            for (auto comp:obj.components) { size += comp->members.size()*obj.quantity; }
+            for (auto comp:obj.components) { size += comp->size*obj.quantity; }
             
         }
 
         data.resize(size);
-        memset(&data[0],0,data.size()*4);
+        memset(&data[0],0,data.size());
 
         widget.updateBufferList();
 
@@ -189,7 +189,6 @@ struct Buffer {
                 
             }
 
-            int uniform_offset = 0;
             if (ImGui::SliderInt("current##uibocurrent", &elem_current,0,obj.quantity-1)) UBO::toJSON();
             
             ImGui::NewLine();
@@ -270,22 +269,61 @@ struct Buffer {
 
             ImGui::Spacing();
 
+            int uniform_offset = 0;
             for (auto c:obj.components) {
                 
+                ImGui::Text((std::to_string(elem_current)+" - "+std::to_string(obj.size)).c_str());
                 if (ImGui::CollapsingHeader(c->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
                 
                     for (auto m:c->members) {
 
-                    if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid).c_str(), &buffer->data[uniform_offset+++(elem_current*members_size)], m.range_from, m.range_to)) { 
-                        
-                        // ubo->update(); 
+                        float *value = (float*)&buffer->data[uniform_offset+(elem_current*obj.size)];
+
+                        if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid).c_str(), value, m.range_from, m.range_to)) { 
+                            
+                            // ubo->update(); 
+                        }
+
+                        uniform_offset += m.size; 
                     }
                     
-                    }
-                    
-                } else { uniform_offset += c->members.size(); }
-                    
+                } 
+                   
+                    // break; 
             }
+
+            ImGui::NewLine();
+            
+            
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+
+            auto window_width = ImGui::GetWindowWidth();
+
+            int cells_count = 48, cell_min = 0, cell_max = 255;
+            int cell_width = window_width / cells_count - 2;
+
+            for (int i = 0; i < buffer->data.size(); i++) {
+
+                ImGui::PushID(i);
+
+                if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &buffer->data[i],  &cell_min,   &cell_max,   "")) { 
+                    
+                    // fixtureUBO->update(); 
+                    
+                }
+                if ((i + 1) % cells_count != 0) { ImGui::SameLine(0); }
+
+                ImGui::PopID();
+
+            }
+
+            ImGui::PopStyleVar(5);
+            
+            ImGui::NewLine();
         }
 
     } widget;
