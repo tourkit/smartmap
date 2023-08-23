@@ -13,6 +13,7 @@ struct VBO {
 
     struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float dim_x,dim_y; GLuint id; }; 
 
+    
     Object vertex{"Vertex", {
 
         Component::id("Position"),
@@ -52,36 +53,6 @@ struct VBO {
 
     void draw(int count = 1);
 
-    
-    struct Widget : GUI::Window {
-
-        Widget() : GUI::Window("VBO Editor") { 
-           
-   
-        
-        }
-
-        void draw() override { 
-
-            // vertex definition
-            //  - x - y 
-            //  - uvx - uvy 
-            //  - width - height 
-            //  - id 
-
-
-            // Index definition
-            //  - v1 - v2 - v3
-
-            // vbo list
-            //  - x - y - id
-            //  - 
-
-        }
-
-    };
-
-    static inline Widget widget;
 
 };
 

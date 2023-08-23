@@ -12,11 +12,12 @@ struct Buffer {
 
         std::vector<Component*> components;
 
-        int quantity,size = 0,offset = 0;
+        int quantity,size = 0, offset = 0;
         
-        // int get(int id, int comp, int member) { 
+        // template <typename T>
+        // T *get(int comp, int member, int id = 0) { 
             
-        //     return size*id; 
+        //     return (T*)(buffer+(components[comp]->members[member].offset+id*components[comp]->size)); 
         
         // }
 
@@ -42,7 +43,7 @@ struct Buffer {
             
         } 
 
-        resize(); 
+        updateBuffer(); 
         
     }
 
@@ -56,31 +57,29 @@ struct Buffer {
 
     }
 
-    // template <typename T>
-    // T &get(int id, int comp, int member) { 
-        
-    //     return data[]; 
-    
-    // }
-
     void reset() { objects.resize(0); data.resize(0); }
 
-    void resize() {
+    void updateBuffer() {
 
         int size = 0;
-        for (auto &obj:objects) {
-            
-            for (auto comp:obj.components) { size += comp->size*obj.quantity; }
-            
-        }
+        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.quantity; } }
 
         data.resize(size);
         memset(&data[0],0,data.size());
 
+        int offset = 0;
+        for (auto &obj:objects) {
+            
+            // obj.offset = offset;
+            obj.buffer = (void*)&data[offset];
+
+            offset += obj.size*obj.quantity;
+            
+        }
+
         widget.updateBufferList();
 
     }
-
 
     struct Widget : GUI::Window {
 
@@ -178,18 +177,17 @@ struct Buffer {
                 if (!obj.quantity) {
                     
                     buffer->objects.erase(buffer->objects.begin()+object_current);
-                    updateBufferList();
-                    buffer->resize();        
+                    
+                    buffer->updateBuffer();        
                     // UBO::toJSON();
                     return;
                 }
 
-                buffer->resize(); 
+                buffer->updateBuffer(); 
                 UBO::toJSON();
                 
             }
 
-  
             ImGui::Spacing();
             
             ImGui::Combo("##AddComponent", &add_comp, comp_list.buffer);
@@ -197,7 +195,7 @@ struct Buffer {
             if (ImGui::Button("Add Component")) {
 
                 obj.components.push_back(Component::pool[add_comp]); 
-                buffer->resize(); 
+                buffer->updateBuffer(); 
                 // UBO::toJSON();
 
             }
@@ -249,13 +247,13 @@ struct Buffer {
 
                     for (auto &c:obj.components) {ImGui::TableSetupColumn(c->name.c_str()); }
                     ImGui::TableHeadersRow();
-                    
 
                     int comp_offset = 0;
                     int members_offset = 0;
                     int col_members_offset = 0;
 
                     for (auto &c:obj.components) {
+
                         ImGui::TableNextColumn();
                     
                         if (ImGui::BeginTable("items", c->members.size(), ImGuiTableFlags_RowBg  | ImGuiTableFlags_BordersInner |  ImGuiTableFlags_NoPadOuterX | ImGuiTableFlags_NoPadInnerX )) {
@@ -268,7 +266,8 @@ struct Buffer {
 
                                 ImGui::PopStyleVar();
 
-                                }
+                            }
+
                             ImGui::TableHeadersRow();
 
                             for (int id = 0; id < obj.quantity; id++) {
@@ -278,11 +277,9 @@ struct Buffer {
                                 ImGui::TableNextRow(ImGuiTableRowFlags_None, 20);
                                 for (int i = 0; i < c->members.size(); i++) {
                                     
-                                    //nexttrow 
                                     ImGui::TableNextColumn();
-                                    ;ImGui::SetNextItemWidth(-1);
+                                    ImGui::SetNextItemWidth(-1);
                                     ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 );
-                                    // ImGui::Text((std::to_string(id*obj.size+members_offset+col_members_offset)).c_str());
 
                                     col_members_offset+=c->members[i].size;
 
@@ -361,19 +358,3 @@ struct Buffer {
 
 
 };
-
-
-
-
-// Buffer 
-
-// [{
-
-// struct 
-
-//   de components
-//   ...ETC
-// [x tant]
-// },]
-
-// data mgmtW

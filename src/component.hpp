@@ -11,6 +11,7 @@ struct Component {
 
         std::string name;
         int size;
+        // int offset;
         float range_from,range_to;  
         enum Type { UNDEFINED, F16, I8, I16, UI8, UI16 } type;
 
@@ -46,6 +47,7 @@ struct Component {
         this->size += sizeof(T);
         
         members.push_back({name, sizeof(T), 0,range_to, type});
+        // members.push_back({name, sizeof(T), members.back().offset+members.back().size ,0,range_to, type});
 
         return *this;
 

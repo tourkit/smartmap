@@ -12,15 +12,15 @@
 
 #include "buffer.hpp"
 
-
+// struct TVBO
 
 int main() { 
 
     // Boilerplate();
 
     Buffer buffer("VBO");
-    buffer.add("Vertex", {"Position", "UV", "Dimention", "ID"});
-    buffer.add("Indice", {"Vertex", "Vertex", "Vertex"});
+    buffer.add("Vertex", {"Position", "UV", "Dimention", "ID"}, 4);
+    buffer.add("Indice", {"Vertex", "Vertex", "Vertex"}, 6);
 
     // SmartMap& sm = SmartMap::getInstance();
 
