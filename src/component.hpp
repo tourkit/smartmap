@@ -3,8 +3,57 @@
 #include "pch.hpp"
 #include <typeinfo>
 
+struct StringsBuffer {
+
+  char* buffer = nullptr;
+  const char** pointers = nullptr;
+
+  ~StringsBuffer() { destroy(); }
+
+  void destroy() {
+
+      if (buffer) delete[] buffer;
+      if (pointers) delete[] pointers;
+
+  }
+
+  void create(std::vector<std::string> strings) {
+
+        destroy(); 
+
+        size_t names_length = 0; 
+        
+        for (auto string:strings) names_length += string.size() + 1; 
+
+        if (!names_length) names_length+=1;
+        buffer = new char[names_length+1];
+
+        memset(buffer,0,names_length+1);
+
+        char* ptr = buffer;
+
+        for (auto string:strings) { strcpy(ptr, string.c_str()); ptr += string.size() + 1; }
+
+        pointers = new const char*[strings.size()];
+
+        for (size_t i = 0; i < strings.size(); i++) { pointers[i] = ptr; ptr += strings[i].size() + 1; }
+
+  }
+
+};
+
 struct Component {
 
+
+    static inline StringsBuffer buffer_string;
+
+    static void updateStringBufferList() {
+
+            std::vector<std::string> names;
+            for (auto &comp:Component::pool) { names.push_back(comp->name); }
+            buffer_string.create(names);
+
+    }
     static inline std::vector<Component*> pool;
 
     struct Member {
@@ -49,6 +98,7 @@ struct Component {
         members.push_back({name, sizeof(T), 0,range_to, type});
         // members.push_back({name, sizeof(T), members.back().offset+members.back().size ,0,range_to, type});
 
+        updateStringBufferList();
         return *this;
 
     }
@@ -80,68 +130,77 @@ struct Component {
 
     }
 
-    static void init() {
+};
 
-        pool.resize(0);
+struct Components {
 
-        create("RGB")
+
+    static Components& getInstance() { static Components instance;  return instance; }
+private:
+
+    Components(const Components&) = delete;
+    Components& operator=(const Components&) = delete;
+
+    Components() {
+
+        Component::pool.resize(0);
+
+        Component::create("RGB")
             .member<float>("red")
             .member<float>("green")
             .member<float>("blue")
         ;
-        create("Opacity")
+        Component::create("Opacity")
             .member<float>("alpha")
         ;
 
-        create("Position")
+        Component::create("Position")
             .member<float>("x")//.range(-1,1)
             .member<float>("y")//.range(-1,1)
         ;
-        create("Di,ention")
-            .member<float>("width")//.range(-1,1)
-            .member<float>("height")//.range(-1,1)
-        ;
-        create("UV")
+        Component::create("UV")
             .member<float>("x")
             .member<float>("y")
         ;
 
-        create("Size")
+        Component::create("Size")
             .member<float>("x")
             .member<float>("y")
         ;
-        create("Gobo")
+        Component::create("Gobo")
             .member<float>("ID")
             .member<float>("FX1")
             .member<float>("FX2")
             .member<float>("FX3")
         ;
 
-        create("Orientation")
+        Component::create("Orientation")
             .member<float>("angle").range(-3.14159265359,3.14159265359)
         ;
 
-        create("Feedback")
+        Component::create("Feedback")
             .member<float>("quantity")
         ;
-        create("Strobe")
+        Component::create("Strobe")
             .member<float>("speed")
         ;
-        create("float")
+        Component::create("float")
             .member<float>("value")
         ;
-        create("Vertex")
+        Component::create("Vertex")
             .member<float>("ptr")
             ;
-        create("Dimention")
+        Component::create("Dimention")
             .member<uint32_t>("width")
             .member<uint32_t>("height")
             ;
-        create("ID")
+        Component::create("ID")
             .member<uint32_t>("value")
             ;
 
+    std::cout << "COMPINIT" << std::endl;
     }
+    
 
 };
 

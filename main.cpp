@@ -17,10 +17,14 @@
 int main() { 
 
     // Boilerplate();
+    
 
     Buffer buffer("VBO");
     buffer.add("Vertex", {"Position", "UV", "Dimention", "ID"}, 4);
     buffer.add("Indice", {"Vertex", "Vertex", "Vertex"}, 6);
+
+    Buffer xxx("fffff");
+    xxx.add("aaa", {"Position"}, 4);
 
     // SmartMap& sm = SmartMap::getInstance();
 
@@ -33,7 +37,7 @@ int main() {
 
     auto &engine = Engine::getInstance();
 
-    UBO::fromJSON();
+    // UBO::fromJSON();
     
 
     Engine::Run();

@@ -13,6 +13,7 @@
 
 struct Engine {
 
+
     Window window;
     
     GUI gui;
@@ -83,9 +84,7 @@ private:
 
         : window(width,height), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), fb(0,width,height), gui(window.id) {
 
-        Component::init();
-
-        UBO::widget.updateCompList();
+            
 
     }
 

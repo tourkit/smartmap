@@ -43,45 +43,6 @@ struct GUI {
 };
 
 
-struct StringsBuffer {
-
-  char* buffer = nullptr;
-  const char** pointers = nullptr;
-
-  ~StringsBuffer() { destroy(); }
-
-  void destroy() {
-
-      if (buffer) delete[] buffer;
-      if (pointers) delete[] pointers;
-
-  }
-
-  void create(std::vector<std::string> strings) {
-
-        destroy(); 
-
-        size_t names_length = 0; 
-        
-        for (auto string:strings) names_length += string.size() + 1; 
-
-        if (!names_length) names_length+=1;
-        buffer = new char[names_length+1];
-
-        memset(buffer,0,names_length+1);
-
-        char* ptr = buffer;
-
-        for (auto string:strings) { strcpy(ptr, string.c_str()); ptr += string.size() + 1; }
-
-        pointers = new const char*[strings.size()];
-
-        for (size_t i = 0; i < strings.size(); i++) { pointers[i] = ptr; ptr += strings[i].size() + 1; }
-
-  }
-
-};
-
 
 
 

@@ -3,6 +3,7 @@
 #include "pch.hpp"
 
 #include "component.hpp"
+#include "gui.hpp"
 
 struct Buffer {
 
@@ -85,10 +86,10 @@ struct Buffer {
 
         Buffer *buffer;
         int buffer_current = 0, object_current = 0, elem_current = 0;
-        int add_comp;
+        int add_comp = -1;
         std::string add_buffer, add_object; 
 
-        StringsBuffer object_list,buffer_list,comp_list;
+        StringsBuffer object_list,buffer_list;
 
         void updateBufferList() {
 
@@ -108,22 +109,13 @@ struct Buffer {
 
         }
 
-        void updateCompList() {
-
-            std::vector<std::string> names;
-            for (auto &comp:Component::pool) { names.push_back(comp->name); }
-            comp_list.create(names);
-
-        }
-
         Widget(Buffer* buffer, std::string name = "Buffer") : GUI::Window(name) { 
             
             this->buffer = buffer;
             updateBufferList();
             add_buffer.resize(120);
+            add_object.resize(120);
             // update();
-
-            updateCompList();
         
         }
 
@@ -159,9 +151,9 @@ struct Buffer {
 
                 object_current = buffer->objects.size()-1;  
                 
-                memset(&add_object[0],0,add_object.size());
+                // memset(&add_object[0],0,add_object.size());
 
-                UBO::toJSON();
+                // UBO::toJSON();
             
             }
             ImGui::Spacing();
@@ -184,13 +176,13 @@ struct Buffer {
                 }
 
                 buffer->updateBuffer(); 
-                UBO::toJSON();
+                // UBO::toJSON();
                 
             }
 
             ImGui::Spacing();
             
-            ImGui::Combo("##AddComponent", &add_comp, comp_list.buffer);
+            ImGui::Combo("##AddComponent", &add_comp, Component::buffer_string.buffer);
             ImGui::SameLine();
             if (ImGui::Button("Add Component")) {
 
@@ -204,11 +196,14 @@ struct Buffer {
 
             ImGui::ShowDemoWindow();
 
+
+            if (!obj.components.size()) return;
+
             if (ImGui::CollapsingHeader("Single view")) {
 
                 ImGui::NewLine();
 
-                if (ImGui::SliderInt("current##uibocurrent", &elem_current,0,obj.quantity-1)) UBO::toJSON();
+                if (ImGui::SliderInt("current##uibocurrent", &elem_current,0,obj.quantity-1)) {}//UBO::toJSON();
             
                 int uniform_offset = 0;
                 for (auto c:obj.components) {
