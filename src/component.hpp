@@ -62,12 +62,12 @@ struct Component {
         int size;
         // int offset;
         float range_from,range_to;  
-        enum Type { UNDEFINED, F16, I8, I16, UI8, UI16 } type;
+        enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32 } type;
 
     };
 
     std::string name;
-    int size;
+    int size =-1;
     std::vector<Member> members;
 
     template <typename T>
@@ -85,6 +85,9 @@ struct Component {
 
         }else if (typeid(T) == typeid(uint16_t)) { 
             type = Member::Type::UI16; 
+
+        }else if (typeid(T) == typeid(uint32_t)) { 
+            type = Member::Type::UI32; 
 
         }else if (typeid(T) == typeid(int8_t)) { 
             type = Member::Type::I8; 
@@ -188,17 +191,21 @@ private:
             .member<float>("value")
         ;
         Component::create("Vertex")
-            .member<float>("ptr")
+            .member<int>("id")
             ;
-        Component::create("Dimention")
+        Component::create("DimentionsUI32")
             .member<uint32_t>("width")
             .member<uint32_t>("height")
             ;
+        Component::create("Dimentions")
+            .member<float>("width")
+            .member<float>("height")
+            ;
+
         Component::create("ID")
             .member<uint32_t>("value")
             ;
 
-    std::cout << "COMPINIT" << std::endl;
     }
     
 

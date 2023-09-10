@@ -21,8 +21,70 @@ struct Buffer {
         //     return (T*)(buffer+(components[comp]->members[member].offset+id*components[comp]->size)); 
         
         // }
+        
+        int create() {
+            
+            quantity+= 1;
+            buffer->updateBuffer();
+            return components.size()-1;
+        }
 
-        void* buffer;
+        void add(void* data) { 
+
+            quantity+= 1;
+            buffer->updateBuffer();
+            memcpy(&buffer->data[offset],data,size);
+
+        }
+
+
+        void *data() { return (void*)&buffer->data[offset]; }
+
+        void set(const char* name, void* data, int id = 0) { 
+
+            Component *comp = nullptr;
+
+            int offset = this->offset;
+
+            for (auto &c:components) { 
+                
+                if (!strcmp(c->name.c_str(),name)) {
+
+                    comp = c;
+                    break;
+
+                }
+
+                offset += c->size;
+            
+            }
+
+            if (comp) { memcpy(&buffer->data[size*id+offset], data, comp->size); }
+            else{ std::cout << name << " does not recall" << std::endl; }
+
+        }
+
+        void set(int member_id, void* data, int obj_id = 0) { 
+
+            Component *comp = components[member_id];
+
+            int offset = this->offset;
+            for (size_t i = 0; i < member_id; i++) offset += components[i]->size;
+           
+            if (comp) memcpy(&buffer->data[size*obj_id+offset], data, comp->size);
+
+        }
+
+        // template <typename T,typename U>
+        // void add(var args ...) { 
+
+        //     quantity+= 1;
+        //     buffer->updateBuffer();
+        //     memcpy(&buffer->data[offset],data,size);
+
+        // }
+
+        Buffer* buffer;
 
     };
 
@@ -50,11 +112,17 @@ struct Buffer {
 
     // void remove(Object *obj, std::vector<Component*> components) {  for (auto comp : components) { obj->components.push_back(comp); } resize(); }
 
-    void add(std::string name, std::vector<std::string> components = {}, int quantity = 1) { 
+    Object *add(std::string name, std::vector<std::string> components = {}, int quantity = 1) { 
 
         objects.push_back({name, {}, quantity}); 
 
         add(&objects.back(),components); 
+
+        objects.back().buffer = this;
+
+        auto zzz = objects.back();
+
+        return &objects.back();
 
     }
 
@@ -71,8 +139,7 @@ struct Buffer {
         int offset = 0;
         for (auto &obj:objects) {
             
-            // obj.offset = offset;
-            obj.buffer = (void*)&data[offset];
+            obj.offset = offset;
 
             offset += obj.size*obj.quantity;
             
@@ -199,13 +266,14 @@ struct Buffer {
 
             if (!obj.components.size()) return;
 
+            //////////////// SINGLE VIEW ////////////////////
             if (ImGui::CollapsingHeader("Single view")) {
 
                 ImGui::NewLine();
 
                 if (ImGui::SliderInt("current##uibocurrent", &elem_current,0,obj.quantity-1)) {}//UBO::toJSON();
             
-                int uniform_offset = 0;
+                int uniform_offset = obj.offset;
                 for (auto c:obj.components) {
                     
                     // ImGui::Text((std::to_string(elem_current)+" - "+std::to_string(obj.size)).c_str());
@@ -244,7 +312,7 @@ struct Buffer {
                     ImGui::TableHeadersRow();
 
                     int comp_offset = 0;
-                    int members_offset = 0;
+                    int members_offset = obj.offset;
                     int col_members_offset = 0;
 
                     for (auto &c:obj.components) {
@@ -323,7 +391,9 @@ struct Buffer {
                     if (!(i%cells_count)) ImGui::NewLine();
                     ImGui::SameLine(((i%cells_count)*20)+8); 
 
-                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &buffer->data[i],  &cell_min,   &cell_max,   "")) { 
+                    ImGuiDataType_ datatype = ImGuiDataType_U8;
+
+                    if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &buffer->data[i],  &cell_min,   &cell_max,   "")) { 
                         
                         // fixtureUBO->update(); 
                         
@@ -348,7 +418,7 @@ struct Buffer {
 
     } widget;
 
-    Buffer(std::string name = "Buffer") : name(name), widget(this, name) { pool.push_back(this); }
+    Buffer(std::string name = "Buffer") : name(name), widget(this, name) { pool.push_back(this);  objects.reserve(10); }
 
 
 

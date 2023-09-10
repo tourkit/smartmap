@@ -292,7 +292,7 @@ vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
 uniform int strobe = 0;
 
 void main() {
-
+color = vec4(1); return;
     // vec2 uv = gl_FragCoord.xy/FBResolution.xy;
     vec2 uv = texcoord;
 

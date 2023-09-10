@@ -5,18 +5,38 @@
 
 #include "engine.hpp"  
 
-VBO::VBO(std::string path, uint16_t width, uint16_t height) : path(path) {  
+VBO::VBO(std::string path, uint16_t width, uint16_t height) 
+: buffer("VBO") 
+{  
+
+    vertices = buffer.add("Vertex", {
+
+        "Position",
+        "UV",
+        "Dimentions",
+        "ID",
+        
+    }, 4);
+
+    indices = buffer.add("Index", {
+
+        "Vertex",
+        "Vertex",
+        "Vertex"
+        
+    }, 2 );
     
     id = VBO::pool.size();
 
     VBO::pool.push_back(this);  
     
-    if (!width || !height) {
+    // if (!width || !height) {
 
-        this->width = Engine::getInstance().window.width;
-        this->height = Engine::getInstance().window.height;
+            // this doesnt work  
+    //     this->width = Engine::getInstance().window.width;
+    //     this->height = Engine::getInstance().window.height;
 
-    }
+    // }
 
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
@@ -42,33 +62,30 @@ VBO::~VBO()  {
 
 }
 
-void VBO::reset() {  import(path, width, height); }
 
 void VBO::update() {
 
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER,  vertices.size()*sizeof(Vertice) , &vertices[0], GL_STATIC_DRAW );
+    glBufferData(GL_ARRAY_BUFFER,  vertices->quantity*vertices->size , vertices->data(), GL_STATIC_DRAW );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(Indice) , &indices[0], GL_STATIC_DRAW );
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->quantity*indices->size , indices->data(), GL_STATIC_DRAW );
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, sizeof(Vertice), (GLvoid *) 0);
+    // make this parametric from Object vertices definition
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->size, (GLvoid *) 0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, sizeof(Vertice), (GLvoid *) (2*sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->size, (GLvoid *) (2*sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, sizeof(Vertice), (GLvoid *) (4*sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, vertices->size, (GLvoid *) (4*sizeof(float)));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, sizeof(Vertice), (GLvoid *) (6*sizeof(float)));
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->size, (GLvoid *) (6*sizeof(float)));
     glEnableVertexAttribArray(3);
 
 }
 
 void VBO::import(std::string path, uint16_t width, uint16_t height) {    
-
-    vertices.resize(0);
-    indices.resize(0);
 
     Assimp::Importer importer;
 
@@ -84,22 +101,23 @@ void VBO::import(std::string path, uint16_t width, uint16_t height) {
     for (int i = 0; i < mesh->mNumVertices; i++) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
-        
-        vertices.push_back({
-            vertex.x,vertex.y, 
-            mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y, 
-            (float)width, (float)height, // maybe useless // is it == glfragcoord ?
-            this->id
-        });
     
+        float dimentions[2] = {(float) width,(float) height};
+
+        vertices->set("Position", (void*)&vertex.x , i);
+        vertices->set("UV", (void*)&mesh->mTextureCoords[0][i].x , i);
+        vertices->set("Dimentions", (void*)&dimentions , i);
+        vertices->set("ID", (void*)&this->id , i);
+
     }
     
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
         
         const aiFace& face = mesh->mFaces[i];
 
-        indices.push_back({(int)face.mIndices[0],(int)face.mIndices[1],(int)face.mIndices[2]});
-
+        indices->set(0, (void*)&face.mIndices[0] , i);
+        indices->set(1, (void*)&face.mIndices[1] , i);
+        indices->set(2, (void*)&face.mIndices[2] , i);
 
     }
 
@@ -110,7 +128,7 @@ void VBO::draw(int count) {
 
     glBindVertexArray(vao); 
 
-    glDrawElementsInstanced(GL_TRIANGLES, indices.size()*sizeof(Indice), GL_UNSIGNED_INT, 0, count);
+    glDrawElementsInstanced(GL_TRIANGLES, indices->quantity*indices->size, GL_UNSIGNED_INT, 0, count);
 
 }
 	

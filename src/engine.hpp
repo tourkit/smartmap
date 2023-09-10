@@ -22,6 +22,8 @@ struct Engine {
 
     FrameBuffer fb;
 
+    VBO *quad;
+
     struct Stack {
 
         struct Stackable { virtual void run() {} };
@@ -31,7 +33,9 @@ struct Engine {
             VBO* vbo;
             ShaderProgram *shader;
             Texture *texture = nullptr;
-            FrameBuffer *fb = &Engine::getInstance().fb;
+            FrameBuffer *fb = &Engine::getInstance().fb; 
+
+            DrawCall(VBO* vbo, ShaderProgram *shader) : vbo(vbo) , shader(shader) {}
 
             void run() override { 
 
@@ -70,7 +74,9 @@ struct Engine {
             
             engine.dynamic_ubo.update();
 
-            engine.stack.run();
+            engine.quad->draw();
+
+            // engine.stack.run();
 
             engine.gui.draw();
 
@@ -84,7 +90,8 @@ private:
 
         : window(width,height), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), fb(0,width,height), gui(window.id) {
 
-            
+            window.setPos(2560,0);
+            quad = new VBO("quad.obj",width,height);
 
     }
 

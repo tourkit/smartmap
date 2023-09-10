@@ -12,19 +12,9 @@
 
 #include "buffer.hpp"
 
-// struct TVBO
-
 int main() { 
 
     // Boilerplate();
-    
-
-    Buffer buffer("VBO");
-    buffer.add("Vertex", {"Position", "UV", "Dimention", "ID"}, 4);
-    buffer.add("Indice", {"Vertex", "Vertex", "Vertex"}, 6);
-
-    Buffer xxx("fffff");
-    xxx.add("aaa", {"Position"}, 4);
 
     // SmartMap& sm = SmartMap::getInstance();
 
@@ -34,24 +24,17 @@ int main() {
     
     // SmartMap::Layer l2(0, 0, sm.basic_fixture, sm.window->width,sm.window->height, SmartMap::Layer::Mode::Free, 4,2);
 
-
     auto &engine = Engine::getInstance();
 
-    // UBO::fromJSON();
-    
+    auto *shader = new ShaderProgram({"basic.frag", "basic.vert"});
+
+    shader->use();
+
+    // engine.stack.list.push_back(Engine::Stack::DrawCall{engine.quad, shader});
+
 
     Engine::Run();
-
-
-    // while(true) window->render([&]() {
-
-    // }
-
-    // sm.render();
  
-
-
-
 }
 
 

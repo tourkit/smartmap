@@ -4,8 +4,6 @@ UBO::~UBO() { destroy(); }
 
 UBO::UBO(std::string name, std::vector<Shader*> subscribers) : name(name), subscribers(subscribers), buffer(name) { 
 
-    buffer.add("ffffffdsd",{"Position"}, 1);
-
     binding = binding_count++;
     // can do better ^^
     if (binding > 100) std::cout << "MAX_UBO might soon be reached";
