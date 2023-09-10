@@ -2,7 +2,7 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name, std::vector<Shader*> subscribers) : name(name), subscribers(subscribers), buffer(name) { 
+UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name), subscribers(subscribers), buffer(name) { 
 
     binding = binding_count++;
     // can do better ^^

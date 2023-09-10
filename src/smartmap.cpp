@@ -22,47 +22,70 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 }
 
-#endif
+#endif 
 
-SmartMap::SmartMap() {
+SmartMap::SmartMap() 
 
-    // order matters for some
+:  quad("quad.obj",Engine::getInstance().window.width,Engine::getInstance().window.height), shader({"smartmap.frag", "smartmap.vert"})
+// ,matriceUBO("matriceUBO"), matriceUBO2("matriceUBO2"), fixtureUBO("fixtureUBO"), fixtureUBO2("fixtureUBO2") 
+
+ {
+
     // artnet = new Artnet("2.0.0.222");
     auto &window = Engine::getInstance().window;
     window.setPos(2560-400,0);
     window.setSize(400,300);
     
-    quad = new VBO("quad.obj",0,window.width,window.height);
-    shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
-    shader->use();
+    
+    shader.use();
     // atlas = new Atlas("assets/media/",4096,2048);
     // atlas->link(shader);
 
-    matriceUBO = new UBO("MatriceUBO", {
+    engine.dynamic_ubo.subscribers.push_back(&shader); 
+    engine.static_ubo.subscribers.push_back(&shader); 
 
-        Component::id("Size"),
-        Component::id("Position"),
+    engine.static_ubo.buffer.add("matriceUBO", {
 
-    }, 100, {shader->id});  
+        "Size",
+        "Position"
+        
+    }, 100 );
 
-    matriceUBO2 = new UBO("MatriceUBO2", matriceUBO->definition[0].components, 100, {shader->id});  
-    fixtureUBO = new UBO("FixtureUBO", {
+    engine.static_ubo.buffer.add("matriceUBO2", {
 
-        Component::id("Opacity"),
-        Component::id("RGB"),
-        Component::id("Position"),
-        Component::id("Size"),
-        Component::id("Gobo"),
-        Component::id("Orientation"),
-        Component::id("Feedback"),
-        Component::id("Strobe"),
-        Component::id("float"), // for alignmentr
+        "Size",
+        "Position"
+        
+    }, 100 );
 
-    },
-    100, {shader->id}); 
+    engine.dynamic_ubo.buffer.add("FixtureUBO", {
 
+        "Opacity",
+        "RGB",
+        "Position",
+        "Size",
+        "Gobo",
+        "Orientation",
+        "Feedback",
+        "Strobe",
+        "float", // for alignmentr
+        
+    }, 100 );
 
-    fixtureUBO2 = new UBO("FixtureUBO2", fixtureUBO->definition[0].components, 100, {shader->id}); 
+    engine.dynamic_ubo.buffer.add("FixtureUBO2", {
+
+        "Opacity",
+        "RGB",
+        "Position",
+        "Size",
+        "Gobo",
+        "Orientation",
+        "Feedback",
+        "Strobe",
+        "float", // for alignmentr
+        
+    }, 100 );
+
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});
@@ -113,160 +136,165 @@ SmartMap::SmartMap() {
 
     };
 
-    artnet->callback = [&](Artnet* an){ fixtureUBO->update(); };
-    
-    gui = new GUI(window->id);
-
-    // new UBOWindow();
+    // artnet->callback = [&](Artnet* an){ engine.dynamic_ubo.update(); };
 
 }
 
-SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
+// SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
 
-    : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
+//     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-    for (auto &layer:pool) { attroffset+=layer->quantity*fixtureUBO->definition[0].members.size(); }
+//     for (auto &layer:pool) { attroffset+=layer->quantity*fixtureUBO->definition[0].members.size(); }
     
-    for (auto &layer:pool) { matoffset+=layer->quantity*4; }
+//     for (auto &layer:pool) { matoffset+=layer->quantity*4; }
 
-    pool.push_back(this);
+//     pool.push_back(this);
     
-    GLuint FW = width*scale, FH = height*scale;
-    if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
+//     GLuint FW = width*scale, FH = height*scale;
+//     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
-    std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);   
-    memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
-    matriceUBO->update(); 
-    shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
+//     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);   
+//     memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
+//     matriceUBO->update(); 
+//     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
-    std::vector<std::array<float, 4>> mat2 = matrice2(quantity_x,quantity_y);    
-    memcpy(&matriceUBO2->data[0+matoffset],&mat2[0][0],quantity*16);
-    matriceUBO2->update(); 
-    shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
+//     std::vector<std::array<float, 4>> mat2 = matrice2(quantity_x,quantity_y);    
+//     memcpy(&matriceUBO2->data[0+matoffset],&mat2[0][0],quantity*16);
+//     matriceUBO2->update(); 
+//     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
     
 
-    quadB = new VBO("quad.obj",VBO::pool.size(), FW, FH);
-    quadA = new VBO("quad.obj",VBO::pool.size(), FW, FH);
+//     quadB = new VBO("quad.obj",VBO::pool.size(), FW, FH);
+//     quadA = new VBO("quad.obj",VBO::pool.size(), FW, FH);
 
-    buffer = new Texture(FW, FH, 0,1,GL_RGB8);
-    pass = new Texture(FW, FH, 0,1, GL_RGB8);
-    FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
+//     buffer = new Texture(FW, FH, 0,1,GL_RGB8);
+//     pass = new Texture(FW, FH, 0,1, GL_RGB8);
+//     FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
 
-    black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
-    memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
+//     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
+//     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
 
-    fb = new FrameBuffer(buffer); 
+//     fb = new FrameBuffer(buffer); 
         
-    artnet->universes[uni].remaps.push_back({chan, quantity, &fixtureUBO->data[attroffset] });
-    auto &remap = artnet->universes[uni].remaps.back();
+//     artnet->universes[uni].remaps.push_back({chan, quantity, &fixtureUBO->data[attroffset] });
+//     auto &remap = artnet->universes[uni].remaps.back();
 
-    for (auto &c:fixtureUBO->definition[0].components) { 
+//     for (auto &c:fixtureUBO->definition[0].components) { 
 
-        for (auto &m :c->members) { 
+//         for (auto &m :c->members) { 
 
-            uint8_t combining = 0;
+//             uint8_t combining = 0;
 
-            bool breaker = false;
-            for (auto &p:fixture.presets) { if (breaker) { break; }
-                for (auto &f:p.features) { if (breaker) { break; }
-                    for (auto &a:f.attributes) { 
-                      if (&m == a.member) {
-                          combining = a.combining; 
-                          breaker = true;
-                          break;
+//             bool breaker = false;
+//             for (auto &p:fixture.presets) { if (breaker) { break; }
+//                 for (auto &f:p.features) { if (breaker) { break; }
+//                     for (auto &a:f.attributes) { 
+//                       if (&m == a.member) {
+//                           combining = a.combining; 
+//                           breaker = true;
+//                           break;
 
-                        }
-                    }
-                }
-            }
+//                         }
+//                     }
+//                 }
+//             }
 
-            remap.attributes.push_back({combining, m.range_from, m.range_to});  
+//             remap.attributes.push_back({combining, m.range_from, m.range_to});  
         
-        }
-    }
+//         }
+//     }
     
-    artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
+//     artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
 
-        const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
+//         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
 
-        for (int i = 0; i < this->quantity; i++) { 
+//         for (int i = 0; i < this->quantity; i++) { 
 
-            int gobo_id = *(8+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*255;
+//             int gobo_id = *(8+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*255;
 
-            if (gobo_id == 10) {
+//             if (gobo_id == 10) {
 
-                float *l = &matriceUBO->data[i*4+this->matoffset];
-                int char_id = *(9+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*(strlen(chars)-1);
+//                 float *l = &matriceUBO->data[i*4+this->matoffset];
+//                 int char_id = *(9+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*(strlen(chars)-1);
 
-                FT fr((chars+char_id), (this->height/this->quantity_y)*.9);
+//                 FT fr((chars+char_id), (this->height/this->quantity_y)*.9);
 
-                GLuint offset_x = this->width**(l+2)+(((this->width/this->quantity_x)-fr.width)*.5);
+//                 GLuint offset_x = this->width**(l+2)+(((this->width/this->quantity_x)-fr.width)*.5);
 
-                this->FTbuffer->write(&black[0], l[0]*this->buffer->width,l[1]*this->buffer->height,this->buffer->width*l[2],this->buffer->height*l[3],0,1,GL_R8,GL_RED); 
-                this->FTbuffer->write(fr.buffer, fr.width, fr.height,offset_x,this->height**(l+3),0,1,GL_R8,GL_RED); 
+//                 this->FTbuffer->write(&black[0], l[0]*this->buffer->width,l[1]*this->buffer->height,this->buffer->width*l[2],this->buffer->height*l[3],0,1,GL_R8,GL_RED); 
+//                 this->FTbuffer->write(fr.buffer, fr.width, fr.height,offset_x,this->height**(l+3),0,1,GL_R8,GL_RED); 
 
 
 
-            }
+//             }
             
 
-         }  
+//          }  
         
-    });
+//     });
 
-}
+// }
 
 
  
-void SmartMap::render() {
+// void SmartMap::render() {
 
-    while(true) window->render([&]() {
+    // while(true) window->render([&]() {
 
-        for (int i = 0; i < 10; i++) shader->sendUniform("debug"+std::to_string(i), debuguniforms[i]);
+    //     for (int i = 0; i < 10; i++) shader->sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
-        artnet->run(); 
+    //     artnet->run(); 
 
-        memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
+    //     memcpy(&fixtureUBO2->data[0],&fixtureUBO->data[0],fixtureUBO->data.size()*4);
 
-        winFB->clear(); 
+    //     winFB->clear(); 
 
-        shader->sendUniform("strobe", frame++%256);
+    //     shader->sendUniform("strobe", frame++%256);
 
-        int offset = 0;
+    //     int offset = 0;
 
-        for (auto layer:SmartMap::Layer::pool) { 
+    //     for (auto layer:SmartMap::Layer::pool) { 
 
-            layer->fb->clear(); // thus bind
+    //         layer->fb->clear(); // thus bind
 
-            shader->sendUniform("offset", offset);
-            offset+=layer->quantity;
-            shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
-            shader->sendUniform("MatriceUBOSize", layer->quantity);
+    //         shader->sendUniform("offset", offset);
+    //         offset+=layer->quantity;
+    //         shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
+    //         shader->sendUniform("MatriceUBOSize", layer->quantity);
             
-            layer->FTbuffer->bind();
-            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
-            layer->quadA->draw(layer->quantity); 
+    //         layer->FTbuffer->bind();
+    //         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
+    //         layer->quadA->draw(layer->quantity); 
 
-            layer->pass->bind();
-            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-            layer->quadB->draw(layer->quantity);
+    //         layer->pass->bind();
+    //         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
+    //         layer->quadB->draw(layer->quantity);
 
-            layer->pass->read(layer->buffer);
+    //         layer->pass->read(layer->buffer);
 
-            // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-            // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-            // blur_x->use(FW*.5/16,FH*.5/16);
-            // blur_y->use(FW*.5/16,FH*.5/16);
-            // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
+    //         // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+    //         // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+    //         // blur_x->use(FW*.5/16,FH*.5/16);
+    //         // blur_y->use(FW*.5/16,FH*.5/16);
+    //         // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
             
-            winFB->bind(); 
-            layer->buffer->bind();
-            shader->use();
-            quad->draw();
+    //         winFB->bind(); 
+    //         layer->buffer->bind();
+    //         shader->use();
+    //         quad->draw();
 
-        }
+    //     }
 
-        fixtureUBO2->update();
+    //     fixtureUBO2->update();
+
+
+
+
+
+        // --------------------------
+
+
+
         //////////////////////////////////////////////
         //////////////////////////////////////////////
         //////////////////////////////////////////////
@@ -274,69 +302,62 @@ void SmartMap::render() {
         //////////////////////////////////////////////
         //////////////////////////////////////////////
 
-        gui->newframe();  
+        // ///// BUFFERS
 
-        ///// BUFFERS
-
-        ImGui::Begin("KTRL");
+        // ImGui::Begin("KTRL");
         
-            // ImGui::SetWindowFontScale(1.5);
+        //     // ImGui::SetWindowFontScale(1.5);
 
-            ImGui::Checkbox("Debug mode", &debug);
+        //     ImGui::Checkbox("Debug mode", &debug);
             
-            uint16_t min = 1, max = 2560;
+        //     uint16_t min = 1, max = 2560;
 
-            if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &window->width,  2, 1, &min,&max)) window->updateSize();
-            if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &window->offset_x,  2, 1, &min,&max)) window->updatePos();
+        //     if (ImGui::DragScalarN("winsize", ImGuiDataType_U16,  &window->width,  2, 1, &min,&max)) window->updateSize();
+        //     if (ImGui::DragScalarN("winpos", ImGuiDataType_U16,  &window->offset_x,  2, 1, &min,&max)) window->updatePos();
 
-            ImGui::Separator();
+        //     ImGui::Separator();
             
-            for (auto fps:FPS::pool) if (fps->fps > 1) ImGui::Text((fps->name+": "+std::to_string((GLuint)(fps->fps))+" FPS").c_str());
+        //     for (auto fps:FPS::pool) if (fps->fps > 1) ImGui::Text((fps->name+": "+std::to_string((GLuint)(fps->fps))+" FPS").c_str());
             
-            ImGui::Separator();
+        //     ImGui::Separator();
             
-            for (int i = 0; i < 5; i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0, 1);
+        //     for (int i = 0; i < 5; i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0, 1);
 
-            ImGui::Separator();
+        //     ImGui::Separator();
 
-            ImGui::SliderInt("GL_BLEND_MODE_IN2",&GL_BLEND_MODE_IN2,0,GL_BLEND_MODES.size());
-            ImGui::SliderInt("GL_B2LEND_MODE_OUT2",&GL_BLEND_MODE_OUT2,0,GL_BLEND_MODES.size()); 
-            ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
-            ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size()); 
-            ImGui::SliderInt("GL_BLEND_MODE_IN3",&GL_BLEND_MODE_IN3,0,GL_BLEND_MODES.size());
-            ImGui::SliderInt("GL_B2LEND_MODE_OUT3",&GL_BLEND_MODE_OUT3,0,GL_BLEND_MODES.size()); 
+        //     ImGui::SliderInt("GL_BLEND_MODE_IN2",&GL_BLEND_MODE_IN2,0,GL_BLEND_MODES.size());
+        //     ImGui::SliderInt("GL_B2LEND_MODE_OUT2",&GL_BLEND_MODE_OUT2,0,GL_BLEND_MODES.size()); 
+        //     ImGui::SliderInt("GL_BLEND_MODE_IN",&GL_BLEND_MODE_IN,0,GL_BLEND_MODES.size());
+        //     ImGui::SliderInt("GL_B2LEND_MODE_OUT",&GL_BLEND_MODE_OUT,0,GL_BLEND_MODES.size()); 
+        //     ImGui::SliderInt("GL_BLEND_MODE_IN3",&GL_BLEND_MODE_IN3,0,GL_BLEND_MODES.size());
+        //     ImGui::SliderInt("GL_B2LEND_MODE_OUT3",&GL_BLEND_MODE_OUT3,0,GL_BLEND_MODES.size()); 
             
-        ImGui::End();
+        // ImGui::End();
 
 
 
-        ImGui::ShowDemoWindow();
+        // ///// TEXTURES
 
-        for (auto w:GUI::Window::pool) { w->drawFull(); }
+        // ImGui::Begin("VIEW");
 
-        ///// TEXTURES
+        // for (int i = 0; i < Texture::pool.size(); i++) {
 
-        ImGui::Begin("VIEW");
-
-        for (int i = 0; i < Texture::pool.size(); i++) {
-
-            std::string wh = std::to_string(Texture::pool[i]->width) + " x " + std::to_string(Texture::pool[i]->height);
-            ImGui::Text(wh.c_str());
+        //     std::string wh = std::to_string(Texture::pool[i]->width) + " x " + std::to_string(Texture::pool[i]->height);
+        //     ImGui::Text(wh.c_str());
             
-            float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
-            auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
+        //     float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
+        //     auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
 
-            ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
+        //     ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
 
-            ImGui::PushID(i+100);
+        //     ImGui::PushID(i+100);
 
-            ImGui::PopID();
-            ImGui::Separator();
-        }
+        //     ImGui::PopID();
+        //     ImGui::Separator();
+        // }
         
-        ImGui::End(); 
+        // ImGui::End(); 
 
-        gui->render();  
 
         //////////////////////////////////////////////
         //////////////////////////////////////////////
@@ -345,17 +366,17 @@ void SmartMap::render() {
         //////////////////////////////////////////////
         //////////////////////////////////////////////
 
-        if (debug) { 
+        // if (debug) { 
 
-            survey_count = 0;
+        //     survey_count = 0;
 
-            survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
-            survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
+        //     survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
+        //     survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
 
-        }
+        // }
         
-    }); 
+//     }); 
 
-}
+// }
 
-SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }
+// SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }

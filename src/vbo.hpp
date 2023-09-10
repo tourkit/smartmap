@@ -27,15 +27,6 @@ struct VBO {
 
     void draw(int count = 1);
 
-    
-    struct Vertice { float pos_x,pos_y; float tex_x,tex_y; float clip_x,clip_y; GLuint id; }; 
-
-    std::vector<Vertice> vx;
-
-    struct Indice { int a,b,c; }; 
-
-    std::vector<Indice> ix;
-
 
 
 };

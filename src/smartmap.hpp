@@ -5,37 +5,7 @@
 #include "atlas.hpp"
 #include "artnet.hpp"
 
-struct Quads {
 
-    Quads() { vbo.destroy(); }
-
-    std::vector<uint16_t> list;
-
-    VBO vbo;
-
-    void add(uint16_t id,uint16_t width,uint16_t height) { 
-        
-        list.push_back(id); 
-
-        vbo.import("quad.obj",id,width, height); 
-        
-    }
-
-    void remove(uint16_t id) {  
-
-        for (int i = 0; i < list.size(); i++) if (list[i] == id) {list.erase(list.begin()+i); break;}
-
-        vbo.destroy(); 
-
-        for (auto id:list) vbo.import("quad.obj",id); 
-        
-        vbo.update(); 
-        
-    }
-
-    void draw(uint16_t quantity) { vbo.draw(quantity); }
-
-};
 
 struct SmartMap {
 
@@ -43,12 +13,9 @@ struct SmartMap {
 
     VBO quad; 
 
-    Atlas atlas;
+    // Atlas atlas;
 
-    UBO matriceUBO("matriceUBO");
-    UBO matriceUBO2("matriceUBO2");
-    UBO fixtureUBO("fixtureUBO"); 
-    UBO fixtureUBO2("fixtureUBO2"); 
+    SmartMap();
 
     // Artnet artnet;
     DMX::Fixture basic_fixture;
@@ -80,3 +47,38 @@ struct SmartMap {
     };
 
 };
+
+
+
+
+// struct Quads {
+
+//     Quads() { vbo.destroy(); }
+
+//     std::vector<uint16_t> list;
+
+//     VBO vbo;
+
+//     void add(uint16_t id,uint16_t width,uint16_t height) { 
+        
+//         list.push_back(id); 
+
+//         vbo.import("quad.obj",id,width, height); 
+        
+//     }
+
+//     void remove(uint16_t id) {  
+
+//         for (int i = 0; i < list.size(); i++) if (list[i] == id) {list.erase(list.begin()+i); break;}
+
+//         vbo.destroy(); 
+
+//         for (auto id:list) vbo.import("quad.obj",id); 
+        
+//         vbo.update(); 
+        
+//     }
+
+//     void draw(uint16_t quantity) { vbo.draw(quantity); }
+
+// };

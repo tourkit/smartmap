@@ -19,13 +19,13 @@ struct UBO {
 
     static inline Components &comps = Components::getInstance();
 
-    std::vector<Shader*> subscribers;
+    std::vector<ShaderProgram*> subscribers;
 
     Buffer buffer;
 
     ~UBO();
     
-    UBO(std::string name, std::vector<Shader*> subscribers = {});
+    UBO(std::string name, std::vector<ShaderProgram*> subscribers = {});
 
     void destroy();
     void resize();

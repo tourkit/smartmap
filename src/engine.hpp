@@ -13,7 +13,6 @@
 
 struct Engine {
 
-
     Window window;
     
     GUI gui;
@@ -22,11 +21,9 @@ struct Engine {
 
     FrameBuffer fb;
 
-    VBO *quad;
-
     struct Stack {
 
-        struct Stackable { virtual void run() {} };
+        struct Stackable { virtual void run() {  } };
 
         struct DrawCall : Stackable {
 
@@ -55,9 +52,9 @@ struct Engine {
 
         };
 
-        std::vector<Stackable> list;
+        std::vector<Stackable*> list;
 
-        void run() { for (auto item : list) item.run(); }
+        void run() { for (auto item : list) item->run();  }
 
     } stack;
 
@@ -74,9 +71,9 @@ struct Engine {
             
             engine.dynamic_ubo.update();
 
-            engine.quad->draw();
+            // engine.quad->draw();
 
-            // engine.stack.run();
+            engine.stack.run();
 
             engine.gui.draw();
 
@@ -90,8 +87,6 @@ private:
 
         : window(width,height), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), fb(0,width,height), gui(window.id) {
 
-            window.setPos(2560,0);
-            quad = new VBO("quad.obj",width,height);
 
     }
 

@@ -10,8 +10,6 @@ add_executable(SmartMap
 
     main.cpp
     
-    # src/smartmap.cpp
-
     src/texture.cpp
     src/window.cpp
     src/shader.cpp
@@ -20,12 +18,14 @@ add_executable(SmartMap
     src/ubo.cpp
     # src/atlas.cpp
     # src/dmx.cpp
-
+    
     # src/artnet.cpp
     
     src/file.cpp
     
     src/gui.cpp
+    
+    src/smartmap.cpp
 
     # src/widgets/artnet_widget.cpp
 

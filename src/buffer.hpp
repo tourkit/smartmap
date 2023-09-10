@@ -158,6 +158,8 @@ struct Buffer {
 
         StringsBuffer object_list,buffer_list;
 
+        std::function<void()> callback = [](){};
+
         void updateBufferList() {
 
             std::vector<std::string> names;
@@ -298,7 +300,7 @@ struct Buffer {
 
             ImGui::NewLine();
             
-            //////////////// LIST VIEW ////////////////////
+            //////////////// TABLE VIEW ////////////////////
             if (ImGui::CollapsingHeader("List view", ImGuiTreeNodeFlags_DefaultOpen)) {
 
                 ImGui::NewLine();
@@ -342,7 +344,11 @@ struct Buffer {
                                     
                                     ImGui::TableNextColumn();
                                     ImGui::SetNextItemWidth(-1);
-                                    ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 );
+                                    if (ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 )) {
+
+                                        callback();
+                                        
+                                    }
 
                                     col_members_offset+=c->members[i].size;
 
@@ -371,7 +377,7 @@ struct Buffer {
 
                 ImGui::NewLine();
 
-                //////////////// TABLE VIEW //////////////////////
+                //////////////// RAW VIEW //////////////////////
                 
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
                 ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);

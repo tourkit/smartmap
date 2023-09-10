@@ -26,6 +26,8 @@ VBO::VBO(std::string path, uint16_t width, uint16_t height)
         
     }, 2 );
     
+    buffer.widget.callback = [this](){ update(); };
+    
     id = VBO::pool.size();
 
     VBO::pool.push_back(this);  
