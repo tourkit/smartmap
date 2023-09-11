@@ -3,9 +3,16 @@
 
 #include "imgui/imgui.h"
 
-// #define SM_DEBUG
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+#ifndef SM_DEBUG
+#define SM_DEBUG
+#endif
+
 #ifdef SM_DEBUG
-#include <windows.h>
+
 #include <ctime>
 #include <cstdint>
 
@@ -13,11 +20,15 @@ static inline std::map<int,int> filechecks;
 static inline int survey_count = 0;
 static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
-    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
-    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
-    auto last = st.wMilliseconds;
+    static auto startTime = fs::file_time_type::clock::now();
 
-    if (filechecks[survey_count] != last) { filechecks[survey_count] = last;  cb(); }
+    auto lastWriteTime = fs::last_write_time(path);
+    auto mSecs = std::chrono::duration_cast<std::chrono::milliseconds>(lastWriteTime - startTime).count();
+
+    if (filechecks[survey_count] != mSecs) {
+        filechecks[survey_count] = mSecs;
+        cb();
+    }
     survey_count++;
 
 }
@@ -144,8 +155,8 @@ SmartMap::SmartMap() {
             };
 
             survey_count = 0;
-            survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[0])).c_str(), cb); 
-            survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[1])).c_str(), cb); 
+            survey((fs::path(REPO_DIR) / "assets/shader" / shader->paths[0]).c_str(), cb);
+            survey((fs::path(REPO_DIR) / "assets/shader" / shader->paths[1]).c_str(), cb);
 
 
 

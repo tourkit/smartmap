@@ -25,6 +25,10 @@ unsigned int width = 400, height = 200, pos_x = 0, pos_y = 0;
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include <filesystem>
+namespace fs = std::filesystem;
+
+
 int Boilerplate() {  
 
     // SET OPENGL
@@ -310,8 +314,8 @@ void Boilerplate() {
         for (int i = 4; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         survey_count = 0;
-        survey((REPO_DIR+"assets/shader/"+std::string(shader.paths[0])).c_str(), [&](){ shader.reset();  shader.use(); });
-        survey((REPO_DIR+"assets/shader/"+std::string(shader.paths[1])).c_str(), [&](){ shader.reset();  shader.use(); });
+        survey((fs::path(REPO_DIR) / "assets/shader" / shader.paths[0]).c_str(), [&](){ shader.reset();  shader.use(); });
+        survey((fs::path(REPO_DIR) / "assets/shader" / shader.paths[1]).c_str(), [&](){ shader.reset();  shader.use(); });
 
         glfwPollEvents(); 
 
