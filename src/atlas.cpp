@@ -36,7 +36,7 @@ void Atlas::link(ShaderProgram* shader) {
 
     ubo->link(shader->id);
 
-    ubo->update(&normalized_list[0], normalized_list.size()*16); // 16 is size of Rect
+    ubo->upload(&normalized_list[0], normalized_list.size()*16); // 16 is size of Rect
 
     shader->sendUniform("mediasAtlas", 1);
 

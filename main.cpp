@@ -8,7 +8,7 @@
 
 #include "smartmap.hpp"
 
-#include "boilerplate.hpp"
+// #include "boilerplate.hpp"
 // #include "debug.hpp"
 // Debug debug;
 
@@ -27,9 +27,7 @@ int main() {
     auto &engine = Engine::getInstance();
 
     SmartMap sm;
-
-    engine.stack.list.push_back(new Engine::Stack::DrawCall{&sm.quad, &sm.shader});
-
+    
     Engine::Run();
  
 }

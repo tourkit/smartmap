@@ -21,6 +21,8 @@ struct Engine {
 
     FrameBuffer fb;
 
+    VBO quad;
+
     struct Stack {
 
         struct Stackable { virtual void run() {  } };
@@ -46,6 +48,8 @@ struct Engine {
 
         struct Action : Stackable {
 
+            Action(std::function<void()> callback) : callback(callback) {}
+
             std::function<void()> callback;
 
             void run() override { callback(); }
@@ -69,9 +73,7 @@ struct Engine {
             
             auto &engine = Engine::getInstance();
             
-            engine.dynamic_ubo.update();
-
-            // engine.quad->draw();
+            engine.dynamic_ubo.upload();
 
             engine.stack.run();
 
@@ -85,7 +87,10 @@ private:
 
     Engine(uint16_t width = 800, uint16_t height = 600) 
 
-        : window(width,height), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), fb(0,width,height), gui(window.id) {
+        : window(width,height), 
+        dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
+        quad("quad.obj",width,height),
+        fb(0,width,height), gui(window.id) {
 
 
     }

@@ -28,17 +28,16 @@ struct UBO {
     UBO(std::string name, std::vector<ShaderProgram*> subscribers = {});
 
     void destroy();
-    void resize();
-
-    void link(GLuint shader);
 
     void update();
+
+    void upload();
+
+    void upload(GLvoid* data, size_t size, GLuint offset = 0);
     
     // static void toJSON();
     
     // static void fromJSON();
-
-    void update(GLvoid* data, size_t size, GLuint offset = 0);
 
 };
 #endif // UBO_H

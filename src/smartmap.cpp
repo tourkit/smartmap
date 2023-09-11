@@ -25,17 +25,12 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 #endif 
 
 SmartMap::SmartMap() 
-
-:  quad("quad.obj",Engine::getInstance().window.width,Engine::getInstance().window.height), shader({"smartmap.frag", "smartmap.vert"})
-// ,matriceUBO("matriceUBO"), matriceUBO2("matriceUBO2"), fixtureUBO("fixtureUBO"), fixtureUBO2("fixtureUBO2") 
-
- {
+: shader({"smartmap.frag", "smartmap.vert"}) {
 
     // artnet = new Artnet("2.0.0.222");
     auto &window = Engine::getInstance().window;
     window.setPos(2560-400,0);
     window.setSize(400,300);
-    
     
     shader.use();
     // atlas = new Atlas("assets/media/",4096,2048);
@@ -44,19 +39,9 @@ SmartMap::SmartMap()
     engine.dynamic_ubo.subscribers.push_back(&shader); 
     engine.static_ubo.subscribers.push_back(&shader); 
 
-    engine.static_ubo.buffer.add("matriceUBO", {
+    engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position"}, 4 );
 
-        "Size",
-        "Position"
-        
-    }, 100 );
-
-    engine.static_ubo.buffer.add("matriceUBO2", {
-
-        "Size",
-        "Position"
-        
-    }, 100 );
+    engine.static_ubo.buffer.add("matriceUBO2", {"Size", "Position"}, 4 );
 
     engine.dynamic_ubo.buffer.add("FixtureUBO", {
 
@@ -70,7 +55,7 @@ SmartMap::SmartMap()
         "Strobe",
         "float", // for alignmentr
         
-    }, 100 );
+    }, 4 );
 
     engine.dynamic_ubo.buffer.add("FixtureUBO2", {
 
@@ -84,7 +69,7 @@ SmartMap::SmartMap()
         "Strobe",
         "float", // for alignmentr
         
-    }, 100 );
+    }, 4 );
 
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
@@ -136,7 +121,31 @@ SmartMap::SmartMap()
 
     };
 
-    // artnet->callback = [&](Artnet* an){ engine.dynamic_ubo.update(); };
+    engine.stack.list.push_back(new Engine::Stack::DrawCall{&engine.quad, &shader});
+
+    engine.stack.list.push_back(new Engine::Stack::Action{[this](){
+
+            auto cb = [&](){ 
+
+                shader.reset(); 
+
+                // atlas->link(shader); 
+
+                Engine::getInstance().dynamic_ubo.upload();
+                Engine::getInstance().static_ubo.upload();  
+
+            };
+
+            survey_count = 0;
+            survey((REPO_DIR+"assets/shader/"+std::string(shader.paths[0])).c_str(), cb); 
+            survey((REPO_DIR+"assets/shader/"+std::string(shader.paths[1])).c_str(), cb); 
+
+
+
+    }});
+
+
+    // artnet->callback = [&](Artnet* an){ engine.dynamic_ubo.upload(); };
 
 }
 
@@ -155,12 +164,12 @@ SmartMap::SmartMap()
 
 //     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);   
 //     memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
-//     matriceUBO->update(); 
+//     matriceUBO->upload(); 
 //     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
 //     std::vector<std::array<float, 4>> mat2 = matrice2(quantity_x,quantity_y);    
 //     memcpy(&matriceUBO2->data[0+matoffset],&mat2[0][0],quantity*16);
-//     matriceUBO2->update(); 
+//     matriceUBO2->upload(); 
 //     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
     
 
@@ -285,7 +294,7 @@ SmartMap::SmartMap()
 
     //     }
 
-    //     fixtureUBO2->update();
+    //     fixtureUBO2->upload();
 
 
 
@@ -370,8 +379,8 @@ SmartMap::SmartMap()
 
         //     survey_count = 0;
 
-        //     survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
-        //     survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->update(); }); 
+        //     survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->upload(); }); 
+        //     survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->upload(); }); 
 
         // }
         

@@ -51,7 +51,7 @@
             if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    ImGuiDataType_U8, &dmx.data[i],  &cell_min,   &cell_max,   "")) { 
                 
                 for (auto &dmx : artnet->universes) { dmx.second.update(); } 
-                // fixtureUBO->update(); 
+                // fixtureUBO->upload(); 
                 
             }
             if ((i + 1) % cells_count != 0) { ImGui::SameLine(0); }

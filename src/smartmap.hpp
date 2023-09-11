@@ -11,7 +11,7 @@ struct SmartMap {
 
     ShaderProgram shader;
 
-    VBO quad; 
+    // VBO quad; 
 
     // Atlas atlas;
 

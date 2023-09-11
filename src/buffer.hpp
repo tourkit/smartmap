@@ -29,11 +29,11 @@ struct Buffer {
             return components.size()-1;
         }
 
-        void add(void* data) { 
+        void add(std::string component) { 
 
-            quantity+= 1;
-            buffer->updateBuffer();
-            memcpy(&buffer->data[offset],data,size);
+            components.push_back(Component::id(component.c_str())); 
+
+            size += Component::id(component.c_str())->size;
 
         }
 
@@ -88,7 +88,6 @@ struct Buffer {
 
     };
 
-
     std::string name;
 
     std::vector<Object> objects;
@@ -96,19 +95,8 @@ struct Buffer {
     std::vector<char> data;  
 
     std::vector<Buffer*> pool;
-
-    void add(Object *obj, std::vector<std::string> components) { 
-        
-        for (auto comp : components) { 
-            
-            obj->components.push_back(Component::id(comp.c_str())); 
-            obj->size+=Component::id(comp.c_str())->size;
-            
-        } 
-
-        updateBuffer(); 
-        
-    }
+    
+    std::function<void()> callback = [](){};
 
     // void remove(Object *obj, std::vector<Component*> components) {  for (auto comp : components) { obj->components.push_back(comp); } resize(); }
 
@@ -116,7 +104,9 @@ struct Buffer {
 
         objects.push_back({name, {}, quantity}); 
 
-        add(&objects.back(),components); 
+        for (auto comp : components) objects.back().add(comp);
+        
+        updateBuffer(); 
 
         objects.back().buffer = this;
 
@@ -144,8 +134,10 @@ struct Buffer {
             offset += obj.size*obj.quantity;
             
         }
-
+        
         widget.updateBufferList();
+
+        callback();
 
     }
 
@@ -255,8 +247,10 @@ struct Buffer {
             ImGui::SameLine();
             if (ImGui::Button("Add Component")) {
 
-                obj.components.push_back(Component::pool[add_comp]); 
+                obj.add(Component::pool[add_comp]->name); 
+
                 buffer->updateBuffer(); 
+                
                 // UBO::toJSON();
 
             }
@@ -347,6 +341,7 @@ struct Buffer {
                                     if (ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 )) {
 
                                         callback();
+                                        // buffer->callback();
                                         
                                     }
 
