@@ -83,12 +83,15 @@ target_include_directories(SmartMap PRIVATE
 
 target_link_libraries(SmartMap PRIVATE
     OpenGL::GL
-    ASSIMP
     glfw
-    ws2_32
-    netapi32
-    dpnet
-    iphlpapi
-    Processing.NDI.Lib.x64
+    assimp
     ${FREETYPE_LIBRARIES}
 )
+
+
+#    ASSIMP
+#    ws2_32
+#    netapi32
+#    dpnet
+#    iphlpapi
+#    Processing.NDI.Lib.x64
