@@ -53,6 +53,7 @@ add_executable(SmartMap
 )
 
 target_compile_features(SmartMap PUBLIC cxx_std_20)
+set_target_properties(SmartMap PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(SmartMap PROPERTIES COMPILE_FLAGS "-DIMGUI_IMPL_OPENGL_LOADER_GL3W -Xlinker --verbose ")
 
 target_link_directories(SmartMap PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include/vendor/NDI/Lib/ )
