@@ -340,8 +340,7 @@ struct Buffer {
                                     ImGui::SetNextItemWidth(-1);
                                     if (ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 )) {
 
-                                        callback();
-                                        // buffer->callback();
+                                        buffer->callback();
                                         
                                     }
 

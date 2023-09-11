@@ -26,7 +26,7 @@ VBO::VBO(std::string path, uint16_t width, uint16_t height)
         
     }, 2 );
     
-    buffer.widget.callback = [this](){ update(); };
+    buffer.callback = [this](){ upload(); };
     
     id = VBO::pool.size();
 
@@ -44,7 +44,7 @@ VBO::VBO(std::string path, uint16_t width, uint16_t height)
 
     import(path, width, height); 
 
-    update();
+    upload();
     
 };
 
@@ -65,7 +65,7 @@ VBO::~VBO()  {
 }
 
 
-void VBO::update() {
+void VBO::upload() {
 
     glBindVertexArray(vao);
 

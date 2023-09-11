@@ -20,7 +20,7 @@ struct VBO {
 
     void import(std::string path, uint16_t width, uint16_t height);
 
-    void update();
+    void upload();
     void destroy();
 
     VBO(std::string path = "quad.obj", uint16_t width=0, uint16_t height=0) ;
