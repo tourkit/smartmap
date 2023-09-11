@@ -10,7 +10,7 @@
 struct SmartMap {
 
 
-    // Atlas atlas;
+    static inline Atlas *atlas;
 
     SmartMap();
 
@@ -50,6 +50,36 @@ struct SmartMap {
         Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
 
     };
+
+    struct Widget : GUI::Window {
+
+        Widget() : GUI::Window("VIEW") { }
+
+        void draw() override {
+
+            for (int i = 0; i < Texture::pool.size(); i++) {
+
+                std::string wh = std::to_string(Texture::pool[i]->width) + " x " + std::to_string(Texture::pool[i]->height);
+                ImGui::Text(wh.c_str());
+                
+                float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
+                auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
+
+                ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
+
+                ImGui::PushID(i+100);
+
+                ImGui::PopID();
+                ImGui::Separator();
+            }
+            
+        }
+
+    } widget;
+
+
+    
+
 
     GLint GL_BLEND_MODE_IN = 11;
     GLint GL_BLEND_MODE_OUT = 13;

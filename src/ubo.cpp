@@ -15,7 +15,13 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name)
     
     update();
 
-    buffer.callback = [this](){ update(); };
+    buffer.callback = [this](){ 
+        
+        
+        update();
+        upload();
+        
+    };
 
 } 
 

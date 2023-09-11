@@ -85,7 +85,7 @@ struct Engine {
 
 private:
 
-    Engine(uint16_t width = 800, uint16_t height = 600) 
+    Engine(uint16_t width = 400, uint16_t height = 300) 
 
         : window(width,height), 
         dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 

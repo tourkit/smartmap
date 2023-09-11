@@ -34,15 +34,15 @@ SmartMap::SmartMap() {
     window.setSize(400,300);
     
     shader->use();
-    // atlas = new Atlas("assets/media/",4096,2048);
-    // atlas->link(shader);
+    atlas = new Atlas("assets/media/",4096,2048);
+    atlas->link(shader);
 
     engine.dynamic_ubo.subscribers.push_back(shader); 
     engine.static_ubo.subscribers.push_back(shader); 
 
-    mat1UBO = engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position"}, 4 );
+    mat1UBO = engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position"}, 24 );
 
-    mat2UBO = engine.static_ubo.buffer.add("matriceUBO2", {"Size", "Position"}, 4 );
+    mat2UBO = engine.static_ubo.buffer.add("matriceUBO2", {"Size", "Position"}, 24 );
 
     fix1UBO = engine.dynamic_ubo.buffer.add("FixtureUBO", {
 
@@ -56,7 +56,7 @@ SmartMap::SmartMap() {
         "Strobe",
         "float", // for alignmentr
         
-    }, 4 );
+    }, 24 );
 
     fix2UBO = engine.dynamic_ubo.buffer.add("FixtureUBO2", {
 
@@ -70,7 +70,7 @@ SmartMap::SmartMap() {
         "Strobe",
         "float", // for alignmentr
         
-    }, 4 );
+    }, 24 );
 
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
@@ -212,10 +212,10 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     std::vector<std::array<float, 4>> mat;
     
     mat = matrice(quantity_x,quantity_y);   
-    memcpy(&engine.static_ubo.buffer.data[mat1UBO->offset],&mat[0][0],quantity*16);
+    memcpy(&engine.static_ubo.buffer.data[mat2UBO->offset],&mat[0][0],quantity*16);
 
     mat = matrice2(quantity_x,quantity_y);    
-    memcpy(&engine.static_ubo.buffer.data[mat2UBO->offset],&mat[0][0],quantity*16);
+    memcpy(&engine.static_ubo.buffer.data[mat1UBO->offset],&mat[0][0],quantity*16);
     engine.static_ubo.upload(); 
 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);

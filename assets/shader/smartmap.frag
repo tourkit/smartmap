@@ -47,7 +47,7 @@ uniform float debug7 = 0;
 uniform float debug8 = 0;
 uniform float debug9 = 0;
 
-layout (binding = 10, std140) uniform mediasCoords { Rect[16] mediaCoord;};
+layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
 layout (binding = 1, std140) uniform static_ubo { Rect mat[24]; Rect matrice2[24]; };
@@ -318,7 +318,6 @@ void main() {
     }
     
     if (mod(obj-1,2) == 1) { 
-
                 
         color = vec4(0);
 
