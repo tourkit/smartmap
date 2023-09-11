@@ -292,7 +292,7 @@ uniform int strobe = 0;
 void main() {
     // vec2 uv = gl_FragCoord.xy/FBResolution.xy;
     vec2 uv = texcoord;
-color = vec4(uv.x+mat[2].pos.x); return;
+// color = vec4(uv.x+mat[2].pos.x); return;
 
     if (obj == 0) { 
 

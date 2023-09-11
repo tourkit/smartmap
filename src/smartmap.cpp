@@ -154,39 +154,39 @@ SmartMap::SmartMap() {
 
     engine.stack.list.push_back(new Engine::Stack::Action{[this](){
 
-    //     int offset = 0;
+        int offset = 0;
 
-    //     for (auto layer:SmartMap::Layer::pool) { 
+        for (auto layer:SmartMap::Layer::pool) { 
 
-    //         layer->fb->clear(); // thus bind
+            layer->fb->clear(); // thus bind
 
-    //         shader->sendUniform("offset", offset);
-    //         offset+=layer->quantity;
-    //         shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
-    //         shader->sendUniform("MatriceUBOSize", layer->quantity);
+            shader->sendUniform("offset", offset);
+            offset+=layer->quantity;
+            shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
+            shader->sendUniform("MatriceUBOSize", layer->quantity);
             
-    //         layer->FTbuffer->bind();
-    //         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
-    //         layer->quadA->draw(layer->quantity); 
+            layer->FTbuffer->bind();
+            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
+            layer->quadA->draw(layer->quantity); 
 
-    //         layer->pass->bind();
-    //         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-    //         layer->quadB->draw(layer->quantity);
+            layer->pass->bind();
+            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
+            layer->quadB->draw(layer->quantity);
 
-    //         layer->pass->read(layer->buffer);
+            layer->pass->read(layer->buffer);
 
-    //         // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-    //         // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-    //         // blur_x->use(FW*.5/16,FH*.5/16);
-    //         // blur_y->use(FW*.5/16,FH*.5/16);
-    //         // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
+            // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+            // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+            // blur_x->use(FW*.5/16,FH*.5/16);
+            // blur_y->use(FW*.5/16,FH*.5/16);
+            // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
             
-    //         winFB->bind(); 
-    //         layer->buffer->bind();
-    //         shader->use();
-    //         quad->draw();
+            Engine::getInstance().fb.bind(); 
+            layer->buffer->bind();
+            shader->use();
+            Engine::getInstance().quad.draw();
 
-    //     }
+        }
 
     }});
 
