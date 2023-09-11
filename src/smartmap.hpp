@@ -9,40 +9,45 @@
 
 struct SmartMap {
 
-    ShaderProgram shader;
-
-    // VBO quad; 
 
     // Atlas atlas;
 
     SmartMap();
 
-    // Artnet artnet;
+
+    static inline Artnet *artnet;
+    static inline ShaderProgram *shader;
+    
     DMX::Fixture basic_fixture;
+
+    static inline Buffer::Object *fix1UBO;
+    static inline Buffer::Object *fix2UBO;
+    static inline Buffer::Object *mat1UBO;
+    static inline Buffer::Object *mat2UBO;
 
     struct Layer {
 
-        // static inline std::vector<Layer*> pool;
+        static inline std::vector<Layer*> pool;
 
-        // enum Mode { Free, Grid } mode;
+        enum Mode { Free, Grid } mode;
 
-        // uint16_t width, height;
+        uint16_t width, height;
         
-        // uint16_t offset_x = 0, offset_y =0;
+        uint16_t offset_x = 0, offset_y =0;
 
-        // uint16_t quantity_x, quantity_y, quantity;
+        uint16_t quantity_x, quantity_y, quantity;
 
-        // Texture *buffer, *pass, *FTbuffer;
+        Texture *buffer, *pass, *FTbuffer;
 
-        // FrameBuffer *fb;
+        FrameBuffer *fb;
 
-        // VBO *quadA, *quadB;
+        VBO *quadA, *quadB;
 
-        // std::vector<uint8_t> black;
+        std::vector<uint8_t> black;
 
-        // uint16_t chan,uni,attroffset = 0, matoffset = 0;
+        uint16_t chan,uni,attroffset = 0, matoffset = 0;
 
-        // Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
+        Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
 
     };
 

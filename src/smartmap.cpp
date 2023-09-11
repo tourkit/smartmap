@@ -24,26 +24,27 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 #endif 
 
-SmartMap::SmartMap() 
-: shader({"smartmap.frag", "smartmap.vert"}) {
+SmartMap::SmartMap() {
 
-    // artnet = new Artnet("2.0.0.222");
+    artnet = new Artnet{"2.0.0.222"};
+    shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
+
     auto &window = Engine::getInstance().window;
     window.setPos(2560-400,0);
     window.setSize(400,300);
     
-    shader.use();
+    shader->use();
     // atlas = new Atlas("assets/media/",4096,2048);
     // atlas->link(shader);
 
-    engine.dynamic_ubo.subscribers.push_back(&shader); 
-    engine.static_ubo.subscribers.push_back(&shader); 
+    engine.dynamic_ubo.subscribers.push_back(shader); 
+    engine.static_ubo.subscribers.push_back(shader); 
 
-    engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position"}, 4 );
+    mat1UBO = engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position"}, 4 );
 
-    engine.static_ubo.buffer.add("matriceUBO2", {"Size", "Position"}, 4 );
+    mat2UBO = engine.static_ubo.buffer.add("matriceUBO2", {"Size", "Position"}, 4 );
 
-    engine.dynamic_ubo.buffer.add("FixtureUBO", {
+    fix1UBO = engine.dynamic_ubo.buffer.add("FixtureUBO", {
 
         "Opacity",
         "RGB",
@@ -57,7 +58,7 @@ SmartMap::SmartMap()
         
     }, 4 );
 
-    engine.dynamic_ubo.buffer.add("FixtureUBO2", {
+    fix2UBO = engine.dynamic_ubo.buffer.add("FixtureUBO2", {
 
         "Opacity",
         "RGB",
@@ -121,13 +122,19 @@ SmartMap::SmartMap()
 
     };
 
-    engine.stack.list.push_back(new Engine::Stack::DrawCall{&engine.quad, &shader});
+    engine.stack.list.push_back(new Engine::Stack::DrawCall{&engine.quad, shader});
+
+    engine.stack.list.push_back(new Engine::Stack::Action{[this](){
+
+        artnet->run();
+
+    }});
 
     engine.stack.list.push_back(new Engine::Stack::Action{[this](){
 
             auto cb = [&](){ 
 
-                shader.reset(); 
+                shader->reset(); 
 
                 // atlas->link(shader); 
 
@@ -137,112 +144,152 @@ SmartMap::SmartMap()
             };
 
             survey_count = 0;
-            survey((REPO_DIR+"assets/shader/"+std::string(shader.paths[0])).c_str(), cb); 
-            survey((REPO_DIR+"assets/shader/"+std::string(shader.paths[1])).c_str(), cb); 
+            survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[0])).c_str(), cb); 
+            survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[1])).c_str(), cb); 
 
 
 
     }});
 
 
-    // artnet->callback = [&](Artnet* an){ engine.dynamic_ubo.upload(); };
+    engine.stack.list.push_back(new Engine::Stack::Action{[this](){
+
+    //     int offset = 0;
+
+    //     for (auto layer:SmartMap::Layer::pool) { 
+
+    //         layer->fb->clear(); // thus bind
+
+    //         shader->sendUniform("offset", offset);
+    //         offset+=layer->quantity;
+    //         shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
+    //         shader->sendUniform("MatriceUBOSize", layer->quantity);
+            
+    //         layer->FTbuffer->bind();
+    //         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
+    //         layer->quadA->draw(layer->quantity); 
+
+    //         layer->pass->bind();
+    //         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
+    //         layer->quadB->draw(layer->quantity);
+
+    //         layer->pass->read(layer->buffer);
+
+    //         // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+    //         // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+    //         // blur_x->use(FW*.5/16,FH*.5/16);
+    //         // blur_y->use(FW*.5/16,FH*.5/16);
+    //         // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
+            
+    //         winFB->bind(); 
+    //         layer->buffer->bind();
+    //         shader->use();
+    //         quad->draw();
+
+    //     }
+
+    }});
 
 }
 
-// SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
+SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
 
-//     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
+    : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-//     for (auto &layer:pool) { attroffset+=layer->quantity*fixtureUBO->definition[0].members.size(); }
+    for (auto &layer:pool) { 
+
+        for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }
+
+    }
     
-//     for (auto &layer:pool) { matoffset+=layer->quantity*4; }
+    for (auto &layer:pool) { matoffset+=layer->quantity*4; }
 
-//     pool.push_back(this);
+    pool.push_back(this);
     
-//     GLuint FW = width*scale, FH = height*scale;
-//     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
+    GLuint FW = width*scale, FH = height*scale;
+    if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
-//     std::vector<std::array<float, 4>> mat = matrice(quantity_x,quantity_y);   
-//     memcpy(&matriceUBO->data[0+matoffset],&mat[0][0],quantity*16);
-//     matriceUBO->upload(); 
-//     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
-
-//     std::vector<std::array<float, 4>> mat2 = matrice2(quantity_x,quantity_y);    
-//     memcpy(&matriceUBO2->data[0+matoffset],&mat2[0][0],quantity*16);
-//     matriceUBO2->upload(); 
-//     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
+    std::vector<std::array<float, 4>> mat;
     
+    mat = matrice(quantity_x,quantity_y);   
+    memcpy(&engine.static_ubo.buffer.data[mat1UBO->offset],&mat[0][0],quantity*16);
 
-//     quadB = new VBO("quad.obj",VBO::pool.size(), FW, FH);
-//     quadA = new VBO("quad.obj",VBO::pool.size(), FW, FH);
+    mat = matrice2(quantity_x,quantity_y);    
+    memcpy(&engine.static_ubo.buffer.data[mat2UBO->offset],&mat[0][0],quantity*16);
+    engine.static_ubo.upload(); 
 
-//     buffer = new Texture(FW, FH, 0,1,GL_RGB8);
-//     pass = new Texture(FW, FH, 0,1, GL_RGB8);
-//     FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
+    shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
-//     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
-//     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
+    quadB = new VBO("quad.obj", FW, FH);
+    quadA = new VBO("quad.obj", FW, FH);
 
-//     fb = new FrameBuffer(buffer); 
+    buffer = new Texture(FW, FH, 0,1,GL_RGB8);
+    pass = new Texture(FW, FH, 0,1, GL_RGB8);
+    FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
+
+    black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
+    memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
+
+    fb = new FrameBuffer(buffer); 
         
-//     artnet->universes[uni].remaps.push_back({chan, quantity, &fixtureUBO->data[attroffset] });
-//     auto &remap = artnet->universes[uni].remaps.back();
+    artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&engine.dynamic_ubo.buffer.data[fix1UBO->offset] });
+    auto &remap = artnet->universes[uni].remaps.back();
 
-//     for (auto &c:fixtureUBO->definition[0].components) { 
+    for (auto &c:fix1UBO->components) { 
 
-//         for (auto &m :c->members) { 
+        for (auto &m :c->members) { 
 
-//             uint8_t combining = 0;
+            uint8_t combining = 0;
 
-//             bool breaker = false;
-//             for (auto &p:fixture.presets) { if (breaker) { break; }
-//                 for (auto &f:p.features) { if (breaker) { break; }
-//                     for (auto &a:f.attributes) { 
-//                       if (&m == a.member) {
-//                           combining = a.combining; 
-//                           breaker = true;
-//                           break;
+            bool breaker = false;
+            for (auto &p:fixture.presets) { if (breaker) { break; }
+                for (auto &f:p.features) { if (breaker) { break; }
+                    for (auto &a:f.attributes) { 
+                      if (&m == a.member) {
+                          combining = a.combining; 
+                          breaker = true;
+                          break;
 
-//                         }
-//                     }
-//                 }
-//             }
+                        }
+                    }
+                }
+            }
 
-//             remap.attributes.push_back({combining, m.range_from, m.range_to});  
+            remap.attributes.push_back({combining, m.range_from, m.range_to});  
         
-//         }
-//     }
+        }
+    }
     
-//     artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
+    // artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
 
-//         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
+    //     const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
 
-//         for (int i = 0; i < this->quantity; i++) { 
+    //     for (int i = 0; i < this->quantity; i++) { 
 
-//             int gobo_id = *(8+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*255;
+    //         int gobo_id = *(8+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*255;
 
-//             if (gobo_id == 10) {
+    //         if (gobo_id == 10) {
 
-//                 float *l = &matriceUBO->data[i*4+this->matoffset];
-//                 int char_id = *(9+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*(strlen(chars)-1);
+    //             float *l = &matriceUBO->data[i*4+this->matoffset];
+    //             int char_id = *(9+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*(strlen(chars)-1);
 
-//                 FT fr((chars+char_id), (this->height/this->quantity_y)*.9);
+    //             FT fr((chars+char_id), (this->height/this->quantity_y)*.9);
 
-//                 GLuint offset_x = this->width**(l+2)+(((this->width/this->quantity_x)-fr.width)*.5);
+    //             GLuint offset_x = this->width**(l+2)+(((this->width/this->quantity_x)-fr.width)*.5);
 
-//                 this->FTbuffer->write(&black[0], l[0]*this->buffer->width,l[1]*this->buffer->height,this->buffer->width*l[2],this->buffer->height*l[3],0,1,GL_R8,GL_RED); 
-//                 this->FTbuffer->write(fr.buffer, fr.width, fr.height,offset_x,this->height**(l+3),0,1,GL_R8,GL_RED); 
+    //             this->FTbuffer->write(&black[0], l[0]*this->buffer->width,l[1]*this->buffer->height,this->buffer->width*l[2],this->buffer->height*l[3],0,1,GL_R8,GL_RED); 
+    //             this->FTbuffer->write(fr.buffer, fr.width, fr.height,offset_x,this->height**(l+3),0,1,GL_R8,GL_RED); 
 
 
 
-//             }
+    //         }
             
 
-//          }  
+    //      }  
         
-//     });
+    // });
 
-// }
+}
 
 
  

@@ -17,17 +17,17 @@ add_executable(SmartMap
     src/vbo.cpp
     src/ubo.cpp
     # src/atlas.cpp
-    # src/dmx.cpp
     
-    # src/artnet.cpp
+    src/dmx.cpp
+    src/artnet.cpp
     
     src/file.cpp
     
     src/gui.cpp
     
     src/smartmap.cpp
-
-    # src/widgets/artnet_widget.cpp
+    
+    src/widgets/artnet_widget.cpp
 
     include/vendor/imgui/imgui.cpp
     include/vendor/imgui/imgui_tables.cpp

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "gui.hpp"
+#include "component.hpp"
 
 struct Artnet;
 

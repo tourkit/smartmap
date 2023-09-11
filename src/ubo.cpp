@@ -30,8 +30,6 @@ void UBO::update() {
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferData(GL_UNIFORM_BUFFER, buffer.data.size(), NULL, GL_DYNAMIC_COPY);
 
-    std::cout << "UBO " << name << " : " << buffer.data.size() << "resize" << std::endl;
-
     for (auto shader:subscribers) {
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);

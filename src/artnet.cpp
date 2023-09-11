@@ -2,7 +2,7 @@
 #include <cmath>
 
 Artnet::Artnet(const char* ip) 
-: gui(this) 
+// : gui(this) 
 {
 
     artnet = artnet_new(ip, 0);
@@ -13,9 +13,9 @@ Artnet::Artnet(const char* ip)
 
         auto *an = (Artnet*)_this;
 
-        an->gui.updateList(p->data.admx.universe); 
-
+        // an->gui.updateList(p->data.admx.universe); 
         auto *u = &an->universes[p->data.admx.universe];
+
 
         for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) u->data[i] = p->data.admx.data[i]; 
 

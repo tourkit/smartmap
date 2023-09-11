@@ -26,7 +26,7 @@ struct Artnet {
 
   void run();
 
-  ArtnetWindow gui;
+  // ArtnetWindow gui;
 
 } ;
 

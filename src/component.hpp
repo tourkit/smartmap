@@ -206,6 +206,9 @@ private:
             .member<uint32_t>("value")
             ;
 
+        auto &dmx = Component::create("DMX");
+        for (size_t i = 0; i < 512; i++) dmx.member<uint8_t>("chan "+std::to_string(i));
+
     }
     
 
