@@ -17,7 +17,7 @@ Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)
         if (!r.width) {std::cout << "needniouatlas" << std::endl; continue;}
 
         normalized_list.push_back({r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height});
-        std::cout << r.width/(float)this->texture->width << " - " << r.height/(float)this->texture->height << " - " << r.x/(float)this->texture->width << " - " << r.y/(float)this->texture->height << std::endl;
+
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 
     }
@@ -30,6 +30,8 @@ Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)
 
     }, normalized_list.size());
 
+    memcpy(&ubo->buffer.data[0],&normalized_list[0],normalized_list.size()*16); // 16 is size of Rect
+
 }
 
 void Atlas::link(ShaderProgram* shader) {
@@ -37,8 +39,8 @@ void Atlas::link(ShaderProgram* shader) {
     ubo->subscribers.push_back(shader);
     ubo->update();
 
-    ubo->upload(&normalized_list[0], normalized_list.size()*16); // 16 is size of Rect
-
+    ubo->upload();
+    
     shader->sendUniform("mediasAtlas", 1);
 
 }

@@ -292,7 +292,6 @@ uniform int strobe = 0;
 void main() {
     // vec2 uv = gl_FragCoord.xy/FBResolution.xy;
     vec2 uv = texcoord;
-// color = vec4(uv.x+mat[2].pos.x); return;
 
     if (obj == 0) { 
 
@@ -300,7 +299,7 @@ void main() {
         
         if (mode==1)  {color = texture(pass, uv); return;}
 
-        for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, uv*mat[i].size+mat[i].pos);
+        for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, uv*matrice2[i].size+matrice2[i].pos);
 
         return;
          

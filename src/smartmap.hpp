@@ -9,7 +9,6 @@
 
 struct SmartMap {
 
-
     static inline Atlas *atlas;
 
     SmartMap();

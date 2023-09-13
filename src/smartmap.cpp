@@ -129,14 +129,14 @@ SmartMap::SmartMap() {
         artnet->run();
 
     }});
-
+#ifdef SM_DEBUG
     engine.stack.list.push_back(new Engine::Stack::Action{[this](){
 
             auto cb = [&](){ 
 
                 shader->reset(); 
 
-                // atlas->link(shader); 
+                atlas->link(shader); 
 
                 Engine::getInstance().dynamic_ubo.upload();
                 Engine::getInstance().static_ubo.upload();  
@@ -150,7 +150,7 @@ SmartMap::SmartMap() {
 
 
     }});
-
+#endif
 
     engine.stack.list.push_back(new Engine::Stack::Action{[this](){
 
@@ -266,7 +266,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     //     for (int i = 0; i < this->quantity; i++) { 
 
-    //         int gobo_id = *(8+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*255;
+    //         int gobo_id = *(8+&fix1UBO->buffer->data[fix1UBO->offset+this->attroffset]+(i*dmx->remaps[0].attributes.size()))*255;
 
     //         if (gobo_id == 10) {
 

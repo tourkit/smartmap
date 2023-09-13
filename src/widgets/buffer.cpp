@@ -1,128 +1,8 @@
 #pragma once
-
-#include "pch.hpp"
-
-#include "component.hpp"
 #include "gui.hpp"
+#include "buffer.hpp"
 
-struct Buffer {
-
-    struct Object {
-
-        std::string name;
-
-        std::vector<Component*> components;
-
-        int quantity,size = 0, offset = 0;
-        
-        int create() {
-            
-            quantity+= 1;
-            buffer->updateBuffer();
-            return components.size()-1;
-        }
-
-        void add(std::string component) { 
-
-            components.push_back(Component::id(component.c_str())); 
-
-            size += Component::id(component.c_str())->size;
-
-        }
-
-        void *data() { return (void*)&buffer->data[offset]; }
-
-        void set(const char* name, void* data, int id = 0) { 
-
-            Component *comp = nullptr;
-
-            int offset = this->offset;
-
-            for (auto &c:components) { 
-                
-                if (!strcmp(c->name.c_str(),name)) {
-
-                    comp = c;
-                    break;
-
-                }
-
-                offset += c->size;
-            
-            }
-
-            if (comp) { memcpy(&buffer->data[size*id+offset], data, comp->size); }
-            else{ std::cout << name << " does not recall" << std::endl; }
-
-        }
-
-        void set(int member_id, void* data, int obj_id = 0) { 
-
-            Component *comp = components[member_id];
-
-            int offset = this->offset;
-            for (size_t i = 0; i < member_id; i++) offset += components[i]->size;
-           
-            if (comp) memcpy(&buffer->data[size*obj_id+offset], data, comp->size);
-
-        }
-
-        Buffer* buffer;
-
-    };
-
-    std::string name;
-
-    std::vector<Object> objects;
-
-    std::vector<char> data;  
-
-    std::vector<Buffer*> pool;
-    
-    std::function<void()> callback = [](){};
-
-    // void remove(Object *obj, std::vector<Component*> components) {  for (auto comp : components) { obj->components.push_back(comp); } resize(); }
-
-    Object *add(std::string name, std::vector<std::string> components = {}, int quantity = 1) { 
-
-        objects.push_back({name, {}, quantity}); 
-
-        for (auto comp : components) objects.back().add(comp);
-        
-        updateBuffer(); 
-
-        objects.back().buffer = this;
-
-        return &objects.back();
-
-    }
-
-    void reset() { objects.resize(0); data.resize(0); }
-
-    void updateBuffer() {
-
-        int size = 0;
-        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.quantity; } }
-
-        data.resize(size);
-        memset(&data[0],0,data.size());
-
-        int offset = 0;
-        for (auto &obj:objects) {
-            
-            obj.offset = offset;
-
-            offset += obj.size*obj.quantity;
-            
-        }
-        
-        widget.updateBufferList();
-
-        callback();
-
-    }
-
-    struct Widget : GUI::Window {
+  struct Widget : GUI::Window {
 
         Buffer *buffer;
         int buffer_current = 0, object_current = 0, elem_current = 0;
@@ -136,24 +16,24 @@ struct Buffer {
         void updateBufferList() {
 
             std::vector<std::string> names;
-            for (auto buffer:buffer->pool) { names.push_back(buffer->name); }
+            for (auto buffer:Buffer::pool) { names.push_back(buffer->name); }
             buffer_list.create(names);
             
-            if (buffer_current < buffer->pool.size()) updateObjectList(); 
+            if (buffer_current < Buffer::pool.size()) updateObjectList(); 
             
         }
 
         void updateObjectList() {
 
             std::vector<std::string> names;
-            for (auto &obj:buffer->pool[buffer_current]->objects) { names.push_back(obj.name); }
+            for (auto &obj:Buffer::pool[buffer_current]->objects) { names.push_back(obj.name); }
             object_list.create(names);
 
         }
 
-        Widget(Buffer* buffer, std::string name = "Buffer") : GUI::Window(name) { 
+        Widget(std::string name = "Buffer") : GUI::Window(name) { 
             
-            this->buffer = buffer;
+            if (Buffer::pool.size()) buffer = Buffer::pool[0];
             updateBufferList();
             add_buffer.resize(120);
             add_object.resize(120);
@@ -162,6 +42,8 @@ struct Buffer {
         }
 
         void draw() override {
+
+            if (!buffer) return;
 
             ImGui::InputText(("##New"+name).c_str(), &add_buffer[0], add_buffer.size());
             ImGui::SameLine();
@@ -181,7 +63,7 @@ struct Buffer {
             ImGui::Spacing();
             if (ImGui::Combo("list##234sdfgsdfg", &buffer_current, buffer_list.buffer)) updateObjectList();
 
-            if (!buffer->pool.size()) return;
+            if (!Buffer::pool.size()) return;
 
             ImGui::NewLine();
 
@@ -397,10 +279,6 @@ struct Buffer {
 
         }
 
-    } widget;
-
-    Buffer(std::string name = "Buffer") : name(name), widget(this, name) { pool.push_back(this);  objects.reserve(10); }
-
-
-
-};
+    } ;
+    
+    // static inline Widget widget();

@@ -31,10 +31,10 @@ struct Engine {
 
             VBO* vbo;
             ShaderProgram *shader;
-            Texture *texture = nullptr;
+            Texture *texture;
             FrameBuffer *fb = &Engine::getInstance().fb; 
 
-            DrawCall(VBO* vbo, ShaderProgram *shader) : vbo(vbo) , shader(shader) {}
+            DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture = nullptr) : vbo(vbo) , shader(shader), texture(texture) {}
 
             void run() override { 
 
