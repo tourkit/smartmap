@@ -3,13 +3,12 @@ project(SmartMap VERSION 0.1.0)
 
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(Freetype REQUIRED) 
+find_package(Freetype REQUIRED)
 
-
-add_executable(SmartMap 
+add_executable(SmartMap
 
     main.cpp
-    
+
     src/texture.cpp
     src/window.cpp
     src/shader.cpp
@@ -17,16 +16,16 @@ add_executable(SmartMap
     src/vbo.cpp
     src/ubo.cpp
     src/atlas.cpp
-    
+
     src/dmx.cpp
     src/artnet.cpp
-    
+
     src/file.cpp
-    
+
     src/gui.cpp
-    
+
     src/smartmap.cpp
-    
+
     src/widgets/artnet_widget.cpp
 
     include/vendor/imgui/imgui.cpp
@@ -35,8 +34,8 @@ add_executable(SmartMap
     include/vendor/imgui/imgui_demo.cpp
     include/vendor/imgui/imgui_draw.cpp
     include/vendor/imgui/backends/imgui_impl_glfw.cpp
-    include/vendor/imgui/backends/imgui_impl_opengl3.cpp    
-    
+    include/vendor/imgui/backends/imgui_impl_opengl3.cpp
+
     include/vendor/gl3w/src/gl3w.c
 
     include/vendor/RectangleBinPack/MaxRectsBinPack.cpp
@@ -49,7 +48,6 @@ add_executable(SmartMap
     include/vendor/ofxLibArtnet/artnet/tod.c
     include/vendor/ofxLibArtnet/artnet/transmit.c
     include/vendor/ofxLibArtnet/ofxLibArtnet.cpp
-
 )
 
 target_compile_features(SmartMap PUBLIC cxx_std_20)
@@ -74,9 +72,8 @@ target_include_directories(SmartMap PRIVATE
     include/vendor/imgui/
     include/vendor/gl3w/include/
     include/vendors/glm/
-    /include/vendor/NDI/Include/
+    include/vendor/NDI/Include/
     ${FREETYPE_INCLUDE_DIRS}
-    
     )
 
     link_directories(${FREETYPE_LIBRARY_DIRS})
@@ -88,10 +85,20 @@ target_link_libraries(SmartMap PRIVATE
     ${FREETYPE_LIBRARIES}
 )
 
+if (WIN32)
+target_link_libraries(SmartMap PRIVATE
+    ws2_32
+    iphlpapi
+    )
+add_compile_definitions(WIN32="1")
+endif (WIN32)
 
-#    ASSIMP
-#    ws2_32
+if(UNIX)
+target_link_libraries(SmartMap PRIVATE
+    -ldl
+    )
+endif(UNIX)
+
 #    netapi32
 #    dpnet
-#    iphlpapi
 #    Processing.NDI.Lib.x64

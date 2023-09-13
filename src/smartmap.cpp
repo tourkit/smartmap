@@ -155,8 +155,8 @@ SmartMap::SmartMap() {
             };
 
             survey_count = 0;
-            survey((fs::path(REPO_DIR) / "assets/shader" / shader->paths[0]).c_str(), cb);
-            survey((fs::path(REPO_DIR) / "assets/shader" / shader->paths[1]).c_str(), cb);
+            survey((fs::path(REPO_DIR) / "assets/shader" / shader->paths[0]).string().c_str(), cb);
+            survey((fs::path(REPO_DIR) / "assets/shader" / shader->paths[1]).string().c_str(), cb);
 
 
 
