@@ -16,6 +16,8 @@ add_executable(SmartMap
     src/vbo.cpp
     src/ubo.cpp
     src/atlas.cpp
+    
+    src/buffer.cpp
 
     src/dmx.cpp
     src/artnet.cpp
