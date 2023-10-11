@@ -179,12 +179,25 @@
                                     
                                     ImGui::TableNextColumn();
                                     ImGui::SetNextItemWidth(-1);
-                                    if (ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 )) {
 
-                                        buffer->callback();
+                                    bool slider;
+                                    if (c->members[i].type == Component::Member::Type::UI32) { 
+                                        
+                                        uint32_t min = 0, max = 32;
+                                        const void *p_min = (void*)&min;
+                                        const void *p_max = (void*)&max;
+                                        slider = ImGui::SliderScalar(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), ImGuiDataType_U32, (void*)&buffer->data[id*obj.size+members_offset+col_members_offset], p_min, p_max , "%u"); 
                                         
                                     }
+                                    else { 
+                                        
+                                        slider = ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 );
+                                    
+                                    }
 
+                                    if (slider) buffer->callback();
+                                        
+                            
                                     col_members_offset+=c->members[i].size;
 
                                 }
