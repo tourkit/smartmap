@@ -5,8 +5,8 @@
 
 #include "engine.hpp"  
 
-VBO::VBO(std::string path, uint16_t width, uint16_t height) 
-: buffer("VBO") 
+VBO::VBO(std::string path, uint16_t width, uint16_t height, std::string name) 
+: name(name), buffer(name) 
 {  
 
     vertices = buffer.add("Vertex", {

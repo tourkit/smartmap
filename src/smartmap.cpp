@@ -231,8 +231,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
-    quadB = new VBO("quad.obj", FW, FH);
-    quadA = new VBO("quad.obj", FW, FH);
+    quadB = new VBO("quad.obj", FW, FH, "quadB");
+    quadA = new VBO("quad.obj", FW, FH, "quadA");
 
     buffer = new Texture(FW, FH, 0,1,GL_RGB8);
     pass = new Texture(FW, FH, 0,1, GL_RGB8);

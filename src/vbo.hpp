@@ -9,6 +9,8 @@ struct VBO {
 
     static inline std::vector<VBO*> pool;
 
+    std::string name;
+
     Buffer buffer;
     Buffer::Object *vertices, *indices;
 
@@ -23,7 +25,7 @@ struct VBO {
     void upload();
     void destroy();
 
-    VBO(std::string path = "quad.obj", uint16_t width=0, uint16_t height=0) ;
+    VBO(std::string path = "quad.obj", uint16_t width=0, uint16_t height=0, std::string name = "VBO") ;
 
     void draw(int count = 1);
 
