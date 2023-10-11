@@ -1,25 +1,21 @@
 #pragma once
-#include "gui.hpp"
-#include "buffer.hpp"
+#include "../gui.hpp"
 
-  struct Widget : GUI::Window {
+  struct BufferWidget : GUI::Window {
 
-        Buffer *buffer;
-        int buffer_current = 0, object_current = 0, elem_current = 0;
-        int add_comp = -1;
-        std::string add_buffer, add_object; 
+        int buffer_current = -1, object_current = 0, elem_current = 0;
 
-        StringsBuffer object_list,buffer_list;
+        static inline StringsBuffer buffers_list;
+        StringsBuffer objects_list;
+        
+        std::string buffer_new, object_new; 
+        int comp_new = -1;
 
-        std::function<void()> callback = [](){};
-
-        void updateBufferList() {
+        static void updateBufferList() {
 
             std::vector<std::string> names;
-            for (auto buffer:Buffer::pool) { names.push_back(buffer->name); }
-            buffer_list.create(names);
-            
-            if (buffer_current < Buffer::pool.size()) updateObjectList(); 
+            for (auto *buffer : Buffer::pool) { names.push_back(buffer->name); }
+            buffers_list.create(names);
             
         }
 
@@ -27,64 +23,49 @@
 
             std::vector<std::string> names;
             for (auto &obj:Buffer::pool[buffer_current]->objects) { names.push_back(obj.name); }
-            object_list.create(names);
+            objects_list.create(names);
+            object_current = 0;
 
         }
 
-        Widget(std::string name = "Buffer") : GUI::Window(name) { 
-            
-            if (Buffer::pool.size()) buffer = Buffer::pool[0];
+        BufferWidget(std::string name = "Buffer") : GUI::Window(name) { 
+    
             updateBufferList();
-            add_buffer.resize(120);
-            add_object.resize(120);
-            // update();
+
+            if (!Buffer::pool.size()) return;
+            
+            buffer_current = 0;
+            updateObjectList();
         
         }
 
         void draw() override {
 
-            if (!buffer) return;
+            // if (!Buffer::pool.size()) return;
 
-            ImGui::InputText(("##New"+name).c_str(), &add_buffer[0], add_buffer.size());
-            ImGui::SameLine();
-            if (ImGui::Button(("Add "+name).c_str()) && strlen(&add_buffer[0])) { 
-                
-                new Buffer{add_buffer.c_str()};
+            if (ImGui::Combo("Buffer##234sdfgsdfg", &buffer_current, buffers_list.buffer)) updateObjectList();
 
-                buffer_current = pool.size()-1;  
-                
-                memset(&add_buffer[0],0,add_buffer.size());
+            if (buffer_current<0) return;
 
-                // Buffer::toJSON();
-
-                updateBufferList(); 
-            
-            }
-            ImGui::Spacing();
-            if (ImGui::Combo("list##234sdfgsdfg", &buffer_current, buffer_list.buffer)) updateObjectList();
-
-            if (!Buffer::pool.size()) return;
+            Buffer *buffer =  Buffer::pool[buffer_current];
 
             ImGui::NewLine();
 
-            ImGui::InputText("##NewObject", &add_object[0], add_object.size());
+            ImGui::InputText("##NewObject", &object_new[0], object_new.size());
             ImGui::SameLine();
-            if (ImGui::Button("Add Object") && strlen(&add_object[0])) { 
+            if (ImGui::Button("Add Object") && strlen(&object_new[0])) { 
                 
-                buffer->add(add_object); 
+                buffer->add(object_new); 
 
                 object_current = buffer->objects.size()-1;  
-                
-                // memset(&add_object[0],0,add_object.size());
-
-                // UBO::toJSON();
             
             }
+            
             ImGui::Spacing();
 
             if (!buffer->objects.size()) return;
 
-            ImGui::Combo("object", &object_current, object_list.buffer);
+            ImGui::Combo("object", &object_current, objects_list.buffer);
 
             auto &obj = buffer->objects[object_current];
             
@@ -94,37 +75,34 @@
                     
                     buffer->objects.erase(buffer->objects.begin()+object_current);
                     
-                    buffer->updateBuffer();        
-                    // UBO::toJSON();
-                    return;
                 }
 
-                buffer->updateBuffer(); 
+                buffer->updateBuffer();
+                updateBufferList();
                 // UBO::toJSON();
                 
             }
 
             ImGui::Spacing();
             
-            ImGui::Combo("##AddComponent", &add_comp, Component::buffer_string.buffer);
+            ImGui::Combo("##AddComponent", &comp_new, Component::buffer_string.buffer);
             ImGui::SameLine();
             if (ImGui::Button("Add Component")) {
 
-                obj.add(Component::pool[add_comp]->name); 
+                obj.add(Component::pool[comp_new]->name); 
 
-                buffer->updateBuffer(); 
+                buffer->updateBuffer();
+                updateBufferList();
                 
                 // UBO::toJSON();
 
             }
 
+            if (!obj.components.size()) return
+
             ImGui::NewLine();
-
-            ImGui::ShowDemoWindow();
-
-
-            if (!obj.components.size()) return;
-
+            
+            
             //////////////// SINGLE VIEW ////////////////////
             if (ImGui::CollapsingHeader("Single view")) {
 
@@ -279,6 +257,7 @@
 
         }
 
+
     } ;
     
-    // static inline Widget widget();
+    // static inline Buffer Buffer();

@@ -11,17 +11,22 @@
 #include "shader.hpp"
 #include "framebuffer.hpp"
 
+
+#include "widgets/buffer.hpp"
+
 struct Engine {
 
     Window window;
-    
-    GUI gui;
 
     UBO dynamic_ubo, static_ubo;
 
     FrameBuffer fb;
 
     VBO quad;
+    
+    GUI gui;
+
+    BufferWidget bw;
 
     struct Stack {
 
