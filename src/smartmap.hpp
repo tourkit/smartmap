@@ -24,6 +24,8 @@ struct SmartMap {
     static inline Buffer::Object *mat1UBO;
     static inline Buffer::Object *mat2UBO;
 
+    void import(std::string filepath); 
+    
     struct Layer {
 
         static inline std::vector<Layer*> pool;
@@ -47,6 +49,7 @@ struct SmartMap {
         uint16_t chan,uni,attroffset = 0, matoffset = 0;
 
         Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
+
 
     };
 

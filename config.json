@@ -1,0 +1,51 @@
+{
+
+
+    "layers" : [
+        
+        { 
+        
+            "name" : "Layer 1", 
+            "output" : "ArtNet 1", 
+            "width": 125,
+            "height": 50,
+            "offset_x": 0,
+            "offset_y": 0,
+            "blending": "Additive",
+            "fixture" : "Basic", 
+            "start_universe" : 0, 
+            "start_channel" : 0, 
+            "mode": "Grid",
+            "columns" : 5, 
+            "rows" : 2
+
+        },
+
+        { 
+        
+            "name" : "Layer 2", 
+            "output" : "HDMI 1", 
+            "width": 1920,
+            "height": 1080,
+            "offset_x": 0,
+            "offset_y": 0,
+            "blending": "Additive",
+            "fixture" : "Basic", 
+            "start_universe" : 0, 
+            "start_channel" : 0, 
+            "mode": "Free",
+            "quantity" : 10
+
+    } 
+        
+    ],
+
+
+    "config" : { 
+    
+        "ip" : "2.0.0.222",
+        "subnet" : 8 
+    
+    } 
+    
+}

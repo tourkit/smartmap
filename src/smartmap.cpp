@@ -166,9 +166,9 @@ SmartMap::SmartMap() {
     engine.stack.list.push_back(new Engine::Stack::Action{[this](){
 
         int offset = 0;
-
+        
         for (auto layer:SmartMap::Layer::pool) { 
-
+            
             layer->fb->clear(); // thus bind
 
             shader->sendUniform("offset", offset);
@@ -200,6 +200,44 @@ SmartMap::SmartMap() {
         }
 
     }});
+
+} 
+
+#include "include/vendor/rapidjson/document.h"
+#include "include/vendor/rapidjson/stringbuffer.h"
+
+void SmartMap::import(std::string filepath) {
+
+    rapidjson::Document json;
+    json.Parse(File(REPO_DIR+filepath).data.data());
+    if(json.HasParseError()) { std::cout << "SM config json parse error !" << std::endl; return; }
+
+    if (!json.HasMember("layers")) { std::cout << "no layers in config" << std::endl; return; }
+
+    for (auto &layer : json["layers"].GetArray()) { 
+
+        SmartMap::Layer::Mode mode = SmartMap::Layer::Mode::Free;
+        if (!strcmp(layer["mode"].GetString(),"Grid")) mode = SmartMap::Layer::Mode::Grid;
+
+        int columns = 1, rows = 1;
+        if (json.HasMember("columns")) columns = layer["columns"].GetInt();
+        if (json.HasMember("rows")) rows = layer["rows"].GetInt();
+        if (json.HasMember("quantity")) columns = layer["rows"].GetInt();
+
+        new SmartMap::Layer(
+
+            layer["start_channel"].GetInt(), 
+            layer["start_universe"].GetInt(), 
+            basic_fixture, 
+            engine.window.width,
+            engine.window.height, 
+            mode, 
+            columns,
+            rows
+
+        );
+    
+    }
 
 }
 
