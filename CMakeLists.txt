@@ -18,6 +18,8 @@ add_executable(SmartMap
     src/atlas.cpp
     
     src/buffer.cpp
+    src/engine.cpp
+    src/stack.cpp
 
     src/dmx.cpp
     src/artnet.cpp

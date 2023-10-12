@@ -3,14 +3,11 @@
 #include "pch.hpp"
 
 #include "window.hpp"
-#include "gui.hpp"
 #include "ubo.hpp"
-
-#include "vbo.hpp"
-#include "texture.hpp"
-#include "shader.hpp"
 #include "framebuffer.hpp"
-
+#include "vbo.hpp"
+#include "stack.hpp"
+#include "gui.hpp"
 
 #include "widgets/buffer.hpp"
 
@@ -23,49 +20,12 @@ struct Engine {
     FrameBuffer fb;
 
     VBO quad;
+
+    Stack stack;
     
     GUI gui;
 
     BufferWidget bw;
-
-    struct Stack {
-
-        struct Stackable { virtual void run() {  } };
-
-        struct DrawCall : Stackable {
-
-            VBO* vbo;
-            ShaderProgram *shader;
-            Texture *texture;
-            FrameBuffer *fb = &Engine::getInstance().fb; 
-
-            DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture = nullptr) : vbo(vbo) , shader(shader), texture(texture) {}
-
-            void run() override { 
-
-                if (texture) texture->bind();
-                shader->use();
-                vbo->draw();
-
-            }
-
-        };
-
-        struct Action : Stackable {
-
-            Action(std::function<void()> callback) : callback(callback) {}
-
-            std::function<void()> callback;
-
-            void run() override { callback(); }
-
-        };
-
-        std::vector<Stackable*> list;
-
-        void run() { for (auto item : list) item->run();  }
-
-    } stack;
 
     static Engine& getInstance() { static Engine instance;  return instance; }
 
@@ -90,15 +50,7 @@ struct Engine {
 
 private:
 
-    Engine(uint16_t width = 400, uint16_t height = 300) 
-
-        : window(width,height), 
-        dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
-        quad("quad.obj",width,height, "quad"),
-        fb(0,width,height), gui(window.id) {
-
-
-    }
+    Engine(uint16_t width = 400, uint16_t height = 300);
 
     Engine(const Engine&) = delete;
     Engine& operator=(const Engine&) = delete;

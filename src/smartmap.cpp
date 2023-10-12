@@ -1,5 +1,6 @@
 
 #include "smartmap.hpp"
+#include "stack.hpp"
 
 #include "imgui/imgui.h"
 
@@ -133,15 +134,15 @@ SmartMap::SmartMap() {
 
     };
 
-    engine.stack.list.push_back(new Engine::Stack::DrawCall{&engine.quad, shader});
+    engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, shader});
 
-    engine.stack.list.push_back(new Engine::Stack::Action{[this](){
+    engine.stack.list.push_back(new Stack::Action{[this](){
 
         artnet->run();
 
     }});
 #ifdef SM_DEBUG
-    engine.stack.list.push_back(new Engine::Stack::Action{[this](){
+    engine.stack.list.push_back(new Stack::Action{[this](){
 
             auto cb = [&](){ 
 
@@ -163,12 +164,13 @@ SmartMap::SmartMap() {
     }});
 #endif
 
-    engine.stack.list.push_back(new Engine::Stack::Action{[this](){
+    engine.stack.list.push_back(new Stack::Action{[this](){
 
         int offset = 0;
-        
+        // int zzz = 0;
         for (auto layer:SmartMap::Layer::pool) { 
-            
+            // if (zzz >0 ) continue;
+            // std::cout << "go: " << zzz++ << std::endl;
             layer->fb->clear(); // thus bind
 
             shader->sendUniform("offset", offset);
@@ -220,9 +222,15 @@ void SmartMap::import(std::string filepath) {
         if (!strcmp(layer["mode"].GetString(),"Grid")) mode = SmartMap::Layer::Mode::Grid;
 
         int columns = 1, rows = 1;
-        if (json.HasMember("columns")) columns = layer["columns"].GetInt();
-        if (json.HasMember("rows")) rows = layer["rows"].GetInt();
-        if (json.HasMember("quantity")) columns = layer["rows"].GetInt();
+        if (layer.HasMember("columns")) columns = layer["columns"].GetInt();
+        if (layer.HasMember("rows")) rows = layer["rows"].GetInt();
+        if (layer.HasMember("quantity")) columns = layer["rows"].GetInt();
+
+        // std::cout 
+        // << "mode:" << mode 
+        // << "columns:" << columns 
+        // << "rows:" << rows 
+        // << std::endl;
 
         new SmartMap::Layer(
 
