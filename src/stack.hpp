@@ -9,26 +9,43 @@
 #include "shader.hpp"
 #include "framebuffer.hpp"
 
+
+static void Draw2D() {
+
+    
+
+}
+
 struct Stack {
 
-    struct Stackable { virtual void run() ; };
+    struct Cue { std::string name = "Cue"; virtual void run() ; };
 
-    struct DrawCall : Stackable {
+    struct ClearCall : Cue {
+
+        FrameBuffer *fb;
+
+        ClearCall(FrameBuffer *fb = nullptr, std::string name = "ClearCall")  ;
+
+        void run() override;
+    };
+    
+    struct DrawCall : Cue {
 
         VBO* vbo;
         ShaderProgram *shader;
         Texture *texture;
         FrameBuffer *fb;
 
-        DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture = nullptr)  ;
+        DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture = nullptr, FrameBuffer *fb = nullptr, std::string name = "DrawCall")  ;
 
         void run() override;
 
     };
 
-    struct Action : Stackable {
+    
+    struct Action : Cue {
 
-        Action(std::function<void()> callback);
+        Action(std::function<void()> callback, std::string name = "Action");
 
         std::function<void()> callback;
 
@@ -36,7 +53,7 @@ struct Stack {
 
     };
 
-    std::vector<Stackable*> list;
+    std::vector<Cue*> list;
 
     void run();
 

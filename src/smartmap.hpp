@@ -5,14 +5,11 @@
 #include "atlas.hpp"
 #include "artnet.hpp"
 
-
-
 struct SmartMap {
 
     static inline Atlas *atlas;
 
     SmartMap();
-
 
     static inline Artnet *artnet;
     static inline ShaderProgram *shader;
@@ -25,6 +22,8 @@ struct SmartMap {
     static inline Buffer::Object *mat2UBO;
 
     void import(std::string filepath); 
+
+    Stack stack;
     
     struct Layer {
 
@@ -32,7 +31,7 @@ struct SmartMap {
 
         enum Mode { Free, Grid } mode;
 
-        uint16_t width, height;
+        uint16_t width, height, id;
         
         uint16_t offset_x = 0, offset_y =0;
 
@@ -52,35 +51,6 @@ struct SmartMap {
 
 
     };
-
-    struct Widget : GUI::Window {
-
-        Widget() : GUI::Window("VIEW") { }
-
-        void draw() override {
-
-            for (int i = 0; i < Texture::pool.size(); i++) {
-
-                std::string wh = std::to_string(Texture::pool[i]->width) + " x " + std::to_string(Texture::pool[i]->height);
-                ImGui::Text(wh.c_str());
-                
-                float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
-                auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
-
-                ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
-
-                ImGui::PushID(i+100);
-
-                ImGui::PopID();
-                ImGui::Separator();
-            }
-            
-        }
-
-    } widget;
-
-
-    
 
 
     GLint GL_BLEND_MODE_IN = 11;

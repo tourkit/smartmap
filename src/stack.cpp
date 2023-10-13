@@ -2,18 +2,46 @@
 #include "stack.hpp"
 
 
-void Stack::Stackable::run() {  } 
+void Stack::Cue::run() {  } 
 
-Stack::DrawCall::DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture) : vbo(vbo) , shader(shader), texture(texture) { FrameBuffer *fb = &Engine::getInstance().fb; }
+Stack::ClearCall::ClearCall(FrameBuffer *fb, std::string name)  { 
+  
+    if (!fb) this->fb = &Engine::getInstance().fb; 
+    else this->fb = fb;
 
+}
+
+Stack::DrawCall::DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture, FrameBuffer *fb, std::string name) 
+ 
+    : vbo(vbo), shader(shader), texture(texture) { 
+    
+    this->name = name;
+
+    if (!fb) this->fb = &Engine::getInstance().fb; 
+    else this->fb = fb;
+
+}
+
+void Stack::ClearCall::run() { 
+
+    // fb
+
+}
 void Stack::DrawCall::run() { 
 
+    fb->bind();
     if (texture) texture->bind();
     shader->use();
     vbo->draw();
 
 }
-Stack::Action::Action(std::function<void()> callback) : callback(callback) {}
+Stack::Action::Action(std::function<void()> callback, std::string name) 
+
+    : callback(callback) {
+
+    this->name = name;
+
+}
 
 
 void Stack::Action::run() { callback(); }

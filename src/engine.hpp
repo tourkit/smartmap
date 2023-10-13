@@ -10,6 +10,7 @@
 #include "gui.hpp"
 
 #include "widgets/buffer.hpp"
+#include "widgets/textures.hpp"
 
 struct Engine {
 
@@ -26,6 +27,7 @@ struct Engine {
     GUI gui;
 
     BufferWidget bw;
+    TexturesWidget tw;
 
     static Engine& getInstance() { static Engine instance;  return instance; }
 
