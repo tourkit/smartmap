@@ -8,8 +8,9 @@ struct Texture;
 struct FrameBuffer {
 
     GLuint id, width, height, attachments = 0;
-    FrameBuffer(GLuint id, GLuint width, GLuint height);
-    FrameBuffer(Texture *tex);
+    std::string name;
+    FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name="FrameBuffer");
+    FrameBuffer(Texture *tex,std::string name="FrameBufferTex");
     ~FrameBuffer();
     void bind();
     void clear(GLfloat r = 0, GLfloat  g = 0, GLfloat b = 0, GLfloat a = 0);

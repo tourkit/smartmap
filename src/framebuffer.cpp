@@ -3,9 +3,9 @@
 
 FrameBuffer::~FrameBuffer() { if (id) glDeleteFramebuffers(1, &id); }
 
-FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height) : id(id), width(width), height(height) { }
+FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) { }
 
-FrameBuffer::FrameBuffer(Texture *tex) {  glGenFramebuffers(1, &id); 
+FrameBuffer::FrameBuffer(Texture *tex,std::string name) : name(name) {  glGenFramebuffers(1, &id); 
 
     width = tex->width;
     height = tex->height;
