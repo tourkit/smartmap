@@ -10,9 +10,12 @@
 #include "framebuffer.hpp"
 
 
-static void Draw2D() {
+static void Draw2D(VBO* vbo, ShaderProgram *shader, FrameBuffer *fb, Texture *texture = nullptr) {
 
-    
+    fb->bind();
+    if (texture) texture->bind();
+    shader->use();
+    vbo->draw();
 
 }
 
@@ -35,6 +38,7 @@ struct Stack {
         ShaderProgram *shader;
         Texture *texture;
         FrameBuffer *fb;
+        bool active = true;
 
         DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture = nullptr, FrameBuffer *fb = nullptr, std::string name = "DrawCall")  ;
 

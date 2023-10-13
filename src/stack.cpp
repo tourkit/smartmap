@@ -27,7 +27,10 @@ void Stack::ClearCall::run() {
     // fb
 
 }
+
 void Stack::DrawCall::run() { 
+
+    if (!active) return;
 
     fb->bind();
     if (texture) texture->bind();
@@ -35,6 +38,7 @@ void Stack::DrawCall::run() {
     vbo->draw();
 
 }
+
 Stack::Action::Action(std::function<void()> callback, std::string name) 
 
     : callback(callback) {
