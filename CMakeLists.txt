@@ -67,6 +67,7 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 
 file(COPY assets DESTINATION .)
+file(COPY config.json DESTINATION .)
 
 target_include_directories(SmartMap PRIVATE
     .
