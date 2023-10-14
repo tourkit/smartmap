@@ -1,14 +1,22 @@
-#include "artnet.hpp"  
+#include "artnet.hpp"
+#include "../../include/vendor/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
 
 Artnet::Artnet(const char* ip) 
 // : gui(this) 
 {
 
-    artnet = artnet_new(ip, 0);
+    artnet = artnet_new(ip, 1); // 1 for VERBOSE
+    if (!artnet) {
+        std::cout << "artnet_new ERROR: " << artnet_errstr << std::endl;
+        return;
+    }
     artnet_set_short_name(artnet, "SmartMap");
     artnet_set_long_name(artnet, "SmartMap");
-    artnet_start(artnet);
+    if (artnet_start(artnet)) {
+        std::cout << "artnet_start ERROR: " << artnet_errstr << std::endl;
+        return;
+    }
     artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this) {
 
         auto *an = (Artnet*)_this;
@@ -29,8 +37,17 @@ Artnet::Artnet(const char* ip)
 
 }
 
-Artnet::~Artnet() { artnet_stop(artnet); artnet_destroy(artnet); }
+Artnet::~Artnet() {
+    if (artnet) {
+        if (artnet_stop(artnet))
+            std::cout << "artnet_stop ERROR: " << artnet_errstr << std::endl;
+        artnet_destroy(artnet);
+    }
+}
 
-void Artnet::run() { artnet_read(artnet, .1); }
-
-
+void Artnet::run() {
+    if (artnet) {
+        if (artnet_read(artnet, .1))
+            std::cout << "artnet_read ERROR: " << artnet_errstr << std::endl;
+    }
+}

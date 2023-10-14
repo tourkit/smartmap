@@ -16,7 +16,7 @@ add_executable(SmartMap
     src/vbo.cpp
     src/ubo.cpp
     src/atlas.cpp
-    
+
     src/buffer.cpp
     src/engine.cpp
     src/stack.cpp
@@ -101,6 +101,8 @@ if(UNIX)
 target_link_libraries(SmartMap PRIVATE
     -ldl
     )
+# for libartnet to use a less deprecated network api on linux
+set_target_properties(SmartMap PROPERTIES COMPILE_FLAGS "-DHAVE_GETIFADDRS -DHAVE_LINUX_IF_PACKET_H")
 endif(UNIX)
 
 #    netapi32
