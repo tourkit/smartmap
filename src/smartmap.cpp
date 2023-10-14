@@ -38,7 +38,7 @@ static inline void survey(const char* path, std::function<void()> cb = [](){}) {
 
 SmartMap::SmartMap() {
 
-    artnet = new Artnet{"2.0.0.222"};
+    artnet = new Artnet{"10.0.0.102"};
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
 
     auto &window = Engine::getInstance().window;
