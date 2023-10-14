@@ -29,7 +29,7 @@
 #include "include/vendor/glm/glm.hpp"
 
 // 
-#define ROCH
+// #define ROCH
 #ifdef ROCH
 static std::string REPO_DIR = "C:/msys64/home/SysErr/old/smartmap/";
 #else
