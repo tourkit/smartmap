@@ -1,4 +1,5 @@
 #include "shader.hpp"
+#include "engine.hpp"
 
 #include <filesystem>
 
@@ -47,13 +48,68 @@ Shader::operator GLuint() { return id; }
 
 ShaderProgram::~ShaderProgram() { destroy(); }
 
-ShaderProgram::ShaderProgram(std::vector<std::string> paths) : paths(paths) {
+
+#include <ctime>
+#include <cstdint>
+
+static inline std::map<int,int> filechecks;
+static inline int survey_count = 0;
+// static void survey(const char* path, std::function<void()> cb = [](){}) {
+static void survey(const char* path, std::function<void()> cb = [](){}) {
+
+    static auto startTime = fs::file_time_type::clock::now();
+
+    auto lastWriteTime = fs::last_write_time(path);
+    auto mSecs = std::chrono::duration_cast<std::chrono::milliseconds>(lastWriteTime - startTime).count();
+
+    if (filechecks[survey_count] != mSecs) {
+        filechecks[survey_count] = mSecs;
+        cb();
+    }
+    survey_count++;
+
+}
+
+ShaderProgram::ShaderProgram(std::vector<std::string> paths, bool surveying) : paths(paths) {
 
     ShaderProgram::pool.push_back(this);
 
     create();
 
     use();
+
+// #ifdef SM_DEBUG
+
+    if (!surveying) return;
+    engine.stack.list.push_back(new Stack::Action{[this](){
+
+            auto cb = [&](){ 
+
+                this->reset();
+
+                // atlas->link(shader);  
+                // - vs -
+                // std::vector<UBO*> to_sub;
+                // for (auto ubo : UBO::pool) {  
+                //     for (auto sub:ubo->subscribers) { 
+                //         if (sub == this) { }
+                //     }
+                // }
+
+                Engine::getInstance().dynamic_ubo.upload();
+                Engine::getInstance().static_ubo.upload();  
+
+            };
+
+            survey_count = 0; 
+
+            survey((fs::path(REPO_DIR) / "assets/shader" / this->paths[0]).string().c_str(), cb);
+            survey((fs::path(REPO_DIR) / "assets/shader" / this->paths[1]).string().c_str(), cb);
+
+
+
+    }, "debug survey for "+paths[0]});
+// #endif
 
 }
 

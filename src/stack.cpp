@@ -21,13 +21,6 @@ Stack::DrawCall::DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture, Fra
     else this->fb = fb;
 
 }
-
-void Stack::ClearCall::run() { 
-
-    // fb
-
-}
-
 void Stack::DrawCall::run() { 
 
     if (!active) return;
@@ -38,6 +31,13 @@ void Stack::DrawCall::run() {
     vbo->draw();
 
 }
+
+void Stack::ClearCall::run() { 
+
+    // fb
+
+}
+
 
 Stack::Action::Action(std::function<void()> callback, std::string name) 
 
@@ -51,5 +51,5 @@ Stack::Action::Action(std::function<void()> callback, std::string name)
 void Stack::Action::run() { callback(); }
 
 
-void Stack::run() { for (auto item : list) item->run();  }
+void Stack::run() { for (auto cue : list) if (cue->active) cue->run();  }
 

@@ -5,7 +5,7 @@
 
 struct Artnet;
 
-struct ArtnetWindow : GUI::Window {
+struct ArtnetWidget : GUI::Window {
 
   Artnet *artnet;
 
@@ -15,14 +15,29 @@ struct ArtnetWindow : GUI::Window {
 
    std::vector<int> universes;
 
-  ~ArtnetWindow();
+  ~ArtnetWidget();
 
   StringsBuffer options;
 
-  ArtnetWindow(Artnet * artnet);
+  ArtnetWidget(Artnet * artnet);
 
   void updateList(int uni);
 
   void draw() override;
 
 };
+
+
+  struct ArtnetWidget2 : GUI::Window {
+
+      Artnet *artnet;
+
+      ArtnetWidget2(Artnet *artnet) : GUI::Window("Artnet"), artnet(artnet) { 
+
+          // engine.list.push_back(new Stack::Action([](){}));
+      
+      }
+
+      void draw() override {}
+
+  };

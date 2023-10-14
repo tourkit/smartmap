@@ -4,6 +4,8 @@ UBO::~UBO() { destroy(); }
 
 UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name), subscribers(subscribers), buffer(name) { 
 
+    pool.push_back(this);
+    
     binding = binding_count++;
 
     std::cout << "UBO \"" << name << "\" binding on " << binding << std::endl;

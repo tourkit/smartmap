@@ -3,6 +3,9 @@
 
 #include "pch.hpp"
 
+
+
+
 enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
 
 struct Shader {
@@ -33,7 +36,7 @@ struct ShaderProgram {
 
   ShaderProgram();
 
-  ShaderProgram(std::vector<std::string> paths);
+  ShaderProgram(std::vector<std::string> paths, bool surveying = false);
 
   void use();
   void use(GLuint x, GLuint y = 1, GLuint z = 1);

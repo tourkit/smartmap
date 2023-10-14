@@ -3,18 +3,18 @@
 
 #include "src/artnet.hpp"
 
-  ArtnetWindow::~ArtnetWindow() { delete artnet; }
+  ArtnetWidget::~ArtnetWidget() { delete artnet; }
 
   StringsBuffer options;
 
 
-  ArtnetWindow::ArtnetWindow(Artnet * artnet) : Window("Artnet Universes") { 
+  ArtnetWidget::ArtnetWidget(Artnet * artnet) : Window("Artnet Universes") { 
     
     this->artnet = artnet; 
 
   }
 
-  void ArtnetWindow::updateList(int uni) {
+  void ArtnetWidget::updateList(int uni) {
 
     bool exist = false;
     for (auto u : universes) { if (u == uni) { exist = true; break;}}
@@ -27,7 +27,7 @@
 
   }
 
-  void ArtnetWindow::draw() {
+  void ArtnetWidget::draw() {
 
 
         ImGui::Combo("Select Universe", &uni_current, options.buffer);

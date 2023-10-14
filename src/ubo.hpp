@@ -11,6 +11,8 @@ struct UBO {
 
     std::string name;
 
+    static inline std::vector<UBO*> pool;
+
     GLuint id;
 
     GLuint binding;

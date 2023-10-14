@@ -134,13 +134,12 @@ SmartMap::SmartMap() {
 
     };
 
-    engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, shader});
-
     engine.stack.list.push_back(new Stack::Action{[this](){
 
         artnet->run();
 
-    }});
+    }, "Artnet"});
+
 #ifdef SM_DEBUG
     engine.stack.list.push_back(new Stack::Action{[this](){
 
@@ -161,13 +160,16 @@ SmartMap::SmartMap() {
 
 
 
-    }});
+    }, "debug survey"});
 #endif
 
     engine.stack.list.push_back(new Stack::Action{[this](){
 
+        // this->stack.run();
+
+        Engine::getInstance().fb.clear();
         int offset = 0;
-        // int zzz = 0;
+        int zzz = 0;
         for (auto layer:SmartMap::Layer::pool) { 
             // if (zzz >0 ) continue;
             // std::cout << "go: " << zzz++ << std::endl;
@@ -201,7 +203,7 @@ SmartMap::SmartMap() {
 
         }
 
-    }});
+    }, "SM layers al at once :("});
 
 } 
 
@@ -226,12 +228,6 @@ void SmartMap::import(std::string filepath) {
         if (layer.HasMember("rows")) rows = layer["rows"].GetInt();
         if (layer.HasMember("quantity")) columns = layer["rows"].GetInt();
 
-        // std::cout 
-        // << "mode:" << mode 
-        // << "columns:" << columns 
-        // << "rows:" << rows 
-        // << std::endl;
-
         new SmartMap::Layer(
 
             layer["start_channel"].GetInt(), 
@@ -253,24 +249,23 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
-    for (auto &layer:pool) { 
+        // stack.list.push_back(new Stack::DrawCall{&engine.quad, sm.shader, nullptr, nullptr, "DC main"});
 
-        for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }
-
-    }
-    
+    //get attr offset from forin pool
+    for (auto &layer:pool) for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }
+    // merge the two ?
     for (auto &layer:pool) { matoffset+=layer->quantity*4; }
 
+    id = pool.size();
+    // push to pool
     pool.push_back(this);
-    
+        
     GLuint FW = width*scale, FH = height*scale;
     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
     std::vector<std::array<float, 4>> mat;
-    
     mat = matrice(quantity_x,quantity_y);   
     memcpy(&engine.static_ubo.buffer.data[mat2UBO->offset],&mat[0][0],quantity*16);
-
     mat = matrice2(quantity_x,quantity_y);    
     memcpy(&engine.static_ubo.buffer.data[mat1UBO->offset],&mat[0][0],quantity*16);
     engine.static_ubo.upload(); 
@@ -288,7 +283,9 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
 
     fb = new FrameBuffer(buffer); 
-        
+    
+    // artnet links 
+
     artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&engine.dynamic_ubo.buffer.data[fix1UBO->offset] });
     auto &remap = artnet->universes[uni].remaps.back();
 
@@ -299,10 +296,19 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
             uint8_t combining = 0;
 
             bool breaker = false;
-            for (auto &p:fixture.presets) { if (breaker) { break; }
-                for (auto &f:p.features) { if (breaker) { break; }
+
+            for (auto &p:fixture.presets) {
+                 
+                if (breaker) { break; }
+
+                for (auto &f:p.features) { 
+
+                    if (breaker) { break; }
+
                     for (auto &a:f.attributes) { 
+
                       if (&m == a.member) {
+
                           combining = a.combining; 
                           breaker = true;
                           break;
@@ -316,6 +322,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
         
         }
     }
+    // if (pool.size()>1)  return;
     
     // artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
 
@@ -449,45 +456,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
 
 
-        // ///// TEXTURES
-
-        // ImGui::Begin("VIEW");
-
-        // for (int i = 0; i < Texture::pool.size(); i++) {
-
-        //     std::string wh = std::to_string(Texture::pool[i]->width) + " x " + std::to_string(Texture::pool[i]->height);
-        //     ImGui::Text(wh.c_str());
-            
-        //     float ratio = Texture::pool[i]->height/(float)Texture::pool[i]->width;
-        //     auto nw = std::min(Texture::pool[i]->width,(GLuint)512);
-
-        //     ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)Texture::pool[i]->id, ImVec2(nw,nw*ratio));
-
-        //     ImGui::PushID(i+100);
-
-        //     ImGui::PopID();
-        //     ImGui::Separator();
-        // }
-        
-        // ImGui::End(); 
-
-
-        //////////////////////////////////////////////
-        //////////////////////////////////////////////
-        //////////////////////////////////////////////
-        // DEBUG STUFF
-        //////////////////////////////////////////////
-        //////////////////////////////////////////////
-
-        // if (debug) { 
-
-        //     survey_count = 0;
-
-        //     survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[0])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->upload(); }); 
-        //     survey((REPO_DIR+"assets/shader/"+std::string(shader->paths[1])).c_str(), [&](){ shader->reset(); atlas->link(shader); matriceUBO->upload(); }); 
-
-        // }
-        
 //     }); 
 
 // }

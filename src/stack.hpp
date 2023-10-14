@@ -21,7 +21,13 @@ static void Draw2D(VBO* vbo, ShaderProgram *shader, FrameBuffer *fb, Texture *te
 
 struct Stack {
 
-    struct Cue { std::string name = "Cue"; virtual void run() ; };
+    struct Cue { 
+        
+        std::string name = "Cue"; 
+        bool active = true;
+        virtual void run() ; 
+        
+    };
 
     struct ClearCall : Cue {
 
@@ -38,14 +44,12 @@ struct Stack {
         ShaderProgram *shader;
         Texture *texture;
         FrameBuffer *fb;
-        bool active = true;
 
         DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture = nullptr, FrameBuffer *fb = nullptr, std::string name = "DrawCall")  ;
 
         void run() override;
 
     };
-
     
     struct Action : Cue {
 
