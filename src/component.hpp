@@ -191,7 +191,7 @@ private:
             .member<float>("value")
         ;
         Component::create("Vertex")
-            .member<int>("id")
+            .member<uint32_t>("id")
             ;
         Component::create("DimentionsUI32")
             .member<uint32_t>("width")
