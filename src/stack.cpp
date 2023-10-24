@@ -15,6 +15,8 @@ Stack::DrawCall::DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture, Fra
  
     : vbo(vbo), shader(shader), texture(texture) { 
     
+    if (!vbo || !shader) active = false;
+    
     this->name = name;
 
     if (!fb) this->fb = &Engine::getInstance().fb; 

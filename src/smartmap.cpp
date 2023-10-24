@@ -140,28 +140,7 @@ SmartMap::SmartMap() {
 
     }, "Artnet"});
 
-#ifdef SM_DEBUG
-    engine.stack.list.push_back(new Stack::Action{[this](){
 
-            auto cb = [&](){ 
-
-                shader->reset(); 
-
-                atlas->link(shader); 
-
-                Engine::getInstance().dynamic_ubo.upload();
-                Engine::getInstance().static_ubo.upload();  
-
-            };
-
-            survey_count = 0;
-            survey((fs::path(REPO_DIR) / "assets/shader" / shader->paths[0]).string().c_str(), cb);
-            survey((fs::path(REPO_DIR) / "assets/shader" / shader->paths[1]).string().c_str(), cb);
-
-
-
-    }, "debug survey"});
-#endif
 
     engine.stack.list.push_back(new Stack::Action{[this](){
 
@@ -213,7 +192,7 @@ SmartMap::SmartMap() {
 void SmartMap::import(std::string filepath) {
 
     rapidjson::Document json;
-    json.Parse(File(REPO_DIR+filepath).data.data());
+    json.Parse(File(filepath).data.data());
     if(json.HasParseError()) { std::cout << "SM config json parse error !" << std::endl; return; }
 
     if (!json.HasMember("layers")) { std::cout << "no layers in config" << std::endl; return; }

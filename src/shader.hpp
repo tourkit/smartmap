@@ -8,13 +8,19 @@
 
 enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
 
+class ShaderProgram; 
+
 struct Shader {
 
   GLuint id;
 
   GLenum type;
 
-  Shader(std::string file);
+  File file;
+
+  ShaderProgram* program;
+
+  Shader(std::string file, ShaderProgram* program);
 
   ~Shader();
 
@@ -31,6 +37,8 @@ struct ShaderProgram {
   GLuint id;
 
   std::vector<std::string> paths;
+
+  std::vector<std::unique_ptr<Shader>> shaders;
 
   ~ShaderProgram();
 

@@ -78,7 +78,7 @@ vec2 rectangle(vec2 uv, vec2 size, vec2 pos, float angle, vec2 AR) {
 }
 
 vec4 fromAtlas(vec2 uv, int id) { 
-    
+           
     uv *= mediaCoord[id].size;
     uv += mediaCoord[id].pos;
 
@@ -90,18 +90,18 @@ vec4 fromAtlas(vec2 uv, int id) {
 float l(float val, float count, float thickness) {
 
    float o = count*.5*thickness;
-
+        
    val = val*(1.+o)-o; // border
-   // v = v*(1.-c)-c; // border less
+   // v = v*(1.-c)-c; // border less 
 
    val = (mod(val, count)*(1./count)+thickness);//*step(count,1.-val);
 
-   val = step(1.0,val); // cross mode
+   val = step(1.0,val); // cross mode 
 
     return val;
 
 }
-
+  
 float grid2(vec2 uv, float thickness, float columns, float rows) {
 
     uv = abs(texcoord-.5)*2.;

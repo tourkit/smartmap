@@ -24,17 +24,83 @@ int main() {
 
     auto &engine = Engine::getInstance();
 
-    SmartMap sm;
+    // SmartMap sm;
 
-    sm.import("config.json");
+    // sm.import("config.json");
 
-    // engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, sm.shader, nullptr, nullptr, "DC main"});
+    // engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, sm.shader, nullptr, nullptr, "Test"});
 
 
     // auto *shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"}, true);
 
     // ArtnetWidget aw(sm.artnet);
 
+    ShaderProgram shader({"smartmap.frag", "smartmap.vert"});
+
+    engine.stack.list.push_back(new Stack::Action{[](){ 
+
+        for (int i = 0; i< File::pool.size(); i++) { 
+
+            File* file = File::pool[i];
+
+            if (file->survey && file->last_modified) {
+
+                auto new_modified = file->getTimeModified();
+
+                if (file->last_modified != new_modified) {
+                
+                    file->callback(file);
+
+                    std::cout << file->path << " changed " << std::endl;
+                    
+                }
+                
+
+            }
+
+        }
+
+     }, "Files survey"});
+
+
+    struct FileWidget : GUI::Window {
+
+        FileWidget() : GUI::Window("Files") { 
+        
+        
+        }
+        
+        void draw() override {
+
+            if (ImGui::BeginTable("table1", 4)) {
+
+                if (false)
+                {
+                    ImGui::TableSetupColumn("One");
+                    ImGui::TableSetupColumn("Two");
+                    ImGui::TableSetupColumn("Twos");
+                }
+
+                for (int i = 0; i< File::pool.size(); i++) { 
+
+                    File* file = File::pool[i];
+
+                    ImGui::TableNextColumn();
+                    ImGui::Checkbox(("##cb"+std::to_string(i)).c_str(), &file->survey);
+                    ImGui::TableNextColumn();
+                    ImGui::Text(file->name.c_str());
+                    ImGui::TableNextColumn();
+                    ImGui::Text(file->extension.c_str());
+                    ImGui::TableNextColumn();
+                    ImGui::Text(std::to_string(file->last_modified).c_str());
+
+                }
+                
+                ImGui::EndTable();
+            }
+        }
+
+    } fw;
 
     struct StackWidget : GUI::Window {
 
@@ -69,8 +135,6 @@ int main() {
             names.resize(0);
             for (auto *shader : ShaderProgram::pool) { names.push_back(shader->paths[0]); }
             shaders.create(names);
-
-            stack->list.push_back(new Stack::Action([](){}));
         
         
         }
@@ -78,6 +142,9 @@ int main() {
         void draw() override {
 
             if (ImGui::CollapsingHeader("VBOs")) {
+
+
+
                 for (auto vbo: VBO::pool) { 
 
                     // ImGui::Text(std::to_string(vbo->id).c_str());
@@ -90,29 +157,46 @@ int main() {
                 // ImGui::Text(fb->name.c_str() );
             };
 
-            for (auto cue: stack->list) { 
 
-                // if (typeid(*cue).name() != typeid(Stack::DrawCall).name()) return;
-                // ImGui::Text(cue->name.c_str());
+            if (ImGui::BeginTable("table1", 5)) {
 
-            // for (auto cue: engine.stack.list) 
-            // std::cout <<typeid(*cue).name() << std::endl;
-                ImGui::Text(cue->name.c_str());
-                ImGui::SameLine();
-                ImGui::SetNextItemWidth(100);
-                ImGui::Combo("##wyuaetd1", &current, vbos.buffer);
-                ImGui::SameLine();
-                ImGui::SetNextItemWidth(100);
-                ImGui::Combo("##wyuaetd2", &current, textures.buffer);
-                ImGui::SameLine();
-                ImGui::SetNextItemWidth(100);
-                ImGui::Combo("##wyuaetd3", &current, framebuffers.buffer);
-                ImGui::SameLine();
-                ImGui::SetNextItemWidth(100);
-                ImGui::Combo("##wyuaetd4", &current, shaders.buffer);
+                if (false)
+                {
+                    ImGui::TableSetupColumn("One");
+                    ImGui::TableSetupColumn("Two");
+                    ImGui::TableSetupColumn("Three");
+                    ImGui::TableSetupColumn("4");
+                    ImGui::TableSetupColumn("5");
+                    ImGui::TableHeadersRow();
+                }
 
+                int i = 0;
+
+                for (auto cue: stack->list) { 
+                    i++;
+                    
+                    // if (typeid(*cue).name() != typeid(Stack::DrawCall).name()) {
+                    // ImGui::TableNextRow(); continue;}
+
+
+                    ImGui::TableNextColumn();
+
+                    ImGui::Checkbox(("##cb"+std::to_string(i)).c_str(), &cue->active);
+                    ImGui::SameLine();
+                    ImGui::Text(cue->name.c_str());
+                    ImGui::TableNextColumn();
+                    if (ImGui::Combo("##wyuaetd1", &current, vbos.buffer)) { ((Stack::DrawCall*)cue)->vbo = VBO::pool[current]; }
+                    ImGui::TableNextColumn();
+                    ImGui::Combo("##wyuaetd2", &current, textures.buffer);
+                    ImGui::TableNextColumn();
+                    ImGui::Combo("##wyuaetd3", &current, framebuffers.buffer);
+                    ImGui::TableNextColumn();
+                    ImGui::Combo("##wyuaetd4", &current, shaders.buffer);
+
+                }
+                
+                ImGui::EndTable();
             }
-
         }
 
     } sw(&engine.stack);

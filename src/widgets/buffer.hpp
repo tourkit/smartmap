@@ -136,7 +136,7 @@
             ImGui::NewLine();
             
             //////////////// TABLE VIEW ////////////////////
-            if (ImGui::CollapsingHeader("List view", ImGuiTreeNodeFlags_DefaultOpen)) {
+            if (ImGui::CollapsingHeader("Table view", ImGuiTreeNodeFlags_DefaultOpen)) {
 
                 ImGui::NewLine();
 
