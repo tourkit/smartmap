@@ -5,23 +5,40 @@ FrameBuffer::~FrameBuffer() { if (id) glDeleteFramebuffers(1, &id); }
 
 FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) { pool.push_back(this); }
 
-FrameBuffer::FrameBuffer(Texture *tex,std::string name) : name(name) { 
+FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : width(width), height(height), name(name) { 
+    
+    pool.push_back(this); 
+
+    link(new Texture(width,height, 0,1,GL_RGB8 ));
+    
+}
+
+FrameBuffer::FrameBuffer(Texture *texture,std::string name) : name(name) { 
     
     pool.push_back(this);
  
+    link(texture);
+ 
+}
+
+void FrameBuffer::link(Texture *texture) { 
+
+    this->texture = texture;
+
     glGenFramebuffers(1, &id); 
 
-    width = tex->width;
-    height = tex->height;
+    width = texture->width;
+    height = texture->height;
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments++), GL_TEXTURE_2D, tex->id, 0); 
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments++), GL_TEXTURE_2D, texture->id, 0); 
 
     std::vector<GLuint> drawBuffers;
     for (size_t i = 0; i < attachments+1; i++) drawBuffers.push_back( GL_COLOR_ATTACHMENT0+i);
     glDrawBuffers(attachments+1, &drawBuffers[0]);
  
 }
+
 
 void FrameBuffer::bind() { glViewport(0,0,width,height); glBindFramebuffer(GL_FRAMEBUFFER, id); }
 
