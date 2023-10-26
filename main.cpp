@@ -27,28 +27,16 @@ int main() {
     // ArtnetWidget aw(sm.artnet);
 
     ShaderProgram shader({"basic.frag", "basic.vert"});
+
+    ShaderProgram shadertex({"texture.frag", "basic.vert"});
+
     ShaderProgram shadersm({"smartmap.frag", "smartmap.vert"});
+
+    FrameBuffer fb(engine.window.width,engine.window.height, "Layer1");
     
-    engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, &shader, nullptr, nullptr, "Test"});
-
-    engine.stack.list.push_back(new Stack::Action{[](){ 
-
-        for (int i = 0; i< File::pool.size(); i++) { 
-
-            File* file = File::pool[i];
-
-            if (file->survey && file->last_modified) {
-
-                auto new_modified = file->getTimeModified();
-
-                if (file->last_modified != new_modified) file->callback(file);      
-
-            }
-
-        }
-
-     }, "Files survey"});
-
+    engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, &shadertex, nullptr, &fb, "Test to layer"});
+    
+    engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, &shader, fb.texture, nullptr, "Test to window"});
 
     FileWidget fw;
 
