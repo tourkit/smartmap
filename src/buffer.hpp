@@ -46,6 +46,7 @@ struct Buffer {
     void reset();
 
     void updateBuffer();
+    // void changeObjQuantity();
 
     Buffer(std::string name = "Buffer");
 

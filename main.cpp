@@ -14,12 +14,6 @@
 
 int main() { 
 
-
-    // int x = 99;
-    // int *y = &x;
-
-
-
     // Boilerplate();
 
     auto &engine = Engine::getInstance();
@@ -27,10 +21,6 @@ int main() {
     // SmartMap sm;
 
     // sm.import("config.json");
-
-
-
-    // auto *shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"}, true);
 
     // ArtnetWidget aw(sm.artnet);
 

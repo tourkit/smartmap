@@ -73,11 +73,32 @@
 
     void Buffer::updateBuffer() {
 
-        int size = 0;
-        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.quantity; } }
+        // std::vector<std::vector<char>> datas;
 
+        // for (auto &obj:objects) { 
+            
+        //     datas.resize(datas.size()+1);
+
+        //     for (auto comp:obj.components) { 
+                
+        //         datas.back().resize(datas.size()  + comp->size*obj.quantity); 
+                
+        //     }
+
+        //     memcpy(&datas.back()[0],&data[obj.offset],datas.back().size());
+
+        // }
+
+        int size = 0;
+        // for (auto d:datas) { size += d.size(); }
+        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.quantity; } }
         data.resize(size);
         memset(&data[0],0,data.size());
+
+        // int max_copy = tdata.size();
+        // if (size < max_copy) max_copy = size;
+
+        // memcpy(&data[0], &tdata[0], max_copy);
 
         int offset = 0;
         for (auto &obj:objects) {

@@ -71,6 +71,8 @@
             
             if (ImGui::InputInt("quantity##objectquantity", &obj.quantity)) {
                 
+                // serait mieux genre changeObjQuantity
+                
                 if (!obj.quantity) {
                     
                     buffer->objects.erase(buffer->objects.begin()+object_current);
