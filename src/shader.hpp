@@ -8,8 +8,6 @@
 
 enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
 
-class ShaderProgram; 
-
 struct Shader {
 
   GLuint id;
@@ -18,9 +16,7 @@ struct Shader {
 
   File file;
 
-  ShaderProgram* program;
-
-  Shader(std::string file, ShaderProgram* program);
+  Shader(std::string file);
 
   ~Shader();
 
@@ -39,6 +35,8 @@ struct ShaderProgram {
   std::vector<std::string> paths;
 
   std::vector<std::unique_ptr<Shader>> shaders;
+
+  bool loaded = false;
 
   ~ShaderProgram();
 

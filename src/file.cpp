@@ -86,7 +86,6 @@ int64_t File::getTimeModified() {
 
 }
 
-
 void File::update() { read(path); }
 
 std::string File::read(std::string path, bool binary){

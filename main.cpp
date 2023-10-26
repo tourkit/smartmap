@@ -28,14 +28,16 @@ int main() {
 
     // sm.import("config.json");
 
-    // engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, sm.shader, nullptr, nullptr, "Test"});
 
 
     // auto *shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"}, true);
 
     // ArtnetWidget aw(sm.artnet);
 
-    ShaderProgram shader({"smartmap.frag", "smartmap.vert"});
+    ShaderProgram shader({"basic.frag", "basic.vert"});
+    ShaderProgram shadersm({"smartmap.frag", "smartmap.vert"});
+    
+    engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, &shader, nullptr, nullptr, "Test"});
 
     engine.stack.list.push_back(new Stack::Action{[](){ 
 
@@ -47,14 +49,7 @@ int main() {
 
                 auto new_modified = file->getTimeModified();
 
-                if (file->last_modified != new_modified) {
-                
-                    file->callback(file);
-
-                    std::cout << file->path << " changed " << std::endl;
-                    
-                }
-                
+                if (file->last_modified != new_modified) file->callback(file);      
 
             }
 
@@ -133,7 +128,7 @@ int main() {
             framebuffers.create(names);
 
             names.resize(0);
-            for (auto *shader : ShaderProgram::pool) { names.push_back(shader->paths[0]); }
+            for (auto *shader : ShaderProgram::pool) { names.push_back(shader->shaders[0].get()->file.name); }
             shaders.create(names);
         
         

@@ -25,7 +25,7 @@ Stack::DrawCall::DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture, Fra
 }
 void Stack::DrawCall::run() { 
 
-    if (!active) return;
+    if (!active || !shader->loaded) return;
 
     fb->bind();
     if (texture) texture->bind();

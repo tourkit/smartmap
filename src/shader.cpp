@@ -8,11 +8,9 @@ namespace fs = std::filesystem;
 
 Shader::~Shader() { if (id) glDeleteShader(id);  }
 
-Shader::Shader(std::string path, ShaderProgram* program) : program(program) {
+Shader::Shader(std::string path)  {
 
     file.read("assets/shader/" + path);
-    file.survey = true;
-    file.callback = [this](File* file){ file->update(); this->program->reset(); };
 
     if (file.extension == "frag") type = GL_FRAGMENT_SHADER;
     else if (file.extension == "vert") type = GL_VERTEX_SHADER;
@@ -59,6 +57,7 @@ ShaderProgram::ShaderProgram(std::vector<std::string> paths, bool surveying) : p
 }
 
 void ShaderProgram::destroy() {  // add pool mgmt
+    loaded = false;
     if (id) glDeleteProgram(id); 
     shaders.resize(0);
 }
@@ -74,11 +73,20 @@ void ShaderProgram::reset() {
 
     id = glCreateProgram();
 
-    for (auto p:paths) shaders.push_back(std::make_unique<Shader>(p,this));
+    for (auto p:paths) shaders.push_back(std::make_unique<Shader>(p));
 
-    for (auto &shader:shaders) glAttachShader(id, shader->id);
+    for (auto &shader:shaders) {
+        
+        glAttachShader(id, shader->id);
+    
+        shader->file.survey = true;
+        shader->file.callback = [this](File* file){ file->update(); this->reset(); };
+    
+    }
 
     glLinkProgram( id );
+
+    loaded = true;
 
   }
 
