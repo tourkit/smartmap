@@ -11,6 +11,8 @@ struct StackWidget : GUI::Window {
         StringsBuffer vbos,textures, framebuffers, shaders;
 
         int current = 0;
+        // int current_vbo, current_tex = 0;
+        std::vector<std::array<int,5>> currents;
 
         Stack *stack;
 
@@ -34,7 +36,27 @@ struct StackWidget : GUI::Window {
             names.resize(0);
             for (auto *shader : ShaderProgram::pool) { names.push_back(shader->shaders[0].get()->file.name); }
             shaders.create(names);
-        
+
+            currents.resize(stack->list.size());
+
+            for (int i = 0; i< stack->list.size(); i++) { 
+
+                Stack::Cue* cue = stack->list[i];  
+
+                std::cout << typeid(*cue).hash_code() << " " << typeid(Stack::DrawCall).hash_code() << std::endl;          
+
+                if (typeid(*cue).hash_code() == typeid(Stack::DrawCall).hash_code()) {
+
+                    auto *dc = (Stack::DrawCall*)cue;
+
+                    currents[i][0] = std::distance(VBO::pool.begin(), std::find(VBO::pool.begin(), VBO::pool.end(), dc->vbo));
+                    currents[i][1] = std::distance(Texture::pool.begin(), std::find(Texture::pool.begin(), Texture::pool.end(), dc->texture));
+                    currents[i][2] = std::distance(FrameBuffer::pool.begin(), std::find(FrameBuffer::pool.begin(), FrameBuffer::pool.end(), dc->fb));
+                    currents[i][3] = std::distance(ShaderProgram::pool.begin(), std::find(ShaderProgram::pool.begin(), ShaderProgram::pool.end(), dc->shader));
+
+                }
+
+            }
         
         }
 
@@ -69,28 +91,30 @@ struct StackWidget : GUI::Window {
                     ImGui::TableHeadersRow();
                 }
 
-                int i = 0;
 
-                for (auto cue: stack->list) { 
-                    i++;
+                // int i = 0;
+                // for (auto cue: stack->list) { 
+                //     i++;
+                for (int i = 0; i< stack->list.size(); i++) { 
+
+                    Stack::Cue* cue = stack->list[i];
                     
                     // if (typeid(*cue).name() != typeid(Stack::DrawCall).name()) {
                     // ImGui::TableNextRow(); continue;}
 
-
                     ImGui::TableNextColumn();
 
-                    ImGui::Checkbox(("##cb"+std::to_string(i)).c_str(), &cue->active);
+                    ImGui::Checkbox(("##xxcb"+std::to_string(i)).c_str(), &cue->active);
                     ImGui::SameLine();
                     ImGui::Text(cue->name.c_str());
                     ImGui::TableNextColumn();
-                    if (ImGui::Combo("##wyuaetd1", &current, vbos.buffer)) { ((Stack::DrawCall*)cue)->vbo = VBO::pool[current]; }
+                    if (ImGui::Combo(("##xxvbo"+std::to_string(i)).c_str(), &currents[i][0], vbos.buffer)) { ((Stack::DrawCall*)cue)->vbo = VBO::pool[currents[i][0]]; }
                     ImGui::TableNextColumn();
-                    ImGui::Combo("##wyuaetd2", &current, textures.buffer);
+                    if (ImGui::Combo(("##xxtex"+std::to_string(i)).c_str(), &currents[i][1], textures.buffer)) { ((Stack::DrawCall*)cue)->texture = Texture::pool[currents[i][1]]; }
                     ImGui::TableNextColumn();
-                    ImGui::Combo("##wyuaetd3", &current, framebuffers.buffer);
+                    if (ImGui::Combo(("##xxfb"+std::to_string(i)).c_str(), &currents[i][2], framebuffers.buffer)) { ((Stack::DrawCall*)cue)->fb = FrameBuffer::pool[currents[i][2]]; }
                     ImGui::TableNextColumn();
-                    ImGui::Combo("##wyuaetd4", &current, shaders.buffer);
+                    if (ImGui::Combo(("##xxshader"+std::to_string(i)).c_str(), &currents[i][3], shaders.buffer)) { ((Stack::DrawCall*)cue)->shader = ShaderProgram::pool[currents[i][3]]; }
 
                 }
                 
