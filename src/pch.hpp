@@ -77,36 +77,19 @@ struct FT {
 struct vec2 { float x = 0, y = 0; };
 struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
 
-// 0 to 1
-// std::array<float, 4> is width height pos_x pos_y 
-static std::vector<std::array<float, 4>> matrice(unsigned int x, unsigned int y) {
-
-    std::vector<std::array<float, 4>> mat;
-
-    float xsize = 1. / x;
-    float ysize = 1. / y;
-
-    for (int row = 0; row < x; ++row) // for in for not in wrong order for opti ?
-      for (int col = 0; col < y; ++col) 
-        mat.push_back({xsize, ysize, xsize * row,  ysize * col});
-
-    return mat;
-
-}
-
 
 // -1 to 1
-// std::array<float, 4> is width height pos_x pos_y 
-static std::vector<std::array<float, 4>> matrice2(unsigned int x, unsigned int y) {
+// std::array<float, 6> is width height pos_x pos_y 
+static std::vector<std::array<float, 8>> matrice(unsigned int x, unsigned int y) {
 
-    std::vector<std::array<float, 4>> mat;
+    std::vector<std::array<float, 8>> mat;
 
     float xsize = 1. / x;
     float ysize = 1. / y;
 
     for (int row = 0; row < x; ++row) // for in for not in wrong order for opti ?
       for (int col = 0; col < y; ++col) 
-        mat.push_back({xsize, ysize, xsize * row*2-(1-xsize),  ysize * col*2-(1-ysize)});
+        mat.push_back({xsize, ysize, xsize * row*2-(1-xsize),  ysize * col*2-(1-ysize), xsize * row,  ysize * col,0,0});
 
     return mat;
 

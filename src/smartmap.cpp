@@ -52,9 +52,8 @@ SmartMap::SmartMap() {
     engine.dynamic_ubo.subscribers.push_back(shader); 
     engine.static_ubo.subscribers.push_back(shader); 
 
-    mat1UBO = engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position"}, 24 );
+    mat1UBO = engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position", "Position", "Position"}, 24 );
 
-    mat2UBO = engine.static_ubo.buffer.add("matriceUBO2", {"Size", "Position"}, 24 );
 
     fix1UBO = engine.dynamic_ubo.buffer.add("FixtureUBO", {
 
@@ -234,7 +233,13 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     //get attr offset from forin pool
     for (auto &layer:pool) for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }
     // merge the two ? no , c dla merde de faire comme ca tfasson
+
+
     for (auto &layer:pool) { matoffset+=layer->quantity*16; }
+    std::vector<std::array<float, 8>> mat;
+    mat = matrice(quantity_x,quantity_y);
+    mat1UBO->push(&mat[0],mat.size());
+    engine.static_ubo.upload(); 
 
     id = pool.size();
     // push to pool
@@ -243,12 +248,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     GLuint FW = width*scale, FH = height*scale;
     if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
-    std::vector<std::array<float, 4>> mat;
-    mat = matrice(quantity_x,quantity_y);   
-    memcpy(&engine.static_ubo.buffer.data[matoffset],&mat[0][0],quantity*16);
-    mat = matrice2(quantity_x,quantity_y);    
-    memcpy(&engine.static_ubo.buffer.data[matoffset],&mat[0][0],quantity*16);
-    engine.static_ubo.upload(); 
 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 

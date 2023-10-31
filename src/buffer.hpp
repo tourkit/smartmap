@@ -21,9 +21,9 @@ struct Buffer {
 
         void *data();
 
-        void set(const char* name, void* data, int id = 0);
+        void set(const char* name, void* data, int id = 0); // UNUSESD
 
-        void set(int member_id, void* data, int obj_id = 0);
+        void set(int member_id, void* data, int obj_id = 0); // UNUSESD
 
         Buffer* buffer;
 

@@ -5,7 +5,8 @@ layout (location = 1) in vec2 TEXCOORD;
 layout (location = 2) in vec2 RESOLUTION;
 layout (location = 3) in int OBJ;
 
-struct Rect { vec2 size, pos; };
+struct Rect { vec2 size;vec2 pos;  };
+struct Mat { vec2 size;vec2 norm;vec2 pos; vec2 xxxxalign; };
 
 struct Fixture {
 
@@ -25,7 +26,7 @@ struct Fixture {
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
-layout (binding = 1, std140) uniform static_ubo { Rect mat[24]; Rect matrice2[24]; };
+layout (binding = 1, std140) uniform static_ubo { Mat mat[24];  };
 
 flat out int obj;
 flat out int id;
@@ -61,7 +62,7 @@ void main() {
     if (obj==0) return;
 
     gl_Position.xy *= mat[id].size;
-    gl_Position.xy += mat[id].pos;
+    gl_Position.xy += mat[id].norm;
 
     if (mod(obj-1,2)  == 0) texcoord = gl_Position.xy*.5+.5;
 

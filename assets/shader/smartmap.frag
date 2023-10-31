@@ -20,6 +20,7 @@ uniform float feedback = 0;
 uniform float texchoice = 0;
 
 struct Rect { vec2 size;vec2 pos;  };
+struct Mat { vec2 size;vec2 norm;vec2 pos;  vec2 xxxxalign; };
 struct Fixture {
 
     float alpha;
@@ -50,7 +51,7 @@ uniform float debug9 = 0;
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
-layout (binding = 1, std140) uniform static_ubo { Rect mat[24]; Rect matrice2[24]; };
+layout (binding = 1, std140) uniform static_ubo { Mat mat[24]; };
 
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
@@ -299,7 +300,7 @@ void main() {
         
         if (mode==1)  {color = texture(pass, uv); return;}
 
-        for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, uv*matrice2[i].size+matrice2[i].pos);
+        for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, uv*mat[i].size+mat[i].pos);
 
         return;
          

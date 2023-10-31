@@ -3,7 +3,19 @@
         
 
 
-        void Buffer::Object::push(void *data, int quantity) { }
+        void Buffer::Object::push(void *data, int quantity) {
+
+            int first_byte = buffer_offset+(this->quantity*byte_size);
+
+            memcpy(&buffer->data[first_byte], data, quantity*byte_size);
+
+            this->quantity += quantity;
+
+            std::cout << this->quantity << std::endl;
+
+        }
+
+
         void Buffer::Object::addComponent(std::string component) { 
 
             components.push_back(Component::id(component.c_str())); 
@@ -14,7 +26,7 @@
 
         void *Buffer::Object::data() { return (void*)&buffer->data[buffer_offset]; }
 
-        void Buffer::Object::set(const char* name, void* data, int id) { 
+        void Buffer::Object::set(const char* name, void* data, int id) {  // UNUSESD
 
             Component *comp = nullptr;
 
@@ -38,7 +50,7 @@
 
         }
 
-        void Buffer::Object::set(int member_id, void* data, int obj_id) { 
+        void Buffer::Object::set(int member_id, void* data, int obj_id) {  // UNUSESD
 
             Component *comp = components[member_id];
 

@@ -104,13 +104,16 @@ void VBO::import(std::string path, uint16_t width, uint16_t height) {
     for (int i = 0; i < mesh->mNumVertices; i++) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
-    
+
         float dimentions[2] = {(float) width,(float) height};
 
-        vertices->set("Position", (void*)&vertex.x , i);
-        vertices->set("UV", (void*)&mesh->mTextureCoords[0][i].x , i);
-        vertices->set("Dimentions", (void*)&dimentions , i);
-        vertices->set("ID", (void*)&this->id , i);
+        std::array<char,28> data;
+        memcpy(&data[0], &vertex.x, 8);
+        memcpy(&data[8], &mesh->mTextureCoords[0][i].x, 8);
+        memcpy(&data[16], &dimentions, 8);
+        memcpy(&data[24], &this->id, 4);
+
+        vertices->push(&data[0]);
 
     }
     
@@ -118,9 +121,7 @@ void VBO::import(std::string path, uint16_t width, uint16_t height) {
         
         const aiFace& face = mesh->mFaces[i];
 
-        indices->set(0, (void*)&face.mIndices[0] , i);
-        indices->set(1, (void*)&face.mIndices[1] , i);
-        indices->set(2, (void*)&face.mIndices[2] , i);
+        indices->push(&face.mIndices[0]);
 
     }
 
