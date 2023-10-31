@@ -266,7 +266,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     
     // artnet links 
 
-    artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&engine.dynamic_ubo.buffer.data[fix1UBO->offset] });
+    artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&engine.dynamic_ubo.buffer.data[fix1UBO->buffer_offset] });
     auto &remap = artnet->universes[uni].remaps.back();
 
     for (auto &c:fix1UBO->components) { 

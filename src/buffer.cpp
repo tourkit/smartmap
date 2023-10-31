@@ -1,28 +1,24 @@
 #include "buffer.hpp"
 #include "widgets/buffer.hpp"
         
-        int Buffer::Object::create() {
-            
-            quantity+= 1;
-            buffer->updateBuffer();
-            return components.size()-1;
-        }
 
+
+        void Buffer::Object::push(void *data, int quantity) { }
         void Buffer::Object::addComponent(std::string component) { 
 
             components.push_back(Component::id(component.c_str())); 
 
-            size += Component::id(component.c_str())->size;
+            byte_size += Component::id(component.c_str())->size;
 
         }
 
-        void *Buffer::Object::data() { return (void*)&buffer->data[offset]; }
+        void *Buffer::Object::data() { return (void*)&buffer->data[buffer_offset]; }
 
         void Buffer::Object::set(const char* name, void* data, int id) { 
 
             Component *comp = nullptr;
 
-            int offset = this->offset;
+            int buffer_offset = this->buffer_offset;
 
             for (auto &c:components) { 
                 
@@ -33,11 +29,11 @@
 
                 }
 
-                offset += c->size;
+                buffer_offset += c->size;
             
             }
 
-            if (comp) { memcpy(&buffer->data[size*id+offset], data, comp->size); }
+            if (comp) { memcpy(&buffer->data[byte_size*id+buffer_offset], data, comp->size); }
             else{ std::cout << name << " does not recall" << std::endl; }
 
         }
@@ -46,18 +42,18 @@
 
             Component *comp = components[member_id];
 
-            int offset = this->offset;
-            for (size_t i = 0; i < member_id; i++) offset += components[i]->size;
+            int buffer_offset = this->buffer_offset;
+            for (size_t i = 0; i < member_id; i++) buffer_offset += components[i]->size;
            
-            if (comp) memcpy(&buffer->data[size*obj_id+offset], data, comp->size);
+            if (comp) memcpy(&buffer->data[byte_size*obj_id+buffer_offset], data, comp->size);
 
         }
 
 
 
-    Buffer::Object *Buffer::add(std::string name, std::vector<std::string> components, int quantity) { 
+    Buffer::Object *Buffer::add(std::string name, std::vector<std::string> components, int reserved) { 
 
-        objects.push_back({name, {}, quantity}); 
+        objects.push_back({name, {}, reserved}); 
 
         for (auto comp : components) objects.back().addComponent(comp);
         
@@ -91,7 +87,7 @@
 
         int size = 0;
         // for (auto d:datas) { size += d.size(); }
-        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.quantity; } }
+        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.reserved; } }
         data.resize(size);
         memset(&data[0],0,data.size());
 
@@ -100,12 +96,12 @@
 
         // memcpy(&data[0], &tdata[0], max_copy);
 
-        int offset = 0;
+        int buffer_offset = 0;
         for (auto &obj:objects) {
             
-            obj.offset = offset;
+            obj.buffer_offset = buffer_offset;
 
-            offset += obj.size*obj.quantity;
+            buffer_offset += obj.byte_size*obj.reserved;
             
         }
 

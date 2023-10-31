@@ -71,19 +71,19 @@ void VBO::upload() {
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER,  vertices->quantity*vertices->size , vertices->data(), GL_STATIC_DRAW );
+    glBufferData(GL_ARRAY_BUFFER,  vertices->reserved*vertices->byte_size , vertices->data(), GL_STATIC_DRAW );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->quantity*indices->size , indices->data(), GL_STATIC_DRAW );
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->reserved*indices->byte_size , indices->data(), GL_STATIC_DRAW );
 
     // make this parametric from Object vertices definition
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->size, (GLvoid *) 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) 0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->size, (GLvoid *) (2*sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (2*sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, vertices->size, (GLvoid *) (4*sizeof(float)));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (4*sizeof(float)));
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->size, (GLvoid *) (6*sizeof(float)));
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (6*sizeof(float)));
     glEnableVertexAttribArray(3);
 
 }
@@ -131,7 +131,7 @@ void VBO::draw(int count) {
 
     glBindVertexArray(vao); 
 
-    glDrawElementsInstanced(GL_TRIANGLES, indices->quantity*indices->size, GL_UNSIGNED_INT, 0, count);
+    glDrawElementsInstanced(GL_TRIANGLES, indices->reserved*indices->byte_size, GL_UNSIGNED_INT, 0, count);
 
 }
 	

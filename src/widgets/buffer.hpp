@@ -112,7 +112,7 @@
 
                 if (ImGui::SliderInt("current##uibocurrent", &elem_current,0,obj.quantity-1)) {}//UBO::toJSON();
             
-                int uniform_offset = obj.offset;
+                int uniform_offset = obj.buffer_offset;
                 for (auto c:obj.components) {
                     
                     // ImGui::Text((std::to_string(elem_current)+" - "+std::to_string(obj.size)).c_str());
@@ -120,7 +120,7 @@
                     
                     for (auto m:c->members) {
 
-                        float *value = (float*)&buffer->data[uniform_offset+(elem_current*obj.size)];
+                        float *value = (float*)&buffer->data[uniform_offset+(elem_current*obj.byte_size)];
 
                         if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str(), value, m.range_from, m.range_to)) { 
                             
@@ -151,7 +151,7 @@
                     ImGui::TableHeadersRow();
 
                     int comp_offset = 0;
-                    int members_offset = obj.offset;
+                    int members_offset = obj.buffer_offset;
                     int col_members_offset = 0;
 
                     for (auto &c:obj.components) {
@@ -188,12 +188,12 @@
                                         uint32_t min = 0, max = 32;
                                         const void *p_min = (void*)&min;
                                         const void *p_max = (void*)&max;
-                                        slider = ImGui::SliderScalar(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), ImGuiDataType_U32, (void*)&buffer->data[id*obj.size+members_offset+col_members_offset], p_min, p_max , "%u"); 
+                                        slider = ImGui::SliderScalar(("##tableview"+std::to_string(id*obj.byte_size+members_offset+col_members_offset)).c_str(), ImGuiDataType_U32, (void*)&buffer->data[id*obj.byte_size+members_offset+col_members_offset], p_min, p_max , "%u"); 
                                         
                                     }
                                     else { 
                                         
-                                        slider = ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.size+members_offset+col_members_offset], 0,1 );
+                                        slider = ImGui::SliderFloat(("##tableview"+std::to_string(id*obj.byte_size+members_offset+col_members_offset)).c_str(), (float*)&buffer->data[id*obj.byte_size+members_offset+col_members_offset], 0,1 );
                                     
                                     }
 

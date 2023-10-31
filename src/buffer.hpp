@@ -13,11 +13,11 @@ struct Buffer {
 
         std::vector<Component*> components;
 
-        int quantity,size = 0, offset = 0;
-        
-        int create();
+        int reserved , quantity = 0, byte_size = 0, buffer_offset = 0;
 
         void addComponent(std::string component);
+
+        void push(void *data, int quantity = 1);
 
         void *data();
 

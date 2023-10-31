@@ -20,9 +20,9 @@ int main() {
 
     auto &engine = Engine::getInstance();
 
-    SmartMap sm;
+    // SmartMap sm;
 
-    sm.import("config.json");
+    // sm.import("config.json");
 
     // ArtnetWidget aw(sm.artnet);
 
