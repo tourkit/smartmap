@@ -8,7 +8,7 @@
             return components.size()-1;
         }
 
-        void Buffer::Object::add(std::string component) { 
+        void Buffer::Object::addComponent(std::string component) { 
 
             components.push_back(Component::id(component.c_str())); 
 
@@ -59,7 +59,7 @@
 
         objects.push_back({name, {}, quantity}); 
 
-        for (auto comp : components) objects.back().add(comp);
+        for (auto comp : components) objects.back().addComponent(comp);
         
         updateBuffer(); 
 

@@ -91,7 +91,7 @@
             ImGui::SameLine();
             if (ImGui::Button("Add Component")) {
 
-                obj.add(Component::pool[comp_new]->name); 
+                obj.addComponent(Component::pool[comp_new]->name); 
 
                 buffer->updateBuffer();
                 updateBufferList();

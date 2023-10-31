@@ -17,7 +17,7 @@ struct Buffer {
         
         int create();
 
-        void add(std::string component);
+        void addComponent(std::string component);
 
         void *data();
 
