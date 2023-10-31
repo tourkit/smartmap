@@ -178,7 +178,7 @@ SmartMap::SmartMap() {
             Engine::getInstance().fb.bind(); 
             layer->buffer->bind();
             shader->use();
-            Engine::getInstance().quad.draw();
+            Engine::getInstance().quad->draw();
 
         }
 
@@ -251,8 +251,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
-    quadB = new VBO("quad.obj", FW, FH, "quadB");
-    quadA = new VBO("quad.obj", FW, FH, "quadA");
+    quadB = new VBO("quad.obj", FW, FH, 1, "quadB");
+    quadA = new VBO("quad.obj", FW, FH, 2, "quadA");
 
     buffer = new Texture(FW, FH, 0,1,GL_RGB8);
     pass = new Texture(FW, FH, 0,1, GL_RGB8);

@@ -25,7 +25,7 @@ struct VBO {
     void upload();
     void destroy();
 
-    VBO(std::string path = "quad.obj", uint16_t width=0, uint16_t height=0, std::string name = "VBO") ;
+    VBO(std::string path = "quad.obj", uint16_t width=0, uint16_t height=0, int id = 0, std::string name = "VBO") ;
 
     void draw(int count = 1);
 

@@ -18,6 +18,11 @@ struct StackWidget : GUI::Window {
 
         StackWidget(Stack *stack) : GUI::Window("Stack"), stack(stack) { 
 
+            update();
+
+        }
+
+        void update() {
 
             std::vector<std::string> names;
 
@@ -41,9 +46,7 @@ struct StackWidget : GUI::Window {
 
             for (int i = 0; i< stack->list.size(); i++) { 
 
-                Stack::Cue* cue = stack->list[i];  
-
-                std::cout << typeid(*cue).hash_code() << " " << typeid(Stack::DrawCall).hash_code() << std::endl;          
+                Stack::Cue* cue = stack->list[i];         
 
                 if (typeid(*cue).hash_code() == typeid(Stack::DrawCall).hash_code()) {
 
@@ -62,22 +65,11 @@ struct StackWidget : GUI::Window {
 
         void draw() override {
 
-            if (ImGui::CollapsingHeader("VBOs")) {
-
-
-
-                for (auto vbo: VBO::pool) { 
-
-                    // ImGui::Text(std::to_string(vbo->id).c_str());
-
-                };
-
-            }
             for (auto fb: FrameBuffer::pool) { 
 
                 // ImGui::Text(fb->name.c_str() );
-            };
 
+            };
 
             if (ImGui::BeginTable("table1", 5)) {
 

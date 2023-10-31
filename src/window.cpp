@@ -70,7 +70,6 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
     if (!fullscreen)setPos(offset_x, offset_y);
 
     glEnable(GL_BLEND);
-
 }
 
 static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { glViewport(0, 0, width, height); }

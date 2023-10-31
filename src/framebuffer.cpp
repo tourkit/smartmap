@@ -43,7 +43,7 @@ void FrameBuffer::link(Texture *texture) {
 void FrameBuffer::bind() { glViewport(0,0,width,height); glBindFramebuffer(GL_FRAMEBUFFER, id); }
 
 void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {
-    
+    std::cout << "clear " << name << std::endl;
     glViewport(0,0,width,height);
     glBindFramebuffer(GL_FRAMEBUFFER, id);
     glClearColor(r,g,b,a);

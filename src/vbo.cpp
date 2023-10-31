@@ -5,7 +5,7 @@
 
 #include "engine.hpp"  
 
-VBO::VBO(std::string path, uint16_t width, uint16_t height, std::string name) 
+VBO::VBO(std::string path, uint16_t width, uint16_t height, int id, std::string name) 
 : name(name), buffer(name) 
 {  
 
@@ -28,17 +28,18 @@ VBO::VBO(std::string path, uint16_t width, uint16_t height, std::string name)
     
     buffer.callback = [this](){ upload(); };
     
-    id = VBO::pool.size();
+    this->id = id;
+
+    if (id<0) this->id = VBO::pool.size();
 
     VBO::pool.push_back(this);  
-    
-    // if (!width || !height) {
+            
+    if (!width || !height) {
+ 
+        this->width = Engine::getInstance().window.width;
+        this->height = Engine::getInstance().window.height;
 
-            // this doesnt work  
-    //     this->width = Engine::getInstance().window.width;
-    //     this->height = Engine::getInstance().window.height;
-
-    // }
+    }
 
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 

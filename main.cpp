@@ -32,11 +32,23 @@ int main() {
 
     ShaderProgram shadersm({"smartmap.frag", "smartmap.vert"});
 
-    FrameBuffer fb(engine.window.width,engine.window.height, "Layer1");
-    
-    engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, &shadertex, nullptr, &fb, "Test to layer"});
-    
-    engine.stack.list.push_back(new Stack::DrawCall{&engine.quad, &shader, fb.texture, nullptr, "Test to window"});
+    ShaderProgram shaderfeed({"feedback.frag", "smartmap.vert"});
+
+    VBO feedbackquad;
+
+    FrameBuffer feedback(engine.window.width,engine.window.height, "Feedback");
+
+    FrameBuffer layer1(engine.window.width,engine.window.height, "Layer1");
+
+    engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shader, nullptr, &layer1, "Quad to layer"});
+
+    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shadertex, feedback.texture, &layer1, "Feedback to layer"});
+
+    engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shadertex, layer1.texture, &feedback, "layer to Feedback"});
+
+    engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shadertex, layer1.texture, nullptr, "layer to window"});
+
+    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shader, nullptr, nullptr, "Quad to layer"});
 
     FileWidget fw;
 
@@ -46,8 +58,4 @@ int main() {
  
 }
 
-
-
-
-    
 

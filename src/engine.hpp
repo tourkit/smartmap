@@ -20,7 +20,7 @@ struct Engine {
 
     FrameBuffer fb;
 
-    VBO quad;
+    VBO *quad;
 
     Stack stack;
     
