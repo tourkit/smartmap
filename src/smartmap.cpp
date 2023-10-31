@@ -147,15 +147,16 @@ SmartMap::SmartMap() {
         // this->stack.run();
 
         Engine::getInstance().fb.clear();
-        int offset = 0;
+        int matoffset = 0;
         int zzz = 0;
         for (auto layer:SmartMap::Layer::pool) { 
             // if (zzz >0 ) continue;
             // std::cout << "go: " << zzz++ << std::endl;
             layer->fb->clear(); // thus bind
 
-            shader->sendUniform("offset", offset);
-            offset+=layer->quantity;
+            // shader->sendUniform("fixoffset", fixoffset);
+            shader->sendUniform("matoffset", matoffset);
+            matoffset+=layer->quantity;
             shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
             shader->sendUniform("MatriceUBOSize", layer->quantity);
             
@@ -232,8 +233,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     //get attr offset from forin pool
     for (auto &layer:pool) for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }
-    // merge the two ?
-    for (auto &layer:pool) { matoffset+=layer->quantity*4; }
+    // merge the two ? no , c dla merde de faire comme ca tfasson
+    for (auto &layer:pool) { matoffset+=layer->quantity*16; }
 
     id = pool.size();
     // push to pool
@@ -244,9 +245,9 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     std::vector<std::array<float, 4>> mat;
     mat = matrice(quantity_x,quantity_y);   
-    memcpy(&engine.static_ubo.buffer.data[mat2UBO->offset],&mat[0][0],quantity*16);
+    memcpy(&engine.static_ubo.buffer.data[matoffset],&mat[0][0],quantity*16);
     mat = matrice2(quantity_x,quantity_y);    
-    memcpy(&engine.static_ubo.buffer.data[mat1UBO->offset],&mat[0][0],quantity*16);
+    memcpy(&engine.static_ubo.buffer.data[matoffset],&mat[0][0],quantity*16);
     engine.static_ubo.upload(); 
 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
