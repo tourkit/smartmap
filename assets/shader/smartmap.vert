@@ -35,6 +35,7 @@ out vec2 texcoord;
 out float FBratio;
 
 uniform int offset = 0;
+uniform int matoffset = 0;
 
 uniform float debug0 = 0;
 uniform float debug1 = 0;
@@ -50,7 +51,7 @@ void main() {
 
     obj = OBJ;
 
-    id = gl_InstanceID+offset;
+    id = gl_InstanceID;
     // if (obj == 3) id+=2;
     // if (obj == 4) id+=2;
 
@@ -60,8 +61,8 @@ void main() {
 
     if (obj==0) return;
 
-    gl_Position.xy *= mat[id].size;
-    gl_Position.xy += mat[id].pos;
+    gl_Position.xy *= mat[id+matoffset].size;
+    gl_Position.xy += mat[id+matoffset].pos;
 
     if (mod(obj-1,2)  == 0) texcoord = gl_Position.xy*.5+.5;
 
