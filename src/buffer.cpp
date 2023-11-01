@@ -11,8 +11,6 @@
 
             this->quantity += quantity;
 
-            std::cout << this->quantity << std::endl;
-
         }
 
 
