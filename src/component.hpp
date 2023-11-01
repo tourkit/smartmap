@@ -190,21 +190,29 @@ private:
         Component::create("float")
             .member<float>("value")
         ;
+        Component::create("Ratio")
+            .member<float>("value")
+        ;
+        Component::create("int")
+            .member<int>("value")
+        ;
         Component::create("Vertex")
             .member<uint32_t>("id")
-            ;
+        ;
         Component::create("DimentionsUI32")
             .member<uint32_t>("width")
             .member<uint32_t>("height")
-            ;
+        ;
         Component::create("Dimentions")
             .member<float>("width")
             .member<float>("height")
-            ;
-
+        ;
         Component::create("ID")
             .member<uint32_t>("value")
-            ;
+        ;
+        Component::create("Offset")
+            .member<uint32_t>("value")
+        ;
 
         auto &dmx = Component::create("DMX");
         for (size_t i = 0; i < 512; i++) dmx.member<uint8_t>("chan "+std::to_string(i));

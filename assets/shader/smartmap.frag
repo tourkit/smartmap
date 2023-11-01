@@ -36,7 +36,18 @@ struct Fixture {
     float ratio; 
 
 };
+struct Layer {
 
+    int width;
+    int height;
+    int fixture_first;
+    int fixture_count;
+    int canva_first;
+    int canva_count;
+    float ratio;
+    float xxx1; // alignment
+
+};
 uniform float debug0 = 0;
 uniform float debug1 = 0;
 uniform float debug2 = 0;
@@ -51,7 +62,7 @@ uniform float debug9 = 0;
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
-layout (binding = 1, std140) uniform static_ubo { Mat mat[24]; };
+layout (binding = 1, std140) uniform static_ubo { Mat mat[24]; Layer layer[10]; };
 
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
