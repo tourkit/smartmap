@@ -63,29 +63,41 @@
 
     Buffer::Object *Buffer::add(std::string name, std::vector<std::string> components, int reserved) { 
 
+        int buffer_offset = 0;
+        if (objects.size()) buffer_offset = objects.back().buffer_offset+(objects.back().reserved*objects.back().byte_size);
 
         objects.push_back({name, {}, reserved}); 
-        
-        std::string sentence = "layout (binding = 0, std140) uniform ";
-        sentence += this->name;
-        sentence += " { ";
-        
-        int i = 0; for (auto obj:objects) { 
-
-            sentence += obj.name;
-            sentence += "[";
-            sentence += std::to_string(obj.reserved);
-            sentence += "]; ";
-
-         }
-
-        sentence += " };";
-        std::cout << sentence << std::endl;
 
         for (auto comp : components) objects.back().addComponent(comp);
         
-        updateBuffer(); 
+        // std::vector<std::vector<char>> datas;
 
+        // int full_size = 0;   
+        // for (auto &obj:objects) { 
+            
+        //     datas.resize(datas.size()+1);
+
+        //     for (auto comp:obj.components) {
+                
+        //         datas.back().resize(datas.size()  + comp->size*obj.quantity); 
+
+        //         full_size += comp->size*obj.reserved;
+                
+        //     }
+
+
+        //     memcpy(&datas.back()[0],&data[obj.buffer_offset],datas.back().size());
+
+        // }
+        
+        int size = 0;
+        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.reserved; } }
+        data.resize(size);
+
+        callback();
+
+
+        objects.back().buffer_offset = buffer_offset;
         objects.back().buffer = this;
 
         return &objects.back();
@@ -96,24 +108,8 @@
 
     void Buffer::updateBuffer() {
 
-        // std::vector<std::vector<char>> datas;
-
-        // for (auto &obj:objects) { 
-            
-        //     datas.resize(datas.size()+1);
-
-        //     for (auto comp:obj.components) { 
-                
-        //         datas.back().resize(datas.size()  + comp->size*obj.quantity); 
-                
-        //     }
-
-        //     memcpy(&datas.back()[0],&data[obj.offset],datas.back().size());
-
-        // }
 
         int size = 0;
-        // for (auto d:datas) { size += d.size(); }
         for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.reserved; } }
         data.resize(size);
         memset(&data[0],0,data.size());
