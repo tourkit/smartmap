@@ -40,6 +40,7 @@ SmartMap::SmartMap() {
 
     artnet = new Artnet{"2.0.0.222"};
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
+    // layershader = new ShaderProgram({"layer.frag", "smartmap.vert"});
 
     auto &window = Engine::getInstance().window;
     window.setPos(2560-400,0);
@@ -49,11 +50,9 @@ SmartMap::SmartMap() {
     atlas = new Atlas("assets/media/",4096,2048);
     atlas->link(shader);
 
-    engine.dynamic_ubo.subscribers.push_back(shader); 
-    engine.static_ubo.subscribers.push_back(shader); 
-
-    mat1UBO = engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position", "Position", "Position"}, 24 );
-
+    
+    matUBO = engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position", "Position", "Position"}, 24 );
+    layersUBO = engine.static_ubo.buffer.add("layerUBO", {"int","int", "ID", "Offset", "ID", "Offset", "Ratio", "float"}, 10 );
 
     fix1UBO = engine.dynamic_ubo.buffer.add("FixtureUBO", {
 
@@ -230,16 +229,36 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
         // stack.list.push_back(new Stack::DrawCall{&engine.quad, sm.shader, nullptr, nullptr, "DC main"});
 
+    
+    fixture_first = fix1UBO->quantity;
+    std::vector<char> zeros;
+    zeros.resize(quantity*fix1UBO->byte_size);
+    fix1UBO->push(&zeros[0],quantity);
+    fix2UBO->push(&zeros[0],quantity);
+    
+
+
+
     //get attr offset from forin pool
     for (auto &layer:pool) for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }
     // merge the two ? no , c dla merde de faire comme ca tfasson
 
+    Buffer::Object::Entry layerUBO = layersUBO->create();
+    layerUBO.set<uint32_t>(0,width);
+    layerUBO.set<uint32_t>(1,height);
+    layerUBO.set<uint32_t>(2,0); // first fixture
+    layerUBO.set<uint32_t>(3,quantity); // count fixtures
+    layerUBO.set<uint32_t>(4,matUBO->quantity); // first canva
+    layerUBO.set<uint32_t>(5,(mode==Layer::Mode::Free?quantity:1)); // count canva
+    layerUBO.set<float>(6,width/(float)height);
+    layerUBO.set<float>(7,0);
 
     for (auto &layer:pool) { matoffset+=layer->quantity*16; }
     std::vector<std::array<float, 8>> mat;
     mat = matrice(quantity_x,quantity_y);
-    mat1UBO->push(&mat[0],mat.size());
+    matUBO->push(&mat[0],mat.size());
     engine.static_ubo.upload(); 
+
 
     id = pool.size();
     // push to pool

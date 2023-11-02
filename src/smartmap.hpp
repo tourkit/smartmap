@@ -12,14 +12,14 @@ struct SmartMap {
     SmartMap();
 
     static inline Artnet *artnet;
-    static inline ShaderProgram *shader;
+    static inline ShaderProgram *shader, *layershader;
     
     DMX::Fixture basic_fixture;
 
     static inline Buffer::Object *fix1UBO;
     static inline Buffer::Object *fix2UBO;
-    static inline Buffer::Object *mat1UBO;
-    static inline Buffer::Object *mat2UBO;
+    static inline Buffer::Object *matUBO;
+    static inline Buffer::Object *layersUBO;
 
     void import(std::string filepath); 
 
@@ -45,7 +45,7 @@ struct SmartMap {
 
         std::vector<uint8_t> black;
 
-        uint16_t chan,uni,attroffset = 0, matoffset = 0;
+        uint16_t chan,uni, fixture_first, attroffset = 0, matoffset = 0;
 
         Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
 
