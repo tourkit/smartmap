@@ -41,7 +41,7 @@ struct SmartMap {
 
         FrameBuffer *fb;
 
-        VBO *quadA, *quadB;
+        VBO *quad;
 
         std::vector<uint8_t> black;
 

@@ -152,7 +152,7 @@ SmartMap::SmartMap() {
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
 
             shader->use();
-            layer->quadA->draw(layer->quantity); 
+            layer->quad->draw(layer->quantity); 
             
             Engine::getInstance().fb->bind(); 
             layer->buffer->bind();
@@ -250,8 +250,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
-    quadB = new VBO("quad.obj", 1, "quadB");
-    quadA = new VBO("quad.obj", id, "quadA");
+    quad = new VBO("quad.obj", id, "quadSM");
 
     buffer = new Texture(FW, FH, 0,1,GL_RGB8);
     // pass = new Texture(FW, FH, 0,1, GL_RGB8);
