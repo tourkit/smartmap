@@ -13,7 +13,6 @@ struct FrameBuffer {
     Texture *texture;
     FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name="FrameBuffer");
     FrameBuffer(GLuint width, GLuint height,std::string name="FrameBuffer");
-    FrameBuffer(Texture *tex,std::string name="FrameBufferTex");
     void link(Texture *tex);
     ~FrameBuffer();
     void bind();

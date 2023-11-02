@@ -13,14 +13,6 @@ FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : width(w
     
 }
 
-FrameBuffer::FrameBuffer(Texture *texture,std::string name) : name(name) { 
-    
-    pool.push_back(this);
- 
-    link(texture);
- 
-}
-
 void FrameBuffer::link(Texture *texture) { 
 
     this->texture = texture;
