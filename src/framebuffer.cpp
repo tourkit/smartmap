@@ -9,18 +9,9 @@ FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : width(w
     
     pool.push_back(this); 
 
-    link(new Texture(width,height, 0,1,GL_RGB8 ));
-    
-}
-
-void FrameBuffer::link(Texture *texture) { 
-
-    this->texture = texture;
+    texture = new Texture(width,height, 0,1,GL_RGB8 );
 
     glGenFramebuffers(1, &id); 
-
-    width = texture->width;
-    height = texture->height;
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments++), GL_TEXTURE_2D, texture->id, 0); 
