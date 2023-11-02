@@ -28,17 +28,12 @@ struct Fixture {
 };
 struct Layer {
 
-    int width;
-    int height;
-    int fixture_first;
-    int fixture_count;
+    int framebuffer;
     int canva_first;
     int canva_count;
-    float ratio;
-    float xxx1; // alignment
+    int fixture_first;
 
 };
-
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };

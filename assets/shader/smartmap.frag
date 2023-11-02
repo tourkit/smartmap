@@ -28,14 +28,10 @@ struct Fixture {
 };
 struct Layer {
 
-    int width;
-    int height;
-    int fixture_first;
-    int fixture_count;
+    int framebuffer;
     int canva_first;
     int canva_count;
-    float ratio;
-    float xxx1; // alignment
+    int fixture_first;
 
 };
 

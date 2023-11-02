@@ -53,7 +53,7 @@ SmartMap::SmartMap() {
 
     
     matUBO = engine.static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 24 );
-    layersUBO = engine.static_ubo.buffer.add("Layer", {"int","int", "ID", "Offset", "ID", "Offset", "Ratio", "float"}, 10 );
+    smartlayersUBO = engine.static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );
 
     fix1UBO = engine.dynamic_ubo.buffer.add("Fixture", {
 
@@ -223,15 +223,17 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     for (auto &layer:pool) for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }
     // merge the two ? no , c dla merde de faire comme ca tfasson
 
-    Buffer::Object::Entry layerUBO = layersUBO->create();
-    layerUBO.set<uint32_t>(0,width);
-    layerUBO.set<uint32_t>(1,height);
-    layerUBO.set<uint32_t>(2,0); // first fixture
-    layerUBO.set<uint32_t>(3,quantity); // count fixtures
-    layerUBO.set<uint32_t>(4,matUBO->quantity); // first canva
-    layerUBO.set<uint32_t>(5,(mode==Layer::Mode::Free?quantity:1)); // count canva
-    layerUBO.set<float>(6,width/(float)height);
-    layerUBO.set<float>(7,0);
+    GLuint FW = width*scale, FH = height*scale;
+    if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
+    fb = new FrameBuffer(FW, FH); 
+
+    
+    Buffer::Object::Entry layerUBO = smartlayersUBO->create();
+
+    layerUBO.set<uint32_t>(0,fb->id);
+    layerUBO.set<uint32_t>(1,matUBO->quantity); // first canva
+    layerUBO.set<uint32_t>(2,(mode==Layer::Mode::Free?quantity:1)); 
+    layerUBO.set<uint32_t>(3,0); // irst fixture
 
     for (auto &layer:pool) { matoffset+=layer->quantity*16; }
     std::vector<std::array<float, 8>> mat;
@@ -244,8 +246,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     // push to pool
     pool.push_back(this);
         
-    GLuint FW = width*scale, FH = height*scale;
-    if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
 
 
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
@@ -258,7 +258,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
 
-    fb = new FrameBuffer(FW, FH); 
     
     // artnet links 
 

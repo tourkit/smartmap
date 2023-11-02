@@ -73,9 +73,7 @@ void VBO::upload() {
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (2*sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (4*sizeof(float)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (6*sizeof(float)));
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (4*sizeof(float)));
     glEnableVertexAttribArray(3);
 
 }

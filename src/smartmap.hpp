@@ -19,7 +19,7 @@ struct SmartMap {
     static inline Buffer::Object *fix1UBO;
     static inline Buffer::Object *fix2UBO;
     static inline Buffer::Object *matUBO;
-    static inline Buffer::Object *layersUBO;
+    static inline Buffer::Object *smartlayersUBO;
 
     void import(std::string filepath); 
 
