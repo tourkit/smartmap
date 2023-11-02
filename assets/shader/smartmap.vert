@@ -2,7 +2,6 @@
 
 layout (location = 0) in vec2 POSITION;
 layout (location = 1) in vec2 TEXCOORD;
-layout (location = 2) in vec2 RESOLUTION;  // should remov
 layout (location = 3) in int OBJ;
 
 struct Rect { vec2 size;vec2 pos;  };

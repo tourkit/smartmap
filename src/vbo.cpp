@@ -13,7 +13,6 @@ VBO::VBO(std::string path, uint16_t width, uint16_t height, int id, std::string 
 
         "Position",
         "UV",
-        "Dimentions",
         "ID",
         
     }, 4);
@@ -107,10 +106,9 @@ void VBO::import(std::string path, uint16_t width, uint16_t height) {
 
         float dimentions[2] = {(float) width,(float) height};
 
-        std::array<char,28> data;
+        std::array<char,20> data;
         memcpy(&data[0], &vertex.x, 8);
         memcpy(&data[8], &mesh->mTextureCoords[0][i].x, 8);
-        memcpy(&data[16], &dimentions, 8);
         memcpy(&data[24], &this->id, 4);
 
         vertices->push(&data[0]);
