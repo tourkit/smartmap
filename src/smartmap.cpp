@@ -155,7 +155,7 @@ SmartMap::SmartMap() {
             layer->quad->draw(layer->quantity); 
             
             Engine::getInstance().fb->bind(); 
-            layer->buffer->bind();
+            layer->fb->texture->bind();
             layershader->use();
             Engine::getInstance().quad->draw();
 
@@ -252,14 +252,13 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     quad = new VBO("quad.obj", id, "quadSM");
 
-    buffer = new Texture(FW, FH, 0,1,GL_RGB8);
     // pass = new Texture(FW, FH, 0,1, GL_RGB8);
     // FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
 
     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
 
-    fb = new FrameBuffer(buffer); 
+    fb = new FrameBuffer(FW, FH); 
     
     // artnet links 
 
