@@ -16,17 +16,14 @@ struct Buffer {
             Object* obj;
             
             template <typename T>
-            void set(int member_id, T data) { set(member_id, &data); }
-            
-            template <typename T>
-            void set(int member_id, T *data) {
+            void set(int member_id, T data) { 
 
                 Component *comp = obj->components[member_id];
 
                 int buffer_offset = obj->buffer_offset;
                 for (size_t i = 0; i < member_id; i++) buffer_offset += obj->components[i]->size;
             
-                if (comp) memcpy(&obj->buffer->data[obj->byte_size*id+buffer_offset], (void*)data, comp->size);                
+                if (comp) memcpy(&obj->buffer->data[obj->byte_size*id+buffer_offset], (void*)&data, comp->size);                
 
             }
 
