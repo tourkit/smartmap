@@ -203,6 +203,10 @@ private:
             .member<uint32_t>("width")
             .member<uint32_t>("height")
         ;
+        Component::create("Resolution")
+            .member<uint32_t>("width")
+            .member<uint32_t>("height")
+        ;
         Component::create("Dimentions")
             .member<float>("width")
             .member<float>("height")
