@@ -305,13 +305,14 @@ void main() {
         // could be in matrice or some UBO ?
         vec2 AR = vec2(1,.5625);
 
-        vec2 outuv = rectangle(uv, fix[id].size, fix[id].pos, fix[id].orientation, AR);
+        int tid = id+layer[obj].fixture_first;
+        vec2 outuv = rectangle(uv, fix[tid].size, fix[tid].pos, fix[tid].orientation, AR);
         
         if (outuv.x+outuv.y==0) return;
 
         outuv.y = 1-outuv.y; // flip for buffers
 
-        vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
+        vec4 rgba = vec4(fix[tid].r,fix[tid].g,fix[tid].b,fix[tid].alpha)*fix[tid].alpha;
 
         color = rgba*vec4(1); 
 

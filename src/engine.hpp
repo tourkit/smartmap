@@ -18,7 +18,7 @@ struct Engine {
 
     UBO dynamic_ubo, static_ubo;
 
-    Buffer::Object *framebuffers;
+    Buffer::Object *framebuffers, *matrices;
 
     FrameBuffer *fb;
 

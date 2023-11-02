@@ -19,7 +19,8 @@
             "columns" : 3, 
             "rows" : 2
 
-        },        { 
+        }
+        ,        { 
         
         "name" : "Layer 1", 
         "output" : "ArtNet 1", 
@@ -30,7 +31,7 @@
         "blending": "Additive",
         "fixture" : "Basic", 
         "start_universe" : 0, 
-        "start_channel" : 0, 
+        "start_channel" : 120, 
         "mode": "Free",
         "columns" : 2, 
         "rows" : 2

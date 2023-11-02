@@ -23,6 +23,9 @@ int main() {
     auto &engine = Engine::getInstance();
     engine.init();
 
+    SmartMap sm;
+
+    sm.import("config.json");
 
     std::cout <<  "\nSHADERS HEADER:" << std::endl;
     for (auto ubo:UBO::pool) { 
@@ -55,9 +58,6 @@ int main() {
     // auto *shader = new ShaderProgram({"basic.frag", "smartmap.vert"});
     // auto *shader2 = new ShaderProgram({"red.frag", "smartmap.vert"});
 
-    SmartMap sm;
-
-    sm.import("config.json");
 
     // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, shader2, nullptr, nullptr, "Quad to layer"});
     // engine.stack.list.push_back(new Stack::Action{[&](){

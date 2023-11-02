@@ -22,7 +22,7 @@ SmartMap::SmartMap() {
     atlas->link(shader);
 
     
-    matUBO = engine.static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 24 );
+    
     smartlayersUBO = engine.static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );
 
             
@@ -200,10 +200,9 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     fix2UBO->push(&zeros[0],quantity);
     
 
-
-
     //get attr offset from forin pool
-    for (auto &layer:pool) for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }
+    int first_fixture = 0;
+    for (auto &layer:pool) {first_fixture += layer->quantity; for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }}
     // merge the two ? no , c dla merde de faire comme ca tfasson
 
     GLuint FW = width*scale, FH = height*scale;
@@ -214,14 +213,14 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     Buffer::Object::Entry layerUBO = smartlayersUBO->create();
 
     layerUBO.set<uint32_t>(0,fb->id);
-    layerUBO.set<uint32_t>(1,matUBO->quantity); // first canva
+    layerUBO.set<uint32_t>(1,engine.matrices->quantity); // first canva
     layerUBO.set<uint32_t>(2,(mode==Layer::Mode::Free?quantity:1)); 
-    layerUBO.set<uint32_t>(3,0); // irst fixture
+    layerUBO.set<uint32_t>(3,first_fixture); // irst fixture
 
     for (auto &layer:pool) { matoffset+=layer->quantity*16; }
     std::vector<std::array<float, 8>> mat;
     mat = matrice(quantity_x,quantity_y);
-    matUBO->push(&mat[0],mat.size());
+    engine.matrices->push(&mat[0],mat.size());
     engine.static_ubo.upload(); 
 
 
@@ -232,7 +231,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     quad = new VBO("quad.obj", id, "quadSM");
 
-    // pass = new Texture(FW, FH, 0,1, GL_RGB8);
+    pass = new Texture(FW, FH, 0,1, GL_RGB8);
     // FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
 
     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
@@ -241,7 +240,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     
     // artnet links 
 
-    artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&engine.dynamic_ubo.buffer.data[fix1UBO->buffer_offset] });
+    artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&engine.dynamic_ubo.buffer.data[fix1UBO->buffer_offset+attroffset*4] });
     auto &remap = artnet->universes[uni].remaps.back();
 
     for (auto &c:fix1UBO->components) { 

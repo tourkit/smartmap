@@ -51,7 +51,6 @@ void main() {
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);  
 
 
-    
     int current = layer[obj].canva_first + id;
     gl_Position.xy *= mat[current].size;
     gl_Position.xy += mat[current].norm;

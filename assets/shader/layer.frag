@@ -48,22 +48,21 @@ void main() {
   
     // if (obj == 0) return;
 
+    if (layer[obj].canva_count == 1) {
+    
+        color += texture(pass, texcoord);
+
+        return;
+    
+    }
+    
     for (int i = 0; i < layer[obj].canva_count; i++) {
-        
-        vec2 uv = texcoord;
-        
-        if (layer[obj].canva_count>1) {
 
-            int current_canva = layer[obj].canva_first+i;
-            uv = uv*mat[current_canva].size+mat[current_canva].pos;
-        
-        }
+        int current_canva = layer[obj].canva_first+i;
 
-        color += texture(pass, uv);
+        color += texture(pass, texcoord*mat[current_canva].size+mat[current_canva].pos);
         
     }       
 
-    return;
-    
 }
 
