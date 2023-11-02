@@ -52,10 +52,10 @@ SmartMap::SmartMap() {
     atlas->link(shader);
 
     
-    matUBO = engine.static_ubo.buffer.add("matriceUBO", {"Size", "Position", "Position", "Position"}, 24 );
-    layersUBO = engine.static_ubo.buffer.add("layerUBO", {"int","int", "ID", "Offset", "ID", "Offset", "Ratio", "float"}, 10 );
+    matUBO = engine.static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 24 );
+    layersUBO = engine.static_ubo.buffer.add("Layer", {"int","int", "ID", "Offset", "ID", "Offset", "Ratio", "float"}, 10 );
 
-    fix1UBO = engine.dynamic_ubo.buffer.add("FixtureUBO", {
+    fix1UBO = engine.dynamic_ubo.buffer.add("Fixture", {
 
         "Opacity",
         "RGB",
@@ -69,7 +69,7 @@ SmartMap::SmartMap() {
         
     }, 24 );
 
-    fix2UBO = engine.dynamic_ubo.buffer.add("FixtureUBO2", {
+    fix2UBO = engine.dynamic_ubo.buffer.add("Fixture2", {
 
         "Opacity",
         "RGB",

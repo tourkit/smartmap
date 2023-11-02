@@ -47,6 +47,7 @@ struct Buffer {
 
         Entry create() { 
 
+
             std::vector<char> data;
             data.resize(byte_size);
             push(&data[0]);
@@ -54,12 +55,9 @@ struct Buffer {
 
         }
 
-
         Buffer* buffer;
 
     };
-
-
 
     std::string name;
 

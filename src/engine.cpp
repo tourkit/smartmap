@@ -11,7 +11,7 @@ Engine::Engine(uint16_t width, uint16_t height)
 
 void Engine::init() {
     
-    framebuffers = static_ubo.buffer.add("framebuffersUBO", {"int", "int","int", "int"}, 100 );
+    framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
 
     fb = new FrameBuffer(0,window.width,window.height,"mainFB");
 
