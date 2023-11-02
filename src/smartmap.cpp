@@ -143,7 +143,7 @@ SmartMap::SmartMap() {
 
     engine.stack.list.push_back(new Stack::Action{[this](){
 
-        Engine::getInstance().fb.clear();
+        Engine::getInstance().fb->clear();
 
         for (auto layer:SmartMap::Layer::pool) { 
             
@@ -154,7 +154,7 @@ SmartMap::SmartMap() {
             shader->use();
             layer->quadA->draw(layer->quantity); 
             
-            Engine::getInstance().fb.bind(); 
+            Engine::getInstance().fb->bind(); 
             layer->buffer->bind();
             layershader->use();
             Engine::getInstance().quad->draw();

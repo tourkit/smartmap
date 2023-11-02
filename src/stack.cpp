@@ -6,7 +6,7 @@ void Stack::Cue::run() {  }
 
 Stack::ClearCall::ClearCall(FrameBuffer *fb, std::string name)  { 
   
-    if (!fb) this->fb = &Engine::getInstance().fb; 
+    if (!fb) this->fb = Engine::getInstance().fb; 
     else this->fb = fb;
 
 }
@@ -19,7 +19,7 @@ Stack::DrawCall::DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture, Fra
     
     this->name = name;
 
-    if (!fb) this->fb = &Engine::getInstance().fb; 
+    if (!fb) this->fb = Engine::getInstance().fb; 
     else this->fb = fb;
 
 }

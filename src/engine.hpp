@@ -18,7 +18,7 @@ struct Engine {
 
     UBO dynamic_ubo, static_ubo;
 
-    FrameBuffer fb;
+    FrameBuffer *fb;
 
     VBO *quad;
 
