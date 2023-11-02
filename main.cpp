@@ -19,6 +19,7 @@ int main() {
     // Boilerplate();
 
     auto &engine = Engine::getInstance();
+    engine.init();
 
     SmartMap sm;
 

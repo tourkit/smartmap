@@ -18,6 +18,8 @@ struct Engine {
 
     UBO dynamic_ubo, static_ubo;
 
+    Buffer::Object *framebuffers;
+
     FrameBuffer *fb;
 
     VBO *quad;
@@ -28,6 +30,8 @@ struct Engine {
 
     BufferWidget bw;
     TexturesWidget tw;
+
+    void init();
 
     static Engine& getInstance() { static Engine instance;  return instance; }
 

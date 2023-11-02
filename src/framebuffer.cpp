@@ -1,13 +1,24 @@
 #include "framebuffer.hpp"  
 #include "texture.hpp"  
+#include "engine.hpp"  
 
 FrameBuffer::~FrameBuffer() { if (id) glDeleteFramebuffers(1, &id); }
 
-FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) { pool.push_back(this); }
+FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) { pool.push_back(this); 
+
+    auto n = engine.framebuffers->create();
+    n.set<uint32_t>(0,width);
+    n.set<uint32_t>(1,height);
+
+}
 
 FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : width(width), height(height), name(name) { 
     
     pool.push_back(this); 
+
+    auto n = engine.framebuffers->create();
+    n.set<uint32_t>(0,width);
+    n.set<uint32_t>(1,height);
 
     texture = new Texture(width,height, 0,1,GL_RGB8 );
 

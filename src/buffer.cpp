@@ -63,7 +63,24 @@
 
     Buffer::Object *Buffer::add(std::string name, std::vector<std::string> components, int reserved) { 
 
+
         objects.push_back({name, {}, reserved}); 
+        
+        std::string sentence = "layout (binding = 0, std140) uniform ";
+        sentence += this->name;
+        sentence += " { ";
+        
+        int i = 0; for (auto obj:objects) { 
+
+            sentence += obj.name;
+            sentence += "[";
+            sentence += std::to_string(obj.reserved);
+            sentence += "]; ";
+
+         }
+
+        sentence += " };";
+        std::cout << sentence << std::endl;
 
         for (auto comp : components) objects.back().addComponent(comp);
         

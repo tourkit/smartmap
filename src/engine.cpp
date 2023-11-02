@@ -6,9 +6,14 @@ Engine::Engine(uint16_t width, uint16_t height)
     dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
      gui(window.id) {
 
-    fb = new FrameBuffer(0,width,height,"mainFB");
+
+}
+
+void Engine::init() {
     
-    // framebuffersUBO = static_ubo.buffer.add("framebuffersUBO", {"Resolution"}, 100 );
+    framebuffers = static_ubo.buffer.add("framebuffersUBO", {"int", "int","int", "int"}, 100 );
+
+    fb = new FrameBuffer(0,window.width,window.height,"mainFB");
 
     quad = new VBO("quad.obj", 0, "quad");
 
