@@ -194,7 +194,7 @@ private:
             .member<float>("value")
         ;
         Component::create("int")
-            .member<int>("value")
+            .member<uint32_t>("value")
         ;
         Component::create("Vertex")
             .member<uint32_t>("id")
