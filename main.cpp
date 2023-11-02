@@ -14,6 +14,8 @@
 // #include "debug.hpp"
 // Debug debug;
 
+
+
 int main() { 
 
     // Boilerplate();
@@ -21,9 +23,6 @@ int main() {
     auto &engine = Engine::getInstance();
     engine.init();
 
-    SmartMap sm;
-
-    sm.import("config.json");
 
     std::cout <<  "\nSHADERS HEADER:" << std::endl;
     for (auto ubo:UBO::pool) { 
@@ -52,33 +51,27 @@ int main() {
 
     // ArtnetWidget aw(sm.artnet);
 
-    // ShaderProgram shader({"basic.frag", "basic.vert"});
 
-    // ShaderProgram shadertex({"texture.frag", "basic.vert"});
+    // auto *shader = new ShaderProgram({"basic.frag", "smartmap.vert"});
+    // auto *shader2 = new ShaderProgram({"red.frag", "smartmap.vert"});
 
-    // ShaderProgram shadersm({"smartmap.frag", "smartmap.vert"});
+    SmartMap sm;
 
-    // ShaderProgram shaderfeed({"feedback.frag", "smartmap.vert"});
+    sm.import("config.json");
 
-    // VBO feedbackquad;
+    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, shader2, nullptr, nullptr, "Quad to layer"});
+    // engine.stack.list.push_back(new Stack::Action{[&](){
 
-    // FrameBuffer feedback(engine.window.width,engine.window.height, "Feedback");
+    //     Engine::getInstance().fb->clear();
+    //     shader->use();
+    //     Engine::getInstance().quad->draw();
 
-    // FrameBuffer layer1(engine.window.width,engine.window.height, "Layer1");
 
-    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shader, nullptr, &layer1, "Quad to layer"});
+    // }, "SM layers al at once :("});
 
-    // // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shadertex, feedback.texture, &layer1, "Feedback to layer"});
-
-    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shadertex, layer1.texture, &feedback, "layer to Feedback"});
-
-    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shadertex, layer1.texture, nullptr, "layer to window"});
-
-    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, &shader, nullptr, nullptr, "Quad to layer"});
+    StackWidget sw(&engine.stack);
 
     FileWidget fw;
-
-    // StackWidget sw(&engine.stack);
 
     Engine::Run();
  

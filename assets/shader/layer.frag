@@ -8,7 +8,7 @@ flat in int obj;
 flat in int id;
 in vec2 texcoord;
 
-struct Res { int width, height;  };
+struct Framebuffer { int width, height, x, y;  };
 struct Rect { vec2 size;vec2 pos;  };
 struct Mat { vec2 size;vec2 norm;vec2 pos;  vec2 xxxxalign; };
 struct Fixture {
@@ -34,22 +34,22 @@ struct Layer {
     int fixture_first;
 
 };
+
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
-layout (binding = 1, std140) uniform static_ubo { Res framebuffer[100]; Mat mat[24]; Layer layer[10]; };
-
+layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[24]; Layer layer[10]; };
 void main() {
 
-    color = vec4(0);
+    color = vec4(0,texcoord.x,1,1);
 
-    for (int i = 0; i < layer[obj].canva_count; i++) {
+    // for (int i = 0; i < layer[obj].canva_count; i++) {
         
-        int current_canva = layer[obj].canva_first+i;
+    //     int current_canva = layer[obj].canva_first+i;
         
-        color += texture(pass, texcoord*mat[current_canva].size+mat[current_canva].pos);
+    //     color += texture(pass, texcoord*mat[current_canva].size+mat[current_canva].pos);
         
-    }       
+    // }       
 
     return;
     

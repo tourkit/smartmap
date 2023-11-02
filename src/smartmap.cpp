@@ -4,49 +4,19 @@
 
 #include "imgui/imgui.h"
 
-#include <filesystem>
-
-namespace fs = std::filesystem;
-
-#ifndef SM_DEBUG
-#define SM_DEBUG
-#endif
-
-#ifdef SM_DEBUG
-
-#include <ctime>
-#include <cstdint>
-
-static inline std::map<int,int> filechecks;
-static inline int survey_count = 0;
-static inline void survey(const char* path, std::function<void()> cb = [](){}) {
-
-    static auto startTime = fs::file_time_type::clock::now();
-
-    auto lastWriteTime = fs::last_write_time(path);
-    auto mSecs = std::chrono::duration_cast<std::chrono::milliseconds>(lastWriteTime - startTime).count();
-
-    if (filechecks[survey_count] != mSecs) {
-        filechecks[survey_count] = mSecs;
-        cb();
-    }
-    survey_count++;
-
-}
-
-#endif 
-
 SmartMap::SmartMap() {
 
     artnet = new Artnet{"2.0.0.222"};
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
-    layershader = new ShaderProgram({"layer.frag", "smartmap.vert"});
     basicshader = new ShaderProgram({"basic.frag", "smartmap.vert"});
+    layershader = new ShaderProgram({"layer.frag", "smartmap.vert"});
 
+            
     auto &window = Engine::getInstance().window;
     window.setPos(2560-400,0);
     window.setSize(400,300);
-    
+  
+              
     shader->use();
     atlas = new Atlas("assets/media/",4096,2048);
     atlas->link(shader);
@@ -55,6 +25,7 @@ SmartMap::SmartMap() {
     matUBO = engine.static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 24 );
     smartlayersUBO = engine.static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );
 
+            
     fix1UBO = engine.dynamic_ubo.buffer.add("Fixture", {
 
         "Opacity",
@@ -141,34 +112,46 @@ SmartMap::SmartMap() {
 
 
 
+            
     engine.stack.list.push_back(new Stack::Action{[this](){
 
+            
         Engine::getInstance().fb->clear();
 
+            
         for (auto layer:SmartMap::Layer::pool) { 
+            
+            shader->use();
             
             layer->fb->clear(); // thus bind
             
+            
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
 
-            shader->use();
+            
             layer->quad->draw(layer->quantity); 
             
+            
             Engine::getInstance().fb->bind(); 
+            
             layer->fb->texture->bind();
             layershader->use();
-            Engine::getInstance().quad->draw();
+            
 
+            Engine::getInstance().quad->draw();
+            
         }
 
     }, "SM layers al at once :("});
 
+            
 } 
 
 #include "include/vendor/rapidjson/document.h"
 #include "include/vendor/rapidjson/stringbuffer.h"
 
 void SmartMap::import(std::string filepath) {
+
 
     rapidjson::Document json;
     json.Parse(File(filepath).data.data());
@@ -200,7 +183,7 @@ void SmartMap::import(std::string filepath) {
         );
     
     }
-
+    
 }
 
 SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
@@ -246,9 +229,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     // push to pool
     pool.push_back(this);
         
-
-
-    shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
     quad = new VBO("quad.obj", id, "quadSM");
 

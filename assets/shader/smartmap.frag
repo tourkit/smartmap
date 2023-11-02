@@ -8,7 +8,7 @@ flat in int obj;
 flat in int id;
 in vec2 texcoord;
 
-struct Res { int width, height, x, y;  };
+struct Framebuffer { int width, height, x, y;  };
 struct Rect { vec2 size;vec2 pos;  };
 struct Mat { vec2 size;vec2 norm;vec2 pos;  vec2 xxxxalign; };
 struct Fixture {
@@ -38,7 +38,7 @@ struct Layer {
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
-layout (binding = 1, std140) uniform static_ubo { Res framebuffer[100]; Mat mat[24]; Layer layer[10]; };
+layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[24]; Layer layer[10]; };
 
 flat in vec2 FBResolution;
 in float FBratio;

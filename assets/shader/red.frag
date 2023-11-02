@@ -39,11 +39,10 @@ layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
 layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[24]; Layer layer[10]; };
-void main() { 
-     
-   color = vec4(0,1-texcoord.x,1,1);      
-   // color = ve.c4(mat[0].pos.x+matrice2[0].pos.x);
 
+void main() { 
+
+    color = vec4(0,1,0,1); return;
+    
 }
 
- 
