@@ -6,7 +6,7 @@ Engine::Engine(uint16_t width, uint16_t height)
     dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
     fb(0,width,height,"mainFB"), gui(window.id) {
 
-    quad = new VBO("quad.obj",width,height, 0, "quad");
+    quad = new VBO("quad.obj", 0, "quad");
 
     stack.list.push_back(new Stack::Action{[](){ 
 
