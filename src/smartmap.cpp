@@ -40,7 +40,8 @@ SmartMap::SmartMap() {
 
     artnet = new Artnet{"2.0.0.222"};
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
-    // layershader = new ShaderProgram({"layer.frag", "smartmap.vert"});
+    layershader = new ShaderProgram({"layer.frag", "smartmap.vert"});
+    basicshader = new ShaderProgram({"basic.frag", "smartmap.vert"});
 
     auto &window = Engine::getInstance().window;
     window.setPos(2560-400,0);
@@ -142,41 +143,20 @@ SmartMap::SmartMap() {
 
     engine.stack.list.push_back(new Stack::Action{[this](){
 
-        // this->stack.run();
-
         Engine::getInstance().fb.clear();
-        int matoffset = 0;
-        int zzz = 0;
+
         for (auto layer:SmartMap::Layer::pool) { 
-            // if (zzz >0 ) continue;
-            // std::cout << "go: " << zzz++ << std::endl;
-            layer->fb->clear(); // thus bind
-
-            // shader->sendUniform("fixoffset", fixoffset);
-            shader->sendUniform("matoffset", matoffset);
-            matoffset+=layer->quantity;
-            shader->sendUniform("mode", ((layer->mode==Layer::Mode::Grid)?1.0f:0.0f));
-            shader->sendUniform("MatriceUBOSize", layer->quantity);
             
-            layer->FTbuffer->bind();
+            layer->fb->clear(); // thus bind
+            
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
+
+            shader->use();
             layer->quadA->draw(layer->quantity); 
-
-            layer->pass->bind();
-            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
-            layer->quadB->draw(layer->quantity);
-
-            layer->pass->read(layer->buffer);
-
-            // glBindImageTexture(0, *outBlur, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
-            // glBindImageTexture(1, *outBuf, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
-            // blur_x->use(FW*.5/16,FH*.5/16);
-            // blur_y->use(FW*.5/16,FH*.5/16);
-            // glMemoryBarrier( GL_ALL_BARRIER_BITS ); 
             
             Engine::getInstance().fb.bind(); 
             layer->buffer->bind();
-            shader->use();
+            layershader->use();
             Engine::getInstance().quad->draw();
 
         }
@@ -271,11 +251,11 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     shader->sendUniform("MatriceUBOSize", quantity_x*quantity_y);
 
     quadB = new VBO("quad.obj", FW, FH, 1, "quadB");
-    quadA = new VBO("quad.obj", FW, FH, 2, "quadA");
+    quadA = new VBO("quad.obj", FW, FH, id, "quadA");
 
     buffer = new Texture(FW, FH, 0,1,GL_RGB8);
-    pass = new Texture(FW, FH, 0,1, GL_RGB8);
-    FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
+    // pass = new Texture(FW, FH, 0,1, GL_RGB8);
+    // FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
 
     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);

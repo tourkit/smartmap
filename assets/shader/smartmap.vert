@@ -52,12 +52,12 @@ void main() {
     id = gl_InstanceID;
 
     
-    gl_Position = vec4(POSITION.x,POSITION.y,0,1);
+    gl_Position = vec4(POSITION.x,POSITION.y,0,1);  
 
     int current = layer[obj].canva_first + id;
     gl_Position.xy *= mat[current].size;
     gl_Position.xy += mat[current].norm;
 
-    if (mod(obj-1,2)  == 0) texcoord = gl_Position.xy*.5+.5;
+    // if (mod(obj-1,2)  == 0) texcoord = gl_Position.xy*.5+.5;
 
 }

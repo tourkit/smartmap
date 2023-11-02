@@ -4,20 +4,9 @@ out vec4 color;
 
 uniform sampler2D pass;
 uniform sampler2D mediasAtlas;
-
 flat in int obj;
 flat in int id;
-flat in vec2 FBResolution;
-
 in vec2 texcoord;
-in float FBratio;
-
-uniform int fixcount = 1;
-
-uniform float mode = 1;
-
-uniform float feedback = 0;
-uniform float texchoice = 0;
 
 struct Rect { vec2 size;vec2 pos;  };
 struct Mat { vec2 size;vec2 norm;vec2 pos;  vec2 xxxxalign; };
@@ -48,6 +37,19 @@ struct Layer {
     float xxx1; // alignment
 
 };
+
+layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
+
+layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
+layout (binding = 1, std140) uniform static_ubo { Mat mat[24]; Layer layer[10]; };
+
+flat in vec2 FBResolution;
+in float FBratio;
+uniform int fixcount = 1;
+uniform float mode = 1;
+uniform float feedback = 0;
+uniform float texchoice = 0;
+
 uniform float debug0 = 0;
 uniform float debug1 = 0;
 uniform float debug2 = 0;
@@ -58,11 +60,6 @@ uniform float debug6 = 0;
 uniform float debug7 = 0;
 uniform float debug8 = 0;
 uniform float debug9 = 0;
-
-layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
-
-layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
-layout (binding = 1, std140) uniform static_ubo { Mat mat[24]; Layer layer[10]; };
 
 uniform int MatriceUBOSize = 1; // could move to matriceUBO a var called "size"
 
@@ -302,103 +299,25 @@ vec4 s1plx(vec2 uv, float height, float zoom, float contrast) {
 uniform int strobe = 0;
 
 void main() {
-    // vec2 uv = gl_FragCoord.xy/FBResolution.xy;
+
+
     vec2 uv = texcoord;
-
-    if (obj == 0) { 
-
-        color = vec4(0);
-        
-        if (mode==1)  {color = texture(pass, uv); return;}
-
-        for (int i = 0; i < MatriceUBOSize; i++) color += texture(pass, uv*mat[i].size+mat[i].pos);
-
-        return;
-         
-    }
-    
-    // if (id!=0) return;
-    // color = vec4(uv.x); return;
-    
-    if (mod(obj-1,2) == 0) {
-
-        color = texture(pass,uv)-(1-min(.998,fix[id].feedback)); 
-
-        return;
-
-    }
-    
-    if (mod(obj-1,2) == 1) { 
                 
         color = vec4(0);
 
         // could be in matrice or some UBO ?
         vec2 AR = vec2(1,.5625);
-        // if (FBratio > 1.) AR.x = FBratio;
-        // else AR.y = FBratio;
 
         vec2 outuv = rectangle(uv, fix[id].size, fix[id].pos, fix[id].orientation, AR);
-        float steps = 12;
-        float feedback_smoothing = 1;
-        if (fix[id].feedback != 0) for (float i = 1; i < steps; i++)  {
         
-            if (outuv.x+outuv.y>0) break;
-
-            float angle = fix[id].orientation;
-            vec2 size = fix[id].size;
-            vec2 pos = fix[id].pos;
-            
-            float step = i/steps;
-
-            feedback_smoothing -= step*debug0; // should be based on frame distance , maybe abs(pos.x-fix2[id].pos.x) ?
-            
-            // 3.14159265359 // 6.2831853072
-            if (abs(angle-fix2[id].orientation)<.25) angle = mix(angle,fix2[id].orientation,step);
-            if (abs(size.x-fix2[id].size.x)<.015 && abs(size.y-fix2[id].size.y)<.015) size = mix(size,fix2[id].size,step);
-            if (abs(pos.x-fix2[id].pos.x)<.12 && abs(pos.y-fix2[id].pos.y)<.12) pos = mix(pos,fix2[id].pos,step);
-
-            outuv = rectangle(uv, size, pos, angle, AR); 
-            
-        }
-
         if (outuv.x+outuv.y==0) return;
 
         outuv.y = 1-outuv.y; // flip for buffers
 
         vec4 rgba = vec4(fix[id].r,fix[id].g,fix[id].b,fix[id].alpha)*fix[id].alpha;
 
-        int gobo_id = int(fix[id].gobo[0]*255)%127;
+        color = rgba*vec4(1); 
 
-        if (gobo_id == 0) { color = rgba*vec4(1); }
-
-        else { if (gobo_id == 10) { color = rgba*texture(pass,(outuv*mat[id].size*.99+mat[id].pos)).r; }
-
-        else { if (gobo_id == 8) { color = rgba*fromAtlas(outuv, int(fix[id].gobo[1]*15)); }
-
-        else {     if (gobo_id == 1) { color = rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]); }
-        else {
-
-            outuv *= .0666; // dunno why gotta do this, works for all ....
-            outuv *=2;
-            outuv -=1;
-
-            if (gobo_id == 2) color = rgba*grid2(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-            else if (gobo_id == 3) color = rgba*gradient(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-            else if (gobo_id == 4) color = rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 0, fix[id].gobo[2]);
-            else if (gobo_id == 5) color = rgba*burst(rotate(outuv, fix[id].gobo[3]), fix[id].gobo[1], 1, fix[id].gobo[2]);
-            else if (gobo_id == 6) color = rgba*flower(outuv*(1/fix[id].size), fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-            else if (gobo_id == 7) color = rgba*border(outuv, fix[id].gobo[1]);
-            else if (gobo_id == 9) color = rgba*s1plx(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]);
-
-        }}}}
-        
-        if (fix[id].gobo[0] > .5) color = vec4(1)-color;
-
-        if (fix[id].strobe>0) color *= mod(strobe,2+(1-fix[id].strobe)*20); 
-
-        color *= feedback_smoothing;
-
-    }
 
     return;
 
