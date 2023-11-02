@@ -8,8 +8,6 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name)
     
     binding = binding_count++;
 
-    std::cout << "UBO \"" << name << "\" binding on " << binding << std::endl;
-
     // can do better ^^
     if (binding > 100) std::cout << "MAX_UBO might soon be reached";
 
