@@ -39,17 +39,29 @@ layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
 layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[24]; Layer layer[10]; };
+
 void main() {
 
-    color = vec4(0,texcoord.x,1,1);
+    // color = vec4(0,texcoord.x,1,1); return;
 
-    // for (int i = 0; i < layer[obj].canva_count; i++) {
+    color = vec4(0);
+  
+    // if (obj == 0) return;
+
+    for (int i = 0; i < layer[obj].canva_count; i++) {
         
-    //     int current_canva = layer[obj].canva_first+i;
+        vec2 uv = texcoord;
         
-    //     color += texture(pass, texcoord*mat[current_canva].size+mat[current_canva].pos);
+        if (layer[obj].canva_count>1) {
+
+            int current_canva = layer[obj].canva_first+i;
+            uv = uv*mat[current_canva].size+mat[current_canva].pos;
         
-    // }       
+        }
+
+        color += texture(pass, uv);
+        
+    }       
 
     return;
     

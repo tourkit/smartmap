@@ -1,22 +1,53 @@
-// VERTEX SHADER
-
 #version 430 core
 
-layout (location = 0) in vec2 POS;
+layout (location = 0) in vec2 POSITION;
 layout (location = 1) in vec2 TEXCOORD;
-layout (location = 2) in vec2 RES;
 layout (location = 3) in int OBJ;
 
+struct Framebuffer { int width, height, x, y;  };
 struct Rect { vec2 size;vec2 pos;  };
-layout (binding = 0, std140) uniform static_ubo { Rect mat[24];  };
-layout (binding = 1, std140) uniform dynamic_ubo {  Rect matrice2[24]; };
-flat out float obj;
+struct Mat { vec2 size;vec2 norm;vec2 pos; vec2 xxxxalign; };
+
+struct Fixture {
+
+    float alpha;
+    float r;
+    float g;
+    float b;
+    vec2 pos;
+    vec2 size;
+    vec4 gobo;
+    float orientation; 
+    float feedback; 
+    float strobe;  
+    float ratio; // unused for now mostly for alignment
+
+};
+struct Layer {
+
+    int framebuffer;
+    int canva_first;
+    int canva_count;
+    int fixture_first;
+
+};
+layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
+
+layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[24]; Fixture fix2[24]; };
+layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[24]; Layer layer[10]; };
+
+flat out int obj;
+flat out int id;
+
 out vec2 texcoord;
-void main() { 
-    
-    obj = OBJ;
+
+void main() {
+
     texcoord = TEXCOORD;
+    obj = OBJ;
+    id = gl_InstanceID;
+
     
-    gl_Position = vec4(POS,0,1);
+    gl_Position = vec4(POSITION.x,POSITION.y,0,1);  
     
 }
