@@ -69,6 +69,25 @@
         objects.push_back({name, {}, reserved}); 
 
         for (auto comp : components) objects.back().addComponent(comp);
+
+        
+        int size = 0;
+        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.reserved; } }
+        data.resize(size);
+
+        callback();
+
+        objects.back().buffer_offset = buffer_offset;
+        objects.back().buffer = this;
+
+        return &objects.back();
+
+    }
+
+    void Buffer::reset() { objects.resize(0); data.resize(0); }
+
+    void Buffer::updateBuffer() {
+
         
         // std::vector<std::vector<char>> datas;
 
@@ -90,25 +109,6 @@
 
         // }
         
-        int size = 0;
-        for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.reserved; } }
-        data.resize(size);
-
-        callback();
-
-
-        objects.back().buffer_offset = buffer_offset;
-        objects.back().buffer = this;
-
-        return &objects.back();
-
-    }
-
-    void Buffer::reset() { objects.resize(0); data.resize(0); }
-
-    void Buffer::updateBuffer() {
-
-
         int size = 0;
         for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.reserved; } }
         data.resize(size);
