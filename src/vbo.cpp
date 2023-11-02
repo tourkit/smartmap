@@ -35,7 +35,7 @@ VBO::VBO(std::string path, int id, std::string name)
 
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
-    import(path, 1,1); 
+    import(path); 
 
     upload();
     
@@ -80,7 +80,7 @@ void VBO::upload() {
 
 }
 
-void VBO::import(std::string path, uint16_t width, uint16_t height) {    
+void VBO::import(std::string path) {    
 
     Assimp::Importer importer;
 
@@ -97,12 +97,10 @@ void VBO::import(std::string path, uint16_t width, uint16_t height) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
 
-        float dimentions[2] = {(float) width,(float) height};
-
         std::array<char,20> data;
         memcpy(&data[0], &vertex.x, 8);
         memcpy(&data[8], &mesh->mTextureCoords[0][i].x, 8);
-        memcpy(&data[24], &this->id, 4);
+        memcpy(&data[16], &this->id, 4);
 
         vertices->push(&data[0]);
 

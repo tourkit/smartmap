@@ -16,11 +16,9 @@ struct VBO {
 
     GLuint vao=0, vbo, ibo, id;
 
-    uint16_t width, height;
-
     ~VBO(); 
 
-    void import(std::string path, uint16_t width, uint16_t height);
+    void import(std::string path);
 
     void upload();
     void destroy();
