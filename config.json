@@ -16,27 +16,29 @@
             "start_universe" : 0, 
             "start_channel" : 0, 
             "mode": "Grid",
-            "columns" : 3, 
+            "columns" : 2, 
             "rows" : 2
 
-        }
-        ,        { 
-        
-        "name" : "Layer 1", 
-        "output" : "ArtNet 1", 
-        "width": 125,
-        "height": 50,
-        "offset_x": 0,
-        "offset_y": 0,
-        "blending": "Additive",
-        "fixture" : "Basic", 
-        "start_universe" : 0, 
-        "start_channel" : 120, 
-        "mode": "Free",
-        "columns" : 2, 
-        "rows" : 2
+        },
 
-    }
+        { 
+        
+            "name" : "Layer 1", 
+            "output" : "ArtNet 1", 
+            "width": 125,
+            "height": 50,
+            "offset_x": 0,
+            "offset_y": 0,
+            "blending": "Additive",
+            "fixture" : "Basic", 
+            "start_universe" : 0, 
+            "start_channel" : 0, 
+            "mode": "Free",
+            "columns" : 4, 
+            "rows" : 1
+
+        }
+   
         
     ],
 

@@ -109,40 +109,44 @@ SmartMap::SmartMap() {
         artnet->run();
 
     }, "Artnet"});
-
-
-
             
     engine.stack.list.push_back(new Stack::Action{[this](){
-
-            
-        Engine::getInstance().fb->clear();
-
-            
+  
         for (auto layer:SmartMap::Layer::pool) { 
             
             shader->use();
             
             layer->fb->clear(); // thus bind
             
-            
             glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
 
+            layer->pass->bind();
+            atlas->texture->bind();
             
             layer->quad->draw(layer->quantity); 
             
+            layer->pass->read(layer->fb->texture);
             
-            Engine::getInstance().fb->bind(); 
-            
-            layer->fb->texture->bind();
-            layershader->use();
-            
+        }
 
+    }, "SM A"});
+
+    engine.stack.list.push_back(new Stack::Action{[this](){
+        
+        Engine::getInstance().fb->bind();
+            
+        layershader->use();
+
+        for (auto layer:SmartMap::Layer::pool) { 
+
+            layer->fb->texture->bind();
+            
             layer->quad->draw();
             
         }
 
-    }, "SM layers al at once :("});
+    }, "SM B"});
+    // engine.stack.list.back()->active=false;
 
             
 } 

@@ -10,15 +10,9 @@
 #include "widgets/artnet_widget.hpp"
 #include "widgets/file.hpp"
 #include "widgets/stack.hpp"
-// #include "boilerplate.hpp"
-// #include "debug.hpp"
-// Debug debug;
-
-
 
 int main() { 
 
-    // Boilerplate();
 
     auto &engine = Engine::getInstance();
     engine.init();
@@ -54,21 +48,12 @@ int main() {
 
     // ArtnetWidget aw(sm.artnet);
 
-
-    // auto *shader = new ShaderProgram({"basic.frag", "smartmap.vert"});
-    // auto *shader2 = new ShaderProgram({"red.frag", "smartmap.vert"});
-
-
-    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, shader2, nullptr, nullptr, "Quad to layer"});
-    // engine.stack.list.push_back(new Stack::Action{[&](){
-
-    //     Engine::getInstance().fb->clear();
-    //     shader->use();
-    //     Engine::getInstance().quad->draw();
-
-
-    // }, "SM layers al at once :("});
-
+    // Texture img("boy.jpg");
+    // FrameBuffer fb;
+    // auto *shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
+    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, shader, &img, &fb, "Quad to layer"});
+    
+    
     StackWidget sw(&engine.stack);
 
     FileWidget fw;

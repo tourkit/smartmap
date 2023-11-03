@@ -43,12 +43,13 @@ out vec2 texcoord;
 
 void main() {
 
-    texcoord = TEXCOORD;
     obj = OBJ;
     id = gl_InstanceID;
-
+    texcoord = TEXCOORD;
+    texcoord.y = 1-texcoord.y;
     
-    gl_Position = vec4(POSITION.x,POSITION.y,0,1);  
+     
+    gl_Position = vec4(POSITION.x,POSITION.y,0,1);   
 
 
     int current = layer[obj].canva_first + id;

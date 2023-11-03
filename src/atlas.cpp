@@ -42,6 +42,7 @@ void Atlas::link(ShaderProgram* shader) {
     ubo->upload();
     
     shader->sendUniform("mediasAtlas", 1);
+    texture->bind();
 
 }
  

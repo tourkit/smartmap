@@ -43,6 +43,8 @@ struct Engine {
         while (!glfwWindowShouldClose(window.id)) window.render([](){
             
             auto &engine = Engine::getInstance();
+
+            engine.fb->clear();
             
             engine.dynamic_ubo.upload();
 

@@ -12,9 +12,15 @@ FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name
 
 }
 
-FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : width(width), height(height), name(name) { 
+FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(name) { 
     
+
     pool.push_back(this); 
+
+    if (!width) width = Engine::getInstance().window.width;
+    if (!height) height = Engine::getInstance().window.height;
+    this->width = width;
+    this->height = height;
 
     auto n = engine.framebuffers->create();
     n.set<uint32_t>(0,width);
@@ -29,17 +35,17 @@ FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : width(w
 
     std::vector<GLuint> drawBuffers;
     for (size_t i = 0; i < attachments+1; i++) drawBuffers.push_back( GL_COLOR_ATTACHMENT0+i);
-    glDrawBuffers(attachments+1, &drawBuffers[0]);
+    glDrawBuffers(attachments+1, &drawBuffers[0]); 
  
 }
 
 
-void FrameBuffer::bind() { glViewport(0,0,width,height); glBindFramebuffer(GL_FRAMEBUFFER, id); }
+void FrameBuffer::bind() {  glBindFramebuffer(GL_FRAMEBUFFER, id); glViewport(0,0,width,height); }
 
 void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {
-    // std::cout << "clear " << name << std::endl;
-    glViewport(0,0,width,height);
+
     glBindFramebuffer(GL_FRAMEBUFFER, id);
+    glViewport(0,0,width,height);
     glClearColor(r,g,b,a);
     glClear(GL_COLOR_BUFFER_BIT);
 
