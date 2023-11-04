@@ -106,11 +106,16 @@ SmartMap::SmartMap() {
 
     engine.stack.list.push_back(new Stack::Action{[this](){
 
+        memcpy(fix2UBO->data(),fix1UBO->data(),fix1UBO->byte_size*fix1UBO->quantity);
         artnet->run();
 
     }, "Artnet"});
             
     engine.stack.list.push_back(new Stack::Action{[this](){
+
+        
+        
+       
   
         for (auto layer:SmartMap::Layer::pool) { 
             
@@ -144,6 +149,8 @@ SmartMap::SmartMap() {
             layer->quad->draw();
             
         }
+
+        //  fix2UBO->update();
 
     }, "SM B"});
     // engine.stack.list.back()->active=false;

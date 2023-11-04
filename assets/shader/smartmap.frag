@@ -84,7 +84,7 @@ void main() {
                 
         color = vec4(0);
         // if (id==0) {color=vec4( 1); return;}
-        color += texture(pass,(uv)*mat[canva_id].size+mat[canva_id].pos)*.3;
+        color += texture(pass,(uv)*mat[canva_id].size+mat[canva_id].pos)*.9;
 
         // could be in matrice or some UBO ?
         vec2 AR = vec2(1,.5625);
@@ -93,7 +93,7 @@ void main() {
         pos.y = 1-pos.y;
 
         vec2 outuv = rectangle(uv, fix[fix_id].size, pos, fix[fix_id].orientation, AR);
-        float steps = 1;
+        float steps = 12;
         float feedback_smoothing = 1;
         if (fix[fix_id].feedback != 0) for (float i = 1; i < steps; i++)  {
         
@@ -105,7 +105,7 @@ void main() {
             float step = i/steps;
 
             // feedback_smoothing -= step*debug0; // should be based on frame distance , maybe abs(pos.x-fix2[fix_id].pos.x) ?
-            feedback_smoothing -= step*.5;
+            feedback_smoothing -= step*.1;
             
             // 3.14159265359 // 6.2831853072
             if (abs(angle-fix2[fix_id].orientation)<.25) angle = mix(angle,fix2[fix_id].orientation,step);
