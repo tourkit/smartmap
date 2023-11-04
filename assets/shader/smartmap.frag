@@ -89,7 +89,10 @@ void main() {
         // could be in matrice or some UBO ?
         vec2 AR = vec2(1,.5625);
         
-        vec2 outuv = rectangle(uv, fix[fix_id].size, fix[fix_id].pos, fix[fix_id].orientation, AR);
+        vec2 pos = fix[fix_id].pos;
+        pos.y = 1-pos.y;
+
+        vec2 outuv = rectangle(uv, fix[fix_id].size, pos, fix[fix_id].orientation, AR);
         float steps = 1;
         float feedback_smoothing = 1;
         if (fix[fix_id].feedback != 0) for (float i = 1; i < steps; i++)  {
@@ -98,7 +101,6 @@ void main() {
 
             float angle = fix[fix_id].orientation;
             vec2 size = fix[fix_id].size;
-            vec2 pos = fix[fix_id].pos;
             
             float step = i/steps;
 
@@ -116,7 +118,7 @@ void main() {
 
         if (outuv.x+outuv.y==0) return;
 
-        outuv.y = 1-outuv.y; // flip for buffers
+        // outuv.y = 1-outuv.y; // flip for buffers
 
 
         vec4 rgba = vec4(fix[fix_id].r,fix[fix_id].g,fix[fix_id].b,fix[fix_id].alpha)*fix[fix_id].alpha;
