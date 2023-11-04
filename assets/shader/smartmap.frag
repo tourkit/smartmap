@@ -101,16 +101,19 @@ void main() {
 
             float angle = fix[fix_id].orientation;
             vec2 size = fix[fix_id].size;
-            
+            vec2 pos = fix[fix_id].pos;
+            pos.y = 1-pos.y;
+            vec2 pos2 = fix2[fix_id].pos;
+            pos2.y = 1-pos2.y;
             float step = i/steps;
 
             // feedback_smoothing -= step*debug0; // should be based on frame distance , maybe abs(pos.x-fix2[fix_id].pos.x) ?
-            feedback_smoothing -= step*.1;
+            feedback_smoothing -= step*.0001;
             
-            // 3.14159265359 // 6.2831853072
+            // // 3.14159265359 // 6.2831853072
             if (abs(angle-fix2[fix_id].orientation)<.25) angle = mix(angle,fix2[fix_id].orientation,step);
             if (abs(size.x-fix2[fix_id].size.x)<.015 && abs(size.y-fix2[fix_id].size.y)<.015) size = mix(size,fix2[fix_id].size,step);
-            if (abs(pos.x-fix2[fix_id].pos.x)<.12 && abs(pos.y-fix2[fix_id].pos.y)<.12) pos = mix(pos,fix2[fix_id].pos,step);
+            if (abs(pos.x-pos2.x)<.12 && abs(pos.y-pos2.y)<.12) pos = mix(pos,pos2,step);
 
             outuv = rectangle(uv, size, pos, angle, AR); 
             
