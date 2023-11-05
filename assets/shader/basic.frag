@@ -2,8 +2,7 @@
 
 out vec4 color;
 
-uniform sampler2D pass;
-uniform sampler2D mediasAtlas;
+uniform sampler2D tex;
 flat in int obj;
 flat in int id;
 in vec2 texcoord;
@@ -43,8 +42,7 @@ layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; 
 void main() { 
      
    color = vec4(0,1-texcoord.x,1,1);  
-   color = texture(pass,texcoord);    
-   // color = ve.c4(mat[0].pos.x+matrice2[0].pos.x);
+   color = texture(tex,texcoord);    
 
 }
 

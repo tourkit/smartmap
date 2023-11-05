@@ -87,6 +87,7 @@ target_link_libraries(smartmap PRIVATE
     OpenGL::GL
     glfw
     assimp
+    Processing.NDI.Lib.x64
     ${FREETYPE_LIBRARIES}
 )
 

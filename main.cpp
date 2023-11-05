@@ -7,6 +7,7 @@
 #include "engine.hpp"
 
 #include "smartmap.hpp"
+#include "ndi.hpp"
 #include "widgets/artnet_widget.hpp"
 #include "widgets/file.hpp"
 #include "widgets/stack.hpp"
@@ -16,6 +17,7 @@
 // fix feedback blending
 
 int main() { 
+
 
 
     auto &engine = Engine::getInstance();
@@ -77,7 +79,20 @@ int main() {
     } dw(&sm);
 
 
+    FrameBuffer ndi_fb(1920,1080);
+    NDI::Sender ndisender(ndi_fb.width,ndi_fb.height);
+    engine.stack.list.push_back(new Stack::Action([&](){
 
+        std::vector<unsigned char> data;
+        data.resize(1920*1080*4);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, Engine::getInstance().fb->id);
+
+        glReadPixels(0,0, 1920, 1080, GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
+
+        ndisender.send(&data[0],data.size());
+
+    }));
 
     auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
     engine.specs = x->create();x->create();x->create();x->create();
@@ -123,9 +138,9 @@ int main() {
     // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, shader, &img, &fb, "Quad to layer"});
     
     
-    // StackWidget sw(&engine.stack);
+    StackWidget sw(&engine.stack);
 
-    // FileWidget fw;
+    FileWidget fw;
 
     Engine::Run();
  

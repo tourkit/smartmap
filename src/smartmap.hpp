@@ -12,7 +12,7 @@ struct SmartMap {
     SmartMap();
 
     static inline Artnet *artnet;
-    static inline ShaderProgram *shader, *layershader, *basicshader;
+    static inline ShaderProgram *shader, *layershader;
     
     DMX::Fixture basic_fixture;
 

@@ -8,7 +8,7 @@ SmartMap::SmartMap() {
 
     artnet = new Artnet{"2.0.0.222"};
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
-    basicshader = new ShaderProgram({"basic.frag", "smartmap.vert"});
+    
     layershader = new ShaderProgram({"layer.frag", "basic.vert"});
 
     

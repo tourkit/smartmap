@@ -7,6 +7,8 @@
 struct GLFWwindow;
 
 struct GUI {
+  
+  bool draw_gui = false;
 
   GUI(GLFWwindow* window);
 
@@ -15,7 +17,17 @@ struct GUI {
   void newframe();
   void render();
 
-  void draw() { newframe(); for (auto window : Window::pool) { window->drawFull(); } render(); }
+  void draw() { 
+    newframe(); 
+    if (draw_gui) {
+
+      for (auto window : Window::pool) { window->drawFull(); } 
+      
+
+    } 
+
+    render(); 
+  }
 
   struct Window {
 
