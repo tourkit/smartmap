@@ -125,16 +125,14 @@ SmartMap::SmartMap() {
             
             layer->fb->clear(); // thus bind
             
-            // glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
-
-            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
+            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
             layer->pass->bind();
             atlas->texture->bind();
             layer->FTbuffer->bind();
             
             layer->quad->draw(layer->quantity); 
             
-            layer->pass->read(layer->fb->texture);
+            if (shader->loaded) layer->pass->read(layer->fb->texture);
             
         }
 

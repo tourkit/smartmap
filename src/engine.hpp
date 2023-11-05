@@ -21,6 +21,7 @@ struct Engine {
     Buffer::Object *framebuffers, *matrices;
     Buffer::Object::Entry specs;
     int sequid = 1000;
+    bool draw_gui = true;
 
     FrameBuffer *fb;
 
@@ -51,10 +52,11 @@ struct Engine {
 
             engine.stack.run();
 
+            if (!engine.draw_gui) return;
             engine.gui.draw();
 
-            // engine.specs.set<uint64_t>(0,engine.sequid--);
-            // if (!engine.sequid) engine.sequid = 1000;;
+            engine.specs.set<uint64_t>(0,engine.sequid--);
+            if (!engine.sequid) engine.sequid = 1000;;
 
         });
 

@@ -65,6 +65,7 @@ void main() {
         int current_canva = layer[obj].canva_first+i;
 
         color += texture(pass, texcoord*mat[current_canva].size+mat[current_canva].pos);
+        
         if (fix[fix_id].strobe>0) color *= mod(seq[0],fix[fix_id].strobe*25+2); 
         
     }       

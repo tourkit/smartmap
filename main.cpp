@@ -11,6 +11,10 @@
 #include "widgets/file.hpp"
 #include "widgets/stack.hpp"
 
+// shader sources
+// clocks
+// fix feedback blending
+
 int main() { 
 
 
@@ -21,22 +25,13 @@ int main() {
 
     struct FPSWidget : GUI::Window {
 
-        Buffer::Object::Entry  specs_ubo;
-        int sequid = 1000;
-
        FPSWidget() :  GUI::Window("FPS") {
 
-            specs_ubo = Engine::getInstance().dynamic_ubo.buffer.add("infos", {"int","int","int","int"},1)->create();
-            
-            // memcpy(x->data(), &sequid, 4);
-            // sequid = std::modf(sequid,1000);
 
        }
 
        void draw() override {
 
-            specs_ubo.set<uint64_t>(0,sequid--);
-            if (!sequid) sequid = 1000;;
 
             ImGui::Text(std::to_string(ImGui::GetIO().Framerate).c_str());  
             // std::cout << ImGui::GetIO().Framerate << std::endl;
@@ -57,7 +52,36 @@ int main() {
 
        }
 
-    } fpsw;
+    };// fpsw;
+    struct DebugWidget : GUI::Window {
+
+        SmartMap *sm;
+
+       DebugWidget(SmartMap *sm) :  GUI::Window("debug") {
+
+            this->sm = sm;
+
+       }
+
+       void draw() override {
+
+            ImGui::SliderInt("GL_BLEND_MODE_IN2",&sm->GL_BLEND_MODE_IN2,0,sm->GL_BLEND_MODES.size());
+            ImGui::SliderInt("GL_B2LEND_MODE_OUT2",&sm->GL_BLEND_MODE_OUT2,0,sm->GL_BLEND_MODES.size()); 
+            ImGui::SliderInt("GL_BLEND_MODE_IN",&sm->GL_BLEND_MODE_IN,0,sm->GL_BLEND_MODES.size());
+            ImGui::SliderInt("GL_B2LEND_MODE_OUT",&sm->GL_BLEND_MODE_OUT,0,sm->GL_BLEND_MODES.size()); 
+            ImGui::SliderInt("GL_BLEND_MODE_IN3",&sm->GL_BLEND_MODE_IN3,0,sm->GL_BLEND_MODES.size());
+            ImGui::SliderInt("GL_B2LEND_MODE_OUT3",&sm->GL_BLEND_MODE_OUT3,0,sm->GL_BLEND_MODES.size()); 
+            
+       }
+
+    } dw(&sm);
+
+
+
+
+    auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
+    engine.specs = x->create();x->create();x->create();x->create();
+
 
     sm.import("config.json");
 

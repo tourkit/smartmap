@@ -1,4 +1,5 @@
 #include "window.hpp"
+#include "engine.hpp"
 
 #include <chrono>
 #include <thread>
@@ -109,6 +110,10 @@ void Window::initUidCallbacks() {
             switch (key) {
             case GLFW_KEY_ESCAPE:
                 exit(0);
+                break;
+            case 73:
+                if (Engine::getInstance().draw_gui) Engine::getInstance().draw_gui = false;
+                else Engine::getInstance().draw_gui = true;
                 break;
             default:
                 std::cout << "keypress : " << (int)key << "\n";

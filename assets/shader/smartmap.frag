@@ -58,7 +58,7 @@ vec2 rectangle(vec2 uv, vec2 size, vec2 pos, float angle, vec2 AR) {
     pos *= 1+size;
     pos -= size*.5;
     uv -= pos; 
-    uv = rotate(uv*AR,angle)*(1./AR);
+    uv = rotate(uv*AR,-angle)*(1./AR);
     uv /= size;
     uv += .5;
     
@@ -118,12 +118,12 @@ float grid2(vec2 uv, float thickness, float columns, float rows) {
 float grid(vec2 uv, float thickness, float columns, float rows) {
 
     vec2 max_lines = vec2(10);
-    return uv.x+uv.y;
+    // return uv.x+uv.y;
 
     vec2 grid = vec2(columns,rows);
     grid = 1.0+grid*max_lines;
 
-    vec2 res = vec2(384,540) / grid ;
+    vec2 res = vec2(1920/30,1080) / grid ;
     // vec2 res = vec2(1);
     // if (FBratio > 1.) res.x = FBratio;
     // else res.y = FBratio;
@@ -291,7 +291,7 @@ void main() {
                 
         color = vec4(0);
         // if (id==0) {color=vec4( 1); return;}
-        color += texture(pass,(uv)*mat[canva_id].size+mat[canva_id].pos)*fix[fix_id].feedback;
+        if (fix[fix_id].feedback>0) color += vec4(texture(pass,(uv)*mat[canva_id].size+mat[canva_id].pos).xyz,0)-(.999999-(1-pow(fix[fix_id].feedback*.87+1,-10))*.999999);
 
         // could be in matrice or some UBO ?
         vec2 AR = vec2(1,.5625);
@@ -300,7 +300,7 @@ void main() {
         pos.y = 1-pos.y;
 
         vec2 outuv = rectangle(uv, fix[fix_id].size, pos, fix[fix_id].orientation, AR);
-        float steps = 12;
+        float steps = 10;
         float feedback_smoothing = 1;
         if (fix[fix_id].feedback != 0) for (float i = 1; i < steps; i++)  {
         
@@ -311,11 +311,11 @@ void main() {
             vec2 pos = fix[fix_id].pos;
             pos.y = 1-pos.y;
             vec2 pos2 = fix2[fix_id].pos;
-            pos2.y = 1-pos2.y;
+            pos2.y = 1-pos2.y; 
             float step = i/steps;
 
             // feedback_smoothing -= step*debug0; // should be based on frame distance , maybe abs(pos.x-fix2[fix_id].pos.x) ?
-            feedback_smoothing -= step*.0001;
+            feedback_smoothing -= step*.00231;
             
             // // 3.14159265359 // 6.2831853072
             if (abs(angle-fix2[fix_id].orientation)<.25) angle = mix(angle,fix2[fix_id].orientation,step);
@@ -342,7 +342,7 @@ void main() {
 
         else { if (gobo_id == 8) { color = rgba*fromAtlas(outuv, int(fix[fix_id].gobo[1]*15)); }
         
-        else {     if (gobo_id == 1) { color = rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]); }
+        else {     if (gobo_id == 1) { color += rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]); }
 
         else {
 
