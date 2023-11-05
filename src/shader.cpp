@@ -80,7 +80,7 @@ void ShaderProgram::reset() {
         glAttachShader(id, shader->id);
     
         shader->file.survey = true;
-        shader->file.callback = [this](File* file){ file->update(); this->reset(); this->sendUniform("mediasAtlas", 1); };
+        shader->file.callback = [this](File* file){ file->update(); this->reset(); this->sendUniform("mediasAtlas", 1); this->sendUniform("freetype", 2); };
     
     }
 

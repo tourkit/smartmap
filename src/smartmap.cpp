@@ -11,6 +11,8 @@ SmartMap::SmartMap() {
     basicshader = new ShaderProgram({"basic.frag", "smartmap.vert"});
     layershader = new ShaderProgram({"layer.frag", "basic.vert"});
 
+    
+    shader->sendUniform("freetype", 2);
             
     auto &window = Engine::getInstance().window;
     window.setPos(2560-400,0);
@@ -127,6 +129,7 @@ SmartMap::SmartMap() {
 
             layer->pass->bind();
             atlas->texture->bind();
+            layer->FTbuffer->bind();
             
             layer->quad->draw(layer->quantity); 
             
@@ -242,8 +245,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     quad = new VBO("quad.obj", id, "quadSM");
 
-    pass = new Texture(FW, FH, 0,1, GL_RGB8); //no need to be a FB
-    FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB); //no need to be a FB
+    pass = new Texture(FW, FH, 0,1, GL_RGB8);
+    FTbuffer = new Texture(FW, FH, 2,1, GL_RGB8,GL_RGB); 
 
     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
@@ -307,7 +310,7 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
         for (int i = 0; i < this->quantity; i++) { 
 
-            float* ptr = (float*)(fix1UBO->data()+i*fix1UBO->byte_size)+8;
+            float* ptr = (float*)(fix1UBO->data()+i*fix1UBO->byte_size+attroffset*4)+8;
 
             int gobo_id = *ptr*255;
 

@@ -40,6 +40,7 @@ layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; 
 
 uniform sampler2D pass;
 uniform sampler2D mediasAtlas;
+uniform sampler2D freetype;
 
 vec2 rotate(vec2 v, float a) {
 
@@ -129,11 +130,14 @@ void main() {
         int gobo_id = int(fix[fix_id].gobo[0]*255)%127;
 
         if (gobo_id == 0) { color = rgba*vec4(1); }
+        
+
+        else { if (gobo_id == 10) { color = rgba*texture(freetype,(outuv*mat[canva_id].size*.99+mat[canva_id].pos)).r; }
 
         else { 
             
             if (gobo_id == 8) { color = rgba*fromAtlas(outuv, int(fix[fix_id].gobo[1]*15)); }
-        }
+        }}
 
         if (fix[fix_id].gobo[0] > .5) color = vec4(1)-color;
 
