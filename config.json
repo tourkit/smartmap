@@ -15,9 +15,9 @@
             "fixture" : "Basic", 
             "start_universe" : 0, 
             "start_channel" : 0, 
-            "mode": "Free",
-            "columns" : 8       , 
-            "rows" : 1
+            "mode": "Grid",
+            "columns" : 4       , 
+            "rows" : 4
 
         }
    

@@ -40,6 +40,9 @@ struct SmartMap {
 
         FrameBuffer *fb;
 
+        const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?'\":()[]<>-_+*/\\|#@&%$€";
+        float char_ratio; 
+
         VBO *quad;
 
         std::vector<uint8_t> black;

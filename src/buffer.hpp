@@ -39,7 +39,7 @@ struct Buffer {
 
         void push(void *data, int quantity = 1);
 
-        void *data();
+        char *data();
 
         void set(const char* name, void* data, int id = 0); // UNUSESD
 

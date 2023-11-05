@@ -203,7 +203,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
         // stack.list.push_back(new Stack::DrawCall{&engine.quad, sm.shader, nullptr, nullptr, "DC main"});
 
-    
     fixture_first = fix1UBO->quantity;
     std::vector<char> zeros;
     zeros.resize(quantity*fix1UBO->byte_size);
@@ -228,7 +227,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     layerUBO.set<uint32_t>(2,(mode==Layer::Mode::Free?quantity:1)); 
     layerUBO.set<uint32_t>(3,first_fixture); // irst fixture
 
-    for (auto &layer:pool) { matoffset+=layer->quantity*16; }
+    matoffset = engine.matrices->quantity*32;
+    std::cout << matoffset << std::endl;
     std::vector<std::array<float, 8>> mat;
     mat = matrice(quantity_x,quantity_y);
     engine.matrices->push(&mat[0],mat.size());
@@ -242,8 +242,8 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 
     quad = new VBO("quad.obj", id, "quadSM");
 
-    pass = new Texture(FW, FH, 0,1, GL_RGB8);
-    // FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB);
+    pass = new Texture(FW, FH, 0,1, GL_RGB8); //no need to be a FB
+    FTbuffer = new Texture(FW, FH, 0,1, GL_RGB8,GL_RGB); //no need to be a FB
 
     black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
     memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
@@ -269,7 +269,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
                 for (auto &f:p.features) { 
 
                     if (breaker) { break; }
-
                     for (auto &a:f.attributes) { 
 
                       if (&m == a.member) {
@@ -289,34 +288,56 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
     }
     // if (pool.size()>1)  return;
     
-    // artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
+   
 
-    //     const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!?.";
+    int char_h = (this->height/this->quantity_y);
+    float char_widest = 0;
+    for (size_t i = 0; i < strlen(chars)-1; i++) {
 
-    //     for (int i = 0; i < this->quantity; i++) { 
+        FT fr((chars+i), char_h);
 
-    //         int gobo_id = *(8+&fix1UBO->buffer->data[fix1UBO->offset+this->attroffset]+(i*dmx->remaps[0].attributes.size()))*255;
+        if (fr.width>char_widest) char_widest = fr.width;
 
-    //         if (gobo_id == 10) {
+    }
 
-    //             float *l = &matriceUBO->data[i*4+this->matoffset];
-    //             int char_id = *(9+&fixtureUBO->data[this->attroffset]+(i*dmx->remaps[0].attributes.size()))*(strlen(chars)-1);
+    char_ratio = (fb->width/quantity_x)/char_widest;
+    if (char_ratio > 1) char_ratio = 1;
 
-    //             FT fr((chars+char_id), (this->height/this->quantity_y)*.9);
+    artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
 
-    //             GLuint offset_x = this->width**(l+2)+(((this->width/this->quantity_x)-fr.width)*.5);
+        for (int i = 0; i < this->quantity; i++) { 
 
-    //             this->FTbuffer->write(&black[0], l[0]*this->buffer->width,l[1]*this->buffer->height,this->buffer->width*l[2],this->buffer->height*l[3],0,1,GL_R8,GL_RED); 
-    //             this->FTbuffer->write(fr.buffer, fr.width, fr.height,offset_x,this->height**(l+3),0,1,GL_R8,GL_RED); 
+            float* ptr = (float*)(fix1UBO->data()+i*fix1UBO->byte_size)+8;
+
+            int gobo_id = *ptr*255;
+
+     
+            if (gobo_id == 10) {
+
+
+                float* matptr = ((float*)(engine.matrices->data()+this->matoffset))+i*8;
+
+                int char_id = *(ptr+1)*(strlen(this->chars)-1);
+
+                FT fr((this->chars+char_id), (this->height/this->quantity_y)*this->char_ratio);
+
+                float max_width = this->fb->width**(matptr);
+                                
+                float offset_x = this->fb->width**(matptr+4)+(((max_width)-fr.width)*.5);
+                if (offset_x<0) offset_x =0;
+
+                std::cout << fr.width << " || " << fr.height << " || " << (GLuint)std::floor(offset_x) << " || " << this->height**(matptr+5)<< std::endl;
+                this->FTbuffer->write(&black[0], matptr[0]*this->fb->width,matptr[1]*this->fb->height,this->fb->width*matptr[4],this->fb->height*matptr[5],0,1,GL_R8,GL_RED); 
+
+                this->FTbuffer->write(fr.buffer, fr.width, fr.height, (GLuint)std::floor(offset_x), this->height**(matptr+5),0,1,GL_R8,GL_RED); 
 
 
 
-    //         }
+            }
             
-
-    //      }  
+         }  
         
-    // });
+    });
 
 }
 

@@ -22,7 +22,7 @@
 
         }
 
-        void *Buffer::Object::data() { return (void*)&buffer->data[buffer_offset]; }
+        char *Buffer::Object::data() { return (char*)&buffer->data[buffer_offset]; }
 
         void Buffer::Object::set(const char* name, void* data, int id) {  // UNUSESD
 
