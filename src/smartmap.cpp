@@ -191,7 +191,10 @@ void SmartMap::import(std::string filepath) {
             engine.window.height, 
             mode, 
             columns,
-            rows
+            rows,
+            1,
+            layer["output"].GetInt()
+
 
         );
     
@@ -199,7 +202,7 @@ void SmartMap::import(std::string filepath) {
     
 }
 
-SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale) 
+SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale, int output) 
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
 
@@ -340,6 +343,26 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
         
     });
 
+    if (output==6) {
+
+    ndi_fb = new FrameBuffer(width,height);
+    ndisender = new NDI::Sender(width,height);
+
+        engine.stack.list.push_back(new Stack::Action([this](){
+
+            std::vector<unsigned char> data;
+            data.resize(1920*1080*4);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, Engine::getInstance().fb->id);
+
+            glReadPixels(0,0, 1920, 1080, GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
+
+            this->ndisender->send(&data[0],data.size());
+
+        }));
+
+
+    }
 }
 
 

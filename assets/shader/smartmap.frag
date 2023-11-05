@@ -338,9 +338,9 @@ void main() {
         if (gobo_id == 0) { color = rgba*vec4(1); }
         
 
-        else { if (gobo_id == 10) { color = rgba*texture(freetype,(outuv*mat[canva_id].size*.99+mat[canva_id].pos)).r; }
+        else { if (gobo_id == 10) { color += rgba*texture(freetype,(outuv*mat[canva_id].size*.99+mat[canva_id].pos)).r; }
 
-        else { if (gobo_id == 8) { color = rgba*fromAtlas(outuv, int(fix[fix_id].gobo[1]*15)); }
+        else { if (gobo_id == 8) { color += rgba*fromAtlas(outuv, int(fix[fix_id].gobo[1]*15)); }
         
         else {     if (gobo_id == 1) { color += rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]); }
 

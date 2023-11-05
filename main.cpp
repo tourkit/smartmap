@@ -55,44 +55,8 @@ int main() {
        }
 
     };// fpsw;
-    struct DebugWidget : GUI::Window {
-
-        SmartMap *sm;
-
-       DebugWidget(SmartMap *sm) :  GUI::Window("debug") {
-
-            this->sm = sm;
-
-       }
-
-       void draw() override {
-
-            ImGui::SliderInt("GL_BLEND_MODE_IN2",&sm->GL_BLEND_MODE_IN2,0,sm->GL_BLEND_MODES.size());
-            ImGui::SliderInt("GL_B2LEND_MODE_OUT2",&sm->GL_BLEND_MODE_OUT2,0,sm->GL_BLEND_MODES.size()); 
-            ImGui::SliderInt("GL_BLEND_MODE_IN",&sm->GL_BLEND_MODE_IN,0,sm->GL_BLEND_MODES.size());
-            ImGui::SliderInt("GL_B2LEND_MODE_OUT",&sm->GL_BLEND_MODE_OUT,0,sm->GL_BLEND_MODES.size()); 
-            ImGui::SliderInt("GL_BLEND_MODE_IN3",&sm->GL_BLEND_MODE_IN3,0,sm->GL_BLEND_MODES.size());
-            ImGui::SliderInt("GL_B2LEND_MODE_OUT3",&sm->GL_BLEND_MODE_OUT3,0,sm->GL_BLEND_MODES.size()); 
-            
-       }
-
-    } dw(&sm);
 
 
-    FrameBuffer ndi_fb(1920,1080);
-    NDI::Sender ndisender(ndi_fb.width,ndi_fb.height);
-    engine.stack.list.push_back(new Stack::Action([&](){
-
-        std::vector<unsigned char> data;
-        data.resize(1920*1080*4);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, Engine::getInstance().fb->id);
-
-        glReadPixels(0,0, 1920, 1080, GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
-
-        ndisender.send(&data[0],data.size());
-
-    }));
 
     auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
     engine.specs = x->create();x->create();x->create();x->create();

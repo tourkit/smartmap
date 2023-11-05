@@ -44,6 +44,7 @@ out vec2 texcoord;
 void main() {
 
     texcoord = TEXCOORD;
+    texcoord.y = 1-texcoord.y;
     obj = OBJ;
     id = gl_InstanceID;
 

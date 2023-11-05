@@ -5,6 +5,8 @@
 #include "atlas.hpp"
 #include "artnet.hpp"
 
+#include "ndi.hpp"
+
 struct SmartMap {
 
     static inline Atlas *atlas;
@@ -38,7 +40,8 @@ struct SmartMap {
 
         Texture *pass, *FTbuffer;
 
-        FrameBuffer *fb;
+        FrameBuffer *fb, *ndi_fb = nullptr;
+        NDI::Sender *ndisender = nullptr;
 
         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?'\":()[]<>-_+*/\\|#@&%$€";
         float char_ratio; 
@@ -49,7 +52,7 @@ struct SmartMap {
 
         uint16_t chan,uni, fixture_first, attroffset = 0, matoffset = 0;
 
-        Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1);
+        Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1, int output = 1);
 
 
     };
