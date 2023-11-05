@@ -38,7 +38,7 @@ SmartMap::SmartMap() {
         "Strobe",
         "float", // for alignmentr
         
-    }, 24 );
+    }, 50 );
 
     fix2UBO = engine.dynamic_ubo.buffer.add("Fixture2", {
 
@@ -52,7 +52,7 @@ SmartMap::SmartMap() {
         "Strobe",
         "float", // for alignmentr
         
-    }, 24 );
+    }, 50 );
 
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
@@ -326,7 +326,6 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
                 float offset_x = this->fb->width**(matptr+4)+(((max_width)-fr.width)*.5);
                 if (offset_x<0) offset_x =0;
 
-                std::cout << fr.width << " || " << fr.height << " || " << (GLuint)std::floor(offset_x) << " || " << this->height**(matptr+5)<< std::endl;
                 this->FTbuffer->write(&black[0], matptr[0]*this->fb->width,matptr[1]*this->fb->height,this->fb->width*matptr[4],this->fb->height*matptr[5],0,1,GL_R8,GL_RED); 
 
                 this->FTbuffer->write(fr.buffer, fr.width, fr.height, (GLuint)std::floor(offset_x), this->height**(matptr+5),0,1,GL_R8,GL_RED); 

@@ -12,7 +12,7 @@ Engine::Engine(uint16_t width, uint16_t height)
 void Engine::init() {
     
     framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
-    matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 24);
+    matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);
     float plain[8] = {1,1,0,0,.5,.5,0,0};
     matrices->push(&plain[0]);
 
