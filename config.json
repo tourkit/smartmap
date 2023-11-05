@@ -3,24 +3,9 @@
 
     "layers" : [
         
-        { 
-        
-            "name" : "Layer 1", 
-            "output" : "ArtNet 1", 
-            "width": 125,
-            "height": 50,
-            "offset_x": 0,
-            "offset_y": 0,
-            "blending": "Additive",
-            "fixture" : "Basic", 
-            "start_universe" : 0, 
-            "start_channel" : 0, 
-            "mode": "Grid",
-            "columns" : 4       , 
-            "rows" : 4
 
-        },        { 
-        
+        { 
+
         "name" : "Layer 1", 
         "output" : "ArtNet 1", 
         "width": 125,
@@ -30,12 +15,30 @@
         "blending": "Additive",
         "fixture" : "Basic", 
         "start_universe" : 0, 
-        "start_channel" :   20, 
+        "start_channel" :   0, 
         "mode": "Free",
-        "columns" : 8       , 
-        "rows" : 1
+        "columns" : 10       , 
+        "rows" : 2
+        
+        }
+        , { 
+        "name" : "Layer 1", 
+"output" : "ArtNet 1", 
+"width": 125,
+"height": 50,
+"offset_x": 0,
+"offset_y": 0,
+"blending": "Additive",
+"fixture" : "Basic", 
+"start_universe" : 1, 
+"start_channel" :   0, 
+"mode": "Free",
+"columns" : 10       , 
+"rows" : 1
 
-    }
+}
+
+
    
         
     ],

@@ -33,7 +33,7 @@ struct Layer {
 };
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
-layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[50]; Fixture fix2[50]; };
+layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[50]; Fixture fix2[50];  int seq[4]; };
 layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[100]; Layer layer[10]; };
 
 flat out int obj;

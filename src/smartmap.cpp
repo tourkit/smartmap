@@ -15,8 +15,8 @@ SmartMap::SmartMap() {
     shader->sendUniform("freetype", 2);
             
     auto &window = Engine::getInstance().window;
-    window.setPos(2560-400,0);
-    window.setSize(400,300);
+    window.setPos(2560,0);
+    window.setSize(1920,1080);
   
               
     shader->use();
@@ -125,8 +125,9 @@ SmartMap::SmartMap() {
             
             layer->fb->clear(); // thus bind
             
-            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
+            // glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
 
+            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
             layer->pass->bind();
             atlas->texture->bind();
             layer->FTbuffer->bind();

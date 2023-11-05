@@ -19,6 +19,8 @@ struct Engine {
     UBO dynamic_ubo, static_ubo;
 
     Buffer::Object *framebuffers, *matrices;
+    Buffer::Object::Entry specs;
+    int sequid = 1000;
 
     FrameBuffer *fb;
 
@@ -28,8 +30,8 @@ struct Engine {
     
     GUI gui;
 
-    BufferWidget bw;
-    TexturesWidget tw;
+    // BufferWidget bw;
+    // TexturesWidget tw;
 
     void init();
 
@@ -38,7 +40,6 @@ struct Engine {
     static void Run() {
 
         auto &window = getInstance().window;
-        window.max_fps = 20;
 
         while (!glfwWindowShouldClose(window.id)) window.render([](){
             
@@ -51,6 +52,9 @@ struct Engine {
             engine.stack.run();
 
             engine.gui.draw();
+
+            // engine.specs.set<uint64_t>(0,engine.sequid--);
+            // if (!engine.sequid) engine.sequid = 1000;;
 
         });
 

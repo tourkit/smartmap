@@ -37,10 +37,14 @@ struct Layer {
 
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
-layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[50]; Fixture fix2[50]; };
+layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[50]; Fixture fix2[50]; int seq[4]; };
 layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[100]; Layer layer[10]; };
 
+uniform int frame_sequence = 0; 
+
 void main() {
+
+        int fix_id = id+layer[obj].fixture_first;
 
     // color = vec4(0,texcoord.x,1,1); return;
 
@@ -61,6 +65,7 @@ void main() {
         int current_canva = layer[obj].canva_first+i;
 
         color += texture(pass, texcoord*mat[current_canva].size+mat[current_canva].pos);
+        if (fix[fix_id].strobe>0) color *= mod(seq[0],fix[fix_id].strobe*25+2); 
         
     }       
 

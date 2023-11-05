@@ -2,10 +2,12 @@
 
 Engine::Engine(uint16_t width, uint16_t height) 
 
-    : window(width,height), 
+    : window(1920,1080), 
+    // : window(width,height), 
     dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
      gui(window.id) {
-
+    window.max_fps = 59;
+    // window.max_fps
 
 }
 
@@ -13,6 +15,8 @@ void Engine::init() {
     
     framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
     matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);
+    // specs = dynamic_ubo.buffer.add("specs", {"int","int","int","int"},1)->create();
+
     float plain[8] = {1,1,0,0,.5,.5,0,0};
     matrices->push(&plain[0]);
 

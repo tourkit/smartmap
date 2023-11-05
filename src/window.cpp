@@ -63,7 +63,7 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
 
     glfwMakeContextCurrent(id);
 
-    glfwSwapInterval(0); // VSYNC 
+    glfwSwapInterval(1); // VSYNC 
     
     gl3wInit();
 
@@ -165,7 +165,8 @@ float FPS::run(float max) {
     if (!max) max = max_fps;
     if (max) while ( get() > max+1) std::this_thread::sleep_for(std::chrono::microseconds(10));
     last_time = current_time;
-    if (fps<max) std::cout << "DROP FRAME " << (int)fps << " fps" << std::endl;
+    if (has_dropped) has_dropped = false;
+    if (fps<max) has_dropped = true;
     return fps;
 
 }
