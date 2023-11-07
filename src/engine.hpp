@@ -24,8 +24,6 @@ struct Engine {
 
     ShaderProgram *basicshader;
 
-    FrameBuffer *fb;
-
     VBO *quad;
 
     Stack stack;
@@ -46,10 +44,7 @@ struct Engine {
         while (!glfwWindowShouldClose(window.id)) window.render([](){
             
 
-
             auto &engine = Engine::getInstance();
-
-            engine.fb->clear();
             
             engine.dynamic_ubo.upload();
 

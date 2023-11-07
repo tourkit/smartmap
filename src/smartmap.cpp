@@ -98,12 +98,14 @@ Base::Base() {
     }, "SM A"});
 
     engine.stack.list.push_back(new Stack::Action{[this](){
-        
-        Engine::getInstance().fb->bind();
+
+        for (auto &output:SmartMap::Output::pool) output->fb.clear() ;
             
         layershader->use();
 
-        for (auto layer:SmartMap::Layer::pool) { 
+        for (auto &layer:SmartMap::Layer::pool) { 
+
+            Output::pool[layer->output]->fb.bind();
 
             layer->fb->texture->bind();
             
@@ -114,6 +116,21 @@ Base::Base() {
         //  fix2UBO->update();
 
     }, "SM B"});
+
+    // engine.stack.list.push_back(new Stack::Action{[this](){
+        
+    //     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //     glViewport(0,0,engine.window.width,engine.window.height);
+
+    //     Engine::getInstance().basicshader->use();
+    //     for (auto layer:SmartMap::Layer::pool) { 
+
+    //         layer->fb->texture->bind();
+    //         Engine::getInstance().quad->draw();
+
+    //     }
+
+    // }, "SM C"});
 
             
 } 

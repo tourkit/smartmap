@@ -1,6 +1,7 @@
 #include "output.hpp"  
 
 #include "../stack.hpp"
+#include "../smartmap.hpp"
 
 namespace SmartMap {
 
@@ -9,7 +10,7 @@ VideoOutput::VideoOutput(std::string name, int width, int height) : Output(name,
     cue = new Stack::Action([this](){
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(this->offset_x,this->offset_y,fb.width,fb.height);
+        glViewport(0,0,this->fb.width,this->fb.height);
 
         this->fb.texture->bind();
         Engine::getInstance().basicshader->use();
@@ -17,7 +18,7 @@ VideoOutput::VideoOutput(std::string name, int width, int height) : Output(name,
 
     }, name);
     
-    engine.stack.list.push_back(cue);
+    Base::stack->childrens.back()->list.push_back(cue);
 
 }
 
@@ -38,7 +39,7 @@ NDIOutput::NDIOutput(std::string name, int width, int height) : Output(name, wid
 
     }, name);
     
-    engine.stack.list.push_back(cue);
+    Base::stack->childrens.back()->list.push_back(cue);
 
 }
 

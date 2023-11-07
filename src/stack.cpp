@@ -11,14 +11,13 @@ Stack::StackCue::StackCue(Stack *stack, std::string name) : stack(stack) {
 
 void Stack::StackCue::run() { 
 
-    stack->run();std::cout << "oo" << std::endl;
+    stack->run();
 
 }
 
 Stack::ClearCall::ClearCall(FrameBuffer *fb, std::string name)  { 
   
-    if (!fb) this->fb = Engine::getInstance().fb; 
-    else this->fb = fb;
+    this->fb = fb;
 
 }
 
@@ -30,8 +29,7 @@ Stack::DrawCall::DrawCall(VBO* vbo, ShaderProgram *shader, Texture *texture, Fra
     
     this->name = name;
 
-    if (!fb) this->fb = Engine::getInstance().fb; 
-    else this->fb = fb;
+    this->fb = fb;
 
 }
 void Stack::DrawCall::run() { 
@@ -65,7 +63,7 @@ void Stack::Action::run() { callback(); }
 
 
 void Stack::run() { 
-    
+
     for (auto cue : list) if (cue->active) cue->run(); 
     for (auto child : childrens) child->run(); 
     

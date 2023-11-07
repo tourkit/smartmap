@@ -35,10 +35,13 @@ struct GUI {
 
     std::string name;
     std::string uid;
+    bool active = true;
 
     Window(std::string name) : name(name), uid(("window"+std::to_string(pool.size())).c_str()) { pool.push_back(this); }
 
     void drawFull() {
+
+      if (!active) return;
 
       ImGui::Begin((name+"##"+uid).c_str());
 

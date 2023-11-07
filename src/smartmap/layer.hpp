@@ -23,6 +23,8 @@ namespace SmartMap {
 
         FrameBuffer *fb;
 
+        int output;
+
         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?'\":()[]<>-_+*/\\|#@&%$€";
         float char_ratio; 
 

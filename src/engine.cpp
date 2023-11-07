@@ -21,8 +21,6 @@ void Engine::init() {
     float plain[8] = {1,1,0,0,.5,.5,0,0};
     matrices->push(&plain[0]);
 
-    fb = new FrameBuffer(window.width,window.height,"mainFB");
-
     basicshader = new ShaderProgram({"basic.frag", "basic.vert"});
 
     quad = new VBO("quad.obj", 0, "quad");

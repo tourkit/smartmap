@@ -68,8 +68,8 @@ void Config::import(std::string filepath) {
 
         // 
         const char* name = JSON::getString(output, "name");
-        unsigned int width = JSON::getUint(output, "width", 16);
-        unsigned int height = JSON::getUint(output, "height", 16);
+        unsigned int width = JSON::getUint(output, "width", engine.window.width);
+        unsigned int height = JSON::getUint(output, "height", engine.window.height);
 
         auto* type = JSON::getString(output, "type");
 

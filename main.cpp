@@ -34,6 +34,8 @@ int main() {
 
        void draw() override {
 
+            int c = 0;
+            for (auto w:GUI::Window::pool) { ImGui::Checkbox((w->name+"##"+std::to_string(c++)).c_str(), &w->active); }
 
             ImGui::Text(std::to_string(ImGui::GetIO().Framerate).c_str());  
             // std::cout << ImGui::GetIO().Framerate << std::endl;
@@ -54,7 +56,7 @@ int main() {
 
        }
 
-    };// fpsw;
+    } fpsw;
 
 
 
