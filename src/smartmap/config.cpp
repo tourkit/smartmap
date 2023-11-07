@@ -157,10 +157,13 @@ void Config::import(std::string filepath) {
 
         auto columns = JSON::getUint(layer, "columns", 1);
         auto rows = JSON::getUint(layer, "rows", 1);
+        auto quantity = JSON::getUint(layer, "quantity", 0);
+        if (quantity) columns = quantity;
     
-        auto* layer_mode = JSON::getString(layer, "Free");
+        auto* layer_mode = JSON::getString(layer, "layer_mode");
         Layer::Mode mode = Layer::Mode::Free;
-        if (strcmp(layer_mode, "Grid")) mode = Layer::Mode::Grid;
+        if (!strcmp(layer_mode, "Grid")) mode = Layer::Mode::Grid;
+        std::cout << "mode: " << mode << std::endl;
         
         new Layer(
 

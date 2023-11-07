@@ -115,21 +115,6 @@ Base::Base() {
 
     }, "SM B"});
 
-    stack->childrens.back()->list.push_back(new Stack::Action{[this](){
-        
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0,0,engine.window.width,engine.window.height);
-
-        Engine::getInstance().basicshader->use();
-        for (auto layer:SmartMap::Layer::pool) { 
-
-            layer->fb->texture->bind();
-            Engine::getInstance().quad->draw();
-
-        }
-
-    }, "SM C"});
-
             
 } 
 
