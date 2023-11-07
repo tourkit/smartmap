@@ -25,7 +25,7 @@ namespace NDI {
             NDI_video_frame = new NDIlib_video_frame_v2_t;
             NDI_video_frame->xres = width;
             NDI_video_frame->yres = height;
-            NDI_video_frame->FourCC = NDIlib_FourCC_type_RGBA;
+            NDI_video_frame->FourCC = NDIlib_FourCC_type_BGRA;
             NDI_video_frame->p_data = (uint8_t*)malloc(NDI_video_frame->xres * NDI_video_frame->yres * 4);
 
             memset((void*)NDI_video_frame->p_data, 0 , NDI_video_frame->xres * NDI_video_frame->yres * 4);

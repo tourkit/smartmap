@@ -3,6 +3,7 @@
 #include "../framebuffer.hpp"
 #include "../ndi.hpp"
 #include "../engine.hpp"
+// #include "../thread.hpp"
 
 namespace SmartMap {
 
@@ -43,6 +44,10 @@ struct VideoOutput : Output {
 struct NDIOutput : Output {
 
     NDI::Sender ndisender;
+
+    // Thread thread;
+
+    std::vector<unsigned char> data;
 
     NDIOutput(std::string name, int width, int height);
 

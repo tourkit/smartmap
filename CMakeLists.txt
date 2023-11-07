@@ -21,6 +21,9 @@ add_executable(smartmap
     src/engine.cpp
     src/stack.cpp
 
+    src/messagequeue.cpp
+    src/thread.cpp
+
     src/dmx.cpp
     src/artnet.cpp
     
@@ -72,6 +75,8 @@ include(CPack)
 
 file(COPY assets DESTINATION .)
 file(COPY config.json DESTINATION .)
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
 
 target_include_directories(smartmap PRIVATE
     .

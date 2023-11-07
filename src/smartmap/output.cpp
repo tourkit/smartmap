@@ -24,21 +24,30 @@ VideoOutput::VideoOutput(std::string name, int width, int height) : Output(name,
 
 NDIOutput::NDIOutput(std::string name, int width, int height) : Output(name, width,height), ndisender(width,height) {
 
-    
+    data.resize(1920*1080*4);
 
     cue = new Stack::Action([this](){
 
-        std::vector<unsigned char> data;
-        data.resize(1920*1080*4);
-
         glBindFramebuffer(GL_FRAMEBUFFER, this->fb.id);
 
-        glReadPixels(0,0, 1920, 1080, GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
+        glReadPixels(0,0, 1920, 1080, GL_BGRA, GL_UNSIGNED_BYTE, &this->data[0]);
 
-        this->ndisender.send(&data[0],data.size());
+        // this->ndisender.send(&this->data[0],this->data.size());
 
     }, name);
     
+    // thread.setInQueueCallback();
+
+    //         setInQueueCallback(MessageType::ARTNET_DMX_IN, [this](std::shared_ptr<Message> const& m) {
+
+    //         auto message = std::static_pointer_cast<ArtNet::DmxInMessage>(m);
+
+    //         g_artnetUniverses->set(*message);
+
+    //         for (auto dmxTarget : dmxTargets) dmxTarget->onDmx(message);
+
+    //     });
+
     Base::stack->childrens.back()->list.push_back(cue);
 
 }

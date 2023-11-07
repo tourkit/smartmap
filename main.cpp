@@ -18,8 +18,6 @@
 
 int main() { 
 
-
-
     auto &engine = Engine::getInstance();
     engine.init();
 
@@ -27,7 +25,7 @@ int main() {
 
     struct FPSWidget : GUI::Window {
 
-       FPSWidget() :  GUI::Window("FPS") {
+       FPSWidget() :  GUI::Window("WIDGETS") {
 
 
        }
@@ -57,7 +55,6 @@ int main() {
        }
 
     } fpsw;
-
 
 
     auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
@@ -92,14 +89,6 @@ int main() {
 
     }
 
-    // ArtnetWidget aw(sm.artnet);
-
-    // Texture img("boy.jpg");
-    // FrameBuffer fb;
-    // auto *shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
-    // engine.stack.list.push_back(new Stack::DrawCall{engine.quad, shader, &img, &fb, "Quad to layer"});
-    
-    
     StackWidget sw(&engine.stack);
 
     FileWidget fw;
