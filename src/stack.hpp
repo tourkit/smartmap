@@ -21,11 +21,28 @@ static void Draw2D(VBO* vbo, ShaderProgram *shader, FrameBuffer *fb, Texture *te
 
 struct Stack {
 
+    Stack* parent = nullptr;
+    std::vector<Stack*> childrens;
+    
+
     struct Cue { 
         
         std::string name = "Cue"; 
         bool active = true;
         virtual void run() ; 
+        
+    };
+
+    std::vector<Cue*> list;
+    
+    struct StackCue : Cue { 
+        
+        std::string name = "Stack"; 
+        Stack *stack;
+
+        StackCue(Stack *stack, std::string name = "ClearCall")  ;
+
+        void run() override;
         
     };
 
@@ -60,8 +77,6 @@ struct Stack {
         void run() override;
 
     };
-
-    std::vector<Cue*> list;
 
     void run();
 

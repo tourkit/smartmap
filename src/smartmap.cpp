@@ -12,6 +12,11 @@ namespace SmartMap {
 
 Base::Base() {
 
+    engine.stack.childrens.push_back(new Stack{&engine.stack});
+    stack = engine.stack.childrens.back();
+    stack->childrens.push_back(new Stack{stack});
+
+
     artnet = new Artnet{"2.0.0.222"};
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     
@@ -109,7 +114,8 @@ Base::Base() {
         //  fix2UBO->update();
 
     }, "SM B"});
-    engine.stack.list.push_back(new Stack::Action{[this](){
+
+    stack->childrens.back()->list.push_back(new Stack::Action{[this](){
         
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0,0,engine.window.width,engine.window.height);
@@ -118,7 +124,7 @@ Base::Base() {
         for (auto layer:SmartMap::Layer::pool) { 
 
             layer->fb->texture->bind();
-        Engine::getInstance().quad->draw();
+            Engine::getInstance().quad->draw();
 
         }
 

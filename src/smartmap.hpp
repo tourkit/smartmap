@@ -26,7 +26,7 @@ struct Base {
 
     Config config;
 
-    Stack stack;
+    Stack *stack;
 
     GLint GL_BLEND_MODE_IN = 11;
     GLint GL_BLEND_MODE_OUT = 13;

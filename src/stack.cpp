@@ -4,6 +4,17 @@
 
 void Stack::Cue::run() {  } 
 
+Stack::StackCue::StackCue(Stack *stack, std::string name) : stack(stack) { 
+  
+
+}
+
+void Stack::StackCue::run() { 
+
+    stack->run();std::cout << "oo" << std::endl;
+
+}
+
 Stack::ClearCall::ClearCall(FrameBuffer *fb, std::string name)  { 
   
     if (!fb) this->fb = Engine::getInstance().fb; 
@@ -53,5 +64,10 @@ Stack::Action::Action(std::function<void()> callback, std::string name)
 void Stack::Action::run() { callback(); }
 
 
-void Stack::run() { for (auto cue : list) if (cue->active) cue->run();  }
+void Stack::run() { 
+    
+    for (auto cue : list) if (cue->active) cue->run(); 
+    for (auto child : childrens) child->run(); 
+    
+}
 
