@@ -4,7 +4,7 @@
 
 namespace SmartMap {
 
-VideoOutput::VideoOutput(int width, int height, int offset_x, int offset_y) : Output("Video Output", width,height,offset_x,offset_y) {
+VideoOutput::VideoOutput(std::string name, int width, int height) : Output(name, width,height) {
     
     cue = new Stack::Action([this](){
 
@@ -21,7 +21,7 @@ VideoOutput::VideoOutput(int width, int height, int offset_x, int offset_y) : Ou
 
 }
 
-NDIOutput::NDIOutput(int width, int height, int offset_x, int offset_y) : Output("NDI Output", width,height,offset_x,offset_y), ndisender(width,height) {
+NDIOutput::NDIOutput(std::string name, int width, int height) : Output(name, width,height), ndisender(width,height) {
 
     
 

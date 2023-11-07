@@ -19,9 +19,9 @@ struct Output {
 
     int offset_x, offset_y;
 
-    Output(std::string name, int width, int height, int offset_x = 0, int offset_y = 0) 
+    Output(std::string name, int width, int height) 
         
-        : name(name),fb(width,height), offset_x(offset_x), offset_y(offset_y) { 
+        : name(name),fb(width,height) { 
     
         pool.push_back(this) ; 
     
@@ -36,7 +36,7 @@ struct Output {
 
 struct VideoOutput : Output {
 
-    VideoOutput(int width, int height, int offset_x = 0, int offset_y = 0);
+    VideoOutput(std::string name, int width, int height);
 
 };
 
@@ -44,7 +44,7 @@ struct NDIOutput : Output {
 
     NDI::Sender ndisender;
 
-    NDIOutput(int width, int height, int offset_x = 0, int offset_y = 0);
+    NDIOutput(std::string name, int width, int height);
 
 };
 
