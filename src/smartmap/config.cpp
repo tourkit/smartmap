@@ -2,9 +2,6 @@
 #include "layer.hpp"  
 #include "../smartmap.hpp"  
 
-#include "include/vendor/rapidjson/document.h"
-#include "include/vendor/rapidjson/stringbuffer.h"
-
 namespace SmartMap {
  
 Config::Config () {
@@ -56,28 +53,119 @@ Config::Config () {
 }
 
 void Config::import(std::string filepath) {
-
-
-    rapidjson::Document json;
+  
     json.Parse(File(filepath).data.data());
+
     if(json.HasParseError()) { std::cout << "SM config json parse error !" << std::endl; return; }
 
-    if (!json.HasMember("layers")) { std::cout << "no layers in config" << std::endl; return; }
+    ip = JSON::getString(json, "ip", "10.0.0.99");
 
-    for (auto &layer : json["layers"].GetArray()) { 
+    subnet = JSON::getUint(json, "subnet", 24);
 
-        SmartMap::Layer::Mode mode = SmartMap::Layer::Mode::Free;
-        if (!strcmp(layer["mode"].GetString(),"Grid")) mode = SmartMap::Layer::Mode::Grid;
+    if (!json.HasMember("outputs")) { std::cout << "Missing outputs" << std::endl; return; }
+    if (!json["outputs"].Size()) { std::cout << "Empty outputs" << std::endl; return; }
+    for (auto& output : json["outputs"].GetArray()) {
 
-        int columns = 1, rows = 1;
-        if (layer.HasMember("columns")) columns = layer["columns"].GetInt();
-        if (layer.HasMember("rows")) rows = layer["rows"].GetInt();
-        if (layer.HasMember("quantity")) columns = layer["rows"].GetInt();
+        // 
+        const char* name = JSON::getString(output, "name");
+        unsigned int width = JSON::getUint(output, "width", 16);
+        unsigned int height = JSON::getUint(output, "height", 16);
 
-        new SmartMap::Layer(
+        auto* type = JSON::getString(output, "type");
 
-            layer["start_channel"].GetInt(), 
-            layer["start_universe"].GetInt(), 
+
+        std::cout << "new \"" << name << "\" output \n";
+
+        if (!strcmp(type, "HDMI")) {
+            
+            outputs[name] = new VideoOutput(name,width,height);
+
+            continue;
+        }
+
+        if (!strcmp(type, "NDI")) {
+
+            outputs[name] = new NDIOutput(name,width, height);
+            outputs[name]->name = name;
+
+            continue;
+
+        }
+
+        std::cout << "could not create \"" << name << "\" output ... \n";
+
+    }
+
+    if (!Output::pool.size()) {std::cout << "No outputs ... \n"; return; }
+
+    if (!json.HasMember("layers")) { std::cout << "Missing layers" << std::endl; return; }
+    if (!json["layers"].Size()) { std::cout << "Empty layers" << std::endl; return; }
+    for (auto& layer : json["layers"].GetArray()) {
+
+        auto* name = JSON::getString(layer, "name");
+
+        int output_id = 0;
+        auto layer_name = JSON::getString(layer, "output");
+        for (auto o:Output::pool) { if (!strcmp(o->name.c_str(),layer_name)) { break;} output_id++; }
+        if (output_id == Output::pool.size()) { 
+
+            std::cout << "layer " << name << " : invalid output !" << std::endl;
+            continue;
+            // output_id = 0; 
+
+        }
+
+        auto* output =  Output::pool[output_id];
+
+        auto startUniverse = JSON::getUint(layer, "start_universe", 1);
+        auto startAddress = JSON::getUint(layer, "start_address", 1);
+
+        // wtf ?
+        if (startAddress == 0 || startAddress > 512) // devrait pas etre 511 ?
+            startAddress = 0;
+        else
+            --startAddress;
+
+        if (startUniverse == 0)
+            startUniverse = -1; // ArtNet::PHYSICAL_DMXIN_UNIVERSE;
+        else if (startUniverse > 0x8000)
+            startUniverse = 0;
+        else
+            --startUniverse;
+
+        auto offset_x = JSON::getUint(layer, "x_offset", 0);
+        auto offset_y = JSON::getUint(layer, "y_offset", 0);
+
+        auto width = JSON::getUint(layer, "width", 0);
+        auto height = JSON::getUint(layer, "height", 0);
+
+        if (!width)
+            width = output->fb.width;
+        if (!height)
+            height = output->fb.height;
+
+        auto* t_fixture_mode = JSON::getString(layer, "fixture_mode");
+
+        // FixtureMode fixture_mode = FixtureMode::Basic;
+
+        // if (!strcmp(t_fixture_mode, "Player"))
+        //     fixture_mode = FixtureMode::Player;
+        // else if (!strcmp(t_fixture_mode, "Basic"))
+        //     fixture_mode = FixtureMode::Basic;
+        // else if (!strcmp(t_fixture_mode, "Extended"))
+        //     fixture_mode = FixtureMode::Extended;
+
+        auto columns = JSON::getUint(layer, "columns", 1);
+        auto rows = JSON::getUint(layer, "rows", 1);
+    
+        auto* layer_mode = JSON::getString(layer, "Free");
+        Layer::Mode mode = Layer::Mode::Free;
+        if (strcmp(layer_mode, "Grid")) mode = Layer::Mode::Grid;
+        
+        new Layer(
+
+            startAddress, 
+            startUniverse, 
             basic_fixture, 
             engine.window.width,
             engine.window.height, 
@@ -85,13 +173,12 @@ void Config::import(std::string filepath) {
             columns,
             rows,
             1,
-            layer["output"].GetInt()
-
+            output_id
 
         );
-    
+
+        }
+
     }
-    
-}
 
 };
