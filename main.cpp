@@ -62,7 +62,7 @@ int main() {
     engine.specs = x->create();x->create();x->create();x->create();
 
 
-    sm.import("config.json");
+    sm.config.import("config.json");
 
 
     std::cout <<  "\nSHADERS HEADER:" << std::endl;

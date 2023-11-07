@@ -7,6 +7,8 @@
 
 #include "ndi.hpp"
 
+#include "smartmap/config.hpp"
+
 namespace SmartMap {
 struct Base {
 
@@ -17,13 +19,12 @@ struct Base {
     static inline Artnet *artnet;
     static inline ShaderProgram *shader, *layershader;
     
-    DMX::Fixture basic_fixture;
 
     static inline Buffer::Object *fix1UBO;
     static inline Buffer::Object *fix2UBO;
     static inline Buffer::Object *smartlayersUBO;
 
-    void import(std::string filepath); 
+    Config config;
 
     Stack stack;
 
