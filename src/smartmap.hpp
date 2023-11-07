@@ -25,7 +25,7 @@ struct SmartMap {
     void import(std::string filepath); 
 
     Stack stack;
-    
+
     struct Layer {
 
         static inline std::vector<Layer*> pool;
@@ -40,8 +40,7 @@ struct SmartMap {
 
         Texture *pass, *FTbuffer;
 
-        FrameBuffer *fb, *ndi_fb = nullptr;
-        NDI::Sender *ndisender = nullptr;
+        FrameBuffer *fb;
 
         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?'\":()[]<>-_+*/\\|#@&%$€";
         float char_ratio; 

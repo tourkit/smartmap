@@ -42,6 +42,7 @@ layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; 
 void main() { 
      
      vec2 uv = texcoord;
+     uv.y = 1-uv.y;
    color = texture(tex,uv);    
 
 }
