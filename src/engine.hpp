@@ -45,6 +45,8 @@ struct Engine {
 
         while (!glfwWindowShouldClose(window.id)) window.render([](){
             
+
+
             auto &engine = Engine::getInstance();
 
             engine.fb->clear();
@@ -53,19 +55,7 @@ struct Engine {
 
             engine.stack.run();
 
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            glViewport(0,0,engine.window.width,engine.window.height);
-            glClearColor(0,0,0,0);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            engine.fb->texture->bind();
-            engine.basicshader->use();
-            engine.quad->draw();
-
-
-                engine.gui.draw();
-
+            engine.gui.draw();
             
             engine.specs.set<uint64_t>(0,engine.sequid--);
             if (!engine.sequid) engine.sequid = 1000;

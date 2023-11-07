@@ -23,7 +23,8 @@ add_executable(smartmap
 
     src/dmx.cpp
     src/artnet.cpp
-
+    
+    src/json.cpp
     src/file.cpp
 
     src/gui.cpp
