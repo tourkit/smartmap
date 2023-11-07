@@ -3,8 +3,14 @@
 #include "stack.hpp"
 
 #include "imgui/imgui.h"
+#include "smartmap/layer.hpp"
 
-SmartMap::SmartMap() {
+#include "include/vendor/rapidjson/document.h"
+#include "include/vendor/rapidjson/stringbuffer.h"
+
+namespace SmartMap {
+
+Base::Base() {
 
     artnet = new Artnet{"2.0.0.222"};
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
@@ -160,10 +166,8 @@ SmartMap::SmartMap() {
             
 } 
 
-#include "include/vendor/rapidjson/document.h"
-#include "include/vendor/rapidjson/stringbuffer.h"
 
-void SmartMap::import(std::string filepath) {
+void Base::import(std::string filepath) {
 
 
     rapidjson::Document json;
@@ -201,150 +205,6 @@ void SmartMap::import(std::string filepath) {
     }
     
 }
-
-SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale, int output) 
-
-    : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y) {
-
-        // stack.list.push_back(new Stack::DrawCall{&engine.quad, sm.shader, nullptr, nullptr, "DC main"});
-
-    fixture_first = fix1UBO->quantity;
-    std::vector<char> zeros;
-    zeros.resize(quantity*fix1UBO->byte_size);
-    fix1UBO->push(&zeros[0],quantity);
-    fix2UBO->push(&zeros[0],quantity);
-    
-
-    //get attr offset from forin pool
-    int first_fixture = 0;
-    for (auto &layer:pool) {first_fixture += layer->quantity; for (auto c:fix1UBO->components) { attroffset += layer->quantity*c->members.size(); }}
-    // merge the two ? no , c dla merde de faire comme ca tfasson
-
-    GLuint FW = width*scale, FH = height*scale;
-    if (mode == Layer::Mode::Free) { FW *= quantity_x; FH *= quantity_y; }
-    fb = new FrameBuffer(FW, FH); 
-
-    
-    Buffer::Object::Entry layerUBO = smartlayersUBO->create();
-
-    layerUBO.set<uint32_t>(0,fb->id);
-    layerUBO.set<uint32_t>(1,engine.matrices->quantity); // first canva
-    layerUBO.set<uint32_t>(2,(mode==Layer::Mode::Free?quantity:1)); 
-    layerUBO.set<uint32_t>(3,first_fixture); // irst fixture
-
-    matoffset = engine.matrices->quantity*32;
-    std::cout << matoffset << std::endl;
-    std::vector<std::array<float, 8>> mat;
-    mat = matrice(quantity_x,quantity_y);
-    engine.matrices->push(&mat[0],mat.size());
-    engine.static_ubo.upload(); 
-
-
-    id = pool.size();
-    // push to pool
-    pool.push_back(this);
-        
-
-    quad = new VBO("quad.obj", id, "quadSM");
-
-    pass = new Texture(FW, FH, 0,1, GL_RGB8);
-    FTbuffer = new Texture(FW, FH, 2,1, GL_RGB8,GL_RGB); 
-
-    black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
-    memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
-
-    
-    // artnet links 
-
-    artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&engine.dynamic_ubo.buffer.data[fix1UBO->buffer_offset+attroffset*4] });
-    auto &remap = artnet->universes[uni].remaps.back();
-
-    for (auto &c:fix1UBO->components) { 
-
-        for (auto &m :c->members) { 
-
-            uint8_t combining = 0;
-
-            bool breaker = false;
-
-            for (auto &p:fixture.presets) {
-                 
-                if (breaker) { break; }
-
-                for (auto &f:p.features) { 
-
-                    if (breaker) { break; }
-                    for (auto &a:f.attributes) { 
-
-                      if (&m == a.member) {
-
-                          combining = a.combining; 
-                          breaker = true;
-                          break;
-
-                        }
-                    }
-                }
-            }
-
-            remap.attributes.push_back({combining, m.range_from, m.range_to});  
-        
-        }
-    }
-    // if (pool.size()>1)  return;
-    
-   
-
-    int char_h = (this->height/this->quantity_y);
-    float char_widest = 0;
-    for (size_t i = 0; i < strlen(chars)-1; i++) {
-
-        FT fr((chars+i), char_h);
-
-        if (fr.width>char_widest) char_widest = fr.width;
-
-    }
-
-    char_ratio = (fb->width/quantity_x)/char_widest;
-    if (char_ratio > 1) char_ratio = 1;
-
-    artnet->universes[uni].callbacks.push_back([this](DMX* dmx){ 
-
-        for (int i = 0; i < this->quantity; i++) { 
-
-            float* ptr = (float*)(fix1UBO->data()+i*fix1UBO->byte_size+attroffset*4)+8;
-
-            int gobo_id = *ptr*255;
-
-     
-            if (gobo_id == 10) {
-
-
-                float* matptr = ((float*)(engine.matrices->data()+this->matoffset))+i*8;
-
-                int char_id = *(ptr+1)*(strlen(this->chars)-1);
-
-                FT fr((this->chars+char_id), (this->height/this->quantity_y)*this->char_ratio);
-
-                float max_width = this->fb->width**(matptr);
-                                
-                float offset_x = this->fb->width**(matptr+4)+(((max_width)-fr.width)*.5);
-                if (offset_x<0) offset_x =0;
-
-                this->FTbuffer->write(&black[0], matptr[0]*this->fb->width,matptr[1]*this->fb->height,this->fb->width*matptr[4],this->fb->height*matptr[5],0,1,GL_R8,GL_RED); 
-
-                this->FTbuffer->write(fr.buffer, fr.width, fr.height, (GLuint)std::floor(offset_x), this->height**(matptr+5),0,1,GL_R8,GL_RED); 
-
-
-
-            }
-            
-         }  
-        
-    });
-
-}
-
 
  
 // void SmartMap::render() {
@@ -451,3 +311,5 @@ SmartMap::Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint1
 // }
 
 // SmartMap& SmartMap::getInstance() { static SmartMap instance;  return instance; }
+
+    }; 

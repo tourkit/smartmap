@@ -29,6 +29,8 @@ add_executable(smartmap
     src/gui.cpp
 
     src/smartmap.cpp
+    src/smartmap/layer.cpp
+    src/smartmap/output.cpp
 
     src/widgets/artnet_widget.cpp
 

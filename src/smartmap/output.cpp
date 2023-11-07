@@ -1,48 +1,30 @@
-#include "atlas.hpp"  
+#include "output.hpp"  
 
-Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)  {
+#include "../stack.hpp"
 
-    texture = new Texture(width,height,1,1);
+namespace SmartMap {
 
-    texture->mipmaps = 10;
+NDIOutput::NDIOutput(int width, int height) : ndisender(width,height) {
 
-    Directory dir(path);
+    name = "NDI Output";
 
-    for (auto file:dir.list) { 
+    fb = new FrameBuffer(width,height);
 
-        Image img(file);
+    cue = new Stack::Action([this](){
 
-        auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
+        std::vector<unsigned char> data;
+        data.resize(1920*1080*4);
 
-        if (!r.width) {std::cout << "needniouatlas" << std::endl; continue;}
+        glBindFramebuffer(GL_FRAMEBUFFER, this->fb->id);
 
-        normalized_list.push_back({r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height});
+        glReadPixels(0,0, 1920, 1080, GL_RGBA, GL_UNSIGNED_BYTE, &data[0]);
 
-        texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
+        this->ndisender.send(&data[0],data.size());
 
-    }
-
-    ubo = new UBO("mediasCoords");
-    ubo->buffer.add("mediasCoords", {
-
-        "Size",
-        "Position",
-
-    }, normalized_list.size());
-
-    memcpy(&ubo->buffer.data[0],&normalized_list[0],normalized_list.size()*16); // 16 is size of Rect
-
-}
-
-void Atlas::link(ShaderProgram* shader) {
-
-    ubo->subscribers.push_back(shader);
-    ubo->update();
-
-    ubo->upload();
+    }, name);
     
-    shader->sendUniform("mediasAtlas", 1);
-    texture->bind();
+    engine.stack.list.push_back(cue);
 
 }
- 
+
+};

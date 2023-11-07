@@ -23,7 +23,7 @@ int main() {
     auto &engine = Engine::getInstance();
     engine.init();
 
-    SmartMap sm;
+    SmartMap::Base sm;
 
     struct FPSWidget : GUI::Window {
 
@@ -63,10 +63,6 @@ int main() {
 
 
     sm.import("config.json");
-
-    
-
-
 
 
     std::cout <<  "\nSHADERS HEADER:" << std::endl;
