@@ -115,21 +115,15 @@ float grid2(vec2 uv, float thickness, float columns, float rows) {
 
 }
 
-float grid(vec2 uv, float thickness, float columns, float rows) {
+float grid(vec2 uv, float thickness, float columns, float rows, vec2 AR) {
 
     vec2 max_lines = vec2(10);
     // return uv.x+uv.y;
 
     vec2 grid = vec2(columns,rows);
     grid = 1.0+grid*max_lines;
-
-    vec2 res = vec2(1920/30,1080) / grid ;
-    // vec2 res = vec2(1);
-    // if (FBratio > 1.) res.x = FBratio;
-    // else res.y = FBratio;
-    // res /= grid ;    
     
-    vec2 aspect = vec2(min(1.0,res.y/res.x),min(1.0,res.x/res.y)); 
+    vec2 aspect = vec2(.5625,1); 
     
     vec2 vthickness = vec2(thickness);
     vthickness *= aspect;
@@ -294,7 +288,8 @@ void main() {
         if (fix[fix_id].feedback>0) color += vec4(texture(pass,(uv)*mat[canva_id].size+mat[canva_id].pos).xyz,0)-(.999999-(1-pow(fix[fix_id].feedback*.87+1,-10))*.999999);
 
         // could be in matrice or some UBO ?
-        vec2 AR = vec2(1,.5625);
+        
+        vec2 AR = mat[canva_id].xxxxalign;
         
         vec2 pos = fix[fix_id].pos;
         pos.y = 1-pos.y;
@@ -342,7 +337,7 @@ void main() {
 
         else { if (gobo_id == 8) { color += rgba*fromAtlas(outuv, int(fix[fix_id].gobo[1]*15)); }
         
-        else {     if (gobo_id == 1) { color += rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3]); }
+        else {     if (gobo_id == 1) { color += rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3],AR); }
 
         else {
 

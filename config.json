@@ -30,7 +30,7 @@
             "start_universe": 1,
             "fixture_mode": "Basic",
             "layer_mode": "Grid",
-            "columns": 8,
+            "columns": 1,
             "rows": 1,
             "blending": "Additive",
             "width": 0,

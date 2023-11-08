@@ -35,9 +35,15 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
 
     matoffset = engine.matrices->quantity*32;
     std::cout << matoffset << std::endl;
-    std::vector<std::array<float, 8>> mat;
-    mat = matrice(quantity_x,quantity_y);
-    engine.matrices->push(&mat[0],mat.size());
+    std::vector<std::array<float, 8>> mats;
+    mats = matrice(quantity_x,quantity_y);
+    for (auto &m:mats) { 
+
+        m[6]  = std::min(1.0f,(width*m[0])/(height*m[1]));
+        m[7]  = std::min(1.0f,(height*m[1])/(width*m[0]));
+
+    }
+    engine.matrices->push(&mats[0],mats.size());
     engine.static_ubo.upload(); 
 
 
@@ -51,8 +57,8 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
     pass = new Texture(FW, FH, 0,1, GL_RGB8);
     FTbuffer = new Texture(FW, FH, 2,1, GL_RGB8,GL_RGB); 
 
-    black.resize((mat[0][0]*FW)*(mat[0][1]*FH)*3);
-    memset(&black[0],0,mat[0][0]*FW*mat[0][1]*FH*3);
+    black.resize((mats[0][0]*FW)*(mats[0][1]*FH)*3);
+    memset(&black[0],0,mats[0][0]*FW*mats[0][1]*FH*3);
 
     
     // artnet links 
