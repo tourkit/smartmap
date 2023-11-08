@@ -91,7 +91,7 @@ Base::Base() {
             
             layer->quad->draw(layer->quantity); 
             
-            if (shader->loaded) layer->pass->read(layer->fb->texture);
+            // if (shader->loaded) layer->pass->read(layer->fb->texture);
             
         }
 

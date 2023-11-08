@@ -122,8 +122,11 @@ float grid(vec2 uv, float thickness, float columns, float rows, vec2 AR) {
 
     vec2 grid = vec2(columns,rows);
     grid = 1.0+grid*max_lines;
+
+    vec2 res = AR / grid ; 
+
     
-    vec2 aspect = vec2(.5625,1); 
+    vec2 aspect = vec2(min(1.0,res.y/res.x),min(1.0,res.x/res.y)); 
     
     vec2 vthickness = vec2(thickness);
     vthickness *= aspect;
@@ -337,7 +340,7 @@ void main() {
 
         else { if (gobo_id == 8) { color += rgba*fromAtlas(outuv, int(fix[fix_id].gobo[1]*15)); }
         
-        else {     if (gobo_id == 1) { color += rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3],AR); }
+        else {     if (gobo_id == 1) { color += rgba*grid(outuv, fix[id].gobo[1], fix[id].gobo[2], fix[id].gobo[3], AR*fix[fix_id].size); }
 
         else {
 
