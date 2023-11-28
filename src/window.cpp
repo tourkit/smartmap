@@ -55,7 +55,7 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
     glfwSetWindowUserPointer(id, this);
 #ifdef __linux__
 #ifdef NDEBUG
-    glfwSetInputMode(window, GLFW_CURSOR, (cursor_visibility ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED));
+    glfwSetInputMode(id, GLFW_CURSOR, (cursor_visibility ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED));
 #endif
 #endif
     if (uid_callbacks) {
