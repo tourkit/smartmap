@@ -13,7 +13,7 @@ add_executable(smartmap
     src/window.cpp
     src/shader.cpp
     src/framebuffer.cpp
-    src/vbo.cpp
+    src/vbo.cpp  
     src/ubo.cpp
     src/atlas.cpp
 
