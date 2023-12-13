@@ -14,8 +14,9 @@ add_executable(smartmap
 
     main.cpp
 
-    src/texture.cpp
     src/window.cpp
+
+    src/texture.cpp
     src/shader.cpp
     src/framebuffer.cpp
     src/vbo.cpp  
@@ -34,6 +35,8 @@ add_executable(smartmap
     
     src/json.cpp
     src/file.cpp
+
+    src/output.cpp
 
     src/gui.cpp
 
