@@ -17,7 +17,7 @@ Base::Base() {
     stack->childrens.push_back(new Stack{stack});
 
 
-    artnet = new Artnet{"2.0.0.222"};
+    artnet = new Artnet{"10.0.0.102"};
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     
     layershader = new ShaderProgram({"layer.frag", "basic.vert"});
