@@ -1,9 +1,5 @@
 #version 430 core
 
-layout (location = 0) in vec2 POSITION;
-layout (location = 1) in vec2 TEXCOORD;
-layout (location = 3) in int OBJ;
-
 struct Framebuffer { int width, height, x, y;  };
 struct Rect { vec2 size;vec2 pos;  };
 struct Mat { vec2 size;vec2 norm;vec2 pos; vec2 xxxxalign; };
@@ -21,6 +17,7 @@ struct Fixture {
     float feedback; 
     float strobe;  
     float ratio; // unused for now mostly for alignment
+
 };
 struct Layer {
 
@@ -30,28 +27,23 @@ struct Layer {
     int fixture_first;
 
 };
+
 layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
 
 layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[50]; Fixture fix2[50];  int seq[4]; };
 layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[100]; Layer layer[10]; };
 
-flat out int obj;
-flat out int id;
 
-out vec2 texcoord;
-// out vec2 pixel;
+out vec4 color;
 
-void main() {
+uniform sampler2D tex;
+flat in int obj;
+flat in int id;
+in vec2 texcoord;
 
-    obj = OBJ;
-    id = gl_InstanceID;
-    texcoord = TEXCOORD;
-    texcoord.y = 1-texcoord.y;
-    // pixel = gl_FragCoord.xy;
-    gl_Position = vec4(POSITION.x,POSITION.y,0,1);   
+void main() { 
 
-    int current = layer[obj].canva_first + id;
-    gl_Position.xy *= mat[current].size;
-    gl_Position.xy += mat[current].norm;
-
+    color = vec4(1,1,0,1); return;
+    
 }
+
