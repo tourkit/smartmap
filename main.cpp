@@ -18,12 +18,6 @@
 
 int main() { 
 
-#ifdef ROCH
-
-    std::cout << "ROOOOCH" << std::endl;
-
-#endif
-
     auto &engine = Engine::getInstance();
     engine.init();
 

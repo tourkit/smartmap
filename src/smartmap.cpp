@@ -25,10 +25,12 @@ Base::Base() {
     shader->sendUniform("freetype", 2);
             
     auto &window = Engine::getInstance().window;
-    // window.setPos(2560,0);
     window.setSize(1920,1080);
-    // window.setPos(1920-400,0);
-    // window.setSize(400,300);
+    
+#ifdef ROCH
+    window.setPos(1920-400,0);
+    window.setSize(400,300);
+#endif
               
     shader->use();
     atlas = new Atlas("assets/media/",4096,2048);
