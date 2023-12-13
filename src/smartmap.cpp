@@ -17,7 +17,13 @@ Base::Base() {
     stack->childrens.push_back(new Stack{stack});
 
 
+#ifdef ROCH
+    artnet = new Artnet{"10.0.0.123"};
+#else
     artnet = new Artnet{"10.0.0.102"};
+#endif
+
+
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     
     layershader = new ShaderProgram({"layer.frag", "basic.vert"});
@@ -28,8 +34,9 @@ Base::Base() {
     window.setSize(1920,1080);
     
 #ifdef ROCH
-    window.setPos(1920-400,0);
-    window.setSize(400,300);
+    window.setPos(2560,0);
+    // window.setPos(1920-400,0);
+    // window.setSize(400,300);
 #endif
               
     shader->use();
