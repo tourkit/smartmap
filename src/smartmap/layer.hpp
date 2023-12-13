@@ -3,7 +3,7 @@
 #include "../framebuffer.hpp"
 #include "../texture.hpp"
 #include "../vbo.hpp"
-#include "../DMX.hpp"
+#include "../dmx.hpp"
 
 namespace SmartMap {
 

@@ -4,16 +4,15 @@
 #include <dirent.h>
 #include <fstream>
 #include <sstream>
+#include <cstdint>
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include <functional>
 
-// 
-#define ROCH
 #ifdef ROCH
-static std::string REPO_DIR = "C:/msys64/home/SysErr/old/smartmap/";
+static std::string REPO_DIR = "C:/users/root/cpp/smartmap/";
 #else
 static std::string REPO_DIR = "./";
 #endif
