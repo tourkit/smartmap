@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.12)
 project(smartmap VERSION 0.1.0)
 
+
+
+option(ROCH  "Roch" OFF)
+
+
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Freetype REQUIRED)
@@ -121,3 +126,8 @@ target_link_libraries(smartmap PRIVATE
 # for libartnet to use a less deprecated network api on linux
 set_target_properties(smartmap PROPERTIES COMPILE_FLAGS "-DHAVE_GETIFADDRS -DHAVE_LINUX_IF_PACKET_H")
 endif(UNIX)
+
+
+if(ROCH)
+target_compile_definitions(smartmap PRIVATE ROCH=1)
+endif(ROCH)

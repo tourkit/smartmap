@@ -11,8 +11,6 @@
 
 #include <functional>
 
-// 
-#define ROCH
 #ifdef ROCH
 static std::string REPO_DIR = "C:/users/root/cpp/smartmap/";
 #else
