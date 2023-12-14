@@ -102,7 +102,7 @@ static void glInfo(GLenum glenum, std::string name = "Info") {
 
     glGetIntegerv(glenum, &data);
 
-    std::cout << name << ": " << data <<std::endl;
+    PLOGI << name << ": " << data ;
 
 }
 
@@ -133,14 +133,14 @@ static void glError(std::string file_name, std::string function_name, GLuint lin
   function_name = function_name.substr(function_name.find(" "));
   function_name = function_name.substr(0,function_name.find("("));
 
-  std::cout << file_name << "(" << line << "): " << function_name  <<  "() => " << code_string << '\n';
+  PLOGI << file_name << "(" << line << "): " << function_name  <<  "() => " << code_string ;
 
   exit(0);
 
 }
 
 #define GL_ERROR() glError(__FILE__, __PRETTY_FUNCTION__, __LINE__)
-#define GL_PRINT(str) std::cout << str << std::endl;
+#define GL_PRINT(str) PLOGI << str;
 #else
 #define GL_ERROR()
 #define GL_PRINT(str) /**/

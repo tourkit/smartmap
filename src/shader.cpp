@@ -15,7 +15,7 @@ Shader::Shader(std::string path)  {
     if (file.extension == "frag") type = GL_FRAGMENT_SHADER;
     else if (file.extension == "vert") type = GL_VERTEX_SHADER;
     else if (file.extension == "comp") type = GL_COMPUTE_SHADER;
-    else std::cout << "SMARTMAP FILENAME ERROR" << std::endl;
+    else PLOGW << "SMARTMAP FILENAME ERROR" ;
 
     id = glCreateShader(type);
  

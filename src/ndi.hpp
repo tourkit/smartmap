@@ -19,7 +19,7 @@ namespace NDI {
             send_create.clock_video = true;
 
             pNDI_send = NDIlib_send_create(&send_create);
-            if (!pNDI_send) std::cout << "NDI ERROR 1" << std::endl;
+            if (!pNDI_send) PLOGW << "NDI ERROR 1" ;
 
             
             NDI_video_frame = new NDIlib_video_frame_v2_t;

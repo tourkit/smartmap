@@ -119,7 +119,7 @@ struct Component {
 
         for (int i = 0; i < pool.size(); i++) if (!strcmp(pool[i]->name.c_str(),name)) return pool[i];
 
-        std::cout << "WARNING: Component \"" << name << "\" does not exist yet !" << std::endl;
+        PLOGW << "Component \"" << name << "\" does not exist yet !";
 
         return &create(name);
 

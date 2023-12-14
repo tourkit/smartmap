@@ -1,6 +1,7 @@
 #include "json.hpp"
 
 #include "file.hpp"
+#include "log.hpp"
 
 JSON::JSON() {}
 
@@ -20,7 +21,7 @@ bool JSON::exists(rapidjson::Value& source, const char* name) {
 
     if (!source.HasMember(name)) {
 
-        std::cout << "-----------------------------> undefined: " << name << "\n";
+        PLOGW << "-----------------------------> undefined: " << name;
 
         return false;
     }

@@ -47,7 +47,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
     layerUBO.set<uint32_t>(3,first_fixture); // irst fixture
 
     matoffset = Engine::getInstance().matrices->quantity*32;
-    std::cout << matoffset << std::endl;
+    PLOGV << "/!\\ " << matoffset;
     std::vector<std::array<float, 8>> mats;
     mats = matrice(quantity_x,quantity_y);
     for (auto &m:mats) { 

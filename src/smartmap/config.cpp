@@ -77,14 +77,14 @@ void Config::import(std::string filepath) {
   
     json.Parse(file.data.data());
 
-    if(json.HasParseError()) { std::cout << "SM config json parse error !" << std::endl; return; }
+    if(json.HasParseError()) { PLOGW << "SM config json parse error !"; return; }
 
     ip = JSON::getString(json, "ip", "180.0.0.99");
 
     subnet = JSON::getUint(json, "subnet", 24);
 
-    if (!json.HasMember("outputs")) { std::cout << "Missing outputs" << std::endl; return; }
-    if (!json["outputs"].Size()) { std::cout << "Empty outputs" << std::endl; return; }
+    if (!json.HasMember("outputs")) { PLOGW << "Missing outputs"; return; }
+    if (!json["outputs"].Size()) { PLOGW << "Empty outputs"; return; }
     for (auto& output : json["outputs"].GetArray()) {
 
         // 
@@ -93,9 +93,6 @@ void Config::import(std::string filepath) {
         unsigned int height = JSON::getUint(output, "height", Engine::getInstance().window.height);
 
         auto* type = JSON::getString(output, "type");
-
-
-        std::cout << "new \"" << name << "\" output \n";
 
         if (!strcmp(type, "HDMI")) {
             
@@ -113,14 +110,14 @@ void Config::import(std::string filepath) {
 
         }
 
-        std::cout << "could not create \"" << name << "\" output ... \n";
+        PLOGW << "could not create \"" << name << "\" output ... \n";
 
     }
 
-    if (!Output::pool.size()) {std::cout << "No outputs ... \n"; return; }
+    if (!Output::pool.size()) {PLOGW << "No outputs ... "; return; }
 
-    if (!json.HasMember("layers")) { std::cout << "Missing layers" << std::endl; return; }
-    if (!json["layers"].Size()) { std::cout << "Empty layers" << std::endl; return; }
+    if (!json.HasMember("layers")) { PLOGW << "Missing layers" ; return; }
+    if (!json["layers"].Size()) { PLOGW << "Empty layers" ; return; }
     for (auto& layer : json["layers"].GetArray()) {
 
         auto* name = JSON::getString(layer, "name");
@@ -130,7 +127,7 @@ void Config::import(std::string filepath) {
         for (auto o:Output::pool) { if (!strcmp(o->name.c_str(),layer_name)) { break;} output_id++; }
         if (output_id == Output::pool.size()) { 
 
-            std::cout << "layer " << name << " : invalid output !" << std::endl;
+           PLOGW << "layer " << name << " : invalid output !" << std::endl;
             continue;
             // output_id = 0; 
 
@@ -184,7 +181,7 @@ void Config::import(std::string filepath) {
         auto* layer_mode = JSON::getString(layer, "layer_mode");
         Layer::Mode mode = Layer::Mode::Free;
         if (!strcmp(layer_mode, "Grid")) mode = Layer::Mode::Grid;
-        std::cout << "mode: " << mode << std::endl;
+        PLOGV << "mode: " << mode;
         
         new Layer(
 

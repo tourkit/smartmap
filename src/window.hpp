@@ -41,7 +41,7 @@ struct Window {
 
     void initUidCallbacks();
     
-    std::function<void()> clickCallBack = []() { /* std::cout << "click" <<std::endl; */ };
+    std::function<void()> clickCallBack = []() { /*  PLOGV << "click"; */ };
 
 };
 

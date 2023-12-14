@@ -14,7 +14,7 @@ Atlas::Atlas(std::string path, int width, int height)  : binpack(width,height,0)
 
         auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
 
-        if (!r.width) {std::cout << "needniouatlas" << std::endl; continue;}
+        if (!r.width) {PLOGW << "needniouatlas"; continue;}
 
         normalized_list.push_back({r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height});
 

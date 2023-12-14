@@ -1,4 +1,5 @@
 #include "thread.hpp"
+#include "log.hpp"
 
 #include "messagetype.hpp"
 
@@ -24,15 +25,15 @@ Thread::~Thread() {
 void Thread::start() {
     _keepRunning = true;
     _thread = std::thread([this]() {
-        std::cout << "init " << _name << std::endl;
+        PLOGW << "init " << _name;
         init();
-        std::cout << "init " << _name << " done" << std::endl;
+        PLOGW << "init " << _name << " done";
         while (_keepRunning) {
             _ios.run_one();
         }
-        std::cout << "deinit " << _name << std::endl;
+        PLOGW << "deinit " << _name;
         deinit();
-        std::cout << "deinit " << _name << " done" << std::endl;
+        PLOGW << "deinit " << _name << " done";
     });
 }
 

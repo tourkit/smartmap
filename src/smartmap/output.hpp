@@ -25,6 +25,8 @@ struct Output {
         : name(name),fb(width,height) { 
     
         pool.push_back(this) ; 
+
+        PLOGD << name << " created";
     
     }
 

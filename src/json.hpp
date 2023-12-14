@@ -46,7 +46,7 @@ struct JSON {
 
     //         if (!val->HasMember(name)) {
 
-    //             std::cout << "member '" << name << "' does not exist" << std::endl;
+    //             PLOGW << "member '" << name << "' does not exist";
     //             return;
 
     //         }

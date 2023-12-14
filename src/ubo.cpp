@@ -9,7 +9,7 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name)
     binding = binding_count++;
 
     // can do better ^^
-    if (binding > 100) std::cout << "MAX_UBO might soon be reached";
+    if (binding > 100) PLOGW << "MAX_UBO might soon be reached";
 
     buffer.updateBuffer();
     

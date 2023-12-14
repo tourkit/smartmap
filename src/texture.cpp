@@ -48,7 +48,7 @@ Texture::Texture(std::string path)   {
 
     Image img(path);  
 
-    if (!img.width) { std::cout << "error in Texture creation" << std::endl; return; }
+    if (!img.width) { PLOGW << "error in Texture creation" ; return; }
     
     create(img.width, img.height,0,1,GL_RGB8,GL_RGB);
 

@@ -44,7 +44,7 @@
             }
 
             if (comp) { memcpy(&buffer->data[byte_size*id+buffer_offset], data, comp->size); }
-            else{ std::cout << name << " does not recall" << std::endl; }
+            else{ PLOGW << name << " does not recall"; }
 
         }
 

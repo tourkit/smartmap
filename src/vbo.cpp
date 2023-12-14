@@ -87,7 +87,7 @@ void VBO::import(std::string path) {
 		aiProcess_JoinIdenticalVertices  |
 		aiProcess_SortByPType);
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) std::cout << "Failed to load OBJ file: " << importer.GetErrorString() << std::endl;
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) PLOGW << "Failed to load OBJ file: " << importer.GetErrorString();
 
     auto mesh = scene->mMeshes[0];
 
