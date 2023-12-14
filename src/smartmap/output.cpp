@@ -24,7 +24,7 @@ VideoOutput::VideoOutput(std::string name, int width, int height) : Output(name,
 
 NDIOutput::NDIOutput(std::string name, int width, int height) : Output(name, width,height), ndisender(width,height) {
 
-    data.resize(1920*1080*4);
+    data.resize(width*height*4);
 
     cue = new Stack::Action([this](){
 
@@ -32,9 +32,9 @@ NDIOutput::NDIOutput(std::string name, int width, int height) : Output(name, wid
 
         // glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-        glReadPixels(0,0, 1920, 1080, GL_BGRA, GL_UNSIGNED_BYTE, &this->data[0]);
+        glReadPixels(0,0, fb.width, fb.height, GL_BGRA, GL_UNSIGNED_BYTE, &this->data[0]);
 
-        this->ndisender.send(&this->data[0],this->data.size());
+        this->ndisender.send(&this->data[0], this->data.size());
 
     }, name);
     
