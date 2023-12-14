@@ -12,11 +12,15 @@ Layer::~Layer() {
     delete pass;
     delete FTbuffer;
 
+    auto it = std::find(pool.begin(), pool.end(), this);
+    if (it != pool.end()) pool.erase(it);
+
+    PLOGD << name;
 }
 
 
 
-Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale, int output) 
+Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale, int output, const char* name) 
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y),output(output) {
 
@@ -134,7 +138,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
 
             float* ptr = (float*)(Base::fix1UBO->data()+i*Base::fix1UBO->byte_size+attroffset*4)+8;
 
-            int gobo_id = *ptr*255;
+            int gobo_id = (*ptr)*255;
 
      
             if (gobo_id == 10) {
@@ -162,6 +166,11 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
          }  
         
     });
+
+    if (name) this->name = name;
+    else this->name = "SM Layer "+std::to_string(id);
+
+    PLOGD <<  this->name;
 
 };
 

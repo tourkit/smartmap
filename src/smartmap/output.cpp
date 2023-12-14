@@ -5,6 +5,35 @@
 
 namespace SmartMap {
 
+Output::Output(std::string name, int width, int height) 
+        
+        : name(name),fb(width,height) { 
+    
+        pool.push_back(this) ; 
+
+        PLOGD << name;
+    
+    }
+
+Output::~Output() { 
+        
+        delete cue; 
+
+        auto it = std::find(pool.begin(), pool.end(), this);
+        if (it != pool.end()) pool.erase(it);
+
+        PLOGD << name;
+        
+    }
+
+VideoOutput::~VideoOutput() {
+
+        auto it = std::find( Base::stack->childrens.back()->list.begin(),  Base::stack->childrens.back()->list.end(), cue);
+        if (it !=  Base::stack->childrens.back()->list.end())  Base::stack->childrens.back()->list.erase(it);
+        else PLOGW << "CROUTE";
+
+}
+
 VideoOutput::VideoOutput(std::string name, int width, int height) : Output(name, width,height) {
     
     cue = new Stack::Action([this](){

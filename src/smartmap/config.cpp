@@ -64,15 +64,26 @@ void Config::import(std::string filepath) {
 
     PLOGD << "SM IMPORT CONFIG";
 
+    bool is = false;
+    if (Output::pool.size()) is = true;
+       
+
     // CLEAR
-    for (auto o:Output::pool) delete o;
-    Output::pool.resize(0);
     for (auto l:Layer::pool) delete l;
     Layer::pool.resize(0);
 
+    Base::artnet->universes.clear();
+
+    Base::fix1UBO->quantity = 0;
+    Base::fix2UBO->quantity = 0;
+    
+    Base::smartlayersUBO->quantity = 0;
+    
+    for (auto o:Output::pool) delete o;
+    Output::pool.resize(0);
     
     // START IMPORT
-    
+    if (is) return;
     file.read(filepath);
   
     json.Parse(file.data.data());
@@ -82,7 +93,6 @@ void Config::import(std::string filepath) {
     ip = JSON::getString(json, "ip", "180.0.0.99");
 
     subnet = JSON::getUint(json, "subnet", 24);
-
     if (!json.HasMember("outputs")) { PLOGW << "Missing outputs"; return; }
     if (!json["outputs"].Size()) { PLOGW << "Empty outputs"; return; }
     for (auto& output : json["outputs"].GetArray()) {
@@ -114,12 +124,14 @@ void Config::import(std::string filepath) {
 
     }
 
-    if (!Output::pool.size()) {PLOGW << "No outputs ... "; return; }
+       
+    if ( !Output::pool.size()) {PLOGW << "No outputs ... "; return; }
 
     if (!json.HasMember("layers")) { PLOGW << "Missing layers" ; return; }
     if (!json["layers"].Size()) { PLOGW << "Empty layers" ; return; }
     for (auto& layer : json["layers"].GetArray()) {
 
+        // if (is) break;  
         auto* name = JSON::getString(layer, "name");
 
         int output_id = 0;
@@ -182,7 +194,7 @@ void Config::import(std::string filepath) {
         Layer::Mode mode = Layer::Mode::Free;
         if (!strcmp(layer_mode, "Grid")) mode = Layer::Mode::Grid;
         PLOGV << "mode: " << mode;
-        
+      
         new Layer(
 
             startAddress, 
@@ -194,7 +206,8 @@ void Config::import(std::string filepath) {
             columns,
             rows,
             1,
-            output_id
+            output_id,
+            name
 
         );
 

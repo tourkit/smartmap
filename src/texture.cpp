@@ -74,7 +74,14 @@ void Texture::addImage(std::string path, GLuint offset_x, GLuint offset_y) {
 
 Texture::~Texture() { destroy(); }
 
-void Texture::destroy() { if (id) glDeleteTextures(1, &id);  }
+void Texture::destroy() { 
+    
+    if (id) glDeleteTextures(1, &id); 
+
+    auto it = std::find(pool.begin(), pool.end(), this);
+    if (it != pool.end()) pool.erase(it);
+
+}
 
 void Texture::bind(int unit) { this->unit = unit; bind(); }
 

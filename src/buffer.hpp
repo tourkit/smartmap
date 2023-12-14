@@ -80,4 +80,6 @@ struct Buffer {
 
     Buffer(std::string name = "Buffer");
 
+    ~Buffer();
+
 };

@@ -20,22 +20,9 @@ struct Output {
 
     int offset_x, offset_y;
 
-    Output(std::string name, int width, int height) 
-        
-        : name(name),fb(width,height) { 
-    
-        pool.push_back(this) ; 
+    Output(std::string name, int width, int height);
 
-        PLOGD << name << " created";
-    
-    }
-
-    ~Output() { 
-        
-        if (cue) delete cue; 
-        PLOGD << name << " destroyed";
-        
-    }
+    virtual ~Output();
 
     enum TYPE { HDMI, NDI, DMX } type;
 
@@ -47,6 +34,7 @@ struct Output {
 struct VideoOutput : Output {
 
     VideoOutput(std::string name, int width, int height);
+    ~VideoOutput();
 
 };
 

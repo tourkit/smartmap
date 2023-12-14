@@ -86,6 +86,13 @@
 
     void Buffer::reset() { objects.resize(0); data.resize(0); }
 
+    Buffer::~Buffer() {
+
+        auto it = std::find(pool.begin(), pool.end(), this);
+        if (it != pool.end()) pool.erase(it);
+
+    }
+
     void Buffer::updateBuffer() {
 
         
