@@ -12,6 +12,8 @@ Engine::Engine(uint16_t width, uint16_t height)
 }
 
 void Engine::init() {
+
+    plog::init(plog::debug, "logs.txt");
     
     framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
     matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);

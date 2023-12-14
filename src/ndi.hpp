@@ -4,7 +4,7 @@
 #include "include/vendor/NDI/Include/Processing.NDI.Lib.h"
 
 namespace NDI {
-
+    
     struct Sender {
 
         NDIlib_send_instance_t pNDI_send;
@@ -31,16 +31,6 @@ namespace NDI {
             memset((void*)NDI_video_frame->p_data, 0 , NDI_video_frame->xres * NDI_video_frame->yres * 4);
 
             
-        }
-
-        int x = 0;
-
-        void test() {
-
-            memset((void*)NDI_video_frame->p_data, x++%255 , NDI_video_frame->xres * NDI_video_frame->yres * 4);
-
-            send();
-
         }
 
         void send(unsigned char* data, size_t size) {

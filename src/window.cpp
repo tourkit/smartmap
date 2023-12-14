@@ -142,7 +142,7 @@ void Window::render(std::function<void()> callback) {
 
     glfwPollEvents();
 
-    fps.run(max_fps);
+    // fps.run(max_fps);
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // BG COLOR

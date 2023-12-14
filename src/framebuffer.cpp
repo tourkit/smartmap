@@ -2,7 +2,13 @@
 #include "texture.hpp"  
 #include "engine.hpp"  
 
-FrameBuffer::~FrameBuffer() { if (id) glDeleteFramebuffers(1, &id); }
+FrameBuffer::~FrameBuffer() { 
+    
+    if (id) {glDeleteFramebuffers(1, &id);} 
+
+    if (texture) { delete texture; } 
+    
+}
 
 FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) { pool.push_back(this); 
 

@@ -49,12 +49,35 @@ Config::Config () {
 
     };
 
+    file.callback = [this](File* f){
+
+        this->import(f->path);
+
+    };
+
+    file.survey = true;
+
 
 }
 
 void Config::import(std::string filepath) {
+
+    PLOGI << "ooo";
+
+    std::cout << "SM import" << std::endl;
+
+    // CLEAR
+    for (auto o:Output::pool) delete o;
+    Output::pool.resize(0);
+    for (auto l:Layer::pool) delete l;
+    Layer::pool.resize(0);
+
+    
+    // START IMPORT
+    
+    file.read(filepath);
   
-    json.Parse(File(filepath).data.data());
+    json.Parse(file.data.data());
 
     if(json.HasParseError()) { std::cout << "SM config json parse error !" << std::endl; return; }
 
@@ -121,7 +144,7 @@ void Config::import(std::string filepath) {
         auto startAddress = JSON::getUint(layer, "start_address", 1);
 
         // wtf ?
-        if (startAddress == 0 || startAddress > 512) // devrait pas etre 511 ?
+        if (startAddress == 0 || startAddress > 512) 
             startAddress = 0;
         else
             --startAddress;

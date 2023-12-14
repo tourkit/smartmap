@@ -28,7 +28,8 @@
 
 #include "include/vendor/glm/glm.hpp"
 
-
+#include "include/vendor/plog/Log.h"
+#include "include/vendor/plog/Initializers/RollingFileInitializer.h"
 
 #include "file.hpp"
 

@@ -16,7 +16,7 @@ struct Output {
 
     FrameBuffer fb;
 
-    Stack::Cue * cue;
+    Stack::Cue * cue = nullptr;
 
     int offset_x, offset_y;
 
@@ -27,6 +27,8 @@ struct Output {
         pool.push_back(this) ; 
     
     }
+
+    ~Output() { if (cue) delete cue; }
 
     enum TYPE { HDMI, NDI, DMX } type;
 

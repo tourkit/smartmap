@@ -7,6 +7,8 @@
 namespace SmartMap {
 
 struct Config {
+    
+    File file;
 
     rapidjson::Document json;
 

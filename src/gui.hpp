@@ -18,6 +18,8 @@ struct GUI {
   void render();
 
   void draw() { 
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
     newframe(); 
     if (draw_gui) {
 

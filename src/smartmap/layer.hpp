@@ -38,7 +38,8 @@ namespace SmartMap {
 
         Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width, uint16_t height, Layer::Mode mode, uint16_t quantity_x, uint16_t quantity_y, float scale = 1, int output = 1);
 
-
+        ~Layer();
+        
     };
 
 };

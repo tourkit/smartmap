@@ -1,4 +1,4 @@
-{
+{   
     "ip": "2.0.0.154",
     "subnet": 8,
     "backlight": 101,
@@ -10,44 +10,20 @@
             "width": 1920,
             "height": 1080,
             "fps": 60
-        },
-        {
-            "type": "NDI",
-            "name": "NDI 1",
-
-            "width": 1920,
-            "height": 1080,
-            "fps": 60
         }
     ],
     "layers": [
 
 
-        {
-
-            "name": "Face",
-            "start_address": 1,
-            "start_universe": 1,
-            "fixture_mode": "Basic",
-            "layer_mode": "Grid",
-            "columns": 9,
-            "rows": 1,
-            "blending": "Additive",
-            "width": 0,
-            "height": 0,
-            "x_offset": 0,
-            "y_offset": 0,
-            "output": "NDI 1"
-            },
-
-            {
+            {  
     
-                "name": "Face 2",
+                "name": "Face  2",
                 "start_address": 1,
                 "start_universe": 1,
                 "fixture_mode": "Basic",
                 "layer_mode": "Grid",
                 "columns": 1,
+                "quantity": 1,
                 "rows": 1,
                 "blending": "Additive",
                 "width": 0,
