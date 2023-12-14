@@ -1,5 +1,6 @@
 #include "engine.hpp"
 
+
 Engine::Engine(uint16_t width, uint16_t height) 
 
     : window(1920,1080), 
@@ -7,15 +8,18 @@ Engine::Engine(uint16_t width, uint16_t height)
     dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
      gui(window.id) {
     window.max_fps = 59;
+
+
+
+    PLOGD << "Engine created";
+
     // window.max_fps
 
 }
 
-void Engine::init() {
+Engine::~Engine() { PLOGD << "Engine destrioyed"; }
 
-    static plog::RollingFileAppender<plog::TxtFormatter> fileAppender((REPO_DIR+"logs.txt").c_str()); 
-    static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender; 
-    plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
+void Engine::init() {
 
     framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
     matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);
@@ -46,5 +50,7 @@ void Engine::init() {
         }
 
      }, "Files survey"});
+
+     PLOGD << "Engine initialized";
 
 }

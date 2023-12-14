@@ -17,6 +17,7 @@ add_executable(smartmap
 
     src/window.cpp
     src/fps.cpp
+    src/log.cpp
 
     src/texture.cpp
     src/shader.cpp

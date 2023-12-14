@@ -33,6 +33,8 @@ struct Engine {
     BufferWidget bw;
     TexturesWidget tw;
 
+    Log log;
+    
     void init();
 
     static Engine& getInstance() { static Engine instance;  return instance; }
@@ -66,6 +68,8 @@ private:
 
     Engine(const Engine&) = delete;
     Engine& operator=(const Engine&) = delete;
+
+    ~Engine();
 
 };
 

@@ -28,11 +28,7 @@
 
 #include "include/vendor/glm/glm.hpp"
 
-#include "include/vendor/plog/Log.h"
-#include "include/vendor/plog/Init.h"
-#include "include/vendor/plog/Formatters/TxtFormatter.h"
-#include "include/vendor/plog/Appenders/ColorConsoleAppender.h"
-#include "include/vendor/plog/Appenders/RollingFileAppender.h"
+#include "src/log.hpp"
 
 #include "file.hpp"
 

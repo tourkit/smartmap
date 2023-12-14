@@ -62,9 +62,7 @@ Config::Config () {
 
 void Config::import(std::string filepath) {
 
-    PLOGI << "ooo";
-
-    std::cout << "SM import" << std::endl;
+    PLOGD << "SM IMPORT CONFIG";
 
     // CLEAR
     for (auto o:Output::pool) delete o;
@@ -81,7 +79,7 @@ void Config::import(std::string filepath) {
 
     if(json.HasParseError()) { std::cout << "SM config json parse error !" << std::endl; return; }
 
-    ip = JSON::getString(json, "ip", "10.0.0.99");
+    ip = JSON::getString(json, "ip", "180.0.0.99");
 
     subnet = JSON::getUint(json, "subnet", 24);
 

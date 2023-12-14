@@ -6,15 +6,15 @@ Artnet::Artnet(const char* ip)
 // : gui(this) 
 {
 
-    artnet = artnet_new(ip, 1); // 1 for VERBOSE
+    artnet = artnet_new(ip, 0); // 1 for VERBOSE
     if (!artnet) {
-        std::cout << "artnet_new ERROR: " << artnet_errstr << std::endl;
+        PLOGW << "artnet_new ERROR: " << artnet_errstr;
         return;
     }
     artnet_set_short_name(artnet, "SmartMap");
     artnet_set_long_name(artnet, "SmartMap");
     if (artnet_start(artnet)) {
-        std::cout << "artnet_start ERROR: " << artnet_errstr << std::endl;
+        PLOGW << "artnet_start ERROR: " << artnet_errstr;
         return;
     }
     artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this) {
@@ -40,7 +40,7 @@ Artnet::Artnet(const char* ip)
 Artnet::~Artnet() {
     if (artnet) {
         if (artnet_stop(artnet))
-            std::cout << "artnet_stop ERROR: " << artnet_errstr << std::endl;
+            PLOGW << "artnet_stop ERROR: " << artnet_errstr;
         artnet_destroy(artnet);
     }
 }
@@ -48,6 +48,6 @@ Artnet::~Artnet() {
 void Artnet::run() {
     if (artnet) {
         if (artnet_read(artnet, .1))
-            std::cout << "artnet_read ERROR: " << artnet_errstr << std::endl;
+            PLOGW << "artnet_read ERROR: " << artnet_errstr;
     }
 }
