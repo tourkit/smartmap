@@ -21,7 +21,6 @@ struct Output {
     int offset_x, offset_y;
 
     Output(std::string name, int width, int height);
-
     virtual ~Output();
 
     enum TYPE { HDMI, NDI, DMX } type;
@@ -47,6 +46,7 @@ struct NDIOutput : Output {
     std::vector<unsigned char> data;
 
     NDIOutput(std::string name, int width, int height);
+    ~NDIOutput();
 
 };
 
