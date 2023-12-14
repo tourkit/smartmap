@@ -10,24 +10,8 @@
 #include <GLFW/glfw3.h>
 
 
-struct FPS {
+#include "fps.hpp"
 
-    std::string name;
-
-    static inline std::vector<FPS*> pool;
-
-    FPS(std::string name = "FPS", float max_fps = 0);
-
-    float current_time = 0, last_time = 0, fps = 1, max_fps = 0;
-    
-    bool has_dropped = false;
-
-    float get();
-    float run(float max = 0);
-
-    operator float() { return fps; }
-
-};
 
 struct Window {
 
@@ -41,10 +25,6 @@ struct Window {
     bool fullscreen;
 
     bool stopped = false;
-
-
-
-    std::string test = "prout2";
 
     uint16_t width, height, mouse_x, mouse_y, offset_x, offset_y, max_fps = 60;
 
