@@ -12,8 +12,8 @@ namespace SmartMap {
 
 Base::Base() {
 
-    engine.stack.childrens.push_back(new Stack{&engine.stack});
-    stack = engine.stack.childrens.back();
+    Engine::getInstance().stack.childrens.push_back(new Stack{&Engine::getInstance().stack});
+    stack = Engine::getInstance().stack.childrens.back();
     stack->childrens.push_back(new Stack{stack});
 
 
@@ -44,9 +44,9 @@ Base::Base() {
     atlas = new Atlas("assets/media/",4096,2048);
     atlas->link(shader);
     
-    smartlayersUBO = engine.static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );
+    smartlayersUBO = Engine::getInstance().static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );
 
-    fix1UBO = engine.dynamic_ubo.buffer.add("Fixture", {
+    fix1UBO = Engine::getInstance().dynamic_ubo.buffer.add("Fixture", {
 
         "Opacity",
         "RGB",
@@ -60,7 +60,7 @@ Base::Base() {
         
     }, 50 );
 
-    fix2UBO = engine.dynamic_ubo.buffer.add("Fixture2", {
+    fix2UBO = Engine::getInstance().dynamic_ubo.buffer.add("Fixture2", {
 
         "Opacity",
         "RGB",
@@ -81,14 +81,14 @@ Base::Base() {
     // outBlur->format = GL_RGBA8;
 
      
-    engine.stack.list.push_back(new Stack::Action{[this](){
+    Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
 
         memcpy(fix2UBO->data(),fix1UBO->data(),fix1UBO->byte_size*fix1UBO->quantity);
         artnet->run();
 
     }, "Artnet"});
             
-    engine.stack.list.push_back(new Stack::Action{[this](){
+    Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
   
         for (auto layer:SmartMap::Layer::pool) { 
             
@@ -108,14 +108,14 @@ Base::Base() {
         }
 
     }, "SM Layers"});
-    // engine.stack.list.push_back(new Stack::Action{[this](){
+    // Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
   
 
     
 
     // }, "Swap"});
 
-    engine.stack.list.push_back(new Stack::Action{[this](){
+    Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
 
         for (auto &output:SmartMap::Output::pool) output->fb.clear() ;
             
@@ -135,10 +135,10 @@ Base::Base() {
 
     }, "SM Outputs"});
 
-    // engine.stack.list.push_back(new Stack::Action{[this](){
+    // Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
         
     //     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    //     glViewport(0,0,engine.window.width,engine.window.height);
+    //     glViewport(0,0,Engine::getInstance().window.width,Engine::getInstance().window.height);
 
     //     Engine::getInstance().basicshader->use();
     //     for (auto layer:SmartMap::Layer::pool) { 

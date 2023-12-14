@@ -20,7 +20,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
 
     : chan(chan), uni(uni), width(width), height(height), mode(mode), quantity_x(quantity_x), quantity_y(quantity_y), quantity(quantity_x*quantity_y),output(output) {
 
-        // stack.list.push_back(new Stack::DrawCall{&engine.quad, sm.shader, nullptr, nullptr, "DC main"});
+        // stack.list.push_back(new Stack::DrawCall{&Engine::getInstance().quad, sm.shader, nullptr, nullptr, "DC main"});
 
     fixture_first = Base::fix1UBO->quantity;
     std::vector<char> zeros;
@@ -42,11 +42,11 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
     Buffer::Object::Entry layerUBO = Base::smartlayersUBO->create();
 
     layerUBO.set<uint32_t>(0,fb->id);
-    layerUBO.set<uint32_t>(1,engine.matrices->quantity); // first canva
+    layerUBO.set<uint32_t>(1,Engine::getInstance().matrices->quantity); // first canva
     layerUBO.set<uint32_t>(2,(mode==Layer::Mode::Free?quantity:1)); 
     layerUBO.set<uint32_t>(3,first_fixture); // irst fixture
 
-    matoffset = engine.matrices->quantity*32;
+    matoffset = Engine::getInstance().matrices->quantity*32;
     std::cout << matoffset << std::endl;
     std::vector<std::array<float, 8>> mats;
     mats = matrice(quantity_x,quantity_y);
@@ -56,8 +56,8 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
         m[7]  = std::min(1.0f,(height*m[1])/(width*m[0]));
 
     }
-    engine.matrices->push(&mats[0],mats.size());
-    engine.static_ubo.upload(); 
+    Engine::getInstance().matrices->push(&mats[0],mats.size());
+    Engine::getInstance().static_ubo.upload(); 
 
 
     id = pool.size();
@@ -76,7 +76,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
     
     // artnet links 
 
-    Base::artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&engine.dynamic_ubo.buffer.data[Base::fix1UBO->buffer_offset+attroffset*4] });
+    Base::artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&Engine::getInstance().dynamic_ubo.buffer.data[Base::fix1UBO->buffer_offset+attroffset*4] });
     auto &remap = Base::artnet->universes[uni].remaps.back();
 
     for (auto &c:Base::fix1UBO->components) { 
@@ -140,7 +140,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
             if (gobo_id == 10) {
 
 
-                float* matptr = ((float*)(engine.matrices->data()+this->matoffset))+i*8;
+                float* matptr = ((float*)(Engine::getInstance().matrices->data()+this->matoffset))+i*8;
 
                 int char_id = *(ptr+1)*(strlen(this->chars)-1);
 

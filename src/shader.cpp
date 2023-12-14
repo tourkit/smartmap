@@ -86,8 +86,8 @@ void ShaderProgram::reset() {
 
     glLinkProgram( id );
 
-    engine.dynamic_ubo.subscribers.push_back(this); 
-    engine.static_ubo.subscribers.push_back(this); 
+    Engine::getInstance().dynamic_ubo.subscribers.push_back(this); 
+    Engine::getInstance().static_ubo.subscribers.push_back(this); 
 
     loaded = true;
 

@@ -33,8 +33,6 @@ struct Engine {
     BufferWidget bw;
     TexturesWidget tw;
 
-    Log log;
-    
     void init();
 
     static Engine& getInstance() { static Engine instance;  return instance; }
@@ -72,5 +70,3 @@ private:
     ~Engine();
 
 };
-
-static inline  Engine &engine = Engine::getInstance();

@@ -12,7 +12,7 @@ FrameBuffer::~FrameBuffer() {
 
 FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) { pool.push_back(this); 
 
-    auto n = engine.framebuffers->create();
+    auto n = Engine::getInstance().framebuffers->create();
     n.set<uint32_t>(0,width);
     n.set<uint32_t>(1,height);
 
@@ -28,7 +28,7 @@ FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(na
     this->width = width;
     this->height = height;
 
-    auto n = engine.framebuffers->create();
+    auto n = Engine::getInstance().framebuffers->create();
     n.set<uint32_t>(0,width);
     n.set<uint32_t>(1,height);
 

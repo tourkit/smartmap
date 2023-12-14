@@ -18,6 +18,8 @@
 
 int main() { 
 
+    Log log;
+    
     auto &engine = Engine::getInstance();
     engine.init();
 
