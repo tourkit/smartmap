@@ -23,6 +23,8 @@ namespace SmartMap {
 
         FrameBuffer *fb;
 
+        std::string name = "layer";
+        
         int output;
 
         const char* chars =  "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.,!?'\":()[]<>-_+*/\\|#@&%$€";
