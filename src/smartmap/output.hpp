@@ -30,7 +30,12 @@ struct Output {
     
     }
 
-    ~Output() { if (cue) delete cue; }
+    ~Output() { 
+        
+        if (cue) delete cue; 
+        PLOGD << name << " destroyed";
+        
+    }
 
     enum TYPE { HDMI, NDI, DMX } type;
 
