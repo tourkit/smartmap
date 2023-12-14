@@ -13,8 +13,10 @@ Engine::Engine(uint16_t width, uint16_t height)
 
 void Engine::init() {
 
-    plog::init(plog::debug, "logs.txt");
-    
+    static plog::RollingFileAppender<plog::TxtFormatter> fileAppender((REPO_DIR+"logs.txt").c_str()); 
+    static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender; 
+    plog::init(plog::debug, &fileAppender).addAppender(&consoleAppender);
+
     framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
     matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);
     // specs = dynamic_ubo.buffer.add("specs", {"int","int","int","int"},1)->create();

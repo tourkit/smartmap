@@ -3,3 +3,4 @@ build/*
 buildtest/*
 .vscode/settings.json
 show/*
+logs.txt
