@@ -30,6 +30,8 @@ NDIOutput::NDIOutput(std::string name, int width, int height) : Output(name, wid
 
         glBindFramebuffer(GL_FRAMEBUFFER, this->fb.id);
 
+        // glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
         glReadPixels(0,0, 1920, 1080, GL_BGRA, GL_UNSIGNED_BYTE, &this->data[0]);
 
         this->ndisender.send(&this->data[0],this->data.size());

@@ -4,7 +4,7 @@
 #include "include/vendor/NDI/Include/Processing.NDI.Lib.h"
 
 namespace NDI {
-    
+
     struct Sender {
 
         NDIlib_send_instance_t pNDI_send;
@@ -26,6 +26,15 @@ namespace NDI {
             NDI_video_frame->xres = width;
             NDI_video_frame->yres = height;
             NDI_video_frame->FourCC = NDIlib_FourCC_type_BGRA;
+
+            // NDI_video_frame->frame_rate_N = 30000;
+            // NDI_video_frame->frame_rate_D = 1001;
+            // NDI_video_frame->picture_aspect_ratio = 16.0f/9.0f;
+            // NDI_video_frame->frame_format_type = NDIlib_frame_format_type_progressive;
+            // NDI_video_frame->timecode = 0;
+            // NDI_video_frame->line_stride_in_bytes = 1920*4;
+            // NDI_video_frame->p_metadata = "<Hello/>";
+
             NDI_video_frame->p_data = (uint8_t*)malloc(NDI_video_frame->xres * NDI_video_frame->yres * 4);
 
             memset((void*)NDI_video_frame->p_data, 0 , NDI_video_frame->xres * NDI_video_frame->yres * 4);
