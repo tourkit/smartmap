@@ -11,6 +11,7 @@
 #include "widgets/artnet_widget.hpp"
 #include "widgets/file.hpp"
 #include "widgets/stack.hpp"
+#include "widgets/fps.hpp"
 
 // shader sources
 // clocks
@@ -25,14 +26,10 @@ int main() {
 
     SmartMap::Base sm;
 
-
-
     auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
     engine.specs = x->create();x->create();x->create();x->create();
 
-
-    sm.config.import("config.json");
-
+    // sm.config.import("config.json");
 
     // std::cout <<  "\nSHADERS HEADER:" << std::endl;
     // for (auto ubo:UBO::pool) { 
@@ -63,40 +60,7 @@ int main() {
 
     FileWidget fw;
 
-    struct FPSWidget : GUI::Window {
-
-       FPSWidget() :  GUI::Window("WIDGETS") {
-
-
-       }
-
-       void draw() override {
-
-            int c = 0;
-            for (auto w:GUI::Window::pool)  { ImGui::Checkbox((w->name+"##"+std::to_string(c++)).c_str(), &w->active); }
-
-            ImGui::Text(std::to_string(ImGui::GetIO().Framerate).c_str());  
-            // std::cout << ImGui::GetIO().Framerate << std::endl;
-             for (auto fps:FPS::pool) {
-                
-                if (fps->fps > 1) {
-
-                    ImGui::Text((fps->name+": "+std::to_string((GLuint)(fps->fps))+" FPS").c_str());
-                    if (fps->has_dropped) {
-
-                        ImGui::SameLine();
-                        ImGui::Text(" - DROPPED !");
-                    }
-                
-                }
-                
-            }
-
-       }
-
-    } fpsw;
-
-
+    FPSWidget fpsw;
 
     Engine::Run();
  
