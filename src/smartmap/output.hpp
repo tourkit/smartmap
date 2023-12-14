@@ -21,13 +21,12 @@ struct Output {
     int offset_x, offset_y;
 
     Output(std::string name, int width, int height) 
-        
-        : name(name),fb(width,height) { 
-    
-        pool.push_back(this) ; 
+
+        : name(name),fb(width,height) {
+
+        pool.push_back(this) ;
 
         PLOGD << name << " created";
-    
     }
 
     ~Output() { if (cue) delete cue; }
@@ -54,6 +53,7 @@ struct NDIOutput : Output {
     std::vector<unsigned char> data;
 
     NDIOutput(std::string name, int width, int height);
+    ~NDIOutput();
 
 };
 

@@ -16,8 +16,6 @@ Thread::Thread(std::string const& name)
 
 Thread::~Thread() {
     assert(!_keepRunning);
-    // if (_keepRunning)
-    //    stop();
     if (_thread.joinable())
         _thread.join();
 }
