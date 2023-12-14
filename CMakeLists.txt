@@ -3,7 +3,8 @@ project(smartmap VERSION 0.1.0)
 
 
 
-option(ROCH  "Roch" OFF)
+option(ROCH "Roch" OFF)
+option(PLUGREGIE "c moi" OFF)
 
 
 find_package(glfw3 REQUIRED)
@@ -135,3 +136,6 @@ endif(UNIX)
 if(ROCH)
 target_compile_definitions(smartmap PRIVATE ROCH=1)
 endif(ROCH)
+if(PLUGREGIE)
+target_compile_definitions(smartmap PRIVATE PLUGREGIE=1)
+endif(PLUGREGIE)
