@@ -38,6 +38,9 @@ Base::Base() {
     window.setPos(2560,0);
     // window.setPos(1920-400,0);
     // window.setSize(400,300);
+#elif defined(PLUGREGIE)
+    window.setPos(1600,200);
+    window.setSize(640,480);
 #endif
               
     shader->use();
