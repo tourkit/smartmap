@@ -106,7 +106,13 @@ Base::Base() {
             
         }
 
-    }, "SM A"});
+    }, "SM Layers"});
+    // engine.stack.list.push_back(new Stack::Action{[this](){
+  
+
+    
+
+    // }, "Swap"});
 
     engine.stack.list.push_back(new Stack::Action{[this](){
 
@@ -126,7 +132,7 @@ Base::Base() {
 
         //  fix2UBO->update();
 
-    }, "SM B"});
+    }, "SM Outputs"});
 
     // engine.stack.list.push_back(new Stack::Action{[this](){
         
