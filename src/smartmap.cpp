@@ -19,10 +19,11 @@ Base::Base() {
 
 #ifdef ROCH
     artnet = new Artnet{"10.0.0.123"};
+#elif defined(PLUGREGIE)
+    artnet = new Artnet{"10.0.0.49"};
 #else
     artnet = new Artnet{"10.0.0.102"};
 #endif
-
 
     shader = new ShaderProgram({"smartmap.frag", "smartmap.vert"});
     
