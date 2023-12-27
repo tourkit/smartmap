@@ -13,6 +13,8 @@
 #include "widgets/stack.hpp"
 #include "widgets/fps.hpp"
 
+#include "shader_builder.hpp"
+
 // shader sources
 // clocks
 // fix feedback blending
