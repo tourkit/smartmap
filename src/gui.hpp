@@ -7,6 +7,8 @@
 struct GLFWwindow;
 
 struct GUI {
+
+  void *dragging = nullptr;
   
   bool draw_gui = false;
 
@@ -22,7 +24,7 @@ struct GUI {
     
     newframe(); 
     if (draw_gui) {
-
+      ImGui::ShowDemoWindow();
       for (auto window : Window::pool) { window->drawFull(); } 
       
 

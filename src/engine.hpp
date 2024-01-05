@@ -8,9 +8,15 @@
 #include "vbo.hpp"
 #include "stack.hpp"
 #include "gui.hpp"
+#include "model.hpp"
+#include "shaderFX.hpp"
+
+#include "node.hpp"
 
 #include "widgets/buffer.hpp"
 #include "widgets/textures.hpp"
+
+
 
 struct Engine {
 
@@ -32,6 +38,11 @@ struct Engine {
 
     BufferWidget bw;
     TexturesWidget tw;
+
+    Node tree;
+    
+    std::vector<Model*> models;
+    std::vector<ShaderFX*> shaders;
 
     void init();
 

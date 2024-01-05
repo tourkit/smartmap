@@ -4,7 +4,9 @@
 #include "pch.hpp"
 #include "gui.hpp"
 #include "buffer.hpp"
-	
+
+struct Models{};
+
 struct VBO {
 
     static inline std::vector<VBO*> pool;
@@ -16,6 +18,8 @@ struct VBO {
 
     GLuint vao=0, vbo, ibo, id;
 
+    std::vector<Models*> models;
+    
     ~VBO(); 
 
     void import(std::string path);

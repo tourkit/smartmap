@@ -14,6 +14,7 @@
 #include "widgets/fps.hpp"
 
 #include "shader_builder.hpp"
+#include "model.hpp"
 
 // shader sources
 // clocks
@@ -31,6 +32,10 @@ int main() {
     auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
     engine.specs = x->create();x->create();x->create();x->create();
 
+    ShaderBuilder sb;
+
+    
+    
     // sm.config.import("config.json");
 
     // std::cout <<  "\nSHADERS HEADER:" << std::endl;
@@ -58,7 +63,58 @@ int main() {
 
     // }
 
-    StackWidget sw(&engine.stack);
+
+
+
+
+    struct TreeWidget : GUI::Window {
+
+    TreeWidget() : GUI::Window("Tree")  {  }
+
+    void draw() override { drawNode(&Engine::getInstance().tree); }
+
+    void drawNode(Node* node) { 
+
+            ImGui::SetNextItemOpen(true);
+
+            if (ImGui::TreeNode(node->name.c_str())) {
+
+                if (ImGui::BeginDragDropSource()) {
+
+                    auto ptr = (uint64_t)node;
+                    ImGui::SetDragDropPayload("_TREENODE", &ptr, sizeof(uint64_t));
+                    ImGui::Text("This is a drag and drop source");
+                    ImGui::EndDragDropSource();
+                    
+                }
+
+                if (ImGui::BeginDragDropTarget()) {
+
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE")) {
+                        
+                        Node* snode = (Node*)(*(uint64_t*)payload->Data);
+
+                        snode->parent(node);
+
+                        PLOGD << snode->name << " > " << node->name;
+       
+                    }
+
+                     ImGui::EndDragDropTarget();
+                    
+                }
+                
+
+                for (auto child : node->childrens) drawNode(child);
+                ImGui::TreePop();
+
+                }
+    
+
+                
+                
+            }
+    }treezidget;
 
     FileWidget fw;
 

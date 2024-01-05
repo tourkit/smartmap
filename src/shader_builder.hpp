@@ -11,10 +11,9 @@ struct ShaderBuilder {
 
   ShaderBuilder() : shaders(REPO_DIR+"/assets/shaders/") {
 
-
     for (auto s:shaders.list) {
 
-      // PLOGD << s.
+      PLOGD << s;
     }
   }
 
