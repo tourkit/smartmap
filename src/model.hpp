@@ -16,7 +16,9 @@ struct Model : Node {
 
     std::vector<std::array<uint32_t,3>> indices;
 
-    Model(std::string path = "quad.obj") { import(path); }
+    Model(std::string path = "quad.obj") { 
+        whitelist<Model>();
+        import(path); }
 
     void import(std::string path) {    
 

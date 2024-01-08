@@ -37,6 +37,24 @@ int main() {
     
     TreeWidget tree;
 
+    struct DC : Node {
+
+        DC() {
+
+            onchild<Model>({[](){ std::cout << "Model child added" << std::endl; }});
+
+        }
+        
+    };
+
+    engine.tree.add(new DC());
+
+    struct Foo : Node {};
+
+    Node* node = new Foo();
+
+    std::cout << typeid(*node).name() << std::endl;
+
     // sm.config.import("config.json");
 
     FileWidget fw;

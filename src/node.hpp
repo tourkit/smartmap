@@ -10,7 +10,19 @@ struct Node {
 
     std::vector<Node*> childrens;
 
-    std::vector<void*> whitelist;
+    std::vector<const std::type_info*> whitelist_;
+
+    //whitelist fx
+    template<typename T>
+    void whitelist() {
+        whitelist_.push_back(&typeid(T));
+    }
+
+    //unwhitelist fx
+    template<typename T>
+    void unwhitelist() {
+        whitelist_.erase(std::remove(whitelist_.begin(), whitelist_.end(), &typeid(T)), whitelist_.end());
+    }
 
     Node* parent_node = nullptr;
 
@@ -22,19 +34,49 @@ struct Node {
 
     }
 
-    Node *add(Node* node) {
+        void parent(Node* parent_node) {  
+            
+            if (this->parent_node == parent_node) return;
 
-         node->parent(this);
+            if (this->parent_node) this->parent_node->unchild(this);
+            
+            this->parent_node = parent_node;
 
-         return node;
+            if (!parent_node) return;
 
-    }
+            parent_node->childrens.push_back(this);
+        
+        }
+
+        
+
+        Node *add(Node* node) {
+
+            std::map<int,int> xx;
+
+            xx.contains(1);  
+
+            auto it = xx.find(1);
+            // it.²
+            node->parent(this);
+
+            for (auto c : childrens_callbacks) {
+                if (c.first == &typeid(node)) {
+                    c.second();
+                    break;}
+            }
+
+            return node;
+
+        }
 
     Node* child(std::string name) { 
 
         for (auto c : childrens) if (c->name == name) return c;
 
-        return add(new Node{name});
+        auto *node = add(new Node());
+        node->name = name;
+        return node;
 
     }
 
@@ -48,19 +90,7 @@ struct Node {
 
     }
 
-    void parent(Node* parent_node) {  
-        
-        if (this->parent_node == parent_node) return;
 
-        if (this->parent_node) this->parent_node->unchild(this);
-        
-        this->parent_node = parent_node;
-
-        if (!parent_node) return;
-
-        parent_node->childrens.push_back(this);
-    
-    }
 
     uint32_t index() { 
 
@@ -98,8 +128,14 @@ struct Node {
 
     }
 
+    std::map<const std::type_info*, std::function<void()>> childrens_callbacks;
+
+    template<typename T>
+    void onchild( std::function<void()> fx) {childrens_callbacks[&typeid(T)] = fx; }
+
 // private:
 
+    virtual void typeinfotracker() {}
     // virtual void drawPanel() {
 
     //     StringBuffer sb; 
@@ -114,3 +150,4 @@ struct Node {
 //     GroupNode() : Node{"group"} {}
 
 // };
+

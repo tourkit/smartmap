@@ -19,7 +19,7 @@
 
                     auto ptr = (uint64_t)node;
                     ImGui::SetDragDropPayload("_TREENODE", &ptr, sizeof(uint64_t));
-                    ImGui::Text("This is a drag and drop source");
+                    ImGui::Text(node->name.c_str());
                     ImGui::EndDragDropSource();
                     
                 }
@@ -30,9 +30,9 @@
                         
                         Node* snode = (Node*)(*(uint64_t*)payload->Data);
 
-                        snode->parent(node);
+                        node->add(snode);
 
-                        PLOGD << snode->name << " > " << node->name;
+                        PLOGD << snode->name << "(" << typeid(*snode).name() << ") > " << node->name << "(" << typeid(*node).name() << ")";
        
                     }
 
