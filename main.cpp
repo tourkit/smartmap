@@ -15,8 +15,6 @@
 
 #include "shader_builder.hpp"
 #include "model.hpp"
-#include "tree.hpp"
-#include "editor.hpp"
 
 // shader sources
 // clocks
@@ -33,15 +31,13 @@ int main() {
     auto &engine = Engine::getInstance();
     engine.init();
 
-    SmartMap::Base sm;
+    // SmartMap::Base sm;
 
     auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
     engine.specs = x->create();x->create();x->create();x->create();
 
     ShaderBuilder sb;
-    
-    TreeWidget tree;
-    EditorWidget editor;
+
 
     struct DC : Node {
 

@@ -29,6 +29,8 @@ add_executable(smartmap
     src/buffer.cpp
     src/engine.cpp
     src/stack.cpp
+    src/node.cpp
+    src/tree.cpp
 
     src/messagequeue.cpp
     src/thread.cpp

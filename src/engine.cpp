@@ -1,6 +1,5 @@
 #include "engine.hpp"
 
-
 Engine::Engine(uint16_t width, uint16_t height) 
 
     : window(1920,1080), 
@@ -38,6 +37,8 @@ void Engine::init() {
 
     quad = new VBO("quad.obj", 0, "quad");
 
+    atlas = (AtlasNode*)tree.add(new AtlasNode());
+    
     stack.list.push_back(new Stack::Action{[](){ 
 
         for (int i = 0; i< File::pool.size(); i++) { 

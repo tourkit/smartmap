@@ -12,11 +12,31 @@
 #include "shaderFX.hpp"
 
 #include "node.hpp"
+#include "atlas.hpp"
 
 #include "widgets/buffer.hpp"
 #include "widgets/textures.hpp"
 
 
+#include "tree.hpp"
+#include "editor.hpp"
+
+struct AtlasNode : Atlas, Node {
+    
+    AtlasNode() : Atlas("assets/media/", 4096, 4096) { 
+        
+        name = "atlas"; 
+
+        // add()
+        
+    }
+
+    void editor() {
+
+
+    }
+
+};
 
 struct Engine {
 
@@ -32,6 +52,8 @@ struct Engine {
 
     VBO *quad;
 
+    AtlasNode *atlas;
+
     Stack stack;
     
     GUI gui;
@@ -39,8 +61,6 @@ struct Engine {
     BufferWidget bw;
     TexturesWidget tw;
 
-    Node tree;
-    
     std::vector<Model*> models;
     std::vector<ShaderFX*> shaders;
 
@@ -71,6 +91,9 @@ struct Engine {
 
     };
 
+    Tree tree;
+    EditorWidget editorw;
+    
 private:
 
     Engine(uint16_t width = 400, uint16_t height = 300);
