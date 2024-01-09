@@ -42,7 +42,7 @@ void Atlas::fromDir(std::string path) {
 
     Directory dir(path);
 
-    // for (auto file:dir.list) add(new Image(file));
+    for (auto file:dir.list) add(new Image(file));
 
 }
 

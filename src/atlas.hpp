@@ -15,8 +15,6 @@ struct Atlas : Node {
 
     std::vector<std::array<float,4>> normalized_list;
 
-    std::vector<Image> image_list;
-
     Texture *texture;
          
     UBO *ubo; 
@@ -27,4 +25,11 @@ struct Atlas : Node {
 
     void link(ShaderProgram* shader);
 
+    Node* add(Node *node) {
+
+        if (node->is_a<Image>()) return Node::add(new Ptr<Image>(node));
+
+        return nullptr;
+
+    }    
 };

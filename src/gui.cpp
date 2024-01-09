@@ -47,6 +47,8 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::PushStyleColor(ImGuiCol_ButtonHovered,color_orange);
   ImGui::PushStyleColor(ImGuiCol_TabHovered,color_orange);
   ImGui::PushStyleColor(ImGuiCol_TabActive,color_orange);
+  ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Darker border color
+    
   // ImGui::PushStyleVar(ImGuiCol_FrameBg,ImVec)
   
 }

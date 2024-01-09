@@ -6,7 +6,7 @@ Tree::Tree() : Node("tree"), GUI::Window("Tree")  {  }
 
 void Tree::draw()  { 
     
-    if (ImGui::BeginMenuBar()) {
+    if (ImGui::BeginMainMenuBar()) {
         
         if (ImGui::BeginMenu("new")) {  
 
@@ -19,48 +19,65 @@ void Tree::draw()  {
             ImGui::EndMenu();
         }
 
-        ImGui::EndMenuBar();
+        ImGui::EndMainMenuBar();
 
     }
 
-    drawNode(&Engine::getInstance().tree); 
+    // Create the table
+    if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
+        
+        drawNode(&Engine::getInstance().tree); 
 
+        ImGui::EndTable();
+    }
 }
 
 void Tree::drawNode(Node* node) { 
     
-ImGui::SetNextItemOpen(true);
+    ImGui::TableNextRow();
+    // ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0);
 
-if (ImGui::TreeNode(node->name.c_str())) {
+    if (ImGui::TableNextColumn()) {
 
-    if (ImGui::BeginDragDropSource()) {
+        ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow ;
 
-        auto ptr = (uint64_t)node;
-        ImGui::SetDragDropPayload("_TREENODE", &ptr, sizeof(uint64_t));
-        ImGui::Text(node->name.c_str());
-        ImGui::EndDragDropSource();
-        
-    }
+        if (!node->childrens.size()) flags |= ImGuiTreeNodeFlags_Leaf;
 
-    if (ImGui::BeginDragDropTarget()) {     
+        if (ImGui::TreeNodeEx(node->name.c_str(), flags)) {
 
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE")) {
-            
-            Node* snode = (Node*)(*(uint64_t*)payload->Data);
+            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
 
-            node->add(snode);
+            if (ImGui::BeginDragDropSource()) {
 
-            PLOGD << snode->name << "(" << typeid(*snode).name() << ") > " << node->name << "(" << typeid(*node).name() << ")";
+                auto ptr = (uint64_t)node;
+                ImGui::SetDragDropPayload("_TREENODE", &ptr, sizeof(uint64_t));
+                ImGui::Text(node->name.c_str());
+                ImGui::EndDragDropSource();
+                
+            }
+
+            if (ImGui::BeginDragDropTarget()) {     
+
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE")) {
+                    
+                    Node* snode = (Node*)(*(uint64_t*)payload->Data);
+
+                    node->add(snode);
+
+                    PLOGD << snode->name << "(" << typeid(*snode).name() << ") > " << node->name << "(" << typeid(*node).name() << ")";
+
+                }
+
+                ImGui::EndDragDropTarget();
+                
+            }
+
+            for (auto child : node->childrens) drawNode(child);
+            ImGui::TreePop();
 
         }
-
-        ImGui::EndDragDropTarget();
         
-    }
-
-    for (auto child : node->childrens) drawNode(child);
-    ImGui::TreePop();
-
+    
     }
 
 }

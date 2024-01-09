@@ -4,7 +4,6 @@
 
 struct EditorWidget : GUI::Window {
 
-
     Node* selected = nullptr;
 
     EditorWidget() : GUI::Window("Editor")  {  }
