@@ -44,7 +44,7 @@ Base::Base() {
 #endif
               
     shader->use();
-    atlas = new Atlas("assets/media/",4096,2048);
+    atlas = new Atlas(4096,2048, "assets/media/");
     atlas->link(shader);
     
     smartlayersUBO = Engine::getInstance().static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );

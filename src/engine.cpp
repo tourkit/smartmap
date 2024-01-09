@@ -37,7 +37,7 @@ void Engine::init() {
 
     quad = new VBO("quad.obj", 0, "quad");
 
-    atlas = (AtlasNode*)tree.add(new AtlasNode());
+    atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
     
     stack.list.push_back(new Stack::Action{[](){ 
 

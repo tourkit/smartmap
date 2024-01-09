@@ -40,6 +40,7 @@ add_executable(smartmap
     src/ndi.cpp
 
     src/json.cpp
+    src/image.cpp
     src/file.cpp
 
     src/output.cpp

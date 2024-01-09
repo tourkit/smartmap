@@ -82,7 +82,7 @@ int main() {
     // sm.config.import("config.json");
 
     FPSWidget fpsw;
-
+ engine.window.setPos(2560,0);
     Engine::Run();
  
 }

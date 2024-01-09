@@ -21,23 +21,6 @@
 #include "tree.hpp"
 #include "editor.hpp"
 
-struct AtlasNode : Atlas, Node {
-    
-    AtlasNode() : Atlas("assets/media/", 4096, 4096) { 
-        
-        name = "atlas"; 
-
-        // add()
-        
-    }
-
-    void editor() {
-
-
-    }
-
-};
-
 struct Engine {
 
     Window window;
@@ -52,7 +35,7 @@ struct Engine {
 
     VBO *quad;
 
-    AtlasNode *atlas;
+    Atlas *atlas;
 
     Stack stack;
     
@@ -93,7 +76,7 @@ struct Engine {
 
     Tree tree;
     EditorWidget editorw;
-    
+
 private:
 
     Engine(uint16_t width = 400, uint16_t height = 300);

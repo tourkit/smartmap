@@ -16,6 +16,12 @@
 
 #include <thread>
 
+#include <dirent.h>
+#include <fstream>
+#include <sstream>
+
+#include <filesystem>
+
 #include <functional>
 
 #include <iterator>
@@ -31,9 +37,18 @@
 #include "src/log.hpp"
 
 #include "file.hpp"
+#include "image.hpp"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+
+#ifdef ROCH
+static std::string REPO_DIR = "C:/users/root/cpp/smartmap/";
+#else
+static std::string REPO_DIR = "./";
+#endif
+
 
 struct FT { 
 
