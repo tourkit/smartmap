@@ -35,6 +35,9 @@ struct Node {
 
 };
 
+template <typename T>
+struct Ptr : Node { T* ptr; Ptr(void* ptr) : ptr((T*)ptr) { name = ((Node*)ptr)->name + "ptr"; } };
+
 // struct GroupNode : Node {
 
 //     GroupNode() : Node{"group"} {}

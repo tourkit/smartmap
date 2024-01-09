@@ -20,8 +20,6 @@
 // clocks
 // fix feedback blending
 
-template <typename T>
-struct Ptr : Node { T* ptr; Ptr(void* ptr) : ptr((T*)ptr) { name = ((Node*)ptr)->name + "ptr"; } };
 
 
 int main() { 
