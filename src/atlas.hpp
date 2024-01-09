@@ -1,5 +1,5 @@
-#ifndef ATLAS_H
-#define ATLAS_H  
+#pragma once
+
 #include "RectangleBinPack/MaxRectsBinPack.h"
 #include "pch.hpp"
 #include "texture.hpp"
@@ -27,6 +27,3 @@ struct Atlas : Node {
     void link(ShaderProgram* shader);
 
 };
-
-
-#endif

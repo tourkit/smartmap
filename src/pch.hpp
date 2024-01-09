@@ -37,6 +37,7 @@
 #include "src/log.hpp"
 
 #include "file.hpp"
+#include "directory.hpp"
 #include "image.hpp"
 
 #include <ft2build.h>
