@@ -7,9 +7,31 @@
 
     TreeWidget() : GUI::Window("Tree")  {  }
 
-    void draw() override { drawNode(&Engine::getInstance().tree); }
+    void draw() override { 
+        
+        if (ImGui::BeginMenuBar()) {
+            
+            if (ImGui::BeginMenu("new")) {  
+
+                if (ImGui::MenuItem("node")) {
+
+                    Engine::getInstance().tree.add(new Node());
+
+                }
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMenuBar();
+
+        }
+    
+        drawNode(&Engine::getInstance().tree); 
+    
+    }
 
     void drawNode(Node* node) { 
+        
 
             ImGui::SetNextItemOpen(true);
 
@@ -24,7 +46,7 @@
                     
                 }
 
-                if (ImGui::BeginDragDropTarget()) {
+                if (ImGui::BeginDragDropTarget()) {     
 
                     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE")) {
                         

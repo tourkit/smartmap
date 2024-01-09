@@ -25,8 +25,11 @@ void Engine::init() {
     matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);
     // specs = dynamic_ubo.buffer.add("specs", {"int","int","int","int"},1)->create();
     
-    for (auto file : Directory(REPO_DIR+"/assets/model/").list)  tree.add(new Model(file));
-    for (auto file : Directory(REPO_DIR+"/assets/shaders/").list)  tree.add(new ShaderFX(file));
+    Node* models = tree.add(new Node{"Models"});
+    Node* shaders = tree.add(new Node{"Shaders"});
+    
+    for (auto file : Directory(REPO_DIR+"/assets/model/").list)  models->add(new Model(file));
+    for (auto file : Directory(REPO_DIR+"/assets/shaders/").list)  shaders->add(new ShaderFX(file));
 
     float plain[8] = {1,1,0,0,.5,.5,0,0};
     matrices->push(&plain[0]);

@@ -47,7 +47,8 @@ struct GUI {
 
       if (!active) return;
 
-      ImGui::Begin((name+"##"+uid).c_str());
+      bool p_open = true;
+      ImGui::Begin((name+"##"+uid).c_str(), &p_open, ImGuiWindowFlags_MenuBar);
 
       draw();
 
@@ -56,6 +57,8 @@ struct GUI {
     }
 
     virtual void draw() {}
+    virtual void drawTree() { draw(); }
+    virtual void drawEditor() {}
 
   };
 

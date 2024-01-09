@@ -16,10 +16,15 @@
 #include "shader_builder.hpp"
 #include "model.hpp"
 #include "tree.hpp"
+#include "editor.hpp"
 
 // shader sources
 // clocks
 // fix feedback blending
+
+template <typename T>
+struct Ptr : Node { T* ptr; Ptr(void* ptr) : ptr((T*)ptr) { name = ((Node*)ptr)->name + "ptr"; } };
+
 
 int main() { 
 
@@ -36,28 +41,49 @@ int main() {
     ShaderBuilder sb;
     
     TreeWidget tree;
+    EditorWidget editor;
 
     struct DC : Node {
 
+        struct ShaderFXPtr : Ptr<ShaderFX> {
+
+            ShaderFXPtr(void* ptr) : Ptr<ShaderFX>(ptr) { }
+
+            Node* add(Node *node) { return nullptr; }    
+
+        };
+
+        struct ModelPtr : Ptr<Model> {
+
+            ModelPtr(void* ptr) : Ptr<Model>(ptr) { }
+                
+            Node* add(Node *node) {
+
+                if (node->is_a<ShaderFX>()) return Node::add(new Ptr<ShaderFX>(node));
+
+                return nullptr;
+
+            }    
+
+        };
+
         DC() {
 
-            onchild<Model>({[](){ std::cout << "Model child added" << std::endl; }});
-
+            name = "drawcall";
         }
         
+        Node* add(Node *node) {
+
+            if (node->is_a<Model>()) return Node::add(new ModelPtr(node));
+
+            return nullptr;
+
+        }        
     };
 
     engine.tree.add(new DC());
 
-    struct Foo : Node {};
-
-    Node* node = new Foo();
-
-    std::cout << typeid(*node).name() << std::endl;
-
     // sm.config.import("config.json");
-
-    FileWidget fw;
 
     FPSWidget fpsw;
 
