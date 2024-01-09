@@ -1,4 +1,5 @@
 #include "texture.hpp" 
+#include "image.hpp" 
 
 
 Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {

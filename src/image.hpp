@@ -3,11 +3,11 @@
 #include "pch.hpp"
 #include "node.hpp"
 
-struct Image {
+struct Image : Node {
 
     enum Encoding { JPEG, PNG, BMP, RAW, BGRA };
 
-    std::string name, extension;
+    std::string extension;
 
     int width = 0, height, comp;  // comp: 1 = lumi, 2 = ?, 3 = rgb, 4 = rgba, 5 = bgra
 

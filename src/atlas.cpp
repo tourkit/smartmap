@@ -1,4 +1,5 @@
 #include "atlas.hpp"  
+#include "directory.hpp"  
 
 Atlas::Atlas(int width, int height, std::string path)  : Node("Atlas"), binpack(width,height,0)  {
 

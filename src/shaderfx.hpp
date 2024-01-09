@@ -2,6 +2,7 @@
 
 
 #include "node.hpp"
+#include "file.hpp"
 #include "shader.hpp"
 
 struct ShaderFX : Node {

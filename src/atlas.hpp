@@ -5,6 +5,7 @@
 #include "texture.hpp"
 #include "ubo.hpp"
 #include "node.hpp"
+#include "image.hpp"
 
 struct UBO;
  
