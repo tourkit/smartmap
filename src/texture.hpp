@@ -13,7 +13,7 @@ struct Texture {
     GLuint id = 0, width, height, mipmaps = 1, unit = 0;
 
     GLenum informat = GL_RGB8;
-    GLenum outformat = GL_RGB;
+    GLenum outformat = GL_RGB; 
 
     Texture(GLuint width = 1, GLuint height = 1, GLuint unit = 0, int mipmaps = 1, GLenum informat = GL_RGB8, GLenum outformat = GL_RGB);
 
@@ -36,6 +36,8 @@ struct Texture {
     void bind();
     
     void destroy();
+
+    void clear();
     
     operator GLuint();
 

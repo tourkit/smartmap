@@ -45,6 +45,8 @@ struct Ptr : Node {
     void editor() override { ptr->editor(); }  
     
     Node* add(Node* n) override { return nullptr; }  
+
+    operator T*() { return ptr; }
     
 };
 

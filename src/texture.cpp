@@ -113,3 +113,13 @@ void Texture::read(const Texture* texture, GLuint offset_x, GLuint offset_y) {
     GL_ERROR();
 
 }
+
+void Texture::clear() {
+
+    std::vector<char> black;
+
+    black.resize(width*height*4);
+
+    write(&black[0], width, height, 0,0,mipmaps,unit,informat,outformat);
+
+}
