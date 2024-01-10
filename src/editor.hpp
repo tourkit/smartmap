@@ -13,7 +13,10 @@ struct EditorWidget : GUI::Window {
         if (!selected) return;
 
         ImGui::Text("%s", selected->name.c_str());
+        
         // if (ImGui::BeginMenuBar()) { ImGui::EndMenuBar(); }
+
+        selected->editor();
     
     }
 

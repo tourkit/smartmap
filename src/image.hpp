@@ -24,4 +24,6 @@ struct Image : Node {
 
     void write(const char* destination, int quality = 100);
 
+    void editor() override;
+
 };

@@ -26,13 +26,21 @@ void Tree::draw()  {
     // Create the table
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
         
-        drawNode(&Engine::getInstance().tree); 
+        drawChildrens(&Engine::getInstance().tree); 
 
         ImGui::EndTable();
     }
 }
 
+void Tree::drawChildrens(Node* node) { 
+
+    for (auto child : node->childrens) drawNode(child);
+
+}
+
 void Tree::drawNode(Node* node) { 
+
+    auto pos = ImGui::GetColumnWidth()-ImGui::GetColumnOffset();
     
     ImGui::TableNextRow();
     // ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0);
@@ -46,7 +54,10 @@ void Tree::drawNode(Node* node) {
         if (ImGui::TreeNodeEx(node->name.c_str(), flags)) {
 
             if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
-
+            ImGui::SameLine(pos);
+            if (ImGui::Button("x")) {
+                delete node;
+            }
             if (ImGui::BeginDragDropSource()) {
 
                 auto ptr = (uint64_t)node;
@@ -72,9 +83,13 @@ void Tree::drawNode(Node* node) {
                 
             }
 
-            for (auto child : node->childrens) drawNode(child);
+            drawChildrens(node);
+
             ImGui::TreePop();
 
+        }else {
+            
+            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
         }
         
     

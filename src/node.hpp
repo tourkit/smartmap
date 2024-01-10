@@ -14,7 +14,7 @@ struct Node {
 
     Node(std::string name = "node", std::vector<uint32_t> color = {255,255,255,255});
 
-    ~Node();
+    virtual ~Node();
 
     template <typename U>
     bool is_a() { return (typeid(*this) == typeid(U)); }
@@ -36,7 +36,17 @@ struct Node {
 };
 
 template <typename T>
-struct Ptr : Node { T* ptr; Ptr(void* ptr) : ptr((T*)ptr) { name = ((Node*)ptr)->name + "ptr"; } };
+struct Ptr : Node { 
+    
+    T* ptr; 
+    
+    Ptr(void* ptr) : ptr((T*)ptr) { name = ((Node*)ptr)->name + "ptr"; } 
+    
+    void editor() override { ptr->editor(); }  
+    
+    Node* add(Node* n) override { return nullptr; }  
+    
+};
 
 // struct GroupNode : Node {
 

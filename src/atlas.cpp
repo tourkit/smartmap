@@ -38,11 +38,52 @@ Atlas::Atlas(int width, int height, std::string path)  : Node("Atlas"), binpack(
 
 }
 
+void Atlas::clear() {
+
+   
+    // auto t = childrens;
+    // for (auto c:t) { delete c; }
+
+    childrens.resize(0);
+
+    PLOGD << "clear";
+
+    normalized_list.resize(0);
+
+}
+
 void Atlas::fromDir(std::string path) {
+
+    if (!Directory::exist(path)) return;
+
+    this->path = path;
+
+    clear();
 
     Directory dir(path);
 
-    for (auto file:dir.list) add(new Image(file));
+    for (auto file:dir.list) {
+        
+        auto img = new Image(path+"/"+file);
+
+        if (!img->data.size()) { delete img; return;}
+        
+        add(img);
+    
+    }
+}
+
+void Atlas::editor() { 
+
+    char path[512];
+
+    memset(&path[0],0,512);
+
+    if (ImGui::InputText("path", &path[0],512) && this->path != path) { 
+
+    fromDir(path);
+        
+    }
 
 }
 

@@ -6,6 +6,7 @@
 #include "ubo.hpp"
 #include "node.hpp"
 #include "image.hpp"
+#include "directory.hpp"
 
 struct UBO;
  
@@ -19,7 +20,11 @@ struct Atlas : Node {
          
     UBO *ubo; 
 
+    std::string path;
+
     Atlas(int width = 4096, int height = 4096 , std::string path = "");
+
+    void clear();
 
     void fromDir(std::string path);
 
@@ -27,9 +32,11 @@ struct Atlas : Node {
 
     Node* add(Node *node) {
 
-        if (node->is_a<Image>()) return Node::add(new Ptr<Image>(node));
+        if (node->is_a<Image>()) return Node::add(node);
 
         return nullptr;
 
-    }    
+    }   
+
+    void editor() override;
 };

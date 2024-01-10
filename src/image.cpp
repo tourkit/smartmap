@@ -1,6 +1,7 @@
 #include "image.hpp"
 #include "file.hpp"
 #include "pch.hpp"
+#include "gui.hpp"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -32,11 +33,13 @@ void Image::read(std::string path) {
     extension = std::move(filename.back());
 
     // add ext check here
-    File file("assets/media/"+std::string(path));
+    File file(path);
 
     if (file.data.size() != -1) {
 
             auto pixels = stbi_load_from_memory((const stbi_uc*)&file.data[0],file.data.size(), &width, &height, &comp, 0);
+            if (!pixels) return;
+
             auto count  =width*height*comp;
 
             data.clear();
@@ -125,5 +128,11 @@ void Image::write(const char* destination, int quality) {
 
     // std::cout << "exvoto" << '\n';
     // File::write(destination, (const char*)&data[0], data.size());
+
+}
+
+void Image::editor() {
+
+    ImGui::InputInt2("dimetions", &width);
 
 }

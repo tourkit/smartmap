@@ -9,5 +9,6 @@ struct Tree : Node, GUI::Window {
     void draw() override;
 
     void drawNode(Node* node);   
+    void drawChildrens(Node* node);   
 
 };

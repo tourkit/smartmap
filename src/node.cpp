@@ -15,6 +15,8 @@
 
         if (parent_node) parent_node->remove(this);
 
+        PLOGD << "node " << name << " deleted";
+
     }
 
     void Node::parent(Node* parent_node) {  
@@ -43,7 +45,12 @@
 
         auto it = std::find(childrens.begin(), childrens.end(), child);
 
-        if ( std::distance(childrens.begin(), it) < 0 ) return; 
+        if ( std::distance(childrens.begin(), it) < 0 ) {
+            
+            PLOGD << "could not delete, didnt found";
+            return; 
+            
+        }
 
         childrens.erase(it);
 
