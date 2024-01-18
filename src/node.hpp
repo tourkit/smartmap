@@ -53,15 +53,19 @@ struct Ptr : Node {
 
     Ptr(void* ptr, bool owned = false) 
         : ptr((T*)ptr), owned(owned) { 
-        
-        name = boost::typeindex::type_id_with_cvr<T>().pretty_name() + " ptr"; 
+         
+        if (isNode()) { name = ((Node*)ptr)->name; }
+        else { name = boost::typeindex::type_id_with_cvr<T>().pretty_name(); }
+        name += " ptr"; 
         
     } 
     
     Node* add(Node* n) override { return nullptr; }  
 
     operator T*() { return ptr; }
-    
+
+private:
+    bool isNode() { return std::is_base_of<Node, T>::value; } 
 };
 
 template <typename T>
