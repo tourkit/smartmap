@@ -1,12 +1,13 @@
 #pragma once
 
 #include "pch.hpp"
+#include "node.hpp"
 
-struct File {
+struct File : Node {
 
     static inline std::vector<File*> pool;
 
-    std::string path, name, extension;
+    std::string path, location, filename, extension;
 
     std::string data;
 

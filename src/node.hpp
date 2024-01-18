@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.hpp"
+#include <boost/type_index.hpp>
 
 struct Node {
     
@@ -11,6 +12,8 @@ struct Node {
     Node* parent_node = nullptr;
 
     std::vector<Node*> childrens;
+
+    bool active = true, locked = false;
 
     Node(std::string name = "node", std::vector<uint32_t> color = {255,255,255,255});
 
@@ -39,16 +42,31 @@ template <typename T>
 struct Ptr : Node { 
     
     T* ptr; 
-    
-    Ptr(void* ptr) : ptr((T*)ptr) { name = ((Node*)ptr)->name + "ptr"; } 
-    
-    void editor() override { ptr->editor(); }  
+    bool owned;
+
+    virtual ~Ptr() { if (owned) delete ptr; }
+
+    Ptr(void* ptr, bool owned = false) 
+        : ptr((T*)ptr), owned(owned) { 
+        
+        name = boost::typeindex::type_id_with_cvr<T>().pretty_name() + " ptr"; 
+        
+    } 
     
     Node* add(Node* n) override { return nullptr; }  
 
     operator T*() { return ptr; }
     
 };
+
+template <typename T>
+struct Ownr : Ptr<T> {
+
+    template <typename... Args>
+    Ownr(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...), true) { }
+
+};
+
 
 // struct GroupNode : Node {
 

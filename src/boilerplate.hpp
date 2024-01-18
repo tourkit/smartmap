@@ -314,8 +314,8 @@ void Boilerplate() {
         for (int i = 4; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
 
         survey_count = 0;
-        survey((fs::path(REPO_DIR) / "assets/shader" / shader.paths[0]).c_str(), [&](){ shader.reset();  shader.use(); });
-        survey((fs::path(REPO_DIR) / "assets/shader" / shader.paths[1]).c_str(), [&](){ shader.reset();  shader.use(); });
+        survey("assets/shader" / shader.paths[0]).c_str(), [&](){ shader.reset();  shader.use(); });
+        survey("assets/shader" / shader.paths[1]).c_str(), [&](){ shader.reset();  shader.use(); });
 
         glfwPollEvents(); 
 

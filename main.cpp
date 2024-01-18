@@ -34,7 +34,6 @@ int main() {
     auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
     engine.specs = x->create();x->create();x->create();x->create();
 
-    ShaderBuilder sb;
 
 
     struct DC : Node {
@@ -77,6 +76,12 @@ int main() {
 
 
     engine.tree.add(new DC());
+
+    // struct lala : Ownr<ShaderFX> {
+    //     void editor() override { ImGui::Text("oooooo");}
+    // };
+    // engine.tree.add(new lala);
+
 
     // sm.config.import("config.json");
 

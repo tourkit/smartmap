@@ -8,25 +8,23 @@
 
 struct Model : Node {
 
-    std::string path;
-
     std::vector<std::array<float,2>> vertices;
 
     std::vector<std::array<float,2>> uvs;
 
     std::vector<std::array<uint32_t,3>> indices;
 
-    Model(std::string path = "quad.obj") { 
+    Model(std::string path = "quad.obj") {  import(path);}
     
-        import(path); 
-    
-    }
+    Model(File *file) {  import(file);}
 
-    void import(std::string path) {    
+    void import(std::string path) { File file(path); import(&file); }
+       
+    void import(File *file) {    
 
         Assimp::Importer importer;
 
-        const aiScene* scene = importer.ReadFile("assets/model/"+std::string(path), aiProcess_CalcTangentSpace       | 
+        const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       | 
             aiProcess_Triangulate            |
             aiProcess_JoinIdenticalVertices  |
             aiProcess_SortByPType);
@@ -53,8 +51,7 @@ struct Model : Node {
 
         }
 
-        this->path = path;
-        this->name = path.substr(0, path.find("."));
+        this->name = file->name;
 
     }
 

@@ -12,3 +12,9 @@ struct Tree : Node, GUI::Window {
     void drawChildrens(Node* node);   
 
 };
+
+struct ImRect
+{
+    ImVec2      Min;  
+    ImVec2      Max; 
+};

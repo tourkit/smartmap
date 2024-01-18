@@ -1,9 +1,9 @@
 #pragma once
 
 #include "pch.hpp"
-#include "node.hpp"
+#include "file.hpp"
 
-struct Image : Node {
+struct Image : File {
 
     enum Encoding { JPEG, PNG, BMP, RAW, BGRA };
 
@@ -17,6 +17,8 @@ struct Image : Node {
     // ~Image();
 
     void read(std::string source);
+
+    bool is_image();
 
     void convert(Encoding type, int quality = 80);
 

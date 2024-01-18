@@ -6,19 +6,26 @@
 struct Directory {
 
     std::string path;
-    std::vector<std::string> list;
-    DIR *dir;
 
+    std::vector<File*> list;
+    
     Directory(std::string path);
+
     ~Directory();
 
-    static bool exist(std::string path) {
-        
-        return std::filesystem::is_directory(path);
+    bool import(std::string path);
 
-    }
+    static bool exist(std::string path) { return std::filesystem::is_directory(REPO_DIR+path); }
 
-    const std::string& operator[](int x) { return list[x]; }
-    operator std::vector<std::string>&() { return list; }
+    void each(std::function<void(File*)> cb);
+
+    const File& operator[](int x);
+
+    auto begin() { return list.begin(); }
+    auto end() { return list.end(); }
+
+private:
+
+    DIR *dir;
 
 };

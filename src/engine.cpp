@@ -27,9 +27,31 @@ void Engine::init() {
     
     Node* models = tree.add(new Node{"Models"});
     Node* shaders = tree.add(new Node{"Shaders"});
+
+    for (auto file : Directory("assets/model/")) models->add(new Model(file->path));
     
-    for (auto file : Directory(REPO_DIR+"/assets/model/").list)  models->add(new Model(file));
-    for (auto file : Directory(REPO_DIR+"/assets/shaders/").list)  shaders->add(new ShaderFX(file));
+    struct lala : Ownr<ShaderFX> {
+        lala(File *file) : Ownr<ShaderFX>(file) { }
+
+
+        void editor() override { 
+
+            
+            for (int i=0; i < ptr->args.size(); i++) {
+                float f = 0;
+                ImGui::SliderFloat(ptr->args[i].c_str(), &f, 0, 1);
+            }
+
+            if (ImGui::InputTextMultiline("code", &ptr->code[0], ptr->code.length(), ImVec2(300,300))) {
+
+
+            };
+        
+        
+        }
+    };
+
+    for (auto file : Directory("assets/shaders/")) shaders->add(new lala(file));
 
     float plain[8] = {1,1,0,0,.5,.5,0,0};
     matrices->push(&plain[0]);
@@ -38,7 +60,7 @@ void Engine::init() {
 
     quad = new VBO("quad.obj", 0, "quad");
 
-    atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
+    // atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
     
     stack.list.push_back(new Stack::Action{[](){ 
 

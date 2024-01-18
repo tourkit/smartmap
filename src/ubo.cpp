@@ -67,7 +67,7 @@ void UBO::upload(GLvoid* data, size_t size, GLuint offset){
 // void UBO::fromJSON(){ 
 
 //     rapidjson::Document json;
-//     json.Parse(File(REPO_DIR+"show/ubo.json").data.data());
+//     json.Parse(File("show/ubo.json").data.data());
 
 //     if(json.HasParseError()) { std::cout << "ubo parse error" << std::endl; return; }
 
@@ -165,6 +165,6 @@ void UBO::upload(GLvoid* data, size_t size, GLuint offset){
 //     writer.EndArray();
 //     writer.EndObject();
 
-//     File::write(REPO_DIR+"show/ubo.json", sb.GetString());
+//     File::write("show/ubo.json", sb.GetString());
 
 // }

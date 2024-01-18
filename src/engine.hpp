@@ -47,6 +47,8 @@ struct Engine {
     std::vector<Model*> models;
     std::vector<ShaderFX*> shaders;
 
+    std::array<char,512> blank{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+
     void init();
 
     static Engine& getInstance() { static Engine instance;  return instance; }

@@ -22,7 +22,7 @@ void Tree::draw()  {
         ImGui::EndMainMenuBar();
 
     }
-
+    ImGui::SliderInt4("blank", (int*)&Engine::getInstance().blank[0], -100, 100);
     // Create the table
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
         
@@ -49,39 +49,50 @@ void Tree::drawNode(Node* node) {
 
         ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow ;
 
-        if (!node->childrens.size()) flags |= ImGuiTreeNodeFlags_Leaf;
+        // if (!node->childrens.size()) 
+        flags |= ImGuiTreeNodeFlags_Leaf;
 
-        if (ImGui::TreeNodeEx(node->name.c_str(), flags)) {
+        ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
+        
+        const bool recurse = ImGui::TreeNodeEx(node->name.c_str(), flags);
+        
+        if (ImGui::BeginDragDropSource()) {
 
-            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
-            ImGui::SameLine(pos);
-            if (ImGui::Button("x")) {
-                delete node;
-            }
-            if (ImGui::BeginDragDropSource()) {
+            auto ptr = (uint64_t)node;
+            ImGui::SetDragDropPayload("_TREENODE", &(ptr), sizeof(uint64_t));
+            ImGui::Text(node->name.c_str());
+            ImGui::EndDragDropSource();
+            
+        }
 
-                auto ptr = (uint64_t)node;
-                ImGui::SetDragDropPayload("_TREENODE", &ptr, sizeof(uint64_t));
-                ImGui::Text(node->name.c_str());
-                ImGui::EndDragDropSource();
-                
-            }
+        if (ImGui::BeginDragDropTarget()) {     
 
-            if (ImGui::BeginDragDropTarget()) {     
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE")) node->add((Node*)(*(uint64_t*)payload->Data));
 
-                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE")) {
-                    
-                    Node* snode = (Node*)(*(uint64_t*)payload->Data);
+            ImGui::EndDragDropTarget();
+            
+        }
+            
+        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
+        
+        ImGui::SameLine(pos);
+        if (ImGui::Button("x")) delete node;
+        
+        const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 
-                    node->add(snode);
+        if (recurse) {
 
-                    PLOGD << snode->name << "(" << typeid(*snode).name() << ") > " << node->name << "(" << typeid(*node).name() << ")";
 
-                }
-
-                ImGui::EndDragDropTarget();
-                
-            }
+            ImDrawList* drawList = ImGui::GetWindowDrawList();
+            verticalLineStart.x+=7;
+            verticalLineStart.y+=-7;
+            ImVec2 verticalLineEnd = verticalLineStart;
+            
+            verticalLineEnd.y+=14;
+            ImVec2 verticalLineEnd2 = verticalLineEnd;
+            verticalLineEnd2.x+=10;//Engine::getInstance().blank[8];
+            drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(255,255,255,255));
+            drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(255,255,255,255));
 
             drawChildrens(node);
 
@@ -89,7 +100,7 @@ void Tree::drawNode(Node* node) {
 
         }else {
             
-            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
+            // if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
         }
         
     

@@ -2,42 +2,21 @@
 #include "directory.hpp"
 #include "pch.hpp"
 
+static std::vector<std::string> explodefilename(std::string const & s, char delim) {
 
+    std::vector<std::string> result;
 
-//////////////////////////////////////
-// DIRECTOPRY
-//////////////////////////////////////
+    std::istringstream iss(s);
 
-Directory::~Directory()  { 
-    
-    // need to delete dir ? dont think , remove on comfirm 
-}
+    for (std::string token; std::getline(iss, token, delim); ) result.push_back(std::move(token));
 
-Directory::Directory(std::string path) : path(path) { 
-
-    struct dirent* ent;
-
-    if ((dir = opendir(path.c_str())) != NULL) {
-
-        while ((ent = readdir(dir)) != NULL) {
-
-            std::string entryName(ent->d_name);
-
-            if (entryName != ".." && entryName != ".") list.push_back(ent->d_name);
-
-        }
-
-        closedir (dir);
-
-    }
+    return result;
 
 }
 
 //////////////////////////////////////
 // FILE
 //////////////////////////////////////
-
-
 
 File::~File() {  
 
@@ -64,18 +43,17 @@ void File::update() { read(path); }
 
 std::string File::read(std::string path, bool binary){
 
-    path = (std::filesystem::path(REPO_DIR) / path).string();
-
-    name = std::filesystem::path(path).filename().stem().string();  
+    name = std::filesystem::path(path).stem().filename().string();;
+    filename = std::filesystem::path(path).filename().string();
     extension = std::filesystem::path(path).extension().string().substr(1);   
-
-
+    location = std::filesystem::path(path).parent_path().string();
     this->path = path;
+
 
     auto flags = std::ifstream::in;
     if (binary) flags |= std::ifstream::binary;
 
-    std::ifstream file(path, flags);
+    std::ifstream file(std::filesystem::path(REPO_DIR) / path, flags);
 
     if (file) {
 
@@ -91,11 +69,9 @@ std::string File::read(std::string path, bool binary){
             return data;
         }
 
-        
-
     }
     
-    else std::cerr << "File Error : " << path << std::endl;
+    else PLOGW << "File Error : " << path << std::endl;
 
     return data;
 

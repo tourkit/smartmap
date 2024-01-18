@@ -37,11 +37,11 @@ struct ShaderBuilder {
 
   Directory shaders; 
 
-  ShaderBuilder() : shaders(REPO_DIR+"/assets/shaders/") {
+  ShaderBuilder() : shaders("/assets/shaders/") {
 
-    for (auto s:shaders.list) {
+    for (auto &s:shaders.list) {
 
-      PLOGD << s;
+      // PLOGD << s.path;
     }
   }
 

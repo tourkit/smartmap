@@ -11,33 +11,22 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 #endif
-
-static std::vector<std::string> explode(std::string const & s, char delim) {
-
-    std::vector<std::string> result;
-
-    std::istringstream iss(s);
-
-    for (std::string token; std::getline(iss, token, delim); ) result.push_back(std::move(token));
-
-    return result;
-
-}
  
 Image::Image(std::string path) { read(path); }
 
+bool Image::is_image() { 
+    
+    auto pixels = stbi_load_from_memory((const stbi_uc*)&data[0],data.size(), &width, &height, &comp, 0);
+    if (!pixels) return false;
+    return true;
+    
+}
+
 void Image::read(std::string path) {
 
-    auto filename = explode(explode(path, '/').back(), '.');
-    name = std::move(filename.front());
-    extension = std::move(filename.back());
+    if (data.size() != -1) {
 
-    // add ext check here
-    File file(path);
-
-    if (file.data.size() != -1) {
-
-            auto pixels = stbi_load_from_memory((const stbi_uc*)&file.data[0],file.data.size(), &width, &height, &comp, 0);
+            auto pixels = stbi_load_from_memory((const stbi_uc*)&data[0],data.size(), &width, &height, &comp, 0);
             if (!pixels) return;
 
             auto count  =width*height*comp;
@@ -53,8 +42,6 @@ void Image::read(std::string path) {
     }
 
 }
-
-
 
 void Image::convert(Encoding type, int quality) {
 
