@@ -11,8 +11,6 @@ struct ShaderFX : Node  {
     std::vector<float> uniforms;
 
     std::string code;
-
-    ShaderFX(std::string path) { Node::import(path); }
     
     ShaderFX(File *file) { import(file); }
 
