@@ -2,22 +2,17 @@
 #include "directory.hpp"
 
 Engine::Engine(uint16_t width, uint16_t height) 
-
     : window(1920,1080), 
     // : window(width,height), 
     dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
      gui(window.id) {
     window.max_fps = 59;
 
-
-
     PLOGD << "Engine created";
-
-    // window.max_fps
 
 }
 
-Engine::~Engine() { PLOGD << "Engine destrioyed"; }
+Engine::~Engine() { PLOGD << "Engine destroyed"; }
 
 void Engine::init() {
 
@@ -25,37 +20,15 @@ void Engine::init() {
     matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);
     // specs = dynamic_ubo.buffer.add("specs", {"int","int","int","int"},1)->create();
     
+
     Node* models = tree.add(new Node{"Models"});
+    for (auto file : Directory("assets/model/")) models->add(new Model(file));
+
     Node* shaders = tree.add(new Node{"Shaders"});
-
-    for (auto file : Directory("assets/model/")) models->add(new Model(file->path));
-    
-    struct lala : Ownr<ShaderFX> {
-        lala(File *file) : Ownr<ShaderFX>(file) { }
-
-
-        void editor() override { 
-
-            
-            for (int i=0; i < ptr->args.size(); i++) {
-                float f = 0;
-                ImGui::SliderFloat(ptr->args[i].c_str(), &f, 0, 1);
-            }
-
-            if (ImGui::InputTextMultiline("code", &ptr->code[0], ptr->code.length(), ImVec2(300,300))) {
-
-
-            };
-        
-        
-        }
-    };
-
-    for (auto file : Directory("assets/shaders/")) shaders->add(new lala(file));
+    for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
 
     float plain[8] = {1,1,0,0,.5,.5,0,0};
     matrices->push(&plain[0]);
-
     basicshader = new ShaderProgram({"basic.frag", "basic.vert"});
 
     quad = new VBO("quad.obj", 0, "quad");

@@ -1,4 +1,5 @@
 #include "node.hpp"
+#include "file.hpp"
 
 
     Node::Node(std::string name, std::vector<uint32_t> color) { 
@@ -16,6 +17,14 @@
         if (parent_node) parent_node->remove(this);
 
         PLOGD << "node " << name << " deleted";
+
+    }
+
+    void Node::import(std::string path) {
+
+        File file(path);
+
+        import(&file);
 
     }
 

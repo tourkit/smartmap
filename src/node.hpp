@@ -2,6 +2,7 @@
 
 #include "pch.hpp"
 #include <boost/type_index.hpp>
+struct File;
 
 struct Node {
     
@@ -35,6 +36,10 @@ struct Node {
     void down();
 
     virtual void editor() {}
+
+    void import(std::string path);
+
+    virtual void import(File* file) {}
 
 };
 

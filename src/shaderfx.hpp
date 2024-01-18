@@ -2,7 +2,6 @@
 
 
 #include "node.hpp"
-#include "file.hpp"
 #include "shader.hpp"
 
 struct ShaderFX : Node  {
@@ -13,26 +12,11 @@ struct ShaderFX : Node  {
 
     std::string code;
 
-    ShaderFX(std::string filename) { import(filename); }
+    ShaderFX(std::string path) { Node::import(path); }
+    
     ShaderFX(File *file) { import(file); }
 
-    void import(std::string filename) {
-
-        File file("assets/shaders/"+filename);
-
-        import(&file);
-
-    }
-
-    void import(File *file) {
-
-        name = file->name;
-
-        code = file->data;
-
-        extractArgsFromFunction(code);
-
-    }
+    void import(File *file) override;
 
    std::vector<std::string> args;
     std::vector<std::string> extractArgsFromFunction(const std::string& functionSrc) {
@@ -58,3 +42,10 @@ struct ShaderFX : Node  {
     
 };
 
+struct ShaderFXPTr : Ownr<ShaderFX> {
+
+    ShaderFXPTr(File *file) : Ownr<ShaderFX>(file) { }
+
+    void editor() override;
+
+};

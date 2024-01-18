@@ -2,6 +2,12 @@
 
 #include "engine.hpp"  
 
+
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
+
+
 VBO::VBO(std::string path, int id, std::string name) 
 : name(name), buffer(name) 
 {  

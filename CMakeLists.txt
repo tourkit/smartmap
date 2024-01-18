@@ -26,6 +26,8 @@ add_executable(smartmap
     src/ubo.cpp
     src/atlas.cpp
 
+    src/shaderfx.cpp
+    src/model.cpp
     src/buffer.cpp
     src/engine.cpp
     src/stack.cpp
