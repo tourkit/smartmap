@@ -10,6 +10,7 @@
 #include "gui.hpp"
 #include "model.hpp"
 #include "shaderFX.hpp"
+#include "drawcall.hpp"
 
 #include "node.hpp"
 #include "atlas.hpp"

@@ -27,6 +27,9 @@ void Engine::init() {
     Node* shaders = tree.add(new Node{"Shaders"});
     for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
 
+    tree.add(new DrawCall());
+
+
     float plain[8] = {1,1,0,0,.5,.5,0,0};
     matrices->push(&plain[0]);
     basicshader = new ShaderProgram({"basic.frag", "basic.vert"});
