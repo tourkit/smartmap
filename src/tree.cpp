@@ -18,9 +18,9 @@ void Tree::draw()  {
 
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu(std::to_string(ImGui::GetIO().Framerate).c_str())) {  
-            ImGui::EndMenu();
-        }
+
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*3);
+        ImGui::TextUnformatted(std::to_string((int)std::round(ImGui::GetIO().Framerate)).c_str());
 
         ImGui::EndMenuBar();
 
@@ -33,7 +33,7 @@ void Tree::draw()  {
 
         ImGui::EndTable();
     }
-
+    
     ImGui::SliderInt4("blank", (int*)&Engine::getInstance().blank[0], -100, 100);
 }
 
