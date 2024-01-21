@@ -54,8 +54,7 @@ void Tree::drawNode(Node* node) {
 
         ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow ;
 
-        // if (!node->childrens.size()) 
-        flags |= ImGuiTreeNodeFlags_Leaf;
+        if (!node->childrens.size()) flags |= ImGuiTreeNodeFlags_Leaf;
 
         ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
         
@@ -96,8 +95,8 @@ void Tree::drawNode(Node* node) {
             verticalLineEnd.y+=14;
             ImVec2 verticalLineEnd2 = verticalLineEnd;
             verticalLineEnd2.x+=10;//Engine::getInstance().blank[8];
-            drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(255,255,255,255));
-            drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(255,255,255,255));
+            drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(122,122,122,122));
+            drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
 
             drawChildrens(node);
 
