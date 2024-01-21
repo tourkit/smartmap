@@ -66,12 +66,18 @@ std::string File::read(std::string path, bool binary){
         if (file.read(&data[0], size)) {
             file.close();
             last_modified = getTimeModified();
+
+            PLOGV << path;
+
+            loaded = true;
             return data;
         }
 
+    PLOGW <<1<<path;
+
     }
     
-    else PLOGW << "File Error : " << path << std::endl;
+    else PLOGW <<2<< path;
 
     return data;
 

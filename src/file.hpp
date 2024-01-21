@@ -13,6 +13,8 @@ struct File : Node {
 
     int64_t last_modified = 0;
 
+    bool loaded = false;
+
     bool survey = false;
 
     void update();

@@ -20,8 +20,12 @@ bool Directory::import(std::string path)  {
         while ((ent = readdir(dir)) != NULL) {
 
             std::string entryName(ent->d_name);
-
-            if (entryName != ".." && entryName != ".") list.push_back(new File(path+ent->d_name));
+            if (entryName == ".." || entryName == ".") continue;
+            
+            auto t = new File(path+ent->d_name);
+            if (!t->loaded) delete t;
+            
+            if (t) list.push_back(t);
 
         }
 

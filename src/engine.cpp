@@ -19,22 +19,20 @@ void Engine::init() {
     framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
     matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);
     // specs = dynamic_ubo.buffer.add("specs", {"int","int","int","int"},1)->create();
-    
-
-    Node* models = tree.add(new Node{"Models"});
-    for (auto file : Directory("assets/model/")) models->add(new Model(file));
-
-    Node* shaders = tree.add(new Node{"Shaders"});
-    for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
-
-    tree.add(new DrawCall());
-
 
     float plain[8] = {1,1,0,0,.5,.5,0,0};
     matrices->push(&plain[0]);
     basicshader = new ShaderProgram({"basic.frag", "basic.vert"});
 
     quad = new VBO("quad.obj", 0, "quad");
+
+    Node* models = tree.add(new Node{"Models"});
+    for (auto file : Directory("assets/model/")) models->add(new Model(file));
+
+    Node* shaders = tree.add(new Node{"Shaders"});
+    for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
+    
+    tree.add(new DrawCall());
 
     // atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
     

@@ -6,7 +6,7 @@ Tree::Tree() : Node("tree"), GUI::Window("Tree")  {  }
 
 void Tree::draw()  { 
     
-    if (ImGui::BeginMainMenuBar()) {
+    if (ImGui::BeginMenuBar()) {
         
         if (ImGui::BeginMenu("new")) {  
 
@@ -18,11 +18,14 @@ void Tree::draw()  {
 
             ImGui::EndMenu();
         }
+        if (ImGui::BeginMenu(std::to_string(ImGui::GetIO().Framerate).c_str())) {  
+            ImGui::EndMenu();
+        }
 
-        ImGui::EndMainMenuBar();
+        ImGui::EndMenuBar();
 
     }
-    ImGui::SliderInt4("blank", (int*)&Engine::getInstance().blank[0], -100, 100);
+
     // Create the table
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
         
@@ -30,6 +33,8 @@ void Tree::draw()  {
 
         ImGui::EndTable();
     }
+
+    ImGui::SliderInt4("blank", (int*)&Engine::getInstance().blank[0], -100, 100);
 }
 
 void Tree::drawChildrens(Node* node) { 

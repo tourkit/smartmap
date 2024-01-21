@@ -25,6 +25,7 @@ add_executable(smartmap
     src/vbo.cpp  
     src/ubo.cpp
     src/atlas.cpp
+    src/test.cpp
 
     src/shaderfx.cpp
     src/drawcall.cpp

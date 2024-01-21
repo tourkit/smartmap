@@ -62,7 +62,13 @@ void Atlas::fromDir(std::string path) {
 
     Directory dir(path);
 
-    for (auto &file:dir.list) if (((Image*)&file)->is_image()) add(file);
+    for (auto &file:dir.list) {
+
+        PLOGD << file->path;
+
+    }
+    for (auto &file:dir.list) {if (((Image*)&file)->is_image()) { }}
+    return;
 
     for (auto c : childrens) {
 

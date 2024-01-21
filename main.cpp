@@ -15,6 +15,7 @@
 
 #include "shader_builder.hpp"
 #include "model.hpp"
+#include "test.hpp"
 
 // shader sources
 // clocks
@@ -25,20 +26,19 @@
 int main() { 
 
     Log log;
+
+    Test test;
     
     auto &engine = Engine::getInstance();
+    engine.window.setPos(2560,0);
     engine.init();
 
     // SmartMap::Base sm;
 
     auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
     engine.specs = x->create();x->create();x->create();x->create();
-    
+
     // sm.config.import("config.json");
-
-    FPSWidget fpsw;
-
-    engine.window.setPos(2560,0);
 
     Engine::Run();
  
