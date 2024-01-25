@@ -2,7 +2,7 @@
 #include "gui.hpp"
 #include "file.hpp"
 
-ShaderFX::ShaderFX(std::string path) : File(path) { convert(); }
+ShaderFX::ShaderFX(File *file) : Ptr<File>(file) { convert(); }
 
 void ShaderFXPTr::editor() { 
         
@@ -20,6 +20,6 @@ void ShaderFXPTr::editor() {
 
 void ShaderFX::convert() {
 
-    extractArgsFromFunction(data);
+    extractArgsFromFunction(ptr->data);
 
 }

@@ -6,13 +6,13 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-Model::Model(std::string path) : File{path} { convert();}
+Model::Model(File *file) : Ptr<File>{file} { convert();}
 
 void Model::convert() {    
 
         Assimp::Importer importer;
 
-        const aiScene* scene = importer.ReadFileFromMemory(&data[0], data.size(), aiProcess_CalcTangentSpace       | 
+        const aiScene* scene = importer.ReadFileFromMemory(&ptr->data[0], ptr->data.size(), aiProcess_CalcTangentSpace       | 
             aiProcess_Triangulate            |
             aiProcess_JoinIdenticalVertices  |
             aiProcess_SortByPType);

@@ -57,16 +57,11 @@ template <typename T>
 struct Ptr : Node { 
     
     T* ptr; 
-    bool owned;
 
-    virtual ~Ptr() { if (owned) delete ptr; }
+    virtual ~Ptr() { }
 
-    Ptr(void* ptr, bool owned = false) 
-        : Node("ptr"), ptr((T*)ptr), owned(owned) { 
-         
-        if (isNode()) { name = ((Node*)ptr)->name; }
-        else { name = boost::typeindex::type_id_with_cvr<T>().pretty_name(); }
-        name += " ptr"; 
+    Ptr(void* ptr) 
+        : Node((isNode() ? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name() + " ptr")), ptr((T*)ptr) { 
         
     } 
     
@@ -82,7 +77,9 @@ template <typename T>
 struct Ownr : Ptr<T> {
 
     template <typename... Args>
-    Ownr(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...), true) { }
+    Ownr(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) { }
+    
+    virtual ~Ownr() { delete Ptr<T>::ptr; }
 
 };
 

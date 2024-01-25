@@ -6,9 +6,9 @@ Directory::~Directory()  {
     PLOGD << "delete";
 }
 
-Directory::Directory(std::string path, bool load) { import(path,load); }
+Directory::Directory(std::string path) { import(path); }
 
-bool Directory::import(std::string path, bool load)  { 
+bool Directory::import(std::string path)  { 
 
     if (!exist(path)) return false;
 
@@ -22,10 +22,6 @@ bool Directory::import(std::string path, bool load)  {
 
             std::string entryName(ent->d_name);
             if (entryName == ".." || entryName == ".") continue;
-
-            paths.push_back(path+ent->d_name);
-
-            if (load) continue;
             
             auto t = new File(path+ent->d_name);
 

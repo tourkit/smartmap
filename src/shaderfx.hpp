@@ -4,7 +4,7 @@
 #include "node.hpp"
 #include "shader.hpp"
 
-struct ShaderFX : File  {
+struct ShaderFX : Ptr<File>  {
 
     ShaderType type;
 
@@ -12,7 +12,7 @@ struct ShaderFX : File  {
 
     std::string code;
     
-    ShaderFX(std::string path);
+    ShaderFX(File *file);
 
     void convert();
 
@@ -42,7 +42,7 @@ struct ShaderFX : File  {
 
 struct ShaderFXPTr : Ownr<ShaderFX> {
 
-    ShaderFXPTr(std::string path) : Ownr<ShaderFX>(path) { }
+    ShaderFXPTr(File* file) : Ownr<ShaderFX>(file) { }
 
     void editor() override;
 
