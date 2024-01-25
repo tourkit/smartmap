@@ -45,31 +45,25 @@ Shader::operator GLuint() { return id; }
 
 ShaderProgram::~ShaderProgram() { destroy(); }
 
+ShaderProgram::ShaderProgram() { }
 
-ShaderProgram::ShaderProgram(std::vector<std::string> paths, bool surveying) : paths(paths) {
+ShaderProgram::ShaderProgram(std::vector<std::string> paths, bool surveying) { create(paths); }
 
-    ShaderProgram::pool.push_back(this);
+void ShaderProgram::reset() { create(paths); }
 
-    create();
+void ShaderProgram::destroy() {  
 
-    use();
-
-}
-
-void ShaderProgram::destroy() {  // add pool mgmt
     loaded = false;
     if (id) glDeleteProgram(id); 
     shaders.resize(0);
+
 }
 
-void ShaderProgram::reset() {  
+void  ShaderProgram::create(std::vector<std::string> paths) {  
 
     destroy();
-    create();
-    
-}
 
-  void  ShaderProgram::create() {  
+    this->paths = paths;
 
     id = glCreateProgram();
 
@@ -91,12 +85,12 @@ void ShaderProgram::reset() {
 
     loaded = true;
 
-  }
+    use();
 
-
-
+}
 
 void ShaderProgram::use() {  glUseProgram(id); }
+
 void ShaderProgram::use(GLuint x, GLuint y, GLuint z) {  glUseProgram(id); glDispatchCompute(x,y,z); }
 
 ShaderProgram::operator GLuint() { return id; }

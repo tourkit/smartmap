@@ -28,6 +28,8 @@
 
     }
 
+    Node *Node::parent() { return parent_node; }
+
     void Node::parent(Node* parent_node) {  
         
         if (this->parent_node == parent_node) return;
@@ -71,6 +73,16 @@
 
         return std::distance(parent_node->childrens.begin(), it);
 
+    }
+
+    void Node::runCB() { }
+
+    void Node::run() { 
+
+        for (auto c : childrens) c->run();
+
+        runCB();
+        
     }
 
     void Node::up() { 

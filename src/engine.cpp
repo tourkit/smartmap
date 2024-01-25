@@ -14,6 +14,31 @@ Engine::Engine(uint16_t width, uint16_t height)
 
 Engine::~Engine() { PLOGD << "Engine destroyed"; }
 
+void Engine::run() {
+
+    auto &window = getInstance().window;
+
+    while (!glfwWindowShouldClose(window.id)) window.render([](){
+        
+
+        auto &engine = Engine::getInstance();
+        
+        engine.dynamic_ubo.upload();
+
+        engine.stack->run();
+
+        // for (auto n : engine.stack->childrens) { auto dc = (DrawCall*)n; dc->run(); }
+
+        engine.gui.draw();
+        
+        engine.specs.set<uint64_t>(0,engine.sequid--);
+        if (!engine.sequid) engine.sequid = 1000;
+    
+
+    });
+
+};
+
 void Engine::init() {
 
     framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
@@ -30,29 +55,30 @@ void Engine::init() {
     for (auto file : Directory("assets/model/")) models->add(new Model(file));
 
     Node* shaders = tree.add(new Node{"Shaders"});
-    for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
+    Directory xx("assets/shaders/");
+    for (auto file : xx) shaders->add(new ShaderFX(file));
     
-    tree.add(new DrawCall());
+    stack->add(new DrawCall());
 
     // atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
     
-    stack.list.push_back(new Stack::Action{[](){ 
+    // stack.list.push_back(new Stack::Action{[](){ 
 
-        for (int i = 0; i< File::pool.size(); i++) { 
+    //     for (int i = 0; i< File::pool.size(); i++) { 
 
-            File* file = File::pool[i];
+    //         File* file = File::pool[i];
 
-            if (file->survey && file->last_modified) {
+    //         if (file->survey && file->last_modified) {
 
-                auto new_modified = file->getTimeModified();
+    //             auto new_modified = file->getTimeModified();
 
-                if (file->last_modified != new_modified) file->callback(file);      
+    //             if (file->last_modified != new_modified) file->callback(file);      
 
-            }
+    //         }
 
-        }
+    //     }
 
-     }, "Files survey"});
+    //  }, "Files survey"});
 
      PLOGD << "Engine initialized";
 

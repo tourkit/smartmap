@@ -38,7 +38,9 @@ struct Engine {
 
     Atlas *atlas;
 
-    Stack stack;
+    // Stack stack;
+
+    Node* stack = tree.add(new Node{"Stack"});
     
     GUI gui;
 
@@ -54,28 +56,7 @@ struct Engine {
 
     static Engine& getInstance() { static Engine instance;  return instance; }
 
-    static void Run() {
-
-        auto &window = getInstance().window;
-
-        while (!glfwWindowShouldClose(window.id)) window.render([](){
-            
-
-            auto &engine = Engine::getInstance();
-            
-            engine.dynamic_ubo.upload();
-
-            engine.stack.run();
-
-            engine.gui.draw();
-            
-            engine.specs.set<uint64_t>(0,engine.sequid--);
-            if (!engine.sequid) engine.sequid = 1000;
-      
-
-        });
-
-    };
+    void run();
 
     Tree tree;
     EditorWidget editorw;

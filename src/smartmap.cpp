@@ -12,9 +12,9 @@ namespace SmartMap {
 
 Base::Base() {
 
-    Engine::getInstance().stack.childrens.push_back(new Stack{&Engine::getInstance().stack});
-    stack = Engine::getInstance().stack.childrens.back();
-    stack->childrens.push_back(new Stack{stack});
+    // Engine::getInstance().stack.childrens.push_back(new Stack{&Engine::getInstance().stack});
+    // stack = Engine::getInstance().stack.childrens.back();
+    // stack->childrens.push_back(new Stack{stack});
 
 
 #ifdef ROCH
@@ -84,33 +84,33 @@ Base::Base() {
     // outBlur->format = GL_RGBA8;
 
      
-    Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
+    // Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
 
-        memcpy(fix2UBO->data(),fix1UBO->data(),fix1UBO->byte_size*fix1UBO->quantity);
-        artnet->run();
+    //     memcpy(fix2UBO->data(),fix1UBO->data(),fix1UBO->byte_size*fix1UBO->quantity);
+    //     artnet->run();
 
-    }, "Artnet"});
+    // }, "Artnet"});
             
-    Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
+    // Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
   
-        for (auto layer:SmartMap::Layer::pool) { 
+    //     for (auto layer:SmartMap::Layer::pool) { 
             
-            shader->use();
+    //         shader->use();
             
-            layer->fb->clear(); // thus bind
+    //         layer->fb->clear(); // thus bind
             
-            glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
-            layer->pass->bind();
-            atlas->texture->bind();
-            layer->FTbuffer->bind();
+    //         glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN2], GL_BLEND_MODES[GL_BLEND_MODE_OUT2]);
+    //         layer->pass->bind();
+    //         atlas->texture->bind();
+    //         layer->FTbuffer->bind();
             
-            layer->quad->draw(layer->quantity); 
+    //         layer->quad->draw(layer->quantity); 
             
-            // if (shader->loaded) layer->pass->read(layer->fb->texture);
+    //         // if (shader->loaded) layer->pass->read(layer->fb->texture);
             
-        }
+    //     }
 
-    }, "SM Layers"});
+    // }, "SM Layers"});
     // Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
   
 
@@ -118,25 +118,25 @@ Base::Base() {
 
     // }, "Swap"});
 
-    Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
+    // Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
 
-        for (auto &output:SmartMap::Output::pool) output->fb.clear() ;
+    //     for (auto &output:SmartMap::Output::pool) output->fb.clear() ;
             
-        layershader->use();
+    //     layershader->use();
 
-        for (auto &layer:SmartMap::Layer::pool) { 
+    //     for (auto &layer:SmartMap::Layer::pool) { 
 
-            Output::pool[layer->output]->fb.bind();
+    //         Output::pool[layer->output]->fb.bind();
 
-            layer->fb->texture->bind();
+    //         layer->fb->texture->bind();
             
-            layer->quad->draw();
+    //         layer->quad->draw();
             
-        }
+    //     }
 
-        //  fix2UBO->update();
+    //     //  fix2UBO->update();
 
-    }, "SM Outputs"});
+    // }, "SM Outputs"});
 
     // Engine::getInstance().stack.list.push_back(new Stack::Action{[this](){
         

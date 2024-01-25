@@ -50,7 +50,7 @@ struct ShaderProgram {
 
   void reset();
   void destroy();
-  void create();
+  void create(std::vector<std::string> paths);
 
   int getLoc(const std::string& name);
   void sendUniform(const std::string& name, int i1);

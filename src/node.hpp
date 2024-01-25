@@ -23,7 +23,9 @@ struct Node {
     template <typename U>
     bool is_a() { return (typeid(*this) == typeid(U)); }
 
-    void parent(Node* parent_node) ;
+    void parent(Node* parent_node);
+    
+    Node* parent();
 
     virtual Node *add(Node *node);
 
@@ -40,6 +42,14 @@ struct Node {
     void import(std::string path);
 
     virtual void import(File* file) {}
+
+    virtual void run();
+    virtual void runCB();
+    
+    virtual void update() {}
+
+    auto begin() { return childrens.begin(); }
+    auto end() { return childrens.end(); }
 
 };
 

@@ -40,7 +40,7 @@ int main() {
 
     // sm.config.import("config.json");
 
-    Engine::Run();
+    engine.run();
  
 }
 
