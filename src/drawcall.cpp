@@ -3,9 +3,8 @@
 #include "model.hpp"
 #include "gui.hpp"
 
-DrawCall::DrawCall() {
+DrawCall::DrawCall() : Node("drawcall") {
 
-    name = "drawcall";
 
 }
 

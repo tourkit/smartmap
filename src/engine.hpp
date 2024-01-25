@@ -40,6 +40,8 @@ struct Engine {
 
     // Stack stack;
 
+    Tree tree;
+    
     Node* stack = tree.add(new Node{"Stack"});
     
     GUI gui;
@@ -58,7 +60,6 @@ struct Engine {
 
     void run();
 
-    Tree tree;
     EditorWidget editorw;
 
 private:

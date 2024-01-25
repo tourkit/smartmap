@@ -1,26 +1,37 @@
 #include "test.hpp"
 #include "log.hpp"
+#include "node.hpp"
+#include "directory.hpp"
+#include <cstring>
+#include <typeinfo>
+struct Foo {
+
+    Foo() { }
+
+    ~Foo() { PLOGD << "FOO"; }
+
+    // virtual void gogo() {}
+};
+
+struct Bar : Foo {
+
+    ~Bar()  { PLOGD << "BAR"; }
+
+};
+
 
 Test::Test(){
 
-    struct Foo{ 
+    auto b = new Bar();
+    delete b;
 
-        std::vector<Foo*> pool;
-        
-        int x; 
+    // Node tree = Node{"Tree"};
 
-        Foo (int x = 5) : x(x) { pool.push_back(this); }
+    // for (int i = 0; i < 3; i++) {
 
-        Foo& y() { return *this; }
-        // Foo y() { return this; }
-        
-    };
+    //     tree.add(new Node{std::to_string(i)}); 
 
-    struct Bar:Foo{};
+    // }
 
-    auto x = new Foo{6};
-
-    x->y().x = 7;
-    PLOGD<< x->x;
 
 }

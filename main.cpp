@@ -5,16 +5,7 @@
                         */
 
 #include "engine.hpp"
-
-#include "smartmap.hpp"
-#include "ndi.hpp"
-#include "widgets/artnet_widget.hpp"
-#include "widgets/file.hpp"
-#include "widgets/stack.hpp"
-#include "widgets/fps.hpp"
-
-#include "shader_builder.hpp"
-#include "model.hpp"
+// #include "smartmap.hpp"
 #include "test.hpp"
 
 // shader sources
@@ -22,16 +13,15 @@
 // fix feedback blending
 
 
-
 int main() { 
 
     Log log;
-
-    Test test;
     
     auto &engine = Engine::getInstance();
     engine.window.setPos(2560,0);
     engine.init();
+
+    Test test;
 
     // SmartMap::Base sm;
 

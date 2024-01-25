@@ -10,7 +10,7 @@ struct Model : Node {
 
     std::vector<std::array<uint32_t,3>> indices;
     
-    Model(File *file) {  import(file);}
+    Model(File *file);
        
     void import(File *file) override;
 

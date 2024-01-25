@@ -12,7 +12,7 @@ struct ShaderFX : Node  {
 
     std::string code;
     
-    ShaderFX(File *file) { import(file); }
+    ShaderFX(File *file);
 
     void import(File *file) override;
 

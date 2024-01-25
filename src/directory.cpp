@@ -2,7 +2,8 @@
 
 Directory::~Directory()  { 
     
-    // need to delete dir ? dont think , remove on comfirm 
+    for (auto f : list) delete f;
+    PLOGD << "delete";
 }
 
 Directory::Directory(std::string path) { import(path); }

@@ -23,7 +23,6 @@ struct File : Node {
 
     File();
     File(std::string source);
-    ~File();
 
     int64_t getTimeModified();
 

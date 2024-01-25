@@ -62,7 +62,7 @@ struct Ptr : Node {
     virtual ~Ptr() { if (owned) delete ptr; }
 
     Ptr(void* ptr, bool owned = false) 
-        : ptr((T*)ptr), owned(owned) { 
+        : Node("ptr"), ptr((T*)ptr), owned(owned) { 
          
         if (isNode()) { name = ((Node*)ptr)->name; }
         else { name = boost::typeindex::type_id_with_cvr<T>().pretty_name(); }

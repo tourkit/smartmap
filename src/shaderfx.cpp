@@ -2,6 +2,8 @@
 #include "gui.hpp"
 #include "file.hpp"
 
+ShaderFX::ShaderFX(File *file) : Node(file->filename) { import(file); }
+
 void ShaderFXPTr::editor() { 
         
     for (int i=0; i < ptr->args.size(); i++) {
@@ -18,7 +20,7 @@ void ShaderFXPTr::editor() {
 
 void ShaderFX::import(File *file) {
 
-    name = file->name;
+    name = file->filename;
 
     code = file->data;
 

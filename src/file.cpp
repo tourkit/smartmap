@@ -18,16 +18,9 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 // FILE
 //////////////////////////////////////
 
-File::~File() {  
+File::File() : Node("file") {  }
 
-    auto x = std::remove(pool.begin(), pool.end(), this);
-    pool.erase(x, pool.end());
-
-}
-
-File::File() { pool.push_back(this);  }
-
-File::File(std::string path) : File() {  read(path); }
+File::File(std::string path) : Node(path) { read(path); }
 
 int64_t File::getTimeModified() {
 

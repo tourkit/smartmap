@@ -6,6 +6,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+Model::Model(File *file) : Node{file->filename} { import(file);}
+
 void Model::import(File *file) {    
 
         Assimp::Importer importer;
@@ -37,6 +39,6 @@ void Model::import(File *file) {
 
         }
 
-        this->name = file->name;
+        this->name = file->filename;
 
     }

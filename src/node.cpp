@@ -2,21 +2,21 @@
 #include "file.hpp"
 
 
-    Node::Node(std::string name, std::vector<uint32_t> color) { 
+    Node::Node(std::string name, std::vector<uint32_t> color) : name(name), color(color) {
 
-        this->name = name;
-        
-        this->color = color;
+        PLOGD << name;
 
     }
 
     Node::~Node() {
 
-        for (auto c : childrens) c->parent(nullptr);
+        auto t_childrens = childrens;
+        for (auto c : t_childrens) delete c;
+        t_childrens.resize(0);
 
         if (parent_node) parent_node->remove(this);
 
-        PLOGD << "node " << name << " deleted";
+        PLOGD << "~" << name;
 
     }
 
