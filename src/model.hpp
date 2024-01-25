@@ -1,8 +1,8 @@
 #pragma once
 
-#include "node.hpp"
+#include "file.hpp"
 
-struct Model : Node {
+struct Model : File {
 
     std::vector<std::array<float,2>> vertices;
 
@@ -10,9 +10,9 @@ struct Model : Node {
 
     std::vector<std::array<uint32_t,3>> indices;
     
-    Model(File *file);
+    Model(std::string path);
        
-    void import(File *file) override;
+    void convert();
 
 };
 

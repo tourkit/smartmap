@@ -20,7 +20,7 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 
 File::File() : Node("file") {  }
 
-File::File(std::string path) : Node(path) { read(path); }
+File::File(std::string path) : Node(std::filesystem::path(path).stem().filename().string()) { read(path); }
 
 int64_t File::getTimeModified() {
 
@@ -34,10 +34,8 @@ int64_t File::getTimeModified() {
 
 void File::update() { read(path); }
 
-std::string File::read(std::string path, bool binary){
+void File::read(std::string path, bool binary){
 
-    name = std::filesystem::path(path).stem().filename().string();;
-    filename = std::filesystem::path(path).filename().string();
     extension = std::filesystem::path(path).extension().string().substr(1);   
     location = std::filesystem::path(path).parent_path().string();
     this->path = path;
@@ -63,7 +61,7 @@ std::string File::read(std::string path, bool binary){
             PLOGV << path;
 
             loaded = true;
-            return data;
+            return;
         }
 
     PLOGW <<1<<path;
@@ -72,7 +70,7 @@ std::string File::read(std::string path, bool binary){
     
     else PLOGW <<2<< path;
 
-    return data;
+    return;
 
 }
 

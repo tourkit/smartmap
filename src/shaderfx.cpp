@@ -2,7 +2,7 @@
 #include "gui.hpp"
 #include "file.hpp"
 
-ShaderFX::ShaderFX(File *file) : Node(file->filename) { import(file); }
+ShaderFX::ShaderFX(std::string path) : File(path) { convert(); }
 
 void ShaderFXPTr::editor() { 
         
@@ -18,12 +18,8 @@ void ShaderFXPTr::editor() {
 
 }
 
-void ShaderFX::import(File *file) {
+void ShaderFX::convert() {
 
-    name = file->filename;
-
-    code = file->data;
-
-    extractArgsFromFunction(code);
+    extractArgsFromFunction(data);
 
 }

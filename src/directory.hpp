@@ -8,12 +8,14 @@ struct Directory {
     std::string path;
 
     std::vector<File*> list;
+
+    std::vector<std::string> paths;
     
-    Directory(std::string path);
+    Directory(std::string path, bool load = false);
 
     ~Directory();
 
-    bool import(std::string path);
+    bool import(std::string path, bool load);
 
     static bool exist(std::string path) { return std::filesystem::is_directory(REPO_DIR+path); }
 
@@ -21,8 +23,10 @@ struct Directory {
 
     const File& operator[](int x);
 
-    auto begin() { return list.begin(); }
-    auto end() { return list.end(); }
+    // operator std::string() { return };
+
+    auto begin() { return paths.begin(); }
+    auto end() { return paths.end(); }
 
 private:
 

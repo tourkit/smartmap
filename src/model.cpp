@@ -6,13 +6,13 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-Model::Model(File *file) : Node{file->filename} { import(file);}
+Model::Model(std::string path) : File{path} { convert();}
 
-void Model::import(File *file) {    
+void Model::convert() {    
 
         Assimp::Importer importer;
 
-        const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       | 
+        const aiScene* scene = importer.ReadFileFromMemory(&data[0], data.size(), aiProcess_CalcTangentSpace       | 
             aiProcess_Triangulate            |
             aiProcess_JoinIdenticalVertices  |
             aiProcess_SortByPType);
@@ -38,7 +38,5 @@ void Model::import(File *file) {
             indices.push_back({face.mIndices[0], face.mIndices[1], face.mIndices[2]});
 
         }
-
-        this->name = file->filename;
 
     }

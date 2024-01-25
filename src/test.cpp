@@ -4,34 +4,24 @@
 #include "directory.hpp"
 #include <cstring>
 #include <typeinfo>
-struct Foo {
 
-    Foo() { }
-
-    ~Foo() { PLOGD << "FOO"; }
-
-    // virtual void gogo() {}
-};
-
-struct Bar : Foo {
-
-    ~Bar()  { PLOGD << "BAR"; }
-
-};
 
 
 Test::Test(){
+struct Foo {
 
-    auto b = new Bar();
-    delete b;
+    int x;
 
-    // Node tree = Node{"Tree"};
+    Foo(int x) : x(x) { }
 
-    // for (int i = 0; i < 3; i++) {
+    virtual ~Foo() {  }
 
-    //     tree.add(new Node{std::to_string(i)}); 
+};
 
-    // }
+struct Bar : Foo { int y = 9; };
 
 
+// can I update futurbar to Bar type ( with correctly allocated memopry) without running any ctor ?
+
+ 
 }

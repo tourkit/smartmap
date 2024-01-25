@@ -14,7 +14,7 @@ struct Node {
 
     std::vector<Node*> childrens;
 
-    bool active = true, locked = false;
+    bool active = true, locked = false, loaded = false;
 
     Node(std::string name = "node", std::vector<uint32_t> color = {255,255,255,255});
 

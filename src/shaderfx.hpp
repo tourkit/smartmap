@@ -4,7 +4,7 @@
 #include "node.hpp"
 #include "shader.hpp"
 
-struct ShaderFX : Node  {
+struct ShaderFX : File  {
 
     ShaderType type;
 
@@ -12,9 +12,9 @@ struct ShaderFX : Node  {
 
     std::string code;
     
-    ShaderFX(File *file);
+    ShaderFX(std::string path);
 
-    void import(File *file) override;
+    void convert();
 
    std::vector<std::string> args;
     std::vector<std::string> extractArgsFromFunction(const std::string& functionSrc) {
@@ -42,7 +42,7 @@ struct ShaderFX : Node  {
 
 struct ShaderFXPTr : Ownr<ShaderFX> {
 
-    ShaderFXPTr(File *file) : Ownr<ShaderFX>(file) { }
+    ShaderFXPTr(std::string path) : Ownr<ShaderFX>(path) { }
 
     void editor() override;
 
