@@ -11,13 +11,15 @@ enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
 
 struct Shader {
 
-  GLuint id;
+  GLuint id = -1;
 
   GLenum type;
 
-  File file;
+  Shader();
+  
+  Shader(std::string src, uint8_t type = 0);
 
-  Shader(std::string file);
+  void create (std::string src, uint8_t type);
 
   ~Shader();
 
@@ -29,13 +31,9 @@ struct Shader {
 
 struct ShaderProgram {
 
-  static inline std::vector<ShaderProgram*> pool;
+  GLuint id = -1;
 
-  GLuint id;
-
-  std::vector<std::string> paths;
-
-  std::vector<std::unique_ptr<Shader>> shaders;
+  Shader frag, vert;
 
   bool loaded = false;
 
@@ -43,14 +41,14 @@ struct ShaderProgram {
 
   ShaderProgram();
 
-  ShaderProgram(std::vector<std::string> paths, bool surveying = false);
+  ShaderProgram(std::string frag, std::string vert);
 
   void use();
   void use(GLuint x, GLuint y = 1, GLuint z = 1);
 
   void reset();
   void destroy();
-  void create(std::vector<std::string> paths);
+  void create(std::string frag, std::string vert);
 
   int getLoc(const std::string& name);
   void sendUniform(const std::string& name, int i1);

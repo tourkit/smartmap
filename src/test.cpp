@@ -5,6 +5,7 @@
 #include <cstring>
 #include <typeinfo>
 
+#include "shader.hpp"
 
 
 Test::Test(){

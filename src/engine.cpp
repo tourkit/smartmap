@@ -49,15 +49,13 @@ void Engine::init() {
     // matrices->push(&plain[0]);
     // basicshader = new ShaderProgram({"basic.frag", "basic.vert"});
 
-    // quad = new VBO("quad.obj", 0, "quad");
-
     Node* models = tree.add(new Node{"Models"});
     for (auto file : Directory("assets/model/")) models->add(new Model(file));
 
     Node* shaders = tree.add(new Node{"Shaders"});
     for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
     
-    // stack->add(new DrawCall());
+    stack->add(new DrawCall());
 
     // atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
     

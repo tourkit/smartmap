@@ -2,7 +2,7 @@
 #include "node.hpp"
 #include "engine.hpp"
 
-Tree::Tree() : Node("tree"), GUI::Window("Tree")  {  }
+Tree::Tree() : Node("tree"), GUI::Window("Tree")  { }
 
 void Tree::draw()  { 
     
@@ -27,6 +27,7 @@ void Tree::draw()  {
     }
 
     // Create the table
+    
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
         
         drawChildrens(&Engine::getInstance().tree); 

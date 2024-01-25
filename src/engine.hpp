@@ -5,7 +5,6 @@
 #include "window.hpp"
 #include "ubo.hpp"
 #include "framebuffer.hpp"
-#include "vbo.hpp"
 #include "stack.hpp"
 #include "gui.hpp"
 #include "model.hpp"
@@ -32,10 +31,6 @@ struct Engine {
     Buffer::Object::Entry specs;
     int sequid = 1000;
 
-    ShaderProgram *basicshader;
-
-    VBO *quad;
-
     Atlas *atlas;
 
     // Stack stack;
@@ -48,9 +43,6 @@ struct Engine {
 
     BufferWidget bw;
     TexturesWidget tw;
-
-    std::vector<Model*> models;
-    std::vector<ShaderFX*> shaders;
 
     std::array<char,512> blank{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 

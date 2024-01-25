@@ -6,21 +6,24 @@
 
 namespace fs = std::filesystem;
 
-Shader::~Shader() { if (id) glDeleteShader(id);  }
+Shader::Shader() { }
 
-Shader::Shader(std::string path)  {
+Shader::~Shader() { if (id > -1) glDeleteShader(id);  }
 
-    file.read("assets/shader/" + path);
+Shader::Shader(std::string src, uint8_t type)  { create(src,type); }
 
-    if (file.extension == "frag") type = GL_FRAGMENT_SHADER;
-    else if (file.extension == "vert") type = GL_VERTEX_SHADER;
-    else if (file.extension == "comp") type = GL_COMPUTE_SHADER;
-    else PLOGW << "SMARTMAP FILENAME ERROR" ;
+void Shader::create(std::string src, uint8_t type)  {
+    
+    auto gl_type = GL_FRAGMENT_SHADER;
 
-    id = glCreateShader(type);
+    if (type == 1) gl_type = GL_VERTEX_SHADER;
+    if (type == 2) gl_type = GL_COMPUTE_SHADER;
+
+    id = glCreateShader(gl_type);
  
-    auto ptr = file.data.c_str(); // J'arive pas a juste ecire (const GLchar* const*)code.data() dans glShaderSource a la place de &ptr ca m'eneeeeeerve
-    glShaderSource(id, 1, &ptr, nullptr);
+    const GLchar *source = src.c_str();
+    glShaderSource(id, 1, &source, nullptr);
+    PLOGD << source;
  
     glCompileShader(id);
 
@@ -47,36 +50,26 @@ ShaderProgram::~ShaderProgram() { destroy(); }
 
 ShaderProgram::ShaderProgram() { }
 
-ShaderProgram::ShaderProgram(std::vector<std::string> paths, bool surveying) { create(paths); }
-
-void ShaderProgram::reset() { create(paths); }
+ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 
 void ShaderProgram::destroy() {  
 
     loaded = false;
-    if (id) glDeleteProgram(id); 
-    shaders.resize(0);
+    if (id > -1) glDeleteProgram(id); 
 
 }
 
-void  ShaderProgram::create(std::vector<std::string> paths) {  
+void  ShaderProgram::create(std::string frag_src, std::string vert_src) { 
 
     destroy();
 
-    this->paths = paths;
-
     id = glCreateProgram();
 
-    for (auto p:paths) shaders.push_back(std::make_unique<Shader>(p));
+    frag.create(frag_src,0);
+    glAttachShader(id, frag.id); 
 
-    for (auto &shader:shaders) {
-        
-        glAttachShader(id, shader->id);
-    
-        shader->file.survey = true;
-        shader->file.callback = [this](File* file){ file->update(); this->reset(); this->sendUniform("mediasAtlas", 1); this->sendUniform("freetype", 2); };
-    
-    }
+    vert.create(vert_src,1);
+    glAttachShader(id, vert.id); 
 
     glLinkProgram( id );
 

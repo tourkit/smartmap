@@ -3,15 +3,13 @@
 #include "model.hpp"
 #include "gui.hpp"
 
-DrawCall::DrawCall() : Node("drawcall") {
-
-
-}
+DrawCall::DrawCall() : Node("drawcall") { }
 
 void DrawCall::run() {
-
-    
+ 
     vbo.draw();
+
+    if (shader.loaded) shader.use();
 
 }
 
@@ -32,6 +30,10 @@ void DrawCall::update() {
         frag_shader += ((ShaderFX*)shader)->code +"\n";
 
     }
+
+    shader.create(
+        "#version 430 core\nout vec4 color;\nvoid main() {color = vec4(1);}"
+        ,"#version 430 core\nlayout (location = 0) in vec2 POSITION;\nvoid main() {gl_Position = vec4(POSITION.x,POSITION.y,0,1);}");
 
 }
 
@@ -69,7 +71,15 @@ Node* DrawCall::add(Node *node) {
 
     };
 
-    if (node->is_a<Model>()) return Node::add(new ModelPtr(node));
+    if (node->is_a<Model>()) {
+        
+        Node::add(new ModelPtr(node));
+
+        update();
+        
+        return node;
+
+    }
 
     return nullptr;
 

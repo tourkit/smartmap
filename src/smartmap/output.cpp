@@ -42,8 +42,8 @@ VideoOutput::VideoOutput(std::string name, int width, int height) : Output(name,
         glViewport(0,0,this->fb.width,this->fb.height);
 
         this->fb.texture->bind();
-        Engine::getInstance().basicshader->use();
-        Engine::getInstance().quad->draw();
+        // Engine::getInstance().basicshader->use();
+        // Engine::getInstance().quad->draw();
 
     }, name);
 

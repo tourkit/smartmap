@@ -23,10 +23,14 @@ GUI::GUI(GLFWwindow* window) {
 
   auto color_white      = ImVec4(1,1,1,1);
   auto color_orange      = ImVec4(1,.4,0,1);
+  auto color_darkergrey  = ImVec4(.1,.1,.1,1);
   auto color_darkgrey  = ImVec4(.2,.2,.2,1);
   auto color_lightgrey   = ImVec4(.25,.25,.25,1);
   auto color_lightergrey   = ImVec4(.4,.4,.4,1);
 
+  ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt,ImVec4(.4,.4,.4,.15));
+  ImGui::PushStyleColor(ImGuiCol_TableBorderLight,color_darkergrey);
+  ImGui::PushStyleColor(ImGuiCol_TableBorderStrong,color_darkergrey);
   ImGui::PushStyleColor(ImGuiCol_CheckMark,color_white);
   ImGui::PushStyleColor(ImGuiCol_FrameBg,color_darkgrey);
   ImGui::PushStyleColor(ImGuiCol_HeaderHovered,color_lightergrey);
