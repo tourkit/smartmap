@@ -1,20 +1,11 @@
 #pragma once
 
-#include "pch.hpp"
-
 #include "window.hpp"
 #include "ubo.hpp"
-#include "framebuffer.hpp"
-#include "stack.hpp"
 #include "gui.hpp"
-#include "model.hpp"
-#include "shaderFX.hpp"
-#include "drawcall.hpp"
 
 #include "node.hpp"
 #include "atlas.hpp"
-
-#include "widgets/textures.hpp"
 
 
 #include "tree.hpp"
@@ -30,15 +21,11 @@ struct Engine {
 
     Atlas *atlas;
 
-    // Stack stack;
-
     Tree tree;
     
     Node* stack = tree.add(new Node{"Stack"});
     
     GUI gui;
-
-    std::array<char,512> blank{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     void init();
 

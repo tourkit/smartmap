@@ -55,7 +55,7 @@
             memset(&object_new[0], 0, 120);
             ImGui::InputText("##NewObject", &object_new[0], 120);
             ImGui::SameLine();
-            if (ImGui::Button("Add Object")) { 
+            if (ImGui::Button("Add Object") && strlen(&object_new[0])) { 
                 
                 buffer->add(object_new); 
 

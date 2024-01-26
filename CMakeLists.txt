@@ -16,9 +16,7 @@ add_executable(smartmap
     main.cpp
 
     src/window.cpp
-    src/fps.cpp
     src/log.cpp
-
     src/texture.cpp
     src/shader.cpp
     src/framebuffer.cpp
@@ -26,15 +24,24 @@ add_executable(smartmap
     src/ubo.cpp
     src/atlas.cpp
     src/test.cpp
-
     src/shaderfx.cpp
     src/drawcall.cpp
     src/model.cpp
     src/buffer.cpp
     src/engine.cpp
-    src/stack.cpp
     src/node.cpp
     src/tree.cpp
+    src/json.cpp
+    src/image.cpp
+    src/file.cpp
+    src/directory.cpp
+
+    src/gui.cpp
+    
+    src/fps.cpp
+
+    # src/output.cpp
+    # src/stack.cpp
 
     src/messagequeue.cpp
     src/thread.cpp
@@ -43,21 +50,13 @@ add_executable(smartmap
     src/artnet.cpp
     src/ndi.cpp
 
-    src/json.cpp
-    src/image.cpp
-    src/file.cpp
-    src/directory.cpp
 
-    src/output.cpp
+    # src/smartmap.cpp
+    # src/smartmap/layer.cpp
+    # src/smartmap/output.cpp
+    # src/smartmap/config.cpp
 
-    src/gui.cpp
-
-    src/smartmap.cpp
-    src/smartmap/layer.cpp
-    src/smartmap/output.cpp
-    src/smartmap/config.cpp
-
-    src/widgets/artnet_widget.cpp
+    # src/widgets/artnet_widget.cpp
 
     include/vendor/imgui/imgui.cpp
     include/vendor/imgui/imgui_tables.cpp

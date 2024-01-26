@@ -1,12 +1,13 @@
 #include "tree.hpp"
 #include "node.hpp"
 #include "engine.hpp"
+#include "imgui_internal.h"
 
 Tree::Tree() : Node("tree"), GUI::Window("Tree")  { }
 
 void Tree::draw()  { 
     
-    if (ImGui::BeginMenuBar()) {
+    if (ImGui::BeginMainMenuBar()) {
         
         if (ImGui::BeginMenu("new")) {  
 
@@ -22,9 +23,14 @@ void Tree::draw()  {
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*3);
         ImGui::TextUnformatted(std::to_string((int)std::round(ImGui::GetIO().Framerate)).c_str());
 
-        ImGui::EndMenuBar();
+        ImGui::EndMainMenuBar();
 
     }
+
+    std::string search_str = "filter";
+    ImGui::PushItemWidth(-1);
+    ImGui::InputText("###filtersearch", &search_str[0], search_str.size(), ImGuiInputTextFlags_EnterReturnsTrue);
+    ImGui::PopItemWidth();
 
     // Create the table
     
@@ -44,8 +50,6 @@ void Tree::drawChildrens(Node* node) {
 }
 
 void Tree::drawNode(Node* node) { 
-
-    auto pos = ImGui::GetColumnWidth()-ImGui::GetColumnOffset();
     
     ImGui::TableNextRow();
     
@@ -66,9 +70,30 @@ void Tree::drawNode(Node* node) {
             if (ImGui::MenuItem("New")) {}
             ImGui::EndMenu();
         }
+        bool will_exit = false;
+        if (!is_deleting) {
+        
+            ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
+            if(ImGui::MenuItem("delete")){ is_deleting = true; }
+            ImGui::PopItemFlag();
+        
+        }else {
+
+            if(ImGui::MenuItem("Sure ?")){
+                
+                is_deleting = false;
+                delete node;
+                
+            }
+
+        }
+
+        if (!ImGui::IsItemHovered()) is_deleting = false;
+
         ImGui::MenuItem("pop");
         ImGui::EndPopup();
     }
+    // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
      
         if (ImGui::BeginDragDropSource()) {
 
@@ -88,9 +113,6 @@ void Tree::drawNode(Node* node) {
         }
             
         if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
-        
-        ImGui::SameLine(pos);
-        if (ImGui::Button("x")) { delete node; }
         
         const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 

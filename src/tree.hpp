@@ -11,10 +11,8 @@ struct Tree : Node, GUI::Window {
     void drawNode(Node* node);   
     void drawChildrens(Node* node);   
 
-};
+private:
 
-struct ImRect
-{
-    ImVec2      Min;  
-    ImVec2      Max; 
+bool is_deleting = false;
+
 };

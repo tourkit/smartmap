@@ -4,30 +4,21 @@
 Buffer::Object::Object(std::string name, std::vector<std::string> components, int reserved)
     : Node(name), reserved(reserved) { 
 
-    for (auto c : components) addComponent(c);
+    for (auto c : components) add(Component::id(c.c_str()));
 
 }
-
-void Buffer::Object::addComponent(std::string component) { 
-
-    Node::add(new Ptr<Component>(Component::id(component.c_str()))); 
-
-    byte_size += Component::id(component.c_str())->size;
-
-}
-
 
 Node* Buffer::Object::add(Node* node) { 
 
-    auto compptr = node->is_a<Ptr<Component>>();
-    if (!compptr) return nullptr;
-    auto comp = compptr->ptr;
+    auto comp = node->is_a<Component>();
+    if (!comp) return nullptr;
 
-    Node::add(node);
+    Node::add(new Ptr<Component>(comp));
+    byte_size += comp->size;
 
-    return node;
+    return node; 
+
 }
-
 
 void Buffer::Object::push(void *data, int quantity) {
 
@@ -46,8 +37,18 @@ Buffer::Buffer(std::string name) : Node(name) {  }
 
 void Buffer::update() { 
 
-    PLOGD<<"once";
+    int size = 0;
+
+    for (auto obj : childrens) { 
+        for (auto comp : ((Object*)obj)->childrens) { 
+            size += ((Ptr<Component>*)comp)->ptr->size*((Object*)obj)->reserved; 
+        } 
+    }
+
+    data.resize(size);
     
+    // TODO: not enough need memory mgmt ( by splirt zhere last new offset)
+
 }
 
 Node* Buffer::add(Node* node) { 
@@ -59,22 +60,11 @@ Node* Buffer::add(Node* node) {
 
     Node::add(node);
 
-    int size = 0;
-
-    for (auto obj : childrens) { 
-        for (auto comp : ((Object*)obj)->childrens) { 
-            size += ((Ptr<Component>*)comp)->ptr->size*((Object*)obj)->reserved; 
-        } 
-    }
-
-    data.resize(size);
-
     callback();
 
     obj->buffer_offset = new_offset_t;
     obj->buffer = this;
 
-    // not enough need memory mgmt ( by splirt zhere last new offset)
 
     // update();
 

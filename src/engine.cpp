@@ -1,5 +1,8 @@
 #include "engine.hpp"
 #include "directory.hpp"
+#include "model.hpp"
+#include "shaderfx.hpp"
+// #include "widgets/buffer.hpp"
 
 Engine::Engine(uint16_t width, uint16_t height) 
     : window(1920,1080), 
@@ -51,6 +54,7 @@ void Engine::init() {
     an->add(new Node{"3"});
     an->add(new Node{"4"});
 
+    // new BufferWidget();
     // auto dc = stack->add(new DrawCall());
     // auto q1 = dc->add(models->childrens[0]);
     // dc->childrens[0]->add(shaders->childrens[0]);
