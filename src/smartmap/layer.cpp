@@ -43,7 +43,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
     fb = new FrameBuffer(FW, FH); 
 
     
-    Buffer::Struct::Entry layerUBO = Base::smartlayersUBO->create();
+    Struct::Entry layerUBO = Base::smartlayersUBO->create();
 
     // layerUBO.set<uint32_t>(0,fb->id);
     // layerUBO.set<uint32_t>(1,Engine::getInstance().matrices->quantity); // first canva

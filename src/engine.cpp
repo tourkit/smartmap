@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "directory.hpp"
+#include "struct.hpp"
 #include "model.hpp"
 #include "shaderfx.hpp"
 
@@ -39,7 +40,7 @@ void Engine::init() {
     tree.add(dyn);
     dynamic_ubo = &dyn->buffer;
 
-    dynamic_ubo->add(new Buffer::Struct("TOUT",{"float"},1));
+    dynamic_ubo->add(new Struct("TOUT",{"float"},1));
 
     Components::getInstance();
     Node* comps = tree.add(new Node{"Components"});

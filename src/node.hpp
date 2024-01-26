@@ -5,6 +5,7 @@
 #include <functional>
 
 #include <boost/type_index.hpp>
+
 struct File;
 
 struct Node {

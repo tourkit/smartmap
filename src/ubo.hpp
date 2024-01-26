@@ -1,18 +1,18 @@
-#ifndef UBO_H
-#define UBO_H
+#pragma once
 
 #include <vector>
 
 #include "buffer.hpp"
+#include "component.hpp"
 
 struct ShaderProgram;
 struct UBO : Node {
 
-    GLuint id = -1;
+    uint32_t id = -1;
 
-    GLuint binding;
+    uint32_t binding;
 
-    static inline GLuint binding_count = 0;
+    static inline uint32_t binding_count = 0;
 
     static inline Components &comps = Components::getInstance();
 
@@ -41,4 +41,3 @@ struct UBO : Node {
     // static void fromJSON();
 
 };
-#endif // UBO_H

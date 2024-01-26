@@ -1,11 +1,10 @@
-#ifndef VBO_H
-#define VBO_H
+#pragma once
 
-#include "pch.hpp"
-#include "gui.hpp"
+#include "node.hpp"
 #include "buffer.hpp"
 
-struct Models{};
+struct Models;
+struct Struct;
 
 struct VBO {
 
@@ -14,9 +13,9 @@ struct VBO {
     std::string name;
 
     Buffer buffer;
-    Buffer::Struct *vertices, *indices;
+    Struct *vertices, *indices;
 
-    GLuint vao=0, vbo, ibo, id;
+    uint32_t vao=0, vbo, ibo, id;
 
     std::vector<Models*> models;
     
@@ -31,8 +30,4 @@ struct VBO {
 
     void draw(int count = 1);
 
-
-
 };
-
-#endif

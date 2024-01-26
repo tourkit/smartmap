@@ -35,6 +35,7 @@ add_executable(smartmap
     src/image.cpp
     src/file.cpp
     src/directory.cpp
+    src/struct.cpp
 
     src/gui.cpp
     

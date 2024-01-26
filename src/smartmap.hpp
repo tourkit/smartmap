@@ -20,9 +20,9 @@ struct Base {
     static inline Artnet *artnet;
     static inline ShaderProgram *shader, *layershader;
 
-    static inline Buffer::Struct *fix1UBO;
-    static inline Buffer::Struct *fix2UBO;
-    static inline Buffer::Struct *smartlayersUBO;
+    static inline Struct *fix1UBO;
+    static inline Struct *fix2UBO;
+    static inline Struct *smartlayersUBO;
 
     Config config;
 

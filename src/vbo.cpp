@@ -1,6 +1,6 @@
 #include "vbo.hpp"  
 
-#include "engine.hpp"  
+#include "struct.hpp"  
 
 
 #include <assimp/Importer.hpp>
@@ -12,7 +12,7 @@ VBO::VBO(std::string path, int id, std::string name)
 : name(name), buffer(name) 
 {  
 
-    vertices = (Buffer::Struct*)buffer.add(new Buffer::Struct("Vertex", {
+    vertices = (Struct*)buffer.add(new Struct("Vertex", {
 
         "Position",
         "UV",
@@ -20,7 +20,7 @@ VBO::VBO(std::string path, int id, std::string name)
         
     }, 4));
 
-    indices = (Buffer::Struct*)buffer.add(new Buffer::Struct("Index", {
+    indices = (Struct*)buffer.add(new Struct("Index", {
 
         "Vertex",
         "Vertex",

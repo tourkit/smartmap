@@ -1,42 +1,7 @@
 #include "buffer.hpp"
 #include "gui.hpp"
-
-Buffer::Struct::Struct(std::string name, std::vector<std::string> components, int reserved)
-    : Node(name), reserved(reserved) { 
-
-    for (auto c : components) add(Component::id(c.c_str()));
-
-}
-
-Node* Buffer::Struct::add(Node* node) { 
-
-    auto comp = node->is_a<Component>();
-    if (!comp) return nullptr;
-
-    Node::add(new Ptr<Component>(comp));
-    byte_size += comp->size;
-
-    return node; 
-
-}
-
-void Buffer::Struct::editor() {
-
-
- }
-
-
-void Buffer::Struct::push(void *data, int quantity) {
-
-    int first_byte = buffer_offset+(this->quantity*byte_size);
-
-    memcpy(&buffer->data[first_byte], data, quantity*byte_size);
-
-    this->quantity += quantity;
-
-}
-
-char *Buffer::Struct::data() { return (char*)&buffer->data[buffer_offset]; }
+#include "struct.hpp"
+#include "component.hpp"
 
 
 Buffer::Buffer(std::string name) : Node(name) {  }
@@ -57,9 +22,10 @@ void Buffer::update() {
 
 }
 
+
 Node* Buffer::add(Node* node) { 
 
-    auto obj = node->is_a<Buffer::Struct>();
+    auto obj = node->is_a<Struct>();
     if (!obj) return nullptr;
 
     int new_offset_t = new_offset();
@@ -77,11 +43,23 @@ Node* Buffer::add(Node* node) {
     return node;
 
  }
+int Buffer::new_offset() { 
+        
+        int buffer_offset = 0;
 
+        if (childrens.size()) {
+            
+            auto obj = ((Ptr<Struct>*)childrens.back())->ptr;
+            buffer_offset = obj->buffer_offset+(obj->reserved*obj->byte_size);
+        }
+
+        return buffer_offset;
+
+    }
 void Buffer::editor() { 
 
     if (!childrens.size()) return;
-    auto obj = childrens[0]->is_a<Buffer::Struct>();
+    auto obj = childrens[0]->is_a<Struct>();
     if (!obj) return;
 
     int uniform_offset = obj->buffer_offset;
