@@ -21,61 +21,73 @@ void DrawCall::update() {
 
     std::unordered_set<ShaderFX*> shaders;
 
-    for (auto model : childrens) { for (auto c : model->childrens) shaders.insert(((Ptr<ShaderFX>*)c)->ptr); }
+    for (auto model : childrens) { for (auto c : model->childrens) {
+        shaders.insert(((ShaderFXPtr*)c)->ptr);
+        } }
 
-    frag_shader.resize(0);
+
+    // FRAGMENT
+
+    std::string frag_shader;
+    frag_shader = "#version 430 core\n\nout vec4 color;\n\n";
+
+    // if buffer filled then 
+    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x; };\n\n";
 
     for (auto shader : shaders) {
 
-        frag_shader += ((ShaderFX*)shader)->code +"\n";
+        frag_shader += ((ShaderFX*)shader)->code +"\n\n";
+
+    }
+    frag_shader += "void main() {\n\n";
+
+    for (auto model : childrens) {
+
+        frag_shader += "\t// " +((Model*)model)->name+"\n";
+
+        frag_shader += "\tcolor = vec4(1);\n";
+
+        for (auto c : model->childrens) { 
+
+            auto shader = ((ShaderFXPtr*)c)->ptr;
+
+            frag_shader += "\tcolor = ";
+            frag_shader += shader->name + "(";
+            frag_shader += "color";
+            for (int i = 1; i < shader->args.size(); i++) frag_shader += ", x";
+            frag_shader += ")";
+            frag_shader += ";\n";
+
+         }
+
+        frag_shader += "\n\n";
 
     }
 
-    shader.create(
-        "#version 430 core\nout vec4 color;\nvoid main() {color = vec4(1);}"
-        ,"#version 430 core\nlayout (location = 0) in vec2 POSITION;\nvoid main() {gl_Position = vec4(POSITION.x,POSITION.y,0,1);}");
+    frag_shader += "}";
+
+
+    /// VERTEX
+
+    std::string vert_shader;
+    vert_shader = "#version 430 core\n\n";
+    vert_shader += "layout (location = 0) in vec2 POSITION;\n\n";
+
+    vert_shader += "void main() {\n\n";
+
+    vert_shader += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
+
+    vert_shader += "}";
+
+    shader.create(frag_shader,vert_shader);
 
 }
 
 Node* DrawCall::add(Node *node) {
 
-    struct ShaderFXPtr : Ptr<ShaderFX> {
-
-        ShaderFXPtr(void* ptr) : Ptr<ShaderFX>(ptr) { }
-
-        Node* add(Node *node) { return nullptr; }    
-
-    };
-
-    struct ModelPtr : Ptr<Model> {
-
-        ModelPtr(void* ptr) : Ptr<Model>(ptr) { }
-            
-        Node* add(Node *node) {
-
-            if (node->is_a<ShaderFX>()) {
-
-                Node::add(new Ptr<ShaderFX>(node));
-
-                parent()->update();
-
-                return node;
-                
-            }
-
-            return Node::add(node);
-
-            return nullptr;
-
-        }    
-
-    };
-
     if (node->is_a<Model>()) {
         
         Node::add(new ModelPtr(node));
-
-        update();
         
         return node;
 
@@ -87,8 +99,8 @@ Node* DrawCall::add(Node *node) {
 
 void DrawCall::editor() { 
     
-    ImGui::InputTextMultiline("frag shader", &frag_shader[0], frag_shader.length(), ImVec2(300,300));
-    ImGui::InputTextMultiline("vert shader", &vert_shader[0], vert_shader.length(), ImVec2(300,300));
+    ImGui::InputTextMultiline("frag shader", &shader.frag.src[0], shader.frag.src.length(), ImVec2(300,300));
+    ImGui::InputTextMultiline("vert shader", &shader.vert.src[0], shader.vert.src.length(), ImVec2(300,300));
 
     //imgui textbox
 

@@ -14,6 +14,8 @@ Shader::Shader(std::string src, uint8_t type)  { create(src,type); }
 
 void Shader::create(std::string src, uint8_t type)  {
     
+    this->src = src;
+    
     auto gl_type = GL_FRAGMENT_SHADER;
 
     if (type == 1) gl_type = GL_VERTEX_SHADER;
@@ -23,8 +25,7 @@ void Shader::create(std::string src, uint8_t type)  {
  
     const GLchar *source = src.c_str();
     glShaderSource(id, 1, &source, nullptr);
-    PLOGD << source;
- 
+
     glCompileShader(id);
 
     // Check for errors

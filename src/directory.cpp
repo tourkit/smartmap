@@ -3,7 +3,7 @@
 Directory::~Directory()  { 
     
     for (auto f : list) delete f;
-    PLOGD << "delete";
+    
 }
 
 Directory::Directory(std::string path) { import(path); }

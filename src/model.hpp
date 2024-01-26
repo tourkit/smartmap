@@ -16,7 +16,12 @@ struct Model : Ptr<File> {
 
 };
 
+struct ModelPtr : Ptr<Model> {
 
+    ModelPtr(void* ptr);
+        
+    Node* add(Node *node);
+    
+    void editor() override;
 
-
-
+};

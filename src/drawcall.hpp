@@ -1,14 +1,16 @@
 #include "node.hpp"
 #include "vbo.hpp"
+#include "buffer.hpp"
 #include "shader.hpp"
 #include <unordered_set>
 
 struct ShaderFX;
+
 struct DrawCall : Node {
 
-    std::string frag_shader, vert_shader;
-
     VBO vbo;
+
+    Buffer buffer;
 
     ShaderProgram shader;
 

@@ -5,7 +5,7 @@
     Node::Node(std::string name, std::vector<uint32_t> color) : name(name), color(color) {
 
         PLOGD << name;
-
+        
     }
 
     Node::~Node() {
@@ -16,7 +16,9 @@
 
         if (parent_node) parent_node->remove(this);
 
-        PLOGD << "~" << name;
+        if (dtor) dtor(parent_node);
+
+        PLOGV << "~" << name;
 
     }
 
@@ -46,11 +48,14 @@
 
     Node *Node::add(Node *node) {
 
+        for (auto c: childrens) if (c->name == node->name)  node->name += " 2";
         node->parent(this);
-
+        update();
         return node;
 
     }
+
+    void Node::update() { if (parent_node) parent_node->update(); }
 
     void Node::remove(Node *child) {  
 
@@ -64,6 +69,8 @@
         }
 
         childrens.erase(it);
+
+        update();
 
     }
 

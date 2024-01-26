@@ -15,11 +15,13 @@ struct Shader {
 
   GLenum type;
 
+  std::string src;
+
   Shader();
   
   Shader(std::string src, uint8_t type = 0);
 
-  void create (std::string src, uint8_t type);
+  void create(std::string src, uint8_t type);
 
   ~Shader();
 

@@ -46,12 +46,14 @@ struct Node {
     virtual void run();
     virtual void runCB();
     
-    virtual void update() {}
+    virtual void update();
+
+    std::function<void(Node*)> dtor = nullptr;
 
     auto begin() { return childrens.begin(); }
     auto end() { return childrens.end(); }
 
-};
+    };
 
 template <typename T>
 struct Ptr : Node { 

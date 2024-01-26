@@ -20,14 +20,11 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
         
-
         auto &engine = Engine::getInstance();
         
         engine.dynamic_ubo.upload();
 
         engine.stack->run();
-
-        // for (auto n : engine.stack->childrens) { auto dc = (DrawCall*)n; dc->run(); }
 
         engine.gui.draw();
         
@@ -41,21 +38,22 @@ void Engine::run() {
 
 void Engine::init() {
 
-    framebuffers = static_ubo.buffer.add("Framebuffer", {"int", "int","int", "int"}, 100 );
-    matrices = static_ubo.buffer.add("Matrice", {"Size", "Position", "Position", "Position"}, 100);
-    // specs = dynamic_ubo.buffer.add("specs", {"int","int","int","int"},1)->create();
-
-    // float plain[8] = {1,1,0,0,.5,.5,0,0};
-    // matrices->push(&plain[0]);
-    // basicshader = new ShaderProgram({"basic.frag", "basic.vert"});
-
     Node* models = tree.add(new Node{"Models"});
     for (auto file : Directory("assets/model/")) models->add(new Model(file));
 
     Node* shaders = tree.add(new Node{"Shaders"});
     for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
     
-    stack->add(new DrawCall());
+    Node* controllers = tree.add(new Node{"Controllers"});
+    auto an = controllers->add(new Node{"Art-Net"});
+    an->add(new Node{"1"});
+    an->add(new Node{"2"});
+    an->add(new Node{"3"});
+    an->add(new Node{"4"});
+
+    auto dc = stack->add(new DrawCall());
+    auto q1 = dc->add(models->childrens[0]);
+    dc->childrens[0]->add(shaders->childrens[0]);
 
     // atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
     
