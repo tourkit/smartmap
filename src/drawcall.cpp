@@ -32,7 +32,7 @@ void DrawCall::update() {
     frag_shader = "#version 430 core\n\nout vec4 color;\n\n";
 
     // if buffer filled then 
-    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x; };\n\n";
+    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n\n";
 
     for (auto shader : shaders) {
 
@@ -54,7 +54,7 @@ void DrawCall::update() {
             frag_shader += "\tcolor = ";
             frag_shader += shader->name + "(";
             frag_shader += "color";
-            for (int i = 1; i < shader->args.size(); i++) frag_shader += ", x";
+            for (int i = 1; i < shader->args.size(); i++) frag_shader += ", x["+std::to_string(i-1)+"]";
             frag_shader += ")";
             frag_shader += ";\n";
 

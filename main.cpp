@@ -23,13 +23,6 @@ int main() {
 
     Test test;
 
-    // SmartMap::Base sm;
-
-    auto *x = engine.dynamic_ubo.buffer.add("infos", {"int","int","int","int"},4);
-    engine.specs = x->create();x->create();x->create();x->create();
-
-    // sm.config.import("config.json");
-
     engine.run();
  
 }

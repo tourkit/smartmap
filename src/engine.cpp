@@ -4,7 +4,7 @@
 Engine::Engine(uint16_t width, uint16_t height) 
     : window(1920,1080), 
     // : window(width,height), 
-    dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
+    // dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
      gui(window.id) {
     window.max_fps = 59;
 
@@ -22,21 +22,19 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
         
-        engine.dynamic_ubo.upload();
+        // engine.dynamic_ubo.upload();
 
         engine.stack->run();
 
-        engine.gui.draw();
-        
-        engine.specs.set<uint64_t>(0,engine.sequid--);
-        if (!engine.sequid) engine.sequid = 1000;
-    
+        engine.gui.draw(); 
 
     });
 
 };
 
 void Engine::init() {
+
+    Components::getInstance();
 
     Node* models = tree.add(new Node{"Models"});
     for (auto file : Directory("assets/model/")) models->add(new Model(file));
@@ -51,9 +49,11 @@ void Engine::init() {
     an->add(new Node{"3"});
     an->add(new Node{"4"});
 
-    auto dc = stack->add(new DrawCall());
-    auto q1 = dc->add(models->childrens[0]);
-    dc->childrens[0]->add(shaders->childrens[0]);
+    // auto dc = stack->add(new DrawCall());
+    // auto q1 = dc->add(models->childrens[0]);
+    // dc->childrens[0]->add(shaders->childrens[0]);
+
+
 
     // atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
     

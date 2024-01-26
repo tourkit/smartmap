@@ -7,51 +7,31 @@
 #include <functional>
 #include <vector>
 
-#include "shader.hpp"
+#include "engine.hpp"
+#include "buffer.hpp"
 
 
-Test::Test(){
 
 struct Foo {
 
-    std::string name;
-
-    std::function<void(Foo*)> dtor;
-
-    std::vector<Foo*> childrens;
-    Foo* parent = nullptr;
-
-    void update() {}
-    void add(Foo* f) { childrens.push_back(f); f->parent = this; }
-    void remove(Foo* f) { childrens.erase(std::remove(childrens.begin(), childrens.end(), f), childrens.end()); update(); } 
-
-    Foo(std::string name = "foo", std::function<void(Foo*)> dtor = nullptr) : name(name), dtor(dtor) { PLOGD << name; }
-
-    virtual ~Foo() { 
-
-        for (auto c : childrens) delete c;
-        PLOGD << "FOO";
-
-        if (parent) parent->remove(this); 
-
-        if (dtor) dtor(parent); 
-    }
+    Foo() { PLOGD << "foo"; }
 
 };
 
-struct Bar : Foo { 
 
-    Bar() : Foo("bar",[](Foo* dtor){ PLOGD << "BAR-"<< dtor->name; }) {  }
+static std::vector<Foo> foos;
 
-};
+static Foo& add(Foo f) { foos.push_back(f); return foos.back(); }
 
-{
+Test::Test(){
 
-    // Foo f;
 
-    // f.add(new Bar());
+    Foo &f = add(Foo());
 
-}
+
+    auto &buffer = *(Buffer*)Engine::getInstance().tree.add(new Buffer);
+
+    buffer.addObject("TOUT",{"float"},1);
 
 
 

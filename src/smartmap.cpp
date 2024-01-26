@@ -47,35 +47,35 @@ Base::Base() {
     atlas = new Atlas(4096,2048, "assets/media/");
     atlas->link(shader);
     
-    smartlayersUBO = Engine::getInstance().static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );
+    // smartlayersUBO = Engine::getInstance().static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );
 
-    fix1UBO = Engine::getInstance().dynamic_ubo.buffer.add("Fixture", {
+    // fix1UBO = Engine::getInstance().dynamic_ubo.buffer.add("Fixture", {
 
-        "Opacity",
-        "RGB",
-        "Position",
-        "Size",
-        "Gobo",
-        "Orientation",
-        "Feedback",
-        "Strobe",
-        "float", // for alignmentr
+    //     "Opacity",
+    //     "RGB",
+    //     "Position",
+    //     "Size",
+    //     "Gobo",
+    //     "Orientation",
+    //     "Feedback",
+    //     "Strobe",
+    //     "float", // for alignmentr
         
-    }, 50 );
+    // }, 50 );
 
-    fix2UBO = Engine::getInstance().dynamic_ubo.buffer.add("Fixture2", {
+    // fix2UBO = Engine::getInstance().dynamic_ubo.buffer.add("Fixture2", {
 
-        "Opacity",
-        "RGB",
-        "Position",
-        "Size",
-        "Gobo",
-        "Orientation",
-        "Feedback",
-        "Strobe",
-        "float", // for alignmentr
+    //     "Opacity",
+    //     "RGB",
+    //     "Position",
+    //     "Size",
+    //     "Gobo",
+    //     "Orientation",
+    //     "Feedback",
+    //     "Strobe",
+    //     "float", // for alignmentr
         
-    }, 50 );
+    // }, 50 );
     
     // blur_x = new ShaderProgram({"blur_x.comp"});
     // blur_y = new ShaderProgram({"blur_y.comp"});

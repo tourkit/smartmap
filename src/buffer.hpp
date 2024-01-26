@@ -3,12 +3,11 @@
 #include "pch.hpp"
 
 #include "component.hpp"
-#include "gui.hpp"
+#include "node.hpp"
 
-struct Buffer {
+struct Buffer : Node {
 
-    
-    struct Object {
+    struct Object : Node {
 
         struct Entry { 
             
@@ -18,10 +17,10 @@ struct Buffer {
             template <typename T>
             void set(int member_id, T data) { 
 
-                Component *comp = obj->components[member_id];
+                auto comp = ((Ptr<Component>*)obj->childrens[member_id])->ptr;
 
                 int buffer_offset = obj->buffer_offset;
-                for (size_t i = 0; i < member_id; i++) buffer_offset += obj->components[i]->size;
+                for (size_t i = 0; i < member_id; i++) buffer_offset += ((Ptr<Component>*)obj->childrens[i])->ptr->size;
             
                 if (comp) memcpy(&obj->buffer->data[obj->byte_size*id+buffer_offset], (void*)&data, comp->size);                
 
@@ -29,9 +28,8 @@ struct Buffer {
 
         };
 
-        std::string name;
 
-        std::vector<Component*> components;
+        Object(std::string name, std::vector<std::string> components = {}, int quantity = 1);
 
         int reserved , quantity = 0, byte_size = 0, buffer_offset = 0;
 
@@ -41,12 +39,7 @@ struct Buffer {
 
         char *data();
 
-        void set(const char* name, void* data, int id = 0); // UNUSESD
-
-        void set(int member_id, void* data, int obj_id = 0); // UNUSESD
-
         Entry create() { 
-
 
             std::vector<char> data;
             data.resize(byte_size);
@@ -59,19 +52,13 @@ struct Buffer {
 
     };
 
-    std::string name;
-
-    std::vector<Object> objects;
-
     std::vector<char> data;  
-
-    static inline std::vector<Buffer*> pool;
     
     std::function<void()> callback = [](){};
 
-    // void remove(Object *obj, std::vector<Component*> components) {  for (auto comp : components) { obj->components.push_back(comp); } resize(); }
-
-    Object *add(std::string name, std::vector<std::string> components = {}, int quantity = 1);
+    Object *addObject(std::string name, std::vector<std::string> components = {}, int quantity = 1);
+    
+    Node* add(Node* node) override;
 
     void reset();
 
@@ -80,6 +67,6 @@ struct Buffer {
 
     Buffer(std::string name = "Buffer");
 
-    ~Buffer();
+    // ~Buffer();
 
 };

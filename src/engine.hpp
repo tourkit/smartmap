@@ -14,7 +14,6 @@
 #include "node.hpp"
 #include "atlas.hpp"
 
-#include "widgets/buffer.hpp"
 #include "widgets/textures.hpp"
 
 
@@ -25,10 +24,8 @@ struct Engine {
 
     Window window;
 
-    UBO dynamic_ubo, static_ubo;
+    // UBO dynamic_ubo, static_ubo;
 
-    Buffer::Object *framebuffers, *matrices;
-    Buffer::Object::Entry specs;
     int sequid = 1000;
 
     Atlas *atlas;
@@ -40,9 +37,6 @@ struct Engine {
     Node* stack = tree.add(new Node{"Stack"});
     
     GUI gui;
-
-    BufferWidget bw;
-    TexturesWidget tw;
 
     std::array<char,512> blank{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 

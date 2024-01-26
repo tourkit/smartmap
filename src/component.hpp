@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.hpp"
+#include "node.hpp"
 #include <typeinfo>
 
 struct StringsBuffer {
@@ -42,7 +43,7 @@ struct StringsBuffer {
 
 };
 
-struct Component {
+struct Component : Node {
 
 
     static inline StringsBuffer buffer_string;
@@ -66,8 +67,7 @@ struct Component {
 
     };
 
-    std::string name;
-    int size =-1;
+    int size;
     std::vector<Member> members;
 
     template <typename T>
@@ -122,6 +122,11 @@ struct Component {
         PLOGW << "Component \"" << name << "\" does not exist yet !";
 
         return &create(name);
+
+    }
+
+    Component(std::string name, int size = -1) : Node(name), size(size) {
+
 
     }
 

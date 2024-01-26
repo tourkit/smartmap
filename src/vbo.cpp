@@ -12,7 +12,7 @@ VBO::VBO(std::string path, int id, std::string name)
 : name(name), buffer(name) 
 {  
 
-    vertices = buffer.add("Vertex", {
+    vertices = buffer.addObject("Vertex", {
 
         "Position",
         "UV",
@@ -20,7 +20,7 @@ VBO::VBO(std::string path, int id, std::string name)
         
     }, 4);
 
-    indices = buffer.add("Index", {
+    indices = buffer.addObject("Index", {
 
         "Vertex",
         "Vertex",

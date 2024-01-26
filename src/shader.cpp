@@ -74,8 +74,8 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     glLinkProgram( id );
 
-    Engine::getInstance().dynamic_ubo.subscribers.push_back(this); 
-    Engine::getInstance().static_ubo.subscribers.push_back(this); 
+    // Engine::getInstance().dynamic_ubo.subscribers.push_back(this); 
+    // Engine::getInstance().static_ubo.subscribers.push_back(this); 
 
     loaded = true;
 
