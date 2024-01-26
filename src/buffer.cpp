@@ -1,4 +1,5 @@
 #include "buffer.hpp"
+#include "gui.hpp"
 
 Buffer::Object::Object(std::string name, std::vector<std::string> components, int quantity)
     : Node(name){ 
@@ -35,40 +36,35 @@ Buffer::Buffer(std::string name) : Node(name) {  }
     
 Node* Buffer::add(Node* node) { 
 
-    if (node->is_a<Component>()) {
+    auto obj = node->is_a<Buffer::Object>();
+    if (obj) {
 
-        childrens.push_back(Ptr<Component>(node));
+        new_offset();
+
+        Node::add(node);
+
+        int size = 0;
+
+        for (auto obj : childrens) { for (auto comp : ((Object*)obj)->childrens) { size += ((Ptr<Component>*)comp)->ptr->size*((Object*)obj)->reserved; } }
+
+        data.resize(size);
+            // callback();
+
+    // objects.back().buffer_offset = buffer_offset;
+    // objects.back().buffer = this;
+        
+        return node;
 
     }
 
     return nullptr;
  }
 
-Buffer::Object *Buffer::addObject(std::string name, std::vector<std::string> components, int reserved) { 
+    void Buffer::editor() { 
 
-    // int buffer_offset = 0;
-    // if (childrens.size()) buffer_offset = childrens.back().buffer_offset+(childrens.back().reserved*childrens.back().byte_size);
+        ImGui::Text(std::to_string(data.size()).c_str());
 
-    // objects.push_back({name, {}, reserved}); 
-
-    // for (auto comp : components) objects.back().addComponent(comp);
-
-    
-    // int size = 0;
-    // for (auto &obj:objects) { for (auto comp:obj.components) { size += comp->size*obj.reserved; } }
-    // data.resize(size);
-
-    // callback();
-
-    // objects.back().buffer_offset = buffer_offset;
-    // objects.back().buffer = this;
-
-    // return &objects.back();
-
-    return nullptr;
-
-}
-
+    }
     void Buffer::reset() { 
         // objects.resize(0); data.resize(0); 
         // 

@@ -21,7 +21,7 @@ struct Node {
     virtual ~Node();
 
     template <typename U>
-    bool is_a() { return (typeid(*this) == typeid(U)); }
+    U* is_a() { return ((typeid(*this) == typeid(U))? (U*)this : nullptr); }
 
     void parent(Node* parent_node);
     
@@ -64,6 +64,8 @@ struct Ptr : Node {
 
     Ptr(void* ptr) 
         : Node((isNode() ? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name() + " ptr")), ptr((T*)ptr) { 
+
+            color = {100,100,100,100};
         
     } 
     

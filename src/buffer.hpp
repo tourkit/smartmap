@@ -55,12 +55,12 @@ struct Buffer : Node {
     std::vector<char> data;  
     
     std::function<void()> callback = [](){};
-
-    Object *addObject(std::string name, std::vector<std::string> components = {}, int quantity = 1);
     
     Node* add(Node* node) override;
 
     void reset();
+
+    void editor() override;
 
     void updateBuffer();
     // void changeObjQuantity();
@@ -69,4 +69,20 @@ struct Buffer : Node {
 
     // ~Buffer();
 
+
+private:
+
+    int new_offset() { 
+        
+        int buffer_offset = 0;
+
+        if (childrens.size()) {
+            
+            auto obj = ((Ptr<Object>*)childrens.back())->ptr;
+            buffer_offset = obj->buffer_offset+(obj->reserved*obj->byte_size);
+        }
+
+        return buffer_offset;
+
+    }
 };

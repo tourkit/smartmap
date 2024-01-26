@@ -12,21 +12,21 @@ VBO::VBO(std::string path, int id, std::string name)
 : name(name), buffer(name) 
 {  
 
-    vertices = buffer.addObject("Vertex", {
+    vertices = (Buffer::Object*)buffer.add(new Buffer::Object("Vertex", {
 
         "Position",
         "UV",
         "ID",
         
-    }, 4);
+    }, 4));
 
-    indices = buffer.addObject("Index", {
+    indices = (Buffer::Object*)buffer.add(new Buffer::Object("Index", {
 
         "Vertex",
         "Vertex",
         "Vertex"
         
-    }, 2 );
+    }, 2) );
     
     buffer.callback = [this](){ upload(); };
     

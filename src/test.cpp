@@ -31,7 +31,7 @@ Test::Test(){
 
     auto &buffer = *(Buffer*)Engine::getInstance().tree.add(new Buffer);
 
-    buffer.addObject("TOUT",{"float"},1);
+    buffer.add(new Buffer::Object("TOUT",{"float"},1));
 
 
 
