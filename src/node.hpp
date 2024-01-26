@@ -1,6 +1,9 @@
 #pragma once
 
-#include "pch.hpp"
+#include <cstring>
+#include <vector>
+#include <functional>
+
 #include <boost/type_index.hpp>
 struct File;
 

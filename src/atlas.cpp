@@ -1,6 +1,11 @@
 #include "atlas.hpp"  
+
 #include "directory.hpp"  
 #include "engine.hpp"  
+#include "shader.hpp"  
+#include "texture.hpp"
+#include "ubo.hpp"
+
 
 Atlas::Atlas(int width, int height, std::string path)  : Node("Atlas"), binpack(width,height,0)  {
 

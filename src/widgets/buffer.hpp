@@ -11,23 +11,6 @@
         std::string buffer_new, object_new; 
         int comp_new = -1;
 
-        static void updateBufferList() {
-
-            std::vector<std::string> names;
-            for (auto *buffer : Buffer::pool) { names.push_back(buffer->name); }
-            buffers_list.create(names);
-            
-        }
-
-        void updateObjectList() {
-
-            std::vector<std::string> names;
-            for (auto &obj:Buffer::pool[buffer_current]->objects) { names.push_back(obj.name); }
-            objects_list.create(names);
-            object_current = 0;
-
-        }
-
         BufferWidget(std::string name = "Buffer") : GUI::Window(name) { 
     
             updateBufferList();

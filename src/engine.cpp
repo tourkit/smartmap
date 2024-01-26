@@ -2,12 +2,10 @@
 #include "directory.hpp"
 #include "model.hpp"
 #include "shaderfx.hpp"
-// #include "widgets/buffer.hpp"
 
 Engine::Engine(uint16_t width, uint16_t height) 
     : window(1920,1080), 
     // : window(width,height), 
-    // dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"), 
      gui(window.id) {
     window.max_fps = 59;
 
@@ -37,6 +35,12 @@ void Engine::run() {
 
 void Engine::init() {
 
+    auto dyn = new UBO("dynamic_ubo");
+    tree.add(dyn);
+    dynamic_ubo = &dyn->buffer;
+
+    dynamic_ubo->add(new Buffer::Object("TOUT",{"float"},1));
+
     Components::getInstance();
     Node* comps = tree.add(new Node{"Components"});
     for (auto c : Component::pool) comps->add(c);
@@ -54,7 +58,6 @@ void Engine::init() {
     an->add(new Node{"3"});
     an->add(new Node{"4"});
 
-    // new BufferWidget();
     // auto dc = stack->add(new DrawCall());
     // auto q1 = dc->add(models->childrens[0]);
     // dc->childrens[0]->add(shaders->childrens[0]);

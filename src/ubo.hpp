@@ -1,19 +1,14 @@
 #ifndef UBO_H
 #define UBO_H
 
-#include "pch.hpp"
-
-#include "shader.hpp"
+#include <vector>
 
 #include "buffer.hpp"
 
-struct UBO {
+struct ShaderProgram;
+struct UBO : Node {
 
-    std::string name;
-
-    static inline std::vector<UBO*> pool;
-
-    GLuint id;
+    GLuint id = -1;
 
     GLuint binding;
 
@@ -36,6 +31,10 @@ struct UBO {
     void upload();
 
     void upload(GLvoid* data, size_t size, GLuint offset = 0);
+
+    Node *add(Node* node) override;
+
+    void editor() override;
     
     // static void toJSON();
     

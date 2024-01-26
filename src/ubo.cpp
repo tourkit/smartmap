@@ -1,22 +1,19 @@
 #include "ubo.hpp"
 
+#include "shader.hpp"
+
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name), subscribers(subscribers), buffer(name) { 
-
-    pool.push_back(this);
+UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : Node(name), subscribers(subscribers), buffer(name) { 
     
     binding = binding_count++;
 
     // can do better ^^
     if (binding > 100) PLOGW << "MAX_UBO might soon be reached";
-
-    buffer.updateBuffer();
     
     update();
 
     buffer.callback = [this](){ 
-        
         
         update();
         upload();
@@ -24,6 +21,19 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name)
     };
 
 } 
+
+Node *UBO::add(Node* node) {
+
+    Node::add(node);
+    return node;
+
+}
+
+void UBO::editor() {
+
+    buffer.editor();
+
+}
 
 void UBO::destroy() { buffer.reset(); subscribers.resize(0); if (id) glDeleteBuffers(1, &id); } // delete name; ?
 

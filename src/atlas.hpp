@@ -1,14 +1,10 @@
 #pragma once
 
 #include "RectangleBinPack/MaxRectsBinPack.h"
-#include "pch.hpp"
-#include "texture.hpp"
-#include "ubo.hpp"
 #include "node.hpp"
 #include "image.hpp"
-#include "directory.hpp"
 
-struct UBO;
+struct UBO; struct ShaderProgram; struct Image; struct Texture;
  
 struct Atlas : Node {
 

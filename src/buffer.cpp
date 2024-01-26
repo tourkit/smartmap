@@ -20,6 +20,12 @@ Node* Buffer::Object::add(Node* node) {
 
 }
 
+void Buffer::Object::editor() {
+
+
+ }
+
+
 void Buffer::Object::push(void *data, int quantity) {
 
     int first_byte = buffer_offset+(this->quantity*byte_size);
@@ -72,32 +78,44 @@ Node* Buffer::add(Node* node) {
 
  }
 
-    void Buffer::editor() { 
+void Buffer::editor() { 
 
-        ImGui::Text(std::to_string(data.size()).c_str());
+    if (!childrens.size()) return;
+    auto obj = childrens[0]->is_a<Buffer::Object>();
+    if (!obj) return;
 
-        for (auto c : childrens) { 
+    int uniform_offset = obj->buffer_offset;
 
-            auto obj = c->is_a<Object>();
-            if (!obj) continue; 
-            
-            ImGui::Text(c->name.c_str()); ImGui::SameLine();
-            ImGui::Text(std::to_string(obj->reserved).c_str());
+    int elem_current = 0;
+    if (ImGui::SliderInt("current##uibocurrent", &elem_current,0,obj->reserved-1)) {}
 
-            for (auto c : obj->childrens) { 
+    for (auto c:obj->childrens) {
 
-                auto compptr = c->is_a<Ptr<Component>>();
-                if (!compptr) continue;
-                auto comp = compptr->ptr;
+        auto compptr = c->is_a<Ptr<Component>>();
+        if (!compptr) continue;
+        auto comp = compptr->ptr;
+        
+        // ImGui::Text((std::to_string(elem_current)+" - "+std::to_string(obj.size)).c_str());
+        ImGui::SeparatorText(comp->name.c_str());
+        
+        for (auto m:comp->members) {
+
+            float *value = (float*)&data[uniform_offset+(elem_current*obj->byte_size)];
+
+            if (ImGui::SliderFloat((m.name+"##"+comp->name+m.name+std::to_string(uniform_offset)).c_str(), value, m.range_from, m.range_to)) { 
                 
-                ImGui::Text(c->name.c_str()); ImGui::SameLine();
-                ImGui::Text(std::to_string(comp->size).c_str());
-            
-            } 
+                // ubo->update(); 
 
+            }
+
+            uniform_offset += m.size; 
         }
 
+        // break; 
+
     }
+
+}
 
     void Buffer::reset() { 
         // objects.resize(0); data.resize(0); 

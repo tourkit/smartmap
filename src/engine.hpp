@@ -15,7 +15,7 @@ struct Engine {
 
     Window window;
 
-    // UBO dynamic_ubo, static_ubo;
+    Buffer *dynamic_ubo, *static_ubo;
 
     int sequid = 1000;
 

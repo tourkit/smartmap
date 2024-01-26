@@ -1,6 +1,8 @@
 #pragma once
 
-#include "pch.hpp"
+#include <cstring>
+#include <vector>
+#include <functional>
 
 #include "component.hpp"
 #include "node.hpp"
@@ -37,6 +39,8 @@ struct Buffer : Node {
     
         Node* add(Node* node) override;
 
+        void editor() override;
+        
         void push(void *data, int quantity = 1);
 
         char *data();
