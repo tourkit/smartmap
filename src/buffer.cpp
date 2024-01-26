@@ -1,8 +1,8 @@
 #include "buffer.hpp"
 #include "gui.hpp"
 
-Buffer::Object::Object(std::string name, std::vector<std::string> components, int quantity)
-    : Node(name){ 
+Buffer::Object::Object(std::string name, std::vector<std::string> components, int reserved)
+    : Node(name), reserved(reserved) { 
 
     for (auto c : components) addComponent(c);
 
@@ -10,11 +10,24 @@ Buffer::Object::Object(std::string name, std::vector<std::string> components, in
 
 void Buffer::Object::addComponent(std::string component) { 
 
-    add(new Ptr<Component>(Component::id(component.c_str()))); 
+    Node::add(new Ptr<Component>(Component::id(component.c_str()))); 
 
     byte_size += Component::id(component.c_str())->size;
 
 }
+
+
+Node* Buffer::Object::add(Node* node) { 
+
+    auto compptr = node->is_a<Ptr<Component>>();
+    if (!compptr) return nullptr;
+    auto comp = compptr->ptr;
+
+    Node::add(node);
+
+    return node;
+}
+
 
 void Buffer::Object::push(void *data, int quantity) {
 
@@ -28,43 +41,74 @@ void Buffer::Object::push(void *data, int quantity) {
 
 char *Buffer::Object::data() { return (char*)&buffer->data[buffer_offset]; }
 
-    
-
 
 Buffer::Buffer(std::string name) : Node(name) {  }
 
+void Buffer::update() { 
+
+    PLOGD<<"once";
     
+}
+
 Node* Buffer::add(Node* node) { 
 
     auto obj = node->is_a<Buffer::Object>();
-    if (obj) {
+    if (!obj) return nullptr;
 
-        new_offset();
+    int new_offset_t = new_offset();
 
-        Node::add(node);
+    Node::add(node);
 
-        int size = 0;
+    int size = 0;
 
-        for (auto obj : childrens) { for (auto comp : ((Object*)obj)->childrens) { size += ((Ptr<Component>*)comp)->ptr->size*((Object*)obj)->reserved; } }
-
-        data.resize(size);
-            // callback();
-
-    // objects.back().buffer_offset = buffer_offset;
-    // objects.back().buffer = this;
-        
-        return node;
-
+    for (auto obj : childrens) { 
+        for (auto comp : ((Object*)obj)->childrens) { 
+            size += ((Ptr<Component>*)comp)->ptr->size*((Object*)obj)->reserved; 
+        } 
     }
 
-    return nullptr;
+    data.resize(size);
+
+    callback();
+
+    obj->buffer_offset = new_offset_t;
+    obj->buffer = this;
+
+    // not enough need memory mgmt ( by splirt zhere last new offset)
+
+    // update();
+
+    return node;
+
  }
 
     void Buffer::editor() { 
 
         ImGui::Text(std::to_string(data.size()).c_str());
 
+        for (auto c : childrens) { 
+
+            auto obj = c->is_a<Object>();
+            if (!obj) continue; 
+            
+            ImGui::Text(c->name.c_str()); ImGui::SameLine();
+            ImGui::Text(std::to_string(obj->reserved).c_str());
+
+            for (auto c : obj->childrens) { 
+
+                auto compptr = c->is_a<Ptr<Component>>();
+                if (!compptr) continue;
+                auto comp = compptr->ptr;
+                
+                ImGui::Text(c->name.c_str()); ImGui::SameLine();
+                ImGui::Text(std::to_string(comp->size).c_str());
+            
+            } 
+
+        }
+
     }
+
     void Buffer::reset() { 
         // objects.resize(0); data.resize(0); 
         // 

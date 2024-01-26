@@ -35,6 +35,8 @@ void Engine::run() {
 void Engine::init() {
 
     Components::getInstance();
+    Node* comps = tree.add(new Node{"Components"});
+    for (auto c : Component::pool) comps->add(c);
 
     Node* models = tree.add(new Node{"Models"});
     for (auto file : Directory("assets/model/")) models->add(new Model(file));
