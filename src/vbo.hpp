@@ -14,7 +14,7 @@ struct VBO {
     std::string name;
 
     Buffer buffer;
-    Buffer::Object *vertices, *indices;
+    Buffer::Struct *vertices, *indices;
 
     GLuint vao=0, vbo, ibo, id;
 

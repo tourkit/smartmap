@@ -9,12 +9,12 @@
 
 struct Buffer : Node {
 
-    struct Object : Node {
+    struct Struct : Node {
 
         struct Entry { 
             
             int id;
-            Object* obj;
+            Struct* obj;
             
             template <typename T>
             void set(int member_id, T data) { 
@@ -31,7 +31,7 @@ struct Buffer : Node {
         };
 
 
-        Object(std::string name, std::vector<std::string> components = {}, int quantity = 1);
+        Struct(std::string name, std::vector<std::string> components = {}, int quantity = 1);
 
         int reserved , quantity = 0, byte_size = 0, buffer_offset = 0;
 
@@ -85,7 +85,7 @@ private:
 
         if (childrens.size()) {
             
-            auto obj = ((Ptr<Object>*)childrens.back())->ptr;
+            auto obj = ((Ptr<Struct>*)childrens.back())->ptr;
             buffer_offset = obj->buffer_offset+(obj->reserved*obj->byte_size);
         }
 

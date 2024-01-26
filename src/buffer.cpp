@@ -1,14 +1,14 @@
 #include "buffer.hpp"
 #include "gui.hpp"
 
-Buffer::Object::Object(std::string name, std::vector<std::string> components, int reserved)
+Buffer::Struct::Struct(std::string name, std::vector<std::string> components, int reserved)
     : Node(name), reserved(reserved) { 
 
     for (auto c : components) add(Component::id(c.c_str()));
 
 }
 
-Node* Buffer::Object::add(Node* node) { 
+Node* Buffer::Struct::add(Node* node) { 
 
     auto comp = node->is_a<Component>();
     if (!comp) return nullptr;
@@ -20,13 +20,13 @@ Node* Buffer::Object::add(Node* node) {
 
 }
 
-void Buffer::Object::editor() {
+void Buffer::Struct::editor() {
 
 
  }
 
 
-void Buffer::Object::push(void *data, int quantity) {
+void Buffer::Struct::push(void *data, int quantity) {
 
     int first_byte = buffer_offset+(this->quantity*byte_size);
 
@@ -36,7 +36,7 @@ void Buffer::Object::push(void *data, int quantity) {
 
 }
 
-char *Buffer::Object::data() { return (char*)&buffer->data[buffer_offset]; }
+char *Buffer::Struct::data() { return (char*)&buffer->data[buffer_offset]; }
 
 
 Buffer::Buffer(std::string name) : Node(name) {  }
@@ -46,8 +46,8 @@ void Buffer::update() {
     int size = 0;
 
     for (auto obj : childrens) { 
-        for (auto comp : ((Object*)obj)->childrens) { 
-            size += ((Ptr<Component>*)comp)->ptr->size*((Object*)obj)->reserved; 
+        for (auto comp : ((Struct*)obj)->childrens) { 
+            size += ((Ptr<Component>*)comp)->ptr->size*((Struct*)obj)->reserved; 
         } 
     }
 
@@ -59,7 +59,7 @@ void Buffer::update() {
 
 Node* Buffer::add(Node* node) { 
 
-    auto obj = node->is_a<Buffer::Object>();
+    auto obj = node->is_a<Buffer::Struct>();
     if (!obj) return nullptr;
 
     int new_offset_t = new_offset();
@@ -81,7 +81,7 @@ Node* Buffer::add(Node* node) {
 void Buffer::editor() { 
 
     if (!childrens.size()) return;
-    auto obj = childrens[0]->is_a<Buffer::Object>();
+    auto obj = childrens[0]->is_a<Buffer::Struct>();
     if (!obj) return;
 
     int uniform_offset = obj->buffer_offset;
