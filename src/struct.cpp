@@ -13,16 +13,29 @@ Node* Struct::add(Node* node) {
     if (!comp) return nullptr;
 
     Node::add(new Ptr<Component>(comp));
-    byte_size += comp->size;
 
     return node; 
+
+}
+
+void Struct::update() {
+
+    byte_size = 0;
+    for (auto c : childrens) {
+        auto compptr = c->is_a<Ptr<Component>>();
+        if (!compptr) continue;
+        auto comp = compptr->ptr;
+        
+        byte_size += comp->size;
+        
+    }
 
 }
 
 void Struct::editor() {
 
 
- }
+}
 
 
 void Struct::push(void *data, int quantity) {

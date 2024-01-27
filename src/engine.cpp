@@ -36,11 +36,11 @@ void Engine::run() {
 
 void Engine::init() {
 
-    auto dyn = new UBO("dynamic_ubo");
-    tree.add(dyn);
-    dynamic_ubo = &dyn->buffer;
+    // auto dyn = new UBO("dynamic_ubo");
+    // tree.add(dyn);
+    // dynamic_ubo = &dyn->buffer;
 
-    dynamic_ubo->add(new Struct("TOUT",{"float"},1));
+    // dynamic_ubo->add(new Struct("TOUT",{"float"},1));
 
     Components::getInstance();
     Node* comps = tree.add(new Node{"Components"});

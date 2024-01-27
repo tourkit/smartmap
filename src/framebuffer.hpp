@@ -8,7 +8,7 @@ struct Texture;
 struct FrameBuffer {
 
     static inline std::vector<FrameBuffer*> pool;
-    GLuint id, width, height, attachments = 0;
+    uint32_t id, width, height, attachments = 0;
     std::string name;
     Texture *texture = nullptr;
     FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name="FrameBuffer");

@@ -1,6 +1,7 @@
 #include "file.hpp"
-#include "directory.hpp"
-#include "pch.hpp"
+#include "log.hpp"
+#include <filesystem>
+#include <fstream>
 
 static std::vector<std::string> explodefilename(std::string const & s, char delim) {
 

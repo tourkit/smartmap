@@ -15,17 +15,20 @@ struct Engine {
 
     Window window;
 
-    Buffer *dynamic_ubo, *static_ubo;
-
-    int sequid = 1000;
-
-    Atlas *atlas;
+    GUI gui;
+    
+    // UBO dynamic_ubo, static_ubo;
 
     Tree tree;
     
     Node* stack = tree.add(new Node{"Stack"});
+
+    Atlas *atlas;
+
     
-    GUI gui;
+    int sequid = 1000;
+
+    
 
     void init();
 

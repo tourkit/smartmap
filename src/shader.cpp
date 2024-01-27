@@ -1,10 +1,8 @@
 #include "shader.hpp"
-#include "engine.hpp"
-// #include "pch.hpp"
+#include "log.hpp"
 
-#include <filesystem>
-
-namespace fs = std::filesystem;
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
 
 Shader::Shader() { }
 
@@ -39,7 +37,7 @@ void Shader::create(std::string src, uint8_t type)  {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
 
-        GL_PRINT(infoLog);
+        PLOGW << infoLog;
         
     }
 
@@ -73,9 +71,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     glAttachShader(id, vert.id); 
 
     glLinkProgram( id );
-
-    // Engine::getInstance().dynamic_ubo.subscribers.push_back(this); 
-    // Engine::getInstance().static_ubo.subscribers.push_back(this); 
 
     loaded = true;
 

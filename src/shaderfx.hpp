@@ -3,10 +3,12 @@
 
 #include "node.hpp"
 #include "shader.hpp"
+#include "file.hpp"
+#include <map>
 
 struct ShaderFX : Ptr<File>  {
 
-    ShaderType type;
+    Shader::Type type;
 
     std::map<std::string, float> uniforms;
 

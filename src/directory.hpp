@@ -1,7 +1,10 @@
 #pragma once
 
-#include "file.hpp"
+#include <string>
+#include <vector>
+#include <functional>
 
+struct File;
 
 struct Directory {
 
@@ -15,7 +18,7 @@ struct Directory {
 
     bool import(std::string path);
 
-    static bool exist(std::string path) { return std::filesystem::is_directory(REPO_DIR+path); }
+    static bool exist(std::string path);
 
     void each(std::function<void(File*)> cb);
 
@@ -26,8 +29,5 @@ struct Directory {
     auto begin() { return list.begin(); }
     auto end() { return list.end(); }
 
-private:
-
-    DIR *dir;
 
 };

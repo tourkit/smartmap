@@ -40,11 +40,7 @@
 #include FT_FREETYPE_H
 
 
-#ifdef ROCH
-static std::string REPO_DIR = "C:/users/root/cpp/smartmap/";
-#else
-static std::string REPO_DIR = "./";
-#endif
+
 
 
 struct FT { 

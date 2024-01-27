@@ -1,5 +1,6 @@
 #include "node.hpp"
 #include "file.hpp"
+#include "log.hpp"
 
 
     Node::Node(std::string name, std::vector<uint32_t> color) : name(name), color(color) {

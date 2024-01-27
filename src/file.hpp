@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pch.hpp"
 #include "node.hpp"
 
 struct File : Node {
@@ -28,3 +27,9 @@ struct File : Node {
     static void write(std::string path, std::string data);
     
 };
+
+#ifdef ROCH
+static std::string REPO_DIR = "C:/users/root/cpp/smartmap/";
+#else
+static std::string REPO_DIR = "./";
+#endif

@@ -29,11 +29,11 @@
         Struct(std::string name, std::vector<std::string> components = {}, int quantity = 1);
 
         int reserved , quantity = 0, byte_size = 0, buffer_offset = 0;
-
-        void addComponent(std::string component);
     
         Node* add(Node* node) override;
 
+        void update() override;
+        
         void editor() override;
         
         void push(void *data, int quantity = 1);

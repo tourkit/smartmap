@@ -1,19 +1,13 @@
-#ifndef SHADER_H
-#define SHADER_H
+#pragma once
 
-#include "pch.hpp"
-#include "file.hpp"
-
-
-
-
-enum ShaderType { FRAGMENT, VERTEX, COMPUTE };
+#include <cstdint>
+#include <string>
 
 struct Shader {
+  
+  uint32_t id = -1;
 
-  GLuint id = -1;
-
-  GLenum type;
+  enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
   std::string src;
 
@@ -27,13 +21,13 @@ struct Shader {
 
   void compile();
   
-  operator GLuint();
+  operator uint32_t();
 
 };
 
 struct ShaderProgram {
 
-  GLuint id = -1;
+  uint32_t id = -1;
 
   Shader frag, vert;
 
@@ -46,7 +40,7 @@ struct ShaderProgram {
   ShaderProgram(std::string frag, std::string vert);
 
   void use();
-  void use(GLuint x, GLuint y = 1, GLuint z = 1);
+  void use(uint32_t x, uint32_t y = 1, uint32_t z = 1);
 
   void reset();
   void destroy();
@@ -59,8 +53,6 @@ struct ShaderProgram {
   void sendUniform(const std::string& name, float f1, float f2, float f3);
   void sendUniform(const std::string& name, float f1, float f2, float f3, float f4);
 
-  operator GLuint();
+  operator uint32_t();
 
 };
-
-#endif
