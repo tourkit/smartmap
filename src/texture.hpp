@@ -1,10 +1,9 @@
-#ifndef TEXTURE_H
-#define TEXTURE_H	
+#pragma once
 	
-#include "pch.hpp"
+#include <vector>
+#include <string>
 
-
-
+#include <GL/gl3w.h>
 
 struct Texture {
 
@@ -42,7 +41,3 @@ struct Texture {
     operator GLuint();
 
 };
-
-
-
-#endif

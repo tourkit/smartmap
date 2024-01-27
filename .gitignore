@@ -1,6 +1,6 @@
 .gitignore
 build/*
 buildtest/*
-.vscode/settings.json
+.vscode/*
 show/*
 logs.txt
