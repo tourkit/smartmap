@@ -8,9 +8,9 @@ struct ShaderFX;
 
 struct DrawCall : Node {
 
-    // Buffer buffer;
+    Buffer buffer;
 
-    // VBO vbo;
+    VBO vbo;
 
     ShaderProgram shader;
 

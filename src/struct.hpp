@@ -13,5 +13,11 @@ struct Struct {
     Struct(std::string name = "struct", std::vector<std::string> components = {});
 
     void addComp(std::vector<std::string> components);
+
+    size_t getComp(std::string name) {
+
+        return 0;
+        
+    }
     
 };

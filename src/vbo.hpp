@@ -2,24 +2,30 @@
 
 #include "struct.hpp"
 #include <cstdint>
+#include <vector>
+
+
+struct Object;
+struct Model;
 
 struct VBO {
 
-    static inline Struct *vertices;
-    static inline Struct *indices;
+    static inline Object *vertices;
+    static inline Object *indices;
 
-    uint32_t vao, vbo, ibo, id;
+    uint32_t vao, vbo, ibo;
 
-    std::string path;
+    std::vector<std::pair<Model*,int>> models;
     
-    VBO(std::string path = "quad.obj", int id = -1);
+    VBO();
 
     ~VBO(); 
 
-    void import(std::string path);
+    void add(Model *model, int id = 0);
 
     void upload();
 
+    void create();
     void destroy();
 
     void draw(int count = 1);

@@ -230,19 +230,3 @@ private:
     
 
 };
-
-struct Object {
-
-    std::string name;
-
-    std::vector<Component*> components;
-
-    int quantity,size = 0;
-    
-    // int get(int id, int comp, int member) { 
-        
-    //     return size*id; 
-    
-    // }
-
-};

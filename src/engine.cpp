@@ -44,24 +44,24 @@ void Engine::init() {
 
     // dynamic_ubo->add(new Struct("TOUT",{"float"},1));
 
-    Components::getInstance();
-    Node* comps = tree.add(new Node{"Components"});
-    for (auto c : Component::pool) comps->add(c);
+    // Components::getInstance();
+    // Node* comps = tree.add(new Node{"Components"});
+    // for (auto c : Component::pool) comps->add(c);
 
-    Node* models = tree.add(new Node{"Models"});
-    for (auto file : Directory("assets/model/")) models->add(new Model(file));
+    // Node* models = tree.add(new Node{"Models"});
+    // for (auto file : Directory("assets/model/")) models->add(new Model(file));
 
-    Node* shaders = tree.add(new Node{"Shaders"});
-    for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
+    // Node* shaders = tree.add(new Node{"Shaders"});
+    // for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
     
-    Node* controllers = tree.add(new Node{"Controllers"});
-    auto an = controllers->add(new Node{"Art-Net"});
-    an->add(new Node{"1"});
-    an->add(new Node{"2"});
-    an->add(new Node{"3"});
-    an->add(new Node{"4"});
+    // Node* controllers = tree.add(new Node{"Controllers"});
+    // auto an = controllers->add(new Node{"Art-Net"});
+    // an->add(new Node{"1"});
+    // an->add(new Node{"2"});
+    // an->add(new Node{"3"});
+    // an->add(new Node{"4"});
 
-    // auto dc = stack->add(new DrawCall());
+    auto dc = stack->add(new DrawCall());
     // auto q1 = dc->add(models->childrens[0]);
     // dc->childrens[0]->add(shaders->childrens[0]);
 

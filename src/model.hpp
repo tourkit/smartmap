@@ -1,8 +1,15 @@
 #pragma once
 
-#include "node.hpp"
+#include <vector>
+#include <array>
+#include <cstdint>
+#include <string>
 
-struct Model : Ptr<File> {
+struct File;
+
+struct Model {
+
+    std::string name = "model";
 
     std::vector<std::array<float,2>> vertices;
 
@@ -12,16 +19,6 @@ struct Model : Ptr<File> {
     
     Model(File *file);
        
-    void convert();
-
-};
-
-struct ModelPtr : Ptr<Model> {
-
-    ModelPtr(void* ptr);
-        
-    Node* add(Node *node);
-    
-    void editor() override;
+    void import(File *file);
 
 };

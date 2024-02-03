@@ -1,130 +1,90 @@
 #include "vbo.hpp"  
 
-#include "struct.hpp"  
+#include "engine.hpp"  
+#include "model.hpp"  
 
 
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-
-VBO::VBO(std::string path, int id)  : id(id), path(path) {  
+VBO::VBO() {  
 
     static bool init = false;
 
-    if (!init) {
+    if (!init) { 
         
-        // vertices.name = "Vertex";  
+        vertices = Engine::getInstance().buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}),4);;
 
-        // vertices.add({
-
-        //     "Position",
-        //     "UV",
-        //     "ID",
-            
-        // }); 
-        
-        // vertices.reserved = 4;
-
-        // indices.name = "Index";  
-        // indices.add({
-
-        //     "Vertex",
-        //     "Vertex",
-        //     "Vertex"
-            
-        // });
+        indices = Engine::getInstance().buffer.addObj(new Struct("Index",{"Vertex", "Vertex", "Vertex"}),4);
 
         init = true;
     
     }
-    
-//     indices.reserved = 2;
-    
-//     // buffer.callback = [this](){ upload(); }; // should be on Struct
 
-//     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
-
-//     import(path); 
-
-//     upload();
-    
+    create();
 }
 
-// VBO::~VBO()  { 
+void VBO::destroy() {
 
-//     glDisableVertexAttribArray(0); 
-//     glDisableVertexAttribArray(1); 
-//     glDisableVertexAttribArray(2); 
-//     glDisableVertexAttribArray(3); 
+    if (vbo<0) return;
 
-//     glDeleteBuffers(1, &vbo);
-//     glDeleteBuffers(1, &ibo);
-//     glDeleteVertexArrays(1, &vao);
+    glDisableVertexAttribArray(0); 
+    glDisableVertexAttribArray(1); 
+    glDisableVertexAttribArray(2); 
+    glDisableVertexAttribArray(3); 
 
-// }
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ibo);
+    glDeleteVertexArrays(1, &vao);
 
-// void VBO::upload() {
+}
 
-//     glBindVertexArray(vao);
+void VBO::create() {
 
-//     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-//     glBufferData(GL_ARRAY_BUFFER,  vertices->reserved*vertices->byte_size , vertices->data(), GL_STATIC_DRAW );
+    destroy();
 
-//     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-//     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->reserved*indices->byte_size , indices->data(), GL_STATIC_DRAW );
+    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
-//     // make this parametric from Object vertices definition
-//     glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) 0);
-//     glEnableVertexAttribArray(0);
-//     glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (2*sizeof(float)));
-//     glEnableVertexAttribArray(1);
-//     glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->byte_size, (GLvoid *) (4*sizeof(float)));
-//     glEnableVertexAttribArray(3);
+}
 
-// }
+VBO::~VBO()  { destroy(); }
 
-// void VBO::import(std::string path) {    
+void VBO::upload() {
 
-//     Assimp::Importer importer;
+    glBindVertexArray(vao);
 
-//     const aiScene* scene = importer.ReadFile("assets/model/"+std::string(path), aiProcess_CalcTangentSpace       | 
-// 		aiProcess_Triangulate            |
-// 		aiProcess_JoinIdenticalVertices  |
-// 		aiProcess_SortByPType);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER,  vertices->size(), vertices->data(), GL_STATIC_DRAW );
 
-//     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) PLOGW << "Failed to load OBJ file: " << importer.GetErrorString();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size(), indices->data(), GL_STATIC_DRAW );
 
-//     auto mesh = scene->mMeshes[0];
+    // make this parametric from Object vertices definition
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->s->size, (GLvoid *) 0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->s->size, (GLvoid *) (2*sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->s->size, (GLvoid *) (4*sizeof(float)));
+    glEnableVertexAttribArray(3);
 
-//     for (int i = 0; i < mesh->mNumVertices; i++) {
+}
 
-//         const aiVector3D& vertex = mesh->mVertices[i];
+void VBO::add(Model *model,int id) {    
 
-//         std::array<char,20> data;
-//         memcpy(&data[0], &vertex.x, 8);
-//         memcpy(&data[8], &mesh->mTextureCoords[0][i].x, 8);
-//         memcpy(&data[16], &this->id, 4);
+    models.push_back({model,id});
 
-//         vertices->push(&data[0]);
-
-//     }
-    
-//     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
-        
-//         const aiFace& face = mesh->mFaces[i];
-
-//         indices->push(&face.mIndices[0]);
-
-//     }
-
-// }
+    // updatye buffer : by adding converted Model to Buffer::Object(Indices) && Buffer::Object(Indices)
 
 
-// void VBO::draw(int count) {
+    // Buffer::Object(Indices).add()
 
-//     glBindVertexArray(vao); 
+    upload();
 
-//     glDrawElementsInstanced(GL_TRIANGLES, indices->reserved*indices->byte_size, GL_UNSIGNED_INT, 0, count);
+}
 
-// }
+
+void VBO::draw(int count) {
+
+    glBindVertexArray(vao); 
+
+    glDrawElementsInstanced(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, 0, count);
+
+}
 	

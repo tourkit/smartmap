@@ -14,12 +14,16 @@
 
 Test::Test(){
 
-    Buffer b; 
+    // Buffer b; 
     
-    Struct index("Index", {"Position"});
+    // Struct index("Index", {"Position"});
 
-    PLOGD << index.size;
+    // PLOGD << index.size;
 
-    b.addObj(&index,1);
+    // b.addObj(&index,10);
+
+    // auto *data = b.getEntry(&index,4);
+
+    // PLOGD << ;
 
 }

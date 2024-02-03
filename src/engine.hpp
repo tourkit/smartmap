@@ -10,12 +10,15 @@
 
 #include "tree.hpp"
 #include "editor.hpp"
+#include "buffer.hpp"
 
 struct Engine {
 
     Window window;
 
     GUI gui;
+
+    Buffer buffer; 
     
     // UBO dynamic_ubo;//, static_ubo;
 

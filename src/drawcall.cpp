@@ -85,13 +85,13 @@ void DrawCall::update() {
 
 Node* DrawCall::add(Node *node) {
 
-    if (node->is_a<Model>()) {
+    // if (node->is_a<Model>()) {
         
-        Node::add(new ModelPtr(node));
+    //     Node::add(new ModelPtr(node));
         
-        return node;
+    //     return node;
 
-    }
+    // }
 
     return nullptr;
 

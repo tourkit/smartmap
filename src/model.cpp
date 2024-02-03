@@ -1,20 +1,19 @@
 
 #include "model.hpp"
 #include "file.hpp"
-#include "shaderfx.hpp"
-#include "gui.hpp"
+#include "log.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-Model::Model(File *file) : Ptr<File>{file} { convert();}
+Model::Model(File *file)  { import(file); }
 
-void Model::convert() {    
+void Model::import(File *file) {    
 
     Assimp::Importer importer;
 
-    const aiScene* scene = importer.ReadFileFromMemory(&ptr->data[0], ptr->data.size(), aiProcess_CalcTangentSpace       | 
+    const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       | 
         aiProcess_Triangulate            |
         aiProcess_JoinIdenticalVertices  |
         aiProcess_SortByPType);
@@ -41,29 +40,4 @@ void Model::convert() {
 
     }
 
-}
-
-ModelPtr::ModelPtr(void* ptr) : Ptr<Model>(ptr) { }
-    
-Node* ModelPtr::add(Node *node) {
-
-    if (node->is_a<ShaderFX>()) {
-
-        Node::add(new ShaderFXPtr(node));
-
-        return node;
-        
-    }
-
-    return nullptr;
-
-}    
-void ModelPtr::editor() {
-
-    for (auto c : childrens) {
-        
-        
-        if (ImGui::TreeNodeEx(c->name.c_str(), ImGuiTreeNodeFlags_DefaultOpen)){ c->editor(); ImGui::TreePop(); }
-
-   } 
 }
