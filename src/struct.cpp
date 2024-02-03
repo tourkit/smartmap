@@ -1,4 +1,7 @@
 #include "struct.hpp"
+#include "buffer.hpp"
+
+Struct::Struct(){}
 
 Struct::Struct(std::string name, std::vector<std::string> components, int reserved)
     : Node(name), reserved(reserved) { 

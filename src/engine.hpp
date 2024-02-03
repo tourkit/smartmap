@@ -17,7 +17,7 @@ struct Engine {
 
     GUI gui;
     
-    // UBO dynamic_ubo, static_ubo;
+    // UBO dynamic_ubo;//, static_ubo;
 
     Tree tree;
     

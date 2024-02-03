@@ -1,32 +1,25 @@
 #pragma once
 
-#include "node.hpp"
-#include "buffer.hpp"
-
-struct Models;
-struct Struct;
+#include "struct.hpp"
 
 struct VBO {
 
-    static inline std::vector<VBO*> pool;
+    static inline Struct *vertices;
+    static inline Struct *indices;
 
-    std::string name;
+    uint32_t vao, vbo, ibo, id;
 
-    Buffer buffer;
-    Struct *vertices, *indices;
-
-    uint32_t vao=0, vbo, ibo, id;
-
-    std::vector<Models*> models;
+    std::string path;
     
+    VBO(std::string path = "quad.obj", int id = -1);
+
     ~VBO(); 
 
     void import(std::string path);
 
     void upload();
-    void destroy();
 
-    VBO(std::string path = "quad.obj", int id = 0, std::string name = "VBO") ;
+    void destroy();
 
     void draw(int count = 1);
 

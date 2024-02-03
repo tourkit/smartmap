@@ -1,28 +1,27 @@
 #pragma once
 
-#include "node.hpp"
+#include "component.hpp"
+#include "struct.hpp"
 
-struct Buffer : Node {
+struct Buffer {
+
+    std::vector<Struct> structs;
 
     std::vector<char> data;  
     
     std::function<void()> callback = [](){};
-    
-    Node* add(Node* node) override;
+
+    // void remove(Object *obj, std::vector<Component*> components) {  for (auto comp : components) { obj->components.push_back(comp); } resize(); }
+
+    Struct add(Struct s);
 
     void reset();
-
-    void update() override;
-    void editor() override;
 
     void updateBuffer();
     // void changeObjQuantity();
 
-    Buffer(std::string name = "Buffer");
+    Buffer();
 
-    // ~Buffer();
+    ~Buffer();
 
-private:
-
-    int new_offset();
 };

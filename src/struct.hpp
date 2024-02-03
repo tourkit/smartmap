@@ -2,8 +2,9 @@
 
 #include "node.hpp"
 #include "component.hpp"
-#include "buffer.hpp"
 
+ struct Buffer;
+ 
  struct Struct : Node {
 
         struct Entry { 
@@ -19,18 +20,21 @@
                 int buffer_offset = obj->buffer_offset;
                 for (size_t i = 0; i < member_id; i++) buffer_offset += ((Ptr<Component>*)obj->childrens[i])->ptr->size;
             
-                if (comp) memcpy(&obj->buffer->data[obj->byte_size*id+buffer_offset], (void*)&data, comp->size);                
+                // if (comp) memcpy(&obj->buffer->data[obj->byte_size*id+buffer_offset], (void*)&data, comp->size);                
 
             }
 
         };
 
+        Struct();
 
         Struct(std::string name, std::vector<std::string> components = {}, int quantity = 1);
 
         int reserved , quantity = 0, byte_size = 0, buffer_offset = 0;
     
         Node* add(Node* node) override;
+
+        void add(std::vector<std::string> components);
 
         void update() override;
         

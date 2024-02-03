@@ -4,7 +4,7 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : Node(name), subscribers(subscribers), buffer(name) { 
+UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : Node(name), subscribers(subscribers) { 
     
     binding = binding_count++;
 
@@ -31,7 +31,7 @@ Node *UBO::add(Node* node) {
 
 void UBO::editor() {
 
-    buffer.editor();
+    // buffer.editor();
 
 }
 
