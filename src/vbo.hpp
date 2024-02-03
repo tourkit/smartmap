@@ -1,6 +1,7 @@
 #pragma once
 
 #include "struct.hpp"
+#include <cstdint>
 
 struct VBO {
 

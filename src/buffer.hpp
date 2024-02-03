@@ -1,27 +1,37 @@
 #pragma once
 
-#include "component.hpp"
-#include "struct.hpp"
+#include <string>
+#include <vector>
+#include <functional>
+#include <cstddef>
+
+struct Struct;
 
 struct Buffer {
 
-    std::vector<Struct> structs;
+    struct Object { 
+        
+        Struct* s; 
 
-    std::vector<char> data;  
-    
-    std::function<void()> callback = [](){};
+        int reserved = 1; 
 
-    // void remove(Object *obj, std::vector<Component*> components) {  for (auto comp : components) { obj->components.push_back(comp); } resize(); }
+        size_t data_offset;
 
-    Struct add(Struct s);
+        // std::vector<Component*> eq; 
+        // struct Entry { int id, offset; };	
+
+    };
+
+    std::vector<Object> objects;
+
+    std::function<void()> callback;
+
+    void addObj(Struct* s, int reserved = 1);
 
     void reset();
+    
+    void destroy();
 
-    void updateBuffer();
-    // void changeObjQuantity();
-
-    Buffer();
-
-    ~Buffer();
+    std::vector<char> data;  
 
 };

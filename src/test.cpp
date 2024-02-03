@@ -7,49 +7,19 @@
 #include <functional>
 #include <vector>
 
-#include "engine.hpp"
-
-namespace YOLO {
-
-
-struct Buffer {
-
-    struct Def {
-
-        Struct s;
-
-        int quantity, reserved;
-
-    };
-
-    std::vector<Def> definition;
-
-    std::vector<char> data;  
-
-
-};
-
-struct Prout {
-
-
-    Prout() {
-
-        Buffer b;
-
-
-    }
-};
-
-};
+#include "component.hpp"
+#include "buffer.hpp"
+#include "struct.hpp"
 
 
 Test::Test(){
 
+    Buffer b; 
+    
+    Struct index("Index", {"Position"});
 
-    YOLO::Prout x;
+    PLOGD << index.size;
 
+    b.addObj(&index,1);
 
-
-
- 
 }
