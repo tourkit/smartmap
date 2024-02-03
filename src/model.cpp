@@ -11,6 +11,8 @@ Model::Model(File *file)  { import(file); }
 
 void Model::import(File *file) {    
 
+    name = file->name;
+
     Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       | 

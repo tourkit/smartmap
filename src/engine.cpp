@@ -36,7 +36,40 @@ void Engine::run() {
 
 };
 
+struct Foo {
+    
+
+    int x = 5;
+
+};
+
+struct Bar : Foo {
+
+    int x = 6;
+};
+
+
+
+
 void Engine::init() {
+
+    static bool init = false;
+
+    if (!init){
+
+        NODE<Model>::onadd([](Node* node, Model *model){ node->name = model->name; });
+
+        NODE<Model>::editor([](Node* node, Model *model){
+
+            ImGui::Text("Posistiv");
+
+        });
+
+        // NODE<Model>::whitelist<Foo>([](Node*n,Foo* m){ return n->Node::add(n); }); 
+
+        init = true;
+
+    }
 
     // auto dyn = new UBO("dynamic_ubo");
     // tree.add(dyn);
@@ -48,8 +81,8 @@ void Engine::init() {
     // Node* comps = tree.add(new Node{"Components"});
     // for (auto c : Component::pool) comps->add(c);
 
-    // Node* models = tree.add(new Node{"Models"});
-    // for (auto file : Directory("assets/model/")) models->add(new Model(file));
+    Node* models = tree.add(new Node{"Models"});
+    for (auto file : Directory("assets/model/")) models->add(new NODE<Model>(file));
 
     // Node* shaders = tree.add(new Node{"Shaders"});
     // for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
@@ -61,7 +94,11 @@ void Engine::init() {
     // an->add(new Node{"3"});
     // an->add(new Node{"4"});
 
-    auto dc = stack->add(new DrawCall());
+    auto dc = new DrawCall();
+    stack->add(dc);
+    // dc->vbo.add()
+
+    
     // auto q1 = dc->add(models->childrens[0]);
     // dc->childrens[0]->add(shaders->childrens[0]);
 

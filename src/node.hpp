@@ -2,7 +2,11 @@
 
 #include <cstring>
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <typeindex>
 #include <functional>
+#include "log.hpp"
 
 #include <boost/type_index.hpp>
 
@@ -88,6 +92,41 @@ struct Ownr : Ptr<T> {
     Ownr(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) { }
     
     virtual ~Ownr() { delete Ptr<T>::ptr; }
+
+};
+
+
+
+
+template <typename T>
+struct NODE : Ptr<T> {
+
+    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> onadd_cbs;
+    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,void*)>> whitelist_cbs;
+
+    template <typename... Args>
+    NODE(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) { onadd_cbs[typeid(T)](this,this->ptr); }
+    
+    virtual ~NODE() { delete Ptr<T>::ptr; }
+
+    void editor() override { editor_cbs[typeid(T)](this,this->ptr); }
+    Node *add(Node* node) override {
+
+        // if     whitelist_cbs has typeid(*node)
+
+        PLOGD << typeid(*node).name();
+        return nullptr;
+        auto x = Node::add(node);
+
+
+        return node;
+    }
+
+    static void onadd(std::function<void(Node*,T*)> cb) { onadd_cbs[typeid(T)] = cb;  }
+    static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
+    template <typename U>
+    static void whitelist(std::function<Node*(Node*,U*)> cb) { whitelist_cbs[typeid(U)] = cb; }
 
 };
 

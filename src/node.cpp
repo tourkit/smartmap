@@ -5,7 +5,7 @@
 
     Node::Node(std::string name, std::vector<uint32_t> color) : name(name), color(color) {
 
-        PLOGD << name;
+        PLOGV << name;
         
     }
 
@@ -21,7 +21,16 @@
 
         PLOGV << "~" << name;
 
-    }
+    }   
+
+    Node* Node::add(Node* n)  { 
+
+         n->parent(this);
+
+        return n;
+
+     }
+
 
     void Node::import(std::string path) {
 
@@ -45,15 +54,6 @@
 
         parent_node->childrens.push_back(this);
     
-    }
-
-    Node *Node::add(Node *node) {
-
-        for (auto c: childrens) if (c->name == node->name)  node->name += " 2";
-        node->parent(this);
-        update();
-        return node;
-
     }
 
     void Node::update() { if (parent_node) parent_node->update(); }
@@ -120,6 +120,8 @@
         parent_node->childrens.insert(parent_node->childrens.begin() + index + 1, this); 
 
     }
+
+
 
 // struct GroupNode : Node {
 
