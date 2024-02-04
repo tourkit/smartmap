@@ -1,8 +1,11 @@
 #pragma once
 
 
-#include "node.hpp"
+#include "log.hpp"
 #include <typeinfo>
+#include <vector>
+#include <string>
+#include <cstdint>
 
 struct Component  {
     

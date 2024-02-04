@@ -6,7 +6,9 @@
 #include "component.hpp"
 
 struct ShaderProgram;
-struct UBO : Node {
+struct UBO  {
+
+    std::string name;
 
     uint32_t id = -1;
 
@@ -31,10 +33,6 @@ struct UBO : Node {
     void upload();
 
     void upload(void* data, size_t size, uint32_t offset = 0);
-
-    Node *add(Node* node) override;
-
-    void editor() override;
     
     // static void toJSON();
     

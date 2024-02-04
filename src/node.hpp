@@ -68,7 +68,6 @@ struct Ptr : Node {
     
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> onadd_cbs;
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> whitelist_cbs;
 
     T* ptr; 
 
@@ -85,24 +84,6 @@ struct Ptr : Node {
         
     } 
     
-    Node *add(Node* node) override {
-        
-        if(whitelist_cbs.size()) { 
-            
-            if (whitelist_cbs.find(typeid(*node)) != whitelist_cbs.end()) {
-
-                return whitelist_cbs[typeid(*node)](this,node);
-
-            }
-
-            return nullptr;
-
-        }
-
-        return Node::add(node);
-
-
-    }
 
     void editor() override { if(editor_cbs.size() && editor_cbs.find(typeid(T)) != editor_cbs.end()) editor_cbs[typeid(T)](this,this->ptr); }
 
@@ -113,8 +94,6 @@ struct Ptr : Node {
 
     static void onadd(std::function<void(Node*,T*)> cb) { onadd_cbs[typeid(T)] = cb;  }
     static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
-    template <typename U>
-    static void whitelist(std::function<Node*(Node*,Node*)> cb) { whitelist_cbs[typeid(Ptr<U>)] = cb;  }
 
 private:
     bool isNode() { return std::is_base_of<Node, T>::value; } 
@@ -125,12 +104,34 @@ struct N {};
 template <typename T>
 struct NODE : Ptr<T> {
 
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> whitelist_cbs;
+
     template <typename... Args>
     NODE(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) {  }
     
     virtual ~NODE() { delete Ptr<T>::ptr; }
     
     template <typename U, typename... Args>
-    NODE<U>* add(Args&&... args) { return (NODE<U>*)Ptr<T>::add(new NODE<U>(std::forward<Args>(args)...)); }
+    NODE<U>* add(Args&&... args) { 
+        
+        if (whitelist_cbs.size()) { 
+            
+            if (whitelist_cbs.find(typeid(Ptr<U>)) != whitelist_cbs.end()) {
+
+                auto x = new NODE<U>(std::forward<Args>(args)...);
+                if (!whitelist_cbs[typeid(Ptr<U>)](this,(Node*)x)) { delete x; x = nullptr; }
+                return x;
+
+            }
+
+            return nullptr;
+
+        }
+
+        return (NODE<U>*)Ptr<T>::add(new NODE<U>(std::forward<Args>(args)...)); 
+
+        }
+    template <typename U>
+    static void whitelist(std::function<Node*(Node*,Node*)> cb) { whitelist_cbs[typeid(Ptr<U>)] = cb;  }
 
 };

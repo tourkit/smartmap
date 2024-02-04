@@ -24,7 +24,11 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     
-    NODE<Stack>::whitelist<DrawCall>([](Node*_this,Node*dc){ return _this->Node::add(dc); });
+    NODE<Stack>::whitelist<DrawCall>([](Node*_this,Node*dc){ 
+        
+        return _this->Node::add(dc); 
+        
+    });
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////

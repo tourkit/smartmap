@@ -1,6 +1,8 @@
 #pragma once
 
-#include "node.hpp"
+#include <string>
+#include <cstdint>
+#include <functional>
 
 struct File {
 

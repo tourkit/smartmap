@@ -1,12 +1,11 @@
 #pragma once
 
 #include "RectangleBinPack/MaxRectsBinPack.h"
-#include "node.hpp"
 #include "image.hpp"
 
 struct UBO; struct ShaderProgram; struct Image; struct Texture;
  
-struct Atlas : Node {
+struct Atlas {
 
     rbp::MaxRectsBinPack binpack;
 
@@ -26,25 +25,4 @@ struct Atlas : Node {
 
     void link(ShaderProgram* shader);
 
-    struct ImagePtr : Ptr<Image> {
-        
-        Atlas* atlas;
-
-        ImagePtr(void* ptr, Atlas* atlas) : Ptr<Image>(ptr), atlas(atlas) {}
-    
-        void editor() override { atlas->editor(); }  
-
-        // ~ImagePtr() { delete ptr; }
-
-    };
-
-    Node* add(Node *node) {
-
-        if (node->is_a<Image>()) return Node::add(new ImagePtr(node, this));
-
-        return nullptr;
-
-    }   
-
-    void editor() override;
 };
