@@ -2,15 +2,15 @@
 
 #include "node.hpp"
 
-struct File : Node {
+struct File {
 
-    std::string path, location, extension;
+    std::string name, path, location, extension;
 
     std::string data;
 
     int64_t last_modified = 0;
 
-    bool survey = false;
+    bool survey = false, loaded = false;
 
     void update();
     

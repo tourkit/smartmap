@@ -22,9 +22,7 @@ struct Engine {
     
     // UBO dynamic_ubo;//, static_ubo;
 
-    Tree tree;
-    
-    Node* stack = tree.add(new Node{"Stack"});
+    NODE<Tree>* tree = new NODE<Tree>();
 
     Atlas *atlas;
 

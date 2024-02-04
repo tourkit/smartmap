@@ -120,12 +120,3 @@
         parent_node->childrens.insert(parent_node->childrens.begin() + index + 1, this); 
 
     }
-
-
-
-// struct GroupNode : Node {
-
-//     GroupNode() : Node{"group"} {}
-
-// };
-

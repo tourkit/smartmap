@@ -22,7 +22,7 @@ struct UBO : Node {
 
     ~UBO();
     
-    UBO(std::string name, std::vector<ShaderProgram*> subscribers = {});
+    UBO(std::string name = "ubo", std::vector<ShaderProgram*> subscribers = {});
 
     void destroy();
 

@@ -30,7 +30,7 @@ void Engine::run() {
         
         // engine.dynamic_ubo.upload();
 
-        engine.stack->run();
+        // engine.stack->run();
 
         engine.gui.draw(); 
 
@@ -38,6 +38,9 @@ void Engine::run() {
 
 };
 
+struct Zoub{ 
+    // Zoub(std::string ok) {}
+    };
 void Engine::init() {
 
     Nodes::init();
@@ -45,53 +48,48 @@ void Engine::init() {
 
     // test buffer pushP
 
-    auto buff = new NODE<Buffer>();
+    auto ubo = tree->add<UBO>()->get();
 
-    tree.add(buff);
-
-    auto test = buff->ptr->addObj(new Struct{"TEST",{"float"}});
-
+    auto test = ubo->buffer.addObj(new Struct{"TEST",{"float"}});
+    
     std::vector<char> data;
     data.resize(test->s->size);
-    memset(&data[0],255,data.size());
+    memset(&data[0],0,data.size());
     test->push(&data[0]);
 
-    // PLOD << buffer.data
-
-    // doing buffer editor from old git history
+    // // auto ubo = 
+    tree->add<Zoub>();
 
 
     // remove Model keep just file and go to VBO
 
 
 
-
-
     // auto dyn = new UBO("dynamic_ubo");
-    // tree.add(dyn);
+    // tree->add(dyn);
     // dynamic_ubo = &dyn->buffer;
 
     // dynamic_ubo->add(new Struct("TOUT",{"float"},1));
 
     // Components::getInstance();
-    // Node* comps = tree.add(new Node{"Components"});
+    // Node* comps = tree->add(new Node{"Components"});
     // for (auto c : Component::pool) comps->add(c);
 
-    Node* models = tree.add(new Node{"Models"});
-    for (auto file : Directory("assets/model/")) models->add(new NODE<Model>(file));
+    Node *models = tree->add<Directory>("assets/model/");
+    Node *shaders = tree->add<Directory>("assets/shaders/");
 
-    // Node* shaders = tree.add(new Node{"Shaders"});
-    // for (auto file : Directory("assets/shaders/")) shaders->add(new ShaderFX(file));
     
-    // Node* controllers = tree.add(new Node{"Controllers"});
+    // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
     // an->add(new Node{"1"});
     // an->add(new Node{"2"});
     // an->add(new Node{"3"});
     // an->add(new Node{"4"});
 
-    auto dc = new DrawCall();
-    stack->add(dc);
+    // auto dc = new DrawCall();
+
+    // tree->add(dc);
+    
     // dc->vbo.add()
 
     
@@ -100,7 +98,7 @@ void Engine::init() {
 
 
 
-    // atlas = (Atlas*)tree.add(new Atlas(4096, 4096, "assets/media/"));
+    // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
     
     // stack.list.push_back(new Stack::Action{[](){ 
 

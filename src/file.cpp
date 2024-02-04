@@ -19,9 +19,9 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 // FILE
 //////////////////////////////////////
 
-File::File() : Node("file") {  }
+File::File() {  }
 
-File::File(std::string path) : Node(std::filesystem::path(path).stem().filename().string()) { read(path); }
+File::File(std::string path) : name(std::filesystem::path(path).stem().filename().string()) { read(path); }
 
 int64_t File::getTimeModified() {
 

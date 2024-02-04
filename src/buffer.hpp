@@ -23,7 +23,7 @@ struct Object {
 
     size_t size();
 
-    void push(void* data);
+    void push(void* data, int id = 0);
 
 };
 

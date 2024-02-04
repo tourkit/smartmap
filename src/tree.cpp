@@ -3,7 +3,7 @@
 #include "engine.hpp"
 #include "imgui_internal.h"
 
-Tree::Tree() : Node("tree"), GUI::Window("Tree")  { }
+Tree::Tree() : GUI::Window("Tree")  { }
 
 void Tree::draw()  { 
     
@@ -13,7 +13,7 @@ void Tree::draw()  {
 
             if (ImGui::MenuItem("node")) {
 
-                Engine::getInstance().tree.add(new Node());
+                // Engine::getInstance().tree->add(new Node());
 
             }
 
@@ -36,7 +36,7 @@ void Tree::draw()  {
     
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
         
-        drawChildrens(&Engine::getInstance().tree); 
+        drawChildrens(Engine::getInstance().tree); 
 
         ImGui::EndTable();
     }

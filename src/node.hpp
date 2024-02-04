@@ -66,52 +66,25 @@ struct Node {
 template <typename T>
 struct Ptr : Node { 
     
+    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> onadd_cbs;
+    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> whitelist_cbs;
+
     T* ptr; 
+
+    T* get() { return ptr; }
 
     virtual ~Ptr() { }
 
     Ptr(void* ptr) 
         : Node((isNode() ? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name() + " ptr")), ptr((T*)ptr) { 
 
+            if(onadd_cbs.find(typeid(T)) != onadd_cbs.end()) { onadd_cbs[typeid(T)](this,this->ptr); }
+
             color = {100,100,100,100};
         
     } 
     
-    Node* add(Node* n) override { return nullptr; }  
-
-    operator T*() { return ptr; }
-
-private:
-    bool isNode() { return std::is_base_of<Node, T>::value; } 
-};
-
-template <typename T>
-struct Ownr : Ptr<T> {
-
-    template <typename... Args>
-    Ownr(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) { }
-    
-    virtual ~Ownr() { delete Ptr<T>::ptr; }
-
-};
-
-
-
-
-template <typename T>
-struct NODE : Ptr<T> {
-
-    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> onadd_cbs;
-    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> whitelist_cbs;
-
-    template <typename... Args>
-    NODE(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) { onadd_cbs[typeid(T)](this,this->ptr); }
-    
-    virtual ~NODE() { delete Ptr<T>::ptr; }
-
-    void editor() override { if(editor_cbs.size() && editor_cbs.find(typeid(T)) != editor_cbs.end()) editor_cbs[typeid(T)](this,this->ptr); }
-
     Node *add(Node* node) override {
 
         if(whitelist_cbs.size() && whitelist_cbs.find(typeid(*node)) != whitelist_cbs.end()) {
@@ -120,16 +93,36 @@ struct NODE : Ptr<T> {
 
         }
 
-        return nullptr;
+        return Node::add(node);
 
 
     }
 
-    operator T*() { return Ptr<T>::ptr; }
+    void editor() override { if(editor_cbs.size() && editor_cbs.find(typeid(T)) != editor_cbs.end()) editor_cbs[typeid(T)](this,this->ptr); }
+
+
+
+
+    operator T*() { return ptr; }
 
     static void onadd(std::function<void(Node*,T*)> cb) { onadd_cbs[typeid(T)] = cb;  }
     static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
     template <typename U>
-    static void whitelist(std::function<Node*(Node*,Node*)> cb) { whitelist_cbs[typeid(NODE<U>)] = cb;  }
+    static void whitelist(std::function<Node*(Node*,Node*)> cb) { whitelist_cbs[typeid(Ptr<U>)] = cb;  }
+
+private:
+    bool isNode() { return std::is_base_of<Node, T>::value; } 
+};
+
+template <typename T>
+struct NODE : Ptr<T> {
+
+    template <typename... Args>
+    NODE(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) {  }
+    
+    virtual ~NODE() { delete Ptr<T>::ptr; }
+    
+    template <typename U, typename... Args>
+    NODE<U>* add(Args&&... args) { return (NODE<U>*)Node::add(new NODE<U>(std::forward<Args>(args)...)); }
 
 };

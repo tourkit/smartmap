@@ -2,7 +2,7 @@
 #include "gui.hpp"
 #include "node.hpp"
 
-struct Tree : Node, GUI::Window {
+struct Tree : GUI::Window {
 
     Tree();
 

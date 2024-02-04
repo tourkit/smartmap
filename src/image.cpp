@@ -121,8 +121,3 @@ void Image::write(const char* destination, int quality) {
 
 }
 
-void Image::editor() {
-
-    ImGui::InputInt2("dimetions", &width);
-
-}
