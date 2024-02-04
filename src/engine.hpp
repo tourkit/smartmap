@@ -12,6 +12,8 @@
 #include "editor.hpp"
 #include "buffer.hpp"
 
+struct Stack {};
+
 struct Engine {
 
     Window window;
@@ -20,19 +22,17 @@ struct Engine {
 
     Buffer buffer; 
     
-
     NODE<Tree>* tree = new NODE<Tree>();
 
     UBO &dynamic_ubo = *tree->add<UBO>("dynamic_ubo")->get();
+
+    UBO &static_ubo = *tree->add<UBO>("static_ubo")->get();
+
+    NODE<Stack>* stack = tree->add<Stack>();
     
-    ;//, static_ubo;
-
     Atlas *atlas;
-
     
     int sequid = 1000;
-
-    
 
     void init();
 

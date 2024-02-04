@@ -114,6 +114,8 @@ private:
     bool isNode() { return std::is_base_of<Node, T>::value; } 
 };
 
+struct N {};
+
 template <typename T>
 struct NODE : Ptr<T> {
 

@@ -30,7 +30,10 @@ void Engine::run() {
         
         engine.dynamic_ubo.upload();
 
-        // engine.stack->run();
+        for ( auto dc : engine.stack->childrens) {
+
+            ((NODE<DrawCall>*)dc)->get()->run();
+        }
 
         engine.gui.draw(); 
 
@@ -48,6 +51,8 @@ void Engine::init() {
     auto test = dynamic_ubo.buffer.addObj(new Struct{"TEST",{"float"}});
 
     test->push();
+
+    stack->add<DrawCall>();
 
 
     // remove Model keep just file and go to VBO
