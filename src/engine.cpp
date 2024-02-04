@@ -1,7 +1,6 @@
 #include "engine.hpp"
 #include "directory.hpp"
 #include "struct.hpp"
-#include "model.hpp"
 #include "shaderfx.hpp"
 #include "drawcall.hpp"
 
@@ -52,6 +51,8 @@ void Engine::init() {
     static_ubo = tree->add<UBO>("static_ubo")->get();
 
     auto dc = stack->add<DrawCall>();
+
+    dc->Ptr<DrawCall>::add(models->childrens[0]);
 
     // vbo whitelist file
 

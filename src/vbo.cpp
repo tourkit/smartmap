@@ -1,7 +1,6 @@
 #include "vbo.hpp"  
 
 #include "engine.hpp"  
-#include "model.hpp"  
 #include "file.hpp"  
 
 #include <assimp/Importer.hpp>
@@ -70,20 +69,6 @@ void VBO::upload() {
 
 }
 
-void VBO::add(Model *model,int id) {    
-
-    models.push_back({model,id});
-
-    // updatye buffer : by adding converted Model to Buffer::Object(Indices) && Buffer::Object(Indices)
-
-
-    // Buffer::Object(Indices).add()
-
-    upload();
-
-}
-
-
 void VBO::draw(int count) {
 
     glBindVertexArray(vao); 
@@ -110,11 +95,9 @@ void VBO::import(File *file) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
 
-        std::array<char,20> data; // unused ?
-
 
         std::array<float,2> v = {vertex.x, vertex.y};
-        vertices->push(&v);
+        // vertices->push(&v);
 
         
         // uvs.push_back({mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y});

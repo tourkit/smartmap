@@ -6,7 +6,6 @@
 
 
 struct Object;
-struct Model;
 struct File;
 
 struct VBO {
@@ -15,14 +14,10 @@ struct VBO {
     static inline Object *indices;
 
     uint32_t vao, vbo, ibo;
-
-    std::vector<std::pair<Model*,int>> models;
     
     VBO();
 
-    ~VBO(); 
-
-    void add(Model *model, int id = 0);
+    ~VBO();
 
     void upload();
 

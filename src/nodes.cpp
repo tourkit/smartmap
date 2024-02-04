@@ -4,7 +4,6 @@
 
 
 #include "buffer.hpp"
-#include "model.hpp"
 
 #include "directory.hpp"
 #include "component.hpp"
@@ -63,18 +62,12 @@ void Nodes::init() {
     ////////// VBO.HPP 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
-    
-    NODE<VBO>::onadd([](Node*node,VBO*vbo){ 
 
-            return node;
-    });
     
     NODE<VBO>::editor([](Node*node,VBO*vbo){ 
 
            ImGui::Text("ooooo");
     });
-
-
 
 
     //////////////////////////////////////////////
@@ -83,19 +76,10 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
 
-    NODE<DrawCall>::onadd([](Node* node, DrawCall *dc){ 
-
-        return node;
-
-    });
-
-
     NODE<DrawCall>::editor([](Node* node, DrawCall *dc){ 
     
         ImGui::InputTextMultiline("frag shader", &dc->shader.frag.src[0], dc->shader.frag.src.length(), ImVec2(300,300));
         ImGui::InputTextMultiline("vert shader", &dc->shader.vert.src[0], dc->shader.vert.src.length(), ImVec2(300,300));
-
-        //imgui textbox
    
     });
 
@@ -240,23 +224,5 @@ void Nodes::init() {
         ImGui::PopStyleVar(5);
 
     });
-
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    ////////// MODEL.HPP 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-
-    NODE<Model>::onadd([](Node* node, Model *model){ node->name = model->name; });
-
-    // NODE<Model>::whitelist<Foo>([](Node*_this,Node*foo){ return _this->Node::add(foo); });
-
-    NODE<Model>::editor([](Node* node, Model *model){
-
-        ImGui::Text("Posistiv");
-
-    });
-
-
 
 }
