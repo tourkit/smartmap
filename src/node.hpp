@@ -98,11 +98,17 @@ struct Ptr : Node {
     template <typename U>
     static void whitelist(std::function<Node*(Node*,U*)> cb) { Ptr<U>::whitelist_cbs[typeid(Ptr<U>)] = cb;  }
 
+    Node* add(Node* node) override {
+
+        return Node::add(node);
+
+    }
+
+
 private:
     bool isNode() { return std::is_base_of<Node, T>::value; } 
 };
 
-struct N {};
 
 template <typename T>
 struct NODE : Ptr<T> {
@@ -141,6 +147,6 @@ struct NODE : Ptr<T> {
 
         return (NODE<U>*)Ptr<T>::add(new NODE<U>(std::forward<Args>(args)...)); 
 
-        }
+    }
 
 };
