@@ -63,9 +63,11 @@ void Nodes::init() {
 
         //// OBJ VIEW
 
-        if (obj_current>-1) {
+        if (obj_current > -1) {
             
             auto &obj = buffer->objects[obj_current];
+
+            if (!obj.reserved) return;
 
             int uniform_offset = obj.offset;
 

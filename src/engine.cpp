@@ -48,14 +48,14 @@ void Engine::init() {
 
     // test buffer pushP
 
-    auto ubo = tree->add<UBO>()->get();
+    auto &ubo = tree->add<UBO>()->get()->buffer;
 
-    auto test = ubo->buffer.addObj(new Struct{"TEST",{"float"}});
-    
-    std::vector<char> data;
-    data.resize(test->s->size);
-    memset(&data[0],0,data.size());
-    test->push(&data[0]);
+    auto test = ubo.addObj(new Struct{"TEST",{"float"}});
+
+    // std::vector<char> data;
+    // data.resize(test->s->size);
+    // memset(&data[0],0,data.size());
+    // test->push(&data[0]);
 
     // // auto ubo = 
     tree->add<Zoub>();
