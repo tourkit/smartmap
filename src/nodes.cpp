@@ -18,17 +18,6 @@
 
 void Nodes::init() {
 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    ////////// ENGINE.HPP 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-    
-    NODE<Stack>::whitelist<DrawCall>([](Node*_this,Node*dc){ 
-        
-        return _this->Node::add(dc); 
-        
-    });
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -62,19 +51,34 @@ void Nodes::init() {
    
     });
 
-    NODE<DrawCall>::whitelist<File>([](Node*_this,Node*n){ 
+    // NODE<DrawCall>::whitelist<File>([](Node*_this,Node*n){ 
 
-        PLOGD<<"Zoo";
+    //     PLOGD<<"Zoo";
         
-        DrawCall* dc = ((Ptr<DrawCall>*)_this)->get();
+    //     DrawCall* dc = ((Ptr<DrawCall>*)_this)->get();
 
-        File* file = ((Ptr<File>*)n)->get();
+    //     File* file = ((Ptr<File>*)n)->get();
 
-        dc->vbo.import(file);
+    //     dc->vbo.import(file);
         
-        return nullptr; 
+    //     return nullptr; 
+        
+    // });
+
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    ////////// ENGINE.HPP 
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    
+    NODE<Stack>::whitelist<DrawCall>([](Node*_this,DrawCall*dc){ 
+        
+        PLOGD << "overdose";
+        // return _this->Node::add(dc); 
+        return nullptr;
         
     });
+
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////

@@ -104,7 +104,7 @@ struct N {};
 template <typename T>
 struct NODE : Ptr<T> {
 
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> whitelist_cbs;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,T*)>> whitelist_cbs;
 
     template <typename... Args>
     NODE(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) {  }
@@ -114,12 +114,12 @@ struct NODE : Ptr<T> {
     template <typename U, typename... Args>
     NODE<U>* add(Args&&... args) { 
         
-        if (whitelist_cbs.size()) { 
+        if (NODE<U>::whitelist_cbs.size()) { 
             
-            if (whitelist_cbs.find(typeid(Ptr<U>)) != whitelist_cbs.end()) {
+            if (NODE<U>::whitelist_cbs.find(typeid(Ptr<U>)) != NODE<U>::whitelist_cbs.end()) {
 
-                auto x = new NODE<U>(std::forward<Args>(args)...);
-                if (!whitelist_cbs[typeid(Ptr<U>)](this,(Node*)x)) { delete x; x = nullptr; }
+                NODE<U>* x = new NODE<U>(std::forward<Args>(args)...);
+                if (!NODE<U>::whitelist_cbs[typeid(Ptr<U>)](this,x->get())) { delete x; x = nullptr; }
                 return x;
 
             }
@@ -132,6 +132,6 @@ struct NODE : Ptr<T> {
 
         }
     template <typename U>
-    static void whitelist(std::function<Node*(Node*,Node*)> cb) { whitelist_cbs[typeid(Ptr<U>)] = cb;  }
+    static void whitelist(std::function<Node*(Node*,U*)> cb) { NODE<U>::whitelist_cbs[typeid(Ptr<U>)] = cb;  }
 
 };
