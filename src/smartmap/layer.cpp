@@ -80,7 +80,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
     
     // artnet links 
 
-    // Base::artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&Engine::getInstance().dynamic_ubo.buffer.data[Base::fix1UBO->buffer_offset+attroffset*4] });
+    // Base::artnet->universes[uni].remaps.push_back({chan, quantity, (float*)&Engine::getInstance().dynamic_ubo->buffer.data[Base::fix1UBO->buffer_offset+attroffset*4] });
     // auto &remap = Base::artnet->universes[uni].remaps.back();
 
     // for (auto &c:Base::fix1UBO->components) { 

@@ -24,9 +24,9 @@ struct Engine {
     
     NODE<Tree>* tree = new NODE<Tree>();
 
-    UBO &dynamic_ubo = *tree->add<UBO>("dynamic_ubo")->get();
+    UBO *dynamic_ubo;
 
-    UBO &static_ubo = *tree->add<UBO>("static_ubo")->get();
+    UBO *static_ubo;
 
     NODE<Stack>* stack = tree->add<Stack>();
     

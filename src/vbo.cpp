@@ -14,9 +14,9 @@ VBO::VBO() {
 
     if (!init) { 
         
-        vertices = Engine::getInstance().dynamic_ubo.buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}));;
+        vertices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}));;
 
-        indices = Engine::getInstance().dynamic_ubo.buffer.addObj(new Struct("Index",{"Vertex", "Vertex", "Vertex"}));
+        indices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Index",{"Vertex", "Vertex", "Vertex"}));
 
         init = true;
     

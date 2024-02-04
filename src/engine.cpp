@@ -28,7 +28,7 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
         
-        engine.dynamic_ubo.upload();
+        engine.dynamic_ubo->upload();
 
         for ( auto dc : engine.stack->childrens) {
 
@@ -48,7 +48,10 @@ void Engine::init() {
     Node *models = tree->add<Directory>("assets/model/");
     Node *shaders = tree->add<Directory>("assets/shaders/");
 
-    auto test = dynamic_ubo.buffer.addObj(new Struct{"TEST",{"float"}});
+    dynamic_ubo = tree->add<UBO>("dynamic_ubo")->get();
+    static_ubo = tree->add<UBO>("static_ubo")->get();
+
+    auto test = dynamic_ubo->buffer.addObj(new Struct{"TEST",{"float"}});
 
     test->push();
 

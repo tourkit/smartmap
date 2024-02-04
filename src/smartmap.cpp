@@ -49,7 +49,7 @@ Base::Base() {
     
     // smartlayersUBO = Engine::getInstance().static_ubo.buffer.add("Layer", {"int", "ID", "Offset", "ID"}, 10 );
 
-    // fix1UBO = Engine::getInstance().dynamic_ubo.buffer.add("Fixture", {
+    // fix1UBO = Engine::getInstance().dynamic_ubo->buffer.add("Fixture", {
 
     //     "Opacity",
     //     "RGB",
@@ -63,7 +63,7 @@ Base::Base() {
         
     // }, 50 );
 
-    // fix2UBO = Engine::getInstance().dynamic_ubo.buffer.add("Fixture2", {
+    // fix2UBO = Engine::getInstance().dynamic_ubo->buffer.add("Fixture2", {
 
     //     "Opacity",
     //     "RGB",
