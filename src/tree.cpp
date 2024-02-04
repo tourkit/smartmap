@@ -62,7 +62,7 @@ void Tree::drawNode(Node* node) {
 
         ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
         
-        const bool recurse = ImGui::TreeNodeEx((node->name+" ("+node->type().name()+")").c_str(), flags);
+        const bool recurse = ImGui::TreeNodeEx((node->name).c_str(), flags);
        if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
     {
         if (ImGui::BeginMenu("add"))

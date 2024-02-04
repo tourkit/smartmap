@@ -68,9 +68,9 @@ struct Node {
 template <typename T>
 struct Ptr : Node { 
     
-    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> onadd_cbs;
+    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> oncreate_cbs;
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> whitelist_cbs;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cbs;
 
     T* ptr; 
 
@@ -81,7 +81,7 @@ struct Ptr : Node {
     Ptr(void* ptr) 
         : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name() + " ptr")), ptr((T*)ptr) { 
 
-            if(onadd_cbs.find(typeid(T)) != onadd_cbs.end()) { onadd_cbs[typeid(T)](this,this->ptr); }
+            if(oncreate_cbs.find(typeid(T)) != oncreate_cbs.end()) { oncreate_cbs[typeid(T)](this,this->ptr); }
 
             color = {100,100,100,100};
         
@@ -96,18 +96,18 @@ struct Ptr : Node {
 
     operator T*() { return ptr; }
 
-    static void onadd(std::function<void(Node*,T*)> cb) { onadd_cbs[typeid(T)] = cb;  }
+    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cbs[typeid(T)] = cb;  }
     static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
     template <typename U>
-    static void whitelist(std::function<Node*(Node*,Node*)> cb) { whitelist_cbs[typeid(U)] = cb;  }
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs[typeid(U)] = cb;  }
 
     Node* add(Node* node) override {
 
-        if (whitelist_cbs.size()) {
+        if (onadd_cbs.size()) {
 
-            if (whitelist_cbs.find(node->type()) != whitelist_cbs.end()) {
+            if (onadd_cbs.find(node->type()) != onadd_cbs.end()) {
 
-                return whitelist_cbs[node->type()](this,node);
+                return onadd_cbs[node->type()](this,node);
 
             }
 

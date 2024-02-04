@@ -26,9 +26,9 @@ void Nodes::init() {
     //////////////////////////////////////////////
 
 
-    NODE<File>::onadd([](Node* node, File *file){ 
+    NODE<File>::oncreate([](Node* node, File *file){ 
 
-        node->name = file->name;
+        node->name = file->name+" . "+file->extension;
         
     });
 
@@ -50,7 +50,7 @@ void Nodes::init() {
         
     });
 
-    NODE<UBO>::onadd([](Node* node, UBO *ubo){ 
+    NODE<UBO>::oncreate([](Node* node, UBO *ubo){ 
 
         node->name = ubo->name;
         
@@ -83,7 +83,7 @@ void Nodes::init() {
    
     });
 
-    NODE<DrawCall>::whitelist<File>([](Node*_this,Node*node){ 
+    NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
 
         auto vbo = &((Ptr<DrawCall>*)_this)->get()->vbo;
         auto file = ((Ptr<File>*)node)->get();
@@ -100,7 +100,7 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     
-    NODE<Stack>::onadd([](Node*node,Stack*stack){ 
+    NODE<Stack>::oncreate([](Node*node,Stack*stack){ 
    
         node->name = "stack";
         
@@ -108,7 +108,7 @@ void Nodes::init() {
         
     });
 
-    NODE<Stack>::whitelist<DrawCall>([](Node*node,Node*dc){ 
+    NODE<Stack>::onadd<DrawCall>([](Node*node,Node*dc){ 
         
         dc->name = "drawcall";
         node->Node::add(dc);
@@ -123,7 +123,7 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
 
-    NODE<Directory>::onadd([](Node* node, Directory *dir){ 
+    NODE<Directory>::oncreate([](Node* node, Directory *dir){ 
 
         node->name = dir->path; 
         for (auto f : dir->list) ((NODE<Directory>*)node)->add<File>(f);
@@ -136,7 +136,7 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
 
-    NODE<Buffer>::onadd([](Node* node, Buffer *buffer){ node->name = "buffy"; });
+    NODE<Buffer>::oncreate([](Node* node, Buffer *buffer){ node->name = "buffy"; });
 
     NODE<Buffer>::editor([](Node* node, Buffer *buffer){
 
