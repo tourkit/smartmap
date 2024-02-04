@@ -58,7 +58,7 @@ void Engine::init() {
 
     dynamic_ubo->buffer.addObj(new Struct("B",{"float"}));
 
-    // x->push(); // cant push if more than 1 obj in buffer ..
+    // x->push(); // cant push if more than 1 obj in buffer .. then fix in VBO::VBO()
 
 
 

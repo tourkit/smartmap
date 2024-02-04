@@ -18,63 +18,23 @@
 
 void Nodes::init() {
 
-
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     ////////// FILE.HPP 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
 
+    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name+"."+file->extension; });
 
-    NODE<File>::oncreate([](Node* node, File *file){ 
+    NODE<File>::editor([](Node* node, File *file){ ImGui::Text(file->extension.c_str()); });
 
-        node->name = file->name+" . "+file->extension;
-        
-    });
-
-    NODE<File>::editor([](Node* node, File *file){ 
-
-        ImGui::Text(file->extension.c_str());
-
-    });
-
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     ////////// UBO.HPP 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
 
-    NODE<UBO>::editor([](Node* node, UBO *ubo){ 
+    NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name; });
 
-        Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &ubo->buffer);
-        
-    });
+    NODE<UBO>::editor([](Node* node, UBO *ubo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &ubo->buffer); });
 
-    NODE<UBO>::oncreate([](Node* node, UBO *ubo){ 
-
-        node->name = ubo->name;
-        
-    });
-
-
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     ////////// VBO.HPP 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
-
     
-    NODE<VBO>::editor([](Node*node,VBO*vbo){ 
+    NODE<VBO>::editor([](Node*node,VBO*vbo){ });
 
-           ImGui::Text("ooooo");
-    });
-
-
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     ////////// DRAWCALL.HPP 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
 
     NODE<DrawCall>::editor([](Node* node, DrawCall *dc){ 
     
@@ -91,22 +51,11 @@ void Nodes::init() {
         vbo->import(file);
     
         return node;
-        
     });
 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     ////////// ENGINE.HPP (and Stack)
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     
-    NODE<Stack>::oncreate([](Node*node,Stack*stack){ 
-   
-        node->name = "stack";
-        
-        return node; 
-        
-    });
+    NODE<Stack>::oncreate([](Node*node,Stack*stack){ node->name = "stack";    return node; });
 
     NODE<Stack>::onadd<DrawCall>([](Node*node,Node*dc){ 
         
@@ -117,11 +66,7 @@ void Nodes::init() {
     });
 
 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     ////////// Directory.HPP 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
 
     NODE<Directory>::oncreate([](Node* node, Directory *dir){ 
 
@@ -130,11 +75,7 @@ void Nodes::init() {
         
     });
 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
     ////////// BUFFER.HPP 
-    //////////////////////////////////////////////
-    //////////////////////////////////////////////
 
     NODE<Buffer>::oncreate([](Node* node, Buffer *buffer){ node->name = "buffy"; });
 
