@@ -4,13 +4,11 @@
 #include <vector>
 #include <functional>
 
-struct File;
-
 struct Directory {
 
     std::string path;
 
-    std::vector<File*> list;
+    std::vector<std::string> list;
     
     Directory(std::string path);
 
@@ -19,10 +17,6 @@ struct Directory {
     bool import(std::string path);
 
     static bool exist(std::string path);
-
-    void each(std::function<void(File*)> cb);
-
-    const File& operator[](int x);
 
     // operator std::string() { return };
 

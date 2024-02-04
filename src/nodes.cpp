@@ -148,7 +148,7 @@ void Nodes::init() {
     NODE<Directory>::onadd([](Node* node, Directory *dir){ 
 
         node->name = dir->path; 
-        for (auto f : dir->list) node->add(new Ptr<File>(f));
+        for (auto f : dir->list) ((NODE<Directory>*)node)->add<File>(f);
         
     });
 

@@ -51,11 +51,7 @@ void Engine::init() {
     dynamic_ubo = tree->add<UBO>("dynamic_ubo")->get();
     static_ubo = tree->add<UBO>("static_ubo")->get();
 
-    auto test = dynamic_ubo->buffer.addObj(new Struct{"TEST",{"float"}});
-
-    test->push();
-
-    auto dc = stack->add<DrawCall>();
+    // auto dc = stack->add<DrawCall>();
 
     // vbo whitelist file
 

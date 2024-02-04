@@ -56,6 +56,8 @@ struct Node {
     
     virtual void update();
 
+    virtual std::type_index type() { return typeid(Node); }
+
     std::function<void(Node*)> dtor = nullptr;
 
     auto begin() { return childrens.begin(); }
@@ -85,6 +87,7 @@ struct Ptr : Node {
         
     } 
     
+    std::type_index type() override { return typeid(T); }
 
     void editor() override { if(editor_cbs.size() && editor_cbs.find(typeid(T)) != editor_cbs.end()) editor_cbs[typeid(T)](this,this->ptr); }
 
@@ -100,6 +103,8 @@ struct Ptr : Node {
 
     Node* add(Node* node) override {
 
+        PLOGD << typeid(T).name() << " ? " << type().name() << " add " << node->type().name()<< " " << (whitelist_cbs.find(node->type()) != whitelist_cbs.end()) ;
+        
         return Node::add(node);
 
     }

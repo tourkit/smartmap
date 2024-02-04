@@ -3,11 +3,7 @@
 #include <filesystem>
 #include <dirent.h>
 
-Directory::~Directory()  { 
-    
-    for (auto f : list) delete f;
-    
-}
+Directory::~Directory()  { }
 
 Directory::Directory(std::string path) { import(path); }
 
@@ -30,12 +26,7 @@ bool Directory::import(std::string path)  {
             std::string entryName(ent->d_name);
             if (entryName == ".." || entryName == ".") continue;
             
-            auto t = new File(path+ent->d_name);
-
-            if (!t->loaded) delete t; // needed ?
-            if (t) {  // needed ?
-                list.push_back(t);
-                } //
+            list.push_back(path+ent->d_name);
 
         }
 
@@ -46,5 +37,3 @@ bool Directory::import(std::string path)  {
     return true;
 
 }
-
-const File& Directory::operator[](int x) { return *list[x]; }
