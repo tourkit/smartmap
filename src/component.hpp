@@ -1,65 +1,19 @@
 #pragma once
 
-#include "pch.hpp"
+
 #include "node.hpp"
 #include <typeinfo>
 
-struct StringsBuffer {
+struct Component  {
+    
+    std::string name;
 
-  char* buffer = nullptr;
-  const char** pointers = nullptr;
-
-  ~StringsBuffer() { destroy(); }
-
-  void destroy() {
-
-      if (buffer) delete[] buffer;
-      if (pointers) delete[] pointers;
-
-  }
-
-  void create(std::vector<std::string> strings) {
-
-        destroy(); 
-
-        size_t names_length = 0; 
-        
-        for (auto string:strings) names_length += string.size() + 1; 
-
-        if (!names_length) names_length+=1;
-        buffer = new char[names_length+1];
-
-        memset(buffer,0,names_length+1);
-
-        char* ptr = buffer;
-
-        for (auto string:strings) { strcpy(ptr, string.c_str()); ptr += string.size() + 1; }
-
-        pointers = new const char*[strings.size()];
-
-        for (size_t i = 0; i < strings.size(); i++) { pointers[i] = ptr; ptr += strings[i].size() + 1; }
-
-  }
-
-};
-
-struct Component : Node {
-
-
-    static inline StringsBuffer buffer_string;
-
-    static void updateStringBufferList() {
-
-            std::vector<std::string> names;
-            for (auto &comp:Component::pool) { names.push_back(comp->name); }
-            buffer_string.create(names);
-
-    }
     static inline std::vector<Component*> pool;
 
     struct Member {
 
         std::string name;
+
         int size;
         // int offset;
         float range_from,range_to;  
@@ -101,7 +55,6 @@ struct Component : Node {
         members.push_back({name, sizeof(T), 0,range_to, type});
         // members.push_back({name, sizeof(T), members.back().offset+members.back().size ,0,range_to, type});
 
-        updateStringBufferList();
         return *this;
 
     }
@@ -125,7 +78,7 @@ struct Component : Node {
 
     }
 
-    Component(std::string name, int size = -1) : Node(name), size(size) {
+    Component(std::string name, int size = -1) : name(name), size(size) {
 
 
     }

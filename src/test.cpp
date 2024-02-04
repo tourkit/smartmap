@@ -10,9 +10,16 @@
 #include "component.hpp"
 #include "buffer.hpp"
 #include "struct.hpp"
-
+#include "gui.hpp"
 
 Test::Test(){
+    
+    StringsBuffer sb;
+
+    // sb.Put()
+
+
+    
 
     // Buffer b; 
     

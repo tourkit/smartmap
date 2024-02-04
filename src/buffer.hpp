@@ -19,18 +19,11 @@ struct Object {
 
     struct Entry{};
 
-    char *data();
+    char *data(size_t id = 0);
 
-    size_t size() { return eq(reserved); }
+    size_t size();
 
-    size_t eq(size_t id);
-
-    void push(void* data) { 
-
-        reserved+=1;
-
-
-    }
+    void push(void* data);
 
 };
 

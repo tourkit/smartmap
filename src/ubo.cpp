@@ -1,6 +1,7 @@
 #include "ubo.hpp"
 
 #include "shader.hpp"
+#include <GL/gl3w.h>
 
 UBO::~UBO() { destroy(); }
 
@@ -58,7 +59,7 @@ void UBO::update() {
 
 void UBO::upload(){ upload(&buffer.data[0], buffer.data.size()); }
 
-void UBO::upload(GLvoid* data, size_t size, GLuint offset){
+void UBO::upload(void* data, size_t size, uint32_t offset){
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 

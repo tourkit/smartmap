@@ -1,6 +1,7 @@
 #include "shaderfx.hpp"
 #include "gui.hpp"
 #include "file.hpp"
+#include <regex>
 
 ShaderFX::ShaderFX(File *file) : Ptr<File>(file) { convert(); }
 

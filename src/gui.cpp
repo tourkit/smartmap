@@ -1,10 +1,12 @@
 #include "gui.hpp"
 
 
+
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 
 
+#include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
 GUI::GUI(GLFWwindow* window) {
@@ -74,6 +76,38 @@ void GUI::newframe() {
 
 }
 
+void GUI::Window::drawFull() { 
+
+   {
+
+      if (!active) return;
+
+      bool p_open = true;
+      ImGui::Begin((name+"##"+uid).c_str(), &p_open, ImGuiWindowFlags_MenuBar);
+
+      draw();
+
+      ImGui::End();
+
+    }
+
+
+}
+
+void GUI::draw() { 
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  
+  newframe(); 
+  if (draw_gui) {
+    ImGui::ShowDemoWindow();
+    for (auto window : Window::pool) { window->drawFull(); } 
+    
+
+  } 
+
+  render(); 
+}
 void GUI::render() {
 
   ImGui::Render();

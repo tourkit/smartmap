@@ -57,6 +57,14 @@ char* Buffer::getEntry(Struct *s, int eq) {
 
 //// BUFFER::OBJECT
 
-size_t Object::eq(size_t id) { return s->size * id; }
+size_t Object::size() { return s->size * reserved; }
 
-char *Object::data() { return &buffer->data[offset]; }
+char *Object::data(size_t id) { return &buffer->data[offset + (s->size * id)]; }
+
+void Object::push(void* data) { 
+
+    reserved+=1;
+    buffer->update();
+    memcpy(this->data(),data,s->size);
+
+}

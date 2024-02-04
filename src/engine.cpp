@@ -5,6 +5,8 @@
 #include "shaderfx.hpp"
 #include "drawcall.hpp"
 
+#include "nodes.hpp"
+
 Engine::Engine(uint16_t width, uint16_t height) 
     : window(1920,1080), 
     // : window(width,height), 
@@ -36,40 +38,34 @@ void Engine::run() {
 
 };
 
-struct Foo {
-    
-
-    int x = 5;
-
-};
-
-struct Bar : Foo {
-
-    int x = 6;
-};
-
-
-
-
 void Engine::init() {
 
-    static bool init = false;
+    Nodes::init();
 
-    if (!init){
 
-        NODE<Model>::onadd([](Node* node, Model *model){ node->name = model->name; });
+    // test buffer pushP
 
-        NODE<Model>::editor([](Node* node, Model *model){
+    auto buff = new NODE<Buffer>();
 
-            ImGui::Text("Posistiv");
+    tree.add(buff);
 
-        });
+    auto test = buff->ptr->addObj(new Struct{"TEST",{"float"}});
 
-        // NODE<Model>::whitelist<Foo>([](Node*n,Foo* m){ return n->Node::add(n); }); 
+    std::vector<char> data;
+    data.resize(test->s->size);
+    memset(&data[0],255,data.size());
+    test->push(&data[0]);
 
-        init = true;
+    // PLOD << buffer.data
 
-    }
+    // doing buffer editor from old git history
+
+
+    // remove Model keep just file and go to VBO
+
+
+
+
 
     // auto dyn = new UBO("dynamic_ubo");
     // tree.add(dyn);

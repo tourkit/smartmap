@@ -103,37 +103,33 @@ struct NODE : Ptr<T> {
 
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> onadd_cbs;
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,void*)>> whitelist_cbs;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> whitelist_cbs;
 
     template <typename... Args>
     NODE(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) { onadd_cbs[typeid(T)](this,this->ptr); }
     
     virtual ~NODE() { delete Ptr<T>::ptr; }
 
-    void editor() override { editor_cbs[typeid(T)](this,this->ptr); }
+    void editor() override { if(editor_cbs.size() && editor_cbs.find(typeid(T)) != editor_cbs.end()) editor_cbs[typeid(T)](this,this->ptr); }
+
     Node *add(Node* node) override {
 
-        // if     whitelist_cbs has typeid(*node)
+        if(whitelist_cbs.size() && whitelist_cbs.find(typeid(*node)) != whitelist_cbs.end()) {
 
-        PLOGD << typeid(*node).name();
+            return whitelist_cbs[typeid(*node)](this,node);
+
+        }
+
         return nullptr;
-        auto x = Node::add(node);
 
 
-        return node;
     }
+
+    operator T*() { return Ptr<T>::ptr; }
 
     static void onadd(std::function<void(Node*,T*)> cb) { onadd_cbs[typeid(T)] = cb;  }
     static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
     template <typename U>
-    static void whitelist(std::function<Node*(Node*,U*)> cb) { whitelist_cbs[typeid(U)] = cb; }
+    static void whitelist(std::function<Node*(Node*,Node*)> cb) { whitelist_cbs[typeid(NODE<U>)] = cb;  }
 
 };
-
-
-// struct GroupNode : Node {
-
-//     GroupNode() : Node{"group"} {}
-
-// };
-

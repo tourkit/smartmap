@@ -30,7 +30,7 @@ struct UBO : Node {
 
     void upload();
 
-    void upload(GLvoid* data, size_t size, GLuint offset = 0);
+    void upload(void* data, size_t size, uint32_t offset = 0);
 
     Node *add(Node* node) override;
 
