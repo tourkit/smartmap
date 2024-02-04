@@ -56,6 +56,8 @@ void Engine::init() {
     // data.resize(test->s->size);
     // memset(&data[0],0,data.size());
     // test->push(&data[0]);
+    
+    test->push();
 
     // // auto ubo = 
     tree->add<Zoub>();

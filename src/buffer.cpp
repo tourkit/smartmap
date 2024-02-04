@@ -61,6 +61,16 @@ size_t Object::size() { return s->size * reserved; }
 
 char *Object::data(size_t id) { return &buffer->data[offset + (s->size * id)]; }
 
+void Object::push() { 
+
+    std::vector<char> data;
+    data.resize(s->size);
+    memset(&data[0],0,data.size());
+
+    push(&data[0]);
+
+}
+
 void Object::push(void* data, int id) { 
 
     reserved+=1;
