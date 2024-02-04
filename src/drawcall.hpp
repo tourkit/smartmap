@@ -1,4 +1,4 @@
-#include "node.hpp"
+
 #include "vbo.hpp"
 #include "buffer.hpp"
 #include "shader.hpp"
@@ -6,7 +6,7 @@
 
 struct ShaderFX;
 
-struct DrawCall : Node {
+struct DrawCall {
 
     Buffer buffer;
 
@@ -14,13 +14,7 @@ struct DrawCall : Node {
 
     ShaderProgram shader;
 
-    DrawCall();
-    
-    Node* add(Node *node);     
+    void update();
 
-    void editor() override;
-
-    void update() override;
-
-    void run() override;
+    void run();
 };
