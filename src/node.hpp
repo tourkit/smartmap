@@ -68,6 +68,7 @@ struct Ptr : Node {
     
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> onadd_cbs;
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,T*)>> whitelist_cbs;
 
     T* ptr; 
 
@@ -76,7 +77,7 @@ struct Ptr : Node {
     virtual ~Ptr() { }
 
     Ptr(void* ptr) 
-        : Node((isNode() ? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name() + " ptr")), ptr((T*)ptr) { 
+        : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name() + " ptr")), ptr((T*)ptr) { 
 
             if(onadd_cbs.find(typeid(T)) != onadd_cbs.end()) { onadd_cbs[typeid(T)](this,this->ptr); }
 
@@ -94,6 +95,8 @@ struct Ptr : Node {
 
     static void onadd(std::function<void(Node*,T*)> cb) { onadd_cbs[typeid(T)] = cb;  }
     static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
+    template <typename U>
+    static void whitelist(std::function<Node*(Node*,U*)> cb) { Ptr<U>::whitelist_cbs[typeid(Ptr<U>)] = cb;  }
 
 private:
     bool isNode() { return std::is_base_of<Node, T>::value; } 
@@ -103,8 +106,6 @@ struct N {};
 
 template <typename T>
 struct NODE : Ptr<T> {
-
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,T*)>> whitelist_cbs;
 
     template <typename... Args>
     NODE(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) {  }
@@ -141,7 +142,5 @@ struct NODE : Ptr<T> {
         return (NODE<U>*)Ptr<T>::add(new NODE<U>(std::forward<Args>(args)...)); 
 
         }
-    template <typename U>
-    static void whitelist(std::function<Node*(Node*,U*)> cb) { NODE<U>::whitelist_cbs[typeid(Ptr<U>)] = cb;  }
 
 };

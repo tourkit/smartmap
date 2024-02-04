@@ -55,10 +55,10 @@ void Engine::init() {
 
     test->push();
 
-    stack->add<DrawCall>();
+    auto dc = stack->add<DrawCall>();
 
+    // vbo whitelist file
 
-    // remove Model keep just file and go to VBO
 
   
 

@@ -14,10 +14,30 @@
 #include "engine.hpp"
 #include "drawcall.hpp"
 #include "file.hpp"
+#include "vbo.hpp"
 
 
 void Nodes::init() {
 
+
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    ////////// FILE.HPP 
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+
+
+    NODE<File>::onadd([](Node* node, File *file){ 
+
+        node->name = file->name;
+        
+    });
+
+    NODE<File>::editor([](Node* node, File *file){ 
+
+        ImGui::Text(file->extension.c_str());
+
+    });
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -37,6 +57,32 @@ void Nodes::init() {
         
     });
 
+
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    ////////// VBO.HPP 
+    //////////////////////////////////////////////
+    //////////////////////////////////////////////
+    
+    NODE<VBO>::onadd([](Node*node,VBO*vbo){ 
+
+            return node;
+    });
+    
+    NODE<VBO>::editor([](Node*node,VBO*vbo){ 
+
+           ImGui::Text("ooooo");
+    });
+
+    NODE<VBO>::whitelist<File>([](Node*node,File*dc){ 
+        
+            PLOGD<< "oui";
+        
+        return nullptr;
+        
+    });
+
+
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     ////////// DRAWCALL.HPP 
@@ -44,7 +90,13 @@ void Nodes::init() {
     //////////////////////////////////////////////
 
     NODE<DrawCall>::onadd([](Node* node, DrawCall *dc){ 
-            PLOGD << "sihne";
+
+  
+        dc->vbo = ((NODE<DrawCall>*)node)->add<VBO>()->get();
+
+        return node;
+
+
     });
 
 
@@ -71,9 +123,10 @@ void Nodes::init() {
         
     // });
 
+
     //////////////////////////////////////////////
     //////////////////////////////////////////////
-    ////////// ENGINE.HPP 
+    ////////// ENGINE.HPP (and Stack)
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     
@@ -95,7 +148,7 @@ void Nodes::init() {
     NODE<Directory>::onadd([](Node* node, Directory *dir){ 
 
         node->name = dir->path; 
-        for (auto f : dir->list) node->add(new Node(f->name));
+        for (auto f : dir->list) node->add(new Ptr<File>(f));
         
     });
 

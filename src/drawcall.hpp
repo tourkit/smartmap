@@ -10,7 +10,7 @@ struct DrawCall {
 
     Buffer buffer;
 
-    VBO vbo;
+    VBO *vbo;
 
     ShaderProgram shader;
 
