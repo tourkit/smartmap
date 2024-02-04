@@ -7,6 +7,7 @@
 
 struct Object;
 struct Model;
+struct File;
 
 struct VBO {
 
@@ -29,5 +30,7 @@ struct VBO {
     void destroy();
 
     void draw(int count = 1);
+       
+    void import(File *file);
 
 };

@@ -86,10 +86,16 @@ struct Ptr : Node {
     } 
     
     Node *add(Node* node) override {
+        
+        if(whitelist_cbs.size()) { 
+            
+            if (whitelist_cbs.find(typeid(*node)) != whitelist_cbs.end()) {
 
-        if(whitelist_cbs.size() && whitelist_cbs.find(typeid(*node)) != whitelist_cbs.end()) {
+                return whitelist_cbs[typeid(*node)](this,node);
 
-            return whitelist_cbs[typeid(*node)](this,node);
+            }
+
+            return nullptr;
 
         }
 
@@ -125,6 +131,6 @@ struct NODE : Ptr<T> {
     virtual ~NODE() { delete Ptr<T>::ptr; }
     
     template <typename U, typename... Args>
-    NODE<U>* add(Args&&... args) { return (NODE<U>*)Node::add(new NODE<U>(std::forward<Args>(args)...)); }
+    NODE<U>* add(Args&&... args) { return (NODE<U>*)Ptr<T>::add(new NODE<U>(std::forward<Args>(args)...)); }
 
 };

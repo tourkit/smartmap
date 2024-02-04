@@ -13,6 +13,7 @@
 #include "ubo.hpp"
 #include "engine.hpp"
 #include "drawcall.hpp"
+#include "file.hpp"
 
 
 void Nodes::init() {
@@ -43,6 +44,11 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
 
+    NODE<DrawCall>::onadd([](Node* node, DrawCall *dc){ 
+            PLOGD << "sihne";
+    });
+
+
     NODE<DrawCall>::editor([](Node* node, DrawCall *dc){ 
     
         ImGui::InputTextMultiline("frag shader", &dc->shader.frag.src[0], dc->shader.frag.src.length(), ImVec2(300,300));
@@ -50,6 +56,20 @@ void Nodes::init() {
 
         //imgui textbox
    
+    });
+
+    NODE<DrawCall>::whitelist<File>([](Node*_this,Node*n){ 
+
+        PLOGD<<"Zoo";
+        
+        DrawCall* dc = ((Ptr<DrawCall>*)_this)->get();
+
+        File* file = ((Ptr<File>*)n)->get();
+
+        dc->vbo.import(file);
+        
+        return nullptr; 
+        
     });
 
     //////////////////////////////////////////////
