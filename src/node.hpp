@@ -70,7 +70,7 @@ struct Ptr : Node {
     
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> onadd_cbs;
     static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,T*)>> whitelist_cbs;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> whitelist_cbs;
 
     T* ptr; 
 
@@ -99,12 +99,22 @@ struct Ptr : Node {
     static void onadd(std::function<void(Node*,T*)> cb) { onadd_cbs[typeid(T)] = cb;  }
     static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
     template <typename U>
-    static void whitelist(std::function<Node*(Node*,U*)> cb) { Ptr<U>::whitelist_cbs[typeid(U)] = cb;  }
+    static void whitelist(std::function<Node*(Node*,Node*)> cb) { whitelist_cbs[typeid(U)] = cb;  }
 
     Node* add(Node* node) override {
 
-        PLOGD << typeid(T).name() << " ? " << type().name() << " add " << node->type().name()<< " " << (whitelist_cbs.find(node->type()) != whitelist_cbs.end()) ;
-        
+        if (whitelist_cbs.size()) {
+
+            if (whitelist_cbs.find(node->type()) != whitelist_cbs.end()) {
+
+                return whitelist_cbs[node->type()](this,node);
+
+            }
+
+            return nullptr;
+
+        }
+
         return Node::add(node);
 
     }
@@ -125,32 +135,12 @@ struct NODE : Ptr<T> {
     
     template <typename U, typename... Args>
     NODE<U>* add(Args&&... args) { 
-        
-        if (NODE<U>::whitelist_cbs.size()) { 
-            
-            if (NODE<U>::whitelist_cbs.find(typeid(U)) != NODE<U>::whitelist_cbs.end()) {
+    
+        NODE<U>* x = new NODE<U>(std::forward<Args>(args)...);
 
-                NODE<U>* x = new NODE<U>(std::forward<Args>(args)...);
+        if (!Ptr<T>::add(x)) { delete x; return nullptr; }
 
-                if (!NODE<U>::whitelist_cbs[typeid(U)](x,x->get())) { 
-
-                    delete x; 
-
-                    return nullptr; 
-
-                }
-
-                Ptr<T>::add(x);
-
-                return x;
-
-            }
-
-            return nullptr;
-
-        }
-
-        return (NODE<U>*)Ptr<T>::add(new NODE<U>(std::forward<Args>(args)...)); 
+        return x;
 
     }
 

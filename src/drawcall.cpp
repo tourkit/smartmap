@@ -6,7 +6,7 @@
 
 void DrawCall::run() {
  
-    vbo->draw();
+    vbo.draw();
 
     if (shader.loaded) shader.use();
 

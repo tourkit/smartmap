@@ -74,13 +74,7 @@ void Nodes::init() {
            ImGui::Text("ooooo");
     });
 
-    NODE<VBO>::whitelist<File>([](Node*node,File*dc){ 
-        
-            PLOGD<< "oui";
-        
-        return nullptr;
-        
-    });
+
 
 
     //////////////////////////////////////////////
@@ -91,11 +85,7 @@ void Nodes::init() {
 
     NODE<DrawCall>::onadd([](Node* node, DrawCall *dc){ 
 
-  
-        dc->vbo = ((NODE<DrawCall>*)node)->add<VBO>()->get();
-
         return node;
-
 
     });
 
@@ -109,20 +99,16 @@ void Nodes::init() {
    
     });
 
-    // NODE<DrawCall>::whitelist<File>([](Node*_this,Node*n){ 
+    NODE<DrawCall>::whitelist<File>([](Node*_this,Node*node){ 
 
-    //     PLOGD<<"Zoo";
+        auto vbo = &((Ptr<DrawCall>*)_this)->get()->vbo;
+        auto file = ((Ptr<File>*)node)->get();
+
+        vbo->import(file);
+    
+        return node;
         
-    //     DrawCall* dc = ((Ptr<DrawCall>*)_this)->get();
-
-    //     File* file = ((Ptr<File>*)n)->get();
-
-    //     dc->vbo.import(file);
-        
-    //     return nullptr; 
-        
-    // });
-
+    });
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -130,10 +116,18 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     
-    NODE<Stack>::whitelist<DrawCall>([](Node*node,DrawCall*dc){ 
+    NODE<Stack>::onadd([](Node*node,Stack*stack){ 
+   
+        node->name = "stack";
         
-        node->name = "drawcall";
+        return node; 
         
+    });
+
+    NODE<Stack>::whitelist<DrawCall>([](Node*node,Node*dc){ 
+        
+        dc->name = "drawcall";
+        node->Node::add(dc);
         return node; 
         
     });
