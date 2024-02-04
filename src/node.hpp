@@ -96,7 +96,7 @@ struct Ptr : Node {
     static void onadd(std::function<void(Node*,T*)> cb) { onadd_cbs[typeid(T)] = cb;  }
     static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
     template <typename U>
-    static void whitelist(std::function<Node*(Node*,U*)> cb) { Ptr<U>::whitelist_cbs[typeid(Ptr<U>)] = cb;  }
+    static void whitelist(std::function<Node*(Node*,U*)> cb) { Ptr<U>::whitelist_cbs[typeid(U)] = cb;  }
 
     Node* add(Node* node) override {
 
@@ -123,11 +123,11 @@ struct NODE : Ptr<T> {
         
         if (NODE<U>::whitelist_cbs.size()) { 
             
-            if (NODE<U>::whitelist_cbs.find(typeid(Ptr<U>)) != NODE<U>::whitelist_cbs.end()) {
+            if (NODE<U>::whitelist_cbs.find(typeid(U)) != NODE<U>::whitelist_cbs.end()) {
 
                 NODE<U>* x = new NODE<U>(std::forward<Args>(args)...);
 
-                if (!NODE<U>::whitelist_cbs[typeid(Ptr<U>)](x,x->get())) { 
+                if (!NODE<U>::whitelist_cbs[typeid(U)](x,x->get())) { 
 
                     delete x; 
 
