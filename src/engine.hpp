@@ -20,9 +20,12 @@ struct Engine {
 
     Buffer buffer; 
     
-    // UBO dynamic_ubo;//, static_ubo;
 
     NODE<Tree>* tree = new NODE<Tree>();
+
+    UBO &dynamic_ubo = *tree->add<UBO>("dynamic_ubo")->get();
+    
+    ;//, static_ubo;
 
     Atlas *atlas;
 

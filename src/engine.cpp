@@ -28,7 +28,7 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
         
-        // engine.dynamic_ubo.upload();
+        engine.dynamic_ubo.upload();
 
         // engine.stack->run();
 
@@ -42,11 +42,13 @@ void Engine::init() {
 
     Nodes::init();
 
-    auto &ubo = tree->add<UBO>()->get()->buffer;
+    Node *models = tree->add<Directory>("assets/model/");
+    Node *shaders = tree->add<Directory>("assets/shaders/");
 
-    auto test = ubo.addObj(new Struct{"TEST",{"float"}});
+    auto test = dynamic_ubo.buffer.addObj(new Struct{"TEST",{"float"}});
 
     test->push();
+
 
     // remove Model keep just file and go to VBO
 
@@ -60,8 +62,6 @@ void Engine::init() {
     // Node* comps = tree->add(new Node{"Components"});
     // for (auto c : Component::pool) comps->add(c);
 
-    Node *models = tree->add<Directory>("assets/model/");
-    Node *shaders = tree->add<Directory>("assets/shaders/");
 
     
     // Node* controllers = tree->add(new Node{"Controllers"});
