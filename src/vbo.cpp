@@ -10,9 +10,9 @@ VBO::VBO() {
 
     if (!init) { 
         
-        vertices = Engine::getInstance().buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}),4);;
+        vertices = Engine::getInstance().dynamic_ubo.buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}));;
 
-        indices = Engine::getInstance().buffer.addObj(new Struct("Index",{"Vertex", "Vertex", "Vertex"}),4);
+        indices = Engine::getInstance().dynamic_ubo.buffer.addObj(new Struct("Index",{"Vertex", "Vertex", "Vertex"}));
 
         init = true;
     
