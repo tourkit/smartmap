@@ -71,11 +71,11 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     
-    NODE<Stack>::whitelist<DrawCall>([](Node*_this,DrawCall*dc){ 
+    NODE<Stack>::whitelist<DrawCall>([](Node*node,DrawCall*dc){ 
         
-        PLOGD << "overdose";
-        // return _this->Node::add(dc); 
-        return nullptr;
+        node->name = "drawcall";
+        
+        return node; 
         
     });
 

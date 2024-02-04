@@ -119,7 +119,17 @@ struct NODE : Ptr<T> {
             if (NODE<U>::whitelist_cbs.find(typeid(Ptr<U>)) != NODE<U>::whitelist_cbs.end()) {
 
                 NODE<U>* x = new NODE<U>(std::forward<Args>(args)...);
-                if (!NODE<U>::whitelist_cbs[typeid(Ptr<U>)](this,x->get())) { delete x; x = nullptr; }
+
+                if (!NODE<U>::whitelist_cbs[typeid(Ptr<U>)](x,x->get())) { 
+
+                    delete x; 
+
+                    return nullptr; 
+
+                }
+
+                Ptr<T>::add(x);
+
                 return x;
 
             }
