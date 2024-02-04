@@ -38,34 +38,17 @@ void Engine::run() {
 
 };
 
-struct Zoub{ 
-    // Zoub(std::string ok) {}
-    };
 void Engine::init() {
 
     Nodes::init();
-
-
-    // test buffer pushP
 
     auto &ubo = tree->add<UBO>()->get()->buffer;
 
     auto test = ubo.addObj(new Struct{"TEST",{"float"}});
 
-    // std::vector<char> data;
-    // data.resize(test->s->size);
-    // memset(&data[0],0,data.size());
-    // test->push(&data[0]);
-    
     test->push();
 
-    // // auto ubo = 
-    tree->add<Zoub>();
-
-
     // remove Model keep just file and go to VBO
-
-
 
     // auto dyn = new UBO("dynamic_ubo");
     // tree->add(dyn);
