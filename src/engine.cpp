@@ -50,20 +50,26 @@ void Engine::init() {
     dynamic_ubo = tree->add<UBO>("dynamic_ubo")->get();
     static_ubo = tree->add<UBO>("static_ubo")->get();
 
-    auto dc = stack->add<DrawCall>();
-
-    dc->Ptr<DrawCall>::add(models->childrens[0]);
-
-    // vbo whitelist file
 
 
+
+
+    auto x  = dynamic_ubo->buffer.addObj(new Struct("A", {"float"}));
+
+    dynamic_ubo->buffer.addObj(new Struct("B",{"float"}));
+
+    // x->push(); // cant push if more than 1 obj in buffer ..
+
+
+
+
+
+    // auto dc = stack->add<DrawCall>();
+    // dc->Ptr<DrawCall>::add(models->childrens[0]);
   
-
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});
     // for (auto c : Component::pool) comps->add(c);
-
-
     
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
@@ -71,18 +77,6 @@ void Engine::init() {
     // an->add(new Node{"2"});
     // an->add(new Node{"3"});
     // an->add(new Node{"4"});
-
-    // auto dc = new DrawCall();
-
-    // tree->add(dc);
-    
-    // dc->vbo.add()
-
-    
-    // auto q1 = dc->add(models->childrens[0]);
-    // dc->childrens[0]->add(shaders->childrens[0]);
-
-
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
     

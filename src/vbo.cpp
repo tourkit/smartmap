@@ -12,10 +12,14 @@ VBO::VBO() {
     static bool init = false;
 
     if (!init) { 
+
+        PLOGD << "init";
         
-        vertices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}));;
+        vertices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}));
 
         indices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Index",{"Vertex", "Vertex", "Vertex"}));
+
+        // vertices->push();
 
         init = true;
     
@@ -98,6 +102,7 @@ void VBO::import(File *file) {
 
         std::array<float,2> v = {vertex.x, vertex.y};
         // vertices->push(&v);
+        // vertices->push();
 
         
         // uvs.push_back({mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y});
