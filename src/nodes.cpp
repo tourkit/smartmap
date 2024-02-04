@@ -12,6 +12,7 @@
 #include "file.hpp"
 #include "ubo.hpp"
 #include "engine.hpp"
+#include "drawcall.hpp"
 
 
 void Nodes::init() {
@@ -22,7 +23,7 @@ void Nodes::init() {
     //////////////////////////////////////////////
     //////////////////////////////////////////////
     
-    // NODE<Stack>::whitelist<DrawCall>([](Node*_this,Node*dc){ return _this->Node::add(dc); });
+    NODE<Stack>::whitelist<DrawCall>([](Node*_this,Node*dc){ return _this->Node::add(dc); });
 
     //////////////////////////////////////////////
     //////////////////////////////////////////////
@@ -163,13 +164,3 @@ void Nodes::init() {
 
 
 }
-
-
-// static inline struct BufferNODE {
-
-//     BufferNODE() {
-
-        
-//     }
-
-// } bufferNODE;

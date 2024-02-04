@@ -57,11 +57,7 @@ void Engine::init() {
 
     // remove Model keep just file and go to VBO
 
-    // auto dyn = new UBO("dynamic_ubo");
-    // tree->add(dyn);
-    // dynamic_ubo = &dyn->buffer;
-
-    // dynamic_ubo->add(new Struct("TOUT",{"float"},1));
+  
 
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});
