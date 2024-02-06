@@ -9,21 +9,14 @@
 #include <map>
 
 
-struct Foo {};
+#include "buffer.hpp"
+#include "engine.hpp"
 
-template <typename T>
-struct Bar {
-
-    static inline int x = 1;
-
-};
 
 Test::Test(){
     
-    Bar<Foo> bar;
+   auto b = engine.tree->add<Buffer>()->get();
 
-    Bar<Foo>::x;
-
-    // can I access x with std::type_index of Foo (aka typeid(Foo)) ?
+   
 
 }

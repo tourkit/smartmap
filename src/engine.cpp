@@ -9,7 +9,6 @@
 Engine::Engine(uint16_t width, uint16_t height) 
     : window(1920,1080), 
     // : window(width,height), 
-    // dynamic_ubo("dynamic_ubo"),//  static_ubo("static_ubo"), 
      gui(window.id) {
     window.max_fps = 59;
 
@@ -27,7 +26,7 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
         
-        engine.dynamic_ubo->upload();
+        // engine.dynamic_ubo->upload();
 
         for ( auto dc : engine.stack->childrens) {
 
@@ -44,25 +43,17 @@ void Engine::init() {
 
     Nodes::init();
 
-    Node *models = tree->add<Directory>("assets/model/");
-    Node *shaders = tree->add<Directory>("assets/shaders/");
+    // Node *models = tree->add<Directory>("assets/model/");
+    // Node *shaders = tree->add<Directory>("assets/shaders/");
 
-    dynamic_ubo = tree->add<UBO>("dynamic_ubo")->get();
-    static_ubo = tree->add<UBO>("static_ubo")->get();
+    // dynamic_ubo = tree->add<UBO>("dynamic_ubo")->get();
+    // static_ubo = tree->add<UBO>("static_ubo")->get();
 
+    // auto x  = dynamic_ubo->buffer.addObj(new Struct("A", {"float"}));
 
-
-
-
-    auto x  = dynamic_ubo->buffer.addObj(new Struct("A", {"float"}));
-
-    dynamic_ubo->buffer.addObj(new Struct("B",{"float"}));
+    // dynamic_ubo->buffer.addObj(new Struct("B",{"float"}));
 
     // x->push(); // cant push if more than 1 obj in buffer .. then fix in VBO::VBO()
-
-
-
-
 
     // auto dc = stack->add<DrawCall>();
     // dc->Ptr<DrawCall>::add(models->childrens[0]);
