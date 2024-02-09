@@ -13,20 +13,14 @@
 #include "engine.hpp"
 #include "struct.hpp"
 
-
 Test::Test(){
-    
-   auto b = engine.tree->add<Buffer>()->get();
 
-   auto foo = b->addObj(new Struct("Foo",{std::string("float")}));
-   auto bar = b->addObj(new Struct("Bar",{std::string("float")}));
+    auto b = engine.tree->add<Buffer>()->get();
 
-   // foo->push();
+    auto o = b->addObj(new Struct("test",{ "float", "float", "float", "float", })); // could retun some betterPtr not slave to reserve()-d
 
-   // check member::size()
-   // check component::size()
-   // check struct::size()
-   // check object::size()
-   // check buffer::size()
+    auto e = o->push(); 
+
+    e.m<float>(0) = .5;
 
 }

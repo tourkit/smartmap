@@ -101,10 +101,9 @@ void VBO::import(File *file) {
 
 
         std::array<float,2> v = {vertex.x, vertex.y};
-        // vertices->push(&v);
-        // vertices->push();
-
         
+        vertices->push(&v);
+
         // uvs.push_back({mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y});
     }
     

@@ -1,12 +1,18 @@
+#include "log.hpp" 
 #include "buffer.hpp" 
 #include "struct.hpp" 
 #include <cstring>
+
+
+Buffer::Buffer() { objects.reserve(1000); }
 
 void Buffer::reset() { destroy(); }
 
 void Buffer::destroy() { objects.resize(0); data.resize(0); }
 
 Object* Buffer::addObj(Struct* s, int reserved) {
+
+    if (objects.size()==999) PLOGW << "obj reserve reached";
 
     objects.push_back({s,reserved,this,data.size()});
 
@@ -57,21 +63,23 @@ char* Buffer::getEntry(Struct *s, int eq) {
 
 //// BUFFER::OBJECT
 
+const char* Object::Entry::name() { return obj->s->name.c_str(); }
+
 size_t Object::size() { return s->size * reserved; }
 
 char *Object::data(size_t id) { return &buffer->data[offset + (s->size * id)]; }
 
-void Object::push() { 
+Object::Entry Object::push() { 
 
     std::vector<char> data;
     data.resize(s->size);
     memset(&data[0],0,data.size());
 
-    push(&data[0]);
+    return push(&data[0]);
 
 }
 
-void Object::push(void* data, int id) { 
+Object::Entry Object::push(void* data, int id) { 
 
     reserved+=1;
     buffer->update();
@@ -80,5 +88,7 @@ void Object::push(void* data, int id) {
 
     // if upscale rearange after rescale
     // if dowscale rearange before rescale
+
+    return {this,id};
 
 }
