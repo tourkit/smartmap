@@ -142,12 +142,18 @@ void Nodes::init() {
         object_str.create(obect_strs);
         ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-
         //// OBJ VIEW
 
         if (obj_current > -1) {
             
             auto &obj = buffer->objects[obj_current];
+
+            if (ImGui::SliderInt("element##current", &elem_current, 0, obj.reserved)) {
+                
+
+                
+            }
+
 
             if (!obj.reserved) return;
 
