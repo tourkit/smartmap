@@ -114,9 +114,9 @@ void VBO::import(File *file) {
 
         auto indices = this->indices->push();
 
-        indices[0][0].set<float>(face.mIndices[0]);
-        indices[0][1].set<float>(face.mIndices[1]);
-        indices[0][2].set<float>(face.mIndices[2]);
+        indices[0][0].set<int>(face.mIndices[0]);
+        indices[1][0].set<int>(face.mIndices[1]);
+        indices[2][0].set<int>(face.mIndices[2]);
 
     }
     

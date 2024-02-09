@@ -20,14 +20,14 @@ void DrawCall::update() {
     std::unordered_set<ShaderFX*> shaders;
 
     // for (auto model : childrens) { for (auto c : model->childrens) {
-    //     shaders.insert(((ShaderFXPtr*)c)->ptr);
+    //     shaders.insert(((ShaderFXPtr*)c)->ptr);i
     //     } }
 
 
     // FRAGMENT
 
     std::string frag_shader;
-    frag_shader = "#version 430 core\n\nout vec4 color;\n\n";
+    frag_shader = "#version 430 core\n\n";
     frag_shader += "out vec4 color;\n\n";
 
     // // if buffer filled then 
@@ -63,7 +63,7 @@ void DrawCall::update() {
 
     // }
 
-    frag_shader += "color = vec4(1);\n\n";
+    frag_shader += "\tcolor = vec4(1);\n\n";
     
     frag_shader += "}";
 

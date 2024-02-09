@@ -182,7 +182,6 @@ void Nodes::init() {
                 }
                 
                 
-                    break; 
             }
             
         }
