@@ -11,7 +11,7 @@ Entry::Comp::Comp(int id) : id(id) {
 
     offset = 0;
 
-    for (auto c : obj->s->comps){
+    for (auto c : entry->obj->s->comps){
 
         offset += c->size;
 

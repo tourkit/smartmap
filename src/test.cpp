@@ -23,9 +23,10 @@ Test::Test(){
     auto e = o->push(); 
     o->push(); 
 
-    e["Position"]["y"].set<float>(2);
+    e[0][0].set<float>(2);
+    // e["Position"]["y"].set<float>(2);
 
-    // add curent selector in buffer editor
+    // *((float*)o->data(e.id)) = 4.0f;
 
 
 }

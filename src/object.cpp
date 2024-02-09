@@ -31,6 +31,7 @@ Entry &Object::push(void* data, int id) {
     // if upscale rearange after rescale
     // if dowscale rearange before rescale
 
+    if (!id) id = entrys.size();
     entrys.push_back(new Entry{this,id});
     return *entrys.back();
 

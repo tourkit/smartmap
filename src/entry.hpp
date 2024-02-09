@@ -23,17 +23,17 @@ struct Entry {
 
             template <typename T>
             void set(T data) { memcpy(this->data,(char*)&data,sizeof(data)); }
+
             template <typename T>
             T& get() { return *((T*)data); }
-
         
         };
 
         int id;
         
-        Object *obj;
+        Entry *entry;
 
-        Comp(int id, Object* obj) : id(id), obj(obj) {}
+        Comp(int id, Entry* entry) : id(id), entry(entry) {}
 
         int offset = 0;
 
@@ -46,7 +46,7 @@ struct Entry {
             
             int offset = 0;
 
-            for (auto m : obj->s->comps[this->id]->members) {
+            for (auto m : entry->obj->s->comps[this->id]->members) {
 
                 if (current++ == id) break;
 
@@ -55,7 +55,7 @@ struct Entry {
 
             }
 
-            return Member{obj->data(this->id)+this->offset+offset};
+            return Member{entry->obj->data(entry->id)+this->offset+offset};
             
         }
 
@@ -64,7 +64,7 @@ struct Entry {
         
             int id = 0;
 
-            for (auto m : obj->s->comps[id]->members) { if (m.name == name) { break;} id++; }
+            for (auto m : entry->obj->s->comps[id]->members) { if (m.name == name) { break;} id++; }
 
             return (*this)[id];
 
@@ -74,7 +74,7 @@ struct Entry {
 
     };
 
-    Comp operator[](int id) { return Comp(id,obj); }
+    Comp operator[](int id) { return Comp(id,this); }
 
     Comp operator[](std::string name) { 
         
