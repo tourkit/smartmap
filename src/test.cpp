@@ -19,13 +19,11 @@ Test::Test(){
 
     auto o = b->addObj(new Struct("test",{ "Position", "float", })); // could retun some betterPtr not slave to reserve()-d
 
-    o->push(); 
     auto e = o->push(); 
-    o->push(); 
 
     e[0][0].set<float>(2);
     e["Position"]["y"].set<float>(3);
     
-    o->push(); 
+    // o->push(); 
 
 }

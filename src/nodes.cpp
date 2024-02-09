@@ -153,7 +153,7 @@ void Nodes::init() {
             
             auto &obj = buffer->objects[obj_current];
 
-            if (ImGui::SliderInt("element##current", &elem_current, 0, obj.reserved)) {
+            if (ImGui::SliderInt("element##current", &elem_current, 0, obj.reserved-1)) {
                 
 
                 
