@@ -24,9 +24,7 @@ Test::Test(){
     o->push(); 
 
     e[0][0].set<float>(2);
-    // e["Position"]["y"].set<float>(2);
-
-    // *((float*)o->data(e.id)) = 4.0f;
-
+    e["Position"]["y"].set<float>(3);
+    
 
 }
