@@ -112,11 +112,11 @@ void VBO::import(File *file) {
         
         const aiFace& face = mesh->mFaces[i];
 
-        auto indices = this->indices->push();
+        auto sindices = indices->push();
 
-        indices[0][0].set<int>(face.mIndices[0]);
-        indices[1][0].set<int>(face.mIndices[1]);
-        indices[2][0].set<int>(face.mIndices[2]);
+        sindices[0][0].set<float>(000);
+        sindices[1][0].set<float>(100);
+        sindices[2][0].set<float>(200);
 
     }
     
