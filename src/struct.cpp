@@ -1,7 +1,7 @@
 #include "struct.hpp"
 #include "component.hpp"
 
-Struct::Struct(std::string name, std::vector<std::string> components) : name(name) { addComp(components); }
+Struct::Struct(const char* name, std::vector<std::string> components) : name(name) { addComp(components); }
 
 void Struct::addComp(std::vector<std::string> components){
 

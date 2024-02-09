@@ -18,6 +18,21 @@
 
 void Nodes::init() {
 
+    // ////////// xxx.HPP 
+
+    // NODE<xxx>::editor([](Node* node, xxx *x){ });
+    
+    // NODE<xxx>::oncreate([](Node* node, xxx *x){ });
+
+    // NODE<xxx>::onadd<yyy>([](Node*_this,Node*node){ 
+
+    //     auto s = ((Ptr<xxx>*)_this)->get();
+    //     auto f = ((Ptr<yyy>*)node)->get();
+
+    //     return node;
+        
+    // });
+
     ////////// FILE.HPP 
 
     NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name+"."+file->extension; });
@@ -33,6 +48,42 @@ void Nodes::init() {
     ////////// VBO.HPP 
     
     NODE<VBO>::editor([](Node*node,VBO*vbo){ });
+
+    ////////// STRUCT.HPP 
+
+    NODE<Struct>::oncreate([](Node* node, Struct *s){ 
+        
+        node->name = s->name;     
+    
+    });
+
+    NODE<Struct>::editor([](Node* node, Struct *s){ 
+        
+        ImGui::Text((node->name+" " +std::to_string(s->size)).c_str());
+
+        for (auto& c : s->comps) {
+
+            ImGui::Text((" - "+c->name+" "+std::to_string(c->size)).c_str());
+
+            for (auto& m : c->members) {
+                ImGui::Text(("  -- "+m.name+" "+std::to_string(m.size)).c_str());                
+            }
+
+
+        }
+
+
+    
+    });
+
+    NODE<Struct>::onadd<File>([](Node*_this,Node*node){ 
+
+        auto s = ((Ptr<Struct>*)_this)->get();
+        auto f = ((Ptr<File>*)node)->get();
+
+        return node;
+        
+    });
 
     ////////// DRAWCALL.HPP 
 
@@ -122,7 +173,7 @@ void Nodes::init() {
                 
                     break; 
             }
-
+            
         }
 
         //// RAW VIEW
@@ -163,7 +214,24 @@ void Nodes::init() {
         ImGui::SetWindowFontScale(1);
 
         ImGui::PopStyleVar(5);
+        
+        ImGui::Separator();
 
+        for (auto &o:buffer->objects) {
+            
+            ImGui::Text((o.s->name+" " +std::to_string(o.s->size)).c_str());
+
+            for (auto& c : o.s->comps) {
+
+                ImGui::Text((" - "+c->name+" "+std::to_string(c->size)).c_str());
+
+                for (auto& m : c->members) {
+                    ImGui::Text(("  -- "+m.name+" "+std::to_string(m.size)).c_str());                
+                }
+
+
+            }
+        }
     });
 
 }

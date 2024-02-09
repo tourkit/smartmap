@@ -52,3 +52,5 @@ private:
     ~Engine();
 
 };
+
+static inline Engine &engine = Engine::getInstance();
