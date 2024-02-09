@@ -139,7 +139,7 @@ void Nodes::init() {
 
 
         static StringsBuffer object_str;
-        static int obj_current = -1;
+        static int obj_current = 0;
         static int elem_current = 0;
         static std::string uid = "123";
         std::vector<std::string> obect_strs;
@@ -149,7 +149,7 @@ void Nodes::init() {
 
         //// OBJ VIEW
 
-        if (obj_current > -1) {
+        if (buffer->objects.size()) {
             
             auto &obj = buffer->objects[obj_current];
 

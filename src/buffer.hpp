@@ -8,7 +8,6 @@
 #include "object.hpp"
 
 struct Struct;
-struct Buffer;
 
 struct Buffer {
     
@@ -27,8 +26,6 @@ struct Buffer {
     void destroy();
 
     std::vector<char> data;  
-
-    char* getEntry(Struct *s, int eq = 0);
 
     Object* operator[](int id) { return &objects[id]; }
 

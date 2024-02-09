@@ -65,19 +65,3 @@ void Buffer::update() {
     }
 
 }
-
-char* Buffer::getEntry(Struct *s, int eq) {
-    
-    for (auto &obj : objects) {
-
-        if (obj.s == s) {
-
-            return obj.data() + obj.size() ;
-
-        }
-
-    }
-
-    return nullptr;
-
-} 
