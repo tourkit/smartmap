@@ -5,40 +5,10 @@
 #include <functional>
 #include <cstddef>
 
+#include "object.hpp"
+
 struct Struct;
 struct Buffer;
-
-
-struct Object { 
-    
-    struct Entry {
-
-        Object* obj;
-        int id;
-
-        const char* name();
-
-        template <typename T>
-        T& m(int id) { return *((T*)obj->data(id)); }
-
-    };
-
-    Struct* s; 
-
-    int reserved; 
-
-    Buffer* buffer;
-    size_t offset;
-
-    char *data(size_t id = 0);
-
-    size_t size();
-
-    Entry push();
-
-    Entry push(void* data, int id = 0);
-
-};
 
 struct Buffer {
     
