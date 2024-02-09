@@ -5,7 +5,7 @@
 
 void DrawCall::run() {
  
-    // vbo.draw();
+    vbo.draw();
 
     if (shader.loaded) shader.use();
 
@@ -17,17 +17,18 @@ void DrawCall::update() {
 
     // // list fx
 
-    // std::unordered_set<ShaderFX*> shaders;
+    std::unordered_set<ShaderFX*> shaders;
 
     // for (auto model : childrens) { for (auto c : model->childrens) {
     //     shaders.insert(((ShaderFXPtr*)c)->ptr);
     //     } }
 
 
-    // // FRAGMENT
+    // FRAGMENT
 
-    // std::string frag_shader;
-    // frag_shader = "#version 430 core\n\nout vec4 color;\n\n";
+    std::string frag_shader;
+    frag_shader = "#version 430 core\n\nout vec4 color;\n\n";
+    frag_shader += "out vec4 color;\n\n";
 
     // // if buffer filled then 
     // frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n\n";
@@ -37,7 +38,7 @@ void DrawCall::update() {
     //     frag_shader += ((ShaderFX*)shader)->code +"\n\n";
 
     // }
-    // frag_shader += "void main() {\n\n";
+    frag_shader += "void main() {\n\n";
 
     // for (auto model : childrens) {
 
@@ -58,26 +59,28 @@ void DrawCall::update() {
 
     //      }
 
-    //     frag_shader += "\n\n";
+        // frag_shader += "\n\n";
 
     // }
 
-    // frag_shader += "}";
+    frag_shader += "color = vec4(1);\n\n";
+    
+    frag_shader += "}";
 
 
     // /// VERTEX
 
-    // std::string vert_shader;
-    // vert_shader = "#version 430 core\n\n";
-    // vert_shader += "layout (location = 0) in vec2 POSITION;\n\n";
+    std::string vert_shader;
+    vert_shader = "#version 430 core\n\n";
+    vert_shader += "layout (location = 0) in vec2 POSITION;\n\n";
 
-    // vert_shader += "void main() {\n\n";
+    vert_shader += "void main() {\n\n";
 
-    // vert_shader += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
+    vert_shader += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 
-    // vert_shader += "}";
+    vert_shader += "}";
 
-    // shader.create(frag_shader,vert_shader);
+    shader.create(frag_shader,vert_shader);
 
 }
 

@@ -2,6 +2,7 @@
 
 #include "engine.hpp"  
 #include "file.hpp"  
+#include "entry.hpp"  
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -18,8 +19,6 @@ VBO::VBO() {
         vertices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}));
 
         indices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Index",{"Vertex", "Vertex", "Vertex"}));
-
-        // vertices->push();
 
         init = true;
     
@@ -98,21 +97,28 @@ void VBO::import(File *file) {
     for (int i = 0; i < mesh->mNumVertices; i++) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
-
-
-        std::array<float,2> v = {vertex.x, vertex.y};
         
-        vertices->push(&v);
+        auto v = vertices->push();
 
-        // uvs.push_back({mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y});
+        v["Position"]["x"].set<float>(vertex.x);
+        v["Position"]["y"].set<float>(vertex.y);
+
+        v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
+        v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
+
     }
     
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
         
         const aiFace& face = mesh->mFaces[i];
 
-        // indices.push_back({face.mIndices[0], face.mIndices[1], face.mIndices[2]});
+        auto indices = this->indices->push();
+
+        indices[0][0].set<float>(face.mIndices[0]);
+        indices[0][1].set<float>(face.mIndices[1]);
+        indices[0][2].set<float>(face.mIndices[2]);
 
     }
-
+    
+    upload();
 }

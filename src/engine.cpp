@@ -26,7 +26,7 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
         
-        // engine.dynamic_ubo->upload();
+        engine.dynamic_ubo->upload();
 
         for ( auto dc : engine.stack->childrens) {
 
@@ -50,7 +50,7 @@ void Engine::init() {
     static_ubo = tree->add<UBO>("static_ubo")->get();
 
     auto dc = stack->add<DrawCall>();
-    // dc->Ptr<DrawCall>::add(models->childrens[0]);
+    dc->Ptr<DrawCall>::add(models->childrens[0]);
   
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});

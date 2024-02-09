@@ -4,7 +4,7 @@
 #include "struct.hpp"
 #include "component.hpp"
 
-// #include <sizeof>
+#include <cstring>
 
 struct Object;
 
@@ -60,11 +60,11 @@ struct Entry {
         }
 
         
-        Member operator[](std::string name) { 
+        Member operator[](const char* name) { 
         
             int id = 0;
 
-            for (auto m : entry->obj->s->comps[id]->members) { if (m.name == name) { break;} id++; }
+            for (auto m : entry->obj->s->comps[id]->members) { if (!(strcmp(m.name.c_str(),name))) { break;} id++; }
 
             return (*this)[id];
 
@@ -76,11 +76,11 @@ struct Entry {
 
     Comp operator[](int id) { return Comp(id,this); }
 
-    Comp operator[](std::string name) { 
+    Comp operator[](const char* name) { 
         
         int id = 0;
 
-        for (auto c : obj->s->comps) { if (c->name == name) { break;} id++; }
+        for (auto c : obj->s->comps) { if (!(strcmp(c->name.c_str(),name))) { break;} id++; }
 
         return (*this)[id];
     

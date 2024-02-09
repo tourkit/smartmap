@@ -88,6 +88,8 @@ void Nodes::init() {
     ////////// DRAWCALL.HPP 
 
     NODE<DrawCall>::editor([](Node* node, DrawCall *dc){ 
+        
+        ImGui::Text(std::to_string(dc->shader.loaded).c_str());
     
         ImGui::InputTextMultiline("frag shader", &dc->shader.frag.src[0], dc->shader.frag.src.length(), ImVec2(300,300));
         ImGui::InputTextMultiline("vert shader", &dc->shader.vert.src[0], dc->shader.vert.src.length(), ImVec2(300,300));
@@ -108,11 +110,14 @@ void Nodes::init() {
     
     NODE<Stack>::oncreate([](Node*node,Stack*stack){ node->name = "stack";    return node; });
 
-    NODE<Stack>::onadd<DrawCall>([](Node*node,Node*dc){ 
+    NODE<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
+
+        auto dc = ((Ptr<DrawCall>*)node)->get();
+        dc->update();
         
-        dc->name = "drawcall";
-        node->Node::add(dc);
-        return node; 
+        node->name = "drawcall";
+        _this->Node::add(node);
+        return _this; 
         
     });
 
