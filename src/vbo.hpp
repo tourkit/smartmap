@@ -1,6 +1,7 @@
 #pragma once
 
 #include "struct.hpp"
+#include "buffer.hpp"
 #include <cstdint>
 #include <vector>
 
@@ -10,10 +11,14 @@ struct File;
 
 struct VBO {
 
-    static inline Object *vertices;
-    static inline Object *indices;
+    static inline Struct *vertices_s = new Struct("Vertex", {"Position","UV","ID",});
+    static inline Struct *indices_s = new Struct("Index",{"Vertex", "Vertex", "Vertex"});
 
     uint32_t vao, vbo, ibo;
+    
+    Buffer buffer;
+    Object *vertices;
+    Object *indices;
     
     VBO();
 

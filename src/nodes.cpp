@@ -47,7 +47,7 @@ void Nodes::init() {
 
     ////////// VBO.HPP 
     
-    NODE<VBO>::editor([](Node*node,VBO*vbo){ });
+    NODE<VBO>::editor([](Node*node,VBO*vbo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &vbo->buffer); });
 
     ////////// STRUCT.HPP 
 
@@ -95,6 +95,19 @@ void Nodes::init() {
         ImGui::InputTextMultiline("vert shader", &dc->shader.vert.src[0], dc->shader.vert.src.length(), ImVec2(300,300));
    
     });
+    NODE<DrawCall>::oncreate([](Node* node, DrawCall *dc) {
+        
+        auto x = new Ptr<Buffer>(&dc->buffer);
+        x->name = "vbo";
+        node->Node::add(x);
+
+        auto y = new Ptr<ShaderProgram>(&dc->shader);
+        y->name = "shader";
+        node->Node::add(y);
+
+        return node;
+   
+    });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
 
@@ -105,6 +118,7 @@ void Nodes::init() {
     
         return node;
     });
+
 
     ////////// ENGINE.HPP (and Stack)
     

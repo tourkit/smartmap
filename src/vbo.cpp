@@ -1,8 +1,10 @@
 #include "vbo.hpp"  
 
-#include "engine.hpp"  
 #include "file.hpp"  
 #include "entry.hpp"  
+
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -10,19 +12,9 @@
 
 VBO::VBO() {  
 
-    static bool init = false;
+    vertices = buffer.addObj(vertices_s);
 
-    if (!init) { 
-
-        PLOGD << "init";
-        
-        vertices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Vertex", {"Position","UV","ID",}));
-
-        indices = Engine::getInstance().dynamic_ubo->buffer.addObj(new Struct("Index",{"Vertex", "Vertex", "Vertex"}));
-
-        init = true;
-    
-    }
+    indices = buffer.addObj(indices_s);
 
     create();
 }
@@ -112,11 +104,11 @@ void VBO::import(File *file) {
         
         const aiFace& face = mesh->mFaces[i];
 
-        auto sindices = indices->push();
+        auto indices = this->indices->push();
 
-        sindices[0][0].set<float>(000);
-        sindices[1][0].set<float>(100);
-        sindices[2][0].set<float>(200);
+        indices[0][0].set<float>(face.mIndices[0]);
+        indices[0][1].set<float>(face.mIndices[1]);
+        indices[0][2].set<float>(face.mIndices[2]);
 
     }
     
