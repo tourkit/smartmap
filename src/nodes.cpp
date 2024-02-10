@@ -97,7 +97,7 @@ void Nodes::init() {
     });
     NODE<DrawCall>::oncreate([](Node* node, DrawCall *dc) {
         
-        auto x = new Ptr<Buffer>(&dc->buffer);
+        auto x = new Ptr<VBO>(&dc->vbo);
         x->name = "vbo";
         node->Node::add(x);
 

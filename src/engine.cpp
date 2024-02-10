@@ -51,6 +51,7 @@ void Engine::init() {
 
     auto dc = stack->add<DrawCall>();
     dc->Ptr<DrawCall>::add(models->childrens[0]);
+
   
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});

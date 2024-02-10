@@ -13,10 +13,10 @@ struct VBO {
 
     static inline Struct *vertices_s = new Struct("Vertex", {"Position","UV","ID",});
     static inline Struct *indices_s = new Struct("Index",{"Vertex", "Vertex", "Vertex"});
+    static inline Buffer buffer;
 
     uint32_t vao, vbo, ibo;
     
-    Buffer buffer;
     Object *vertices;
     Object *indices;
     
