@@ -51,13 +51,9 @@ void Engine::init() {
 
     auto dc = stack->add<DrawCall>();
 
-    dc->each<VBO>([](Node* n){
+    dc->Ptr::add(models->childrens[0]);
 
-        
 
-    });
-
-    dc->Ptr<DrawCall>::add(models->childrens[0]);
   
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});

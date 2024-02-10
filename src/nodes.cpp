@@ -40,6 +40,7 @@ void Nodes::init() {
 
     Ownr<File>::editor([](Node* node, File *file){ ImGui::Text(file->extension.c_str()); });
 
+
     ////////// UBO.HPP 
 
     Ownr<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name; });
@@ -58,6 +59,8 @@ void Nodes::init() {
         return node;
         
     });
+
+
 
     ////////// STRUCT.HPP 
 
@@ -122,16 +125,29 @@ void Nodes::init() {
     });
 
     Ownr<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
-
-        auto vbo = &((Ptr<DrawCall>*)_this)->get()->vbo;
+        
         auto file = ((Ptr<File>*)node)->get();
 
-        vbo->import(file);
-    
+        ((Ptr<DrawCall>*)_this)->get()->vbo.import(file);
+
+        _this->each<VBO>([file](Node* vbo){ 
+            
+            vbo->Node::add(new Ptr<File>(file)); 
+        
+        });
+
         return node;
+
     });
 
+    Ownr<File>::onadd<File>([](Node*_this,Node*node){ 
 
+        auto dst = ((Ptr<File>*)_this)->get();
+        auto src = ((Ptr<File>*)node)->get();
+
+        return node;
+        
+    });
     ////////// ENGINE.HPP (and Stack)
 
     Ownr<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 

@@ -54,6 +54,24 @@ struct Node {
     virtual void update();
 
     void select();
+
+    template <typename U>
+    U* is_a() { return ((type() == typeid(U))? (U*)this : nullptr); }
+
+    template <typename V>
+    void each(std::function<void(Node*)> fx) { 
+        
+        for (auto c : childrens) {
+
+            if (c->is_a<V>()) {
+
+                fx(c);
+
+            }
+
+        }       
+        
+    }
     
     virtual std::type_index type() { return typeid(Node); }
 
@@ -114,24 +132,6 @@ struct Ptr : Node {
 
         return Node::add(node);
 
-    }
-
-    template <typename U>
-    U* is_a() { return ((typeid(*this) == typeid(U))? (U*)this : nullptr); }
-
-    template <typename V>
-    void each(std::function<void(Node*)> fx) { 
-        
-        for (auto c : childrens) {
-
-            if (((Ptr<T>*)c)->is_a<V>()) {
-
-                fx(c);
-
-            }
-
-        }       
-        
     }
 
 
