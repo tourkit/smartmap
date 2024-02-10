@@ -1,6 +1,7 @@
 #include "node.hpp"
 #include "file.hpp"
 #include "log.hpp"
+#include "engine.hpp"
 
 
     Node::Node(std::string name, std::vector<uint32_t> color) : name(name), color(color) {
@@ -22,6 +23,12 @@
         PLOGV << "~" << name;
 
     }   
+
+    void Node::select(){
+
+        engine.editorw.selected = this;
+
+    }
 
     Node* Node::add(Node* n)  { 
 

@@ -56,6 +56,8 @@ struct Node {
     
     virtual void update();
 
+    void select();
+    
     virtual std::type_index type() { return typeid(Node); }
 
     std::function<void(Node*)> dtor = nullptr;

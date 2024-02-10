@@ -72,7 +72,10 @@ void DrawCall::update() {
 
     std::string vert_shader;
     vert_shader = "#version 430 core\n\n";
+
     vert_shader += "layout (location = 0) in vec2 POSITION;\n\n";
+    vert_shader += "layout (location = 1) in vec2 TEXCOORD;\n\n";
+    vert_shader += "layout (location = 3) in int OBJ;\n\n";
 
     vert_shader += "void main() {\n\n";
 

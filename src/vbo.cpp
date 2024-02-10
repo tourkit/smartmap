@@ -12,9 +12,9 @@
 
 VBO::VBO() {  
 
-    indices = buffer.addObj(indices_s);
-
     vertices = buffer.addObj(vertices_s);
+
+    indices = buffer.addObj(indices_s);
 
     create();
 }
@@ -46,10 +46,21 @@ VBO::~VBO()  { destroy(); }
 
 void VBO::upload() {
 
+    static std::vector<float> backup_quad = {
+
+        -1,-1, 0,0, 0,
+        1,-1, 1,0, 0,
+        -1,1, 0,1, 0,
+        1,1, 1,1, 0,
+
+    };
+
+
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER,  vertices->size(), vertices->data(), GL_STATIC_DRAW );
+    // glBufferData(GL_ARRAY_BUFFER,  vertices->size(), &backup_quad[0], GL_STATIC_DRAW );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size(), indices->data(), GL_STATIC_DRAW );
@@ -92,11 +103,19 @@ void VBO::import(File *file) {
         
         auto v = vertices->push();
 
-        v["Position"]["x"].set<float>(vertex.x);
-        v["Position"]["y"].set<float>(vertex.y);
+        v[0][0].set<float>(vertex.x);
+        v[0][1].set<float>(vertex.y);
 
-        v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
-        v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
+        v[1][0].set<float>(mesh->mTextureCoords[0][i].x);
+        v[1][1].set<float>(mesh->mTextureCoords[0][i].y);
+
+        v[2][0].set<float>(0);
+
+        // v["Position"]["x"].set<float>(vertex.x);
+        // v["Position"]["y"].set<float>(vertex.y);
+
+        // v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
+        // v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
 
     }
     
@@ -105,12 +124,6 @@ void VBO::import(File *file) {
         const aiFace& face = mesh->mFaces[i];
 
         auto indices = this->indices->push();
-
-
-        PLOGD << (uint32_t)face.mIndices[0];
-        PLOGD << (uint32_t)face.mIndices[1];
-        PLOGD << (uint32_t)face.mIndices[2];
-
 
         indices[0][0].set<uint32_t>(face.mIndices[0]);
         indices[1][0].set<uint32_t>(face.mIndices[1]);

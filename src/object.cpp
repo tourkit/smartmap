@@ -7,7 +7,7 @@
 #include "buffer.hpp"
 #include "entry.hpp"
 
-size_t Object::size() { return s->size * reserved; }
+size_t Object::size() { return eq(reserved); }
 
 char *Object::data(size_t id) { return &buffer->data[offset + eq(id)]; }
 
@@ -77,7 +77,15 @@ Entry &Object::push(void* data) {
 
     int id = entrys.size();
 
-    memcpy(this->data()+s->size*id,data,s->size);
+    int obj_offset = 0;
+    for (auto& o : buffer->objects) {
+
+        o.offset = obj_offset;
+        obj_offset += o.size();
+
+    }
+    memcpy(this->data()+eq(id),data,s->size); // missing some (not comp but obj?) offset here 
+
 
     entrys.push_back(new Entry{this,id});
     return *entrys.back();
