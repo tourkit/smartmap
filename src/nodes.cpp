@@ -145,6 +145,8 @@ void Nodes::init() {
         auto dst = ((Ptr<File>*)_this)->get();
         auto src = ((Ptr<File>*)node)->get();
 
+        _this->Node::add(new Ptr<File>(src));
+
         return node;
         
     });
