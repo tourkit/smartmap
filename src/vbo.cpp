@@ -92,11 +92,11 @@ void VBO::import(File *file) {
         
         auto v = vertices->push();
 
-        // v["Position"]["x"].set<float>(vertex.x);
-        // v["Position"]["y"].set<float>(vertex.y);
+        v["Position"]["x"].set<float>(vertex.x);
+        v["Position"]["y"].set<float>(vertex.y);
 
-        // v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
-        // v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
+        v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
+        v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
 
     }
     
@@ -112,9 +112,9 @@ void VBO::import(File *file) {
         PLOGD << (uint32_t)face.mIndices[2];
 
 
-        // indices[0][0].set<uint32_t>(face.mIndices[0]);
-        // indices[0][1].set<uint32_t>(face.mIndices[1]);
-        // indices[0][2].set<uint32_t>(face.mIndices[2]);
+        indices[0][0].set<uint32_t>(face.mIndices[0]);
+        indices[1][0].set<uint32_t>(face.mIndices[1]);
+        indices[2][0].set<uint32_t>(face.mIndices[2]);
 
     }
     

@@ -122,6 +122,16 @@ private:
             .member<float>("x")//.range(-1,1)
             .member<float>("y")//.range(-1,1)
         ;
+        Component::create("Position3D")
+            .member<float>("x")//.range(-1,1)
+            .member<float>("y")//.range(-1,1)
+            .member<float>("z")//.range(-1,1)
+        ;
+        Component::create("U32Vec3")
+            .member<uint32_t>("x")//.range(-1,1)
+            .member<uint32_t>("y")//.range(-1,1)
+            .member<uint32_t>("z")//.range(-1,1)
+        ;
         Component::create("UV")
             .member<float>("x")
             .member<float>("y")
