@@ -171,12 +171,21 @@ void Nodes::init() {
                 
                 for (auto m:c->members) {
 
-                    float *value = (float*)&buffer->data[uniform_offset+(elem_current*obj.s->size)];
+                    auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
 
-                    if (ImGui::SliderFloat((m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str(), value, m.range_from, m.range_to)) { 
+                    auto data = &buffer->data[uniform_offset+(elem_current*obj.s->size)];
+
+                    auto type = ImGuiDataType_Float;
+
+                    if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
+                    if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
+
+                    if (ImGui::SliderScalar(name, ImGuiDataType_U8, data, &m.range_from, &m.range_to)) { 
                         
                         // ubo->update(); 
                     }
+
+                    
 
                     uniform_offset += m.size; 
                 }

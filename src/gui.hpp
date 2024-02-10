@@ -58,7 +58,7 @@ struct GUI {
 
   void *dragging = nullptr;
   
-  bool draw_gui = false;
+  bool draw_gui = true;
 
   GUI(GLFWwindow* window);
 

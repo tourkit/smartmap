@@ -151,6 +151,13 @@ private:
         Component::create("float")
             .member<float>("value")
         ;
+        Component::create("char")
+            .member<char>("value")
+        ;
+        Component::create("2chars")
+            .member<uint8_t>("char1")
+            .member<uint8_t>("char2")
+        ;
         Component::create("Ratio")
             .member<float>("value")
         ;

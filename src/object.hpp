@@ -24,6 +24,6 @@ struct Object {
     
     Entry &push();
 
-    Entry &push(void* data, int id = 0);
+    Entry &push(void* data);
 
 };

@@ -15,15 +15,17 @@
 
 Test::Test(){
 
-    auto b = engine.tree->add<Buffer>()->get();
+    auto a = engine.tree->add<Buffer>();
+    engine.editorw.selected = a;
+    auto b = a->get();
 
-    auto o = b->addObj(new Struct("test",{ "Position", "float", })); // could retun some betterPtr not slave to reserve()-d
+    auto o = b->addObj(new Struct("test",{"2chars"})); // could retun some betterPtr not slave to reserve()-d
 
     auto e = o->push(); 
 
-    e[0][0].set<float>(2);
-    e["Position"]["y"].set<float>(3);
-    
+    e[0][0].set<uint8_t>(100);
+    e["2chars"]["char2"].set<uint8_t>(200);
+    PLOGD << "oooo";
     // o->push(); 
 
 }

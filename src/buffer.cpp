@@ -25,43 +25,6 @@ Object* Buffer::addObj(Struct* s, int reserved) {
 
 void Buffer::update() {
 
-    auto backup_objects = objects; // should remode last ?
-
-    auto backup_data = data;
-
-    int offset = 0;
-    for (auto obj : objects) {
-
-        obj.offset = offset;
-        offset += obj.size();
-        
-    }
-
-    data.resize(offset);
-    memset(&data[0],0,data.size());
-    
-    for (int obj_id = 0; obj_id < backup_objects.size(); obj_id++) {
-
-        auto &o = backup_objects[obj_id];
-
-        for (int entry_id = 0; entry_id < o.entrys.size(); entry_id++) {
-
-            o.entrys[entry_id]->obj = &o;
-
-            for (int comp_id = 0; comp_id < o.s->comps.size(); comp_id++) {
-
-                for (int member_id = 0; member_id < o.s->comps[comp_id]->members.size(); member_id++) {
-
-                    auto x = (*o.entrys[entry_id])[comp_id][member_id].data;
-
-                    auto y = (*(*this)[obj_id]->entrys[entry_id])[comp_id][member_id].data;
-                    
-                    memcpy(y,x,o.s->comps[comp_id]->members[member_id].size);
-
-                }
-            }
-        }
-
-    }
+    std::vector<char> future_data = data;
 
 }
