@@ -75,7 +75,7 @@ Entry &Object::push(void* data) {
 
     int id = entrys.size();
 
-    // memcpy(this->data()+s->size*id,data,s->size);
+    memcpy(this->data()+s->size*id,data,s->size);
 
     entrys.push_back(new Entry{this,id});
     return *entrys.back();
