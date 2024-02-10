@@ -47,25 +47,27 @@ Entry &Object::push(void* data) {
 
         for (int entry_id = 0; entry_id < o.entrys.size(); entry_id++) {
 
-            auto offset = o.offset+(o.s->size*entry_id);
-
-            auto x = &backup_data[offset];
-
-            memcpy((*buffer)[obj_id]->data(entry_id),x,o.s->size);
-
-            // int comp_offset = 0;
+            int comp_offset = 0;
             
-            // for (int comp_id = 0; comp_id < o.s->comps.size(); comp_id++) {
-
-            //     int member_offset = 0;
+            for (int comp_id = 0; comp_id < o.s->comps.size(); comp_id++) {
                 
-            //     for (int member_id = 0; member_id < o.s->comps[comp_id]->members.size(); member_id++) {
+                int member_offset = comp_offset;
+                
+                for (int member_id = 0; member_id < o.s->comps[comp_id]->members.size(); member_id++) {
+                           
+                    auto offset = o.offset+(o.s->size*entry_id)+member_offset;
 
-            //     }
+                    auto x = &backup_data[offset];
 
-            //     comp_offset += o.s->comps[comp_id]->size;
+                    memcpy((*buffer)[obj_id]->data(entry_id)+member_offset,x,o.s->comps[comp_id]->size);
+                           
+                    member_offset += o.s->comps[comp_id]->members[member_id].size;
 
-            // }
+                }
+
+                comp_offset += o.s->comps[comp_id]->size;
+
+            }
 
         }
 
