@@ -126,17 +126,17 @@ private:
 
 
 template <typename T>
-struct NODE : Ptr<T> {
+struct Ownr : Ptr<T> {
 
     template <typename... Args>
-    NODE(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) {  }
+    Ownr(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) {  }
     
-    virtual ~NODE() { delete Ptr<T>::ptr; }
+    virtual ~Ownr() { delete Ptr<T>::ptr; }
     
     template <typename U, typename... Args>
-    NODE<U>* add(Args&&... args) { 
+    Ownr<U>* add(Args&&... args) { 
     
-        NODE<U>* x = new NODE<U>(std::forward<Args>(args)...);
+        Ownr<U>* x = new Ownr<U>(std::forward<Args>(args)...);
 
         if (!Ptr<T>::add(x)) { delete x; return nullptr; }
 

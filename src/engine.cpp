@@ -30,7 +30,7 @@ void Engine::run() {
 
         for ( auto dc : engine.stack->childrens) {
 
-            ((NODE<DrawCall>*)dc)->get()->run();
+            ((Ownr<DrawCall>*)dc)->get()->run();
         }
 
         engine.gui.draw(); 
