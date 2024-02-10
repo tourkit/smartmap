@@ -33,9 +33,9 @@ struct Entry {
         
         Entry *entry;
 
-        int offset = 0;
+        char* data() { return entry->obj->data(id); }
 
-        Comp(int id, Entry* entry, int offset = 0) : id(id), entry(entry), offset(offset) { }
+        Comp(int id, Entry* entry, int offset = 0) : id(id), entry(entry) { }
 
         Comp(int id);
      
@@ -43,18 +43,17 @@ struct Entry {
 
             int current = 0;
             
-            int offset = 0;
+            int member_offset = 0;
 
             for (auto m : entry->obj->s->comps[this->id]->members) {
 
                 if (current++ == id) break;
 
-                offset += m.size;
-
+                member_offset += m.size;
 
             }
 
-            return Member{entry->obj->data(entry->id)+this->offset+offset};
+            return Member{data()+member_offset};
             
         }
 
@@ -73,7 +72,7 @@ struct Entry {
 
     };
 
-    Comp operator[](int id) { return Comp(id,this,obj->eq(id)); }
+    Comp operator[](int id) { return Comp(id,this); }
 
     Comp operator[](const char* name) { 
         
