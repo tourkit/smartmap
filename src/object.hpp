@@ -17,6 +17,7 @@ struct Object {
     size_t offset;
 
     char *data(size_t id = 0);
+    int  eq(size_t id = 0);
 
     size_t size();
 

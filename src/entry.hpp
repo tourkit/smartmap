@@ -33,13 +33,12 @@ struct Entry {
         
         Entry *entry;
 
-        Comp(int id, Entry* entry) : id(id), entry(entry) {}
-
         int offset = 0;
 
-        Comp(int id);
+        Comp(int id, Entry* entry, int offset = 0) : id(id), entry(entry), offset(offset) { }
 
-        
+        Comp(int id);
+     
         Member operator[](int id) { 
 
             int current = 0;
@@ -74,7 +73,7 @@ struct Entry {
 
     };
 
-    Comp operator[](int id) { return Comp(id,this); }
+    Comp operator[](int id) { return Comp(id,this,obj->eq(id)); }
 
     Comp operator[](const char* name) { 
         

@@ -14,6 +14,7 @@
 #include "drawcall.hpp"
 #include "file.hpp"
 #include "vbo.hpp"
+#include "shader.hpp"
 
 
 void Nodes::init() {
@@ -85,24 +86,26 @@ void Nodes::init() {
         
     });
 
-    ////////// DRAWCALL.HPP 
+    ////////// SHADER.HPP 
 
-    Ownr<DrawCall>::editor([](Node* node, DrawCall *dc){ 
+    Ownr<ShaderProgram>::editor([](Node* node, ShaderProgram *shader){ 
         
-        ImGui::Text(std::to_string(dc->shader.loaded).c_str());
+        ImGui::Text(std::to_string(shader->loaded).c_str());
     
-        ImGui::InputTextMultiline("frag shader", &dc->shader.frag.src[0], dc->shader.frag.src.length(), ImVec2(300,300));
-        ImGui::InputTextMultiline("vert shader", &dc->shader.vert.src[0], dc->shader.vert.src.length(), ImVec2(300,300));
+        ImGui::InputTextMultiline("frag shader", &shader->frag.src[0], shader->frag.src.length(), ImVec2(300,300));
+        ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(300,300));
    
     });
+    ////////// DRAWCALL.HPP 
+
+    Ownr<DrawCall>::editor([](Node* node, DrawCall *dc){ Ptr<ShaderProgram>::editor_cbs[typeid(ShaderProgram)](node, &dc->shader); });
+
     Ownr<DrawCall>::oncreate([](Node* node, DrawCall *dc) {
         
         auto x = new Ptr<VBO>(&dc->vbo);
-        x->name = "vbo";
         node->Node::add(x);
 
         auto y = new Ptr<ShaderProgram>(&dc->shader);
-        y->name = "shader";
         node->Node::add(y);
 
         return node;
@@ -121,15 +124,12 @@ void Nodes::init() {
 
 
     ////////// ENGINE.HPP (and Stack)
-    
-    Ownr<Stack>::oncreate([](Node*node,Stack*stack){ node->name = "stack";    return node; });
 
     Ownr<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
 
         auto dc = ((Ptr<DrawCall>*)node)->get();
         dc->update();
-        
-        node->name = "drawcall";
+    
         _this->Node::add(node);
         return _this; 
         
@@ -146,8 +146,6 @@ void Nodes::init() {
     });
 
     ////////// BUFFER.HPP 
-
-    Ownr<Buffer>::oncreate([](Node* node, Buffer *buffer){ node->name = "buffy"; });
 
     Ownr<Buffer>::editor([](Node* node, Buffer *buffer){
 
@@ -194,6 +192,7 @@ void Nodes::init() {
 
                     if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
                     if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
+                    if (m.type == Component::Member::Type::UI32) type = ImGuiDataType_U16;
 
                     if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to)) { 
                         

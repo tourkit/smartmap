@@ -9,7 +9,9 @@
 
 size_t Object::size() { return s->size * reserved; }
 
-char *Object::data(size_t id) { return &buffer->data[offset + (s->size * id)]; }
+char *Object::data(size_t id) { return &buffer->data[eq(id)]; }
+
+int Object::eq(size_t id) { return offset + (s->size * id); }
 
 Entry &Object::push() { 
 

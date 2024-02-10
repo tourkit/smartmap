@@ -12,9 +12,9 @@
 
 VBO::VBO() {  
 
-    vertices = buffer.addObj(vertices_s);
-
     indices = buffer.addObj(indices_s);
+
+    vertices = buffer.addObj(vertices_s);
 
     create();
 }
@@ -106,9 +106,15 @@ void VBO::import(File *file) {
 
         auto indices = this->indices->push();
 
-        indices[0][0].set<float>(face.mIndices[0]);
-        indices[0][1].set<float>(face.mIndices[1]);
-        indices[0][2].set<float>(face.mIndices[2]);
+
+        PLOGD << (uint32_t)face.mIndices[0];
+        PLOGD << (uint32_t)face.mIndices[1];
+        PLOGD << (uint32_t)face.mIndices[2];
+
+
+        indices[0][0].set<uint32_t>(face.mIndices[0]);
+        indices[0][1].set<uint32_t>(face.mIndices[1]);
+        indices[0][2].set<uint32_t>(face.mIndices[2]);
 
     }
     

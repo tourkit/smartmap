@@ -83,7 +83,7 @@ void GUI::Window::drawFull() {
       if (!active) return;
 
       bool p_open = true;
-      ImGui::Begin((name+"##"+uid).c_str(), &p_open, ImGuiWindowFlags_MenuBar);
+      ImGui::Begin((name+"##"+uid).c_str(), &p_open);
 
       draw();
 
