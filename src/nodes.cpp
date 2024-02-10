@@ -50,6 +50,15 @@ void Nodes::init() {
     
     Ownr<VBO>::editor([](Node*node,VBO*vbo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &vbo->buffer); });
 
+    Ownr<VBO>::onadd<File>([](Node*_this,Node*node){ 
+
+        auto v = ((Ptr<VBO>*)_this)->get();
+        auto f = ((Ptr<File>*)node)->get();
+
+        return node;
+        
+    });
+
     ////////// STRUCT.HPP 
 
     Ownr<Struct>::oncreate([](Node* node, Struct *s){ 

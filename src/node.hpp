@@ -28,9 +28,6 @@ struct Node {
 
     virtual ~Node();
 
-    template <typename U>
-    U* is_a() { return ((typeid(*this) == typeid(U))? (U*)this : nullptr); }
-
     void parent(Node* parent_node);
     
     Node* parent();
@@ -94,8 +91,6 @@ struct Ptr : Node {
     void editor() override { if(editor_cbs.size() && editor_cbs.find(typeid(T)) != editor_cbs.end()) editor_cbs[typeid(T)](this,this->ptr); }
 
 
-
-
     operator T*() { return ptr; }
 
     static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cbs[typeid(T)] = cb;  }
@@ -119,6 +114,24 @@ struct Ptr : Node {
 
         return Node::add(node);
 
+    }
+
+    template <typename U>
+    U* is_a() { return ((typeid(*this) == typeid(U))? (U*)this : nullptr); }
+
+    template <typename V>
+    void each(std::function<void(Node*)> fx) { 
+        
+        for (auto c : childrens) {
+
+            if (((Ptr<T>*)c)->is_a<V>()) {
+
+                fx(c);
+
+            }
+
+        }       
+        
     }
 
 

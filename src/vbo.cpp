@@ -55,7 +55,6 @@ void VBO::upload() {
 
     };
 
-
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -103,19 +102,14 @@ void VBO::import(File *file) {
         
         auto v = vertices->push();
 
-        v[0][0].set<float>(vertex.x);
-        v[0][1].set<float>(vertex.y);
+        v["Position"]["x"].set<float>(vertex.x);
+        v["Position"]["y"].set<float>(vertex.y);
 
-        v[1][0].set<float>(mesh->mTextureCoords[0][i].x);
-        v[1][1].set<float>(mesh->mTextureCoords[0][i].y);
+        v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
+        v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
 
-        v[2][0].set<float>(0);
+        v["ID"][0].set<float>(0);
 
-        // v["Position"]["x"].set<float>(vertex.x);
-        // v["Position"]["y"].set<float>(vertex.y);
-
-        // v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
-        // v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
 
     }
     

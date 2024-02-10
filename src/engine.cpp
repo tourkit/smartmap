@@ -50,6 +50,13 @@ void Engine::init() {
     static_ubo = tree->add<UBO>("static_ubo")->get();
 
     auto dc = stack->add<DrawCall>();
+
+    dc->each<VBO>([](Node* n){
+
+        
+
+    });
+
     dc->Ptr<DrawCall>::add(models->childrens[0]);
   
     // Components::getInstance();

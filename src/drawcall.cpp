@@ -17,7 +17,7 @@ void DrawCall::update() {
 
     // // list fx
 
-    std::unordered_set<ShaderFX*> shaders;
+    std::unordered_set<ShaderFX*> fxs;
 
     // for (auto model : childrens) { for (auto c : model->childrens) {
     //     shaders.insert(((ShaderFXPtr*)c)->ptr);i
@@ -33,11 +33,12 @@ void DrawCall::update() {
     // // if buffer filled then 
     // frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n\n";
 
-    // for (auto shader : shaders) {
+    for (auto fx : fxs) {
 
-    //     frag_shader += ((ShaderFX*)shader)->code +"\n\n";
+        frag_shader += fx->code +"\n\n";
 
-    // }
+    }
+    
     frag_shader += "void main() {\n\n";
 
     // for (auto model : childrens) {
