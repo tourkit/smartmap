@@ -26,8 +26,6 @@ Test::Test(){
     e[0][0].set<float>(100);
     e[0][1].set<float>(200);
 
-    // o->push(); 
-
-    // si struct tive mais de um component tein problem
+    o->push(); 
 
 }
