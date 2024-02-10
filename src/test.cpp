@@ -19,13 +19,15 @@ Test::Test(){
     engine.editorw.selected = a;
     auto b = a->get();
 
-    auto o = b->addObj(new Struct("test",{"2chars"})); // could retun some betterPtr not slave to reserve()-d
+    auto o = b->addObj(new Struct("test",{"Position", "float"})); // could retun some betterPtr not slave to reserve()-d
 
     auto e = o->push(); 
 
-    e[0][0].set<uint8_t>(100);
-    e["2chars"]["char2"].set<uint8_t>(200);
-    PLOGD << "oooo";
+    e[0][0].set<float>(100);
+    e[0][1].set<float>(200);
+
     // o->push(); 
+
+    // si struct tive mais de um component tein problem
 
 }

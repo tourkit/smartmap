@@ -19,7 +19,7 @@ struct Component  {
 
         int size;
         // int offset;
-        float range_from,range_to;  
+        float range_from=0,range_to=1000;  
         enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32 } type;
 
     };

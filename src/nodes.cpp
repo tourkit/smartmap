@@ -159,6 +159,7 @@ void Nodes::init() {
                 
             }
 
+            ImGui::SameLine(); if (ImGui::Button("add")) (*buffer)[obj_current]->push();
 
             if (!obj.reserved) return;
 
@@ -180,7 +181,7 @@ void Nodes::init() {
                     if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
                     if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
 
-                    if (ImGui::SliderScalar(name, ImGuiDataType_U8, data, &m.range_from, &m.range_to)) { 
+                    if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to)) { 
                         
                         // ubo->update(); 
                     }
