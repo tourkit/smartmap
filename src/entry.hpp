@@ -11,9 +11,8 @@ struct Object;
 struct Entry {
 
     Object* obj;
-    int id;
 
-    const char* name();
+    int id;
 
     struct Comp {
 
@@ -30,58 +29,44 @@ struct Entry {
         };
 
         int id;
-        
+
         Entry *entry;
 
-        char* data() { return entry->obj->data(id); }
+        char* data() { 
 
-        Comp(int id, Entry* entry, int offset = 0) : id(id), entry(entry) { }
+            int comp_offset = 0;
+            int curr = 0;
+            for (auto c : entry->obj->s->comps) {
+                if (curr++ >= id) break;
+                comp_offset += c->size;
+            }
 
-        Comp(int id);
-     
+            return entry->data()+comp_offset; 
+        }
+
         Member operator[](int id) { 
-
-            int current = 0;
             
             int member_offset = 0;
-
+            int current = 0;
             for (auto m : entry->obj->s->comps[this->id]->members) {
-
                 if (current++ == id) break;
-
                 member_offset += m.size;
-
             }
 
             return Member{data()+member_offset};
             
         }
 
-        
-        Member operator[](const char* name) { 
-        
-            int id = 0;
-
-            for (auto m : entry->obj->s->comps[id]->members) { if (!(strcmp(m.name.c_str(),name))) { break;} id++; }
-
-            return (*this)[id];
-
-        }
-
-
 
     };
 
-    Comp operator[](int id) { return Comp(id,this); }
-
-    Comp operator[](const char* name) { 
+    Comp operator[](int id) { 
         
-        int id = 0;
-
-        for (auto c : obj->s->comps) { if (!(strcmp(c->name.c_str(),name))) { break;} id++; }
-
-        return (*this)[id];
-    
+        
+        return Comp{id,this}; 
+        
     }
+
+    char* data() { return obj->data(id); }
 
 };
