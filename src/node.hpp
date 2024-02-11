@@ -11,7 +11,7 @@
 #include <boost/type_index.hpp>
 
 struct File;
-struct NODE;
+
 struct Node {
     
     std::string name;
@@ -85,40 +85,25 @@ struct Node {
     };
 
 template <typename T>
-struct Ptr : Node { 
-    
-    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> oncreate_cbs;
-    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cbs;
+struct NODE : Node { 
 
     T* ptr; 
 
     T* get() { return ptr; }
+    
+    std::type_index type() override { return typeid(T); }
 
     void* ptr_untyped() override { return ptr; }
 
-    virtual ~Ptr() { }
-
-    Ptr(void* ptr) 
-        : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) { 
+    operator T*() { return ptr; }
+    
+    NODE(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
 
             if(oncreate_cbs.find(typeid(T)) != oncreate_cbs.end()) { oncreate_cbs[typeid(T)](this,this->ptr); }
 
             color = {100,100,100,100};
-        
-    } 
-    
-    std::type_index type() override { return typeid(T); }
 
-    void editor() override { if(editor_cbs.size() && editor_cbs.find(typeid(T)) != editor_cbs.end()) editor_cbs[typeid(T)](this,this->ptr); }
-
-
-    operator T*() { return ptr; }
-
-    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cbs[typeid(T)] = cb;  }
-    static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
-    template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs[typeid(U)] = cb;  }
+     }
 
     Node* add(Node* node) override {
 
@@ -138,14 +123,34 @@ struct Ptr : Node {
 
     }
 
+    void editor() override { if(editor_cbs.size() && editor_cbs.find(typeid(T)) != editor_cbs.end()) editor_cbs[typeid(T)](this,this->ptr); }
+
+    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> oncreate_cbs;
+    static inline std::unordered_map<std::type_index, std::function<void(Node*,T*)>> editor_cbs;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cbs;
+
+    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cbs[typeid(T)] = cb;  }
+    static void editor(std::function<void(Node*,T*)> cb) { editor_cbs[typeid(T)] = cb; }
+    template <typename U>
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs[typeid(U)] = cb;  }
 
 private:
+
     bool isNode() { return std::is_base_of<Node, T>::value; } 
+
 };
 
+template <typename T>
+struct Ptr : NODE<T> { 
 
-struct KJHDFHJKDFHJKSDFHJK {};
-struct NODE : Ptr<KJHDFHJKDFHJKSDFHJK> {};
+    virtual ~Ptr() { }
+
+    Ptr(void* ptr) : NODE<T>(ptr) { } 
+
+    Ptr<T>* addPtr(Node* node)  { return (Ptr<T>*)NODE<T>::add(node); }
+
+};
+
 
 template <typename T>
 struct Ownr : Ptr<T> {
