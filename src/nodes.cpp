@@ -52,16 +52,6 @@ void Nodes::init() {
     
     Ownr<VBO>::editor([](Node*node,VBO*vbo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &vbo->buffer); });
     
-    Ownr<VBO>::onadd<File>([](Node*_this,Node*node){ 
-        
-        auto vbo = ((Ownr<VBO>*)_this);
-        auto file = ((Ptr<File>*)node)->get();
-
-        _this->Node::add(new Ptr<Model>(vbo->get()->import(file)));
-
-        return node;
-
-    });
 
     ////////// STRUCT.HPP 
 
@@ -128,16 +118,18 @@ void Nodes::init() {
 
     Ownr<DrawCall>::editor([](Node* node, DrawCall *dc){ Ptr<ShaderProgram>::editor_cbs[typeid(ShaderProgram)](node, &dc->shader); });
 
-    Ownr<DrawCall>::oncreate([](Node* node, DrawCall *dc) {
+    Ownr<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
-        auto x = new Ptr<VBO>(&dc->vbo);
-        node->Node::add(x);
+        auto dc = _this->is_a<DrawCall>();
+        auto file = node->is_a<File>();
+        if (!dc || !file) return node;
 
-        auto y = new Ptr<ShaderProgram>(&dc->shader);
-        node->Node::add(y);
+        auto model = dc->vbo.import(file);
+
+        _this->Node::add(new Ptr<Model>(model));
 
         return node;
-   
+
     });
 
     ////////// MODEL.HPP 

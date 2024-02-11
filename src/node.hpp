@@ -55,8 +55,10 @@ struct Node {
 
     void select();
 
+    virtual void* ptr_untyped() { return this; }
+
     template <typename U>
-    U* is_a() { return ((type() == typeid(U))? (U*)this : nullptr); }
+    U* is_a() { return ((type() == typeid(U))? (U*)ptr_untyped() : nullptr); }
 
     template <typename V>
     void each(std::function<void(Node*)> fx) { 
@@ -92,6 +94,8 @@ struct Ptr : Node {
     T* ptr; 
 
     T* get() { return ptr; }
+
+    void* ptr_untyped() override { return ptr; }
 
     virtual ~Ptr() { }
 
