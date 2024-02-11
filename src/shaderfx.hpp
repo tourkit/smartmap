@@ -1,35 +1,30 @@
 #pragma once
 
 
-#include "node.hpp"
-#include "shader.hpp"
-#include "file.hpp"
+// #include "shader.hpp"
 #include <map>
+#include <vector>
+#include <string>
 
-struct ShaderFX : Ptr<File>  {
+struct File;
 
-    Shader::Type type;
+struct ShaderFX   {
+
+    // Shader::Type type;
+
+    enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
     std::map<std::string, float> uniforms;
 
-    std::string code;
+    File * file;
     
+    ShaderFX();
     ShaderFX(File *file);
 
-    void convert();
-
-    void editor() override;
+    void import(File *file);
 
     std::vector<std::string> args;
 
     std::vector<std::string> extractArgsFromFunction(const std::string& functionSrc);
     
-};
-
-struct ShaderFXPtr : Ptr<ShaderFX> {
-
-    ShaderFXPtr(Node* ptr);
-
-    void editor() override;
-
 };

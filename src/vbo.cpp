@@ -1,5 +1,6 @@
 #include "vbo.hpp"  
 
+#include "model.hpp"  
 #include "file.hpp"  
 #include "entry.hpp"  
 
@@ -83,7 +84,7 @@ void VBO::draw(int count) {
 }
 	
 
-void VBO::import(File *file) {    
+Model* VBO::import(File *file) {    
 
     Assimp::Importer importer;
 
@@ -124,6 +125,12 @@ void VBO::import(File *file) {
         indices[2][0].set<uint32_t>(face.mIndices[2]);
 
     }
+
     
     upload();
+
+    models.push_back({file,(int)models.size()});
+
+    return &models.back();
+    
 }

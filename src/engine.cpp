@@ -51,7 +51,15 @@ void Engine::init() {
 
     auto dc = stack->add<DrawCall>();
 
+
     dc->Ptr::add(models->childrens[0]);
+
+    // auto model = ((Ptr<VBO>*)dc->childrens[0])->add(models->childrens[0]); // should return Model, should be able to do dc.add(MODELCHILD) 
+    // ((Ptr<Model>*)dc->childrens[0]->childrens[0])->add(shaders->childrens[0]); // vbo should own model list
+
+
+
+    
 
 
   

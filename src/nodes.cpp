@@ -15,6 +15,7 @@
 #include "file.hpp"
 #include "vbo.hpp"
 #include "shader.hpp"
+#include "shaderfx.hpp"
 
 
 void Nodes::init() {
@@ -50,17 +51,17 @@ void Nodes::init() {
     ////////// VBO.HPP 
     
     Ownr<VBO>::editor([](Node*node,VBO*vbo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &vbo->buffer); });
-
+    
     Ownr<VBO>::onadd<File>([](Node*_this,Node*node){ 
+        
+        auto vbo = ((Ownr<VBO>*)_this);
+        auto file = ((Ptr<File>*)node)->get();
 
-        auto v = ((Ptr<VBO>*)_this)->get();
-        auto f = ((Ptr<File>*)node)->get();
+        _this->Node::add(new Ptr<Model>(vbo->get()->import(file)));
 
         return node;
-        
+
     });
-
-
 
     ////////// STRUCT.HPP 
 
@@ -108,6 +109,21 @@ void Nodes::init() {
         ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(300,300));
    
     });
+    ////////// SHADERFX.HPP 
+
+    Ownr<ShaderFX>::editor([](Node* node, ShaderFX *shader){ 
+            
+        ImGui::InputTextMultiline("src", (char*)shader->file->data.c_str(), shader->file->data.size());
+   
+    });
+
+    
+    Ownr<ShaderFX>::oncreate([](Node* node, ShaderFX *fx) {
+
+        node->name = fx->file->name;
+
+    });
+
     ////////// DRAWCALL.HPP 
 
     Ownr<DrawCall>::editor([](Node* node, DrawCall *dc){ Ptr<ShaderProgram>::editor_cbs[typeid(ShaderProgram)](node, &dc->shader); });
@@ -124,32 +140,45 @@ void Nodes::init() {
    
     });
 
-    Ownr<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
+    ////////// MODEL.HPP 
+
+    Ownr<Model>::oncreate([](Node* node, Model *model) {
         
+        node->name = model->file->name;
+
+        return node;
+   
+    });
+
+    Ownr<Model>::onadd<File>([](Node*_this,Node*node){ 
+        
+        auto model = ((Ownr<Model>*)_this);
+
         auto file = ((Ptr<File>*)node)->get();
 
-        ((Ptr<DrawCall>*)_this)->get()->vbo.import(file);
+        // auto file = node->is_a<File>(); 
 
-        _this->each<VBO>([file](Node* vbo){ 
-            
-            vbo->Node::add(new Ptr<File>(file)); 
+        // if (!file) return node;
+
+        auto x = model->add<ShaderFX>(file)->get();
         
-        });
+        // model->get()->addFX(x);
 
         return node;
 
     });
 
-    Ownr<File>::onadd<File>([](Node*_this,Node*node){ 
-
-        auto dst = ((Ptr<File>*)_this)->get();
-        auto src = ((Ptr<File>*)node)->get();
-
-        _this->Node::add(new Ptr<File>(src));
+    Ownr<Model>::onadd<ShaderFX>([](Node*_this,Node*node){ 
+        
+         _this->Node::add(node); 
+        
+        auto dc = _this->parent()->parent()->is_a<DrawCall>();
+        if (dc) dc->update();
 
         return node;
         
     });
+
     ////////// ENGINE.HPP (and Stack)
 
     Ownr<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 

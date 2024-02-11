@@ -1,9 +1,9 @@
 #include "shaderfx.hpp"
-#include "gui.hpp"
 #include "file.hpp"
 #include <regex>
 
-ShaderFX::ShaderFX(File *file) : Ptr<File>(file) { convert(); }
+ShaderFX::ShaderFX()  { }
+ShaderFX::ShaderFX(File *file) { import(file); }
 
 
 std::vector<std::string> ShaderFX::extractArgsFromFunction(const std::string& functionSrc) {
@@ -28,29 +28,24 @@ std::vector<std::string> ShaderFX::extractArgsFromFunction(const std::string& fu
         return args;
     }
 
-void ShaderFX::editor() {
-
-    ImGui::InputTextMultiline("src", (char*)code.c_str(), code.size());
-
-}
-
-void ShaderFX::convert() {
-
-    code = ptr->data;
-    extractArgsFromFunction(ptr->data);
 
 
+void ShaderFX::import(File *file) {
 
+    this->file = file;
+
+    extractArgsFromFunction(file->data);
 
 }
 
-//---------
-ShaderFXPtr::ShaderFXPtr(Node *ptr) : Ptr<ShaderFX>((ShaderFX*)ptr) { }
-void ShaderFXPtr::editor() { 
+
+// //---------
+// ShaderFXPtr::ShaderFXPtr(Node *ptr) : Ptr<ShaderFX>((ShaderFX*)ptr) { }
+// void ShaderFXPtr::editor() { 
         
-    for (int i=0; i < ptr->args.size(); i++) {
-        float f = 0;
-        ImGui::SliderFloat(ptr->args[i].c_str(), &f, 0, 1);
-    }
+//     for (int i=0; i < ptr->args.size(); i++) {
+//         float f = 0;
+//         ImGui::SliderFloat(ptr->args[i].c_str(), &f, 0, 1);
+//     }
 
-}
+// }

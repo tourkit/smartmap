@@ -35,7 +35,7 @@ Test::Test(){
     
     for (int i = 0 ; i < 2; i++) {
 
-        auto indices = bar->push(&f[0]); // pushing to second obj fucks first 
+        auto indices = bar->push(&f[0]);
 
         indices[0][0].set<float>(5);
     }
@@ -43,7 +43,5 @@ Test::Test(){
 
     // add Objects child to Buffer w/ child Comp
 
-
-    /// refaire obj ofgfset bxcp plus souvent ( update )
 
 }

@@ -2,11 +2,13 @@
 
 #include "struct.hpp"
 #include "buffer.hpp"
+#include "model.hpp"
 #include <cstdint>
 #include <vector>
 
 
 struct Object;
+struct Model;
 struct File;
 
 struct VBO {
@@ -31,6 +33,8 @@ struct VBO {
 
     void draw(int count = 1);
        
-    void import(File *file);
+    Model* import(File *file);
+
+    std::vector<Model> models;
 
 };

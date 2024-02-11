@@ -11,7 +11,7 @@
 #include <boost/type_index.hpp>
 
 struct File;
-
+struct NODE;
 struct Node {
     
     std::string name;
@@ -160,3 +160,6 @@ struct Ownr : Ptr<T> {
     }
 
 };
+
+struct KJHDFHJKDFHJKSDFHJK {};
+struct NODE : Ownr<KJHDFHJKDFHJKSDFHJK> {};

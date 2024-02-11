@@ -1,6 +1,9 @@
 #include "drawcall.hpp"
 #include "shaderfx.hpp"
-#include "gui.hpp"
+#include "file.hpp"
+#include "log.hpp"
+
+#include <unordered_set>
 
 
 void DrawCall::run() {
@@ -17,8 +20,6 @@ void DrawCall::update() {
 
     // // list fx
 
-    std::unordered_set<ShaderFX*> fxs;
-
     // for (auto model : childrens) { for (auto c : model->childrens) {
     //     shaders.insert(((ShaderFXPtr*)c)->ptr);i
     //     } }
@@ -33,11 +34,11 @@ void DrawCall::update() {
     // // if buffer filled then 
     // frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n\n";
 
-    for (auto fx : fxs) {
+    std::unordered_set<ShaderFX*> fxs;
+    // for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
+    // for (auto fx : fxs) frag_shader += fx->file->data +"\n\n";
 
-        frag_shader += fx->code +"\n\n";
-
-    }
+    PLOGD << fxs.size();
     
     frag_shader += "void main() {\n\n";
 
