@@ -51,20 +51,11 @@ void Engine::init() {
 
     auto dc = stack->add<DrawCall>();
 
+    auto model = dc->Ptr::add(models->childrens[0]);
 
-    dc->Ptr::add(models->childrens[0]);
-
-    // auto model = ((Ptr<VBO>*)dc->childrens[0])->add(models->childrens[0]); // (should return Model)WHAT?, should be able to do dc.add(MODELCHILD) 
-
-
-    // ((Ptr<Model>*)dc->childrens[0]->childrens[0])->add(shaders->childrens[0]); 
+    ((Ptr<Model>*)model)->Ptr::add(shaders->childrens[0]); // not adding ?
 
 
-    // un node "each" qui foreach tous ces childs ( genre add() { for childrens add })
-    
-
-
-  
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});
     // for (auto c : Component::pool) comps->add(c);

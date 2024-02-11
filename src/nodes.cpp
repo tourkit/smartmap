@@ -1,10 +1,8 @@
 #include "nodes.hpp"
+
 #include "node.hpp"
 #include "gui.hpp"
-
-
 #include "buffer.hpp"
-
 #include "directory.hpp"
 #include "component.hpp"
 #include "struct.hpp"
@@ -17,14 +15,13 @@
 #include "shader.hpp"
 #include "shaderfx.hpp"
 
-
 void Nodes::init() {
 
     // ////////// xxx.HPP 
 
-    // Ownr<xxx>::editor([](Node* node, xxx *x){ });
+    // Ownr<xxx>::editor([](NODE* node, xxx *x){ });
     
-    // Ownr<xxx>::oncreate([](Node* node, xxx *x){ });
+    // Ownr<xxx>::oncreate([](NODE* node, xxx *x){ });
 
     // Ownr<xxx>::onadd<yyy>([](Node*_this,Node*node){ 
 
@@ -37,31 +34,25 @@ void Nodes::init() {
 
     ////////// FILE.HPP 
 
-    Ownr<File>::oncreate([](Node* node, File *file){ node->name = file->name+"."+file->extension; });
+    Ownr<File>::oncreate([](NODE* node, File *file){ node->name = file->name+"."+file->extension; });
 
-    Ownr<File>::editor([](Node* node, File *file){ ImGui::Text(file->extension.c_str()); });
-
+    Ownr<File>::editor([](NODE* node, File *file){ ImGui::Text(file->extension.c_str()); });
 
     ////////// UBO.HPP 
 
-    Ownr<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name; });
+    Ownr<UBO>::oncreate([](NODE* node, UBO *ubo){ node->name = ubo->name; });
 
-    Ownr<UBO>::editor([](Node* node, UBO *ubo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &ubo->buffer); });
+    Ownr<UBO>::editor([](NODE* node, UBO *ubo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &ubo->buffer); });
 
     ////////// VBO.HPP 
     
-    Ownr<VBO>::editor([](Node*node,VBO*vbo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &vbo->buffer); });
-    
+    Ownr<VBO>::editor([](NODE*node,VBO*vbo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &vbo->buffer); });
 
     ////////// STRUCT.HPP 
 
-    Ownr<Struct>::oncreate([](Node* node, Struct *s){ 
-        
-        node->name = s->name;     
-    
-    });
+    Ownr<Struct>::oncreate([](NODE* node, Struct *s){ node->name = s->name; });
 
-    Ownr<Struct>::editor([](Node* node, Struct *s){ 
+    Ownr<Struct>::editor([](NODE* node, Struct *s){ 
         
         ImGui::Text((node->name+" " +std::to_string(s->size)).c_str());
 
@@ -75,23 +66,12 @@ void Nodes::init() {
 
 
         }
-
-
     
-    });
-
-    Ownr<Struct>::onadd<File>([](Node*_this,Node*node){ 
-
-        auto s = ((Ptr<Struct>*)_this)->get();
-        auto f = ((Ptr<File>*)node)->get();
-
-        return node;
-        
     });
 
     ////////// SHADER.HPP 
 
-    Ownr<ShaderProgram>::editor([](Node* node, ShaderProgram *shader){ 
+    Ownr<ShaderProgram>::editor([](NODE* node, ShaderProgram *shader){ 
         
         ImGui::Text(std::to_string(shader->loaded).c_str());
     
@@ -99,24 +79,21 @@ void Nodes::init() {
         ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(300,300));
    
     });
+
     ////////// SHADERFX.HPP 
 
-    Ownr<ShaderFX>::editor([](Node* node, ShaderFX *shader){ 
+    Ownr<ShaderFX>::editor([](NODE* node, ShaderFX *shader){ 
             
         ImGui::InputTextMultiline("src", (char*)shader->file->data.c_str(), shader->file->data.size());
    
     });
 
     
-    Ownr<ShaderFX>::oncreate([](Node* node, ShaderFX *fx) {
-
-        node->name = fx->file->name;
-
-    });
+    Ownr<ShaderFX>::oncreate([](NODE* node, ShaderFX *fx) { node->name = fx->file->name; });
 
     ////////// DRAWCALL.HPP 
 
-    Ownr<DrawCall>::editor([](Node* node, DrawCall *dc){ Ptr<ShaderProgram>::editor_cbs[typeid(ShaderProgram)](node, &dc->shader); });
+    Ownr<DrawCall>::editor([](NODE* node, DrawCall *dc){ Ptr<ShaderProgram>::editor_cbs[typeid(ShaderProgram)](node, &dc->shader); });
 
     Ownr<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
@@ -134,41 +111,27 @@ void Nodes::init() {
 
     ////////// MODEL.HPP 
 
-    Ownr<Model>::oncreate([](Node* node, Model *model) {
-        
-        node->name = model->file->name;
-
-        return node;
-   
-    });
+    Ownr<Model>::oncreate([](NODE* node, Model *model) { node->name = model->file->name; });
 
     Ownr<Model>::onadd<File>([](Node*_this,Node*node){ 
         
-        auto model = ((Ownr<Model>*)_this);
+        auto model = _this->is_a<Model>();
+        auto file = node->is_a<File>();
+        if (!model || !file) return node;
 
-        auto file = ((Ptr<File>*)node)->get();
+        PLOGD << "uuuu";
 
-        // auto file = node->is_a<File>(); 
+        auto bad = new ShaderFX(file);
 
-        // if (!file) return node;
+        model->addFX(bad);
 
-        auto x = model->add<ShaderFX>(file)->get();
+        _this->Node::add(new Ptr<ShaderFX>(bad));
         
-        // model->get()->addFX(x);
-
-        return node;
-
-    });
-
-    Ownr<Model>::onadd<ShaderFX>([](Node*_this,Node*node){ 
-        
-         _this->Node::add(node); 
-        
-        auto dc = _this->parent()->parent()->is_a<DrawCall>();
+        auto dc = _this->parent()->is_a<DrawCall>();
         if (dc) dc->update();
-
-        return node;
         
+        return node;
+
     });
 
     ////////// ENGINE.HPP (and Stack)
@@ -186,17 +149,17 @@ void Nodes::init() {
 
     ////////// Directory.HPP 
 
-    Ownr<Directory>::oncreate([](Node* node, Directory *dir){ 
+    Ownr<Directory>::oncreate([](NODE* node, Directory *dir){ 
 
-        node->name = dir->path; 
+        node->name = dir->path;
+
         for (auto f : dir->list) ((Ownr<Directory>*)node)->add<File>(f);
         
     });
 
     ////////// BUFFER.HPP 
 
-    Ownr<Buffer>::editor([](Node* node, Buffer *buffer){
-
+    Ownr<Buffer>::editor([](NODE* node, Buffer *buffer){
 
         static StringsBuffer object_str;
         static int obj_current = 0;
