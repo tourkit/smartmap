@@ -26,6 +26,7 @@ add_executable(smartmap
     src/test.cpp
     src/shaderfx.cpp
     src/drawcall.cpp
+    src/model.cpp
     src/buffer.cpp
     src/engine.cpp
     src/node.cpp
