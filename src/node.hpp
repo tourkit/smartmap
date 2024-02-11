@@ -85,7 +85,7 @@ struct Node {
     };
 
 template <typename T>
-struct NODE : Node { 
+struct NONODE : Node { 
 
     T* ptr; 
 
@@ -97,7 +97,7 @@ struct NODE : Node {
 
     operator T*() { return ptr; }
     
-    NODE(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
+    NONODE(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
 
             if(oncreate_cbs.find(typeid(T)) != oncreate_cbs.end()) { oncreate_cbs[typeid(T)](this,this->ptr); }
 
@@ -140,15 +140,17 @@ private:
 
 };
 
+struct ANYNODE {};
+struct NODE : NONODE<ANYNODE> { NODE* addPtr(Node* node)  { return (NODE*)NONODE<ANYNODE>::add(node); } };
+
 template <typename T>
-struct Ptr : NODE<T> { 
+struct Ptr : NONODE<T> { 
 
     virtual ~Ptr() { }
 
-    Ptr(void* ptr) : NODE<T>(ptr) { } 
+    Ptr(void* ptr) : NONODE<T>(ptr) { } 
 
-    Ptr<T>* addPtr(Node* node)  { return (Ptr<T>*)NODE<T>::add(node); }
-
+    NODE* addPtr(Node* node)  { return (NODE*)NONODE<T>::add(node); }
 };
 
 

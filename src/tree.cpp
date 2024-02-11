@@ -98,7 +98,7 @@ void Tree::drawNode(Node* node) {
         if (ImGui::BeginDragDropSource()) {
 
             auto ptr = (uint64_t)node;
-            ImGui::SetDragDropPayload("_TREENODE", &(ptr), sizeof(uint64_t));
+            ImGui::SetDragDropPayload("_TREENONODE", &(ptr), sizeof(uint64_t));
             ImGui::Text(node->name.c_str());
             ImGui::EndDragDropSource();
             
@@ -106,7 +106,7 @@ void Tree::drawNode(Node* node) {
 
         if (ImGui::BeginDragDropTarget()) {     
 
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENODE")) node->add((Node*)(*(uint64_t*)payload->Data));
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) node->add((Node*)(*(uint64_t*)payload->Data));
 
             ImGui::EndDragDropTarget();
             

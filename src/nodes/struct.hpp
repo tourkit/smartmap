@@ -1,6 +1,6 @@
 #pragma once
 
-namespace NODE {
+namespace NONODE {
 
 struct Struct  {
 
