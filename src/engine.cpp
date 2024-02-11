@@ -43,8 +43,8 @@ void Engine::init() {
 
     Nodes::init();
 
-    Node *models = tree->add<Directory>("assets/model/");
-    Node *shaders = tree->add<Directory>("assets/shaders/");
+    auto models = tree->add<Directory>("assets/model/");
+    auto shaders = tree->add<Directory>("assets/shaders/");
 
     dynamic_ubo = tree->add<UBO>("dynamic_ubo")->get();
     static_ubo = tree->add<UBO>("static_ubo")->get();

@@ -42,11 +42,11 @@ void Nodes::init() {
 
     Ownr<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name; });
 
-    Ownr<UBO>::editor([](Node* node, UBO *ubo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &ubo->buffer); });
+    Ownr<UBO>::editor([](Node* node, UBO *ubo){ Ptr<Buffer>::editor_cbs(node, &ubo->buffer); });
 
     ////////// VBO.HPP 
     
-    Ownr<VBO>::editor([](Node*node,VBO*vbo){ Ptr<Buffer>::editor_cbs[typeid(Buffer)](node, &vbo->buffer); });
+    Ownr<VBO>::editor([](Node*node,VBO*vbo){ Ptr<Buffer>::editor_cbs(node, &vbo->buffer); });
 
     ////////// STRUCT.HPP 
 
@@ -93,7 +93,7 @@ void Nodes::init() {
 
     ////////// DRAWCALL.HPP 
 
-    Ownr<DrawCall>::editor([](Node* node, DrawCall *dc){ Ptr<ShaderProgram>::editor_cbs[typeid(ShaderProgram)](node, &dc->shader); });
+    Ownr<DrawCall>::editor([](Node* node, DrawCall *dc){ Ptr<ShaderProgram>::editor_cbs(node, &dc->shader); });
 
     Ownr<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
