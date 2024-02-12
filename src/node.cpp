@@ -6,7 +6,7 @@
 
     Node::Node(std::string name, std::vector<uint32_t> color) : name(name), color(color) {
 
-        PLOGV << name;
+        PLOGV << name << " - " << type().name();
         
     }
 
@@ -32,7 +32,7 @@
 
     Node* Node::add(Node* n)  { 
 
-         n->parent(this);
+         n->parent(this);   
 
         return n;
 

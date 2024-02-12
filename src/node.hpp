@@ -12,14 +12,33 @@
 
 struct File;
 
+
 struct Node {
-    
+
+    template <typename T>
+    static inline std::function<void(Node*,T*)> oncreate_cbs2;
+    template <typename T>
+    static inline std::function<void(Node*,T*)> editor_cbs2;
+    template <typename T>
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cbs2;
+
+    template <typename T>
+    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cbs2<T> = cb;  }
+    template <typename T>
+    static void editor(std::function<void(Node*,T*)> cb) { editor_cbs2<T> = cb; }
+    template <typename T>
+    static void editor() { editor_cbs2<T>(); }
+    template <typename T>
+    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs2<T>[type()] = cb;  }
+
+
+
     std::string name;
 
     std::vector<uint32_t> color;
 
     Node* parent_node = nullptr;
-
+ 
     std::vector<Node*> childrens;
 
     bool active = true, locked = false, loaded = false;
@@ -101,6 +120,8 @@ struct NONODE : Node {
 
             if(oncreate_cbs) { oncreate_cbs(this,this->ptr); }
 
+            if(oncreate_cbs2<T>) { PLOGD << " add";  oncreate_cbs2<T>(this,this->ptr); }
+
             color = {100,100,100,100};
 
      }
@@ -123,7 +144,9 @@ struct NONODE : Node {
 
     }
 
-    void editor() override { if(editor_cbs) editor_cbs(this,this->ptr); }
+    void editor() override { if(editor_cbs) editor_cbs(this,this->ptr);
+    if(editor_cbs2<T>) editor_cbs2<T>(this,this->ptr);
+     }
 
     static inline std::function<void(Node*,T*)> oncreate_cbs = nullptr;
     static inline std::function<void(Node*,T*)> editor_cbs = nullptr;

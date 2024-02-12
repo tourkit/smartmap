@@ -47,13 +47,13 @@ void Engine::init() {
     auto shaders = tree->add<Directory>("assets/shaders/");
 
     dynamic_ubo = tree->add<UBO>("dynamic_ubo")->get();
-    static_ubo = tree->add<UBO>("static_ubo")->get();
+    static_ubo = tree->add<UBO>("static_ubo")->get(); 
 
     auto dc = stack->add<DrawCall>();
 
     auto model = dc->addPtr(models->childrens[0]);
 
-    model->addPtr(shaders->childrens[0]); // not adding ?
+    ((Ptr<Model>*)model)->addPtr(shaders->childrens[0]); // not adding as NODE*
 
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});

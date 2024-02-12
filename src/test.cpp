@@ -14,31 +14,10 @@
 #include "entry.hpp"
 #include "vbo.hpp"
 
+// struct Foo { virtual Foo() { PLOGD << "foo"; } };
+// struct Bar : Foo { Bar() { PLOGD << "bar"; Foo(); } };
+
 Test::Test(){
-
-    auto buffer = engine.tree->add<Buffer>();
-
-    buffer->select();
-
-    auto foo = buffer->get()->addObj(new Struct("Foo", {"float"}));
-    auto bar = buffer->get()->addObj(new Struct("Bar", {"float"}));
-
-    float f[3] = {1,2,3};
-
-    for (int i = 0 ; i < 4; i++) {
-
-        auto vertice = foo->push();
-
-        vertice[0][0].set<float>(4);
-
-    }
-    
-    for (int i = 0 ; i < 2; i++) {
-
-        auto indices = bar->push(&f[0]);
-
-        indices[0][0].set<float>(5);
-    }
 
 
     // add Objects child to Buffer w/ child Comp
