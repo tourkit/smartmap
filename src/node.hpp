@@ -118,8 +118,6 @@ struct NONODE : Node {
     
     NONODE(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
 
-            if(oncreate_cbs) { oncreate_cbs(this,this->ptr); }
-
             if(oncreate_cbs2<T>) { PLOGD << " add";  oncreate_cbs2<T>(this,this->ptr); }
 
             color = {100,100,100,100};
@@ -144,16 +142,10 @@ struct NONODE : Node {
 
     }
 
-    void editor() override { if(editor_cbs) editor_cbs(this,this->ptr);
-    if(editor_cbs2<T>) editor_cbs2<T>(this,this->ptr);
-     }
+    void editor() override { if(editor_cbs2<T>) editor_cbs2<T>(this,this->ptr); }
 
-    static inline std::function<void(Node*,T*)> oncreate_cbs = nullptr;
-    static inline std::function<void(Node*,T*)> editor_cbs = nullptr;
     static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cbs;
 
-    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cbs = cb;  }
-    static void editor(std::function<void(Node*,T*)> cb) { editor_cbs = cb; }
     template <typename U>
     static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs[typeid(U)] = cb;  }
 
