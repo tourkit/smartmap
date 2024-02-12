@@ -11,26 +11,26 @@
 #include <boost/type_index.hpp>
 
 struct File;
-struct NODE;
+struct TYPEDNODE;
 
 
 struct Node {
 
     template <typename T>
-    static inline std::function<void(Node*,T*)> oncreate_cbs2;
+    static inline std::function<void(Node*,T*)> oncreate_cb;
     template <typename T>
-    static inline std::function<void(Node*,T*)> editor_cbs2;
+    static inline std::function<void(Node*,T*)> editor_cb;
     template <typename T>
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cbs2;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
 
     template <typename T>
-    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cbs2<T> = cb;  }
+    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cb<T> = cb;  }
     template <typename T>
-    static void editor(std::function<void(Node*,T*)> cb) { editor_cbs2<T> = cb; }
+    static void editor(std::function<void(Node*,T*)> cb) { editor_cb<T> = cb; }
     template <typename T>
-    static void editor() { editor_cbs2<T>(); }
+    static void editor() { editor_cb<T>(); }
     template <typename T>
-    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs2<T>[type()] = cb;  }
+    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[type()] = cb;  }
 
     std::string name;
 
@@ -52,7 +52,7 @@ struct Node {
 
     virtual Node *add(Node *node);
 
-    virtual NODE* addPtr(Node* node) ;
+    virtual TYPEDNODE* addPtr(Node* node) ;
 
     void remove(Node *child);
 
@@ -107,7 +107,7 @@ struct Node {
     };
 
 template <typename T>
-struct Ptr : Node { 
+struct NODE : Node { 
 
     T* ptr; 
 
@@ -119,9 +119,9 @@ struct Ptr : Node {
 
     operator T*() { return ptr; }
     
-    Ptr(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
+    NODE(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
 
-            if(oncreate_cbs2<T>) { oncreate_cbs2<T>(this,this->ptr); }
+            if(oncreate_cb<T>) { oncreate_cb<T>(this,this->ptr); }
 
             color = {100,100,100,100};
 
@@ -129,11 +129,11 @@ struct Ptr : Node {
 
     Node* add(Node* node) override {
 
-        if (onadd_cbs2<T>.size()) {
+        if (onadd_cb<T>.size()) {
 
-            if (onadd_cbs2<T>.find(node->type()) != onadd_cbs2<T>.end()) {
+            if (onadd_cb<T>.find(node->type()) != onadd_cb<T>.end()) {
 
-                return onadd_cbs2<T>[node->type()](this,node);
+                return onadd_cb<T>[node->type()](this,node);
 
             }
 
@@ -145,10 +145,10 @@ struct Ptr : Node {
 
     }
 
-    void editor() override { if(editor_cbs2<T>) editor_cbs2<T>(this,this->ptr); }
+    void editor() override { if(editor_cb<T>) editor_cb<T>(this,this->ptr); }
 
     template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs2<T>[typeid(U)] = cb;  }
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
 
 private:
 
@@ -156,8 +156,18 @@ private:
 
 };
 
-struct ANYNODE {};
-struct NODE : Ptr<ANYNODE> { };
+struct ANY {};
+struct TYPEDNODE : NODE<ANY> { };
+
+template <typename T>
+struct Ptr : NODE<T> { 
+
+    virtual ~Ptr() { }
+
+    Ptr(void* ptr) : NODE<T>(ptr) { } 
+
+    TYPEDNODE* addPtr(Node* node) override { return (TYPEDNODE*)NODE<T>::add(node); }
+};
 
 template <typename T>
 struct Ownr : Ptr<T> {

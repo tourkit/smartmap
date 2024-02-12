@@ -50,10 +50,9 @@ void Engine::init() {
     static_ubo = tree->add<UBO>("static_ubo")->get(); 
 
     auto dc = stack->add<DrawCall>();
-
-    auto model = dc->addPtr(models->childrens[0]);
-
-    ((Ptr<Model>*)model)->addPtr(shaders->childrens[0]); // not adding as NODE*
+    auto model = dc->addPtr(models->childrens[0]); // maybe addPtr is not a good name
+    model->addPtr(shaders->childrens[0]); 
+    dc->addPtr(models->childrens[1]); // maybe addPtr is not a good name
 
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});

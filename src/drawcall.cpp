@@ -35,18 +35,22 @@ void DrawCall::update() {
     // frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n\n";
 
     std::unordered_set<ShaderFX*> fxs;
-    // for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
-    // for (auto fx : fxs) frag_shader += fx->file->data +"\n\n";
+
+
+    for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
+    for (auto fx : fxs) frag_shader += fx->file->data +"\n\n";
 
     PLOGD << fxs.size();
     
     frag_shader += "void main() {\n\n";
 
-    // for (auto model : childrens) {
+    int model_id = 0;
+    for (auto model : vbo.models) {
 
-    //     frag_shader += "\t// " +((Model*)model)->name+"\n";
+        frag_shader += "\t// " +model.file->name+"\n";
+        // frag_shader += "\t// " +model.file->name+"_"+std::to_string(model_id)+"\n";
 
-    //     frag_shader += "\tcolor = vec4(1);\n";
+        frag_shader += "\tcolor = vec4(1);\n";
 
     //     for (auto c : model->childrens) { 
 
@@ -61,11 +65,11 @@ void DrawCall::update() {
 
     //      }
 
-        // frag_shader += "\n\n";
+        frag_shader += "\n\n";
 
-    // }
+        model_id++;
 
-    frag_shader += "\tcolor = vec4(1);\n\n";
+    }
     
     frag_shader += "}";
 
@@ -75,8 +79,8 @@ void DrawCall::update() {
     std::string vert_shader;
     vert_shader = "#version 430 core\n\n";
 
-    vert_shader += "layout (location = 0) in vec2 POSITION;\n\n";
-    vert_shader += "layout (location = 1) in vec2 TEXCOORD;\n\n";
+    vert_shader += "layout (location = 0) in vec2 POSITION;\n";
+    vert_shader += "layout (location = 1) in vec2 TEXCOORD;\n";
     vert_shader += "layout (location = 3) in int OBJ;\n\n";
 
     vert_shader += "void main() {\n\n";

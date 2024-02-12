@@ -24,7 +24,7 @@
 
     }   
 
-    NODE* Node::addPtr(Node* node){ return (NODE*)add(node); } 
+    TYPEDNODE* Node::addPtr(Node* node){ return (TYPEDNODE*)add(node); } 
 
     void Node::select(){
 

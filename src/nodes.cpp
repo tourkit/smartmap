@@ -23,7 +23,7 @@ void Nodes::init() {
     
     // Node::oncreate<xxx>([](Node* node, xxx *x){ });
 
-    // Ownr<xxx>::onadd<yyy>([](Node*_this,Node*node){ 
+    // NODE<xxx>::onadd<yyy>([](Node*_this,Node*node){ 
 
     //     auto s = ((Ptr<xxx>*)_this)->get();
     //     auto f = ((Ptr<yyy>*)node)->get();
@@ -34,19 +34,17 @@ void Nodes::init() {
 
     ////////// FILE.HPP 
 
-    Node::oncreate<File>([](Node* node, File *file){ node->name = file->name+"."+file->extension; });
-
-    Node::editor<File>([](Node* node, File *file){ ImGui::Text(file->extension.c_str()); });
+    Node::oncreate<File>([](Node* node, File *file){ node->name = file->name+" ("+file->extension+")"; });
 
     ////////// UBO.HPP 
 
     Node::oncreate<UBO>([](Node* node, UBO *ubo){ node->name = ubo->name; });
 
-    Node::editor<UBO>([](Node* node, UBO *ubo){ Node::editor_cbs2<Buffer>(node, &ubo->buffer); });
+    Node::editor<UBO>([](Node* node, UBO *ubo){ Node::editor_cb<Buffer>(node, &ubo->buffer); });
 
     ////////// VBO.HPP 
     
-    Node::editor<VBO>([](Node*node,VBO*vbo){ Node::editor_cbs2<Buffer>(node, &vbo->buffer); });
+    Node::editor<VBO>([](Node*node,VBO*vbo){ Node::editor_cb<Buffer>(node, &vbo->buffer); });
 
     ////////// STRUCT.HPP 
 
@@ -75,16 +73,16 @@ void Nodes::init() {
         
         ImGui::Text(std::to_string(shader->loaded).c_str());
     
-        ImGui::InputTextMultiline("frag shader", &shader->frag.src[0], shader->frag.src.length(), ImVec2(300,300));
-        ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(300,300));
+        ImGui::InputTextMultiline("frag shader", &shader->frag.src[0], shader->frag.src.length(), ImVec2(600,300));
+        ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(600,300));
    
     });
 
     ////////// DRAWCALL.HPP 
 
-    Node::editor<DrawCall>([](Node* node, DrawCall *dc){ Node::editor_cbs2<ShaderProgram>(node, &dc->shader); });
+    Node::editor<DrawCall>([](Node* node, DrawCall *dc){ Node::editor_cb<ShaderProgram>(node, &dc->shader); });
 
-    Ownr<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
+    NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
         auto dc = _this->is_a<DrawCall>();
         auto file = node->is_a<File>();
@@ -92,9 +90,7 @@ void Nodes::init() {
 
         auto model = dc->vbo.import(file);
 
-        _this->Node::add(new Ptr<Model>(model));
-
-        return node;
+        return _this->Node::add(new Ptr<Model>(model));
 
     });
 
@@ -102,24 +98,20 @@ void Nodes::init() {
 
     Node::oncreate<Model>([](Node* node, Model *model) { node->name = model->file->name; });
 
-    Ownr<Model>::onadd<File>([](Node*_this,Node*node){ 
-        PLOGD << "uuuu"; 
+    NODE<Model>::onadd<File>([](Node*_this,Node*node){ 
         
         auto model = _this->is_a<Model>();
         auto file = node->is_a<File>();
         if (!model || !file) return node;
 
-
-        auto bad = new ShaderFX(file);
+        auto bad = new ShaderFX(file); // unowned...
 
         model->addFX(bad);
 
-        _this->Node::add(new Ptr<ShaderFX>(bad));
-        
         auto dc = _this->parent()->is_a<DrawCall>();
         if (dc) dc->update();
         
-        return node;
+        return _this->Node::add(new Ptr<ShaderFX>(bad));
 
     });
 
@@ -137,7 +129,7 @@ void Nodes::init() {
 
     ////////// ENGINE.HPP (and Stack)
 
-    Ownr<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
+    NODE<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
 
         auto dc = ((Ptr<DrawCall>*)node)->get();
         dc->update();
