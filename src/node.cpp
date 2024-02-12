@@ -24,6 +24,8 @@
 
     }   
 
+    NODE* Node::addPtr(Node* node){ return (NODE*)add(node); } 
+
     void Node::select(){
 
         engine.editorw.selected = this;

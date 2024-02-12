@@ -11,6 +11,7 @@
 #include <boost/type_index.hpp>
 
 struct File;
+struct NODE;
 
 
 struct Node {
@@ -30,8 +31,6 @@ struct Node {
     static void editor() { editor_cbs2<T>(); }
     template <typename T>
     void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs2<T>[type()] = cb;  }
-
-
 
     std::string name;
 
@@ -53,6 +52,8 @@ struct Node {
 
     virtual Node *add(Node *node);
 
+    virtual NODE* addPtr(Node* node) ;
+
     void remove(Node *child);
 
     uint32_t index();
@@ -63,18 +64,11 @@ struct Node {
 
     virtual void editor() {}
 
-    void import(std::string path);
-
-    virtual void import(File* file) {}
-
     virtual void run();
-    virtual void runCB();
     
     virtual void update();
 
     void select();
-
-    virtual void* ptr_untyped() { return this; }
 
     template <typename U>
     U* is_a() { return ((type() == typeid(U))? (U*)ptr_untyped() : nullptr); }
@@ -95,16 +89,25 @@ struct Node {
     }
     
     virtual std::type_index type() { return typeid(Node); }
+    
+    virtual void* ptr_untyped() { return this; }
 
-    std::function<void(Node*)> dtor = nullptr;
+    std::function<void(Node*)> dtor = nullptr; // useless ?
 
     auto begin() { return childrens.begin(); }
+
     auto end() { return childrens.end(); }
+    
+    virtual void runCB();
+
+    void import(std::string path); // useless ?
+
+    virtual void import(File* file) {} // useless ?
 
     };
 
 template <typename T>
-struct NONODE : Node { 
+struct Ptr : Node { 
 
     T* ptr; 
 
@@ -116,9 +119,9 @@ struct NONODE : Node {
 
     operator T*() { return ptr; }
     
-    NONODE(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
+    Ptr(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
 
-            if(oncreate_cbs2<T>) { PLOGD << " add";  oncreate_cbs2<T>(this,this->ptr); }
+            if(oncreate_cbs2<T>) { oncreate_cbs2<T>(this,this->ptr); }
 
             color = {100,100,100,100};
 
@@ -126,11 +129,11 @@ struct NONODE : Node {
 
     Node* add(Node* node) override {
 
-        if (onadd_cbs.size()) {
+        if (onadd_cbs2<T>.size()) {
 
-            if (onadd_cbs.find(node->type()) != onadd_cbs.end()) {
+            if (onadd_cbs2<T>.find(node->type()) != onadd_cbs2<T>.end()) {
 
-                return onadd_cbs[node->type()](this,node);
+                return onadd_cbs2<T>[node->type()](this,node);
 
             }
 
@@ -144,10 +147,8 @@ struct NONODE : Node {
 
     void editor() override { if(editor_cbs2<T>) editor_cbs2<T>(this,this->ptr); }
 
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cbs;
-
     template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs[typeid(U)] = cb;  }
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cbs2<T>[typeid(U)] = cb;  }
 
 private:
 
@@ -156,18 +157,7 @@ private:
 };
 
 struct ANYNODE {};
-struct NODE : NONODE<ANYNODE> { NODE* addPtr(Node* node)  { return (NODE*)NONODE<ANYNODE>::add(node); } };
-
-template <typename T>
-struct Ptr : NONODE<T> { 
-
-    virtual ~Ptr() { }
-
-    Ptr(void* ptr) : NONODE<T>(ptr) { } 
-
-    NODE* addPtr(Node* node)  { return (NODE*)NONODE<T>::add(node); }
-};
-
+struct NODE : Ptr<ANYNODE> { };
 
 template <typename T>
 struct Ownr : Ptr<T> {
