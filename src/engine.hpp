@@ -28,6 +28,8 @@ struct Engine {
     UBO *static_ubo;
 
     Ownr<Stack>* stack = tree->add<Stack>();
+
+    Node* selected = tree;
     
     Atlas *atlas;
     

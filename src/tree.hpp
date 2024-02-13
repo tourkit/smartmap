@@ -4,6 +4,10 @@
 
 struct Tree : GUI::Window {
 
+    Node* selected = nullptr;
+
+    bool locked = true;
+
     Tree();
 
     void draw() override;

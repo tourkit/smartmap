@@ -40,6 +40,7 @@ add_executable(smartmap
     src/object.cpp
     
     src/nodes.cpp
+    src/editor.cpp
     src/editors.cpp
     src/gui.cpp
     

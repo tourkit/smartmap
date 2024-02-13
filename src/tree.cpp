@@ -6,6 +6,8 @@
 Tree::Tree() : GUI::Window("Tree")  { }
 
 void Tree::draw()  { 
+
+    if (!locked || !selected) selected = engine.selected;
     
     if (ImGui::BeginMainMenuBar()) {
         
@@ -36,7 +38,7 @@ void Tree::draw()  {
     
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
         
-        drawChildrens(Engine::getInstance().tree); 
+        drawChildrens(selected); 
 
         ImGui::EndTable();
     }
@@ -76,10 +78,10 @@ bool TreeViewNode(Node* node) {
 
     auto hovered = IsItemHovered();
 
-    if(engine.editorw.selected != node) {
+    if(engine.selected != node) {
 
 
-        if (engine.editorw.selected) { 
+        if (engine.selected) { 
 
             auto c = node->color;
 
@@ -98,11 +100,11 @@ bool TreeViewNode(Node* node) {
     SetCursorPosX(GetCursorPosX()-text_size.x);
     auto x = TreeNodeEx((node->name).c_str(), flags);
     
-    if(engine.editorw.selected != node) {
+    if(engine.selected != node) {
 
         if (hovered) PopStyleColor();
 
-        if (engine.editorw.selected) ImGui::PopStyleColor(1);
+        if (engine.selected) ImGui::PopStyleColor(1);
 
     }
 
@@ -170,7 +172,7 @@ void Tree::drawNode(Node* node) {
             
         }
             
-        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
+        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().selected = node; }
         
         const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 

@@ -28,7 +28,7 @@
 
     void Node::select(){
 
-        engine.editorw.selected = this;
+        engine.selected = this;
 
     }
 
