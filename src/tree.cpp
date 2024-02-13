@@ -49,26 +49,78 @@ void Tree::drawChildrens(Node* node) {
 
 }
 
+ 
+namespace ImGui {
+
+bool TreeViewNode(Node* node) {
+
+    ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow ;
+
+    if (!node->childrens.size()) flags |= ImGuiTreeNodeFlags_Leaf;
+
+    ImGuiContext& g = *GImGui;
+    ImGuiWindow* window = GetCurrentWindow();
+    if (window->SkipItems)
+        return 0;
+
+    // Layout
+    // const ImVec2 curr_pos = ImVec2(0,GetCursorPos().y);
+    const ImVec2 curr_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
+
+    const char *badbad = "mmmmmmmmmmmmmmmmmmmmmmmmmm";
+    const ImVec2 text_size = CalcTextSize(badbad,badbad+15);
+    ImRect bb(curr_pos.x, curr_pos.y, curr_pos.x + text_size.x, curr_pos.y + text_size.y);
+    ItemSize(text_size, 0.0f);
+    if (!ItemAdd(bb, 0))
+        return 0;
+
+    auto hovered = IsItemHovered();
+
+    if(engine.editorw.selected != node) {
+
+
+        if (engine.editorw.selected) { 
+
+            auto c = node->color;
+
+            const ImVec4 imc = ImVec4(.75, .75, .75, .75);  // shoud use node->color; !!
+
+            ImGui::PushStyleColor(ImGuiCol_Text, imc);
+
+        
+        }
+
+        if (hovered) PushStyleColor(ImGuiCol_Text, ImVec4(1, .4, 0, 1));
+
+    }
+
+    SameLine();
+    SetCursorPosX(GetCursorPosX()-text_size.x);
+    auto x = TreeNodeEx((node->name).c_str(), flags);
+    
+    if(engine.editorw.selected != node) {
+
+        if (hovered) PopStyleColor();
+
+        if (engine.editorw.selected) ImGui::PopStyleColor(1);
+
+    }
+
+    return x;
+
+}
+
+};
 void Tree::drawNode(Node* node) { 
     
     ImGui::TableNextRow();
 
     if (ImGui::TableNextColumn()) {
 
-        ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow ;
-
-        if (!node->childrens.size()) flags |= ImGuiTreeNodeFlags_Leaf;
-
         ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
-        
 
-        if (engine.editorw.selected != node) { 
+        const bool recurse = ImGui::TreeViewNode(node);
 
-            // ImGui::PushStyleColor(ImGuiCol_Text, node->color);
-
-        
-        }
-        const bool recurse = ImGui::TreeNodeEx((node->name).c_str(), flags);
        if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
     {
         if (ImGui::BeginMenu("add"))
