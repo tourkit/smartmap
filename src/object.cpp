@@ -83,8 +83,6 @@ Entry &Object::push(void* data) {
 
     }
 
-    int id = entrys.size();
-
     int obj_offset = 0;
     for (auto& o : buffer->objects) {
 
@@ -92,6 +90,8 @@ Entry &Object::push(void* data) {
         obj_offset += o.size();
 
     }
+
+    int id = entrys.size();
 
     memcpy(this->data()+eq(id),data,s->size); 
 
