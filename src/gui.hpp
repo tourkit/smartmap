@@ -7,6 +7,7 @@
 
 
 #include "imgui/imgui.h"
+#include "include/vendor/ImGuiColorTextEdit/TextEditor.h"
 
 
 struct StringsBuffer {

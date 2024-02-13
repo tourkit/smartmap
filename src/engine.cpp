@@ -28,10 +28,7 @@ void Engine::run() {
         
         // engine.dynamic_ubo->upload();
 
-        for ( auto dc : engine.stack->childrens) {
-
-            ((Ownr<DrawCall>*)dc)->get()->run();
-        }
+        engine.stack->run();
 
         engine.gui.draw(); 
 
@@ -52,7 +49,6 @@ void Engine::init() {
     auto dc = stack->add<DrawCall>();
     auto model = dc->addPtr(models->childrens[0]); // maybe addPtr is not a good name
     model->addPtr(shaders->childrens[0]); 
-    dc->addPtr(models->childrens[1]); // maybe addPtr is not a good name
 
     // Components::getInstance();
     // Node* comps = tree->add(new Node{"Components"});

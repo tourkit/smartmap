@@ -39,22 +39,26 @@ void DrawCall::update() {
 
     for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
     for (auto fx : fxs) frag_shader += fx->file->data +"\n\n";
-
-    PLOGD << fxs.size();
     
     frag_shader += "void main() {\n\n";
 
+    PLOGD << vbo.models.size();
+
+    frag_shader += "\tcolor = vec4(0);\n\n";
+
     int model_id = 0;
-    for (auto model : vbo.models) {
+    for (auto &model : vbo.models) {
 
         frag_shader += "\t// " +model.file->name+"\n";
+        auto varname = model.file->name+"_"+std::to_string(model_id);
         // frag_shader += "\t// " +model.file->name+"_"+std::to_string(model_id)+"\n";
 
-        frag_shader += "\tcolor = vec4(1);\n";
+        frag_shader += "\tvec4 "+varname+" = vec4(1);\n\n";
 
-    //     for (auto c : model->childrens) { 
+        for (auto fx : model.fxs) { 
 
-    //         auto shader = ((ShaderFXPtr*)c)->ptr;
+
+               frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname+");\n\n";
 
     //         frag_shader += "\tcolor = ";
     //         frag_shader += shader->name + "(";
@@ -63,7 +67,9 @@ void DrawCall::update() {
     //         frag_shader += ")";
     //         frag_shader += ";\n";
 
-    //      }
+         }
+
+        frag_shader += "\tcolor += "+varname+";\n";
 
         frag_shader += "\n\n";
 

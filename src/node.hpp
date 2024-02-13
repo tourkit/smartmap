@@ -17,12 +17,16 @@ struct TYPEDNODE;
 struct Node {
 
     template <typename T>
-    static inline std::function<void(Node*,T*)> oncreate_cb;
+    static inline std::function<void(Node*,T*)> oncreate_cb = nullptr;
     template <typename T>
-    static inline std::function<void(Node*,T*)> editor_cb;
+    static inline std::function<void(Node*,T*)> onrun_cb = nullptr;
+    template <typename T>
+    static inline std::function<void(Node*,T*)> editor_cb = nullptr;
     template <typename T>
     static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
 
+    template <typename T>
+    static void onrun(std::function<void(Node*,T*)> cb) { onrun_cb<T> = cb;  }
     template <typename T>
     static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cb<T> = cb;  }
     template <typename T>
@@ -127,6 +131,13 @@ struct NODE : Node {
 
      }
 
+    void run() override {
+
+        Node::run();
+
+        if(onrun_cb<T>) { onrun_cb<T>(this,this->ptr); }
+
+    }
     Node* add(Node* node) override {
 
         if (onadd_cb<T>.size()) {

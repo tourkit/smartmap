@@ -10,7 +10,6 @@
 #include "ubo.hpp"
 #include "engine.hpp"
 #include "drawcall.hpp"
-#include "file.hpp"
 #include "vbo.hpp"
 #include "shader.hpp"
 #include "shaderfx.hpp"
@@ -34,7 +33,27 @@ void Nodes::init() {
 
     ////////// FILE.HPP 
 
-    Node::oncreate<File>([](Node* node, File *file){ node->name = file->name+" ("+file->extension+")"; });
+    Node::oncreate<File>([](Node* node, File *file){ node->name = file->name+"."+file->extension+""; });
+
+    static std::map<int,int> filechecks;
+
+    Node::onrun<File>([](Node* node, File *file){ 
+
+        int uid = 0;
+
+        WIN32_FILE_ATTRIBUTE_DATA fileInfo; 
+        
+        GetFileAttributesExA(file->path.c_str(), GetFileExInfoStandard, &fileInfo);
+
+        SYSTEMTIME st; 
+        
+        FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
+
+        auto last = st.wMilliseconds;
+
+        if (filechecks[uid] != last) { filechecks[uid] = last;  file->reload(); }
+
+     });
 
     ////////// UBO.HPP 
 
@@ -72,14 +91,26 @@ void Nodes::init() {
     Node::editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
         
         ImGui::Text(std::to_string(shader->loaded).c_str());
+
+        TextEditor editor;
+	    auto lang = TextEditor::LanguageDefinition::GLSL();
+        
+	    editor.SetLanguageDefinition(lang);
+        editor.SetText(shader->frag.src);
+
+        editor.SetPalette(TextEditor::GetDarkPalette());
+        
+        editor.Render("TextEditor");
     
-        ImGui::InputTextMultiline("frag shader", &shader->frag.src[0], shader->frag.src.length(), ImVec2(600,300));
-        ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(600,300));
+        // ImGui::InputTextMultiline("frag shader", &shader->frag.src[0], shader->frag.src.length(), ImVec2(600,300));
+        // ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(600,300));
    
     });
 
     ////////// DRAWCALL.HPP 
 
+    Node::onrun<DrawCall>([](Node* node, DrawCall *dc){  dc->run(); });
+    
     Node::editor<DrawCall>([](Node* node, DrawCall *dc){ Node::editor_cb<ShaderProgram>(node, &dc->shader); });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
@@ -89,6 +120,8 @@ void Nodes::init() {
         if (!dc || !file) return node;
 
         auto model = dc->vbo.import(file);
+        
+        dc->update();
 
         return _this->Node::add(new Ptr<Model>(model));
 

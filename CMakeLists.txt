@@ -70,6 +70,8 @@ add_executable(smartmap
     include/vendor/imgui/backends/imgui_impl_glfw.cpp
     include/vendor/imgui/backends/imgui_impl_opengl3.cpp
 
+    include/vendor/ImGuiColorTextEdit/TextEditor.cpp
+
     include/vendor/gl3w/src/gl3w.c
 
     include/vendor/RectangleBinPack/MaxRectsBinPack.cpp

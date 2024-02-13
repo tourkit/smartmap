@@ -27,6 +27,8 @@ struct File {
     void read(std::string source, bool binary = true);
     void write(const char* path);
     static void write(std::string path, std::string data);
+
+    void reload();
     
 };
 
