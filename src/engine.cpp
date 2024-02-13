@@ -7,8 +7,7 @@
 #include "nodes.hpp"
 
 Engine::Engine(uint16_t width, uint16_t height) 
-    : window(1920,1080), 
-    // : window(width,height), 
+    : window(1920,1080,2560,0), 
      gui(window.id) {
     window.max_fps = 59;
 
@@ -41,25 +40,22 @@ void Engine::init() {
 
     Nodes::init();
 
+    stack->addPtr<UBO>(dynamic_ubo)->select();
+
+    tree->addPtr<UBO>(static_ubo);
+
     auto models = tree->add<Directory>("assets/model/");
     auto shaders = tree->add<Directory>("assets/shaders/");
 
-    tree->addPtr<UBO>(static_ubo);
-    stack->addPtr<UBO>(dynamic_ubo);
+    // auto dc = stack->add<DrawCall>();
 
-    auto dc = stack->add<DrawCall>();
+    // dynamic_ubo->subscribers.push_back(&dc->get()->shader);
 
-    // link dc shader to ubo
+    // auto model = dc->addPtr(models->childrens[0]); 
 
-    // dc->get()->shader
-    dynamic_ubo->subscribers.push_back(&dc->get()->shader);
+    // model->addPtr(shaders->childrens[0]); 
 
-    auto model = dc->addPtr(models->childrens[0]); // maybe addPtr is not a good name
-    model->addPtr(shaders->childrens[0]); 
 
-    // Components::getInstance();
-    // Node* comps = tree->add(new Node{"Components"});
-    // for (auto c : Component::pool) comps->add(c);
     
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});

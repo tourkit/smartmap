@@ -23,6 +23,14 @@ Entry &Object::push() {
 
 }
 
+void Object::update() {
+
+
+
+
+
+}
+
 Entry &Object::push(void* data) { 
 
     auto backup_data = buffer->data;
@@ -84,12 +92,12 @@ Entry &Object::push(void* data) {
         obj_offset += o.size();
 
     }
-    memcpy(this->data()+eq(id),data,s->size); // missing some (not comp but obj?) offset here 
 
+    memcpy(this->data()+eq(id),data,s->size); 
 
     entrys.push_back(new Entry{this,id});
 
-    // buffer->update(); // needed ?
+    // shouldnt buffer->update() here ? if not find where does it happn now and if is logic ?
     
     return *entrys.back();
 

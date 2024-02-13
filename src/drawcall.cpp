@@ -41,7 +41,7 @@ void DrawCall::update() {
 
         auto varname = model.file->name+"_"+std::to_string(model_id);
 
-        frag_shader += "\tvec4 "+varname+" = vec4(1);\n\n";
+        frag_shader += "\tvec4 "+varname+" = vec4(1,1,1,1);\n\n";
 
         for (auto fx : model.fxs) { 
 

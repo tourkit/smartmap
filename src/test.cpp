@@ -20,7 +20,10 @@
 Test::Test(){
 
 
-    // add Objects child to Buffer w/ child Comp
+    auto obj = engine.dynamic_ubo->buffer.addObj(new Struct("MICHEL"));
+
+    obj->s->addComp({"Position"});
+    obj->push();
 
 
 }

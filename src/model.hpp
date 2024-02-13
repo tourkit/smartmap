@@ -16,7 +16,9 @@ struct Model {
 
     std::vector<ShaderFX*> fxs; 
 
-    Model(File* file, int id = 0);
+    int quantity;
+
+    Model(File* file, int id = 0, int quantity = 1);
 
     void addFX(ShaderFX* fx);
 

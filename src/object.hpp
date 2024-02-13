@@ -27,4 +27,6 @@ struct Object {
 
     Entry &push(void* data);
 
+    void update();
+
 };
