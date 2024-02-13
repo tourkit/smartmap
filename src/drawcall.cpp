@@ -24,7 +24,7 @@ void DrawCall::update() {
 
     frag_shader += "out vec4 color;\n\n";
 
-    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[12]; };\n\n"; // should auto from dynamic UBO structs
+    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[3]; };\n\n"; // should auto from dynamic UBO structs
 
     std::unordered_set<ShaderFX*> fxs;
     for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);

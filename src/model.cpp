@@ -17,11 +17,9 @@ void Model::addFX(ShaderFX* fx) {
 
     // if (!Component::id(fx->file->name.c_str())) 
     
-    Component::create(fx->file->name.c_str())
-        .member<float>("param1")
-        .member<float>("param2")
-        .member<float>("param3")
-        ;
+    auto &c = Component::create(fx->file->name.c_str());
+
+    for (int i = 1; i < fx->args.size(); i++) c.member<float>(fx->args[i].c_str());
 
     obj->s->addComp({fx->file->name});
     

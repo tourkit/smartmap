@@ -49,6 +49,11 @@ void Engine::init() {
 
     auto dc = stack->add<DrawCall>();
 
+    // link dc shader to ubo
+
+    // dc->get()->shader
+    dynamic_ubo->subscribers.push_back(&dc->get()->shader);
+
     auto model = dc->addPtr(models->childrens[0]); // maybe addPtr is not a good name
     model->addPtr(shaders->childrens[0]); 
 

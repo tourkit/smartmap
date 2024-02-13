@@ -223,7 +223,9 @@ void Nodes::init() {
 
             ImGui::SameLine(); if (ImGui::Button("add")) {
 
-                // if (buffer->owner) buffer->owner->update();
+                (*buffer)[obj_current]->push();
+
+                if (buffer->owner) buffer->owner->update();
 
             }
 
@@ -249,7 +251,7 @@ void Nodes::init() {
 
                     if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to)) { 
 
-                        // if (buffer->owner) buffer->owner->update();
+                        if (buffer->owner) buffer->owner->upload();
 
                     }
 

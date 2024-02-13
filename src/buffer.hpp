@@ -12,6 +12,7 @@ struct Struct;
 struct BufferOwner {
 
     virtual void update() { }
+    virtual void upload() { }
 
 };
 
