@@ -27,6 +27,6 @@ struct Object {
 
     Entry &push(void* data);
 
-    void update();
+    void resize(size_t size);
 
 };

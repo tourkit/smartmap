@@ -23,20 +23,12 @@ Entry &Object::push() {
 
 }
 
-void Object::update() {
-
-
-
-
-
-}
-
-Entry &Object::push(void* data) { 
+void Object::resize(size_t size) {
 
     auto backup_data = buffer->data;
     auto backup_objects = buffer->objects;
 
-    reserved+=1;
+    reserved=size;
 
     int offset = 0;
 
@@ -90,6 +82,13 @@ Entry &Object::push(void* data) {
         obj_offset += o.size();
 
     }
+
+
+}
+
+Entry &Object::push(void* data) { 
+
+    resize(reserved+1);
 
     int id = entrys.size();
 
