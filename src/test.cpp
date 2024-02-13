@@ -1,6 +1,8 @@
 #include "test.hpp"
 #include "log.hpp"
 
+#include "node.hpp"
+
 #include <cstring>
 #include <typeinfo>
 #include <typeindex>
@@ -25,9 +27,9 @@ Test::Test(){
 
     obj->push();
 
-    Buffer bkp = *obj->buffer;
+    // Buffer bkp = *obj->buffer;
 
-    obj->update2(bkp); // get why this crashess
+    // obj->update2(bkp); // get why this crashess
 
     // PLOGD << "tete";
 

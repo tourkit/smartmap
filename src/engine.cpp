@@ -42,14 +42,14 @@ void Engine::init() {
 
     Nodes::init();
     
-    Editors::init();
+    // Editors::init();
 
-    stack->addPtr<UBO>(dynamic_ubo)->select();
+    // stack->addPtr<UBO>(dynamic_ubo)->select();
 
-    tree->addPtr<UBO>(static_ubo);
+    // tree->addPtr<UBO>(static_ubo);
 
-    auto models = tree->add<Directory>("assets/model/");
-    auto shaders = tree->add<Directory>("assets/shaders/");
+    // auto models = tree->add<Directory>("assets/model/");
+    // auto shaders = tree->add<Directory>("assets/shaders/");
 
     // auto dc = stack->add<DrawCall>();
     // dynamic_ubo->subscribers.push_back(&dc->get()->shader);
