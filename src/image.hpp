@@ -1,6 +1,7 @@
 #pragma once
 
-#include "pch.hpp"
+#include <string>
+
 #include "file.hpp"
 
 struct Image : File {

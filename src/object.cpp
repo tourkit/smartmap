@@ -116,6 +116,13 @@ void Object::update2(Buffer bkp) {
                 int member_offset = comp_offset;
                 
                 for (int member_id = 0; member_id < o.s->comps[comp_id]->members.size(); member_id++) {
+
+                    if (member_id >0) {
+
+
+                        PLOGD<<"crash";
+
+                    }
                            
                     auto offset = o.offset+(o.s->size*entry_id)+member_offset;
 
@@ -125,7 +132,6 @@ void Object::update2(Buffer bkp) {
                            
                     member_offset += o.s->comps[comp_id]->members[member_id].size;
 
-                // return;
                 }
 
                 comp_offset += o.s->comps[comp_id]->size;

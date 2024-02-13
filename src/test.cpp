@@ -25,9 +25,11 @@ Test::Test(){
 
     obj->push();
 
-    // Buffer bkp = *obj->buffer;
+    Buffer bkp = *obj->buffer;
 
-    // obj->update2(bkp);
+    obj->update2(bkp); // get why this crashess
+
+    // PLOGD << "tete";
 
 
 }

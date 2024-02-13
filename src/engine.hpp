@@ -5,11 +5,11 @@
 
 #include "node.hpp"
 #include "atlas.hpp"
+#include "buffer.hpp"
 
 
 #include "tree.hpp"
 #include "editor.hpp"
-#include "buffer.hpp"
 
 struct Stack {};
 

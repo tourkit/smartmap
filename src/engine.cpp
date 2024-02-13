@@ -52,14 +52,9 @@ void Engine::init() {
     auto shaders = tree->add<Directory>("assets/shaders/");
 
     // auto dc = stack->add<DrawCall>();
-
     // dynamic_ubo->subscribers.push_back(&dc->get()->shader);
-
     // auto model = dc->addPtr(models->childrens[0]); 
-
     // model->addPtr(shaders->childrens[0]); 
-
-
     
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
