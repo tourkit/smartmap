@@ -3,6 +3,8 @@
 #include <chrono>
 #include <thread>
 
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
 
 FPS::FPS(std::string name, float max_fps) : name(name), max_fps(max_fps) { 
     
