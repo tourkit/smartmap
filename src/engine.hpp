@@ -2,7 +2,6 @@
 
 #include "window.hpp"
 #include "ubo.hpp"
-#include "gui.hpp"
 
 #include "node.hpp"
 #include "atlas.hpp"
@@ -18,7 +17,7 @@ struct Engine {
 
     Window window;
 
-    GUI gui;
+    GUI* gui;
 
     Buffer buffer; 
     

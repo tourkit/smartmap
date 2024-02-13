@@ -3,12 +3,14 @@
 #include "struct.hpp"
 #include "shaderfx.hpp"
 #include "drawcall.hpp"
+#include "gui.hpp"
 
 #include "nodes.hpp"
+#include "editors.hpp"
 
 Engine::Engine(uint16_t width, uint16_t height) 
     : window(1920,1080,2560,0), 
-     gui(window.id) {
+     gui(new GUI(window.id)) {
     window.max_fps = 59;
 
     dynamic_ubo = new UBO("dynamic_ubo");
@@ -30,7 +32,7 @@ void Engine::run() {
 
         engine.stack->run();
 
-        engine.gui.draw(); 
+        engine.gui->draw(); 
 
     });
 
@@ -39,6 +41,8 @@ void Engine::run() {
 void Engine::init() {
 
     Nodes::init();
+    
+    Editors::init();
 
     stack->addPtr<UBO>(dynamic_ubo)->select();
 

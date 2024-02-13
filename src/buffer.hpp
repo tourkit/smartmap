@@ -21,6 +21,8 @@ struct Buffer {
     
     std::vector<Object> objects;
 
+    std::vector<char> data;  
+
     std::function<void()> callback;
 
     BufferOwner *owner = nullptr;
@@ -36,8 +38,6 @@ struct Buffer {
     void reset();
     
     void destroy();
-
-    std::vector<char> data;  
 
     Object* operator[](int id) { return &objects[id]; }
 

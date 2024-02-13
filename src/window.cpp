@@ -112,8 +112,8 @@ void Window::initUidCallbacks() {
                 exit(0);
                 break;
             case 73:
-                if (Engine::getInstance().gui.draw_gui) Engine::getInstance().gui.draw_gui = false;
-                else Engine::getInstance().gui.draw_gui = true;
+                if (Engine::getInstance().gui->draw_gui) Engine::getInstance().gui->draw_gui = false;
+                else Engine::getInstance().gui->draw_gui = true;
                 break;
             default:
                 PLOGV << "keypress : " << (int)key ;

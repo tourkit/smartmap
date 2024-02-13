@@ -25,7 +25,7 @@ void Model::addFX(ShaderFX* fx) {
 
     obj->s->addComp({fx->file->name});
 
-    // obj->update();
+    // obj->resize(obj->reserved);
     
     fxs.push_back(fx);
 

@@ -19,11 +19,15 @@
 
 Test::Test(){
 
-
     auto obj = engine.dynamic_ubo->buffer.addObj(new Struct("MICHEL"));
 
     obj->s->addComp({"Position"});
+
     obj->push();
+
+    // Buffer bkp = *obj->buffer;
+
+    // obj->update2(bkp);
 
 
 }
