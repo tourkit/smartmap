@@ -2026,7 +2026,7 @@ const TextEditor::Palette & TextEditor::GetDarkPalette()
 			0xff707000, // Line number
 			0x40000000, // Current line fill
 			0x40808080, // Current line fill (inactive)
-			0x40a0a0a0, // Current line edge
+			0x00000000, // Current line edge
 		} };
 	return p;
 }

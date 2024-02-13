@@ -95,9 +95,11 @@ void Nodes::init() {
         ImGui::Text(std::to_string(shader->loaded).c_str());
 
         static TextEditor editor;
+        
 	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
         
 	    // editor.SetLanguageDefinition(lang);
+
         editor.SetText(shader->frag.src);
         editor.SetShowWhitespaces(false);
 

@@ -52,6 +52,7 @@ void UBO::upload(void* data, size_t size, uint32_t offset){
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 
+    
 }
 
 

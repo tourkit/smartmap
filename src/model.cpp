@@ -9,13 +9,11 @@
 
 Model::Model(File* file, int id) : file(file), id(id) { 
 
-    obj = engine.dynamic_ubo->buffer.addObj(new Struct("model"));
+    obj = engine.dynamic_ubo->buffer.addObj(new Struct((file->name+"_"+std::to_string(id)).c_str()));
 
 }
 
 void Model::addFX(ShaderFX* fx) {
-
-    // if (!Component::id(fx->file->name.c_str())) 
     
     auto &c = Component::create(fx->file->name.c_str());
 
