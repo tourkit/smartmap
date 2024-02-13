@@ -52,7 +52,6 @@ void Tree::drawChildrens(Node* node) {
 void Tree::drawNode(Node* node) { 
     
     ImGui::TableNextRow();
-    
 
     if (ImGui::TableNextColumn()) {
 
@@ -62,6 +61,13 @@ void Tree::drawNode(Node* node) {
 
         ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
         
+
+        if (engine.editorw.selected != node) { 
+
+            // ImGui::PushStyleColor(ImGuiCol_Text, node->color);
+
+        
+        }
         const bool recurse = ImGui::TreeNodeEx((node->name).c_str(), flags);
        if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
     {

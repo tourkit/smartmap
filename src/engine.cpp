@@ -44,12 +44,12 @@ void Engine::init() {
     auto models = tree->add<Directory>("assets/model/");
     auto shaders = tree->add<Directory>("assets/shaders/");
 
-    tree->addPtr(new Ptr<UBO>(static_ubo)); 
-    stack->addPtr(new Ptr<UBO>(dynamic_ubo));
+    tree->addPtr<UBO>(static_ubo);
+    stack->addPtr<UBO>(dynamic_ubo);
 
-    // auto dc = stack->add<DrawCall>();
+    auto dc = stack->add<DrawCall>();
 
-    // auto model = dc->addPtr(models->childrens[0]); // maybe addPtr is not a good name
+    auto model = dc->addPtr(models->childrens[0]); // maybe addPtr is not a good name
     model->addPtr(shaders->childrens[0]); 
 
     // Components::getInstance();

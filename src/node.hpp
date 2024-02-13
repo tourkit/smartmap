@@ -10,6 +10,8 @@
 
 #include <boost/type_index.hpp>
 
+#include "glm/glm.hpp"
+
 struct File;
 struct TYPEDNODE;
 
@@ -38,7 +40,7 @@ struct Node {
 
     std::string name;
 
-    std::vector<uint32_t> color;
+    glm::vec4 color;
 
     Node* parent_node = nullptr;
  
@@ -46,7 +48,7 @@ struct Node {
 
     bool active = true, locked = false, loaded = false;
 
-    Node(std::string name = "node", std::vector<uint32_t> color = {255,255,255,255});
+    Node(std::string name = "node", glm::vec4 color = {255,255,255,255});
 
     virtual ~Node();
 
@@ -123,7 +125,7 @@ struct NODE : Node {
 
     operator T*() { return ptr; }
     
-    NODE(void* ptr) : Node((isNode() ? "((Node*)ptr)->name" : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
+    NODE(void* ptr) : Node((isNode() ? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
 
             if(oncreate_cb<T>) { oncreate_cb<T>(this,this->ptr); }
 
@@ -178,6 +180,17 @@ struct Ptr : NODE<T> {
     Ptr(void* ptr) : NODE<T>(ptr) { } 
 
     TYPEDNODE* addPtr(Node* node) override { return (TYPEDNODE*)NODE<T>::add(node); }
+
+    template <typename U>
+    Ptr<U>* addPtr(U* ptr) { 
+
+        auto x = new Ptr<U>(ptr);
+
+        Ptr<T>::add(x);
+
+        return x;
+
+    }
 };
 
 template <typename T>

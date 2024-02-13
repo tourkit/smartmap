@@ -57,7 +57,7 @@ void Nodes::init() {
 
     ////////// UBO.HPP 
 
-    Node::onrun<UBO>([](Node* node, UBO *ubo){ PLOGD<<"ubo->upload()"; });
+    Node::onrun<UBO>([](Node* node, UBO *ubo){ ubo->upload(); });
     
     Node::oncreate<UBO>([](Node* node, UBO *ubo){ node->name = ubo->name; });
 
@@ -110,19 +110,31 @@ void Nodes::init() {
    
     });
 
+    ////////// ENGINE.HPP (and Stack)
+
+    NODE<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
+
+        auto dc = ((Ptr<DrawCall>*)node)->get();
+        dc->update();
+    
+        _this->Node::add(node);
+        return _this; 
+        
+    });
+
+    NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
+
+        _this->Node::add(node);
+        return node;
+
+
+    });
+
     ////////// DRAWCALL.HPP 
 
     Node::onrun<DrawCall>([](Node* node, DrawCall *dc){  dc->run(); });
     
     Node::editor<DrawCall>([](Node* node, DrawCall *dc){ Node::editor_cb<ShaderProgram>(node, &dc->shader); });
-
-    NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
-
-        return node;
-
-        PLOGD<<"PLOL";
-
-    });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
@@ -169,19 +181,6 @@ void Nodes::init() {
 
     
     Node::oncreate<ShaderFX>([](Node* node, ShaderFX *fx) { node->name = fx->file->name; });
-
-
-    ////////// ENGINE.HPP (and Stack)
-
-    NODE<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
-
-        auto dc = ((Ptr<DrawCall>*)node)->get();
-        dc->update();
-    
-        _this->Node::add(node);
-        return _this; 
-        
-    });
 
 
     ////////// Directory.HPP 

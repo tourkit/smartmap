@@ -4,7 +4,7 @@
 #include "engine.hpp"
 
 
-    Node::Node(std::string name, std::vector<uint32_t> color) : name(name), color(color) {
+    Node::Node(std::string name, glm::vec4 color) : name(name), color(color) {
 
         PLOGV << name << " - " << type().name();
         
