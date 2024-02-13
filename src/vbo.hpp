@@ -6,12 +6,11 @@
 #include <cstdint>
 #include <vector>
 
-
 struct Object;
 struct Model;
 struct File;
 
-struct VBO {
+struct VBO : BufferOwner {
 
     static inline Struct *vertices_s = new Struct("Vertex", {"Position","UV","ID",});
     static inline Struct *indices_s = new Struct("Index",{"Vertex", "Vertex", "Vertex"});
@@ -27,6 +26,7 @@ struct VBO {
     ~VBO();
 
     void upload();
+    void update() override;
 
     void create();
     void destroy();

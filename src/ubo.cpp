@@ -5,7 +5,7 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name), subscribers(subscribers) { 
+UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : buffer(this), name(name), subscribers(subscribers) { 
     
     binding = binding_count++;
 
@@ -27,6 +27,8 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : name(name)
 void UBO::destroy() { buffer.reset(); subscribers.resize(0); if (id) glDeleteBuffers(1, &id); } // delete name; ?
 
 void UBO::update() {
+
+    PLOGD<< buffer.data.size();
 
     if (id) glDeleteBuffers(1, &id);
     

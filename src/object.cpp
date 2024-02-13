@@ -88,6 +88,9 @@ Entry &Object::push(void* data) {
 
 
     entrys.push_back(new Entry{this,id});
+
+    // buffer->update(); // needed ?
+    
     return *entrys.back();
 
 }

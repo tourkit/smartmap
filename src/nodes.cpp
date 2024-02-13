@@ -212,13 +212,20 @@ void Nodes::init() {
             
             auto &obj = buffer->objects[obj_current];
 
-            if (ImGui::SliderInt("element##current", &elem_current, 0, obj.reserved-1)) {
+            int max = obj.reserved-1;
+            if (max<0) max = 0;
+
+            if (ImGui::SliderInt("element##current", &elem_current, 0, max)) {
                 
 
                 
             }
 
-            ImGui::SameLine(); if (ImGui::Button("add")) (*buffer)[obj_current]->push();
+            ImGui::SameLine(); if (ImGui::Button("add")) {
+
+                // if (buffer->owner) buffer->owner->update();
+
+            }
 
             if (!obj.reserved) return;
 
@@ -226,7 +233,6 @@ void Nodes::init() {
 
             for (auto c:obj.s->comps) {
                         
-                // ImGui::Text((std::to_string(elem_current)+" - "+std::to_string(obj.size)).c_str());
                 ImGui::SeparatorText(c->name.c_str());
                 
                 for (auto m:c->members) {
@@ -242,8 +248,9 @@ void Nodes::init() {
                     if (m.type == Component::Member::Type::UI32) type = ImGuiDataType_U16;
 
                     if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to)) { 
-                        
-                        // ubo->update(); 
+
+                        // if (buffer->owner) buffer->owner->update();
+
                     }
 
                     

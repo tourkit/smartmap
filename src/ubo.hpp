@@ -6,7 +6,7 @@
 #include "component.hpp"
 
 struct ShaderProgram;
-struct UBO  {
+struct UBO : BufferOwner {
 
     std::string name;
 
@@ -28,7 +28,7 @@ struct UBO  {
 
     void destroy();
 
-    void update();
+    void update() override;
 
     void upload();
 

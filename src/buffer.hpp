@@ -9,13 +9,24 @@
 
 struct Struct;
 
+struct BufferOwner {
+
+    virtual void update() { }
+
+};
+
+
 struct Buffer {
     
     std::vector<Object> objects;
 
     std::function<void()> callback;
 
+    BufferOwner *owner = nullptr;
+
     Buffer();
+    
+    Buffer(BufferOwner* owner) : owner(owner) {}
 
     Object* addObj(Struct* s, int reserved = 0);
 

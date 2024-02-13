@@ -35,6 +35,7 @@ void VBO::destroy() {
 
 }
 
+void VBO::update() {}
 void VBO::create() {
 
     destroy();
