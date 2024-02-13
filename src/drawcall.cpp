@@ -16,33 +16,21 @@ void DrawCall::run() {
 
 void DrawCall::update() {
 
-    // // shader builder 
-
-    // // list fx
-
-    // for (auto model : childrens) { for (auto c : model->childrens) {
-    //     shaders.insert(((ShaderFXPtr*)c)->ptr);i
-    //     } }
-
-
-    // FRAGMENT
+    // FRAGMENT SHADER BUILDER
 
     std::string frag_shader;
+
     frag_shader = "#version 430 core\n\n";
+
     frag_shader += "out vec4 color;\n\n";
 
-    // // if buffer filled then 
-    // frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n\n";
+    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n\n"; // should auto from dynamic UBO structs
 
     std::unordered_set<ShaderFX*> fxs;
-
-
     for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
     for (auto fx : fxs) frag_shader += fx->file->data +"\n\n";
     
     frag_shader += "void main() {\n\n";
-
-    PLOGD << vbo.models.size();
 
     frag_shader += "\tcolor = vec4(0);\n\n";
 
@@ -50,26 +38,22 @@ void DrawCall::update() {
     for (auto &model : vbo.models) {
 
         frag_shader += "\t// " +model.file->name+"\n";
+
         auto varname = model.file->name+"_"+std::to_string(model_id);
-        // frag_shader += "\t// " +model.file->name+"_"+std::to_string(model_id)+"\n";
 
         frag_shader += "\tvec4 "+varname+" = vec4(1);\n\n";
 
         for (auto fx : model.fxs) { 
 
-
-               frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname+");\n\n";
-
-    //         frag_shader += "\tcolor = ";
-    //         frag_shader += shader->name + "(";
-    //         frag_shader += "color";
-    //         for (int i = 1; i < shader->args.size(); i++) frag_shader += ", x["+std::to_string(i-1)+"]";
-    //         frag_shader += ")";
-    //         frag_shader += ";\n";
+               frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname;
+               
+               for (int i = 1; i < fx->args.size(); i++) { frag_shader += ",x["+std::to_string(i)+"]"; }
+               
+               frag_shader += ");\n";
 
          }
 
-        frag_shader += "\tcolor += "+varname+";\n";
+        frag_shader += "\n\tcolor += "+varname+";\n";
 
         frag_shader += "\n\n";
 

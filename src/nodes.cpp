@@ -57,7 +57,7 @@ void Nodes::init() {
 
     ////////// UBO.HPP 
 
-    Node::onrun<UBO>([](Node* node, UBO *ubo){ ubo->upload(); });
+    Node::onrun<UBO>([](Node* node, UBO *ubo){ PLOGD<<"ubo->upload()"; });
     
     Node::oncreate<UBO>([](Node* node, UBO *ubo){ node->name = ubo->name; });
 
@@ -99,6 +99,7 @@ void Nodes::init() {
         
 	    // editor.SetLanguageDefinition(lang);
         editor.SetText(shader->frag.src);
+        editor.SetShowWhitespaces(false);
 
         // editor.SetPalette(TextEditor::GetDarkPalette());
         
@@ -114,6 +115,14 @@ void Nodes::init() {
     Node::onrun<DrawCall>([](Node* node, DrawCall *dc){  dc->run(); });
     
     Node::editor<DrawCall>([](Node* node, DrawCall *dc){ Node::editor_cb<ShaderProgram>(node, &dc->shader); });
+
+    NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
+
+        return node;
+
+        PLOGD<<"PLOL";
+
+    });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         

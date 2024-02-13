@@ -12,6 +12,9 @@ Engine::Engine(uint16_t width, uint16_t height)
      gui(window.id) {
     window.max_fps = 59;
 
+    dynamic_ubo = new UBO("dynamic_ubo");
+    static_ubo = new UBO("static_ubo");
+
     PLOGD << "Engine created";
 
 }
@@ -41,11 +44,12 @@ void Engine::init() {
     auto models = tree->add<Directory>("assets/model/");
     auto shaders = tree->add<Directory>("assets/shaders/");
 
-    dynamic_ubo = tree->add<UBO>("dynamic_ubo")->get();
-    static_ubo = tree->add<UBO>("static_ubo")->get(); 
+    tree->addPtr(new Ptr<UBO>(static_ubo)); 
+    stack->addPtr(new Ptr<UBO>(dynamic_ubo));
 
-    auto dc = stack->add<DrawCall>();
-    auto model = dc->addPtr(models->childrens[0]); // maybe addPtr is not a good name
+    // auto dc = stack->add<DrawCall>();
+
+    // auto model = dc->addPtr(models->childrens[0]); // maybe addPtr is not a good name
     model->addPtr(shaders->childrens[0]); 
 
     // Components::getInstance();
