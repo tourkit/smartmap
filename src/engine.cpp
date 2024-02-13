@@ -25,8 +25,6 @@ void Engine::run() {
     while (!glfwWindowShouldClose(window.id)) window.render([](){
         
         auto &engine = Engine::getInstance();
-        
-        // engine.dynamic_ubo->upload();
 
         engine.stack->run();
 

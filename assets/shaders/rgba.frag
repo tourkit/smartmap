@@ -1,5 +1,5 @@
-vec4 colorize(vec4 rgba, float red, float green, float blue) {
+vec4 rgba(vec4 pixel, float red, float green, float blue) {
 
-    return rgba * vec4 (red,green,blue,1);
+    return pixel * vec4 (red,green,blue,1);
 
 }

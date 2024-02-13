@@ -57,6 +57,8 @@ void Nodes::init() {
 
     ////////// UBO.HPP 
 
+    Node::onrun<UBO>([](Node* node, UBO *ubo){ ubo->upload(); });
+    
     Node::oncreate<UBO>([](Node* node, UBO *ubo){ node->name = ubo->name; });
 
     Node::editor<UBO>([](Node* node, UBO *ubo){ Node::editor_cb<Buffer>(node, &ubo->buffer); });
@@ -92,15 +94,15 @@ void Nodes::init() {
         
         ImGui::Text(std::to_string(shader->loaded).c_str());
 
-        TextEditor editor;
-	    auto lang = TextEditor::LanguageDefinition::GLSL();
+        static TextEditor editor;
+	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
         
-	    editor.SetLanguageDefinition(lang);
+	    // editor.SetLanguageDefinition(lang);
         editor.SetText(shader->frag.src);
 
-        editor.SetPalette(TextEditor::GetDarkPalette());
+        // editor.SetPalette(TextEditor::GetDarkPalette());
         
-        editor.Render("TextEditor");
+        editor.Render("frageditor");
     
         // ImGui::InputTextMultiline("frag shader", &shader->frag.src[0], shader->frag.src.length(), ImVec2(600,300));
         // ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(600,300));
