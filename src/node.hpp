@@ -14,29 +14,29 @@
 
 struct File;
 
-struct AnyNode;
+struct Node;
 
 struct UntypedNode {
 
     template <typename T>
-    static inline std::function<void(AnyNode*,T*)> oncreate_cb = nullptr;
+    static inline std::function<void(Node*,T*)> oncreate_cb = nullptr;
     template <typename T>
-    static inline std::function<void(AnyNode*,T*)> onrun_cb = nullptr;
+    static inline std::function<void(Node*,T*)> onrun_cb = nullptr;
     template <typename T>
-    static inline std::function<void(AnyNode*,T*)> editor_cb = nullptr;
+    static inline std::function<void(Node*,T*)> editor_cb = nullptr;
     template <typename T>
-    static inline std::unordered_map<std::type_index, std::function<AnyNode*(AnyNode*,AnyNode*)>> onadd_cb;
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
 
     template <typename T>
-    static void onrun(std::function<void(AnyNode*,T*)> cb) { onrun_cb<T> = cb;  }
+    static void onrun(std::function<void(Node*,T*)> cb) { onrun_cb<T> = cb;  }
     template <typename T>
-    static void oncreate(std::function<void(AnyNode*,T*)> cb) { oncreate_cb<T> = cb;  }
+    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cb<T> = cb;  }
     template <typename T>
-    static void editor(std::function<void(AnyNode*,T*)> cb) { editor_cb<T> = cb; }
+    static void editor(std::function<void(Node*,T*)> cb) { editor_cb<T> = cb; }
     template <typename T>
     static void editor() { editor_cb<T>(); }
     template <typename T>
-    void onadd(std::function<AnyNode*(AnyNode*,AnyNode*)> cb) { onadd_cb<T>[type()] = cb;  }
+    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[type()] = cb;  }
 
     std::string name;
 
@@ -56,7 +56,7 @@ struct UntypedNode {
     
     UntypedNode* parent();
 
-    virtual AnyNode* add(void *node);
+    virtual Node* add(void *node);
 
     void remove(UntypedNode *child);
 
@@ -129,7 +129,7 @@ struct TypedNode : UntypedNode {
     
     TypedNode(void* ptr, bool owned = false) : UntypedNode((isNode()? ((UntypedNode*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr), owned(owned) {
 
-            if(oncreate_cb<T>) { oncreate_cb<T>((AnyNode*)this,this->ptr); }
+            if(oncreate_cb<T>) { oncreate_cb<T>((Node*)this,this->ptr); }
 
             color = {100,100,100,100};
 
@@ -139,11 +139,11 @@ struct TypedNode : UntypedNode {
 
         UntypedNode::run();
 
-        if(onrun_cb<T>) { onrun_cb<T>((AnyNode*)this,this->ptr); }
+        if(onrun_cb<T>) { onrun_cb<T>((Node*)this,this->ptr); }
 
     }
 
-    AnyNode* add(void *node_v) override { 
+    Node* add(void *node_v) override { 
         
         auto node = (TypedNode<Any>*)node_v;
 
@@ -151,7 +151,7 @@ struct TypedNode : UntypedNode {
 
             if (onadd_cb<T>.find(node->type()) != onadd_cb<T>.end()) {
 
-                return (AnyNode*)onadd_cb<T>[node->type()]((AnyNode*)this,(AnyNode*)node);
+                return (Node*)onadd_cb<T>[node->type()]((Node*)this,(Node*)node);
 
             }
 
@@ -164,10 +164,10 @@ struct TypedNode : UntypedNode {
     }
 
     template <typename U>
-    AnyNode* addPtr(U* ptr, bool owned = false) { return UntypedNode::add(new TypedNode<U>(ptr, owned)); }
+    Node* addPtr(U* ptr, bool owned = false) { return UntypedNode::add(new TypedNode<U>(ptr, owned)); }
 
     template <typename U, typename... Args>
-    AnyNode* addOwnr(Args&&... args) {
+    Node* addOwnr(Args&&... args) {
 
         auto ptr = new U(std::forward<Args>(args)...);
     
@@ -190,10 +190,10 @@ struct TypedNode : UntypedNode {
 
     }
 
-    void editor() override { if(editor_cb<T>) editor_cb<T>((AnyNode*)this,this->ptr); }
+    void editor() override { if(editor_cb<T>) editor_cb<T>((Node*)this,this->ptr); }
 
     template <typename U>
-    static void onadd(std::function<AnyNode*(AnyNode*,AnyNode*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
 
 private:
 
@@ -201,7 +201,7 @@ private:
 
 };
 
-struct AnyNode : TypedNode<Any> { AnyNode(std::string name = "any") : TypedNode<Any>(this) { this->name = name; } };
+struct Node : TypedNode<Any> { Node(std::string name = "any") : TypedNode<Any>(this) { this->name = name; } };
 
 
 template <typename T>

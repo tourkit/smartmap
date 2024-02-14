@@ -23,9 +23,9 @@ struct Engine {
 
     UBO *static_ubo;
 
-    AnyNode tree = AnyNode("tree");
+    Node tree = Node("tree");
 
-    AnyNode* stack = tree.addOwnr<Stack>();
+    Node* stack = tree.addOwnr<Stack>();
 
     UntypedNode* selected = &tree;
     

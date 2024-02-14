@@ -24,13 +24,13 @@
 
     }   
 
-    AnyNode* UntypedNode::add(void* node_v)  {
+    Node* UntypedNode::add(void* node_v)  {
         
         auto n = (UntypedNode*)node_v; 
 
          n->parent(this);   
 
-        return (AnyNode*)n;
+        return (Node*)n;
 
      }
 

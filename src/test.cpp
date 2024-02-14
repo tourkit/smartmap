@@ -33,7 +33,7 @@ Test::Test(){
 
     Foo foo;
 
-    TypedNode<Foo>::onadd<Bar>([](AnyNode* a, AnyNode* b) {
+    TypedNode<Foo>::onadd<Bar>([](Node* a, Node* b) {
         return nullptr;
     });
 
