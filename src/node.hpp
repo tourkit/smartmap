@@ -18,13 +18,20 @@ struct Node;
 
 struct UntypedNode {
 
+    template <typename U>
+    static inline std::function<void(Node*,U*)> oncreate_cb = nullptr;
+    template <typename U>
+    static inline std::function<void(Node*,U*)> onrun_cb = nullptr;
+    template <typename U>
+    static inline std::function<void(Node*,U*)> editor_cb = nullptr;
+
     std::string name;
 
     glm::vec4 color;
 
-    UntypedNode* parent_node = nullptr;
+    Node* parent_node = nullptr;
  
-    std::vector<UntypedNode*> childrens;
+    std::vector<Node*> childrens;
 
     bool active = true, locked = false, loaded = false;
 
@@ -32,13 +39,13 @@ struct UntypedNode {
 
     virtual ~UntypedNode();
 
-    void parent(UntypedNode* parent_node);
+    void parent(Node* parent_node);
     
-    UntypedNode* parent();
+    Node* parent();
 
     virtual Node* add(void *node);
 
-    void remove(UntypedNode *child);
+    void remove(Node *child);
 
     uint32_t index();
 
@@ -54,7 +61,7 @@ struct UntypedNode {
     
     virtual void runCB();  // need ?
 
-    std::function<void(UntypedNode*)> dtor = nullptr; // useless ?
+    std::function<void(Node*)> dtor = nullptr; // useless ?
 
     void import(std::string path); // useless ?
 
@@ -66,11 +73,11 @@ struct UntypedNode {
     U* is_a() { return ((type() == typeid(U))? (U*)ptr_untyped() : nullptr); }
 
     template <typename V>
-    void each(std::function<void(UntypedNode*)> fx) { 
+    void each(std::function<void(Node*)> fx) { 
         
         for (auto c : childrens) {
 
-            if (c->is_a<V>()) {
+            if (((UntypedNode*)c)->is_a<V>()) {
 
                 fx(c);
 
@@ -80,7 +87,7 @@ struct UntypedNode {
         
     }
     
-    virtual std::type_index type() { return typeid(UntypedNode); }
+    virtual std::type_index type() { return typeid(*this); }
     
     virtual void* ptr_untyped() { return this; }
 
@@ -88,19 +95,14 @@ struct UntypedNode {
 
     auto end() { return childrens.end(); }
 
+    Node* node();
+
 };
 
 struct Any {};
 
 template <typename T>
 struct TypedNode : UntypedNode { 
-
-    template <typename U>
-    static inline std::function<void(Node*,U*)> oncreate_cb = nullptr;
-    template <typename U>
-    static inline std::function<void(Node*,U*)> onrun_cb = nullptr;
-    template <typename U>
-    static inline std::function<void(Node*,U*)> editor_cb = nullptr;
 
     template <typename U>
     static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
