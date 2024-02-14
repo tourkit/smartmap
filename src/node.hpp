@@ -16,7 +16,7 @@ struct File;
 
 struct AnyNode;
 
-struct Node {
+struct UntypedNode {
 
     template <typename T>
     static inline std::function<void(AnyNode*,T*)> oncreate_cb = nullptr;
@@ -42,23 +42,23 @@ struct Node {
 
     glm::vec4 color;
 
-    Node* parent_node = nullptr;
+    UntypedNode* parent_node = nullptr;
  
-    std::vector<Node*> childrens;
+    std::vector<UntypedNode*> childrens;
 
     bool active = true, locked = false, loaded = false;
 
-    Node(std::string name = "node", glm::vec4 color = {255,255,255,255});
+    UntypedNode(std::string name = "node", glm::vec4 color = {255,255,255,255});
 
-    virtual ~Node();
+    virtual ~UntypedNode();
 
-    void parent(Node* parent_node);
+    void parent(UntypedNode* parent_node);
     
-    Node* parent();
+    UntypedNode* parent();
 
     virtual AnyNode* add(void *node);
 
-    void remove(Node *child);
+    void remove(UntypedNode *child);
 
     uint32_t index();
 
@@ -74,7 +74,7 @@ struct Node {
     
     virtual void runCB();  // need ?
 
-    std::function<void(Node*)> dtor = nullptr; // useless ?
+    std::function<void(UntypedNode*)> dtor = nullptr; // useless ?
 
     void import(std::string path); // useless ?
 
@@ -86,7 +86,7 @@ struct Node {
     U* is_a() { return ((type() == typeid(U))? (U*)ptr_untyped() : nullptr); }
 
     template <typename V>
-    void each(std::function<void(Node*)> fx) { 
+    void each(std::function<void(UntypedNode*)> fx) { 
         
         for (auto c : childrens) {
 
@@ -100,7 +100,7 @@ struct Node {
         
     }
     
-    virtual std::type_index type() { return typeid(Node); }
+    virtual std::type_index type() { return typeid(UntypedNode); }
     
     virtual void* ptr_untyped() { return this; }
 
@@ -113,7 +113,7 @@ struct Node {
 struct Any {};
 
 template <typename T>
-struct TypedNode : Node { 
+struct TypedNode : UntypedNode { 
 
     T* ptr; 
 
@@ -127,7 +127,7 @@ struct TypedNode : Node {
 
     operator T*() { return ptr; }
     
-    TypedNode(void* ptr, bool owned = false) : Node((isNode()? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr), owned(owned) {
+    TypedNode(void* ptr, bool owned = false) : UntypedNode((isNode()? ((UntypedNode*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr), owned(owned) {
 
             if(oncreate_cb<T>) { oncreate_cb<T>((AnyNode*)this,this->ptr); }
 
@@ -137,7 +137,7 @@ struct TypedNode : Node {
 
     void run() override {
 
-        Node::run();
+        UntypedNode::run();
 
         if(onrun_cb<T>) { onrun_cb<T>((AnyNode*)this,this->ptr); }
 
@@ -159,12 +159,12 @@ struct TypedNode : Node {
 
         }
 
-        return Node::add(node);
+        return UntypedNode::add(node);
 
     }
 
     template <typename U>
-    AnyNode* addPtr(U* ptr, bool owned = false) { return Node::add(new TypedNode<U>(ptr, owned)); }
+    AnyNode* addPtr(U* ptr, bool owned = false) { return UntypedNode::add(new TypedNode<U>(ptr, owned)); }
 
     template <typename U, typename... Args>
     AnyNode* addOwnr(Args&&... args) {
@@ -197,7 +197,7 @@ struct TypedNode : Node {
 
 private:
 
-    bool isNode() { return std::is_base_of<Node, T>::value; } 
+    bool isNode() { return std::is_base_of<UntypedNode, T>::value; } 
 
 };
 

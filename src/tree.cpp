@@ -3,7 +3,7 @@
 #include "engine.hpp"
 #include "imgui_internal.h"
 
-TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected) {  }
+TreeWidget::TreeWidget(UntypedNode* selected) : GUI::Window("Tree"), selected(selected) {  }
 
 void TreeWidget::draw()  { 
 
@@ -45,7 +45,7 @@ void TreeWidget::draw()  {
     
 }
 
-void TreeWidget::drawChildrens(Node* node) { 
+void TreeWidget::drawChildrens(UntypedNode* node) { 
 
     for (auto child : node->childrens) drawNode(child);
 
@@ -54,7 +54,7 @@ void TreeWidget::drawChildrens(Node* node) {
  
 namespace ImGui {
 
-bool TreeViewNode(Node* node) {
+bool TreeViewNode(UntypedNode* node) {
 
     ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow ;
 
@@ -113,7 +113,7 @@ bool TreeViewNode(Node* node) {
 }
 
 };
-void TreeWidget::drawNode(Node* node) { 
+void TreeWidget::drawNode(UntypedNode* node) { 
     
     ImGui::TableNextRow();
 
@@ -166,7 +166,7 @@ void TreeWidget::drawNode(Node* node) {
 
         if (ImGui::BeginDragDropTarget()) {     
 
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) node->add((Node*)(*(uint64_t*)payload->Data));
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) node->add((UntypedNode*)(*(uint64_t*)payload->Data));
 
             ImGui::EndDragDropTarget();
             

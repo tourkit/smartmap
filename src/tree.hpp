@@ -5,14 +5,14 @@
 
 struct TreeWidget : GUI::Window {
 
-    Node* selected;
+    UntypedNode* selected;
 
-    TreeWidget(Node* selected = nullptr);
+    TreeWidget(UntypedNode* selected = nullptr);
 
     void draw() override;
 
-    void drawNode(Node* node);   
-    void drawChildrens(Node* node);   
+    void drawNode(UntypedNode* node);   
+    void drawChildrens(UntypedNode* node);   
 
 private:
 

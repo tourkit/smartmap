@@ -5,7 +5,7 @@
 
 struct EditorWidget : GUI::Window {
 
-    Node* selected = nullptr;
+    UntypedNode* selected = nullptr;
 
     bool locked = false;
 

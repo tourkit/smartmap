@@ -39,9 +39,9 @@ Test::Test(){
 
     {    
     
-        Node a("aaa");
+        UntypedNode a("aaa");
 
-        auto b = a.add(new Node("b"));
+        auto b = a.add(new UntypedNode("b"));
 
         b->addPtr<Foo>(&foo);
 

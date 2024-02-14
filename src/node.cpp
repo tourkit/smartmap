@@ -4,13 +4,13 @@
 #include "engine.hpp"
 
 
-    Node::Node(std::string name, glm::vec4 color) : name(name), color(color) {
+    UntypedNode::UntypedNode(std::string name, glm::vec4 color) : name(name), color(color) {
 
         PLOGV << name << " - " << type().name();
         
     }
 
-    Node::~Node() {
+    UntypedNode::~UntypedNode() {
 
         auto t_childrens = childrens;
         for (auto c : t_childrens) delete c;
@@ -24,9 +24,9 @@
 
     }   
 
-    AnyNode* Node::add(void* node_v)  {
+    AnyNode* UntypedNode::add(void* node_v)  {
         
-        auto n = (Node*)node_v; 
+        auto n = (UntypedNode*)node_v; 
 
          n->parent(this);   
 
@@ -35,7 +35,7 @@
      }
 
 
-    void Node::import(std::string path) {
+    void UntypedNode::import(std::string path) {
 
         File file(path);
 
@@ -43,11 +43,11 @@
 
     }
 
-    Node *Node::parent() { return parent_node; }
+    UntypedNode *UntypedNode::parent() { return parent_node; }
 
-    void Node::select(){ engine.selected = this; }
+    void UntypedNode::select(){ engine.selected = this; }
     
-    void Node::parent(Node* parent_node) {  
+    void UntypedNode::parent(UntypedNode* parent_node) {  
         
         if (this->parent_node == parent_node) return;
 
@@ -61,9 +61,9 @@
     
     }
 
-    void Node::update() { if (parent_node) parent_node->update(); }
+    void UntypedNode::update() { if (parent_node) parent_node->update(); }
 
-    void Node::remove(Node *child) {  
+    void UntypedNode::remove(UntypedNode *child) {  
 
         auto it = std::find(childrens.begin(), childrens.end(), child);
 
@@ -80,7 +80,7 @@
 
     }
 
-    uint32_t Node::index() { 
+    uint32_t UntypedNode::index() { 
 
         auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
 
@@ -88,9 +88,9 @@
 
     }
 
-    void Node::runCB() { }
+    void UntypedNode::runCB() { }
 
-    void Node::run() { 
+    void UntypedNode::run() { 
 
         for (auto c : childrens) c->run();
 
@@ -98,7 +98,7 @@
         
     }
 
-    void Node::up() { 
+    void UntypedNode::up() { 
         
         if (!parent_node) return;
 
@@ -112,7 +112,7 @@
     
     }
 
-    void Node::down() {
+    void UntypedNode::down() {
 
         if (!parent_node) return;
         

@@ -55,7 +55,7 @@ void Engine::init() {
     // auto model = dc->addPtr(models->childrens[0]); 
     // model->addPtr(shaders->childrens[0]); 
     
-    // Node* controllers = tree->add(new Node{"Controllers"});
+    // UntypedNode* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
     // an->add(new Node{"1"});
     // an->add(new Node{"2"});
