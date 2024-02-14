@@ -41,12 +41,9 @@ struct TempNode {
 
     template <typename T>
     static inline std::unordered_map<std::type_index, std::function<TAnyNode*(TAnyNode*,TAnyNode*)>> onadd_cb;
+    
     template <typename T>
     void onadd(std::function<TAnyNode*(TAnyNode*,TAnyNode*)> cb) { onadd_cb<T>[ptr_type()] = cb;  }
-
-    static inline void* anyptr = nullptr;
-
-    TAnyNode* getAny() { return (TAnyNode*)this; }
 
     virtual TAnyNode* add(void *node_v)  { 
         
@@ -72,6 +69,7 @@ struct TempNode {
 
 };
 
+struct Any {};
 template <typename T>
 struct TTypedNode : TempNode { 
 
@@ -98,21 +96,19 @@ struct TTypedNode : TempNode {
 
     TAnyNode* add(void *node_v) override { 
         
-        auto node = (TempNode*)node_v;
+        auto node = (TTypedNode<Any>*)node_v;
 
-        test = getAny();
+        if (onadd_cb<T>.size()) {
 
-        // if (onadd_cb<T>.size()) {
+            if (onadd_cb<T>.find(node->ptr_type()) != onadd_cb<T>.end()) {
 
-        //     if (onadd_cb<T>.find(node->ptr_type()) != onadd_cb<T>.end()) {
+                return (TAnyNode*)onadd_cb<T>[node->ptr_type()]((TAnyNode*)this,(TAnyNode*)node);
 
-        //         return onadd_cb<T>[node->ptr_type()](this,node);
+            }
 
-        //     }
+            return nullptr;
 
-        //     return nullptr;
-
-        // }
+        }
 
         return TempNode::add(node);
 
@@ -156,7 +152,6 @@ struct TPtr : TTypedNode<T> {
 
 };
 
-struct Any {};
 struct TAnyNode : TTypedNode<Any> {};
 
 struct Foo { Foo() { PLOGD << "foo"; } ~Foo() { PLOGD << "~ foo"; } };
