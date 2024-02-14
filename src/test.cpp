@@ -37,7 +37,12 @@ struct TempNode {
  
     std::vector<TempNode*> childrens;
 
-    TAnyNode* add(TempNode *node)  { 
+    template <typename T>
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
+    template <typename T>
+    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[ptr_type()] = cb;  }
+
+    virtual TAnyNode* add(TempNode *node)  { 
         
         node->parent_node = this;
 
@@ -54,6 +59,8 @@ struct TempNode {
         PLOGD <<"dtroy "<<name;
 
     }
+
+    virtual std::type_index ptr_type() { return typeid(this); }
 
 };
 
@@ -78,6 +85,26 @@ struct TTypedNode : TempNode {
         return new_U;
 
     }
+
+    std::type_index ptr_type() override { return typeid(*ptr); }
+
+    // TAnyNode* add(TempNode* node) override {
+
+    //     if (onadd_cb<T>.size()) {
+
+    //         if (onadd_cb<T>.find(node->ptr_type()) != onadd_cb<T>.end()) {
+
+    //             return onadd_cb<T>[node->ptr_type()](this,node);
+
+    //         }
+
+    //         return nullptr;
+
+    //     }
+
+    //     return TempNode::add(node);
+
+    // }
 
     template <typename U, typename... Args>
     TTypedNode<U>* addOwnr(Args&&... args) {
