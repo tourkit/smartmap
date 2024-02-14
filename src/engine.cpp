@@ -4,6 +4,8 @@
 #include "shaderfx.hpp"
 #include "drawcall.hpp"
 #include "gui.hpp"
+#include "editors.hpp"
+
 
 #include "nodes.hpp"
 
@@ -40,22 +42,22 @@ void Engine::run() {
 void Engine::init() {
 
     Nodes::init();
+    
+    Editors::init();
 
     stack->addPtr<UBO>(dynamic_ubo)->select();
 
-    PLOGD<<stack->type().name();
+    tree.addPtr<UBO>(static_ubo);
 
-    // tree->addPtr<UBO>(static_ubo);
-
-    // auto models = tree->add<Directory>("assets/model/");
-    // auto shaders = tree->add<Directory>("assets/shaders/");
+    auto models = tree.addOwnr<Directory>("assets/model/");
+    auto shaders = tree.addOwnr<Directory>("assets/shaders/");
 
     // auto dc = stack->add<DrawCall>();
     // dynamic_ubo->subscribers.push_back(&dc->get()->shader);
     // auto model = dc->addPtr(models->childrens[0]); 
     // model->addPtr(shaders->childrens[0]); 
     
-    // UntypedNode* controllers = tree->add(new Node{"Controllers"});
+    // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
     // an->add(new Node{"1"});
     // an->add(new Node{"2"});

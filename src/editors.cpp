@@ -18,19 +18,19 @@ void Editors::init() {
 
     // ////////// xxx.HPP 
 
-    // Node::editor<xxx>([](Node* node, xxx *x){ });
+    // Editor::set<xxx>([](Node* node, xxx *x){ });
 
     ////////// UBO.HPP 
 
-    Node::editor<UBO>([](Node* node, UBO *ubo){ Node::editor_cb<Buffer>(node, &ubo->buffer); });
+    Editor::set<UBO>([](Node* node, UBO *ubo){ Editor::cb<Buffer>(node, &ubo->buffer); });
 
     ////////// VBO.HPP 
     
-    Node::editor<VBO>([](Node*node,VBO*vbo){ Node::editor_cb<Buffer>(node, &vbo->buffer); });
+    Editor::set<VBO>([](Node*node,VBO*vbo){ Editor::cb<Buffer>(node, &vbo->buffer); });
 
     ////////// STRUCT.HPP 
 
-    Node::editor<Struct>([](Node* node, Struct *s){ 
+    Editor::set<Struct>([](Node* node, Struct *s){ 
         
         ImGui::Text((node->name+" " +std::to_string(s->size)).c_str());
 
@@ -49,7 +49,7 @@ void Editors::init() {
 
     ////////// SHADER.HPP 
 
-    Node::editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
+    Editor::set<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
         
         ImGui::Text(std::to_string(shader->loaded).c_str());
 
@@ -73,11 +73,11 @@ void Editors::init() {
 
     ////////// DRAWCALL.HPP 
     
-    Node::editor<DrawCall>([](Node* node, DrawCall *dc){ Node::editor_cb<ShaderProgram>(node, &dc->shader); });
+    Editor::set<DrawCall>([](Node* node, DrawCall *dc){ Editor::cb<ShaderProgram>(node, &dc->shader); });
 
     ////////// SHADERFX.HPP 
 
-    Node::editor<ShaderFX>([](Node* node, ShaderFX *shader){ 
+    Editor::set<ShaderFX>([](Node* node, ShaderFX *shader){ 
             
         ImGui::InputTextMultiline("src", (char*)shader->file->data.c_str(), shader->file->data.size());
    
@@ -85,7 +85,7 @@ void Editors::init() {
 
     ////////// BUFFER.HPP 
 
-    Node::editor<Buffer>([](Node* node, Buffer *buffer){
+    Editor::set<Buffer>([](Node* node, Buffer *buffer){
 
         static StringsBuffer object_str;
         static int obj_current = 0;

@@ -27,7 +27,7 @@ struct Engine {
 
     Node* stack = tree.addOwnr<Stack>();
 
-    UntypedNode* selected = &tree;
+    Node* selected = &tree;
     
     Atlas *atlas;
     

@@ -47,7 +47,7 @@
 
     Node *UntypedNode::parent() { return parent_node; }
 
-    void UntypedNode::select(){ engine.selected = this; }
+    void UntypedNode::select(){ engine.selected = node(); }
     
     void UntypedNode::parent(Node* parent_node) {  
         

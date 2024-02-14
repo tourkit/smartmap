@@ -12,18 +12,22 @@
 
 #include "glm/glm.hpp"
 
+
 struct File;
 
 struct Node;
 
-struct UntypedNode {
+struct Editor  {
 
     template <typename U>
-    static inline std::function<void(Node*,U*)> oncreate_cb = nullptr;
+    static inline std::function<void(Node*,U*)> cb = nullptr;
+
     template <typename U>
-    static inline std::function<void(Node*,U*)> onrun_cb = nullptr;
-    template <typename U>
-    static inline std::function<void(Node*,U*)> editor_cb = nullptr;
+    static void set(std::function<void(Node*,U*)> cb) { Editor::cb<U> = cb; };
+
+};
+
+struct UntypedNode {
 
     std::string name;
 
@@ -53,7 +57,7 @@ struct UntypedNode {
 
     void down();
 
-    virtual void editor() {}
+    virtual void editor() { PLOGD << "KOKO";}
 
     virtual void run(); // need to be virtual ?
     
@@ -96,6 +100,11 @@ struct UntypedNode {
     auto end() { return childrens.end(); }
 
     Node* node();
+
+    template <typename U>
+    static inline std::function<void(Node*,U*)> oncreate_cb = nullptr;
+    template <typename U>
+    static inline std::function<void(Node*,U*)> onrun_cb = nullptr;
 
 };
 
@@ -186,7 +195,12 @@ struct TypedNode : UntypedNode {
 
     }
 
-    void editor() override { if(editor_cb<T>) editor_cb<T>((Node*)this,this->ptr); }
+    void editor() override { 
+        
+        if(Editor::cb<T>) {
+            Editor::cb<T>(node(),this->ptr); 
+        }
+    }
 
 private:
 
@@ -204,11 +218,10 @@ struct Node : TypedNode<Any> {
     static void oncreate(std::function<void(Node*,U*)> cb) { oncreate_cb<U> = cb;  }
 
     template <typename U>
-    static void editor(std::function<void(Node*,U*)> cb) { editor_cb<U> = cb; }
-    template <typename U>
-    static void editor() { editor_cb<U>(); }
+    static void editor(std::function<void(Node*,U*)> cb) { Editor::cb<U> = cb; }
 
-    
+    void editor() override {  PLOGD << "NIK"; }
+
 };
 
 
@@ -217,8 +230,10 @@ struct Ownr : TypedNode<T> {
 
     template <typename... Args>
     Ownr(Args&&... args) : TypedNode<T>(new T(std::forward<Args>(args)...), true) { } 
+    void editor() override {  PLOGD << "ooooo"; }
 
 };
 
 template <typename T>
-struct Ptr : TypedNode<T> { Ptr(T *ptr)  : TypedNode<T>(ptr)  { } };
+struct Ptr : TypedNode<T> { Ptr(T *ptr)  : TypedNode<T>(ptr)  { }
+    void editor() override {  PLOGD << "pppp"; } };
