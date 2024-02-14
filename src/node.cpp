@@ -24,11 +24,13 @@
 
     }   
 
-    Node* Node::add(Node* n)  { 
+    AnyNode* Node::add(void* node_v)  {
+        
+        auto n = (Node*)node_v; 
 
          n->parent(this);   
 
-        return (Node*)n;
+        return (AnyNode*)n;
 
      }
 

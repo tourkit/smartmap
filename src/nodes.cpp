@@ -16,9 +16,9 @@ void Nodes::init() {
 
     // ////////// xxx.HPP 
     
-    // Node::oncreate<xxx>([](Node* node, xxx *x){ });
+    // Node::oncreate<xxx>([](AnyNode* node, xxx *x){ });
 
-    // TypedNode<xxx>::onadd<yyy>([](Node*_this,Node*node){ 
+    // TypedNode<xxx>::onadd<yyy>([](AnyNode*_this,AnyNode*node){ 
 
     //     auto s = ((Ptr<xxx>*)_this)->get();
     //     auto f = ((Ptr<yyy>*)node)->get();
@@ -29,11 +29,11 @@ void Nodes::init() {
 
     ////////// FILE.HPP 
 
-    Node::oncreate<File>([](Node* node, File *file){ node->name = file->name+"."+file->extension+""; });
+    Node::oncreate<File>([](AnyNode* node, File *file){ node->name = file->name+"."+file->extension+""; });
 
     static std::map<int,int> filechecks;
 
-    Node::onrun<File>([](Node* node, File *file){ 
+    Node::onrun<File>([](AnyNode* node, File *file){ 
 
         int uid = 0;
 
@@ -53,17 +53,17 @@ void Nodes::init() {
 
     ////////// UBO.HPP 
 
-    Node::onrun<UBO>([](Node* node, UBO *ubo){ ubo->upload(); });
+    Node::onrun<UBO>([](AnyNode* node, UBO *ubo){ ubo->upload(); });
     
-    Node::oncreate<UBO>([](Node* node, UBO *ubo){ node->name = ubo->name; });
+    Node::oncreate<UBO>([](AnyNode* node, UBO *ubo){ node->name = ubo->name; });
 
     ////////// STRUCT.HPP 
 
-    Node::oncreate<Struct>([](Node* node, Struct *s){ node->name = s->name; });
+    Node::oncreate<Struct>([](AnyNode* node, Struct *s){ node->name = s->name; });
 
     ////////// ENGINE.HPP (and Stack)
 
-    TypedNode<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
+    TypedNode<Stack>::onadd<DrawCall>([](AnyNode*_this,AnyNode*node){ 
 
         auto dc = ((Ptr<DrawCall>*)node)->get();
         dc->update();
@@ -73,7 +73,7 @@ void Nodes::init() {
         
     });
 
-    TypedNode<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
+    TypedNode<Stack>::onadd<UBO>([](AnyNode*_this,AnyNode*node){ 
 
         _this->Node::add(node);
         return node;
@@ -83,9 +83,9 @@ void Nodes::init() {
 
     ////////// DRAWCALL.HPP 
 
-    Node::onrun<DrawCall>([](Node* node, DrawCall *dc){  dc->run(); });
+    Node::onrun<DrawCall>([](AnyNode* node, DrawCall *dc){  dc->run(); });
     
-    TypedNode<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
+    TypedNode<DrawCall>::onadd<File>([](AnyNode*_this,AnyNode*node){ 
         
         auto dc = _this->is_a<DrawCall>();
         auto file = node->is_a<File>();
@@ -101,9 +101,9 @@ void Nodes::init() {
 
     ////////// MODEL.HPP 
 
-    Node::oncreate<Model>([](Node* node, Model *model) { node->name = model->file->name; });
+    Node::oncreate<Model>([](AnyNode* node, Model *model) { node->name = model->file->name; });
 
-    TypedNode<Model>::onadd<File>([](Node*_this,Node*node){ 
+    TypedNode<Model>::onadd<File>([](AnyNode*_this,AnyNode*node){ 
         
         auto model = _this->is_a<Model>();
         auto file = node->is_a<File>();
@@ -120,12 +120,12 @@ void Nodes::init() {
 
     });
     
-    Node::oncreate<ShaderFX>([](Node* node, ShaderFX *fx) { node->name = fx->file->name; });
+    Node::oncreate<ShaderFX>([](AnyNode* node, ShaderFX *fx) { node->name = fx->file->name; });
 
 
     ////////// Directory.HPP 
 
-    Node::oncreate<Directory>([](Node* node, Directory *dir){ 
+    Node::oncreate<Directory>([](AnyNode* node, Directory *dir){ 
 
         node->name = dir->path;
 
