@@ -37,12 +37,20 @@ struct TempNode {
  
     std::vector<TempNode*> childrens;
 
-    template <typename T>
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
-    template <typename T>
-    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[ptr_type()] = cb;  }
+    static inline TAnyNode* test;
 
-    virtual TAnyNode* add(TempNode *node)  { 
+    template <typename T>
+    static inline std::unordered_map<std::type_index, std::function<TAnyNode*(TAnyNode*,TAnyNode*)>> onadd_cb;
+    template <typename T>
+    void onadd(std::function<TAnyNode*(TAnyNode*,TAnyNode*)> cb) { onadd_cb<T>[ptr_type()] = cb;  }
+
+    static inline void* anyptr = nullptr;
+
+    TAnyNode* getAny() { return (TAnyNode*)this; }
+
+    virtual TAnyNode* add(void *node_v)  { 
+        
+        auto node = (TempNode*)node_v;
         
         node->parent_node = this;
 
@@ -88,23 +96,27 @@ struct TTypedNode : TempNode {
 
     std::type_index ptr_type() override { return typeid(*ptr); }
 
-    // TAnyNode* add(TempNode* node) override {
+    TAnyNode* add(void *node_v) override { 
+        
+        auto node = (TempNode*)node_v;
 
-    //     if (onadd_cb<T>.size()) {
+        test = getAny();
 
-    //         if (onadd_cb<T>.find(node->ptr_type()) != onadd_cb<T>.end()) {
+        // if (onadd_cb<T>.size()) {
 
-    //             return onadd_cb<T>[node->ptr_type()](this,node);
+        //     if (onadd_cb<T>.find(node->ptr_type()) != onadd_cb<T>.end()) {
 
-    //         }
+        //         return onadd_cb<T>[node->ptr_type()](this,node);
 
-    //         return nullptr;
+        //     }
 
-    //     }
+        //     return nullptr;
 
-    //     return TempNode::add(node);
+        // }
 
-    // }
+        return TempNode::add(node);
+
+    }
 
     template <typename U, typename... Args>
     TTypedNode<U>* addOwnr(Args&&... args) {
