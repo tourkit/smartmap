@@ -25,136 +25,6 @@
 #include <vector>
 
 
-struct TAnyNode;
-
-struct TempNode {
-
-    std::string name;
-
-    TempNode(std::string name = "nullNode") :name(name) {}
-
-    TempNode* parent_node = nullptr;
- 
-    std::vector<TempNode*> childrens;
-
-    static inline TAnyNode* test;
-
-    template <typename T>
-    static inline std::unordered_map<std::type_index, std::function<TAnyNode*(TAnyNode*,TAnyNode*)>> onadd_cb;
-    
-    template <typename T>
-    void onadd(std::function<TAnyNode*(TAnyNode*,TAnyNode*)> cb) { onadd_cb<T>[ptr_type()] = cb;  }
-
-    virtual TAnyNode* add(void *node_v)  { 
-        
-        auto node = (TempNode*)node_v;
-        
-        node->parent_node = this;
-
-        childrens.push_back(node);
-
-        return (TAnyNode*)node;
-
-    }
-
-    virtual ~TempNode() {
-
-        for (auto c : childrens) delete c;
-
-        PLOGD <<"dtroy "<<name;
-
-    }
-
-    virtual std::type_index ptr_type() { return typeid(this); }
-
-};
-
-struct TAny {};
-template <typename T>
-struct TTypedNode : TempNode { 
-
-    T* ptr; 
-
-    bool owned = false;
-    
-    TTypedNode(void* ptr = nullptr) : ptr((T*)ptr) {}
-
-    template <typename U>
-    TTypedNode<U>* addPtr(U* ptr, bool owned = false) { 
-
-        auto new_U = new TTypedNode<U>(ptr);
-
-        new_U->owned = owned;
-
-        TempNode::add(new_U);
-
-        return new_U;
-
-    }
-
-    std::type_index ptr_type() override { return typeid(*ptr); }
-
-    TAnyNode* add(void *node_v) override { 
-        
-        auto node = (TTypedNode<TAny>*)node_v;
-
-        if (onadd_cb<T>.size()) {
-
-            if (onadd_cb<T>.find(node->ptr_type()) != onadd_cb<T>.end()) {
-
-                return (TAnyNode*)onadd_cb<T>[node->ptr_type()]((TAnyNode*)this,(TAnyNode*)node);
-
-            }
-
-            return nullptr;
-
-        }
-
-        return TempNode::add(node);
-
-    }
-    template <typename U>
-    static void onadd(std::function<TAnyNode*(TAnyNode*,TAnyNode*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
-
-    template <typename U, typename... Args>
-    TTypedNode<U>* addOwnr(Args&&... args) {
-
-        auto ptr = new U(std::forward<Args>(args)...);
-    
-        auto* NEW_U = addPtr(ptr,true);
-
-        if (!NEW_U) { delete ptr; return nullptr; }
-
-        return NEW_U;
-
-    }
-
-    ~TTypedNode() override { 
-        
-        if (owned) { 
-            delete ptr; 
-    } 
-    }
-   
-};
-
-template <typename T>
-struct TOwnr : TTypedNode<T> {  
-
-    template <typename... Args>
-    TOwnr(Args&&... args) { addOwnr(std::forward<Args>(args)...); }
-
-};
-
-template <typename T>
-struct TPtr : TTypedNode<T> {  
-
-    template <typename... Args>
-    TPtr(T *ptr) { addPtr(ptr,true); }
-
-};
-
-struct TAnyNode : TTypedNode<TAny> {};
 
 struct Foo { Foo() { PLOGD << "foo"; } ~Foo() { PLOGD << "~ foo"; } };
 struct Bar {  ~Bar() { PLOGD << "~ bar"; }  Bar(int x) { PLOGD << "bar"; }};
@@ -163,17 +33,19 @@ Test::Test(){
 
     Foo foo;
 
-    TTypedNode<Foo>::onadd<Bar>([](TAnyNode* a, TAnyNode* b) {
+    TypedNode<Foo>::onadd<Bar>([](AnyNode* a, AnyNode* b) {
         return nullptr;
     });
 
     {    
     
-        TempNode a("aaa");
+        Node a("aaa");
 
-        auto b = a.add(new TempNode("b"));
+        auto b = a.add(new Node("b"));
 
         b->addPtr<Foo>(&foo);
+
+        Ownr<Foo>* owned_foo = new Ownr<Foo>();
 
         auto z  = b->addOwnr<Bar>(6);
     

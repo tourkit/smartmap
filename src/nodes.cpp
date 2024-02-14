@@ -65,12 +65,14 @@ void Nodes::init() {
 
     TypedNode<Stack>::onadd<DrawCall>([](AnyNode*_this,AnyNode*node){ 
 
-        auto dc = ((Ptr<DrawCall>*)node)->get();
-        dc->update();
+        // auto dc = ((Ptr<DrawCall>*)node)->get();
+        // dc->update();
     
-        _this->Node::add(node);
-        return _this; 
+        // _this->Node::add(node);
+        // return _this; 
         
+        return nullptr;
+
     });
 
     TypedNode<Stack>::onadd<UBO>([](AnyNode*_this,AnyNode*node){ 
@@ -87,15 +89,17 @@ void Nodes::init() {
     
     TypedNode<DrawCall>::onadd<File>([](AnyNode*_this,AnyNode*node){ 
         
-        auto dc = _this->is_a<DrawCall>();
-        auto file = node->is_a<File>();
-        if (!dc || !file) return node;
+        // auto dc = _this->is_a<DrawCall>();
+        // auto file = node->is_a<File>();
+        // if (!dc || !file) return node;
 
-        auto model = dc->vbo.import(file);
+        // auto model = dc->vbo.import(file);
         
-        dc->update();
+        // dc->update();
 
-        return _this->Node::add(new Ptr<Model>(model));
+        // return _this->Node::add(new Ptr<Model>(model));]
+
+        return nullptr;
 
     });
 
@@ -105,18 +109,21 @@ void Nodes::init() {
 
     TypedNode<Model>::onadd<File>([](AnyNode*_this,AnyNode*node){ 
         
-        auto model = _this->is_a<Model>();
-        auto file = node->is_a<File>();
-        if (!model || !file) return node;
+        // auto model = _this->is_a<Model>();
+        // auto file = node->is_a<File>();
+        // if (!model || !file) return node;
 
-        auto bad = new ShaderFX(file); // unowned...
+        // auto bad = new ShaderFX(file); // unowned...
 
-        model->addFX(bad);
+        // model->addFX(bad);
 
-        auto dc = _this->parent()->is_a<DrawCall>();
-        if (dc) dc->update();
+        // auto dc = _this->parent()->is_a<DrawCall>();
+        // if (dc) dc->update();
         
-        return _this->Node::add(new Ptr<ShaderFX>(bad));
+        // return _this->Node::add(new Ptr<ShaderFX>(bad));
+        
+
+        return nullptr;
 
     });
     
@@ -127,9 +134,9 @@ void Nodes::init() {
 
     Node::oncreate<Directory>([](AnyNode* node, Directory *dir){ 
 
-        node->name = dir->path;
+        // node->name = dir->path;
 
-        for (auto f : dir->list) ((Ownr<Directory>*)node)->add<File>(f);
+        // for (auto f : dir->list) ((Ownr<Directory>*)node)->add<File>(f);
         
     });
 

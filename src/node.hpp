@@ -117,6 +117,8 @@ struct TypedNode : Node {
 
     T* ptr; 
 
+    bool owned;
+    
     T* get() { return ptr; }
     
     std::type_index type() override { return typeid(T); }
@@ -125,7 +127,7 @@ struct TypedNode : Node {
 
     operator T*() { return ptr; }
     
-    TypedNode(void* ptr) : Node((isNode() ? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
+    TypedNode(void* ptr, bool owned = false) : Node((isNode()? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr), owned(owned) {
 
             if(oncreate_cb<T>) { oncreate_cb<T>((AnyNode*)this,this->ptr); }
 
@@ -141,9 +143,9 @@ struct TypedNode : Node {
 
     }
 
-    AnyNode* add(void* node_v) override {
+    AnyNode* add(void *node_v) override { 
         
-        auto node = (Node*)node_v;
+        auto node = (TypedNode<Any>*)node_v;
 
         if (onadd_cb<T>.size()) {
 
@@ -161,6 +163,33 @@ struct TypedNode : Node {
 
     }
 
+    template <typename U>
+    TypedNode<U>* addPtr(U* ptr, bool owned = false) { return (TypedNode<U>*)Node::add(new TypedNode<U>(ptr, owned)); }
+
+    template <typename U, typename... Args>
+    TypedNode<U>* addOwnr(Args&&... args) {
+
+        auto ptr = new U(std::forward<Args>(args)...);
+    
+        auto* NEW_U = addPtr(ptr,true);
+
+        if (!NEW_U) { delete ptr; return nullptr; }
+
+        return NEW_U;
+
+    }
+
+
+    ~TypedNode() override { 
+        
+        if (owned) { 
+
+            delete ptr; 
+
+        } 
+
+    }
+
     void editor() override { if(editor_cb<T>) editor_cb<T>((AnyNode*)this,this->ptr); }
 
     template <typename U>
@@ -174,44 +203,14 @@ private:
 
 struct AnyNode : TypedNode<Any> { };
 
-template <typename T>
-struct Ptr : TypedNode<T> { 
-
-    virtual ~Ptr() { }
-
-    Ptr(void* ptr) : TypedNode<T>(ptr) { } 
-
-    AnyNode* addPtr(Node* node) { return (AnyNode*)TypedNode<T>::add(node); }
-
-    template <typename U>
-    Ptr<U>* addPtr(U* ptr) { 
-
-        auto x = new Ptr<U>(ptr);
-
-        Ptr<T>::add(x);
-
-        return x;
-
-    }
-};
 
 template <typename T>
-struct Ownr : Ptr<T> {
+struct Ownr : TypedNode<T> {  
 
     template <typename... Args>
-    Ownr(Args&&... args) : Ptr<T>(new T(std::forward<Args>(args)...)) {  }
-    
-    virtual ~Ownr() { delete Ptr<T>::ptr; }
-    
-    template <typename U, typename... Args>
-    Ownr<U>* add(Args&&... args) { 
-    
-        Ownr<U>* x = new Ownr<U>(std::forward<Args>(args)...);
-
-        if (!Ptr<T>::add(x)) { delete x; return nullptr; }
-
-        return x;
-
-    }
+    Ownr(Args&&... args) : TypedNode<T>(new T(std::forward<Args>(args)...), true) { } 
 
 };
+
+template <typename T>
+struct Ptr : TypedNode<T> { Ptr(T *ptr)  : TypedNode<T>(ptr)  { } };

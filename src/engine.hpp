@@ -25,7 +25,7 @@ struct Engine {
 
     Node tree = Node("tree");
     
-    Node* stack = tree.Node::add(new Ownr<Stack>{});
+    // Node* stack = tree.Node::add(new Ownr<Stack>{});
 
     // Ownr<Stack>* stack = tree->add<Stack>();
 
