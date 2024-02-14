@@ -69,7 +69,7 @@ struct TempNode {
 
 };
 
-struct Any {};
+struct TAny {};
 template <typename T>
 struct TTypedNode : TempNode { 
 
@@ -96,7 +96,7 @@ struct TTypedNode : TempNode {
 
     TAnyNode* add(void *node_v) override { 
         
-        auto node = (TTypedNode<Any>*)node_v;
+        auto node = (TTypedNode<TAny>*)node_v;
 
         if (onadd_cb<T>.size()) {
 
@@ -154,7 +154,7 @@ struct TPtr : TTypedNode<T> {
 
 };
 
-struct TAnyNode : TTypedNode<Any> {};
+struct TAnyNode : TTypedNode<TAny> {};
 
 struct Foo { Foo() { PLOGD << "foo"; } ~Foo() { PLOGD << "~ foo"; } };
 struct Bar {  ~Bar() { PLOGD << "~ bar"; }  Bar(int x) { PLOGD << "bar"; }};
