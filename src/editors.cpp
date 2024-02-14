@@ -18,19 +18,19 @@ void Editors::init() {
 
     // ////////// xxx.HPP 
 
-    // UntypedNode::editor<xxx>([](Node* node, xxx *x){ });
+    // Node::editor<xxx>([](Node* node, xxx *x){ });
 
     ////////// UBO.HPP 
 
-    UntypedNode::editor<UBO>([](Node* node, UBO *ubo){ UntypedNode::editor_cb<Buffer>(node, &ubo->buffer); });
+    Node::editor<UBO>([](Node* node, UBO *ubo){ Node::editor_cb<Buffer>(node, &ubo->buffer); });
 
     ////////// VBO.HPP 
     
-    UntypedNode::editor<VBO>([](Node*node,VBO*vbo){ UntypedNode::editor_cb<Buffer>(node, &vbo->buffer); });
+    Node::editor<VBO>([](Node*node,VBO*vbo){ Node::editor_cb<Buffer>(node, &vbo->buffer); });
 
     ////////// STRUCT.HPP 
 
-    UntypedNode::editor<Struct>([](Node* node, Struct *s){ 
+    Node::editor<Struct>([](Node* node, Struct *s){ 
         
         ImGui::Text((node->name+" " +std::to_string(s->size)).c_str());
 
@@ -49,7 +49,7 @@ void Editors::init() {
 
     ////////// SHADER.HPP 
 
-    UntypedNode::editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
+    Node::editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
         
         ImGui::Text(std::to_string(shader->loaded).c_str());
 
@@ -73,11 +73,11 @@ void Editors::init() {
 
     ////////// DRAWCALL.HPP 
     
-    UntypedNode::editor<DrawCall>([](Node* node, DrawCall *dc){ UntypedNode::editor_cb<ShaderProgram>(node, &dc->shader); });
+    Node::editor<DrawCall>([](Node* node, DrawCall *dc){ Node::editor_cb<ShaderProgram>(node, &dc->shader); });
 
     ////////// SHADERFX.HPP 
 
-    UntypedNode::editor<ShaderFX>([](Node* node, ShaderFX *shader){ 
+    Node::editor<ShaderFX>([](Node* node, ShaderFX *shader){ 
             
         ImGui::InputTextMultiline("src", (char*)shader->file->data.c_str(), shader->file->data.size());
    
@@ -85,7 +85,7 @@ void Editors::init() {
 
     ////////// BUFFER.HPP 
 
-    UntypedNode::editor<Buffer>([](Node* node, Buffer *buffer){
+    Node::editor<Buffer>([](Node* node, Buffer *buffer){
 
         static StringsBuffer object_str;
         static int obj_current = 0;

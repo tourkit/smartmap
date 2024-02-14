@@ -18,26 +18,6 @@ struct Node;
 
 struct UntypedNode {
 
-    template <typename T>
-    static inline std::function<void(Node*,T*)> oncreate_cb = nullptr;
-    template <typename T>
-    static inline std::function<void(Node*,T*)> onrun_cb = nullptr;
-    template <typename T>
-    static inline std::function<void(Node*,T*)> editor_cb = nullptr;
-    template <typename T>
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
-
-    template <typename T>
-    static void onrun(std::function<void(Node*,T*)> cb) { onrun_cb<T> = cb;  }
-    template <typename T>
-    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cb<T> = cb;  }
-    template <typename T>
-    static void editor(std::function<void(Node*,T*)> cb) { editor_cb<T> = cb; }
-    template <typename T>
-    static void editor() { editor_cb<T>(); }
-    template <typename T>
-    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[type()] = cb;  }
-
     std::string name;
 
     glm::vec4 color;
@@ -114,6 +94,20 @@ struct Any {};
 
 template <typename T>
 struct TypedNode : UntypedNode { 
+
+    template <typename U>
+    static inline std::function<void(Node*,U*)> oncreate_cb = nullptr;
+    template <typename U>
+    static inline std::function<void(Node*,U*)> onrun_cb = nullptr;
+    template <typename U>
+    static inline std::function<void(Node*,U*)> editor_cb = nullptr;
+
+    template <typename U>
+    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
+
+    template <typename U>
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
+
 
     T* ptr; 
 
@@ -192,16 +186,28 @@ struct TypedNode : UntypedNode {
 
     void editor() override { if(editor_cb<T>) editor_cb<T>((Node*)this,this->ptr); }
 
-    template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
-
 private:
 
     bool isNode() { return std::is_base_of<UntypedNode, T>::value; } 
 
 };
 
-struct Node : TypedNode<Any> { Node(std::string name = "any") : TypedNode<Any>(this) { this->name = name; } };
+struct Node : TypedNode<Any> { 
+
+    Node(std::string name = "any") : TypedNode<Any>(this) { this->name = name; } 
+
+    template <typename U>
+    static void onrun(std::function<void(Node*,U*)> cb) { onrun_cb<U> = cb;  }
+    template <typename U>
+    static void oncreate(std::function<void(Node*,U*)> cb) { oncreate_cb<U> = cb;  }
+
+    template <typename U>
+    static void editor(std::function<void(Node*,U*)> cb) { editor_cb<U> = cb; }
+    template <typename U>
+    static void editor() { editor_cb<U>(); }
+
+    
+};
 
 
 template <typename T>
