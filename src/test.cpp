@@ -25,7 +25,7 @@
 #include <vector>
 
 
-struct AnyNode;
+struct TAnyNode;
 
 struct TempNode {
 
@@ -37,13 +37,13 @@ struct TempNode {
  
     std::vector<TempNode*> childrens;
 
-    AnyNode* add(TempNode *node)  { 
+    TAnyNode* add(TempNode *node)  { 
         
         node->parent_node = this;
 
         childrens.push_back(node);
 
-        return (AnyNode*)node;
+        return (TAnyNode*)node;
 
     }
 
@@ -58,18 +58,18 @@ struct TempNode {
 };
 
 template <typename T>
-struct TypedNode : TempNode { 
+struct TTypedNode : TempNode { 
 
     T* ptr; 
 
     bool owned = false;
     
-    TypedNode(void* ptr = nullptr) : ptr((T*)ptr) {}
+    TTypedNode(void* ptr = nullptr) : ptr((T*)ptr) {}
 
     template <typename U>
-    TypedNode<U>* addPtr(U* ptr, bool owned = false) { 
+    TTypedNode<U>* addPtr(U* ptr, bool owned = false) { 
 
-        auto new_U = new TypedNode<U>(ptr);
+        auto new_U = new TTypedNode<U>(ptr);
 
         new_U->owned = owned;
 
@@ -80,7 +80,7 @@ struct TypedNode : TempNode {
     }
 
     template <typename U, typename... Args>
-    TypedNode<U>* addOwnr(Args&&... args) {
+    TTypedNode<U>* addOwnr(Args&&... args) {
 
         auto ptr = new U(std::forward<Args>(args)...);
     
@@ -92,7 +92,7 @@ struct TypedNode : TempNode {
 
     }
 
-    ~TypedNode() override { 
+    ~TTypedNode() override { 
         
         if (owned) { 
             delete ptr; 
@@ -102,7 +102,7 @@ struct TypedNode : TempNode {
 };
 
 template <typename T>
-struct TOwnr : TypedNode<T> {  
+struct TOwnr : TTypedNode<T> {  
 
     template <typename... Args>
     TOwnr(Args&&... args) { addOwnr(std::forward<Args>(args)...); }
@@ -110,7 +110,7 @@ struct TOwnr : TypedNode<T> {
 };
 
 template <typename T>
-struct TPtr : TypedNode<T> {  
+struct TPtr : TTypedNode<T> {  
 
     template <typename... Args>
     TPtr(T *ptr) { addPtr(ptr,true); }
@@ -118,7 +118,7 @@ struct TPtr : TypedNode<T> {
 };
 
 struct Any {};
-struct AnyNode : TypedNode<Any> {};
+struct TAnyNode : TTypedNode<Any> {};
 
 struct Foo { Foo() { PLOGD << "foo"; } ~Foo() { PLOGD << "~ foo"; } };
 struct Bar {  ~Bar() { PLOGD << "~ bar"; }  Bar(int x) { PLOGD << "bar"; }};

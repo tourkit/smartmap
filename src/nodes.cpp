@@ -18,7 +18,7 @@ void Nodes::init() {
     
     // Node::oncreate<xxx>([](Node* node, xxx *x){ });
 
-    // NODE<xxx>::onadd<yyy>([](Node*_this,Node*node){ 
+    // TypedNode<xxx>::onadd<yyy>([](Node*_this,Node*node){ 
 
     //     auto s = ((Ptr<xxx>*)_this)->get();
     //     auto f = ((Ptr<yyy>*)node)->get();
@@ -63,7 +63,7 @@ void Nodes::init() {
 
     ////////// ENGINE.HPP (and Stack)
 
-    NODE<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
+    TypedNode<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
 
         auto dc = ((Ptr<DrawCall>*)node)->get();
         dc->update();
@@ -73,7 +73,7 @@ void Nodes::init() {
         
     });
 
-    NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
+    TypedNode<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
 
         _this->Node::add(node);
         return node;
@@ -85,7 +85,7 @@ void Nodes::init() {
 
     Node::onrun<DrawCall>([](Node* node, DrawCall *dc){  dc->run(); });
     
-    NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
+    TypedNode<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
         auto dc = _this->is_a<DrawCall>();
         auto file = node->is_a<File>();
@@ -103,7 +103,7 @@ void Nodes::init() {
 
     Node::oncreate<Model>([](Node* node, Model *model) { node->name = model->file->name; });
 
-    NODE<Model>::onadd<File>([](Node*_this,Node*node){ 
+    TypedNode<Model>::onadd<File>([](Node*_this,Node*node){ 
         
         auto model = _this->is_a<Model>();
         auto file = node->is_a<File>();

@@ -13,8 +13,8 @@
 #include "glm/glm.hpp"
 
 struct File;
-struct TYPEDNODE;
 
+struct AnyNode;
 
 struct Node {
 
@@ -56,9 +56,7 @@ struct Node {
     
     Node* parent();
 
-    virtual Node *add(Node *node);
-
-    virtual TYPEDNODE* addPtr(Node* node) ;
+    virtual Node* add(Node *node);
 
     void remove(Node *child);
 
@@ -70,9 +68,17 @@ struct Node {
 
     virtual void editor() {}
 
-    virtual void run();
+    virtual void run(); // need to be virtual ?
     
-    virtual void update();
+    virtual void update();  // need ?
+    
+    virtual void runCB();  // need ?
+
+    std::function<void(Node*)> dtor = nullptr; // useless ?
+
+    void import(std::string path); // useless ?
+
+    virtual void import(File* file) {} // useless ?
 
     void select();
 
@@ -98,22 +104,14 @@ struct Node {
     
     virtual void* ptr_untyped() { return this; }
 
-    std::function<void(Node*)> dtor = nullptr; // useless ?
-
     auto begin() { return childrens.begin(); }
 
     auto end() { return childrens.end(); }
-    
-    virtual void runCB();
-
-    void import(std::string path); // useless ?
-
-    virtual void import(File* file) {} // useless ?
 
     };
 
 template <typename T>
-struct NODE : Node { 
+struct TypedNode : Node { 
 
     T* ptr; 
 
@@ -125,7 +123,7 @@ struct NODE : Node {
 
     operator T*() { return ptr; }
     
-    NODE(void* ptr) : Node((isNode() ? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
+    TypedNode(void* ptr) : Node((isNode() ? ((Node*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr) {
 
             if(oncreate_cb<T>) { oncreate_cb<T>(this,this->ptr); }
 
@@ -170,16 +168,16 @@ private:
 };
 
 struct ANY {};
-struct TYPEDNODE : NODE<ANY> { };
+struct AnyNode : TypedNode<ANY> { };
 
 template <typename T>
-struct Ptr : NODE<T> { 
+struct Ptr : TypedNode<T> { 
 
     virtual ~Ptr() { }
 
-    Ptr(void* ptr) : NODE<T>(ptr) { } 
+    Ptr(void* ptr) : TypedNode<T>(ptr) { } 
 
-    TYPEDNODE* addPtr(Node* node) override { return (TYPEDNODE*)NODE<T>::add(node); }
+    AnyNode* addPtr(Node* node) { return (AnyNode*)TypedNode<T>::add(node); }
 
     template <typename U>
     Ptr<U>* addPtr(U* ptr) { 

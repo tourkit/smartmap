@@ -24,19 +24,11 @@
 
     }   
 
-    TYPEDNODE* Node::addPtr(Node* node){ return (TYPEDNODE*)add(node); } 
-
-    void Node::select(){
-
-        engine.selected = this;
-
-    }
-
     Node* Node::add(Node* n)  { 
 
          n->parent(this);   
 
-        return n;
+        return (Node*)n;
 
      }
 
