@@ -108,7 +108,9 @@ struct Node {
 
     auto end() { return childrens.end(); }
 
-    };
+};
+
+struct Any {};
 
 template <typename T>
 struct TypedNode : Node { 
@@ -167,8 +169,7 @@ private:
 
 };
 
-struct ANY {};
-struct AnyNode : TypedNode<ANY> { };
+struct AnyNode : TypedNode<Any> { };
 
 template <typename T>
 struct Ptr : TypedNode<T> { 
