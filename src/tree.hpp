@@ -1,14 +1,13 @@
 #pragma once
 #include "gui.hpp"
 #include "node.hpp"
+#include "engine.hpp"
 
 struct TreeWidget : GUI::Window {
 
-    Node* selected = nullptr;
+    Node* selected;
 
-    bool locked = true;
-
-    TreeWidget();
+    TreeWidget(Node* selected = nullptr);
 
     void draw() override;
 

@@ -45,6 +45,8 @@
 
     Node *Node::parent() { return parent_node; }
 
+    void Node::select(){ engine.selected = this; }
+    
     void Node::parent(Node* parent_node) {  
         
         if (this->parent_node == parent_node) return;

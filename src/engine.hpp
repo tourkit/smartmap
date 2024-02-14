@@ -23,11 +23,9 @@ struct Engine {
 
     UBO *static_ubo;
 
-    Node tree = Node("tree");
-    
-    // Node* stack = tree.Node::add(new Ownr<Stack>{});
+    AnyNode tree = AnyNode("tree");
 
-    // Ownr<Stack>* stack = tree->add<Stack>();
+    AnyNode* stack = tree.addOwnr<Stack>();
 
     Node* selected = &tree;
     

@@ -134,9 +134,9 @@ void Nodes::init() {
 
     Node::oncreate<Directory>([](AnyNode* node, Directory *dir){ 
 
-        // node->name = dir->path;
+        node->name = dir->path;
 
-        // for (auto f : dir->list) ((Ownr<Directory>*)node)->add<File>(f);
+        for (auto f : dir->list) node->addOwnr<File>(f);
         
     });
 

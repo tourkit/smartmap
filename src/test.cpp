@@ -45,7 +45,7 @@ Test::Test(){
 
         b->addPtr<Foo>(&foo);
 
-        Ownr<Foo>* owned_foo = new Ownr<Foo>();
+        Ownr<Foo> owned_foo;
 
         auto z  = b->addOwnr<Bar>(6);
     

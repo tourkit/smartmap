@@ -164,10 +164,10 @@ struct TypedNode : Node {
     }
 
     template <typename U>
-    TypedNode<U>* addPtr(U* ptr, bool owned = false) { return (TypedNode<U>*)Node::add(new TypedNode<U>(ptr, owned)); }
+    AnyNode* addPtr(U* ptr, bool owned = false) { return Node::add(new TypedNode<U>(ptr, owned)); }
 
     template <typename U, typename... Args>
-    TypedNode<U>* addOwnr(Args&&... args) {
+    AnyNode* addOwnr(Args&&... args) {
 
         auto ptr = new U(std::forward<Args>(args)...);
     
@@ -201,7 +201,7 @@ private:
 
 };
 
-struct AnyNode : TypedNode<Any> { };
+struct AnyNode : TypedNode<Any> { AnyNode(std::string name = "any") : TypedNode<Any>(this) { this->name = name; } };
 
 
 template <typename T>

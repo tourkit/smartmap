@@ -3,11 +3,11 @@
 #include "engine.hpp"
 #include "imgui_internal.h"
 
-TreeWidget::TreeWidget() : GUI::Window("Tree")  { }
+TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected) {  }
 
 void TreeWidget::draw()  { 
 
-    if (!locked || !selected) selected = engine.selected;
+    if (!selected) selected = &engine.tree;
     
     if (ImGui::BeginMainMenuBar()) {
         

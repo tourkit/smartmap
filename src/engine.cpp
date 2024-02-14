@@ -41,7 +41,9 @@ void Engine::init() {
 
     Nodes::init();
 
-    // stack->addPtr<UBO>(dynamic_ubo)->select();
+    stack->addPtr<UBO>(dynamic_ubo)->select();
+
+    PLOGD<<stack->type().name();
 
     // tree->addPtr<UBO>(static_ubo);
 
