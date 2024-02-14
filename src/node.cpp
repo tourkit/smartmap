@@ -1,5 +1,4 @@
 #include "node.hpp"
-#include "file.hpp"
 #include "log.hpp"
 #include "engine.hpp"
 
@@ -36,14 +35,6 @@
 
      }
 
-
-    void UntypedNode::import(std::string path) {
-
-        File file(path);
-
-        import(&file);
-
-    }
 
     Node *UntypedNode::parent() { return parent_node; }
 

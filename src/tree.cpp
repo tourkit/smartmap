@@ -150,7 +150,10 @@ void TreeWidget::drawNode(Node* node) {
 
         if (!ImGui::IsItemHovered()) is_deleting = false;
 
-        ImGui::MenuItem("pop");
+        if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
+      
+        if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));
+
         ImGui::EndPopup();
     }
     // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}

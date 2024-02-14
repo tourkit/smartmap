@@ -67,10 +67,6 @@ struct UntypedNode {
 
     std::function<void(Node*)> dtor = nullptr; // useless ?
 
-    void import(std::string path); // useless ?
-
-    virtual void import(File* file) {} // useless ?
-
     void select();
 
     template <typename U>
@@ -119,12 +115,14 @@ struct TypedNode : UntypedNode {
     template <typename U>
     static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
 
-
     T* ptr; 
 
     bool owned;
-    
+
     T* get() { return ptr; }
+    
+    template <typename U>
+    U* get() { return (U*)ptr; }
     
     std::type_index type() override { return typeid(T); }
 
@@ -195,12 +193,7 @@ struct TypedNode : UntypedNode {
 
     }
 
-    void editor() override { 
-        
-        if(Editor::cb<T>) {
-            Editor::cb<T>(node(),this->ptr); 
-        }
-    }
+    void editor() override { if(Editor::cb<T>) Editor::cb<T>(node(),this->ptr); }
 
 private:
 
@@ -220,7 +213,7 @@ struct Node : TypedNode<Any> {
     template <typename U>
     static void editor(std::function<void(Node*,U*)> cb) { Editor::cb<U> = cb; }
 
-    void editor() override {  PLOGD << "NIK"; }
+    void editor() override {  }
 
 };
 
@@ -230,10 +223,8 @@ struct Ownr : TypedNode<T> {
 
     template <typename... Args>
     Ownr(Args&&... args) : TypedNode<T>(new T(std::forward<Args>(args)...), true) { } 
-    void editor() override {  PLOGD << "ooooo"; }
 
 };
 
 template <typename T>
-struct Ptr : TypedNode<T> { Ptr(T *ptr)  : TypedNode<T>(ptr)  { }
-    void editor() override {  PLOGD << "pppp"; } };
+struct Ptr : TypedNode<T> { Ptr(T *ptr)  : TypedNode<T>(ptr)  { } };

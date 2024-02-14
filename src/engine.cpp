@@ -22,7 +22,7 @@ Engine::Engine(uint16_t width, uint16_t height)
 }
 
 Engine::~Engine() { PLOGD << "Engine destroyed"; }
-
+ 
 void Engine::run() {
 
     auto &window = getInstance().window;
@@ -31,7 +31,7 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
 
-        // engine.stack->run();
+        // engine.stack->run(); // better be : tree.run(); ( owning gui and all..)
 
         engine.gui->draw(); 
 
@@ -52,10 +52,10 @@ void Engine::init() {
     auto models = tree.addOwnr<Directory>("assets/model/");
     auto shaders = tree.addOwnr<Directory>("assets/shaders/");
 
-    // auto dc = stack->add<DrawCall>();
-    // dynamic_ubo->subscribers.push_back(&dc->get()->shader);
-    // auto model = dc->addPtr(models->childrens[0]); 
-    // model->addPtr(shaders->childrens[0]); 
+    auto dc = stack->addOwnr<DrawCall>();
+    dynamic_ubo->subscribers.push_back(&dc->get<DrawCall>()->shader);
+    auto model = dc->addPtr(models->childrens[0]); 
+    model->addPtr(shaders->childrens[0]); 
     
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});

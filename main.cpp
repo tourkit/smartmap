@@ -7,6 +7,7 @@
 #include "engine.hpp"
 
 #include "test.hpp"
+#include "log.hpp"
 
 int main() { 
 
