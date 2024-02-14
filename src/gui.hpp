@@ -5,10 +5,11 @@
 #include <string>
 #include <cstring>
 
-
 #include "imgui/imgui.h"
 #include "include/vendor/ImGuiColorTextEdit/TextEditor.h"
 
+struct EditorWidget;
+struct TreeWidget;
 
 struct StringsBuffer {
 
@@ -69,6 +70,9 @@ struct GUI {
   void render();
 
   void draw() ;
+
+  std::vector<EditorWidget*> editors;
+  std::vector<TreeWidget*> trees;
 
   struct Window {
 

@@ -7,9 +7,7 @@
 #include "atlas.hpp"
 #include "buffer.hpp"
 
-
-#include "tree.hpp"
-#include "editor.hpp"
+#include "gui.hpp"
 
 struct Stack {};
 
@@ -20,16 +18,18 @@ struct Engine {
     GUI* gui;
 
     Buffer buffer; 
-    
-    Ownr<Tree>* tree = new Ownr<Tree>();
 
     UBO *dynamic_ubo;
 
     UBO *static_ubo;
 
-    Ownr<Stack>* stack = tree->add<Stack>();
+    Node tree = Node("tree");
+    
+    Node* stack = tree.Node::add(new Ownr<Stack>{});
 
-    Node* selected = tree;
+    // Ownr<Stack>* stack = tree->add<Stack>();
+
+    Node* selected = &tree;
     
     Atlas *atlas;
     
@@ -40,8 +40,6 @@ struct Engine {
     static Engine& getInstance() { static Engine instance;  return instance; }
 
     void run();
-
-    EditorWidget editorw;
 
 private:
 

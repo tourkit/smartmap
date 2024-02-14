@@ -3,9 +3,9 @@
 #include "engine.hpp"
 #include "imgui_internal.h"
 
-Tree::Tree() : GUI::Window("Tree")  { }
+TreeWidget::TreeWidget() : GUI::Window("Tree")  { }
 
-void Tree::draw()  { 
+void TreeWidget::draw()  { 
 
     if (!locked || !selected) selected = engine.selected;
     
@@ -35,7 +35,7 @@ void Tree::draw()  {
     ImGui::PopItemWidth();
 
     // Create the table
-    
+   
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
         
         drawChildrens(selected); 
@@ -45,7 +45,7 @@ void Tree::draw()  {
     
 }
 
-void Tree::drawChildrens(Node* node) { 
+void TreeWidget::drawChildrens(Node* node) { 
 
     for (auto child : node->childrens) drawNode(child);
 
@@ -113,7 +113,7 @@ bool TreeViewNode(Node* node) {
 }
 
 };
-void Tree::drawNode(Node* node) { 
+void TreeWidget::drawNode(Node* node) { 
     
     ImGui::TableNextRow();
 

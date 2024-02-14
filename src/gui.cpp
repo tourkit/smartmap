@@ -1,6 +1,9 @@
 #include "gui.hpp"
 
+#include "editor.hpp"
+#include "tree.hpp"
 
+#include "editors.hpp"
 
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
@@ -59,7 +62,18 @@ GUI::GUI(GLFWwindow* window) {
     
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
-  
+
+
+Editors::init();
+
+editors.push_back(new EditorWidget());
+
+trees.push_back(new TreeWidget());
+
+
+    
+
+
 }
 
 GUI::~GUI() {   

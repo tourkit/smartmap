@@ -6,7 +6,6 @@
 #include "gui.hpp"
 
 #include "nodes.hpp"
-#include "editors.hpp"
 
 Engine::Engine(uint16_t width, uint16_t height) 
     : window(1920,1080,2560,0), 
@@ -30,7 +29,7 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
 
-        engine.stack->run();
+        // engine.stack->run();
 
         engine.gui->draw(); 
 
@@ -41,8 +40,6 @@ void Engine::run() {
 void Engine::init() {
 
     Nodes::init();
-    
-    // Editors::init();
 
     // stack->addPtr<UBO>(dynamic_ubo)->select();
 

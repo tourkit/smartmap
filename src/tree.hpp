@@ -2,13 +2,13 @@
 #include "gui.hpp"
 #include "node.hpp"
 
-struct Tree : GUI::Window {
+struct TreeWidget : GUI::Window {
 
     Node* selected = nullptr;
 
     bool locked = true;
 
-    Tree();
+    TreeWidget();
 
     void draw() override;
 
