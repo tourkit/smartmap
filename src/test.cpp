@@ -113,6 +113,8 @@ struct TTypedNode : TempNode {
         return TempNode::add(node);
 
     }
+    template <typename U>
+    static void onadd(std::function<TAnyNode*(TAnyNode*,TAnyNode*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
 
     template <typename U, typename... Args>
     TTypedNode<U>* addOwnr(Args&&... args) {
@@ -159,7 +161,12 @@ struct Bar {  ~Bar() { PLOGD << "~ bar"; }  Bar(int x) { PLOGD << "bar"; }};
 
 Test::Test(){
 
-        Foo foo;
+    Foo foo;
+
+    TTypedNode<Foo>::onadd<Bar>([](TAnyNode* a, TAnyNode* b) {
+        return nullptr;
+    });
+
     {    
     
         TempNode a("aaa");
