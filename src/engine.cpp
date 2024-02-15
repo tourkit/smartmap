@@ -57,8 +57,7 @@ void Engine::init() {
     dynamic_ubo->subscribers.push_back(&dc->get<DrawCall>()->shader);
 
     auto model = dc->addPtr(models->childrens[0]); 
-    // auto model = dc->addPtr<File>(models->childrens[0]->ptr); 
-    // model->addPtr<File>(shaders->childrens[0]->ptr); 
+    model->addPtr(shaders->childrens[0]); 
     
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});

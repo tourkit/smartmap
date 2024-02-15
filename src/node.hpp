@@ -201,8 +201,6 @@ struct TypedNode : UntypedNode {
 
         if (!NEW_U) { delete ptr; return nullptr; }
 
-        PLOGD<<NEW_U->type().name();
-
         return NEW_U;
 
     }

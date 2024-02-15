@@ -65,9 +65,11 @@ void Nodes::init() {
 
     On<Stack>::add<DrawCall>([](Node*_this,Node*node){ 
 
-        // node->is_a<DrawCall>()->update();
+        node->is_a<DrawCall>()->update();
 
         return _this->UntypedNode::add(node); // missind add() use case
+
+        // maybe moved stored_type to UntypedNode and use if!=UntypedNode get name and so on
 
     });
 
@@ -83,23 +85,27 @@ void Nodes::init() {
 
     On<DrawCall>::run([](Node* node, DrawCall *dc){  dc->run(); });
     
-    // On<DrawCall>::add<File>([](Node*_this,Node*node){ 
+    On<DrawCall>::add<Model>([](Node*_this,Node*node){ return _this->UntypedNode::add(node); });
+
+    On<DrawCall>::add<File>([](Node*_this,Node*node){ 
         
-    //     auto dc = _this->is_a<DrawCall>();
-    //     auto file = node->is_a<File>();
-    //     if (!dc || !file) return node;
+        auto dc = _this->is_a<DrawCall>();
+        auto file = node->is_a<File>();
+        if (!dc || !file) return node;
 
-    //     auto model = dc->vbo.import(file);
+        auto model = dc->vbo.import(file);
         
-    //     dc->update();
+        dc->update();
 
-    //     return _this->Node::add(new Ptr<Model>(model));
+        return _this->addPtr<Model>(model);
 
-    // });
+    });
 
     ////////// MODEL.HPP 
 
     On<Model>::create([](Node* node, Model *model) { node->name = model->file->name; });
+
+    On<Model>::add<ShaderFX>([](Node*_this,Node*node){ return _this->UntypedNode::add(node); });
 
     On<Model>::add<File>([](Node*_this,Node*node){ 
         
