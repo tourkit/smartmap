@@ -165,6 +165,10 @@ void TreeWidget::drawNode(Node* node) {
             ImGui::Text(node->name.c_str());
             ImGui::EndDragDropSource();
             
+        }else {
+            
+            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(0)) { Engine::getInstance().selected = node; }
+
         }
 
         if (ImGui::BeginDragDropTarget()) {     
@@ -174,8 +178,7 @@ void TreeWidget::drawNode(Node* node) {
             ImGui::EndDragDropTarget();
             
         }
-            
-        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().selected = node; }
+
         
         const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 

@@ -31,7 +31,7 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
 
-        // engine.stack->run(); // better be : tree.run(); ( owning gui and all..)
+        engine.stack->run(); // better be : tree.run(); ( owning gui and all..)
 
         engine.gui->draw(); 
 

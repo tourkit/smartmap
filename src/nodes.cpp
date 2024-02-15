@@ -67,25 +67,24 @@ void Nodes::init() {
 
         node->is_a<DrawCall>()->update();
 
-        return _this->UntypedNode::add(node); // missind add() use case
+        return _this->UntypedNode::add(node); // missind add() use case (still ? maybe not untyped)
 
         // maybe moved stored_type to UntypedNode and use if!=UntypedNode get name and so on
 
     });
 
-    // On<Stack>::add<UBO>([](Node*_this,Node*node){ 
+    On<Stack>::add<UBO>([](Node*_this,Node*node){ 
 
-    //     _this->Node::add(node);
-    //     return node;
+        return _this->UntypedNode::add(node);
 
 
-    // });
+    });
 
     ////////// DRAWCALL.HPP 
 
     On<DrawCall>::run([](Node* node, DrawCall *dc){  dc->run(); });
     
-    On<DrawCall>::add<Model>([](Node*_this,Node*node){ return _this->UntypedNode::add(node); });
+    // On<DrawCall>::add<Model>([](Node*_this,Node*node){ return _this->UntypedNode::add(node); });
 
     On<DrawCall>::add<File>([](Node*_this,Node*node){ 
         
@@ -97,7 +96,9 @@ void Nodes::init() {
         
         dc->update();
 
-        return _this->addPtr<Model>(model);
+        // return _this->addPtr<Model>(model);
+        
+        return _this->UntypedNode::add(new Ptr<Model>(model));
 
     });
 
