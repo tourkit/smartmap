@@ -157,7 +157,6 @@ void TreeWidget::drawNode(Node* node) {
         ImGui::EndPopup();
     }
     // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
-     
         if (ImGui::BeginDragDropSource()) {
 
             auto ptr = (uint64_t)node;
@@ -179,7 +178,6 @@ void TreeWidget::drawNode(Node* node) {
             
         }
 
-        
         const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 
         if (recurse) {
@@ -196,14 +194,32 @@ void TreeWidget::drawNode(Node* node) {
             drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(122,122,122,122));
             drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
 
+            if (ImGui::IsDragDropActive()) {
+                
+                auto pos = ImGui::GetCursorPos();
+                auto p1 = pos; 
+                auto p2 = pos; p2.x += 10;
+                auto p3 = pos; p3.x += 10; p3.y += 10;
+                auto p4 = pos; p4.y += 10;
+
+                drawList->AddQuad(p1,p2,p3,p4, IM_COL32(255, 255, 0, 255));
+
+                if (ImGui::BeginDragDropTarget()) {     
+
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGD << "TODO MOVE NODE";
+
+                    ImGui::EndDragDropTarget();
+                }
+                    
+            }
+
             drawChildrens(node);
 
             ImGui::TreePop();
 
-        }else {
-            
-            // if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { Engine::getInstance().editorw.selected = node; }
         }
+
+        
         
     
     }

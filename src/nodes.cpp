@@ -80,6 +80,14 @@ void Nodes::init() {
 
     });
 
+
+    On<Stack>::add<File>([](Node*_this,Node*node){ 
+
+        return _this->UntypedNode::add(node);
+
+
+    });
+
     ////////// DRAWCALL.HPP 
 
     On<DrawCall>::run([](Node* node, DrawCall *dc){  dc->run(); });
