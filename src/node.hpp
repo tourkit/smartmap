@@ -114,9 +114,6 @@ struct Passing {};
 template <typename T>
 struct TypedNode : UntypedNode { 
 
-    template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)][typeid(U)] = cb; }
-
     T* ptr; 
 
     bool owned;
@@ -210,7 +207,6 @@ struct TypedNode : UntypedNode {
 
     }
 
-
     ~TypedNode() override { 
         
         if (owned) { 
@@ -234,11 +230,6 @@ struct Node : TypedNode<Any> {
     Node(std::string name = "any") : TypedNode<Any>(this) { this->name = name; } 
 
     template <typename U>
-    static void onrun(std::function<void(Node*,U*)> cb) { onrun_cb<U> = cb;  }
-    template <typename U>
-    static void oncreate(std::function<void(Node*,U*)> cb) { oncreate_cb<U> = cb;  }
-
-    template <typename U>
     static void editor(std::function<void(Node*,U*)> cb) { Editor::cb<U> = cb; }
 
     void editor() override {  }
@@ -254,5 +245,20 @@ struct Ownr : TypedNode<T> {
 
 };
 
+
+
 template <typename T>
 struct Ptr : TypedNode<T> { Ptr(T *ptr)  : TypedNode<T>(ptr)  { } };
+
+template <typename T>
+struct On : TypedNode<T> { 
+    
+    On(T *ptr)  : TypedNode<T>(ptr)  { } 
+
+    template <typename U>
+    static void add(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onadd_cb[typeid(T)][typeid(U)] = cb; }
+    
+    static void create(std::function<void(Node*,T*)> cb) { UntypedNode::oncreate_cb<T> = cb;  }
+    static void run(std::function<void(Node*,T*)> cb) { UntypedNode::onrun_cb<T> = cb;  }
+    
+};
