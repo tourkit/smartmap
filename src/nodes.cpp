@@ -63,25 +63,25 @@ void Nodes::init() {
 
     ////////// ENGINE.HPP (and Stack)
 
-    TypedNode<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
+    // TypedNode<Stack>::onadd<DrawCall>([](Node*_this,Node*node){ 
 
-        // auto dc = ((Ptr<DrawCall>*)node)->get();
-        // dc->update();
+    //     // auto dc = ((Ptr<DrawCall>*)node)->get();
+    //     // dc->update();
     
-        // _this->Node::add(node);
-        // return _this; 
+    //     // _this->Node::add(node);
+    //     // return _this; 
         
-        return nullptr;
+    //     return nullptr;
 
-    });
+    // });
 
-    TypedNode<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
+    // TypedNode<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
 
-        _this->Node::add(node);
-        return node;
+    //     _this->Node::add(node);
+    //     return node;
 
 
-    });
+    // });
 
     ////////// DRAWCALL.HPP 
 
@@ -89,17 +89,15 @@ void Nodes::init() {
     
     TypedNode<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
-        // auto dc = _this->is_a<DrawCall>();
-        // auto file = node->is_a<File>();
-        // if (!dc || !file) return node;
+        auto dc = _this->is_a<DrawCall>();
+        auto file = node->is_a<File>();
+        if (!dc || !file) return node;
 
-        // auto model = dc->vbo.import(file);
+        auto model = dc->vbo.import(file);
         
-        // dc->update();
+        dc->update();
 
-        // return _this->Node::add(new Ptr<Model>(model));]
-
-        return nullptr;
+        return _this->Node::add(new Ptr<Model>(model));
 
     });
 
@@ -107,25 +105,25 @@ void Nodes::init() {
 
     Node::oncreate<Model>([](Node* node, Model *model) { node->name = model->file->name; });
 
-    TypedNode<Model>::onadd<File>([](Node*_this,Node*node){ 
+    // TypedNode<Model>::onadd<File>([](Node*_this,Node*node){ 
         
-        // auto model = _this->is_a<Model>();
-        // auto file = node->is_a<File>();
-        // if (!model || !file) return node;
+    //     // auto model = _this->is_a<Model>();
+    //     // auto file = node->is_a<File>();
+    //     // if (!model || !file) return node;
 
-        // auto bad = new ShaderFX(file); // unowned...
+    //     // auto bad = new ShaderFX(file); // unowned...
 
-        // model->addFX(bad);
+    //     // model->addFX(bad);
 
-        // auto dc = _this->parent()->is_a<DrawCall>();
-        // if (dc) dc->update();
+    //     // auto dc = _this->parent()->is_a<DrawCall>();
+    //     // if (dc) dc->update();
         
-        // return _this->Node::add(new Ptr<ShaderFX>(bad));
+    //     // return _this->Node::add(new Ptr<ShaderFX>(bad));
         
 
-        return nullptr;
+    //     return nullptr;
 
-    });
+    // });
     
     Node::oncreate<ShaderFX>([](Node* node, ShaderFX *fx) { node->name = fx->file->name; });
 

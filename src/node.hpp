@@ -29,6 +29,8 @@ struct Editor  {
 
 struct UntypedNode {
 
+    static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onadd_cb;
+
     std::string name;
 
     glm::vec4 color;
@@ -52,6 +54,8 @@ struct UntypedNode {
     void remove(Node *child);
 
     uint32_t index();
+
+    bool is_typed = false;
 
     void up();
 
@@ -105,32 +109,42 @@ struct UntypedNode {
 };
 
 struct Any {};
+struct Passing {};
 
 template <typename T>
 struct TypedNode : UntypedNode { 
 
     template <typename U>
-    static inline std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
-
-    template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb<T>[typeid(U)] = cb;  }
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)][typeid(U)] = cb; }
 
     T* ptr; 
 
     bool owned;
+
+    std::type_index stored_type;
 
     T* get() { return ptr; }
     
     template <typename U>
     U* get() { return (U*)ptr; }
     
-    std::type_index type() override { return typeid(T); }
+    std::type_index type() override { return stored_type; }
 
     void* ptr_untyped() override { return ptr; }
 
     operator T*() { return ptr; }
     
-    TypedNode(void* ptr, bool owned = false) : UntypedNode((isNode()? ((UntypedNode*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), ptr((T*)ptr), owned(owned) {
+    TypedNode(void* ptr, bool owned = false) : 
+
+        UntypedNode((isNode()? ((UntypedNode*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), 
+        ptr((T*)ptr), owned(owned), stored_type(typeid(*this->ptr)) {
+    
+    // TypedNode(void* ptr, bool owned = false, std::type_index stored_type = typeid(Passing)) : 
+
+    //     UntypedNode((isNode()? ((UntypedNode*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())), 
+    //     ptr((T*)ptr), owned(owned), stored_type(stored_type) {
+
+            if (stored_type == typeid(Passing)) stored_type = typeid(*this->ptr);
 
             if(oncreate_cb<T>) { oncreate_cb<T>((Node*)this,this->ptr); }
 
@@ -150,11 +164,11 @@ struct TypedNode : UntypedNode {
         
         auto node = (TypedNode<Any>*)node_v;
 
-        if (onadd_cb<T>.size()) {
+        if (onadd_cb[type()].size()) {
 
-            if (onadd_cb<T>.find(node->type()) != onadd_cb<T>.end()) {
+            if (onadd_cb[type()].find(node->type()) != onadd_cb[type()].end()) {
 
-                return (Node*)onadd_cb<T>[node->type()]((Node*)this,(Node*)node);
+                return (Node*)onadd_cb[type()][node->type()]((Node*)this,(Node*)node);
 
             }
 
@@ -166,17 +180,31 @@ struct TypedNode : UntypedNode {
 
     }
 
+    TypedNode(TypedNode<Any>* other) : TypedNode<Any>(other->ptr) { stored_type = other->type(); }
+
+    Node* addPtr(void* node_v) {
+
+        auto node = (TypedNode<Any>*) node_v;
+
+        auto x = new TypedNode<Any>(node); 
+
+        return add(x); 
+         
+    }
+
     template <typename U>
-    Node* addPtr(U* ptr, bool owned = false) { return UntypedNode::add(new TypedNode<U>(ptr, owned)); }
+    Node* addPtr(void* ptr) { return TypedNode<T>::add(new TypedNode<U>((U*)ptr)); }
 
     template <typename U, typename... Args>
     Node* addOwnr(Args&&... args) {
 
         auto ptr = new U(std::forward<Args>(args)...);
     
-        auto* NEW_U = addPtr(ptr,true);
+        auto* NEW_U = TypedNode<T>::add(new TypedNode<U>(ptr, true));
 
         if (!NEW_U) { delete ptr; return nullptr; }
+
+        PLOGD<<NEW_U->type().name();
 
         return NEW_U;
 
