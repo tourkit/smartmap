@@ -10,6 +10,10 @@
 
     UntypedNode::~UntypedNode() {
 
+        auto topmost = this;
+        while(topmost->parent()) topmost = topmost->parent();
+        topmost->runCB([this](Node* node){ if (node->refering == this) node->refering = nullptr; });
+
         auto t_childrens = childrens;
         for (auto c : t_childrens) delete c;
         t_childrens.resize(0);

@@ -37,6 +37,7 @@ struct UntypedNode {
     glm::vec4 color;
 
     Node* parent_node = nullptr;
+    Node* refering = nullptr;
  
     std::vector<Node*> childrens;
 
@@ -196,9 +197,7 @@ struct TypedNode : UntypedNode {
 
         auto node = (TypedNode<Any>*) node_v;
 
-        auto x = new TypedNode<Any>(node); 
-
-        return add(x); 
+        return add(node); 
          
     }
 

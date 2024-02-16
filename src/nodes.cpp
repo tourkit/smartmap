@@ -39,11 +39,12 @@ void Nodes::init() {
 
             file->reload(); 
 
-            engine.tree.runCB([file](Node* node){
+            engine.tree.runCB([node](Node* curr){
 
-                if (node->ptr_untyped() == file) PLOGD << node->name <<" is a ref of " << file->name << " . in " << node->parent()->name;
+                if (curr->refering == node) PLOGD << curr->name <<" is a ref of " << node->name << " . in " << curr->parent()->name;
 
             });
+
             
         }
 
@@ -110,7 +111,10 @@ void Nodes::init() {
         auto dc = _this->parent()->is_a<DrawCall>();
         if (dc) dc->update();
         
-        return (new Ptr<ShaderFX>(bad))->node();
+        auto shader = new Ptr<ShaderFX>(bad);
+        shader->refering = node;
+
+        return shader->node();
 
     });
     
