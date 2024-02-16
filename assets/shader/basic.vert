@@ -2,52 +2,10 @@
 
 layout (location = 0) in vec2 POSITION;
 layout (location = 1) in vec2 TEXCOORD;
-layout (location = 3) in int OBJ;
 
-struct Framebuffer { int width, height, x, y;  };
-struct Rect { vec2 size;vec2 pos;  };
-struct Mat { vec2 size;vec2 norm;vec2 pos; vec2 xxxxalign; };
-
-struct Fixture {
-
-    float alpha;
-    float r;
-    float g;
-    float b;
-    vec2 pos;
-    vec2 size;
-    vec4 gobo;
-    float orientation; 
-    float feedback; 
-    float strobe;  
-    float ratio; // unused for now mostly for alignment
-
-};
-struct Layer {
-
-    int framebuffer;
-    int canva_first;
-    int canva_count;
-    int fixture_first;
-
-};
-layout (binding = 2, std140) uniform mediasCoords { Rect[16] mediaCoord;};
-
-layout (binding = 0, std140) uniform dynamic_ubo { Fixture fix[50]; Fixture fix2[50];  int seq[4]; };
-layout (binding = 1, std140) uniform static_ubo { Framebuffer framebuffer[100]; Mat mat[100]; Layer layer[10]; };
-
-flat out int obj;
-flat out int id;
-
-out vec2 texcoord;
+layout (binding = 0, std140) uniform ubo { vec4 v; };
 
 void main() {
-
-    texcoord = TEXCOORD;
-    texcoord.y = 1-texcoord.y;
-    obj = OBJ;
-    id = gl_InstanceID;
-
     
     gl_Position = vec4(POSITION.x,POSITION.y,0,1);  
     
