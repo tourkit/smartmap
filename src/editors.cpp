@@ -80,7 +80,7 @@ void Editors::init() {
 
             auto x = editor.GetText();
 
-            memset(&x[x.size()-3],0,1);
+            memset(&x[x.size()-2],0,1);
 
             shader->create(x,shader->vert.src);
 
@@ -121,15 +121,12 @@ void Editors::init() {
 
             if (strcmp(data, file->data.c_str())) {
 
-                PLOGD << "save";
                 file->write(data); 
+
                 node->update(); 
-                // shader->create(file->data,shader->vert.src); // node update should do that
                 
             }
 
-            
-            
         }
 
     });
@@ -240,8 +237,12 @@ void Editors::init() {
             ImGuiDataType_ datatype = ImGuiDataType_U8;
 
             if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &buffer->data[i],  &cell_min,   &cell_max,   "")) { 
-                
-                // fixtureUBO->update(); 
+                        
+                if (buffer->owner) {
+                    
+                    buffer->owner->upload();
+                    
+                }
                 
             }
 

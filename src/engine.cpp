@@ -50,7 +50,6 @@ void Engine::init() {
     
     Editors::init();
 
-
     auto vbo = tree.addOwnr<VBO>()->get();
     vbo->import(new File("assets/model/quad.obj")); // fuck owning
 
@@ -61,13 +60,15 @@ void Engine::init() {
     shader_->refering = frag->node();
     auto shader = shader_->get();
     auto cb = [shader,frag,vert](Node* node){ 
-        
+
+        // if (frag->get()->data != shader->frag.src) {  PLOGW <<"loosing SHaderProgram data"  ;} // not workinh
+
         shader->create(frag->get()->data, vert->get()->data); 
-        
+
     };
 
     frag->onchange(cb);
-    // vert->onchange(cb);
+    vert->onchange(cb);
 
     dynamic_ubo = tree.addOwnr<UBO>("dynamic_ubo")->get();
     dynamic_ubo->buffer.addObj(new Struct("test",{"float","float","float","float"}))->push();
