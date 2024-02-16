@@ -54,12 +54,17 @@ void Editors::init() {
         ImGui::Text(std::to_string(shader->loaded).c_str());
 
         static TextEditor editor;
+        static bool init = false;
+        if (!init) { 
+
+            editor.SetShowWhitespaces(false);
+            editor.SetReadOnly(false);
+            editor.SetText(shader->frag.src); init = true; 
+            
+        }
         
 	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
 	    // editor.SetLanguageDefinition(lang);
-
-        editor.SetText(shader->frag.src);
-        editor.SetShowWhitespaces(false);
 
         // editor.SetPalette(TextEditor::GetDarkPalette());
         

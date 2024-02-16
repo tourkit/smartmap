@@ -50,6 +50,9 @@ void Engine::init() {
     
     Editors::init();
 
+    dynamic_ubo = tree.addOwnr<UBO>("dynamic_ubo")->get();
+    dynamic_ubo->buffer.addObj(new Struct("test",{"float","float","float","float"}))->push();
+
     auto vbo = tree.addOwnr<VBO>()->get();
     vbo->import(new File("assets/model/quad.obj")); // fuck owning
 
