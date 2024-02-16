@@ -30,8 +30,8 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
 
-        // engine.stack->run(); // better be : tree.run(); ( owning gui and all..)
-        engine.tree.run(); 
+        // engine.stack->run(); // better be : tree->run(); ( owning gui and all..)
+        engine.tree->run(); 
 
         engine.gui->draw(); 
 
@@ -43,28 +43,28 @@ void Engine::run() {
 struct DC {};
 
 void Engine::init() {
-    
-    dynamic_ubo = new UBO("dynamic_ubo");
-    static_ubo = new UBO("static_ubo");
 
     Nodes::init();
     
     Editors::init();
 
+    dynamic_ubo = new UBO("dynamic_ubo");
+    static_ubo = new UBO("static_ubo");
+    
     auto ubo = stack->addPtr<UBO>(dynamic_ubo);
     ubo->select();
 
-    tree.addPtr<UBO>(static_ubo);
+    tree->addPtr<UBO>(static_ubo);
 
-    auto obj = dynamic_ubo->buffer.addObj(new Struct("test",{"RGBA"}));
+    auto obj = dynamic_ubo->addObj(new Struct("test",{"RGBA","Position"}));
     obj->push();
-    // auto vbo = tree.addOwnr<VBO>()->get();
+    // auto vbo = tree->addOwnr<VBO>()->get();
     // vbo->import(new File("assets/model/quad.obj")); // fuck owning
 
-    // auto frag = tree.addOwnr<File>("assets/shader/test.frag");
-    // auto vert = tree.addOwnr<File>("assets/shader/test.vert");
+    // auto frag = tree->addOwnr<File>("assets/shader/test.frag");
+    // auto vert = tree->addOwnr<File>("assets/shader/test.vert");
 
-    // auto shader_ = tree.addOwnr<ShaderProgram>(frag->get()->data, vert->get()->data);
+    // auto shader_ = tree->addOwnr<ShaderProgram>(frag->get()->data, vert->get()->data);
     // shader_->refering = frag->node();
     // auto shader = shader_->get();
     // auto cb = [shader,frag,vert](Node* node){ 
@@ -80,7 +80,7 @@ void Engine::init() {
 
     // dynamic_ubo->subscribers.push_back(shader);
 
-    // auto dc1 = tree.addOwnr<DC>()->get();
+    // auto dc1 = tree->addOwnr<DC>()->get();
 
     // NODE<DC>::onrun([shader,vbo,ubo](Node* node, DC* dc) {
         
@@ -90,22 +90,16 @@ void Engine::init() {
 
     // });
 
-    auto models = tree.addOwnr<Directory>("assets/model/");
-    auto shaders = tree.addOwnr<Directory>("assets/shaders/");
-
-
-    auto dc = stack->addOwnr<DrawCall>();
-
-    auto model = dc->addPtr(models->childrens[0]); 
-    model->addPtr(shaders->childrens[0]); 
-
-
-
-
-
-
-
+    // auto models = tree->addOwnr<Directory>("assets/model/");
+    // auto shaders = tree->addOwnr<Directory>("assets/shaders/");
     
+    // auto dc = stack->addOwnr<DrawCall>();
+
+    // auto model = dc->addPtr(models->childrens[0]); 
+
+    // model->addPtr(shaders->childrens[0]); 
+
+
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
     // an->add(new Node{"1"});

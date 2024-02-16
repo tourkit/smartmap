@@ -58,6 +58,8 @@ struct UntypedNode {
 
     virtual Node* add(void *node);
 
+    uint32_t uid = 0;
+
     void remove(Node *child);
 
     uint32_t index();

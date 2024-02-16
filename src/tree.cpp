@@ -7,7 +7,7 @@ TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected)
 
 void TreeWidget::draw()  { 
 
-    if (!selected) selected = &engine.tree;
+    if (!selected) selected = engine.tree;
     
     if (ImGui::BeginMainMenuBar()) {
         
@@ -107,6 +107,32 @@ bool TreeViewNode(Node* node) {
         if (engine.selected) ImGui::PopStyleColor(1);
 
     }
+        if (ImGui::BeginDragDropSource()) {
+
+            auto ptr = (uint64_t)node;
+            ImGui::SetDragDropPayload("_TREENONODE", &(ptr), sizeof(uint64_t));
+            ImGui::Text(node->name.c_str());
+            ImGui::EndDragDropSource();
+            
+        }else {
+            
+            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(0)) { Engine::getInstance().selected = node; }
+
+        }
+
+        if (ImGui::BeginDragDropTarget()) {     
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) node->add((Node*)(*(uint64_t*)payload->Data));
+
+            ImGui::EndDragDropTarget();
+            
+        }
+
+    SameLine();
+    
+    SetCursorPosX(GetWindowWidth()-30); 
+     
+    Checkbox(("##active"+std::to_string(node->uid)).c_str(), &node->active);
 
     return x;
 
@@ -157,29 +183,9 @@ void TreeWidget::drawNode(Node* node) {
         ImGui::EndPopup();
     }
     // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
-        if (ImGui::BeginDragDropSource()) {
-
-            auto ptr = (uint64_t)node;
-            ImGui::SetDragDropPayload("_TREENONODE", &(ptr), sizeof(uint64_t));
-            ImGui::Text(node->name.c_str());
-            ImGui::EndDragDropSource();
-            
-        }else {
-            
-            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(0)) { Engine::getInstance().selected = node; }
-
-        }
-
-        if (ImGui::BeginDragDropTarget()) {     
-
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) node->add((Node*)(*(uint64_t*)payload->Data));
-
-            ImGui::EndDragDropTarget();
-            
-        }
 
         const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
-
+        
         if (recurse) {
 
 
@@ -196,13 +202,24 @@ void TreeWidget::drawNode(Node* node) {
 
             if (ImGui::IsDragDropActive()) {
                 
-                auto pos = ImGui::GetCursorPos();
-                auto p1 = pos; 
-                auto p2 = pos; p2.x += 10;
-                auto p3 = pos; p3.x += 10; p3.y += 10;
-                auto p4 = pos; p4.y += 10;
+  ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
+  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
 
-                drawList->AddQuad(p1,p2,p3,p4, IM_COL32(255, 255, 0, 255));
+                ImVec2 dropperline;
+                dropperline.x = ImGui::GetWindowPos().x;
+                dropperline.y = ImGui::GetCursorScreenPos().y;
+                dropperline.y += 6;
+
+                ImVec2 dropperline2 = dropperline;
+                dropperline2.x += ImGui::GetWindowWidth();
+                dropperline2.y -= 10;
+
+                ImGui::SameLine();
+                ImGui::PushID(6969);
+                ImGui::BeginGroup();
+                drawList->AddRectFilled(dropperline, dropperline2, IM_COL32(255,0,0,30));
+                ImGui::EndGroup();
+                ImGui::PopID();
 
                 if (ImGui::BeginDragDropTarget()) {     
 
@@ -210,6 +227,8 @@ void TreeWidget::drawNode(Node* node) {
 
                     ImGui::EndDragDropTarget();
                 }
+
+                ImGui::PopStyleVar(2);
                     
             }
 

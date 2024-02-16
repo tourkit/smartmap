@@ -23,11 +23,11 @@ struct Engine {
 
     UBO *static_ubo;
 
-    Node tree = Node("tree");
+    Node* tree = new Node("tree");
 
-    Node* stack = tree.addOwnr<Stack>()->node();
+    Node* stack = tree->addOwnr<Stack>()->node();
 
-    Node* selected = &tree;
+    Node* selected = tree;
     
     Atlas *atlas;
     

@@ -60,6 +60,7 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::PushStyleColor(ImGuiCol_HeaderActive,ImVec4(0,0,0,0));
     
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
+  ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,4));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
 
 
@@ -98,7 +99,10 @@ void GUI::Window::drawFull() {
       if (!active) return;
 
       bool p_open = true;
-      ImGui::Begin((name+"##"+uid).c_str(), &p_open);
+
+      ImGuiWindowFlags  flag = 0;ImGuiWindowFlags_NoTitleBar;
+
+      ImGui::Begin((name+"##"+uid).c_str(), &p_open, flag);
 
       draw();
 
