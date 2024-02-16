@@ -1,10 +1,29 @@
 #include "test.hpp"
 #include "log.hpp"
 
-// struct Foo { virtual Foo() { PLOGD << "foo"; } };
+struct Foo { Foo() { PLOGD << "foo"; } };
 // struct Bar : Foo { Bar() { PLOGD << "bar"; Foo(); } };
 
+
+template <typename T>
+struct Ownr;
+
+struct XXX {
+
+    template <typename U>
+    static Ownr<U>* y() { return nullptr; }
+
+};
+
+template <typename T>
+struct Ownr { /* ... */ };
+
+
+
+
 Test::Test() {
+    
+    XXX::y<Foo>();
 
     // auto obj = engine.dynamic_ubo->buffer.addObj(new Struct("MICHEL"));
 
