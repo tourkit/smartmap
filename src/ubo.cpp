@@ -51,7 +51,6 @@ void UBO::update() { // on Buffer change
 
     for (auto shader:subscribers) { // need link after resize ?
 
-    PLOGD << data.size();
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name.c_str()), binding);
         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);

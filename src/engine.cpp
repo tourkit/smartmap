@@ -56,48 +56,42 @@ void Engine::init() {
 
     // tree->addPtr<UBO>(static_ubo);
 
+    
+    
+    
+    auto models = tree->addOwnr<Directory>("assets/model/");
+    auto shaders = tree->addOwnr<Directory>("assets/shaders/");
+    
+    auto dc = stack->addOwnr<DrawCall>();
+    
+    auto model = dc->addPtr(models->childrens[0]); 
+
+    model->addPtr(shaders->childrens[0]); 
+    // dc->active = false;
+ 
+    // dc->get()->vbo.import(new File("C:/users/root/cpp/smartmap/assets/model/quad.obj")); // fuck owning
+
     auto obj = dynamic_ubo->addObj(new Struct("test",{"RGBA"}));
     obj->push();
 
-    auto vbo = tree->addOwnr<VBO>()->get();
-    vbo->import(new File("C:/users/root/cpp/smartmap/assets/model/quad.obj")); // fuck owning
-
-
     auto frag = tree->addOwnr<File>("C:/users/root/cpp/smartmap/assets/shader/test.frag");
     auto vert = tree->addOwnr<File>("C:/users/root/cpp/smartmap/assets/shader/test.vert");
-    auto shader_ = tree->addOwnr<ShaderProgram>(frag->get()->data, vert->get()->data);
-    shader_->refering = frag->node();
-    auto shader = shader_->get();
-    auto cb = [shader,frag,vert](Node* node){ 
 
-        // if (frag->get()->data != shader->frag.src) {  PLOGW <<"loosing SHaderProgram data"  ;} // not workinh
+    // dc->get()->shader.create(frag->get()->data, vert->get()->data);
 
-        shader->create(frag->get()->data, vert->get()->data); 
+    dynamic_ubo->subscribers.push_back(&dc->get()->shader);
 
-    };
+    // auto dc1 = tree->addOwnr<DC>()->get();
 
-    frag->onchange(cb);
-    vert->onchange(cb);
-
-    dynamic_ubo->subscribers.push_back(shader);
-
-    auto dc1 = tree->addOwnr<DC>()->get();
-
-    NODE<DC>::onrun([shader,vbo](Node* node, DC* dc) {
+    NODE<DC>::onrun([dc](Node* node, DC* Dc) {
         
-        shader->use();
-        vbo->draw();
+        dc->get()->shader.use();
+        dc->get()->vbo.draw();
 
     });
 
-    // auto models = tree->addOwnr<Directory>("assets/model/");
-    // auto shaders = tree->addOwnr<Directory>("assets/shaders/");
     
-    // auto dc = stack->addOwnr<DrawCall>();
 
-    // auto model = dc->addPtr(models->childrens[0]); 
-
-    // model->addPtr(shaders->childrens[0]); 
 
 
     // Node* controllers = tree->add(new Node{"Controllers"});
