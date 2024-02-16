@@ -13,8 +13,14 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : buffer(thi
 
     // can do better ^^
     if (binding > 100) PLOGW << "MAX_UBO might soon be reached";
-    
+
     update();
+
+    // create(name,size,subscribers); 
+     
+    //  for (auto shader:subscribers) link(shader);
+
+
 
     buffer.callback = [this](){ 
         
@@ -26,6 +32,25 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : buffer(thi
 } 
 
 void UBO::destroy() { buffer.reset(); subscribers.resize(0); if (id) glDeleteBuffers(1, &id); } // delete name; ?
+// void UBO::create() {
+
+//     destroy();
+
+//     glGenBuffers(1, &id);
+
+//     glBindBuffer(GL_UNIFORM_BUFFER, id);
+//     glBufferData(GL_UNIFORM_BUFFER, buffer.data.size(), NULL, GL_DYNAMIC_COPY);
+
+
+//     for (auto shader:subscribers) {
+
+//         glBindBuffer(GL_UNIFORM_BUFFER, id);
+//         glUniformBlockBinding(id, glGetUniformBlockIndex(id, name.c_str()), binding);
+//         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
+
+//     }
+
+// }
 
 
 void UBO::update() {
@@ -37,10 +62,12 @@ void UBO::update() {
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferData(GL_UNIFORM_BUFFER, buffer.data.size(), NULL, GL_DYNAMIC_COPY);
 
+    PLOGD << "pour: " << buffer.data.size();
+
     for (auto shader:subscribers) {
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name.c_str()), binding);
+        glUniformBlockBinding(id, glGetUniformBlockIndex(id, name.c_str()), binding);
         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 
     }

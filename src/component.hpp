@@ -108,6 +108,12 @@ private:
 
         Component::pool.resize(0);
 
+        Component::create("RGBA")
+            .member<float>("red")
+            .member<float>("green")
+            .member<float>("blue")
+            .member<float>("alpha")
+        ;
         Component::create("RGB")
             .member<float>("red")
             .member<float>("green")

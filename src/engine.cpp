@@ -15,8 +15,6 @@ Engine::Engine(uint16_t width, uint16_t height)
      gui(new GUI(window.id)) {
     window.max_fps = 59;
 
-    dynamic_ubo = new UBO("dynamic_ubo");
-    static_ubo = new UBO("static_ubo");
 
     PLOGD << "Engine created";
 
@@ -45,6 +43,9 @@ void Engine::run() {
 struct DC {};
 
 void Engine::init() {
+    
+    dynamic_ubo = new UBO("dynamic_ubo");
+    static_ubo = new UBO("static_ubo");
 
     Nodes::init();
     
@@ -55,7 +56,7 @@ void Engine::init() {
 
     tree.addPtr<UBO>(static_ubo);
 
-    auto obj = dynamic_ubo->buffer.addObj(new Struct("test",{"RGB"}));
+    auto obj = dynamic_ubo->buffer.addObj(new Struct("test",{"RGBA"}));
     obj->push();
     // auto vbo = tree.addOwnr<VBO>()->get();
     // vbo->import(new File("assets/model/quad.obj")); // fuck owning

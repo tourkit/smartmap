@@ -27,6 +27,8 @@ struct UBO : BufferOwner {
     UBO(std::string name = "ubo", std::vector<ShaderProgram*> subscribers = {});
 
     void destroy();
+    
+    void create();
 
     void update() override;
 

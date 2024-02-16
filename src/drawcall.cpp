@@ -55,14 +55,16 @@ void DrawCall::update() {
 
     // FRAGMENT SHADER BUILDER
 
+    std::string layout_str = "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n"; 
+    layout_str += "// "+Shaderlayout(engine.dynamic_ubo)+"\n";
+    
     std::string frag_shader;
 
     frag_shader = "#version 430 core\n\n";
 
     frag_shader += "out vec4 color;\n\n";
 
-    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n"; 
-    frag_shader += "// "+Shaderlayout(engine.dynamic_ubo)+"\n";
+    frag_shader += layout_str;
     
 
     std::unordered_set<ShaderFX*> fxs;
@@ -87,6 +89,7 @@ void DrawCall::update() {
                frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname;
                
                for (int i = 1; i < fx->args.size(); i++) { frag_shader += ",x["+std::to_string(i-1)+"]"; }
+            //    frag_shader += ",x.x, x.y, x.z"; 
                
                frag_shader += ");\n";
 
@@ -112,8 +115,7 @@ void DrawCall::update() {
     vert_shader += "layout (location = 1) in vec2 TEXCOORD;\n";
     vert_shader += "layout (location = 3) in int OBJ;\n\n";
 
-    vert_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n"; 
-    vert_shader += "// "+Shaderlayout(engine.dynamic_ubo);
+    vert_shader += layout_str;
 
     vert_shader += "\nvoid main() {\n\n";
 
