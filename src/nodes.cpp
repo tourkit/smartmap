@@ -112,10 +112,18 @@ void Nodes::init() {
         return shader->node();
 
     });
+
+
+    
+    ////////// ShaderFX.HPP 
     
     NODE<ShaderFX>::oncreate([](Node* node, ShaderFX *fx) { node->name = fx->file->name; });
 
     NODE<ShaderFX>::onchange([](Node* node, ShaderFX *fx) { PLOGD<<"update " << fx->file->name; });
+    
+    ////////// ShaderProgram.HPP 
+
+    // NODE<ShaderProgram>::onchange([](Node* node, ShaderProgram *shader) { });
 
     ////////// Directory.HPP 
 
