@@ -39,7 +39,7 @@ void Nodes::init() {
 
             engine.tree.runCB([file](Node* node){
 
-                if (node->ptr_untyped() == file) PLOGD << node->name <<" is a ref of " << file->name << " . " << node->parent()->name;
+                if (node->ptr_untyped() == file) PLOGD << node->name <<" is a ref of " << file->name << " . in " << node->parent()->name;
 
             });
             
