@@ -58,6 +58,7 @@
     }
 
     void UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; }
+    void UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; }
     
     void UntypedNode::runCB(std::function<void(Node*)> cb) {
 
@@ -121,6 +122,8 @@
     }
 
     void UntypedNode::run() { 
+
+        if (onrun_cb) onrun_cb(node());
 
         for (auto c : childrens) c->run();
         

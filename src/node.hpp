@@ -31,6 +31,7 @@ struct Editor  {
 struct UntypedNode {
 
     std::function<void(Node*)> onchange_cb = nullptr;
+    std::function<void(Node*)> onrun_cb = nullptr;
 
     static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onadd_cb;
 
@@ -76,6 +77,7 @@ struct UntypedNode {
     virtual void update();
 
     void onchange(std::function<void(Node*)> cb = nullptr);
+    void onrun(std::function<void(Node*)> cb = nullptr);
 
     void runCB(std::function<void(Node*)> cb = nullptr);
 
