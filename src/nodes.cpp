@@ -31,15 +31,17 @@ void Nodes::init() {
 
     ////////// FILE.HPP 
 
-    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name+"."+file->extension+""; });
+    NODE<File>::oncreate([](Node* node, File *file){ if (file->loaded) node->name = file->name+"."+file->extension+""; });
 
     NODE<File>::onrun([](Node* node, File *file){ 
 
         if (file->hasChanged()) { 
 
+            PLOGD << file->name << "  " << file->last_modified;
+
             file->reload(); 
 
-            node->top()->runCB([node](Node* curr){ if (curr->refering == node) curr->update(); });
+            node->top()->runCB([node](Node* curr){ if (curr->refering == node) curr->update(); }); // UntypedNode::updateReferences();
    
         }
 
@@ -115,12 +117,7 @@ void Nodes::init() {
     
     NODE<ShaderFX>::oncreate([](Node* node, ShaderFX *fx) { node->name = fx->file->name; });
 
-    NODE<ShaderFX>::onchange([](Node* node, ShaderFX *fx) { 
-        
-        PLOGD<<"update " << fx->file->name; 
-        
-        
-    });
+    NODE<ShaderFX>::onchange([](Node* node, ShaderFX *fx) { PLOGD<<"update " << fx->file->name; });
 
     ////////// Directory.HPP 
 

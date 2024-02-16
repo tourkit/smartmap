@@ -75,10 +75,39 @@ void Editors::init() {
     
     Editor::set<DrawCall>([](Node* node, DrawCall *dc){ Editor::cb<ShaderProgram>(node, &dc->shader); });
 
-    ////////// SHADERFX.HPP 
+    ////////// File.HPP 
+
+    Editor::set<File>([](Node* node, File *file){ 
+        
+        char buffer[512]; 
+        memset(buffer,0,512);
+        memcpy(buffer,file->path.c_str(),file->path.size());
+
+        if (ImGui::InputText("path", buffer, 512)) {
+    
+            if (strcmp(buffer, file->path.c_str())) {
+                
+                file->read(buffer);
+                if (!file->loaded) {
+
+                    node->name = "File";
+                    
+                }else{
+
+                    node->name = node->name = file->name+"."+file->extension+"";
+                }
+                
+            }
+        
+        }
+        
+        ImGui::InputTextMultiline("src", &file->data[0], file->data.size());
+   
+    });
+
 
     Editor::set<ShaderFX>([](Node* node, ShaderFX *shader){ 
-            
+
         ImGui::InputTextMultiline("src", (char*)shader->file->data.c_str(), shader->file->data.size());
    
     });

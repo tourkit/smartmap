@@ -19,8 +19,6 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 // FILE
 //////////////////////////////////////
 
-File::File() {  }
-
 File::File(std::string path) : name(std::filesystem::path(path).stem().filename().string()) { read(path); }
 
 int64_t File::getTimeModified() {
@@ -39,7 +37,7 @@ void File::reload() { read(path); }
 
 bool File::hasChanged() { 
 
-    if (last_modified != getTimeModified()) {
+    if (loaded && last_modified != getTimeModified()) {
 
         last_modified = getTimeModified();
 
@@ -54,17 +52,21 @@ bool File::hasChanged() {
 
 void File::read(std::string path, bool binary){
 
-    extension = std::filesystem::path(path).extension().string().substr(1);   
-    location = std::filesystem::path(path).parent_path().string();
     this->path = path;
+    data.resize(0);
 
-
+    loaded = false;
+    
     auto flags = std::ifstream::in;
     if (binary) flags |= std::ifstream::binary;
 
     std::ifstream file(std::filesystem::path(REPO_DIR) / path, flags);
 
     if (file) {
+
+        extension = std::filesystem::path(path).extension().string().substr(1);   
+
+        location = std::filesystem::path(path).parent_path().string();
 
         file.seekg(0, std::ios::end);
         std::streamsize size = file.tellg();
@@ -82,11 +84,9 @@ void File::read(std::string path, bool binary){
             return;
         }
 
-    PLOGW <<1<<path;
-
     }
-    
-    else PLOGW <<2<< path;
+
+    PLOGW << path;
 
     return;
 

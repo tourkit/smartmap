@@ -10,17 +10,15 @@ struct File {
 
     std::string data;
 
-    int64_t last_modified = 0;
+    int64_t last_modified = 1;
 
-    bool survey = false, loaded = false;
+    bool loaded = false;
 
     void update();
     
     std::function<void(File*)> callback = [](File* f){};
 
-    File();
-
-    File(std::string source);
+    File(std::string source = "");
 
     int64_t getTimeModified();
 

@@ -5,6 +5,7 @@
 #include "drawcall.hpp"
 #include "gui.hpp"
 #include "editors.hpp"
+#include "file.hpp"
 
 
 #include "nodes.hpp"
@@ -46,18 +47,34 @@ void Engine::init() {
     
     Editors::init();
 
-    stack->addPtr<UBO>(dynamic_ubo)->select();
-
-    tree.addPtr<UBO>(static_ubo);
-
-    auto models = tree.addOwnr<Directory>("assets/model/");
-    auto shaders = tree.addOwnr<Directory>("assets/shaders/");
 
 
-    auto dc = stack->addOwnr<DrawCall>();
 
-    auto model = dc->addPtr(models->childrens[0]); 
-    model->addPtr(shaders->childrens[0]); 
+    tree.addOwnr<ShaderProgram>();
+
+    tree.addOwnr<VBO>();
+
+    tree.addOwnr<File>("assets/shaders/rgba.frag")->select();
+
+    // stack->addPtr<UBO>(dynamic_ubo)->select();
+
+    // tree.addPtr<UBO>(static_ubo);
+
+    // auto models = tree.addOwnr<Directory>("assets/model/");
+    // auto shaders = tree.addOwnr<Directory>("assets/shaders/");
+
+
+    // auto dc = stack->addOwnr<DrawCall>();
+
+    // auto model = dc->addPtr(models->childrens[0]); 
+    // model->addPtr(shaders->childrens[0]); 
+
+
+
+
+
+
+
     
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
