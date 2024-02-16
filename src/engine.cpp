@@ -50,20 +50,28 @@ void Engine::init() {
     
     Editors::init();
 
-    dynamic_ubo = tree.addOwnr<UBO>("dynamic_ubo")->get();
-    dynamic_ubo->buffer.addObj(new Struct("test",{"float","float","float","float"}))->push();
 
     auto vbo = tree.addOwnr<VBO>()->get();
     vbo->import(new File("assets/model/quad.obj")); // fuck owning
 
     auto frag = tree.addOwnr<File>("assets/shader/test.frag");
-    auto vert = tree.addOwnr<File>("assets/shader/basic.vert");
+    auto vert = tree.addOwnr<File>("assets/shader/test.vert");
 
-    auto shader = tree.addOwnr<ShaderProgram>(frag->get()->data, vert->get()->data)->get();
-    auto cb = [shader,frag,vert](Node* node){ shader->create(frag->get()->data, vert->get()->data); };
+    auto shader_ = tree.addOwnr<ShaderProgram>(frag->get()->data, vert->get()->data);
+    shader_->refering = frag->node();
+    auto shader = shader_->get();
+    auto cb = [shader,frag,vert](Node* node){ 
+        
+        shader->create(frag->get()->data, vert->get()->data); 
+        
+    };
 
-    frag->addCallback(cb);
-    vert->addCallback(cb);
+    frag->onchange(cb);
+    // vert->onchange(cb);
+
+    dynamic_ubo = tree.addOwnr<UBO>("dynamic_ubo")->get();
+    dynamic_ubo->buffer.addObj(new Struct("test",{"float","float","float","float"}))->push();
+    dynamic_ubo->subscribers.push_back(shader);
 
     auto dc = tree.addOwnr<DC>()->get();
 

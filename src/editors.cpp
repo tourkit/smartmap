@@ -22,7 +22,13 @@ void Editors::init() {
 
     ////////// UBO.HPP 
 
-    Editor::set<UBO>([](Node* node, UBO *ubo){ Editor::cb<Buffer>(node, &ubo->buffer); });
+    Editor::set<UBO>([](Node* node, UBO *ubo){ 
+
+        ImGui::Text((""+std::to_string(ubo->subscribers.size())+" subs").c_str());
+
+        Editor::cb<Buffer>(node, &ubo->buffer); 
+        
+    });
 
     ////////// VBO.HPP 
     
@@ -110,7 +116,21 @@ void Editors::init() {
         char data[512000]; 
         memset(data,0,512000);
         memcpy(data,file->data.c_str(),file->data.size());
-        if(ImGui::InputTextMultiline("src", data, 512000, ImVec2(600,300))) file->write(data);
+
+        if(ImGui::InputTextMultiline("src", data, 512000, ImVec2(600,300))) {
+
+            if (strcmp(data, file->data.c_str())) {
+
+                PLOGD << "save";
+                file->write(data); 
+                node->update(); 
+                // shader->create(file->data,shader->vert.src); // node update should do that
+                
+            }
+
+            
+            
+        }
 
     });
 

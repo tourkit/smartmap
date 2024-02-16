@@ -75,7 +75,7 @@ struct UntypedNode {
     
     virtual void update();
 
-    void addCallback(std::function<void(Node*)> cb = nullptr);
+    void onchange(std::function<void(Node*)> cb = nullptr);
 
     void runCB(std::function<void(Node*)> cb = nullptr);
 

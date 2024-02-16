@@ -57,7 +57,7 @@
     
     }
 
-    void UntypedNode::addCallback(std::function<void(Node*)> cb) { onchange_cb = cb; }
+    void UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; }
     
     void UntypedNode::runCB(std::function<void(Node*)> cb) {
 
@@ -69,7 +69,9 @@
 
     void UntypedNode::update() { 
         
-        // if (parent_node) parent_node->update(); 
+        if (parent_node) parent_node->update(); 
+        
+        if (onchange_cb) onchange_cb(node()); 
         
         top()->runCB([this](Node* curr){ 
             
