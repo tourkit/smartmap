@@ -5,6 +5,8 @@
 
 struct DrawCall {
 
+    DrawCall();
+
     VBO vbo;
 
     ShaderProgram shader;

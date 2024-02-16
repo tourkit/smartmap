@@ -2,9 +2,16 @@
 #include "shaderfx.hpp"
 #include "file.hpp"
 #include "log.hpp"
+#include "engine.hpp"
 
 #include <unordered_set>
 
+
+DrawCall::DrawCall() {
+
+    engine.dynamic_ubo->subscribers.push_back(&this->shader);
+
+}
 
 void DrawCall::run() {
  
