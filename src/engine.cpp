@@ -90,14 +90,14 @@ void Engine::init() {
 
     // });
 
-    // auto models = tree->addOwnr<Directory>("assets/model/");
-    // auto shaders = tree->addOwnr<Directory>("assets/shaders/");
+    auto models = tree->addOwnr<Directory>("assets/model/");
+    auto shaders = tree->addOwnr<Directory>("assets/shaders/");
     
-    // auto dc = stack->addOwnr<DrawCall>();
+    auto dc = stack->addOwnr<DrawCall>();
 
-    // auto model = dc->addPtr(models->childrens[0]); 
+    auto model = dc->addPtr(models->childrens[0]); 
 
-    // model->addPtr(shaders->childrens[0]); 
+    model->addPtr(shaders->childrens[0]); 
 
 
     // Node* controllers = tree->add(new Node{"Controllers"});

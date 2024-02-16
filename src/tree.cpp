@@ -7,6 +7,9 @@ TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected)
 
 void TreeWidget::draw()  { 
 
+    
+  ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
+
     if (!selected) selected = engine.tree;
     
     if (ImGui::BeginMainMenuBar()) {
@@ -42,7 +45,7 @@ void TreeWidget::draw()  {
 
         ImGui::EndTable();
     }
-    
+    ImGui::PopStyleVar(1);
 }
 
 void TreeWidget::drawChildrens(Node* node) { 
@@ -201,14 +204,14 @@ void TreeWidget::drawNode(Node* node) {
             drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
 
             if (ImGui::IsDragDropActive()) {
-                
-  ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
-  ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
+                                
+                ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
+                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
 
                 ImVec2 dropperline;
                 dropperline.x = ImGui::GetWindowPos().x;
                 dropperline.y = ImGui::GetCursorScreenPos().y;
-                dropperline.y += 6;
+                dropperline.y += 2;
 
                 ImVec2 dropperline2 = dropperline;
                 dropperline2.x += ImGui::GetWindowWidth();

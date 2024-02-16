@@ -60,7 +60,6 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::PushStyleColor(ImGuiCol_HeaderActive,ImVec4(0,0,0,0));
     
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
-  ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,4));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
 
 
