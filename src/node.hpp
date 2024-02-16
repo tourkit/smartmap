@@ -63,6 +63,8 @@ struct UntypedNode {
 
     void up();
 
+    Node* top();
+
     void down();
 
     virtual void editor() { PLOGD << "KOKO";}

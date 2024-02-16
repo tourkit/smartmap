@@ -10,9 +10,7 @@
 
     UntypedNode::~UntypedNode() {
 
-        auto topmost = this;
-        while(topmost->parent()) topmost = topmost->parent();
-        topmost->runCB([this](Node* node){ if (node->refering == this) node->refering = nullptr; });
+        top()->runCB([this](Node* node){ if (node->refering == this) node->refering = nullptr; });
 
         auto t_childrens = childrens;
         for (auto c : t_childrens) delete c;
@@ -27,6 +25,8 @@
     }   
 
     Node* UntypedNode::node() { return (Node*)this; }
+
+    Node* UntypedNode::top() { auto top = node(); while(top->parent()) { top = top->parent(); } return top; }
 
     Node* UntypedNode::add(void* node_v)  {
         

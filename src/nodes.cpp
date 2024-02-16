@@ -39,13 +39,12 @@ void Nodes::init() {
 
             file->reload(); 
 
-            engine.tree.runCB([node](Node* curr){
+            node->top()->runCB([node](Node* curr){
 
                 if (curr->refering == node) PLOGD << curr->name <<" is a ref of " << node->name << " . in " << curr->parent()->name;
 
             });
-
-            
+   
         }
 
      });
