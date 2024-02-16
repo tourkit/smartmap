@@ -17,13 +17,15 @@ void Nodes::init() {
     // ////////// xxx.HPP 
     
     // NODE<xxx>::oncreate([](Node* node, xxx *x){ });
+    // NODE<xxx>::onchange([](Node* node, xxx *x){ });
+    // NODE<xxx>::onrun([](Node* node, xxx *x){ });
 
     // NODE<xxx>::onadd<yyy>([](Node*_this,Node*node){ 
 
-    //     auto s = ((Ptr<xxx>*)_this)->get();
-    //     auto f = ((Ptr<yyy>*)node)->get();
+    //     auto s = _this->is_a<xxx>();
+    //     auto f = node->is_a<yyy>();
 
-    //     return node;
+    //     return _this->UntypedNode::add(node);
         
     // });
 
@@ -63,46 +65,30 @@ void Nodes::init() {
 
         node->is_a<DrawCall>()->update();
 
-        return _this->UntypedNode::add(node); // missind add() use case (still ? maybe not untyped)
+        return node; // missind add() use case (still ? maybe not untyped)
 
         // maybe moved stored_type to UntypedNode and use if!=UntypedNode get name and so on
 
     });
 
-    NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ 
+    NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ return node; });
 
-        return _this->UntypedNode::add(node);
-
-
-    });
-
-
-    NODE<Stack>::onadd<File>([](Node*_this,Node*node){ 
-
-        return _this->UntypedNode::add(node);
-
-
-    });
+    NODE<Stack>::onadd<File>([](Node*_this,Node*node){ return node; });
 
     ////////// DRAWCALL.HPP 
 
     NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){  dc->run(); });
-    
-    // NODE<DrawCall>::onadd<Model>([](Node*_this,Node*node){ return _this->UntypedNode::add(node); });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
         auto dc = _this->is_a<DrawCall>();
         auto file = node->is_a<File>();
-        if (!dc || !file) return node;
 
         auto model = dc->vbo.import(file);
         
         dc->update();
-
-        // return _this->addPtr<Model>(model);
         
-        return _this->UntypedNode::add(new Ptr<Model>(model));
+        return (new Ptr<Model>(model))->node();
 
     });
 
@@ -110,13 +96,12 @@ void Nodes::init() {
 
     NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->file->name; });
 
-    NODE<Model>::onadd<ShaderFX>([](Node*_this,Node*node){ return _this->UntypedNode::add(node); });
+    NODE<Model>::onadd<ShaderFX>([](Node*_this,Node*node){ return node; });
 
     NODE<Model>::onadd<File>([](Node*_this,Node*node){ 
         
         auto model = _this->is_a<Model>();
         auto file = node->is_a<File>();
-        if (!model || !file) return node;
 
         auto bad = new ShaderFX(file); // unowned...
 
@@ -125,7 +110,7 @@ void Nodes::init() {
         auto dc = _this->parent()->is_a<DrawCall>();
         if (dc) dc->update();
         
-        return _this->Node::add(new Ptr<ShaderFX>(bad));
+        return (new Ptr<ShaderFX>(bad))->node();
 
     });
     

@@ -178,11 +178,11 @@ struct TypedNode : UntypedNode {
 
             if (onadd_cb[type()].find(node->type()) != onadd_cb[type()].end()) {
 
-                return (Node*)onadd_cb[type()][node->type()]((Node*)this,(Node*)node);
+                node = onadd_cb[type()][node->type()](this->node(),node->node());
+
+                if (node->node() == this->node()) return nullptr;
 
             }
-
-            return nullptr;
 
         }
 

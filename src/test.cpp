@@ -4,7 +4,7 @@
 // struct Foo { virtual Foo() { PLOGD << "foo"; } };
 // struct Bar : Foo { Bar() { PLOGD << "bar"; Foo(); } };
 
-Test::Test(){
+Test::Test() {
 
     // auto obj = engine.dynamic_ubo->buffer.addObj(new Struct("MICHEL"));
 
