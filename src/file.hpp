@@ -29,6 +29,8 @@ struct File {
     static void write(std::string path, std::string data);
 
     void reload();
+
+    bool hasChanged();
     
 };
 

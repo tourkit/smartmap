@@ -16,6 +16,7 @@
 struct File;
 
 struct Node;
+struct NodesList;
 
 struct Editor  {
 
@@ -49,6 +50,8 @@ struct UntypedNode {
     
     Node* parent();
 
+    NodesList* findRefs(Node* of);
+
     virtual Node* add(void *node);
 
     void remove(Node *child);
@@ -63,11 +66,13 @@ struct UntypedNode {
 
     virtual void editor() { PLOGD << "KOKO";}
 
-    virtual void run(); // need to be virtual ?
+    virtual void run(); 
     
-    virtual void update();  // need ?
-    
-    virtual void runCB();  // need ?
+    virtual void update();  
+
+
+    void runCB(std::function<void(Node*)> cb = nullptr);
+
 
     std::function<void(Node*)> dtor = nullptr; // useless ?
 
@@ -105,6 +110,14 @@ struct UntypedNode {
     static inline std::function<void(Node*,U*)> oncreate_cb = nullptr;
     template <typename U>
     static inline std::function<void(Node*,U*)> onrun_cb = nullptr;
+
+};
+
+struct NodesList : UntypedNode {
+
+    std::vector<UntypedNode*> list;
+
+    NodesList (std::vector<UntypedNode*> list = {}) : list(list) {}
 
 };
 

@@ -37,6 +37,21 @@ void File::update() { read(path); }
 
 void File::reload() { read(path); }
 
+bool File::hasChanged() { 
+
+    if (last_modified != getTimeModified()) {
+
+        last_modified = getTimeModified();
+
+        return true;
+
+    }
+
+    return false;
+
+}
+
+
 void File::read(std::string path, bool binary){
 
     extension = std::filesystem::path(path).extension().string().substr(1);   

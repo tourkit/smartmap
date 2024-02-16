@@ -31,7 +31,8 @@ void Engine::run() {
         
         auto &engine = Engine::getInstance();
 
-        engine.stack->run(); // better be : tree.run(); ( owning gui and all..)
+        // engine.stack->run(); // better be : tree.run(); ( owning gui and all..)
+        engine.tree.run(); 
 
         engine.gui->draw(); 
 
@@ -68,23 +69,6 @@ void Engine::init() {
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
     
-    // stack.list.push_back(new Stack::Action{[](){ 
-
-    //     for (int i = 0; i< File::pool.size(); i++) { 
-
-    //         File* file = File::pool[i];
-
-    //         if (file->survey && file->last_modified) {
-
-    //             auto new_modified = file->getTimeModified();
-
-    //             if (file->last_modified != new_modified) file->callback(file);      
-
-    //         }
-
-    //     }
-
-    //  }, "Files survey"});
 
      PLOGD << "Engine initialized";
 

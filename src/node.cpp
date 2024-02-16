@@ -53,6 +53,17 @@
     
     }
 
+    
+    void UntypedNode::runCB(std::function<void(Node*)> cb) {
+
+        for (auto c:childrens) c->runCB(cb);
+
+        if(cb) cb(node());
+
+    }
+
+
+
     void UntypedNode::update() { if (parent_node) parent_node->update(); }
 
     void UntypedNode::remove(Node *child) {  
@@ -72,6 +83,14 @@
 
     }
 
+    NodesList* UntypedNode::findRefs(Node* of) {
+        
+        std::vector<UntypedNode*> list;
+
+        return new NodesList(list);
+
+    }
+
     uint32_t UntypedNode::index() { 
 
         auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
@@ -80,13 +99,9 @@
 
     }
 
-    void UntypedNode::runCB() { }
-
     void UntypedNode::run() { 
 
         for (auto c : childrens) c->run();
-
-        runCB();
         
     }
 

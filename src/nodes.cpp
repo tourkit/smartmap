@@ -31,23 +31,19 @@ void Nodes::init() {
 
     On<File>::create([](Node* node, File *file){ node->name = file->name+"."+file->extension+""; });
 
-    static std::map<int,int> filechecks;
-
     On<File>::run([](Node* node, File *file){ 
 
-        int uid = 0;
+        if (file->hasChanged()) { 
 
-        WIN32_FILE_ATTRIBUTE_DATA fileInfo; 
-        
-        GetFileAttributesExA(file->path.c_str(), GetFileExInfoStandard, &fileInfo);
+            file->reload(); 
 
-        SYSTEMTIME st; 
-        
-        FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
+            engine.tree.runCB([file](Node* node){
 
-        auto last = st.wMilliseconds;
+                if (node->ptr_untyped() == file) PLOGD << node->name <<" is a ref of " << file->name << " . " << node->parent()->name;
 
-        if (filechecks[uid] != last) { filechecks[uid] = last;  file->reload(); }
+            });
+            
+        }
 
      });
 
