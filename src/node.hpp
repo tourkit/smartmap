@@ -226,7 +226,7 @@ struct TypedNode : UntypedNode {
     }
 
     template <typename U>
-    TypedNode<U>* addPtr(void* ptr) { return TypedNode<T>::add(new TypedNode<U>((U*)ptr)); }
+    TypedNode<U>* addPtr(void* ptr) { return (TypedNode<U>*)TypedNode<T>::add(new TypedNode<U>((U*)ptr)); }
 
     template <typename U, typename... Args>
     TypedNode<U>* addOwnr(Args&&... args) {
