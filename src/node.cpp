@@ -76,9 +76,7 @@
             
             if (curr->refering == this) {
                 
-                curr->update(); 
-
-                PLOGD << curr->type().name();
+                curr->update();
                 
             }
             

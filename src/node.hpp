@@ -146,7 +146,7 @@ struct TypedNode : UntypedNode {
 
     void update() override {
 
-        if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
+        if(onchange_cb) { onchange_cb(node(),this->ptr); }
 
         UntypedNode::update();
 
