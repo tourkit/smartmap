@@ -41,20 +41,35 @@ void Engine::run() {
 
 };
 
+
+struct DC {};
+
 void Engine::init() {
 
     Nodes::init();
     
     Editors::init();
 
+    auto vbo = tree.addOwnr<VBO>()->get();
+    vbo->import(new File("assets/model/quad.obj")); // fuck owning
 
+    auto frag = tree.addOwnr<File>("assets/shader/test.frag");
+    auto vert = tree.addOwnr<File>("assets/shader/basic.vert");
 
-    tree.addOwnr<ShaderProgram>();
+    auto shader = tree.addOwnr<ShaderProgram>(frag->get()->data, vert->get()->data)->get();
+    auto cb = [shader,frag,vert](Node* node){ shader->create(frag->get()->data, vert->get()->data); };
 
-    tree.addOwnr<VBO>();
+    frag->addCallback(cb);
+    vert->addCallback(cb);
 
-    tree.addOwnr<File>()->select();
+    auto dc = tree.addOwnr<DC>()->get();
 
+    NODE<DC>::onrun([shader,vbo](Node* node, DC* dc) {
+        
+        shader->use();
+        vbo->draw();
+         
+    });
 
 
 

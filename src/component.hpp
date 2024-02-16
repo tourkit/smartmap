@@ -28,9 +28,8 @@ struct Component  {
     std::vector<Member> members;
 
     template <typename T>
-    Component& member(std::string name = "") {
+    Component& member(std::string name = "", float range_from = 0, float range_to = 1) {
 
-        float range_to = 1;
 
         Member::Type type = Member::Type::UNDEFINED;
         if (typeid(T) == typeid(float)) { 
@@ -38,7 +37,7 @@ struct Component  {
 
         }else if (typeid(T) == typeid(uint8_t)) { 
             type = Member::Type::UI8; 
-            range_to = 255;
+            range_to *= 255;
 
         }else if (typeid(T) == typeid(uint16_t)) { 
             type = Member::Type::UI16; 
@@ -55,7 +54,7 @@ struct Component  {
 
         this->size += sizeof(T);
         
-        members.push_back({name, sizeof(T), 0,range_to, type});
+        members.push_back({name, sizeof(T), range_from,range_to, type});
         // members.push_back({name, sizeof(T), members.back().offset+members.back().size ,0,range_to, type});
 
         return *this;
@@ -119,8 +118,8 @@ private:
         ;
 
         Component::create("Position")
-            .member<float>("x")//.range(-1,1)
-            .member<float>("y")//.range(-1,1)
+            .member<float>("x").range(-1,1)
+            .member<float>("y").range(-1,1)
         ;
         Component::create("Position3D")
             .member<float>("x")//.range(-1,1)

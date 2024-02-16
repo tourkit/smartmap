@@ -25,7 +25,7 @@ struct Engine {
 
     Node tree = Node("tree");
 
-    Node* stack = tree.addOwnr<Stack>();
+    Node* stack = tree.addOwnr<Stack>()->node();
 
     Node* selected = &tree;
     

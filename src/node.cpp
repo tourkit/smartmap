@@ -57,6 +57,7 @@
     
     }
 
+    void UntypedNode::addCallback(std::function<void(Node*)> cb) { onchange_cb = cb; }
     
     void UntypedNode::runCB(std::function<void(Node*)> cb) {
 
@@ -65,8 +66,6 @@
         if(cb) cb(node());
 
     }
-
-
 
     void UntypedNode::update() { 
         
@@ -81,6 +80,8 @@
             }
             
         });
+
+        if (onchange_cb) onchange_cb(node());
         
     }
 
@@ -101,8 +102,8 @@
 
     }
 
-    NodesList* UntypedNode::findRefs(Node* of) {
-        
+    NodesList* UntypedNode::updateRefs(Node* of) { 
+
         std::vector<UntypedNode*> list;
 
         return new NodesList(list);

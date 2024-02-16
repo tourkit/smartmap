@@ -168,7 +168,11 @@ void Editors::init() {
 
                     if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to)) { 
 
-                        if (buffer->owner) buffer->owner->upload();
+                        if (buffer->owner) {
+                            
+                            buffer->owner->upload();
+                            
+                        }
 
                     }
 

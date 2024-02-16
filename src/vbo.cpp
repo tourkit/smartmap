@@ -13,6 +13,8 @@
 
 VBO::VBO() {  
 
+    buffer.owner = this;
+
     vertices = buffer.addObj(vertices_s);
 
     indices = buffer.addObj(indices_s);

@@ -30,6 +30,8 @@ struct Editor  {
 
 struct UntypedNode {
 
+    std::function<void(Node*)> onchange_cb = nullptr;
+
     static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onadd_cb;
 
     std::string name;
@@ -51,7 +53,7 @@ struct UntypedNode {
     
     Node* parent();
 
-    NodesList* findRefs(Node* of);
+    NodesList* updateRefs(Node* of);
 
     virtual Node* add(void *node);
 
@@ -71,7 +73,9 @@ struct UntypedNode {
 
     virtual void run(); 
     
-    virtual void update();  
+    virtual void update();
+
+    void addCallback(std::function<void(Node*)> cb = nullptr);
 
     void runCB(std::function<void(Node*)> cb = nullptr);
 
@@ -80,7 +84,17 @@ struct UntypedNode {
     Node* select();
 
     template <typename U>
-    U* is_a() { return ((type() == typeid(U))? (U*)ptr_untyped() : nullptr); }
+    U* is_a() { 
+        
+        if (type() == typeid(U)) { return (U*)ptr_untyped(); }
+        else {
+            
+            PLOGD << "not what you think";
+            return nullptr;
+            
+        } 
+        
+    }
 
     template <typename V>
     void each(std::function<void(Node*)> fx) { 
@@ -119,6 +133,9 @@ struct NodesList : UntypedNode {
 
 struct Any {};
 struct Passing {};
+
+template <typename T>
+struct Ownr;
 
 template <typename T>
 struct TypedNode : UntypedNode { 
@@ -209,16 +226,16 @@ struct TypedNode : UntypedNode {
     }
 
     template <typename U>
-    Node* addPtr(void* ptr) { return TypedNode<T>::add(new TypedNode<U>((U*)ptr)); }
+    TypedNode<U>* addPtr(void* ptr) { return TypedNode<T>::add(new TypedNode<U>((U*)ptr)); }
 
     template <typename U, typename... Args>
-    Node* addOwnr(Args&&... args) {
+    TypedNode<U>* addOwnr(Args&&... args) {
 
         auto ptr = new U(std::forward<Args>(args)...);
     
-        auto* NEW_U = TypedNode<T>::add(new TypedNode<U>(ptr, true));
+        auto NEW_U = new TypedNode<U>(ptr, true);
 
-        if (!NEW_U) { delete ptr; return nullptr; }
+        if (!TypedNode<T>::add(NEW_U)) { delete ptr; return nullptr; } // et delete NEW_U non ?
 
         return NEW_U;
 
