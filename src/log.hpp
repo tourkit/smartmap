@@ -12,6 +12,16 @@ struct Log {
     plog::RollingFileAppender<plog::TxtFormatter> fileAppender; 
     plog::ConsoleAppender<plog::TxtFormatter> consoleAppender; 
 
+    static Log& getInstance() { static Log instance;  return instance; }
+
+private:
     Log();
 
+    Log(const Log&) = delete;
+    Log& operator=(const Log&) = delete;
+
+    ~Log() {}
 };
+
+
+static inline Log &log_s = Log::getInstance();

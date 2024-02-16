@@ -4,19 +4,17 @@
 
                         */
 
-#include "engine.hpp"
-
-#include "test.hpp"
 #include "log.hpp"
 // #include "boilerplate.hpp"
+
+#include "engine.hpp"
+#include "test.hpp"
 
 int main() { 
 
 
 
     // Boilerplate();
-
-    Log log;
     
     auto &engine = Engine::getInstance();
 
