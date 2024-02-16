@@ -68,7 +68,23 @@
 
 
 
-    void UntypedNode::update() { if (parent_node) parent_node->update(); }
+    void UntypedNode::update() { 
+        
+        // if (parent_node) parent_node->update(); 
+        
+        top()->runCB([this](Node* curr){ 
+            
+            if (curr->refering == this) {
+                
+                curr->update(); 
+
+                PLOGD << curr->type().name();
+                
+            }
+            
+        });
+        
+    }
 
     void UntypedNode::remove(Node *child) {  
 

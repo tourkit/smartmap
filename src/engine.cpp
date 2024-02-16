@@ -49,25 +49,27 @@ void Engine::init() {
 
 
 
+    // tree.addOwnr<ShaderProgram>();
 
-    tree.addOwnr<ShaderProgram>();
+    // tree.addOwnr<VBO>();
 
-    tree.addOwnr<VBO>();
-
-    tree.addOwnr<File>("assets/shaders/rgba.frag")->select();
-
-    // stack->addPtr<UBO>(dynamic_ubo)->select();
-
-    // tree.addPtr<UBO>(static_ubo);
-
-    // auto models = tree.addOwnr<Directory>("assets/model/");
-    // auto shaders = tree.addOwnr<Directory>("assets/shaders/");
+    // tree.addOwnr<File>("assets/shaders/rgba.frag")->select();
 
 
-    // auto dc = stack->addOwnr<DrawCall>();
 
-    // auto model = dc->addPtr(models->childrens[0]); 
-    // model->addPtr(shaders->childrens[0]); 
+
+    stack->addPtr<UBO>(dynamic_ubo)->select();
+
+    tree.addPtr<UBO>(static_ubo);
+
+    auto models = tree.addOwnr<Directory>("assets/model/");
+    auto shaders = tree.addOwnr<Directory>("assets/shaders/");
+
+
+    auto dc = stack->addOwnr<DrawCall>();
+
+    auto model = dc->addPtr(models->childrens[0]); 
+    model->addPtr(shaders->childrens[0]); 
 
 
 

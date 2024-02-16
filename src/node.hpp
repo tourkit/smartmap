@@ -107,13 +107,6 @@ struct UntypedNode {
 
     Node* node();
 
-    template <typename U>
-    static inline std::function<void(Node*,U*)> oncreate_cb = nullptr;
-    template <typename U>
-    static inline std::function<void(Node*,U*)> onrun_cb = nullptr;
-    template <typename U>
-    static inline std::function<void(Node*,U*)> onchange_cb = nullptr;
-
 };
 
 struct NodesList : UntypedNode {
@@ -129,6 +122,10 @@ struct Passing {};
 
 template <typename T>
 struct TypedNode : UntypedNode { 
+
+    static inline std::function<void(Node*,T*)> oncreate_cb = nullptr;
+    static inline std::function<void(Node*,T*)> onrun_cb = nullptr;
+    static inline std::function<void(Node*,T*)> onchange_cb = nullptr;
 
     T* ptr; 
 
@@ -149,7 +146,9 @@ struct TypedNode : UntypedNode {
 
     void update() override {
 
-        if(onchange_cb<T>) { onchange_cb<T>((Node*)this,this->ptr); }
+        if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
+
+        UntypedNode::update();
 
     }
     
@@ -165,7 +164,7 @@ struct TypedNode : UntypedNode {
 
             if (stored_type == typeid(Passing)) stored_type = typeid(*this->ptr);
 
-            if(oncreate_cb<T>) { oncreate_cb<T>((Node*)this,this->ptr); }
+            if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
 
             color = {100,100,100,100};
 
@@ -175,7 +174,7 @@ struct TypedNode : UntypedNode {
 
         UntypedNode::run();
 
-        if(onrun_cb<T>) { onrun_cb<T>((Node*)this,this->ptr); }
+        if(onrun_cb) { onrun_cb(node(),this->ptr); }
 
     }
 
@@ -276,8 +275,8 @@ struct NODE : TypedNode<T> {
     template <typename U>
     static void onadd(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onadd_cb[typeid(T)][typeid(U)] = cb; }
     
-    static void oncreate(std::function<void(Node*,T*)> cb) { UntypedNode::oncreate_cb<T> = cb;  }
-    static void onchange(std::function<void(Node*,T*)> cb) { UntypedNode::onchange_cb<T> = cb;  }
-    static void onrun(std::function<void(Node*,T*)> cb) { UntypedNode::onrun_cb<T> = cb;  }
+    static void oncreate(std::function<void(Node*,T*)> cb) { TypedNode<T>::oncreate_cb = cb;  }
+    static void onchange(std::function<void(Node*,T*)> cb) { TypedNode<T>::onchange_cb = cb;  }
+    static void onrun(std::function<void(Node*,T*)> cb) { TypedNode<T>::onrun_cb = cb;  }
     
 };

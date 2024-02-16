@@ -88,20 +88,15 @@ void Editors::init() {
             if (strcmp(buffer, file->path.c_str())) {
                 
                 file->read(buffer);
-                if (!file->loaded) {
 
-                    node->name = "File";
-                    
-                }else{
-
-                    node->name = node->name = file->name+"."+file->extension+"";
-                }
+                if (!file->loaded) node->name = "File";
+                else node->name = node->name = file->name+"."+file->extension+"";
                 
             }
         
         }
         
-        ImGui::InputTextMultiline("src", &file->data[0], file->data.size());
+        ImGui::InputTextMultiline("src", &file->data[0], file->data.size(), ImVec2(600,300));
    
     });
 

@@ -37,11 +37,9 @@ void Nodes::init() {
 
         if (file->hasChanged()) { 
 
-            PLOGD << file->name << "  " << file->last_modified;
-
             file->reload(); 
 
-            node->top()->runCB([node](Node* curr){ if (curr->refering == node) curr->update(); }); // UntypedNode::updateReferences();
+            node->update();
    
         }
 
