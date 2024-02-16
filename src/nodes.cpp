@@ -39,11 +39,7 @@ void Nodes::init() {
 
             file->reload(); 
 
-            node->top()->runCB([node](Node* curr){
-
-                if (curr->refering == node) PLOGD << curr->name <<" is a ref of " << node->name << " . in " << curr->parent()->name;
-
-            });
+            node->top()->runCB([node](Node* curr){ if (curr->refering == node) curr->update(); });
    
         }
 
@@ -119,6 +115,12 @@ void Nodes::init() {
     
     NODE<ShaderFX>::oncreate([](Node* node, ShaderFX *fx) { node->name = fx->file->name; });
 
+    NODE<ShaderFX>::onchange([](Node* node, ShaderFX *fx) { 
+        
+        PLOGD<<"update " << fx->file->name; 
+        
+        
+    });
 
     ////////// Directory.HPP 
 

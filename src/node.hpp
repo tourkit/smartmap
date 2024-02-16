@@ -73,9 +73,7 @@ struct UntypedNode {
     
     virtual void update();  
 
-
     void runCB(std::function<void(Node*)> cb = nullptr);
-
 
     std::function<void(Node*)> dtor = nullptr; // useless ?
 
@@ -113,6 +111,8 @@ struct UntypedNode {
     static inline std::function<void(Node*,U*)> oncreate_cb = nullptr;
     template <typename U>
     static inline std::function<void(Node*,U*)> onrun_cb = nullptr;
+    template <typename U>
+    static inline std::function<void(Node*,U*)> onchange_cb = nullptr;
 
 };
 
@@ -146,6 +146,12 @@ struct TypedNode : UntypedNode {
     void* ptr_untyped() override { return ptr; }
 
     operator T*() { return ptr; }
+
+    void update() override {
+
+        if(onchange_cb<T>) { onchange_cb<T>((Node*)this,this->ptr); }
+
+    }
     
     TypedNode(void* ptr, bool owned = false) : 
 
@@ -271,6 +277,7 @@ struct NODE : TypedNode<T> {
     static void onadd(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onadd_cb[typeid(T)][typeid(U)] = cb; }
     
     static void oncreate(std::function<void(Node*,T*)> cb) { UntypedNode::oncreate_cb<T> = cb;  }
+    static void onchange(std::function<void(Node*,T*)> cb) { UntypedNode::onchange_cb<T> = cb;  }
     static void onrun(std::function<void(Node*,T*)> cb) { UntypedNode::onrun_cb<T> = cb;  }
     
 };
