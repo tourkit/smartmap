@@ -23,7 +23,7 @@ struct File {
     int64_t getTimeModified();
 
     void read(std::string source, bool binary = true);
-    void write(const char* path);
+    void write(const char* data);
     static void write(std::string path, std::string data);
 
     void reload();

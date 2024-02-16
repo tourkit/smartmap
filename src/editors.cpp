@@ -78,16 +78,16 @@ void Editors::init() {
     ////////// File.HPP 
 
     Editor::set<File>([](Node* node, File *file){ 
-        
-        char buffer[512]; 
-        memset(buffer,0,512);
-        memcpy(buffer,file->path.c_str(),file->path.size());
 
-        if (ImGui::InputText("path", buffer, 512)) {
+        char path[512]; 
+        memset(path,0,512);
+        memcpy(path,file->path.c_str(),file->path.size());
+
+        if (ImGui::InputText("path", path, 512)) {
     
-            if (strcmp(buffer, file->path.c_str())) {
+            if (strcmp(path, file->path.c_str())) {
                 
-                file->read(buffer);
+                file->read(path);
 
                 if (!file->loaded) node->name = "File";
                 else node->name = node->name = file->name+"."+file->extension+"";
@@ -96,8 +96,11 @@ void Editors::init() {
         
         }
         
-        ImGui::InputTextMultiline("src", &file->data[0], file->data.size(), ImVec2(600,300));
-   
+        char data[512000]; 
+        memset(data,0,512000);
+        memcpy(data,file->data.c_str(),file->data.size());
+        if(ImGui::InputTextMultiline("src", data, 512000, ImVec2(600,300))) file->write(data);
+
     });
 
 

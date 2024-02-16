@@ -49,11 +49,11 @@ void Engine::init() {
 
 
 
-    // tree.addOwnr<ShaderProgram>();
+    tree.addOwnr<ShaderProgram>();
 
-    // tree.addOwnr<VBO>();
+    tree.addOwnr<VBO>();
 
-    // tree.addOwnr<File>("assets/shaders/rgba.frag")->select();
+    tree.addOwnr<File>()->select();
 
 
 

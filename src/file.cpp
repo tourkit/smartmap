@@ -19,7 +19,7 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 // FILE
 //////////////////////////////////////
 
-File::File(std::string path) : name(std::filesystem::path(path).stem().filename().string()) { read(path); }
+File::File(std::string path) { read(path); }
 
 int64_t File::getTimeModified() {
 
@@ -64,6 +64,8 @@ void File::read(std::string path, bool binary){
 
     if (file) {
 
+        name = std::filesystem::path(path).stem().filename().string();
+
         extension = std::filesystem::path(path).extension().string().substr(1);   
 
         location = std::filesystem::path(path).parent_path().string();
@@ -92,11 +94,14 @@ void File::read(std::string path, bool binary){
 
 }
 
-void File::write(const char* filename){
+void File::write(const char* data){
 
-    std::fstream bin (filename, std::ios :: out | std::ios :: binary);
-    bin.write(&data[0],data.size());
+    if (!loaded) return;
+
+    std::fstream bin (path.c_str(), std::ios :: out | std::ios :: binary);
+    bin.write(&data[0],strlen(data));
     bin.close();
+
 
 }
 
