@@ -1,8 +1,3 @@
-/*
-
-    SMARTMAP (beta)
-
-                        */
 
 
 #pragma once
@@ -10,27 +5,17 @@
 unsigned int width = 400, height = 200, pos_x = 0, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
-#define BOIL
-#ifdef BOIL
 
 #include <chrono>
 #include <thread>
+#include <iostream>
 #include <vector>
 #include <fstream>
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
-#include "src/file.hpp"
-#include "src/image.hpp"
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
-#include <filesystem>
-namespace fs = std::filesystem;
-
-
-int Boilerplate() {  
+void Boilerplate() {  
 
     // SET OPENGL
 
@@ -87,21 +72,49 @@ int Boilerplate() {
 
     auto shader = glCreateProgram();
 
-    std::ifstream fragFile("shader/basic.frag");
+    std::ifstream fragFile("C:/users/root/cpp/smartmap/assets/shader/basic.frag");
     std::string fragCode((std::istreambuf_iterator<char>(fragFile)), (std::istreambuf_iterator<char>()));
     auto fragptr = (const GLchar* const ) fragCode.c_str();
+
+    std::cout << fragCode;
 
     auto frag = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(frag, 1, &fragptr, nullptr);
     glCompileShader(frag);
+    // Check for errors
 
-    std::ifstream vertFile("shader/basic.vert");
+    GLchar infoLog[512];
+    GLint success;
+
+    glGetShaderiv(frag, GL_COMPILE_STATUS, &success);
+
+    if (!success) {
+
+        glGetShaderInfoLog(frag, 512, NULL, infoLog);
+
+        std::cout << infoLog;
+        
+    }
+
+
+    std::ifstream vertFile("C:/users/root/cpp/smartmap/assets/shader/basic.vert");
     std::string vertCode((std::istreambuf_iterator<char>(vertFile)), (std::istreambuf_iterator<char>()));
     auto vertptr = (const GLchar* const ) vertCode.c_str();
+    std::cout << vertCode;
 
     auto vert = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vert, 1, &vertptr, nullptr);
     glCompileShader(vert);
+
+    glGetShaderiv(vert, GL_COMPILE_STATUS, &success);
+
+    if (!success) {
+
+        glGetShaderInfoLog(vert, 512, NULL, infoLog);
+
+        std::cout << infoLog;
+        
+    }
 
 
     glAttachShader(shader, frag);
@@ -111,103 +124,33 @@ int Boilerplate() {
 
     glUseProgram(shader); 
 
-    // SET TEXTURE
+    std::vector<float> data = {.0,0,1,1};
 
-    GLuint tex;
+    GLuint ubo;
+    glGenBuffers(1, &ubo);
 
-    struct FT { 
-
-        FT_Library library;
-        FT_Face face;
-        FT_GlyphSlot slot;
-
-        GLuint width;
-        GLuint height;
-        
-        void* buffer;
-
-        FT() {
-            
-            FT_Init_FreeType(&library);
-            
-            FT_New_Face(library, "Anonymous.ttf", 0, &face); 
-
-            FT_Set_Pixel_Sizes(face, 0, 200);
-            
-            slot = face->glyph;
-            FT_Load_Char(face, 'A', FT_LOAD_RENDER);
-
-            buffer = slot->bitmap.buffer;
-            width = slot->bitmap.width;
-            height = slot->bitmap.rows;
-
-        }
-
-        ~FT() {
-           
-            FT_Done_Face(face);
-            FT_Done_FreeType(library);
-
-        }
-
-    } img;
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferData(GL_UNIFORM_BUFFER, data.size()*4, NULL, GL_DYNAMIC_COPY);
 
 
-    glGenTextures(1, &tex);
-    glBindTexture(GL_TEXTURE_2D, tex);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, img.width, img.height);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-    glBindTexture(GL_TEXTURE_2D, tex);
-    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img.width, img.height,GL_RED,GL_UNSIGNED_BYTE,img.buffer);
-    glGenerateMipmap(GL_TEXTURE_2D);
-
-    Image img2("container.jpg");
-    GLuint tex2;
-
-    glGenTextures(1, &tex2);
-    glActiveTexture(GL_TEXTURE0+1);
-    glBindTexture(GL_TEXTURE_2D, tex2);
-    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, img2.width, img2.height);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glActiveTexture(GL_TEXTURE0); 
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glUniformBlockBinding(shader, glGetUniformBlockIndex(shader, "ubo"), 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
 
 
-    glActiveTexture(GL_TEXTURE0+1);
-    glBindTexture(GL_TEXTURE_2D, tex2);
-    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img2.width, img2.height,GL_RGB,GL_UNSIGNED_BYTE,&img2.data[0]);
-    glGenerateMipmap(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE0); 
-
-    GLuint textureUniformLoc = glGetUniformLocation(shader, "mediaAtlas");
-    glUniform1i(textureUniformLoc, 1);
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, data.size()*4, &data[0]); 
 
     // RENDER
 
-    
+    while (!glfwWindowShouldClose(window)) {
 
-    while (true) {
-
-        // if (glfwGetTime() - lastTime <= 1./280. ) {
-        //     std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        //     continue;
-        // }
-    
         lastTime = glfwGetTime();
 
-        glClearColor(0.5f, 0.0f, 0.0f, 1.0f); // BG COLOR
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-        // glDrawElementsInstanced(GL_TRIANGLES, indices.size()*6, GL_UNSIGNED_INT, 0, 1);
+        glDrawElementsInstanced(GL_TRIANGLES, indices.size()*6, GL_UNSIGNED_INT, 0, 1);
 
         glfwPollEvents();
 
@@ -215,135 +158,4 @@ int Boilerplate() {
 
     }
 
-
-    return 1;
-
 } 
-
-#else
-
-#include "artnet.hpp"
-
-#include <ctime>
-#include <cstdint>
-#include <map>
-#include <functional>
-
-static inline std::map<int,int> filechecks;
-static inline int survey_count = 0;
-static inline void survey(const char* path, std::function<void()> cb = [](){}) {
-
-    WIN32_FILE_ATTRIBUTE_DATA fileInfo; GetFileAttributesExA(path, GetFileExInfoStandard, &fileInfo);
-    SYSTEMTIME st; FileTimeToSystemTime(&fileInfo.ftLastWriteTime, &st);
-    auto last = st.wMilliseconds;
-
-    if (filechecks[survey_count] != last) { filechecks[survey_count] = last;  cb(); }
-    survey_count++;
-
-}
-
-
-#include "window.hpp"
-#include "shader.hpp"
-#include "texture.hpp"
-#include "vbo.hpp"
-#include "framebuffer.hpp"
-#include "atlas.hpp"
-#include "ubo.hpp"
-#include "gui.hpp"
-#include "artnet.hpp"
-#include "ndi.hpp"
-#include "citp.hpp"
-
-#include "imgui/imgui.h"
-
-void Boilerplate() {  
-
-
-    GLuint width = 400, height = 200;
-    // GLuint pos_x = 1920-400, pos_y = 0;  
-
-    // Artnet artnet("2.0.0.222");
-
-    auto lastTime = glfwGetTime();
-
-    Window window(false,width,height);
-    GLuint pos_x = window.displays[0].width-400;
-    window.setPos(pos_x,pos_y);
-    
-    GUI gui(window.id);
-
-    VBO quad0("quad.obj", width,height);
-
-    Texture img("boy.jpg");
-
-    ShaderProgram shader({"basic.vert", "basic.frag"});
-
-    std::vector<float> debuguniforms{0,0,.5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
-    NDI::Sender ndi(width,height);
-
-    CITP citp(width,height);
-
-    
-
-    // char buffer[1024];
-    // socket.receive(buffer, 1024);
-
-
-    FrameBuffer fb(0,width,height);
-
-    while (!glfwWindowShouldClose(window.id)) {
-
-        fb.read(width,height,0,0,GL_RGBA,ndi.NDI_video_frame->p_data);
-
-        ndi.send();
-
-        citp.send();
-
-        if (glfwGetTime() - lastTime <= 1./60 ) { std::this_thread::sleep_for(std::chrono::milliseconds(1)); continue; }
-        lastTime = glfwGetTime();
-        
-        // artnet.run();    
-        
-        // frr.addChar((chars+(int)(debuguniforms[0]*61)),100);
-
-        shader.sendUniform("columns", debuguniforms[0]);      
-        shader.sendUniform("rows", debuguniforms[1]);      
-        shader.sendUniform("thickness", debuguniforms[2]);      
-        shader.sendUniform("debugsquare", debuguniforms[3]);      
-        for (int i = 4; i < 10; i++) shader.sendUniform("debug"+std::to_string(i), debuguniforms[i]);
-
-        survey_count = 0;
-        survey("assets/shader" / shader.paths[0]).c_str(), [&](){ shader.reset();  shader.use(); });
-        survey("assets/shader" / shader.paths[1]).c_str(), [&](){ shader.reset();  shader.use(); });
-
-        glfwPollEvents(); 
-
-        glClearColor(0.1f, 0.0f, 0.0f, 0.0f); // BG COLOR
-        glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
-
-        quad0.draw();
-
-        gui.newframe();
-
-        ImGui::Begin("test");
-
-        ImGui::SliderFloat("columns", &debuguniforms[0], 0,1); 
-        ImGui::SliderFloat("rows", &debuguniforms[1], 0,1); 
-        ImGui::SliderFloat("thickness", &debuguniforms[2], 0,1); 
-        ImGui::SliderFloat("debugsquare", &debuguniforms[3], 0,1); 
-        for (int i = 4; i < debuguniforms.size(); i++) ImGui::SliderFloat(("debug "+std::to_string(i)).c_str(), &debuguniforms[i], 0,1); 
-
-        ImGui::End();
-
-        gui.render();
-
-        glfwSwapBuffers(window.id);
-
-    }
-
-} 
-
-
-#endif
