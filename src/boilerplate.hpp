@@ -10,7 +10,7 @@
 unsigned int width = 400, height = 200, pos_x = 0, pos_y = 0;
 //unsigned int  width = 1920; height = 1080; pos_x = 2560; pos_y = 290;
 
-#define BOILNOT
+#define BOIL
 #ifdef BOIL
 
 #include <chrono>
@@ -21,6 +21,7 @@ unsigned int width = 400, height = 200, pos_x = 0, pos_y = 0;
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include "src/file.hpp"
+#include "src/image.hpp"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -194,19 +195,19 @@ int Boilerplate() {
 
     
 
-    while (!glfwWindowShouldClose(window)) {
+    while (true) {
 
-        if (glfwGetTime() - lastTime <= 1./280. ) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-            continue;
-        }
+        // if (glfwGetTime() - lastTime <= 1./280. ) {
+        //     std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        //     continue;
+        // }
     
         lastTime = glfwGetTime();
 
         glClearColor(0.5f, 0.0f, 0.0f, 1.0f); // BG COLOR
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-        glDrawElementsInstanced(GL_TRIANGLES, indices.size()*6, GL_UNSIGNED_INT, 0, 1);
+        // glDrawElementsInstanced(GL_TRIANGLES, indices.size()*6, GL_UNSIGNED_INT, 0, 1);
 
         glfwPollEvents();
 
@@ -215,7 +216,7 @@ int Boilerplate() {
     }
 
 
-
+    return 1;
 
 } 
 

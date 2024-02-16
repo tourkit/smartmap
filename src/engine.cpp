@@ -50,44 +50,44 @@ void Engine::init() {
     
     Editors::init();
 
-    auto ubo = tree.addPtr<UBO>(dynamic_ubo);
+    auto ubo = stack->addPtr<UBO>(dynamic_ubo);
     ubo->select();
 
     tree.addPtr<UBO>(static_ubo);
 
-    auto obj = dynamic_ubo->buffer.addObj(new Struct("test",{"float","float","float","float"}));
+    auto obj = dynamic_ubo->buffer.addObj(new Struct("test",{"RGB"}));
     obj->push();
-    auto vbo = tree.addOwnr<VBO>()->get();
-    vbo->import(new File("assets/model/quad.obj")); // fuck owning
+    // auto vbo = tree.addOwnr<VBO>()->get();
+    // vbo->import(new File("assets/model/quad.obj")); // fuck owning
 
-    auto frag = tree.addOwnr<File>("assets/shader/test.frag");
-    auto vert = tree.addOwnr<File>("assets/shader/test.vert");
+    // auto frag = tree.addOwnr<File>("assets/shader/test.frag");
+    // auto vert = tree.addOwnr<File>("assets/shader/test.vert");
 
-    auto shader_ = tree.addOwnr<ShaderProgram>(frag->get()->data, vert->get()->data);
-    shader_->refering = frag->node();
-    auto shader = shader_->get();
-    auto cb = [shader,frag,vert](Node* node){ 
+    // auto shader_ = tree.addOwnr<ShaderProgram>(frag->get()->data, vert->get()->data);
+    // shader_->refering = frag->node();
+    // auto shader = shader_->get();
+    // auto cb = [shader,frag,vert](Node* node){ 
 
-        // if (frag->get()->data != shader->frag.src) {  PLOGW <<"loosing SHaderProgram data"  ;} // not workinh
+    //     // if (frag->get()->data != shader->frag.src) {  PLOGW <<"loosing SHaderProgram data"  ;} // not workinh
 
-        shader->create(frag->get()->data, vert->get()->data); 
+    //     shader->create(frag->get()->data, vert->get()->data); 
 
-    };
+    // };
 
-    frag->onchange(cb);
-    vert->onchange(cb);
+    // frag->onchange(cb);
+    // vert->onchange(cb);
 
-    dynamic_ubo->subscribers.push_back(shader);
+    // dynamic_ubo->subscribers.push_back(shader);
 
-    auto dc1 = tree.addOwnr<DC>()->get();
+    // auto dc1 = tree.addOwnr<DC>()->get();
 
-    NODE<DC>::onrun([shader,vbo,ubo](Node* node, DC* dc) {
+    // NODE<DC>::onrun([shader,vbo,ubo](Node* node, DC* dc) {
         
-        shader->use();
-        vbo->draw();
-        ubo->run();
+    //     shader->use();
+    //     vbo->draw();
+    //     ubo->run();
 
-    });
+    // });
 
     auto models = tree.addOwnr<Directory>("assets/model/");
     auto shaders = tree.addOwnr<Directory>("assets/shaders/");

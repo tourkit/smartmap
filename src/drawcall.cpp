@@ -2,6 +2,7 @@
 #include "shaderfx.hpp"
 #include "file.hpp"
 #include "log.hpp"
+#include "ubo.hpp"
 #include "engine.hpp"
 
 #include <unordered_set>
@@ -21,6 +22,35 @@ void DrawCall::run() {
 
 }
 
+std::string DrawCall::Shaderlayout(UBO* ubo) {
+
+    std::string str = "layout (binding = ";
+    str += std::to_string(ubo->binding);
+    str += ", std140) uniform ";
+    str += ubo->name;
+    str += " { ";
+    
+    int i = 0; for (auto obj:ubo->buffer.objects) { 
+
+        if(!obj.reserved) continue;
+    
+        std::string obj_str = obj.s->name;
+        obj_str[0] = std::toupper(obj_str[0]);
+        str += obj_str;
+        str += " ";
+        for(int i = 0; i < obj.s->name.length(); i++) str += std::tolower(obj.s->name[i]); 
+        str += "[";
+        str += std::to_string(obj.reserved);
+        str += "]; ";
+
+        }
+
+    str += " };\n";
+
+    return str;
+
+}
+
 void DrawCall::update() {
 
     // FRAGMENT SHADER BUILDER
@@ -31,13 +61,15 @@ void DrawCall::update() {
 
     frag_shader += "out vec4 color;\n\n";
 
-    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[3]; };\n\n"; // should auto from dynamic UBO structs
+    frag_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n"; 
+    frag_shader += "// "+Shaderlayout(engine.dynamic_ubo)+"\n";
+    
 
     std::unordered_set<ShaderFX*> fxs;
     for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
     for (auto fx : fxs) frag_shader += fx->file->data +"\n\n";
     
-    frag_shader += "void main() {\n\n";
+    frag_shader += "\nvoid main() {\n\n";
 
     frag_shader += "\tcolor = vec4(0);\n\n";
 
@@ -80,7 +112,10 @@ void DrawCall::update() {
     vert_shader += "layout (location = 1) in vec2 TEXCOORD;\n";
     vert_shader += "layout (location = 3) in int OBJ;\n\n";
 
-    vert_shader += "void main() {\n\n";
+    vert_shader += "layout (binding = 0, std140) uniform dynamic_ubo { float x[4]; };\n"; 
+    vert_shader += "// "+Shaderlayout(engine.dynamic_ubo);
+
+    vert_shader += "\nvoid main() {\n\n";
 
     vert_shader += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 

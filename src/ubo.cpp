@@ -1,6 +1,7 @@
 #include "ubo.hpp"
 
 #include "shader.hpp"
+#include "struct.hpp"
 #include "engine.hpp"
 #include <GL/gl3w.h>
 
@@ -24,8 +25,8 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : buffer(thi
 
 } 
 
-
 void UBO::destroy() { buffer.reset(); subscribers.resize(0); if (id) glDeleteBuffers(1, &id); } // delete name; ?
+
 
 void UBO::update() {
 

@@ -56,29 +56,32 @@ void Editors::init() {
     ////////// SHADER.HPP 
 
     Editor::set<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
-        
-        ImGui::Text(std::to_string(shader->loaded).c_str());
 
-        static TextEditor editor;
+        static TextEditor frageditor;
+        static TextEditor verteditor;
         static bool init = false;
         if (!init) { 
 
-            editor.SetShowWhitespaces(false);
-            editor.SetReadOnly(false);
-            editor.SetText(shader->frag.src); init = true; 
+            frageditor.SetShowWhitespaces(false);
+            frageditor.SetReadOnly(false);
+            frageditor.SetText(shader->frag.src); init = true; 
+            verteditor.SetShowWhitespaces(false);
+            verteditor.SetReadOnly(false);
+            verteditor.SetText(shader->vert.src); init = true; 
             
         }
         
 	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
-	    // editor.SetLanguageDefinition(lang);
+	    // frageditor.SetLanguageDefinition(lang);
 
-        // editor.SetPalette(TextEditor::GetDarkPalette());
+        // frageditor.SetPalette(TextEditor::GetDarkPalette());
         
-        editor.Render("frageditor");
+        frageditor.Render("frageditor");
+        verteditor.Render("frageditor");
         
-        if (editor.IsTextChanged()) {
+        if (frageditor.IsTextChanged()) {
 
-            auto x = editor.GetText();
+            auto x = frageditor.GetText();
 
             memset(&x[x.size()-2],0,1);
 
