@@ -54,11 +54,8 @@ void Engine::init() {
     auto ubo = stack->addPtr<UBO>(dynamic_ubo);
     ubo->select();
 
-    // tree->addPtr<UBO>(static_ubo);
-
-    
-    
-    
+    tree->addPtr<UBO>(static_ubo);
+   
     auto models = tree->addOwnr<Directory>("assets/model/");
     auto shaders = tree->addOwnr<Directory>("assets/shaders/");
     
@@ -67,32 +64,6 @@ void Engine::init() {
     auto model = dc->addPtr(models->childrens[0]); 
 
     model->addPtr(shaders->childrens[0]); 
-    // dc->active = false;
- 
-    // dc->get()->vbo.import(new File("C:/users/root/cpp/smartmap/assets/model/quad.obj")); // fuck owning
-
-    auto obj = dynamic_ubo->addObj(new Struct("test",{"RGBA"}));
-    obj->push();
-
-    auto frag = tree->addOwnr<File>("C:/users/root/cpp/smartmap/assets/shader/test.frag");
-    auto vert = tree->addOwnr<File>("C:/users/root/cpp/smartmap/assets/shader/test.vert");
-
-    // dc->get()->shader.create(frag->get()->data, vert->get()->data);
-
-    dynamic_ubo->subscribers.push_back(&dc->get()->shader);
-
-    // auto dc1 = tree->addOwnr<DC>()->get();
-
-    NODE<DC>::onrun([dc](Node* node, DC* Dc) {
-        
-        dc->get()->shader.use();
-        dc->get()->vbo.draw();
-
-    });
-
-    
-
-
 
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
