@@ -56,7 +56,6 @@ void Editors::init() {
         static TextEditor editor;
         
 	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
-        
 	    // editor.SetLanguageDefinition(lang);
 
         editor.SetText(shader->frag.src);
@@ -65,9 +64,16 @@ void Editors::init() {
         // editor.SetPalette(TextEditor::GetDarkPalette());
         
         editor.Render("frageditor");
-    
-        // ImGui::InputTextMultiline("frag shader", &shader->frag.src[0], shader->frag.src.length(), ImVec2(600,300));
-        // ImGui::InputTextMultiline("vert shader", &shader->vert.src[0], shader->vert.src.length(), ImVec2(600,300));
+        
+        if (editor.IsTextChanged()) {
+
+            auto x = editor.GetText();
+
+            memset(&x[x.size()-3],0,1);
+
+            shader->create(x,shader->vert.src);
+
+        }
    
     });
 
