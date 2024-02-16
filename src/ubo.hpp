@@ -6,7 +6,8 @@
 #include "component.hpp"
 
 struct ShaderProgram;
-struct UBO : BufferOwner {
+
+struct UBO : Buffer {
 
     std::string name;
 
@@ -14,21 +15,21 @@ struct UBO : BufferOwner {
 
     uint32_t binding;
 
+    bool loaded = false;
+
     static inline uint32_t binding_count = 0;
 
     static inline Components &comps = Components::getInstance();
 
     std::vector<ShaderProgram*> subscribers;
 
-    Buffer buffer;
-
     ~UBO();
     
     UBO(std::string name = "ubo", std::vector<ShaderProgram*> subscribers = {});
 
     void destroy();
-    
-    void create();
+
+    void create(std::string name, std::vector<ShaderProgram*> subscribers);
 
     void update() override;
 

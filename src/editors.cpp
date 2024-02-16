@@ -26,13 +26,13 @@ void Editors::init() {
 
         ImGui::Text((""+std::to_string(ubo->subscribers.size())+" subs").c_str());
 
-        Editor::cb<Buffer>(node, &ubo->buffer); 
+        Editor::cb<Buffer>(node, ubo); 
         
     });
 
     ////////// VBO.HPP 
     
-    Editor::set<VBO>([](Node*node,VBO*vbo){ Editor::cb<Buffer>(node, &vbo->buffer); });
+    Editor::set<VBO>([](Node*node,VBO*vbo){ Editor::cb<Buffer>(node, vbo); });
 
     ////////// STRUCT.HPP 
 
@@ -173,7 +173,7 @@ void Editors::init() {
 
                 (*buffer)[obj_current]->push();
 
-                if (buffer->owner) buffer->owner->update();
+                buffer->update();
 
             }
 
@@ -199,11 +199,7 @@ void Editors::init() {
 
                     if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to)) { 
 
-                        if (buffer->owner) {
-                            
-                            buffer->owner->upload();
-                            
-                        }
+                        buffer->update();
 
                     }
 
@@ -241,11 +237,7 @@ void Editors::init() {
 
             if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &buffer->data[i],  &cell_min,   &cell_max,   "")) { 
                         
-                if (buffer->owner) {
-                    
-                    buffer->owner->upload();
-                    
-                }
+                buffer->update();
                 
             }
 

@@ -5,6 +5,7 @@
 #include <cstring>
 
 
+
 Buffer::Buffer() { objects.reserve(1000); }
 
 void Buffer::reset() { destroy(); }
@@ -17,14 +18,8 @@ Object* Buffer::addObj(Struct* s, int reserved) {
 
     objects.push_back({s,reserved,this,data.size()});
 
-    update();
+    if (data.size()) update();
 
     return &objects.back();
-
-}
-
-void Buffer::update() {
-
-    std::vector<char> future_data = data;
 
 }

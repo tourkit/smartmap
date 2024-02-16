@@ -56,7 +56,7 @@ void Engine::init() {
 
     tree->addPtr<UBO>(static_ubo);
 
-    auto obj = dynamic_ubo->buffer.addObj(new Struct("test",{"RGBA","Position"}));
+    auto obj = dynamic_ubo->addObj(new Struct("test",{"RGBA"}));
     obj->push();
     // auto vbo = tree->addOwnr<VBO>()->get();
     // vbo->import(new File("assets/model/quad.obj")); // fuck owning

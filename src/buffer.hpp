@@ -9,14 +9,6 @@
 
 struct Struct;
 
-struct BufferOwner {
-
-    virtual void update() { }
-    virtual void upload() { }
-
-};
-
-
 struct Buffer {
     
     std::vector<Object> objects;
@@ -24,16 +16,14 @@ struct Buffer {
     std::vector<char> data;  
 
     std::function<void()> callback;
-
-    BufferOwner *owner = nullptr;
-
-    Buffer();
     
-    Buffer(BufferOwner* owner) : owner(owner) {}
+    Buffer();
 
     Object* addObj(Struct* s, int reserved = 0);
 
-    void update();
+    virtual void update() { }
+
+    virtual void upload() { }
 
     void reset();
     

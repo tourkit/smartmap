@@ -30,7 +30,7 @@ std::string DrawCall::Shaderlayout(UBO* ubo) {
     str += ubo->name;
     str += " { ";
     
-    int i = 0; for (auto obj:ubo->buffer.objects) { 
+    int i = 0; for (auto obj:ubo->objects) { 
 
         if(!obj.reserved) continue;
     

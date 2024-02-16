@@ -7,22 +7,16 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : buffer(this), name(name), subscribers(subscribers) { 
+UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) { 
     
+    create(name,subscribers);
+
     binding = binding_count++;
-
-    // can do better ^^
-    if (binding > 100) PLOGW << "MAX_UBO might soon be reached";
-
-    update();
-
-    // create(name,size,subscribers); 
+    if (binding > 100) PLOGW << "MAX_UBO might soon be reached";// can do better ^^
      
     //  for (auto shader:subscribers) link(shader);
 
-
-
-    buffer.callback = [this](){ 
+    callback = [this](){ 
         
         update();
         upload();
@@ -31,53 +25,43 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : buffer(thi
 
 } 
 
-void UBO::destroy() { buffer.reset(); subscribers.resize(0); if (id) glDeleteBuffers(1, &id); } // delete name; ?
-// void UBO::create() {
+void UBO::destroy() { if (id) glDeleteBuffers(1, &id); } // delete name; ?
 
-//     destroy();
+void UBO::create(std::string name, std::vector<ShaderProgram*> subscribers) {
 
-//     glGenBuffers(1, &id);
+    this->name = name;
+    this->subscribers = subscribers;
 
-//     glBindBuffer(GL_UNIFORM_BUFFER, id);
-//     glBufferData(GL_UNIFORM_BUFFER, buffer.data.size(), NULL, GL_DYNAMIC_COPY);
+    update();
 
-
-//     for (auto shader:subscribers) {
-
-//         glBindBuffer(GL_UNIFORM_BUFFER, id);
-//         glUniformBlockBinding(id, glGetUniformBlockIndex(id, name.c_str()), binding);
-//         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
-
-//     }
-
-// }
+}
 
 
-void UBO::update() {
+void UBO::update() { // on Buffer change
 
-    if (id) glDeleteBuffers(1, &id);
-    
+    destroy();
+
     glGenBuffers(1, &id);
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glBufferData(GL_UNIFORM_BUFFER, buffer.data.size(), NULL, GL_DYNAMIC_COPY);
+    glBufferData(GL_UNIFORM_BUFFER, data.size(), NULL, GL_DYNAMIC_COPY);
 
-    PLOGD << "pour: " << buffer.data.size();
+    PLOGD << data.size();
 
-    for (auto shader:subscribers) {
+    for (auto shader:subscribers) { // need link after resize ?
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         glUniformBlockBinding(id, glGetUniformBlockIndex(id, name.c_str()), binding);
         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 
     }
-    
+
 }
 
-void UBO::upload(){ upload(&buffer.data[0], buffer.data.size()); }
+void UBO::upload(){ upload(&data[0], data.size()); }
 
 void UBO::upload(void* data, size_t size, uint32_t offset){
-
+    
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 
     

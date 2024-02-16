@@ -13,11 +13,9 @@
 
 VBO::VBO() {  
 
-    buffer.owner = this;
+    vertices = addObj(vertices_s);
 
-    vertices = buffer.addObj(vertices_s);
-
-    indices = buffer.addObj(indices_s);
+    indices = addObj(indices_s);
 
     create();
 }
@@ -37,7 +35,6 @@ void VBO::destroy() {
 
 }
 
-void VBO::update() {}
 void VBO::create() {
 
     destroy();
@@ -47,6 +44,8 @@ void VBO::create() {
 }
 
 VBO::~VBO()  { destroy(); }
+
+void VBO::update() {upload();}
 
 void VBO::upload() {
 

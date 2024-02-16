@@ -10,12 +10,11 @@ struct Object;
 struct Model;
 struct File;
 
-struct VBO : BufferOwner {
+struct VBO : Buffer {
 
     static inline Struct *vertices_s = new Struct("Vertex", {"Position","UV","ID",});
     static inline Struct *indices_s = new Struct("Index",{"Vertex", "Vertex", "Vertex"});
 
-    static inline Buffer buffer;
     uint32_t vao, vbo, ibo;
     
     Object *vertices;
@@ -25,7 +24,7 @@ struct VBO : BufferOwner {
 
     ~VBO();
 
-    void upload();
+    void upload() override;
     void update() override;
 
     void create();
