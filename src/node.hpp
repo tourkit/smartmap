@@ -262,14 +262,14 @@ template <typename T>
 struct Ptr : TypedNode<T> { Ptr(T *ptr)  : TypedNode<T>(ptr)  { } };
 
 template <typename T>
-struct On : TypedNode<T> { 
+struct NODE : TypedNode<T> { 
     
-    On(T *ptr)  : TypedNode<T>(ptr)  { } 
+    NODE(T *ptr)  : TypedNode<T>(ptr)  { } 
 
     template <typename U>
-    static void add(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onadd_cb[typeid(T)][typeid(U)] = cb; }
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onadd_cb[typeid(T)][typeid(U)] = cb; }
     
-    static void create(std::function<void(Node*,T*)> cb) { UntypedNode::oncreate_cb<T> = cb;  }
-    static void run(std::function<void(Node*,T*)> cb) { UntypedNode::onrun_cb<T> = cb;  }
+    static void oncreate(std::function<void(Node*,T*)> cb) { UntypedNode::oncreate_cb<T> = cb;  }
+    static void onrun(std::function<void(Node*,T*)> cb) { UntypedNode::onrun_cb<T> = cb;  }
     
 };
