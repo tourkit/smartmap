@@ -58,18 +58,18 @@ void Engine::init() {
 
 
 
-    stack->addPtr<UBO>(dynamic_ubo)->select();
+    // stack->addPtr<UBO>(dynamic_ubo)->select();
 
-    tree.addPtr<UBO>(static_ubo);
+    // tree.addPtr<UBO>(static_ubo);
 
-    auto models = tree.addOwnr<Directory>("assets/model/");
-    auto shaders = tree.addOwnr<Directory>("assets/shaders/");
+    // auto models = tree.addOwnr<Directory>("assets/model/");
+    // auto shaders = tree.addOwnr<Directory>("assets/shaders/");
 
 
-    auto dc = stack->addOwnr<DrawCall>();
+    // auto dc = stack->addOwnr<DrawCall>();
 
-    auto model = dc->addPtr(models->childrens[0]); 
-    model->addPtr(shaders->childrens[0]); 
+    // auto model = dc->addPtr(models->childrens[0]); 
+    // model->addPtr(shaders->childrens[0]); 
 
 
 

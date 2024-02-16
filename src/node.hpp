@@ -77,7 +77,7 @@ struct UntypedNode {
 
     std::function<void(Node*)> dtor = nullptr; // useless ?
 
-    void select();
+    Node* select();
 
     template <typename U>
     U* is_a() { return ((type() == typeid(U))? (U*)ptr_untyped() : nullptr); }
