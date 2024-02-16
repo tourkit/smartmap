@@ -66,7 +66,7 @@ void Editors::init() {
             frageditor.SetReadOnly(false);
             frageditor.SetText(shader->frag.src); init = true; 
             verteditor.SetShowWhitespaces(false);
-            verteditor.SetReadOnly(false);
+            verteditor.SetReadOnly(true);
             verteditor.SetText(shader->vert.src); init = true; 
             
         }

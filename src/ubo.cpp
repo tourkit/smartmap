@@ -25,14 +25,14 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) {
 
 } 
 
-void UBO::destroy() { if (id) glDeleteBuffers(1, &id); } // delete name; ?
+void UBO::destroy() { if (id<0) {glDeleteBuffers(1, &id); id = -1;} } // delete name; ?
 
 void UBO::create(std::string name, std::vector<ShaderProgram*> subscribers) {
 
     this->name = name;
     this->subscribers = subscribers;
 
-    update();
+    // update();
 
 }
 
@@ -41,17 +41,19 @@ void UBO::update() { // on Buffer change
 
     destroy();
 
+    if (!data.size()) return;
+
     glGenBuffers(1, &id);
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferData(GL_UNIFORM_BUFFER, data.size(), NULL, GL_DYNAMIC_COPY);
 
-    PLOGD << data.size();
 
     for (auto shader:subscribers) { // need link after resize ?
 
+    PLOGD << data.size();
         glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glUniformBlockBinding(id, glGetUniformBlockIndex(id, name.c_str()), binding);
+        glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name.c_str()), binding);
         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 
     }
