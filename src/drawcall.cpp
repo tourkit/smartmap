@@ -104,6 +104,10 @@ void DrawCall::update() {
             
             if (model.obj->reserved) for (auto fx : model.fxs) { 
 
+                if (!strcmp(fx->args[0].c_str(),"uv")) { continue; }
+
+                PLOGD<<model.fxs[0]->args[0];
+
                 frag_shader += "\t"+varinst+" = "+fx->file->name+"("+varinst;
                 
                 for (auto &m: Component::id(fx->file->name.c_str())->members) {

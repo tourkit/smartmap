@@ -18,8 +18,6 @@ Model::Model(File* file, int id, int quantity) : file(file), id(id), quantity(qu
 }
 
 void Model::addFX(ShaderFX* fx) {
-
-    // PLOGD << "z: "<<engine.dynamic_ubo->data.size();
     
     auto &c = Component::create(fx->file->name.c_str());
 
@@ -27,7 +25,7 @@ void Model::addFX(ShaderFX* fx) {
 
     obj->addComp({fx->file->name});
 
-    // obj->resize(obj->reserved);
+    // obj->resize(obj->reserved); // would fuck everything for moving data in heap
     
     fxs.push_back(fx);
 
