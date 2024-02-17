@@ -18,7 +18,7 @@ void DrawCall::run() {
  
     vbo.draw();
 
-    shader.use(); // maybe "if" could be in node::onrun ?
+    shader.use(); 
 
 }
 
@@ -76,52 +76,44 @@ void DrawCall::update() {
 
     header_commom += ""+Shaderlayout(engine.dynamic_ubo)+"\n";
     
-    // FRAGMENT SHADER BUILDER
+    // FRAGMENT
     
     std::string frag_shader = header_commom;
-
     frag_shader += "out vec4 color;\n\n";
 
+    // add fxs
     std::unordered_set<ShaderFX*> fxs;
     for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
     for (auto fx : fxs) frag_shader += fx->file->data +"\n\n";
     
-    frag_shader += "\nvoid main() {\n\n";
-
-    frag_shader += "\tcolor = vec4(0);\n\n";
+    // main loop
+    frag_shader += "\nvoid main() {\n\n\tcolor = vec4(0);\n\n";
 
     int model_id = 0;
     for (auto &model : vbo.models) {
 
-        frag_shader += "\t// " +model.file->name+"\n";
+        frag_shader += "\t// " +model.file->name+std::to_string(model_id)+"\n";
 
-        int instance = 0;
+        for (int instance = 0; instance < model.obj->reserved; instance++) {
+
+            auto varname = model.file->name+""+std::to_string(model_id)+"inst"+std::to_string(instance);
+
+            frag_shader += "\tvec4 "+varname+" = vec4(1,1,1,1);\n\n";
             
-            for (int instance = 0; instance < model.obj->reserved; instance++) {
-        auto varname = model.file->name+""+std::to_string(model_id)+"inst"+std::to_string(instance);
+            if (model.obj->reserved) for (auto fx : model.fxs) { 
 
-        frag_shader += "\tvec4 "+varname+" = vec4(1,1,1,1);\n\n";
+                frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname;
+                
+                for (auto &m: Component::id(fx->file->name.c_str())->members) {
+            
+                        frag_shader += ", "+model.file->name+std::to_string(model_id)+std::to_string(instance)+"."+fx->file->name+"."+m.name+"";
 
-        
-        int comp_id = 0;
-        if (model.obj->reserved) for (auto fx : model.fxs) { 
+                    }
+                
+                    frag_shader += ");\n";
+            }
 
-               frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname;
-               
-               for (auto &m: Component::id(fx->file->name.c_str())->members) {
-        
-
-                    frag_shader += ", "+model.file->name+std::to_string(model_id)+std::to_string(instance)+"."+fx->file->name+"."+m.name+"";
-
-                    
-                }
-               
-                frag_shader += ");\n";
-         }
-
-        frag_shader += "\n\tcolor += "+varname+";\n\n";
-
-        
+            frag_shader += "\n\tcolor += "+varname+";\n\n";
 
         }
 
@@ -133,7 +125,7 @@ void DrawCall::update() {
     
     frag_shader += "}";
 
-    // /// VERTEX
+    // VERTEX
 
     std::string vert_shader = header_commom;
 
