@@ -6,6 +6,7 @@
 #include "directory.hpp"
 #include "component.hpp"
 #include "struct.hpp"
+#include "model.hpp"
 #include "file.hpp"
 #include "ubo.hpp"
 #include "engine.hpp"
@@ -153,6 +154,10 @@ void Editors::init() {
    
     });
 
+    ////////// MODEL.HPP 
+
+    Editor::set<Model>([](Node* node, Model *model){ Editor::cb<Object>(node, model->obj); });
+
     ////////// OBJECT.HPP 
 
     Editor::set<Object>([](Node* node, Object *obj){
@@ -165,9 +170,10 @@ void Editors::init() {
         if (buffer->objects.size()) {
 
             int max = obj->reserved-1;
-            if (max<0) max = 0;
+            int min = 0;
+            if (max<0) min = -1;
 
-            if (ImGui::SliderInt("element##current", &elem_current, 0, max)) { }
+            if (ImGui::SliderInt("instance##current", &elem_current, min, max)) { }
 
             ImGui::SameLine(); if (ImGui::Button("add")) {
 

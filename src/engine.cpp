@@ -38,6 +38,8 @@ void Engine::run() {
     while (!glfwWindowShouldClose(window.id)) window.render([](){
         
         auto &engine = Engine::getInstance();
+        
+        engine.dynamic_ubo->upload();
 
         // engine.stack->run(); // better be : tree->run(); ( owning gui and all..)
         engine.tree->run(); 
@@ -56,9 +58,6 @@ void Engine::init() {
     Nodes::init();
     
     Editors::init();
-
-    auto ubo = stack->addPtr<UBO>(dynamic_ubo);
-    ubo->select();
 
     tree->addPtr<UBO>(static_ubo);
 

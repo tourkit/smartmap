@@ -87,7 +87,7 @@ void DrawCall::update() {
     for (auto effector : effectors) frag_shader += effector->file->data +"\n\n";
     
     // main loop
-    frag_shader += "\nvoid main() {\n\n\tcolor = vec4(0);\n\n";
+    frag_shader += "\nvoid main() {\n\n\tcolor = vec4(0);\n\n\vec2 uv = vec2(0);\n\n";
 
     int model_id = 0;
     for (auto &model : vbo.models) {

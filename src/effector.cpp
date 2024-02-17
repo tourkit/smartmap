@@ -37,15 +37,3 @@ void Effector::import(File *file) {
     extractArgsFromFunction(file->data);
 
 }
-
-
-// //---------
-// EffectorPtr::EffectorPtr(Node *ptr) : Ptr<Effector>((Effector*)ptr) { }
-// void EffectorPtr::editor() { 
-        
-//     for (int i=0; i < ptr->args.size(); i++) {
-//         float f = 0;
-//         ImGui::SliderFloat(ptr->args[i].c_str(), &f, 0, 1);
-//     }
-
-// }
