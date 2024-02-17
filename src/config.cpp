@@ -3,7 +3,6 @@
 #include "include/vendor/rapidjson/document.h"
 #include "include/vendor/rapidjson/stringbuffer.h"
 
-#include "pch.cpp"
 
 #include "file.cpp"
 #include "ubo.cpp"

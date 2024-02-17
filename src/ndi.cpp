@@ -1,4 +1,5 @@
 #include "ndi.hpp"
+#include "log.hpp"
 
 #include "messagetype.hpp"
 

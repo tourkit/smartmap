@@ -1,6 +1,5 @@
 #include "log.hpp"
 
-#include "pch.hpp"
 #include "src/file.hpp"
 
 Log::Log() : fileAppender(std::string(REPO_DIR+"logs.txt").c_str()) {

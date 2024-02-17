@@ -1,5 +1,5 @@
-#pragma once
-#include "../pch.hpp"
+#pragma oncreate
+
 #include "../dmx.hpp"
 #include "../json.hpp"
 #include "output.hpp"

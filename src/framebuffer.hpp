@@ -1,13 +1,16 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
 	
-#include "pch.hpp"
+
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
+#include <vector>
+#include <string>
 
 struct Texture;
 	
 struct FrameBuffer {
 
-    static inline std::vector<FrameBuffer*> pool;
     uint32_t id, width, height, attachments = 0;
     std::string name;
     Texture *texture = nullptr;

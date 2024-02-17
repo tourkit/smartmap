@@ -8,7 +8,6 @@
 #include "../../include/vendor/ofxLibArtnet/artnet/artnet.h"
 
 #include "dmx.hpp"
-#include "widgets/artnet_widget.hpp"
 
 struct Artnet {
 

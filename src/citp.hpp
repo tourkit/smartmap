@@ -1,7 +1,8 @@
 
 #pragma once
 
-#include "pch.hpp"
+#include <Windows.h>
+
 #include "include/vendor/citp-lib/CITPDefines.h"
 
 #include <winsock2.h>

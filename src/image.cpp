@@ -1,6 +1,5 @@
 #include "image.hpp"
 #include "file.hpp"
-#include "pch.hpp"
 #include "gui.hpp"
 
 #ifndef STB_IMAGE_IMPLEMENTATION

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pch.hpp"
 #include "include/vendor/NDI/Include/Processing.NDI.Lib.h"
 #include "thread.hpp"
 
