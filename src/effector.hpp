@@ -8,7 +8,7 @@
 
 struct File;
 
-struct ShaderFX   {
+struct Effector   {
 
     // Shader::Type type;
 
@@ -18,8 +18,8 @@ struct ShaderFX   {
 
     File * file;
     
-    ShaderFX();
-    ShaderFX(File *file);
+    Effector();
+    Effector(File *file);
 
     void import(File *file);
 

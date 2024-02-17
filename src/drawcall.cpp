@@ -1,5 +1,5 @@
 #include "drawcall.hpp"
-#include "shaderfx.hpp"
+#include "effector.hpp"
 #include "file.hpp"
 #include "log.hpp"
 #include "ubo.hpp"
@@ -81,10 +81,10 @@ void DrawCall::update() {
     std::string frag_shader = header_commom;
     frag_shader += "out vec4 color;\n\n";
 
-    // add fxs
-    std::unordered_set<ShaderFX*> fxs;
-    for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
-    for (auto fx : fxs) frag_shader += fx->file->data +"\n\n";
+    // add effectors
+    std::unordered_set<Effector*> effectors;
+    for (auto &m : vbo.models) for (auto effector : m.effectors) effectors.insert(effector);
+    for (auto effector : effectors) frag_shader += effector->file->data +"\n\n";
     
     // main loop
     frag_shader += "\nvoid main() {\n\n\tcolor = vec4(0);\n\n";
@@ -102,17 +102,17 @@ void DrawCall::update() {
 
             frag_shader += "\tvec4 "+varinst+" = vec4(1,1,1,1);\n\n";
             
-            if (model.obj->reserved) for (auto fx : model.fxs) { 
+            if (model.obj->reserved) for (auto effector : model.effectors) { 
 
-                if (!strcmp(fx->args[0].c_str(),"uv")) { continue; }
+                if (!strcmp(effector->args[0].c_str(),"uv")) { continue; }
 
-                PLOGD<<model.fxs[0]->args[0];
+                PLOGD<<model.effectors[0]->args[0];
 
-                frag_shader += "\t"+varinst+" = "+fx->file->name+"("+varinst;
+                frag_shader += "\t"+varinst+" = "+effector->file->name+"("+varinst;
                 
-                for (auto &m: Component::id(fx->file->name.c_str())->members) {
+                for (auto &m: Component::id(effector->file->name.c_str())->members) {
             
-                    frag_shader += ", "+varname+std::to_string(instance)+"."+fx->file->name+"."+m.name+"";
+                    frag_shader += ", "+varname+std::to_string(instance)+"."+effector->file->name+"."+m.name+"";
 
                 }
             

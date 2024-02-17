@@ -5,7 +5,7 @@
 #include "ubo.hpp"
 #include "struct.hpp"
 #include "model.hpp"
-#include "shaderfx.hpp"
+#include "effector.hpp"
 #include "directory.hpp"
 #include "drawcall.hpp"
 #include "engine.hpp"
@@ -99,14 +99,14 @@ void Nodes::init() {
 
     NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->file->name; });
 
-    NODE<Model>::onadd<ShaderFX>([](Node*_this,Node*node){ return node; });
+    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return node; });
 
     NODE<Model>::onadd<File>([](Node*_this,Node*node){ 
         
         auto model = _this->is_a<Model>();
         auto file = node->is_a<File>();
 
-        auto bad = new ShaderFX(file); // unowned...
+        auto bad = new Effector(file); // unowned...
 
         model->addFX(bad);
         // PLOGD << "z: "<<engine.dynamic_ubo->data.size();
@@ -115,7 +115,7 @@ void Nodes::init() {
         if (dc) dc->update();
         
         
-        auto shader = new Ptr<ShaderFX>(bad);
+        auto shader = new Ptr<Effector>(bad);
         shader->refering = node;
 
         return shader->node();
@@ -124,11 +124,11 @@ void Nodes::init() {
 
 
     
-    ////////// ShaderFX.HPP 
+    ////////// Effector.HPP 
     
-    NODE<ShaderFX>::oncreate([](Node* node, ShaderFX *fx) { node->name = fx->file->name; });
+    NODE<Effector>::oncreate([](Node* node, Effector *effector) { node->name = effector->file->name; });
 
-    NODE<ShaderFX>::onchange([](Node* node, ShaderFX *fx) { PLOGD<<"update " << fx->file->name; });
+    NODE<Effector>::onchange([](Node* node, Effector *effector) { PLOGD<<"update " << effector->file->name; });
     
     ////////// ShaderProgram.HPP 
 

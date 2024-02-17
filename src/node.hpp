@@ -103,13 +103,13 @@ struct UntypedNode {
     }
 
     template <typename V>
-    void each(std::function<void(Node*)> fx) { 
+    void each(std::function<void(Node*)> ) { 
         
         for (auto c : childrens) {
 
             if (((UntypedNode*)c)->is_a<V>()) {
 
-                fx(c);
+                (c);
 
             }
 

@@ -15,47 +15,49 @@ add_executable(smartmap
 
     main.cpp
 
-    src/window.cpp
     src/log.cpp
-    src/texture.cpp
-    src/shader.cpp
-    src/framebuffer.cpp
-    src/vbo.cpp  
-    src/ubo.cpp
-    src/atlas.cpp
+    
     src/test.cpp
-    src/shaderfx.cpp
-    src/drawcall.cpp
-    src/model.cpp
-    src/buffer.cpp
-    src/engine.cpp
-    src/node.cpp
-    src/tree.cpp
+
+    src/directory.cpp
+    src/file.cpp
     src/json.cpp
     src/image.cpp
-    src/file.cpp
-    src/directory.cpp
-    src/struct.cpp
-    src/entry.cpp
-    src/object.cpp
     
-    src/nodes.cpp
-    src/editor.cpp
-    src/editors.cpp
-    src/gui.cpp
-    
-    src/fps.cpp
-
-    # src/output.cpp
-    # src/stack.cpp
-
-    src/messagequeue.cpp
-    src/thread.cpp
-
     src/dmx.cpp
     src/artnet.cpp
     src/ndi.cpp
 
+    src/buffer.cpp
+    src/object.cpp
+    src/struct.cpp
+    src/entry.cpp
+    
+    src/node.cpp
+    src/nodes.cpp
+    
+    src/window.cpp
+    src/fps.cpp
+    src/vbo.cpp  
+    src/ubo.cpp
+    src/framebuffer.cpp
+    src/texture.cpp
+    src/shader.cpp
+    
+    src/engine.cpp
+    src/model.cpp
+    src/effector.cpp
+    src/drawcall.cpp
+    src/atlas.cpp
+    
+    src/gui.cpp
+    src/tree.cpp
+    src/editor.cpp
+    src/editors.cpp
+
+
+    src/messagequeue.cpp
+    src/thread.cpp
 
     # src/smartmap.cpp
     # src/smartmap/layer.cpp

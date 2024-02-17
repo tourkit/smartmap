@@ -2,7 +2,7 @@
 
 struct File;
 struct Object;
-struct ShaderFX;
+struct Effector;
 
 #include <vector>
 
@@ -14,12 +14,12 @@ struct Model {
 
     Object* obj;
 
-    std::vector<ShaderFX*> fxs; 
+    std::vector<Effector*> effectors; 
 
     int quantity;
 
     Model(File* file, int id = 0, int quantity = 1);
 
-    void addFX(ShaderFX* fx);
+    void addFX(Effector*  effector);
 
 };

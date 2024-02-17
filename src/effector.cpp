@@ -1,12 +1,12 @@
-#include "shaderfx.hpp"
+#include "effector.hpp"
 #include "file.hpp"
 #include <regex>
 
-ShaderFX::ShaderFX()  { }
-ShaderFX::ShaderFX(File *file) { import(file); }
+Effector::Effector()  { }
+Effector::Effector(File *file) { import(file); }
 
 
-std::vector<std::string> ShaderFX::extractArgsFromFunction(const std::string& functionSrc) {
+std::vector<std::string> Effector::extractArgsFromFunction(const std::string& functionSrc) {
         
         args.resize(0);
         // Regular expression pattern to match function arguments
@@ -30,7 +30,7 @@ std::vector<std::string> ShaderFX::extractArgsFromFunction(const std::string& fu
 
 
 
-void ShaderFX::import(File *file) {
+void Effector::import(File *file) {
 
     this->file = file;
 
@@ -40,8 +40,8 @@ void ShaderFX::import(File *file) {
 
 
 // //---------
-// ShaderFXPtr::ShaderFXPtr(Node *ptr) : Ptr<ShaderFX>((ShaderFX*)ptr) { }
-// void ShaderFXPtr::editor() { 
+// EffectorPtr::EffectorPtr(Node *ptr) : Ptr<Effector>((Effector*)ptr) { }
+// void EffectorPtr::editor() { 
         
 //     for (int i=0; i < ptr->args.size(); i++) {
 //         float f = 0;

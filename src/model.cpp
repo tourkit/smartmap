@@ -1,6 +1,6 @@
 #include "model.hpp"
 
-#include "shaderfx.hpp"
+#include "effector.hpp"
 #include "file.hpp"
 #include "component.hpp"
 #include "engine.hpp"
@@ -17,16 +17,16 @@ Model::Model(File* file, int id, int quantity) : file(file), id(id), quantity(qu
 
 }
 
-void Model::addFX(ShaderFX* fx) {
+void Model::addFX(Effector* effector) {
     
-    auto &c = Component::create(fx->file->name.c_str());
+    auto &c = Component::create(effector->file->name.c_str());
 
-    for (int i = 1; i < fx->args.size(); i++) c.member<float>(fx->args[i].c_str());
+    for (int i = 1; i <effector->args.size(); i++) c.member<float>(effector->args[i].c_str());
 
-    obj->addComp({fx->file->name});
+    obj->addComp({effector->file->name});
 
     // obj->resize(obj->reserved); // would fuck everything for moving data in heap
     
-    fxs.push_back(fx);
+    effectors.push_back(effector);
 
 }

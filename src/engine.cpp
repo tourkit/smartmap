@@ -1,7 +1,7 @@
 #include "engine.hpp"
 #include "directory.hpp"
 #include "struct.hpp"
-#include "shaderfx.hpp"
+#include "effector.hpp"
 #include "drawcall.hpp"
 #include "gui.hpp"
 #include "editors.hpp"

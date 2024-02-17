@@ -12,7 +12,7 @@
 #include "drawcall.hpp"
 #include "vbo.hpp"
 #include "shader.hpp"
-#include "shaderfx.hpp"
+#include "effector.hpp"
 #include "engine.hpp"
 
 void Editors::init() {
@@ -147,7 +147,7 @@ void Editors::init() {
     });
 
 
-    Editor::set<ShaderFX>([](Node* node, ShaderFX *shader){ 
+    Editor::set<Effector>([](Node* node, Effector *shader){ 
 
         ImGui::InputTextMultiline("src", (char*)shader->file->data.c_str(), shader->file->data.size());
    
