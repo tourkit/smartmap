@@ -153,43 +153,35 @@ void Editors::init() {
    
     });
 
-    ////////// BUFFER.HPP 
+    ////////// OBJECT.HPP 
 
-    Editor::set<Buffer>([](Node* node, Buffer *buffer){
-
-        static StringsBuffer object_str;
-        static int obj_current = 0;
+    Editor::set<Object>([](Node* node, Object *obj){
+        
         static int elem_current = 0;
         static std::string uid = "123";
-        std::vector<std::string> obect_strs;
-        for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
-        object_str.create(obect_strs);
-        ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-        //// OBJ VIEW
+        Buffer* buffer = obj->buffer;
 
         if (buffer->objects.size()) {
-            
-            auto &obj = buffer->objects[obj_current];
 
-            int max = obj.reserved-1;
+            int max = obj->reserved-1;
             if (max<0) max = 0;
 
             if (ImGui::SliderInt("element##current", &elem_current, 0, max)) { }
 
             ImGui::SameLine(); if (ImGui::Button("add")) {
 
-                (*buffer)[obj_current]->push();
+                obj->push();
 
                 node->update();
 
             }
 
-            if (!obj.reserved) return;
+            if (!obj->reserved) return;
 
-            int uniform_offset = obj.offset;
+            int uniform_offset = obj->offset;
 
-            for (auto c:obj.s->comps) {
+            for (auto c:obj->s->comps) {
                         
                 ImGui::SeparatorText(c->name.c_str());
                 
@@ -197,7 +189,7 @@ void Editors::init() {
 
                     auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
 
-                    auto data = &buffer->data[uniform_offset+(elem_current*obj.s->size)];
+                    auto data = &buffer->data[uniform_offset+(elem_current*obj->s->size)];
 
                     auto type = ImGuiDataType_Float;
 
@@ -279,6 +271,22 @@ void Editors::init() {
 
             }
         }
+
+    });
+
+    ////////// BUFFER.HPP 
+
+    Editor::set<Buffer>([](Node* node, Buffer *buffer){
+
+        static StringsBuffer object_str;
+        static int obj_current = 0;
+        std::vector<std::string> obect_strs;
+        for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
+        object_str.create(obect_strs);
+        ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
+
+        Editor::cb<Object>(node, &buffer->objects[obj_current]);
+
     });
 
 }
