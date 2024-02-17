@@ -18,7 +18,7 @@ void DrawCall::run() {
  
     vbo.draw();
 
-    if (shader.loaded) shader.use(); // maybe "if" could be in node::onrun ?
+    shader.use(); // maybe "if" could be in node::onrun ?
 
 }
 
@@ -130,11 +130,8 @@ void DrawCall::update() {
         model_id++;
 
     }
-
-    // frag_shader += "\tcolor = vec4(v.x,v.y,v.z,1);\n\n";
     
     frag_shader += "}";
-
 
     // /// VERTEX
 

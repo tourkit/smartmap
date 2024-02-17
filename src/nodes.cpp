@@ -76,7 +76,7 @@ void Nodes::init() {
 
     ////////// DRAWCALL.HPP 
 
-    NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){  dc->run(); });
+    NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){  if (dc->shader.loaded) dc->run(); });
     
     NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){  dc->update(); });
 
