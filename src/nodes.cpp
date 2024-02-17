@@ -48,6 +48,9 @@ void Nodes::init() {
     ////////// UBO.HPP 
 
     NODE<UBO>::onrun([](Node* node, UBO *ubo){ ubo->upload(); });
+    NODE<UBO>::onchange([](Node* node, UBO *ubo){ ubo->update(); 
+    node->updateRefs(node); 
+    });
     
     NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name; });
 
@@ -74,6 +77,8 @@ void Nodes::init() {
     ////////// DRAWCALL.HPP 
 
     NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){  dc->run(); });
+    
+    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){  dc->update(); });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
@@ -83,8 +88,12 @@ void Nodes::init() {
         auto model = dc->vbo.import(file);
         
         dc->update();
+
+        auto ptr = new Ptr<Model>(model);
+
+        _this->refering = engine.stack->childrens[0]->node();
         
-        return (new Ptr<Model>(model))->node();
+        return (ptr)->node();
 
     });
 

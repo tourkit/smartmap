@@ -15,8 +15,8 @@ Engine::Engine(uint16_t width, uint16_t height)
      gui(new GUI(window.id)) {
     window.max_fps = 59;
 
-
-    PLOGD << "Engine created";
+    dynamic_ubo = new UBO("dynamic_ubo");
+    static_ubo = new UBO("static_ubo");
 
 }
 
@@ -47,9 +47,6 @@ void Engine::init() {
     Nodes::init();
     
     Editors::init();
-
-    dynamic_ubo = new UBO("dynamic_ubo");
-    static_ubo = new UBO("static_ubo");
     
     auto ubo = stack->addPtr<UBO>(dynamic_ubo);
     ubo->select();

@@ -55,6 +55,8 @@ void UBO::update() { // on Buffer change
         glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name.c_str()), binding);
         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 
+        // shader update
+
     }
 
 }

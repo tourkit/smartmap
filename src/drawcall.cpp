@@ -24,28 +24,40 @@ void DrawCall::run() {
 
 std::string DrawCall::Shaderlayout(UBO* ubo) {
 
-    std::string str = "layout (binding = ";
-    str += std::to_string(ubo->binding);
-    str += ", std140) uniform ";
-    str += ubo->name;
-    str += " { ";
-    
-    int i = 0; for (auto obj:ubo->objects) { 
+    std::string str = "";
+    std::string in_str = "";
 
-        if(!obj.reserved) continue;
-    
-        std::string obj_str = obj.s->name;
+    int i = 0;
+    bool at_least_one = false;
+    for (auto m:vbo.models) { 
+        auto obj = m.obj;
+        std::string name_lower = "";
+        for(int i = 0; i < obj->s->name.length(); i++) name_lower += std::tolower(obj->s->name[i]); 
+        std::string obj_str = name_lower;
         obj_str[0] = std::toupper(obj_str[0]);
-        str += obj_str;
-        str += " ";
-        for(int i = 0; i < obj.s->name.length(); i++) str += std::tolower(obj.s->name[i]); 
-        str += "[";
-        str += std::to_string(obj.reserved);
-        str += "]; ";
+    
+        std::string struct_str = "struct "+obj_str+"{\n\n";
+
+        for (auto c: obj->s->comps) {
+        
+            struct_str += "\tvec4 "+c->name+";\n";
+            
+        }
+
+        struct_str += "};\n\n";
+
+        str += struct_str;
+
+        if(obj->reserved) {
+
+            in_str += obj_str+" "+name_lower+"["+std::to_string(obj->reserved)+ "]; ";
+            at_least_one = true;
 
         }
 
-    str += " };\n";
+    }
+
+    if (at_least_one) str += "layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+in_str+" };\n";
 
     return str;
 
@@ -55,8 +67,8 @@ void DrawCall::update() {
 
     // FRAGMENT SHADER BUILDER
 
-    std::string layout_str = "layout (binding = 0, std140) uniform dynamic_ubo { float x,y,z,w; };\n"; 
-    layout_str += "// "+Shaderlayout(engine.dynamic_ubo)+"\n";
+    std::string layout_str = "";//layout (binding = 0, std140) uniform dynamic_ubo { float x,y,z,w; };\n"; 
+    layout_str += ""+Shaderlayout(engine.dynamic_ubo)+"\n";
     
     std::string frag_shader;
 
@@ -84,13 +96,16 @@ void DrawCall::update() {
 
         frag_shader += "\tvec4 "+varname+" = vec4(1,1,1,1);\n\n";
 
-        for (auto fx : model.fxs) { 
+        
+        if (model.obj->reserved) for (auto fx : model.fxs) { 
 
                frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname;
                
-            //    for (int i = 1; i < fx->args.size(); i++) { frag_shader += ",x["+std::to_string(i-1)+"]"; }
-            //    frag_shader += ",v.x, v.y, v.z"; 
-               frag_shader += ",x, y, z"; 
+               for (auto &m: Component::id(fx->file->name.c_str())->members) {
+        
+                frag_shader += ", "+varname+"."+fx->file->name+"."+m.name+"";
+                
+            }
                
                frag_shader += ");\n";
 

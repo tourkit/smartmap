@@ -173,7 +173,7 @@ void Editors::init() {
 
                 (*buffer)[obj_current]->push();
 
-                buffer->update();
+                node->update();
 
             }
 
