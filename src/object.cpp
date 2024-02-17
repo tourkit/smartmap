@@ -126,11 +126,20 @@ void Object::update2(Buffer bkp) {
                            
                     auto offset = o.offset+(o.s->size*entry_id)+member_offset;
 
+                    PLOGD<<backup_data.size();
                     auto x = &backup_data[offset];
 
-                    memcpy((*buffer)[obj_id]->data(entry_id)+member_offset,x,o.s->comps[comp_id]->size);
+                    PLOGD << o.s->comps[comp_id]->size;
+
+                    memcpy((*buffer)[obj_id]->data(entry_id)+member_offset,x,o.s->comps[comp_id]->members[member_id].size);
                            
                     member_offset += o.s->comps[comp_id]->members[member_id].size;
+                    if (member_id >0) {
+
+
+                        PLOGD<<"smack";
+
+                    }
 
                 }
 

@@ -6,16 +6,16 @@
 
 Test::Test() {
 
-    auto obj = engine.dynamic_ubo->addObj(new Struct("MICHEL"));
+    // auto obj = engine.dynamic_ubo->addObj(new Struct("MICHEL"));
 
-    obj->s->addComp({"Position"});
+    // obj->s->addComp({"Position"});
 
-    obj->push();
+    // obj->push();
 
-    Buffer bkp = *obj->buffer;
+    // Buffer bkp = *obj->buffer;
 
     // obj->update2(bkp); // get why this crashess
 
-    PLOGD << "notcrashed";
+    // PLOGD << "notcrashed";
 
 }
