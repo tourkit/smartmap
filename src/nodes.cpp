@@ -109,9 +109,11 @@ void Nodes::init() {
         auto bad = new ShaderFX(file); // unowned...
 
         model->addFX(bad);
+        // PLOGD << "z: "<<engine.dynamic_ubo->data.size();
 
         auto dc = _this->parent()->is_a<DrawCall>();
         if (dc) dc->update();
+        
         
         auto shader = new Ptr<ShaderFX>(bad);
         shader->refering = node;

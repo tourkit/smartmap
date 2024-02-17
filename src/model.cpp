@@ -18,12 +18,14 @@ Model::Model(File* file, int id, int quantity) : file(file), id(id), quantity(qu
 }
 
 void Model::addFX(ShaderFX* fx) {
+
+    // PLOGD << "z: "<<engine.dynamic_ubo->data.size();
     
     auto &c = Component::create(fx->file->name.c_str());
 
     for (int i = 1; i < fx->args.size(); i++) c.member<float>(fx->args[i].c_str());
 
-    obj->s->addComp({fx->file->name});
+    obj->addComp({fx->file->name});
 
     // obj->resize(obj->reserved);
     

@@ -175,11 +175,7 @@ void Editors::init() {
             int max = obj.reserved-1;
             if (max<0) max = 0;
 
-            if (ImGui::SliderInt("element##current", &elem_current, 0, max)) {
-                
-
-                
-            }
+            if (ImGui::SliderInt("element##current", &elem_current, 0, max)) { }
 
             ImGui::SameLine(); if (ImGui::Button("add")) {
 
@@ -201,12 +197,8 @@ void Editors::init() {
 
                     auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
 
-                    PLOGD << buffer->data.size();
-                    PLOGD << buffer->objects.size();
-                    PLOGD << buffer->objects[0].reserved << " * " << buffer->objects[0].size();
                     auto data = &buffer->data[uniform_offset+(elem_current*obj.s->size)];
 
-    // exit(0);
                     auto type = ImGuiDataType_Float;
 
                     if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;

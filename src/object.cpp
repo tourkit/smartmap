@@ -40,7 +40,7 @@ void Object::update(Buffer bkp) {
 
 
     buffer->data.resize(offset);
-    memset(&buffer->data[0],66,buffer->data.size()); 
+    memset(&buffer->data[0],0,buffer->data.size()); 
     
     for (int obj_id = 0; obj_id < backup_objects.size(); obj_id++) {
 
@@ -58,7 +58,6 @@ void Object::update(Buffer bkp) {
                            
                     auto offset = o.offset+(o.s->size*entry_id)+member_offset;
 
-                    PLOGD<<backup_data.size();
                     auto x = &backup_data[offset];
 
                     memcpy((*buffer)[obj_id]->data(entry_id)+member_offset,x,o.s->comps[comp_id]->members[member_id].size);
@@ -127,7 +126,7 @@ void Object::update2(Buffer bkp) {
 
 
     buffer->data.resize(offset);
-    memset(&buffer->data[0],66,buffer->data.size()); 
+    memset(&buffer->data[0],0,buffer->data.size()); 
     
     for (int obj_id = 0; obj_id < backup_objects.size(); obj_id++) {
 
@@ -152,7 +151,6 @@ void Object::update2(Buffer bkp) {
                            
                     auto offset = o.offset+(o.s->size*entry_id)+member_offset;
 
-                    PLOGD<<backup_data.size();
                     auto x = &backup_data[offset];
 
 
