@@ -173,6 +173,10 @@ private:
             .member<uint8_t>("char1")
             .member<uint8_t>("char2")
         ;
+        Component::create("Vec2")
+            .member<float>("x")
+            .member<float>("y")
+        ;
         Component::create("Ratio")
             .member<float>("value")
         ;

@@ -4,13 +4,12 @@
 #include "ubo.hpp"
 
 #include "log.hpp"
-#include "node.hpp"
-#include "atlas.hpp"
-#include "buffer.hpp"
-
-#include "gui.hpp"
 
 struct Stack {};
+
+struct GUI;
+struct Node;
+struct Atlas;
 
 struct Engine {
 
@@ -20,15 +19,13 @@ struct Engine {
 
     GUI* gui;
 
-    Buffer buffer; 
-
     UBO *dynamic_ubo;
 
     UBO *static_ubo;
 
-    Node* tree = new Node("tree");
+    Node* tree;
 
-    Node* stack = tree->addOwnr<Stack>()->node();
+    Node* stack;
 
     Node* selected = tree;
     

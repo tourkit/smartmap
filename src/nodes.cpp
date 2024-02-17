@@ -4,13 +4,11 @@
 #include "file.hpp"
 #include "ubo.hpp"
 #include "struct.hpp"
-#include "engine.hpp"
 #include "model.hpp"
 #include "shaderfx.hpp"
 #include "directory.hpp"
 #include "drawcall.hpp"
-
-//check none have gui in.hpp !!
+#include "engine.hpp"
 
 void Nodes::init() {
 

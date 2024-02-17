@@ -6,6 +6,10 @@
 #include "gui.hpp"
 #include "editors.hpp"
 #include "file.hpp"
+#include "gui.hpp"
+#include "ubo.hpp"
+#include "node.hpp"
+#include "atlas.hpp"
 
 
 #include "nodes.hpp"
@@ -14,6 +18,11 @@ Engine::Engine(uint16_t width, uint16_t height)
     : window(1920,1080,2560,0), 
      gui(new GUI(window.id)) {
     window.max_fps = 59;
+
+
+    tree = new Node("tree");
+
+    stack = tree->addOwnr<Stack>()->node();
 
     dynamic_ubo = new UBO("dynamic_ubo");
     static_ubo = new UBO("static_ubo");
@@ -64,11 +73,11 @@ void Engine::init() {
     // shader->trigchange();
     
 
-    auto models = tree->addOwnr<Directory>("assets/model/");
-    auto shaders = tree->addOwnr<Directory>("assets/shaders/");
-    auto dc = stack->addOwnr<DrawCall>();
-    auto model = dc->addPtr(models->childrens[0]); 
-    model->addPtr(shaders->childrens[0]); 
+    // auto models = tree->addOwnr<Directory>("assets/model/");
+    // auto shaders = tree->addOwnr<Directory>("assets/shaders/");
+    // auto dc = stack->addOwnr<DrawCall>();
+    // auto model = dc->addPtr(models->childrens[0]); 
+    // model->addPtr(shaders->childrens[0]); 
 
 
     // Node* controllers = tree->add(new Node{"Controllers"});
