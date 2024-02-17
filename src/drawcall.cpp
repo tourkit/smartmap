@@ -31,27 +31,31 @@ std::string DrawCall::Shaderlayout(UBO* ubo) {
     bool at_least_one = false;
     for (auto m:vbo.models) { 
         auto obj = m.obj;
+        if (!obj->reserved || !obj->s->comps.size()) continue;
         std::string name_lower = "";
-        for(int i = 0; i < obj->s->name.length(); i++) name_lower += std::tolower(obj->s->name[i]); 
+        for(int i =  0; i < obj->s->name.length(); i++) name_lower += std::tolower(obj->s->name[i]); 
         std::string obj_str = name_lower;
         obj_str[0] = std::toupper(obj_str[0]);
     
         std::string struct_str = "struct "+obj_str+"{\n\n";
 
         int comp_id = 0;
-        for (auto c: obj->s->comps) {
-        
-            struct_str += "\tvec4 "+c->name+""+std::to_string(comp_id++)+";\n";
-            
-        }
+        for (auto c: obj->s->comps) struct_str += "\tvec4 "+c->name+";\n";
 
         struct_str += "};\n\n";
 
         str += struct_str;
 
-        if(obj->reserved) {
+        if(obj->reserved)  {
 
-            in_str += obj_str+" "+name_lower+"["+std::to_string(obj->reserved)+ "]; ";
+            int instance = 0;
+
+            in_str += obj_str+ " "+name_lower+std::to_string(instance)+"";
+
+            for (int i = 1; i < obj->reserved; i++) in_str+=", "+name_lower+std::to_string(i);
+
+            in_str+=";";
+
             at_least_one = true;
 
         }
@@ -105,7 +109,7 @@ void DrawCall::update() {
                
                for (auto &m: Component::id(fx->file->name.c_str())->members) {
         
-                    frag_shader += ", "+varname+"."+fx->file->name+"+"+std::to_string(comp_id++)+"."+m.name+"";
+                    frag_shader += ", "+varname+"0."+fx->file->name+"."+m.name+"";
                     
                 }
                

@@ -1,29 +1,30 @@
 #include "test.hpp"
 #include "log.hpp"
 
-struct Foo { Foo() { PLOGD << "foo"; } };
-// struct Bar : Foo { Bar() { PLOGD << "bar"; Foo(); } };
 
+#include <functional>
 
-template <typename T>
-struct Ownr;
+struct Foo { 
+    
+    Foo(std::function<void()> fx) : fx(fx) { PLOGD << "foo"; } 
 
-struct XXX {
-
-    template <typename U>
-    static Ownr<U>* y() { return nullptr; }
-
+    std::function<void()> fx;
+    
+    
 };
 
-template <typename T>
-struct Ownr { /* ... */ };
+auto foo = Foo([](){
 
+    static int x = 6;
 
-
+});
 
 Test::Test() {
+
+
+
     
-    XXX::y<Foo>();
+
 
     // auto obj = engine.dynamic_ubo->buffer.addObj(new Struct("MICHEL"));
 

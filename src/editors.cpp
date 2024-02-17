@@ -66,9 +66,9 @@ void Editors::init() {
             frageditor.SetShowWhitespaces(false);
             frageditor.SetReadOnly(false);
             frageditor.SetText(shader->frag.src); init = true; 
-            verteditor.SetShowWhitespaces(false);
-            verteditor.SetReadOnly(true);
-            verteditor.SetText(shader->vert.src); init = true; 
+            // verteditor.SetShowWhitespaces(false);
+            // verteditor.SetReadOnly(true);
+            // verteditor.SetText(shader->vert.src); init = true; 
             
         }
 
@@ -81,7 +81,7 @@ void Editors::init() {
         // frageditor.SetPalette(TextEditor::GetDarkPalette());
         
         frageditor.Render("frageditor");
-        verteditor.Render("frageditor");
+        // verteditor.Render("frageditor");
         
         if (frageditor.IsTextChanged()) {
 

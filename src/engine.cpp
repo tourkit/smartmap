@@ -57,35 +57,18 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
-    auto shader = tree->addOwnr<ShaderProgram>();
-
-    auto frag = shader->addPtr<File>(new File("C:/Users/root/cpp/smartmap/assets/shader/basic.frag"))->get();
-    auto vert = shader->addPtr<File>(new File("C:/Users/root/cpp/smartmap/assets/shader/basic.vert"))->get();
-
-    shader->onchange([shader, frag, vert](Node* node){
-
-        shader->get()->create(frag->data, vert->data);
-
-        PLOGD << "change";
-        
-    });
-
-    shader->trigchange();
-
-    // shader->create((new File("C:/Users/root/cpp/smartmap/assets/shaders/basic.frag"))->data, (new File("C:/Users/root/cpp/smartmap/assets/shaders/basic.vert"))->data);
+    // auto shader = tree->addOwnr<ShaderProgram>();
+    // auto frag = shader->addPtr<File>(new File("C:/Users/root/cpp/smartmap/assets/shader/basic.frag"))->get();
+    // auto vert = shader->addPtr<File>(new File("C:/Users/root/cpp/smartmap/assets/shader/basic.vert"))->get();
+    // shader->onchange([shader, frag, vert](Node* node){ shader->get()->create(frag->data, vert->data); });
+    // shader->trigchange();
     
-    
-    
-    // auto shader = new ShaderProgram();
 
-    // // auto frag = 
-    // shader->create((new File("C:/Users/root/cpp/smartmap/assets/shaders/basic.frag"))->data, (new File("C:/Users/root/cpp/smartmap/assets/shaders/basic.vert"))->data);
-   
-    // auto models = tree->addOwnr<Directory>("assets/model/");
-    // auto shaders = tree->addOwnr<Directory>("assets/shaders/");
-    // auto dc = stack->addOwnr<DrawCall>();
-    // auto model = dc->addPtr(models->childrens[0]); 
-    // model->addPtr(shaders->childrens[0]); 
+    auto models = tree->addOwnr<Directory>("assets/model/");
+    auto shaders = tree->addOwnr<Directory>("assets/shaders/");
+    auto dc = stack->addOwnr<DrawCall>();
+    auto model = dc->addPtr(models->childrens[0]); 
+    model->addPtr(shaders->childrens[0]); 
 
 
     // Node* controllers = tree->add(new Node{"Controllers"});
