@@ -108,11 +108,11 @@ void DrawCall::update() {
                 
                 for (auto &m: Component::id(fx->file->name.c_str())->members) {
             
-                        frag_shader += ", "+varname+std::to_string(instance)+"."+fx->file->name+"."+m.name+"";
+                    frag_shader += ", "+varname+std::to_string(instance)+"."+fx->file->name+"."+m.name+"";
 
-                    }
-                
-                    frag_shader += ");\n";
+                }
+            
+                frag_shader += ");\n";
             }
 
             frag_shader += "\n\tcolor += "+varinst+";\n\n";
