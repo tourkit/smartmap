@@ -25,7 +25,7 @@ Entry &Object::push() {
 
 void Object::update(Buffer bkp) {
 
-  auto backup_data = bkp.data;
+    auto backup_data = bkp.data;
     auto backup_objects = bkp.objects;
 
     int offset = 0;
@@ -37,7 +37,6 @@ void Object::update(Buffer bkp) {
         offset += obj.size();
         
     }
-
 
     buffer->data.resize(offset);
     memset(&buffer->data[0],0,buffer->data.size()); 
@@ -65,8 +64,6 @@ void Object::update(Buffer bkp) {
                     member_offset += o.s->comps[comp_id]->members[member_id].size;
 
                 }
-
-                // do for not backup members aswell
 
                 comp_offset += o.s->comps[comp_id]->size;
 
@@ -88,12 +85,6 @@ void Object::update(Buffer bkp) {
 
 void Object::addComp(std::vector<std::string> components){
 
-
-    // backup obj struct before
-    // somehow use it aftyer
-
-    // go thou bkp, add to niou
-
     auto s = *this->s;
     auto s_ptr = this->s;
     this->s = &s;
@@ -102,92 +93,10 @@ void Object::addComp(std::vector<std::string> components){
 
     this->s->addComp(components);
 
-    update2(bkp);
+    update(bkp);
 
 }
 
-void Object::update2(Buffer bkp) {
-
-
-
-
-    auto backup_data = bkp.data;
-    auto backup_objects = bkp.objects;
-
-    int offset = 0;
-
-    for (auto obj : buffer->objects) {
-
-        obj.offset = offset;
-
-        offset += obj.size();
-        
-    }
-
-
-    buffer->data.resize(offset);
-    memset(&buffer->data[0],0,buffer->data.size()); 
-    
-    for (int obj_id = 0; obj_id < backup_objects.size(); obj_id++) {
-
-        auto &o = backup_objects[obj_id];
-
-        for (int entry_id = 0; entry_id < o.entrys.size(); entry_id++) {
-
-            int comp_offset = 0;
-            
-            for (int comp_id = 0; comp_id < o.s->comps.size(); comp_id++) {
-                
-                int member_offset = comp_offset;
-                
-                for (int member_id = 0; member_id < o.s->comps[comp_id]->members.size(); member_id++) {
-
-                    if (member_id >0) {
-
-
-                        PLOGD<<"crash";
-
-                    }
-                           
-                    auto offset = o.offset+(o.s->size*entry_id)+member_offset;
-
-                    auto x = &backup_data[offset];
-
-
-                    std::string str = "";
-
-                    str += "from " + o.s->comps[comp_id]->members[member_id].name + " "; //member name
-                    str += "val " + std::to_string(*(float*)x) + " "; //member name
-                    // is rungging from bad obj list , alt with bkp one or inverse
-
-                    PLOGD << str;
-
-                    memcpy((*buffer)[obj_id]->data(entry_id)+member_offset,x,o.s->comps[comp_id]->members[member_id].size);
-                           
-                    member_offset += o.s->comps[comp_id]->members[member_id].size;
-
-                }
-
-                // do for not backup members aswell
-
-                comp_offset += o.s->comps[comp_id]->size;
-
-            }
-
-        }
-
-    }
-
-    int obj_offset = 0;
-    for (auto& o : buffer->objects) {
-
-        o.offset = obj_offset;
-        obj_offset += o.size();
-
-    }
-
-
-}
 
 Entry &Object::push(void* data) { 
 

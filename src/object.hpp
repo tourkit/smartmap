@@ -29,7 +29,6 @@ struct Object {
     Entry &push(void* data);
 
     void update(Buffer bkp);
-    void update2(Buffer bkp);
 
     void addComp(std::vector<std::string> components);
 

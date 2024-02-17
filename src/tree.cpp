@@ -118,8 +118,12 @@ bool TreeViewNode(Node* node) {
             ImGui::EndDragDropSource();
             
         }else {
+
+            static bool holding = false;
+
+            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { holding = true; }
             
-            if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(0)) { Engine::getInstance().selected = node; }
+            if (holding && ImGui::IsItemHovered() && ImGui::IsMouseReleased(0)) { Engine::getInstance().selected = node; }
 
         }
 
