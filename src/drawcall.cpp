@@ -18,71 +18,69 @@ void DrawCall::run() {
  
     vbo.draw();
 
-    if (shader.loaded) shader.use();
+    if (shader.loaded) shader.use(); // maybe "if" could be in node::onrun ?
 
 }
 
 std::string DrawCall::Shaderlayout(UBO* ubo) {
 
-    std::string str = "";
-    std::string in_str = "";
-
-    int i = 0;
-    bool at_least_one = false;
-    for (auto m:vbo.models) { 
-        auto obj = m.obj;
-        if (!obj->reserved || !obj->s->comps.size()) continue;
-        std::string name_lower = "";
-        for(int i =  0; i < obj->s->name.length(); i++) name_lower += std::tolower(obj->s->name[i]); 
-        std::string obj_str = name_lower;
-        obj_str[0] = std::toupper(obj_str[0]);
+    std::string out = "";
     
-        std::string struct_str = "struct "+obj_str+"{\n\n";
+    std::string attr_str = "";
+
+    bool is_reserved = false;
+
+    for (auto m:vbo.models) { 
+
+        auto obj = m.obj; if (!obj->reserved || !obj->s->comps.size()) continue;
+
+        std::string name = ""; for(int i =  0; i < obj->s->name.length(); i++) name += std::tolower(obj->s->name[i]); 
+
+        std::string Name = name; Name[0] = std::toupper(Name[0]);
+    
+        std::string struct_str = "struct "+Name+"{\n\n";
 
         int comp_id = 0;
+
         for (auto c: obj->s->comps) struct_str += "\tvec4 "+c->name+";\n";
 
         struct_str += "};\n\n";
 
-        str += struct_str;
+        out += struct_str;
 
         if(obj->reserved)  {
 
-            int instance = 0;
+            attr_str += Name+ " "+name+"0"; //inst0
 
-            in_str += obj_str+ " "+name_lower+std::to_string(instance)+"";
+            for (int instance = 1; instance < obj->reserved; instance++) attr_str+=", "+name+std::to_string(instance);
 
-            for (int instance = 1; instance < obj->reserved; instance++) in_str+=", "+name_lower+std::to_string(instance);
+            attr_str+=";";
 
-            in_str+=";";
-
-            at_least_one = true;
+            is_reserved = true;
 
         }
 
     }
 
-    if (at_least_one) str += "layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+in_str+" };\n";
+    if (is_reserved) out += "layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+attr_str+" };\n";
 
-    return str;
+    return out;
 
 }
 
 void DrawCall::update() {
 
-    // FRAGMENT SHADER BUILDER
+    // Common Header
 
-    std::string layout_str = "";//layout (binding = 0, std140) uniform dynamic_ubo { float x,y,z,w; };\n"; 
-    layout_str += ""+Shaderlayout(engine.dynamic_ubo)+"\n";
+    std::string header_commom = "#version 430 core\n\n";
+
+    header_commom += ""+Shaderlayout(engine.dynamic_ubo)+"\n";
     
-    std::string frag_shader;
-
-    frag_shader = "#version 430 core\n\n";
+    // FRAGMENT SHADER BUILDER
+    
+    std::string frag_shader = header_commom;
 
     frag_shader += "out vec4 color;\n\n";
-
-    frag_shader += layout_str;
-    
 
     std::unordered_set<ShaderFX*> fxs;
     for (auto &m : vbo.models) for (auto fx : m.fxs) fxs.insert(fx);
@@ -140,14 +138,11 @@ void DrawCall::update() {
 
     // /// VERTEX
 
-    std::string vert_shader;
-    vert_shader = "#version 430 core\n\n";
+    std::string vert_shader = header_commom;
 
     vert_shader += "layout (location = 0) in vec2 POSITION;\n";
     vert_shader += "layout (location = 1) in vec2 TEXCOORD;\n";
     vert_shader += "layout (location = 3) in int OBJ;\n\n";
-
-    vert_shader += layout_str;
 
     vert_shader += "\nvoid main() {\n\n";
 
