@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include <string>
 
 struct Struct;
 struct Buffer;
@@ -29,5 +30,7 @@ struct Object {
 
     void update(Buffer bkp);
     void update2(Buffer bkp);
+
+    void addComp(std::vector<std::string> components);
 
 };

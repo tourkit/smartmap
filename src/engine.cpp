@@ -11,20 +11,20 @@
 #include "node.hpp"
 #include "atlas.hpp"
 
-
 #include "nodes.hpp"
 
-Engine::Engine(uint16_t width, uint16_t height) 
-    : window(1920,1080,2560,0), 
-     gui(new GUI(window.id)) {
+Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
+
     window.max_fps = 59;
 
+    gui = new GUI(window.id);
 
     tree = new Node("tree");
 
     stack = tree->addOwnr<Stack>()->node();
 
     dynamic_ubo = new UBO("dynamic_ubo");
+
     static_ubo = new UBO("static_ubo");
 
 }

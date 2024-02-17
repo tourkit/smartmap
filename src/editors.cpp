@@ -201,8 +201,12 @@ void Editors::init() {
 
                     auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
 
+                    PLOGD << buffer->data.size();
+                    PLOGD << buffer->objects.size();
+                    PLOGD << buffer->objects[0].reserved << " * " << buffer->objects[0].size();
                     auto data = &buffer->data[uniform_offset+(elem_current*obj.s->size)];
 
+    // exit(0);
                     auto type = ImGuiDataType_Float;
 
                     if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
@@ -266,16 +270,18 @@ void Editors::init() {
         
         ImGui::Separator();
 
+        ImGui::Text(("char[" +std::to_string(buffer->data.size()) + "]").c_str());
+
         for (auto &o:buffer->objects) {
             
-            ImGui::Text((o.s->name+" " +std::to_string(o.s->size)).c_str());
+            ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size)+"]"+" * "+std::to_string(o.reserved)).c_str());
 
             for (auto& c : o.s->comps) {
 
-                ImGui::Text((" - "+c->name+" "+std::to_string(c->size)).c_str());
+                ImGui::Text(("    "+c->name+"["+std::to_string(c->size)+"]").c_str());
 
                 for (auto& m : c->members) {
-                    ImGui::Text(("  -- "+m.name+" "+std::to_string(m.size)).c_str());                
+                    ImGui::Text(("      "+m.name+"["+std::to_string(m.size)+"]").c_str());                
                 }
 
 
