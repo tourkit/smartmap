@@ -133,6 +133,8 @@
         
     }
 
+    void UntypedNode::trigchange() { if (onchange_cb) onchange_cb(node()); }
+
     void UntypedNode::up() { 
         
         if (!parent_node) return;

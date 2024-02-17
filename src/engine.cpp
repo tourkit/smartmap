@@ -47,20 +47,46 @@ void Engine::init() {
     Nodes::init();
     
     Editors::init();
-    
+
     auto ubo = stack->addPtr<UBO>(dynamic_ubo);
     ubo->select();
 
     tree->addPtr<UBO>(static_ubo);
-   
-    auto models = tree->addOwnr<Directory>("assets/model/");
-    auto shaders = tree->addOwnr<Directory>("assets/shaders/");
-    
-    auto dc = stack->addOwnr<DrawCall>();
-    
-    auto model = dc->addPtr(models->childrens[0]); 
 
-    model->addPtr(shaders->childrens[0]); 
+    PLOGD << "Engine initialized";
+
+    ///////////////////////////////////////////////////////////////////
+
+    auto shader = tree->addOwnr<ShaderProgram>();
+
+    auto frag = shader->addPtr<File>(new File("C:/Users/root/cpp/smartmap/assets/shader/basic.frag"))->get();
+    auto vert = shader->addPtr<File>(new File("C:/Users/root/cpp/smartmap/assets/shader/basic.vert"))->get();
+
+    shader->onchange([shader, frag, vert](Node* node){
+
+        shader->get()->create(frag->data, vert->data);
+
+        PLOGD << "change";
+        
+    });
+
+    shader->trigchange();
+
+    // shader->create((new File("C:/Users/root/cpp/smartmap/assets/shaders/basic.frag"))->data, (new File("C:/Users/root/cpp/smartmap/assets/shaders/basic.vert"))->data);
+    
+    
+    
+    // auto shader = new ShaderProgram();
+
+    // // auto frag = 
+    // shader->create((new File("C:/Users/root/cpp/smartmap/assets/shaders/basic.frag"))->data, (new File("C:/Users/root/cpp/smartmap/assets/shaders/basic.vert"))->data);
+   
+    // auto models = tree->addOwnr<Directory>("assets/model/");
+    // auto shaders = tree->addOwnr<Directory>("assets/shaders/");
+    // auto dc = stack->addOwnr<DrawCall>();
+    // auto model = dc->addPtr(models->childrens[0]); 
+    // model->addPtr(shaders->childrens[0]); 
+
 
     // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
@@ -69,9 +95,7 @@ void Engine::init() {
     // an->add(new Node{"3"});
     // an->add(new Node{"4"});
 
-    // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
-    
 
-     PLOGD << "Engine initialized";
+    // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
 
 }

@@ -3,6 +3,7 @@
 #include "window.hpp"
 #include "ubo.hpp"
 
+#include "log.hpp"
 #include "node.hpp"
 #include "atlas.hpp"
 #include "buffer.hpp"
@@ -12,6 +13,8 @@
 struct Stack {};
 
 struct Engine {
+
+    Log log;
 
     Window window;
 

@@ -68,6 +68,8 @@ struct UntypedNode {
 
     void up();
 
+    virtual void trigchange();
+
     Node* top();
 
     void down();
@@ -191,6 +193,10 @@ struct TypedNode : UntypedNode {
 
      }
 
+    void trigchange() override {
+        UntypedNode::trigchange();
+        if(onchange_cb) onchange_cb(node(),this->ptr);
+    }
     void run() override {
 
         UntypedNode::run();

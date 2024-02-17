@@ -38,9 +38,10 @@ std::string DrawCall::Shaderlayout(UBO* ubo) {
     
         std::string struct_str = "struct "+obj_str+"{\n\n";
 
+        int comp_id = 0;
         for (auto c: obj->s->comps) {
         
-            struct_str += "\tvec4 "+c->name+";\n";
+            struct_str += "\tvec4 "+c->name+""+std::to_string(comp_id++)+";\n";
             
         }
 
@@ -92,20 +93,21 @@ void DrawCall::update() {
 
         frag_shader += "\t// " +model.file->name+"\n";
 
-        auto varname = model.file->name+"_"+std::to_string(model_id);
+        auto varname = model.file->name+""+std::to_string(model_id);
 
         frag_shader += "\tvec4 "+varname+" = vec4(1,1,1,1);\n\n";
 
         
+        int comp_id = 0;
         if (model.obj->reserved) for (auto fx : model.fxs) { 
 
                frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname;
                
                for (auto &m: Component::id(fx->file->name.c_str())->members) {
         
-                frag_shader += ", "+varname+"."+fx->file->name+"."+m.name+"";
-                
-            }
+                    frag_shader += ", "+varname+"."+fx->file->name+"+"+std::to_string(comp_id++)+"."+m.name+"";
+                    
+                }
                
                frag_shader += ");\n";
 

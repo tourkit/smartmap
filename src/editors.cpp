@@ -13,6 +13,7 @@
 #include "vbo.hpp"
 #include "shader.hpp"
 #include "shaderfx.hpp"
+#include "engine.hpp"
 
 void Editors::init() {
 
@@ -94,6 +95,14 @@ void Editors::init() {
     ////////// DRAWCALL.HPP 
     
     Editor::set<DrawCall>([](Node* node, DrawCall *dc){ Editor::cb<ShaderProgram>(node, &dc->shader); });
+
+    ////////// Log.HPP 
+    
+    Editor::set<Stack>([](Node* node, Stack *log){ 
+        static File file(REPO_DIR+"logs.txt");
+        file.reload();
+        ImGui::Text(&file.data[0]); 
+    });
 
     ////////// File.HPP 
 
