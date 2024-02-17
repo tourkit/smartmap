@@ -92,28 +92,30 @@ void DrawCall::update() {
     int model_id = 0;
     for (auto &model : vbo.models) {
 
-        frag_shader += "\t// " +model.file->name+std::to_string(model_id)+"\n";
+        auto varname = model.file->name+""+std::to_string(model_id);
+
+        frag_shader += "\t// " +varname+"\n";
 
         for (int instance = 0; instance < model.obj->reserved; instance++) {
 
-            auto varname = model.file->name+""+std::to_string(model_id)+"inst"+std::to_string(instance);
+            auto varinst = varname+"inst"+std::to_string(instance);
 
-            frag_shader += "\tvec4 "+varname+" = vec4(1,1,1,1);\n\n";
+            frag_shader += "\tvec4 "+varinst+" = vec4(1,1,1,1);\n\n";
             
             if (model.obj->reserved) for (auto fx : model.fxs) { 
 
-                frag_shader += "\t"+varname+" = "+fx->file->name+"("+varname;
+                frag_shader += "\t"+varinst+" = "+fx->file->name+"("+varinst;
                 
                 for (auto &m: Component::id(fx->file->name.c_str())->members) {
             
-                        frag_shader += ", "+model.file->name+std::to_string(model_id)+std::to_string(instance)+"."+fx->file->name+"."+m.name+"";
+                        frag_shader += ", "+varname+std::to_string(instance)+"."+fx->file->name+"."+m.name+"";
 
                     }
                 
                     frag_shader += ");\n";
             }
 
-            frag_shader += "\n\tcolor += "+varname+";\n\n";
+            frag_shader += "\n\tcolor += "+varinst+";\n\n";
 
         }
 
