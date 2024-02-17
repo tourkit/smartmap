@@ -72,6 +72,8 @@
 
     void UntypedNode::update() { 
         
+        trigchange(); 
+                
         if (parent_node) parent_node->update(); 
         
         if (onchange_cb) onchange_cb(node()); 

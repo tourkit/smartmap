@@ -27,7 +27,7 @@ Gobos :
 
 Shader Builder
 CITP integration (WIP)
-PLOG
+
 frame interpolation for orientation with media gobo 
 UBO partial update only (instead of full when no need to be)
 Medias Atlas better binpack & sort by name in UBO

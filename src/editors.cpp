@@ -71,6 +71,9 @@ void Editors::init() {
             verteditor.SetText(shader->vert.src); init = true; 
             
         }
+
+        // should find trigger aS PARENT()
+
         
 	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
 	    // frageditor.SetLanguageDefinition(lang);

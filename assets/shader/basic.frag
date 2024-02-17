@@ -1,8 +1,8 @@
 #version 430 core
 
 struct Quad0 {
-
-   vec4 rgba0;  
+ 
+   vec4 rgba0;    
    
 };
 
@@ -13,7 +13,7 @@ out vec4 color;
 
 void main() { 
      
-   color = vec4(v.x,v.y,v.z,1);    
+   color = vec4(v.x,v.y,v.z,4 );    
 
 }
 
