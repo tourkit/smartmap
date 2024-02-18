@@ -9,7 +9,7 @@ void rectangle(vec2 size, vec2 pos, float angle) {
     uv -= pos; 
     //uv = rotate(uv*AR,-angle)*(1./AR);
     uv /= size;
-    uv += .5;
+    uv -= .5;
     
     if (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) uv = vec2(0);
     
