@@ -13,15 +13,22 @@ void Effector::import(File *file) {
 
     std::smatch match;
 
-    // ranges.empty();
+    ranges.clear();
 
-    if (std::regex_search(file->data, match, std::regex(R"(//\s*([a-zAS-Z]+)\s*\((\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*)?)?)\))"))) {
+    std::string argsStr = file->data;
+    std::regex argPattern(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*)?)?)?\))");
+    std::sregex_iterator next(argsStr.begin(), argsStr.end(), argPattern);
+    std::sregex_iterator end;
+    while (next != end) {
 
+        std::smatch match = *next++;
         std::string range;
         int i = 0;
-        // while (std::getline(std::istringstream(match[2].str()), range, ',')) ranges[match[1]][i++] = std::stof(range);
+        std::istringstream stream(match[2].str());
+        while (std::getline(stream, range, ',')) ranges[match[1]][i++] = std::stof(range);
 
     }
+
 
     args.resize(0);
     

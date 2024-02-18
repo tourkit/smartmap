@@ -28,15 +28,11 @@ void Model::addFX(Effector* effector) {
         for (auto arg : effector->args) {
 
             if (arg.first == "vec2") c->member<glm::vec2>(arg.second.c_str()); 
+            
             else c->member<float>(arg.second.c_str()); 
 
-            // if (effector->ranges.find(arg.second) != effector->ranges.end()) {
-                
-            //     float* f = effector->ranges[arg.second];
-
-            //     // c->range(f[0],f[1],f[2]);
+            if (effector->ranges.find(arg.second) != effector->ranges.end()) c->range(effector->ranges[arg.second][0],effector->ranges[arg.second][1],effector->ranges[arg.second][2]);
             
-            // }
         }
     
     }
