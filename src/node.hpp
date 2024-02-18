@@ -46,7 +46,7 @@ struct UntypedNode {
 
     bool active = false, locked = false, loaded = false;
 
-    UntypedNode(std::string name = "node", glm::vec4 color = {255,255,255,255});
+    UntypedNode(std::string name = "node", glm::vec4 color = {1,1,1,1});
 
     virtual ~UntypedNode();
 
@@ -188,8 +188,6 @@ struct TypedNode : UntypedNode {
             if (stored_type == typeid(Passing)) stored_type = typeid(*this->ptr);
 
             if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
-
-            color = {100,100,100,100};
 
      }
 
