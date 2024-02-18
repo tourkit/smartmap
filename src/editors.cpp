@@ -40,7 +40,7 @@ void Editors::init() {
 
     Editor<Struct>([](Node* node, Struct *s){ 
         
-        ImGui::Text((node->name+" " +std::to_string(s->size)).c_str());
+        ImGui::Text((s->name+" " +std::to_string(s->size)).c_str());
 
         for (auto& c : s->comps) {
 
@@ -64,7 +64,7 @@ void Editors::init() {
         static TextEditor frageditor;
         static TextEditor verteditor;
         static bool init = false;
-        if (!init||node->has_changed) { 
+        if (!init) { 
 
             frageditor.SetShowWhitespaces(false);
             frageditor.SetReadOnly(false);
@@ -100,7 +100,11 @@ void Editors::init() {
 
     ////////// DRAWCALL.HPP 
     
-    Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
+    Editor<DrawCall>([](Node* node, DrawCall *dc){  
+        
+        if (node->has_changed) PLOGD << "changeee";
+        
+        Editor<ShaderProgram>::cb(node, &dc->shader); });
 
     ////////// Log.HPP 
     
