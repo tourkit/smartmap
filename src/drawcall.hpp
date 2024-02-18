@@ -17,5 +17,5 @@ struct DrawCall {
 
     void run();
 
-    std::string Shaderlayout(UBO* ubo);
+    std::string layout(UBO* ubo);
 };
