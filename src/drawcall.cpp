@@ -60,9 +60,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
         if(obj->reserved)  {
 
-            attr_str += Name+ " "+name+"["+std::to_string(obj->reserved)+"]"; //inst0
-
-            // for (int instance = 1; instance < obj->reserved; instance++) attr_str+=", "+name+std::to_string(instance);
+            attr_str += Name+ " "+name+"["+std::to_string(obj->reserved)+"]";
 
             attr_str+=";";
 
