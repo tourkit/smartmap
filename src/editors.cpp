@@ -20,25 +20,25 @@ void Editors::init() {
 
     // ////////// xxx.HPP 
 
-    // Editor::set<xxx>([](Node* node, xxx *x){ });
+    // Editor<xxx>([](Node* node, xxx *x){ });
 
     ////////// UBO.HPP 
 
-    Editor::set<UBO>([](Node* node, UBO *ubo){ 
+    Editor<UBO>([](Node* node, UBO *ubo){ 
 
         ImGui::Text((""+std::to_string(ubo->subscribers.size())+" subs").c_str());
 
-        Editor::cb<Buffer>(node, ubo); 
+        Editor<Buffer>::cb(node, ubo); 
         
     });
 
     ////////// VBO.HPP 
     
-    Editor::set<VBO>([](Node*node,VBO*vbo){ Editor::cb<Buffer>(node, vbo); });
+    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
 
     ////////// STRUCT.HPP 
 
-    Editor::set<Struct>([](Node* node, Struct *s){ 
+    Editor<Struct>([](Node* node, Struct *s){ 
         
         ImGui::Text((node->name+" " +std::to_string(s->size)).c_str());
 
@@ -57,12 +57,14 @@ void Editors::init() {
 
     ////////// SHADER.HPP 
 
-    Editor::set<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
+    Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
+
+        //node.hasChanged();
 
         static TextEditor frageditor;
         static TextEditor verteditor;
         static bool init = false;
-        if (!init) { 
+        if (!init||node->has_changed) { 
 
             frageditor.SetShowWhitespaces(false);
             frageditor.SetReadOnly(false);
@@ -98,11 +100,11 @@ void Editors::init() {
 
     ////////// DRAWCALL.HPP 
     
-    Editor::set<DrawCall>([](Node* node, DrawCall *dc){ Editor::cb<ShaderProgram>(node, &dc->shader); });
+    Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
 
     ////////// Log.HPP 
     
-    Editor::set<Stack>([](Node* node, Stack *log){ 
+    Editor<Stack>([](Node* node, Stack *log){ 
         static File file(REPO_DIR+"logs.txt");
         file.reload();
         ImGui::Text(&file.data[0]); 
@@ -110,7 +112,7 @@ void Editors::init() {
 
     ////////// File.HPP 
 
-    Editor::set<File>([](Node* node, File *file){ 
+    Editor<File>([](Node* node, File *file){ 
 
         char path[512]; 
         memset(path,0,512);
@@ -149,15 +151,15 @@ void Editors::init() {
 
     ////////// Effector.HPP 
 
-    Editor::set<Effector>([](Node* node, Effector *effector){ });
+    Editor<Effector>([](Node* node, Effector *effector){ });
 
     ////////// MODEL.HPP 
 
-    Editor::set<Model>([](Node* node, Model *model){ Editor::cb<Object>(node, model->obj); });
+    Editor<Model>([](Node* node, Model *model){ Editor<Object>::cb(node, model->obj); });
 
     ////////// OBJECT.HPP 
 
-    Editor::set<Object>([](Node* node, Object *obj){
+    Editor<Object>([](Node* node, Object *obj){
         
         static int elem_current = 0;
         static std::string uid = "123";
@@ -275,7 +277,7 @@ void Editors::init() {
 
     ////////// BUFFER.HPP 
 
-    Editor::set<Buffer>([](Node* node, Buffer *buffer){
+    Editor<Buffer>([](Node* node, Buffer *buffer){
 
         static StringsBuffer object_str;
         static int obj_current = 0;
@@ -284,7 +286,7 @@ void Editors::init() {
         object_str.create(obect_strs);
         ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-        Editor::cb<Object>(node, &buffer->objects[obj_current]);
+        Editor<Object>::cb(node, &buffer->objects[obj_current]);
 
     });
 

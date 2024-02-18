@@ -17,14 +17,13 @@ struct File;
 
 struct Node;
 struct NodesList;
-
+    
+template <typename T>
 struct Editor  {
 
-    template <typename U>
-    static inline std::function<void(Node*,U*)> cb = nullptr;
+    static inline std::function<void(Node*,T*)> cb = nullptr;
 
-    template <typename U>
-    static void set(std::function<void(Node*,U*)> cb) { Editor::cb<U> = cb; };
+    Editor(std::function<void(Node*,T*)> cb) { Editor<T>::cb = cb; };
 
 };
 
@@ -79,6 +78,8 @@ struct UntypedNode {
     virtual void run(); 
     
     virtual void update();
+
+    bool has_changed = false;
 
     void onchange(std::function<void(Node*)> cb = nullptr);
     void onrun(std::function<void(Node*)> cb = nullptr);
@@ -259,7 +260,7 @@ struct TypedNode : UntypedNode {
 
     }
 
-    void editor() override { if(Editor::cb<T>) Editor::cb<T>(node(),this->ptr); }
+    void editor() override { if(Editor<T>::cb) Editor<T>::cb(node(),this->ptr); }
 
 private:
 
@@ -272,7 +273,7 @@ struct Node : TypedNode<Any> {
     Node(std::string name = "any") : TypedNode<Any>(this) { this->name = name; } 
 
     template <typename U>
-    static void editor(std::function<void(Node*,U*)> cb) { Editor::cb<U> = cb; }
+    static void editor(std::function<void(Node*,U*)> cb) { Editor<U>::cb = cb; }
 
     void editor() override {  }
 

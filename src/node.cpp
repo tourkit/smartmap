@@ -10,6 +10,7 @@
         
     }
 
+
     UntypedNode::~UntypedNode() {
 
         top()->runCB([this](Node* node){ if (node->refering == this) node->refering = nullptr; });
