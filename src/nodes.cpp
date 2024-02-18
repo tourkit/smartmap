@@ -114,11 +114,8 @@ void Nodes::init() {
 
         auto dc = _this->parent()->is_a<DrawCall>();
         if (dc) dc->update();
-        
-        auto shader = new Ptr<Effector>(bad);
-        shader->refering = node;
 
-        return shader->node();
+        return _this;
 
     });
 

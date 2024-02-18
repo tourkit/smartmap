@@ -1,22 +1,14 @@
 #include "struct.hpp"
 #include "component.hpp"
 
-Struct::Struct(const char* name, std::vector<std::string> components) : name(name) { addComp(components); }
+Struct::Struct(const char* name, std::vector<std::string> components) : name(name) { for (auto c : components) addComp(c); }
 
-void Struct::addComp(std::vector<std::string> components){
+void Struct::addComp(std::string component){
 
-    size_t size = 0;
+    auto x = Component::id(component.c_str());
 
-    for (auto c : components) {
-        
-        auto x = Component::id(c.c_str());
+    comps.push_back(x);
 
-        comps.push_back(x);
-
-        size += x->size;
-        
-    }
-
-    this->size+=size;
+    size += x->size;
 
 }

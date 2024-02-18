@@ -30,6 +30,6 @@ struct Object {
 
     void update(Buffer bkp);
 
-    void addComp(std::vector<std::string> components);
+    void addComp(std::string components);
 
 };

@@ -12,7 +12,7 @@ Model::Model(File* file, int id, int quantity) : file(file), id(id), quantity(qu
 
     obj = engine.dynamic_ubo->addObj(new Struct((file->name+""+std::to_string(id)).c_str()));
 
-    obj->push();
+    entry = &obj->push();
     // entry[0][0].set<float>(1);
 
 }

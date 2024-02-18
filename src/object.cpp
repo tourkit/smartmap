@@ -83,7 +83,7 @@ void Object::update(Buffer bkp) {
 
 }
 
-void Object::addComp(std::vector<std::string> components){
+void Object::addComp(std::string components){
 
     auto s = *this->s;
     auto s_ptr = this->s;
@@ -94,6 +94,8 @@ void Object::addComp(std::vector<std::string> components){
     this->s->addComp(components);
 
     update(bkp);
+
+    // go theough data for component
 
 }
 

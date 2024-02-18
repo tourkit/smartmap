@@ -2,6 +2,7 @@
 
 struct File;
 struct Object;
+struct Entry;
 struct Effector;
 
 #include <vector>
@@ -13,6 +14,8 @@ struct Model {
     int id;
 
     Object* obj;
+    
+    Entry* entry;
 
     std::vector<Effector*> effectors; 
 

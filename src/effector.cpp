@@ -15,9 +15,10 @@ void Effector::import(File *file) {
 
     ranges.clear();
 
-    std::string argsStr = file->data;
-    std::regex argPattern(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*)?)?)?\))");
-    std::sregex_iterator next(argsStr.begin(), argsStr.end(), argPattern);
+    int range_count = 0;
+    source = file->data;
+    std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*)?)?)?\))");
+    std::sregex_iterator next(source.begin(), source.end(), regex);
     std::sregex_iterator end;
     while (next != end) {
 
@@ -26,18 +27,25 @@ void Effector::import(File *file) {
         int i = 0;
         std::istringstream stream(match[2].str());
         while (std::getline(stream, range, ',')) ranges[match[1]][i++] = std::stof(range);
+        range_count++;
 
     }
+
+    std::istringstream iss(source);
+    std::string line;
+    for (int i = 0 ; i < range_count ; i++) std::getline(iss, line);
+    source.clear();
+    while (std::getline(iss, line)) source += line + "\n";
 
 
     args.resize(0);
     
-    if (std::regex_search(file->data, match, std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))"))) {
+    if (std::regex_search(source, match, std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))"))) {
 
         std::string argsStr = match[2].str();
         
-        std::regex argPattern(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
-        std::sregex_iterator iter(argsStr.begin(), argsStr.end(), argPattern);
+        std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
+        std::sregex_iterator iter(argsStr.begin(), argsStr.end(), regex);
         std::sregex_iterator end;
         while (iter != end) {
             args.push_back({(*iter)[1].str(),(*iter)[2].str()});

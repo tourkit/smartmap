@@ -12,7 +12,7 @@ struct Struct {
 
     Struct(const char* name = "struct", std::vector<std::string> components = {});
 
-    void addComp(std::vector<std::string> components);
+    void addComp(std::string component);
 
     size_t getComp(std::string name) {
 
