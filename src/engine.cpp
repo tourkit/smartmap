@@ -22,6 +22,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
     tree = new Node("tree");
 
     stack = tree->addOwnr<Stack>()->node();
+    stack->active = true;
 
     dynamic_ubo = new UBO("dynamic_ubo");
 
@@ -41,7 +42,7 @@ void Engine::run() {
         
         engine.dynamic_ubo->upload();
 
-        engine.tree->run(); 
+        engine.stack->run(); 
 
         engine.gui->draw(); 
 

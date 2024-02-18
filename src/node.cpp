@@ -34,7 +34,7 @@
         
         auto n = (Node*)node_v; 
 
-         n->parent(node());   
+         n->parent(node());
 
         return n;
 
@@ -54,6 +54,8 @@
         this->parent_node = parent_node;
 
         if (!parent_node) return;
+
+        active = parent_node->active;
 
         parent_node->childrens.push_back(node());
     

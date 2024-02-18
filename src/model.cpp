@@ -21,7 +21,7 @@ void Model::addFX(Effector* effector) {
     
     auto &c = Component::create(effector->file->name.c_str());
 
-    for (int i = 1; i <effector->args.size(); i++) c.member<float>(effector->args[i].c_str());
+    for (auto arg : effector->args) c.member<float>(arg.c_str());
 
     obj->addComp({effector->file->name});
 

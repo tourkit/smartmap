@@ -79,7 +79,7 @@ void DrawCall::update() {
     // FRAGMENT
     
     std::string frag_shader = header_commom;
-    frag_shader += "out vec4 color;\n\n";
+    frag_shader += "out vec4 out_color;\n\nvec4 color;\n\n";
 
     // add effectors
     std::unordered_set<Effector*> effectors;
@@ -87,32 +87,34 @@ void DrawCall::update() {
     for (auto effector : effectors) frag_shader += effector->file->data +"\n\n";
     
     // main loop
-    frag_shader += "\nvoid main() {\n\n\tcolor = vec4(0);\n\n\tvec2 uv = vec2(0);\n\n";
+    frag_shader += "\nvoid main() {\n\n\tout_color = vec4(0);\n\n\tvec2 uv = vec2(0);\n\n";
 
     int model_id = 0;
     for (auto &model : vbo.models) {
 
         auto varname = model.file->name+""+std::to_string(model_id);
 
-        frag_shader += "\t// " +varname+"\n\n";
-
         for (int instance = 0; instance < model.obj->reserved; instance++) {
 
             auto varinst = varname+"inst"+std::to_string(instance);
 
-            frag_shader += "\tvec4 "+varinst+" = vec4(1,1,1,1);\n\n";
+            frag_shader += "\t// " +varname+"\n\n"+"\tcolor = vec4(1);\n\n";
             
-            if (model.obj->reserved) for (auto effector : model.effectors) { 
+            for (auto effector : model.effectors) { 
+                
+                std::string arg_str = "";
+                for (auto &m: Component::id(effector->file->name.c_str())->members) {
+                    
+                    arg_str += varname+std::to_string(instance)+"."+effector->file->name+"."+m.name;
+                    
+                    if (&m != &Component::id(effector->file->name.c_str())->members.back()) arg_str += ", ";
+                    
+                }
 
-                if (!strcmp(effector->args[0].c_str(),"uv")) frag_shader += "\t// uv = "+effector->file->name+"(uv";
-                else if (!strcmp(effector->args[0].c_str(),"pixel")) frag_shader += "\t"+varinst+" = "+effector->file->name+"("+varinst;
-                   
-                for (auto &m: Component::id(effector->file->name.c_str())->members) frag_shader += ", "+varname+std::to_string(instance)+"."+effector->file->name+"."+m.name+"";
-
-                frag_shader += ");\n\n";
+                frag_shader += "\t"+effector->file->name+"("+arg_str+");\n\n";
             }
 
-            frag_shader += "\tcolor += "+varinst+";\n\n";
+            frag_shader += "\tout_color += color;\n\n";
 
         }
 
