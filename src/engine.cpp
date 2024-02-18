@@ -41,7 +41,6 @@ void Engine::run() {
         
         engine.dynamic_ubo->upload();
 
-        // engine.stack->run(); // better be : tree->run(); ( owning gui and all..)
         engine.tree->run(); 
 
         engine.gui->draw(); 
@@ -50,42 +49,25 @@ void Engine::run() {
 
 };
 
-
-struct DC {};
-
 void Engine::init() {
 
     Nodes::init();
     
     Editors::init();
 
-    tree->addPtr<UBO>(static_ubo);
-
     PLOGD << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
-
-    // auto shader = tree->addOwnr<ShaderProgram>();
-    // auto frag = shader->addPtr<File>(new File("C:/Users/root/cpp/smartmap/assets/shader/basic.frag"))->get();
-    // auto vert = shader->addPtr<File>(new File("C:/Users/root/cpp/smartmap/assets/shader/basic.vert"))->get();
-    // shader->onchange([shader, frag, vert](Node* node){ shader->get()->create(frag->data, vert->data); });
-    // shader->trigchange();
-    
 
     auto models = tree->addOwnr<Directory>("assets/model/");
     auto shaders = tree->addOwnr<Directory>("assets/shaders/");
     auto dc = stack->addOwnr<DrawCall>();
     auto model = dc->addPtr(models->childrens[0]); 
-    model->addPtr(shaders->childrens[0]); 
+    // model->addPtr(shaders->childrens[0]); 
+    model->addPtr(shaders->childrens[1]); 
 
 
-    // Node* controllers = tree->add(new Node{"Controllers"});
     // auto an = controllers->add(new Node{"Art-Net"});
-    // an->add(new Node{"1"});
-    // an->add(new Node{"2"});
-    // an->add(new Node{"3"});
-    // an->add(new Node{"4"});
-
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
 

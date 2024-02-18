@@ -14,6 +14,8 @@ struct TreeWidget : GUI::Window {
     void drawNode(Node* node);   
     void drawChildrens(Node* node);   
 
+    bool TreeViewNode(Node* node);
+
 private:
 
 bool is_deleting = false;

@@ -147,12 +147,9 @@ void Editors::init() {
 
     });
 
+    ////////// Effector.HPP 
 
-    Editor::set<Effector>([](Node* node, Effector *shader){ 
-
-        ImGui::InputTextMultiline("src", (char*)shader->file->data.c_str(), shader->file->data.size());
-   
-    });
+    Editor::set<Effector>([](Node* node, Effector *effector){ });
 
     ////////// MODEL.HPP 
 

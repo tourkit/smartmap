@@ -55,9 +55,9 @@ void TreeWidget::drawChildrens(Node* node) {
 }
 
  
-namespace ImGui {
 
-bool TreeViewNode(Node* node) {
+bool TreeWidget::TreeViewNode(Node* node) {
+using namespace ImGui;
 
     ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow ;
 
@@ -102,6 +102,40 @@ bool TreeViewNode(Node* node) {
     SameLine();
     SetCursorPosX(GetCursorPosX()-text_size.x);
     auto x = TreeNodeEx((node->name).c_str(), flags);
+
+           if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+    {
+        if (ImGui::BeginMenu("add"))
+        {
+            if (ImGui::MenuItem("New")) {}
+            ImGui::EndMenu();
+        }
+        bool will_exit = false;
+        if (!is_deleting) {
+        
+            ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
+            if(ImGui::MenuItem("delete")){ is_deleting = true; }
+            ImGui::PopItemFlag();
+        
+        }else {
+
+            if(ImGui::MenuItem("Sure ?")){
+                
+                is_deleting = false;
+                delete node;
+                
+            }
+
+        }
+
+        if (!ImGui::IsItemHovered()) is_deleting = false;
+
+        if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
+      
+        if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));
+
+        ImGui::EndPopup();
+    }
     
     if(engine.selected != node) {
 
@@ -145,7 +179,7 @@ bool TreeViewNode(Node* node) {
 
 }
 
-};
+
 void TreeWidget::drawNode(Node* node) { 
     
     ImGui::TableNextRow();
@@ -154,41 +188,9 @@ void TreeWidget::drawNode(Node* node) {
 
         ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
 
-        const bool recurse = ImGui::TreeViewNode(node);
+        const bool recurse = TreeViewNode(node);
 
-       if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
-    {
-        if (ImGui::BeginMenu("add"))
-        {
-            if (ImGui::MenuItem("New")) {}
-            ImGui::EndMenu();
-        }
-        bool will_exit = false;
-        if (!is_deleting) {
-        
-            ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
-            if(ImGui::MenuItem("delete")){ is_deleting = true; }
-            ImGui::PopItemFlag();
-        
-        }else {
 
-            if(ImGui::MenuItem("Sure ?")){
-                
-                is_deleting = false;
-                delete node;
-                
-            }
-
-        }
-
-        if (!ImGui::IsItemHovered()) is_deleting = false;
-
-        if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
-      
-        if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));
-
-        ImGui::EndPopup();
-    }
     // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
 
         const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());

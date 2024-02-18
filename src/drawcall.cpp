@@ -87,14 +87,14 @@ void DrawCall::update() {
     for (auto effector : effectors) frag_shader += effector->file->data +"\n\n";
     
     // main loop
-    frag_shader += "\nvoid main() {\n\n\tcolor = vec4(0);\n\n\vec2 uv = vec2(0);\n\n";
+    frag_shader += "\nvoid main() {\n\n\tcolor = vec4(0);\n\n\tvec2 uv = vec2(0);\n\n";
 
     int model_id = 0;
     for (auto &model : vbo.models) {
 
         auto varname = model.file->name+""+std::to_string(model_id);
 
-        frag_shader += "\t// " +varname+"\n";
+        frag_shader += "\t// " +varname+"\n\n";
 
         for (int instance = 0; instance < model.obj->reserved; instance++) {
 
@@ -104,22 +104,15 @@ void DrawCall::update() {
             
             if (model.obj->reserved) for (auto effector : model.effectors) { 
 
-                if (!strcmp(effector->args[0].c_str(),"uv")) { continue; }
+                if (!strcmp(effector->args[0].c_str(),"uv")) frag_shader += "\t// uv = "+effector->file->name+"(uv";
+                else if (!strcmp(effector->args[0].c_str(),"pixel")) frag_shader += "\t"+varinst+" = "+effector->file->name+"("+varinst;
+                   
+                for (auto &m: Component::id(effector->file->name.c_str())->members) frag_shader += ", "+varname+std::to_string(instance)+"."+effector->file->name+"."+m.name+"";
 
-                PLOGD<<model.effectors[0]->args[0];
-
-                frag_shader += "\t"+varinst+" = "+effector->file->name+"("+varinst;
-                
-                for (auto &m: Component::id(effector->file->name.c_str())->members) {
-            
-                    frag_shader += ", "+varname+std::to_string(instance)+"."+effector->file->name+"."+m.name+"";
-
-                }
-            
-                frag_shader += ");\n";
+                frag_shader += ");\n\n";
             }
 
-            frag_shader += "\n\tcolor += "+varinst+";\n\n";
+            frag_shader += "\tcolor += "+varinst+";\n\n";
 
         }
 

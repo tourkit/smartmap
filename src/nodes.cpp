@@ -35,6 +35,8 @@ void Nodes::init() {
 
         if (file->hasChanged()) { 
 
+            PLOGD <<  "file " << file->name << " changed";
+
             file->reload(); 
 
             node->update();

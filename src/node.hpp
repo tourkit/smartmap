@@ -44,7 +44,7 @@ struct UntypedNode {
  
     std::vector<Node*> childrens;
 
-    bool active = true, locked = false, loaded = false;
+    bool active = false, locked = false, loaded = false;
 
     UntypedNode(std::string name = "node", glm::vec4 color = {255,255,255,255});
 
