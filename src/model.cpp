@@ -19,9 +19,27 @@ Model::Model(File* file, int id, int quantity) : file(file), id(id), quantity(qu
 
 void Model::addFX(Effector* effector) {
     
-    auto &c = Component::create(effector->file->name.c_str());
+    Component* c = Component::exist(effector->file->name.c_str());
 
-    for (auto arg : effector->args) c.member<float>(arg.c_str());
+    if (!c) {
+        
+        c = &Component::create(effector->file->name.c_str());
+
+        for (auto arg : effector->args) {
+
+            if (arg.first == "vec2") c->member<glm::vec2>(arg.second.c_str()); 
+            else c->member<float>(arg.second.c_str()); 
+
+            // if (effector->ranges.find(arg.second) != effector->ranges.end()) {
+                
+            //     float* f = effector->ranges[arg.second];
+
+            //     // c->range(f[0],f[1],f[2]);
+            
+            // }
+        }
+    
+    }
 
     obj->addComp({effector->file->name});
 

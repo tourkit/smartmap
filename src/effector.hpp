@@ -18,8 +18,8 @@ struct Effector   {
 
     void import(File *file);
 
-    std::vector<std::string> args;
+    std::vector<std::pair<std::string,std::string>> args;
 
-    std::vector<std::string> extractArgsFromFunction(const std::string& functionSrc);
+    std::map<std::string, float[3]> ranges;
     
 };

@@ -64,8 +64,8 @@ void Engine::init() {
     auto shaders = tree->addOwnr<Directory>("assets/shaders/");
     auto dc = stack->addOwnr<DrawCall>();
     auto model = dc->addPtr(models->childrens[0]); 
-    // model->addPtr(shaders->childrens[0]); 
-    model->addPtr(shaders->childrens[1]); 
+    model->addPtr(shaders->childrens[0]); 
+    // model->addPtr(shaders->childrens[1]); 
 
 
     // auto an = controllers->add(new Node{"Art-Net"});

@@ -22,6 +22,7 @@ struct Component  {
         // int offset;
         float range_from,range_to;  
         enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
+        // float default_val = 0;
 
     };
 
@@ -72,20 +73,28 @@ struct Component  {
 
     }
 
-    Component& range(float range_from, float range_to) {
+    Component& range(float range_from, float range_to, float default_val=0) {
 
         members.back().range_from = range_from;
         members.back().range_to = range_to;
+        // members.back().default_val = default_val;
 
         return *this;
 
     }
 
-    static Component *id(const char* name) {
+    static Component *exist(const char* name) {
 
         for (int i = 0; i < pool.size(); i++) if (!strcmp(pool[i]->name.c_str(),name)) return pool[i];
 
-        PLOGW << "Component \"" << name << "\" does not exist yet !";
+        return nullptr;
+
+    }
+    static Component *id(const char* name) {
+
+        auto exist_v = exist(name);
+        
+        if (exist_v) return exist_v;
 
         return &create(name);
 
