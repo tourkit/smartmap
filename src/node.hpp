@@ -39,7 +39,7 @@ struct UntypedNode {
     glm::vec4 color;
 
     Node* parent_node = nullptr;
-    Node* refering = nullptr;
+    std::vector<Node*> referings;
  
     std::vector<Node*> childrens;
 

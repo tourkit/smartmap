@@ -13,7 +13,7 @@
 
     UntypedNode::~UntypedNode() {
 
-        top()->runCB([this](Node* node){ if (node->refering == this) node->refering = nullptr; });
+        top()->runCB([this](Node* node){ for (auto r : node->referings) if (r == this) r = nullptr; });
 
         auto t_childrens = childrens;
         for (auto c : t_childrens) delete c;
@@ -77,15 +77,7 @@
                 
         if (parent_node) parent_node->update(); 
         
-        top()->runCB([this](Node* curr){ 
-            
-            if (curr->refering == this) {
-                
-                curr->update();
-                
-            }
-            
-        });
+        top()->runCB([this](Node* curr){ for (auto r : curr->referings)if (r == this) curr->update(); });
 
         if (onchange_cb) onchange_cb(node());
         

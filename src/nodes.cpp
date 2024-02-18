@@ -91,7 +91,7 @@ void Nodes::init() {
 
         auto ptr = new Ptr<Model>(model);
 
-        _this->refering = engine.stack->childrens[0]->node();
+        _this->referings.push_back(engine.stack->childrens[0]->node());
         
         return (ptr)->node();
 
