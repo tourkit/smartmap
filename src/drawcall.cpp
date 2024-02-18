@@ -60,9 +60,9 @@ std::string DrawCall::layout(UBO* ubo) {
 
         if(obj->reserved)  {
 
-            attr_str += Name+ " "+name+"0"; //inst0
+            attr_str += Name+ " "+name+"["+std::to_string(obj->reserved)+"]"; //inst0
 
-            for (int instance = 1; instance < obj->reserved; instance++) attr_str+=", "+name+std::to_string(instance);
+            // for (int instance = 1; instance < obj->reserved; instance++) attr_str+=", "+name+std::to_string(instance);
 
             attr_str+=";";
 
@@ -134,7 +134,7 @@ void DrawCall::update() {
 
         for (int instance = 0; instance < model.obj->reserved; instance++) {
 
-            auto name = model.file->name+std::to_string(model_id)+std::to_string(instance);
+            auto name = model.file->name+std::to_string(model_id)+"["+std::to_string(instance)+"]";
 
             frag_shader += "\t// "+name+"\n";
             frag_shader += "\tuv = UV;\n";
