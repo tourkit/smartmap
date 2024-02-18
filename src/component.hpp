@@ -22,7 +22,7 @@ struct Component  {
         // int offset;
         float range_from,range_to;  
         enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
-        // float default_val = 0;
+        float default_val = 0;
 
     };
 
@@ -77,7 +77,7 @@ struct Component  {
 
         members.back().range_from = range_from;
         members.back().range_to = range_to;
-        // members.back().default_val = default_val;
+        members.back().default_val = default_val;
 
         return *this;
 
