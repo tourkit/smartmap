@@ -114,6 +114,8 @@ void Object::addComp(std::string component){
 
     }
 
+    buffer->update();
+
 }
 
 

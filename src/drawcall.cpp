@@ -48,7 +48,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
         for (auto c: obj->s->comps) {
             
-            struct_str += "\t"+camel(c->name)+" "+c->name+";\n";
+            struct_str += "\t"+camel(c->name)+" "+c->name+";\n\n";
             
             components.insert(c);
             
