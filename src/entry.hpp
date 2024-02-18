@@ -74,7 +74,6 @@ struct Entry {
 
     Comp operator[](int id) { 
         
-        
         return Comp{id,this}; 
         
     }

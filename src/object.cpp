@@ -83,7 +83,7 @@ void Object::update(Buffer bkp) {
 
 }
 
-void Object::addComp(std::string components){
+void Object::addComp(std::string component){
 
     auto s = *this->s;
     auto s_ptr = this->s;
@@ -91,11 +91,28 @@ void Object::addComp(std::string components){
     Buffer bkp = *buffer;
     this->s = s_ptr;
 
-    this->s->addComp(components);
+    this->s->addComp(component);
 
     update(bkp);
 
-    // go theough data for component
+    // niquons l'opti :)
+
+    for (auto e : entrys){
+
+        auto c = (*e)[component.c_str()];
+
+        int i = 0;
+        for (auto member : Component::id(component.c_str())->members) {
+
+            auto w = &c[i++].get<float>();        
+            (*w) = member.default_val;
+            if (member.type == Component::Member::Type::VEC2) { *(w+1) = member.default_val; }
+            if (member.type == Component::Member::Type::VEC3) { *(w+1) = member.default_val; *(w+2) = member.default_val; }
+            if (member.type == Component::Member::Type::VEC4) { *(w+1) = member.default_val; *(w+2) = member.default_val; *(w+3) = member.default_val; }
+            
+        }
+
+    }
 
 }
 
