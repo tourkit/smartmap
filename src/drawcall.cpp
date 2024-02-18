@@ -79,7 +79,7 @@ void DrawCall::update() {
     // FRAGMENT
     
     std::string frag_shader = header_commom;
-    frag_shader += "out vec4 out_color;\n\nvec4 color;\n\n";
+    frag_shader += "in vec2 UV;\n\nout vec4 out_color;\n\nvec4 color;\n\nvec2 uv;\n\n";
 
     // add effectors
     std::unordered_set<Effector*> effectors;
@@ -87,7 +87,7 @@ void DrawCall::update() {
     for (auto effector : effectors) frag_shader += effector->file->data +"\n\n";
     
     // main loop
-    frag_shader += "\nvoid main() {\n\n\tout_color = vec4(0);\n\n\tvec2 uv = vec2(0);\n\n";
+    frag_shader += "\nvoid main() {\n\n\tout_color = vec4(0);\n\n\t uv = UV;\n\n";
 
     int model_id = 0;
     for (auto &model : vbo.models) {
@@ -133,9 +133,12 @@ void DrawCall::update() {
     vert_shader += "layout (location = 0) in vec2 POSITION;\n";
     vert_shader += "layout (location = 1) in vec2 TEXCOORD;\n";
     vert_shader += "layout (location = 3) in int OBJ;\n\n";
+    vert_shader += "out vec2 UV;\n\n";
 
     vert_shader += "\nvoid main() {\n\n";
 
+                    
+    vert_shader += "\tUV = TEXCOORD;\n\n";
     vert_shader += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 
     vert_shader += "}";

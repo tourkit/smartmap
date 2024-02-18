@@ -23,7 +23,7 @@ File::File(std::string path) { read(path); }
 
 int64_t File::getTimeModified() {
 
-    auto last_modified_time = std::filesystem::last_write_time(path);
+    auto last_modified_time = std::filesystem::last_write_time(std::filesystem::path(REPO_DIR) / path);
 
     std::int64_t last_modified_ms = std::chrono::time_point_cast<std::chrono::milliseconds>(last_modified_time).time_since_epoch().count();
 

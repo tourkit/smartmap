@@ -42,7 +42,7 @@ void Engine::run() {
         
         engine.dynamic_ubo->upload();
 
-        engine.stack->run(); 
+        engine.tree->run();
 
         engine.gui->draw(); 
 

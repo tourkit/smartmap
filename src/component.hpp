@@ -2,6 +2,7 @@
 
 
 #include "log.hpp"
+#include "glm/glm.hpp"
 #include <typeinfo>
 #include <vector>
 #include <string>
@@ -20,7 +21,7 @@ struct Component  {
         int size;
         // int offset;
         float range_from,range_to;  
-        enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32 } type;
+        enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
 
     };
 
@@ -50,6 +51,16 @@ struct Component  {
 
         }else if (typeid(T) == typeid(int16_t)) { 
             type = Member::Type::I16; 
+
+        }else if (typeid(T) == typeid(glm::vec2)) { 
+            type = Member::Type::VEC2; 
+
+        }else if (typeid(T) == typeid(glm::vec3)) { 
+            type = Member::Type::VEC3; 
+
+        }else if (typeid(T) == typeid(glm::vec4)) { 
+            type = Member::Type::VEC4; 
+
         }
 
         this->size += sizeof(T);

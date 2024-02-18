@@ -125,9 +125,7 @@
 
     void UntypedNode::run() { 
 
-        if (!active) return;
-
-        if (onrun_cb) onrun_cb(node());
+        if (active && onrun_cb) onrun_cb(node());
 
         for (auto c : childrens) c->run();
         

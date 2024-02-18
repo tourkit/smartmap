@@ -193,6 +193,11 @@ void Editors::init() {
                     auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
 
                     auto data = &buffer->data[uniform_offset+(elem_current*obj->s->size)];
+                    uniform_offset += m.size; 
+
+                    if (m.type == Component::Member::Type::VEC2) { ImGui::SliderFloat2(name, (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Component::Member::Type::VEC3) { ImGui::SliderFloat3(name, (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Component::Member::Type::VEC4) { ImGui::SliderFloat4(name, (float*)data, m.range_from, m.range_to); continue; }
 
                     auto type = ImGuiDataType_Float;
 
@@ -200,17 +205,8 @@ void Editors::init() {
                     if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
                     if (m.type == Component::Member::Type::UI32) type = ImGuiDataType_U16;
 
-                    if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to)) { 
-
-                        buffer->update();
-
-                    }
-
-                    
-
-                    uniform_offset += m.size; 
+                    if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to))  buffer->update();
                 }
-                
                 
             }
             

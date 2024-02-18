@@ -1,5 +1,1 @@
-void rgba(float r, float g, float b) {
-
-    color = color * vec4 (r,g,b,1);
-
-} 
+void rgba(float r, float g, float b, float a) { color = color * vec4 (r, g, b, a); } 
