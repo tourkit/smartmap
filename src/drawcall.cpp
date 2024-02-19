@@ -121,7 +121,7 @@ void DrawCall::update() {
 
     std::set<Effector*> effectors;
     for (auto &m : vbo.models) for (auto effector : m.effectors) effectors.insert(effector);
-    for (auto effector : effectors) frag_shader += effector->source +"\n\n";
+    for (auto effector : effectors) frag_shader += effector->source() +"\n\n";
     
     // main loop
     frag_shader += "\nvoid main() {\n\n";

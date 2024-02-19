@@ -59,24 +59,24 @@ void Editors::init() {
 
     Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
 
-        //node.hasChanged();
-
         static TextEditor frageditor;
         static TextEditor verteditor;
-        static bool init = false;
-        if (!init) { 
 
+        static bool init = false;
+        if (!init){
             frageditor.SetShowWhitespaces(false);
             frageditor.SetReadOnly(false);
-            frageditor.SetText(shader->frag.src); init = true; 
-            // verteditor.SetShowWhitespaces(false);
-            // verteditor.SetReadOnly(true);
-            // verteditor.SetText(shader->vert.src); init = true; 
-            
+            frageditor.SetText(shader->frag.src); 
+            init = true;
         }
 
-        // should find trigger aS PARENT()
+        static std::chrono::_V2::system_clock::time_point last_change;
+        if (last_change != shader->last_change) { 
 
+            frageditor.SetText(shader->frag.src); 
+            last_change = shader->last_change;
+            
+        }
         
 	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
 	    // frageditor.SetLanguageDefinition(lang);
@@ -100,11 +100,7 @@ void Editors::init() {
 
     ////////// DRAWCALL.HPP 
     
-    Editor<DrawCall>([](Node* node, DrawCall *dc){  
-        
-        if (node->has_changed) PLOGD << "changeee";
-        
-        Editor<ShaderProgram>::cb(node, &dc->shader); });
+    Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
 
     ////////// Log.HPP 
     

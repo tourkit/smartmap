@@ -22,7 +22,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
     tree = new Node("tree");
 
     stack = tree->addOwnr<Stack>()->node();
-    stack->active = true;
+    // stack->active = true;
 
     dynamic_ubo = new UBO("dynamic_ubo");
 
@@ -38,14 +38,12 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
         
-        auto &engine = Engine::getInstance();
-        
         engine.dynamic_ubo->upload();
 
         engine.tree->run();
 
         engine.gui->draw(); 
-
+        
     });
 
 };
@@ -67,6 +65,7 @@ void Engine::init() {
     model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[0]); 
 
+    ((Node*)shaders)->childrens[2]->update();
 
     // auto an = controllers->add(new Node{"Art-Net"});
 

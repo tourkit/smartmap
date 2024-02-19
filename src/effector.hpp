@@ -12,7 +12,7 @@ struct Effector   {
 
     File * file;
 
-    std::string source;
+    std::string source();
     
     Effector();
 

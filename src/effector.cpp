@@ -16,7 +16,7 @@ void Effector::import(File *file) {
     ranges.clear();
 
     int range_count = 0;
-    source = file->data;
+    auto source = file->data;
     std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*)?)?)?\))");
     std::sregex_iterator next(source.begin(), source.end(), regex);
     std::sregex_iterator end;
@@ -30,13 +30,6 @@ void Effector::import(File *file) {
         range_count++;
 
     }
-
-    std::istringstream iss(source);
-    std::string line;
-    for (int i = 0 ; i < range_count ; i++) std::getline(iss, line);
-    source.clear();
-    while (std::getline(iss, line)) source += line + "\n";
-
 
     args.resize(0);
     
@@ -53,4 +46,26 @@ void Effector::import(File *file) {
         }
     }
 
+}
+
+std::string Effector::source() { 
+    
+    auto out_code = file->data;
+
+    size_t pos = 0;
+    while ((pos = out_code.find("//", pos)) != std::string::npos) {
+
+        size_t end = out_code.find("\n", pos);
+        if (end == std::string::npos) end = out_code.length();
+        out_code.erase(pos, end - pos);
+
+    }
+
+    std::string out_code_without_blank_lines;
+    std::istringstream iss(out_code);
+    std::string line;
+    while (std::getline(iss, line)) if (!line.empty()) out_code_without_blank_lines += line + "\n";
+    
+    return out_code_without_blank_lines; 
+    
 }

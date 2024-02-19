@@ -2,6 +2,7 @@
 #include "log.hpp"
 
 #include <GL/gl3w.h>
+#include <chrono>
 
 Shader::Shader() { }
 
@@ -72,6 +73,8 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     glLinkProgram( id );
 
     loaded = true;
+
+    last_change = std::chrono::system_clock::now();
 
     use();
 
