@@ -1,4 +1,4 @@
-#include "nodes.hpp"
+#include "callbacks.hpp"
 
 #include "node.hpp"
 #include "file.hpp"
@@ -10,7 +10,7 @@
 #include "drawcall.hpp"
 #include "engine.hpp"
 
-void Nodes::init() {
+void Callbacks::init() {
 
     // ////////// xxx.HPP 
     
@@ -91,7 +91,7 @@ void Nodes::init() {
 
         auto ptr = new Ptr<Model>(model);
 
-        _this->referings.push_back(engine.stack->childrens[0]->node());
+        _this->referings.push_back(ptr->node()); 
         
         return (ptr)->node();
 
@@ -113,7 +113,13 @@ void Nodes::init() {
         model->addFX(bad);
 
         auto dc = _this->parent()->is_a<DrawCall>();
-        if (dc) dc->update();
+        if (dc) {
+
+            dc->update();
+
+            _this->referings.push_back(node);
+
+        }
 
         return _this;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-struct Nodes  {
+struct Callbacks  {
 
     static void init();
 

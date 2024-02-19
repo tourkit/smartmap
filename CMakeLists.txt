@@ -34,7 +34,7 @@ add_executable(smartmap
     src/entry.cpp
     
     src/node.cpp
-    src/nodes.cpp
+    src/callbacks.cpp
     
     src/window.cpp
     src/fps.cpp
