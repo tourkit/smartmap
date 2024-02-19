@@ -144,11 +144,15 @@ using namespace ImGui;
             
         }else {
 
-            static bool holding = false;
+            static bool mouse_down = false;
 
-            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { holding = true; }
+            static Node* s = nullptr;
+
+            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
+
+            if (mouse_down) if (ImGui::IsMouseReleased(0)) Engine::getInstance().selected = s;
             
-            if (holding && ImGui::IsItemHovered() && ImGui::IsMouseReleased(0)) { Engine::getInstance().selected = node; }
+            if (ImGui::IsMouseReleased(0)) mouse_down = false;
 
         }
 
