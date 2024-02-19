@@ -68,4 +68,8 @@ std::string Effector::source() {
     
     return out_code_without_blank_lines; 
     
+    // or...
+    // size_t pos = file->data.find("void");
+    // return std::string(&file->data[pos]);
+    
 }
