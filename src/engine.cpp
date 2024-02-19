@@ -52,18 +52,12 @@ void Engine::init() {
     tree = new Node("tree");
 
     auto models = tree->addOwnr<Node>("Models");
-
     models->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<Model>(node->is_a<File>())->referings.push_back(node); return _this; });
-
+    models->addList(&models->addOwnr<Directory>("assets/model/")->hide()->childrens);
+    
     auto shaders = tree->addOwnr<Node>("Shaders");
-
     shaders->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<Effector>(node->is_a<File>())->referings.push_back(node); return _this; });
-
-    auto shaders_dir = new Ownr<Directory>("assets/shaders/");
-    shaders->addList(&shaders_dir->childrens);
-
-    auto models_dir = new Ownr<Directory>("assets/model/");
-    models->addList(&models_dir->childrens);
+    shaders->addList(&shaders->addOwnr<Directory>("assets/shaders/")->hide()->childrens);
 
     stack = tree->addOwnr<Stack>()->node();
     // stack->active = true;
@@ -72,12 +66,13 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
+
     auto dc = stack->addOwnr<DrawCall>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[0]); 
 
-    // auto an = controllers->add(new Node{"Art-Net"});
+    // auto an = controllers->add(new Node{"Art-Net"});3
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
 

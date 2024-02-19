@@ -48,8 +48,9 @@ struct UntypedNode {
     std::vector<Node*> referings;
  
     std::vector<Node*> childrens;
+    std::vector<Node*> hidden_childrens;
 
-    bool active = false, locked = false, loaded = false;
+    bool active = false, locked = false, loaded = false, hidden = false;
 
     UntypedNode(std::string name = "node", glm::vec4 color = {1,1,1,1});
 
@@ -62,6 +63,8 @@ struct UntypedNode {
     NodesList* updateRefs(Node* of);
 
     void addList(NodeList *nodes);
+
+    Node* hide();
     
     virtual Node* add(void *node);
 

@@ -80,7 +80,18 @@ void Callbacks::init() {
     
     NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
 
-    NODE<DrawCall>::onadd<Model>([](Node*_this,Node*node){ return (new Ptr<Model>(node->is_a<Model>()))->node(); });
+    NODE<DrawCall>::onadd<Model>([](Node*_this,Node*node){
+
+        auto dc = _this->is_a<DrawCall>();
+        auto model = node->is_a<Model>();
+
+        dc->vbo.import(model->file);  
+
+        auto x = new Ptr<Model>(model);
+
+        return x->node(); 
+        
+    });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         

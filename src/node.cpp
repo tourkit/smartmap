@@ -17,7 +17,9 @@
 
         auto t_childrens = childrens;
         for (auto c : t_childrens) delete c;
-        t_childrens.resize(0);
+
+        t_childrens = hidden_childrens;
+        for (auto c : t_childrens) delete c;
 
         if (parent_node) parent_node->remove(node());
 
@@ -80,6 +82,16 @@
         for (auto c:childrens) c->runCB(cb);
 
         if(cb) cb(node());
+
+    }
+
+    Node* UntypedNode::hide() { 
+
+        parent_node->remove(node());
+
+        parent()->hidden_childrens.push_back(node()); 
+
+        return node();
 
     }
 

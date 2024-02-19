@@ -172,6 +172,8 @@ using namespace ImGui;
 
 
 void TreeWidget::drawNode(Node* node) { 
+
+    if (node->hidden) return;
     
     ImGui::TableNextRow();
 
