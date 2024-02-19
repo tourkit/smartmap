@@ -43,6 +43,18 @@ void Engine::run() {
 
 };
 
+template <typename T>
+static Node* addFolder(std::string name, std::string path) {
+
+
+    auto folder = engine.tree->addOwnr<Node>(name);
+    folder->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<T>(node->is_a<File>())->referings.push_back(node); return _this; });
+    folder->addList(&folder->addOwnr<Directory>(path)->hide()->childrens);
+
+    return folder->node();
+
+}
+
 void Engine::init() {
 
     Callbacks::init();
@@ -51,13 +63,9 @@ void Engine::init() {
 
     tree = new Node("tree");
 
-    auto models = tree->addOwnr<Node>("Models");
-    models->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<Model>(node->is_a<File>())->referings.push_back(node); return _this; });
-    models->addList(&models->addOwnr<Directory>("assets/model/")->hide()->childrens);
-    
-    auto shaders = tree->addOwnr<Node>("Shaders");
-    shaders->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<Effector>(node->is_a<File>())->referings.push_back(node); return _this; });
-    shaders->addList(&shaders->addOwnr<Directory>("assets/shaders/")->hide()->childrens);
+    auto models = addFolder<Model>("Model", "assets/model/");
+
+    auto shaders = addFolder<Effector>("Shaders", "assets/shaders/");
 
     stack = tree->addOwnr<Stack>()->node();
     // stack->active = true;

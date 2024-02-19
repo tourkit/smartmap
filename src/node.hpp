@@ -7,6 +7,7 @@
 #include <typeindex>
 #include <functional>
 #include "log.hpp"
+#include "directory.hpp"
 
 #include <boost/type_index.hpp>
 
@@ -16,8 +17,9 @@
 struct File;
 
 struct Node;
-struct NodesList;
     
+using NodeList = std::vector<Node*>;
+
 template <typename T>
 struct Editor  {
 
@@ -26,8 +28,6 @@ struct Editor  {
     Editor(std::function<void(Node*,T*)> cb) { Editor<T>::cb = cb; };
 
 };
-
-using NodeList = std::vector<Node*>;
 
 struct UntypedNode {
 
@@ -60,7 +60,7 @@ struct UntypedNode {
     
     Node* parent();
 
-    NodesList* updateRefs(Node* of);
+    NodeList* updateRefs(Node* of);
 
     void addList(NodeList *nodes);
 
@@ -136,13 +136,7 @@ struct UntypedNode {
 
 };
 
-struct NodesList : UntypedNode {
 
-    std::vector<UntypedNode*> list;
-
-    NodesList (std::vector<UntypedNode*> list = {}) : list(list) {}
-
-};
 
 struct Any {};
 struct Passing {};
@@ -229,6 +223,7 @@ struct TypedNode : UntypedNode {
         return UntypedNode::add(node);
 
     }
+
 
     TypedNode(TypedNode<Any>* other) : TypedNode<Any>(other->ptr) { stored_type = other->type(); }
 

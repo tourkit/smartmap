@@ -11,7 +11,7 @@
 #include "engine.hpp"
 
 void Callbacks::init() {
-
+    
     // ////////// xxx.HPP 
     
     // NODE<xxx>::oncreate([](Node* node, xxx *x){ });
@@ -27,9 +27,14 @@ void Callbacks::init() {
         
     // });
 
-    ////////// FILE.HPP 
+    // NODE<Folder>::oncreate([](Node* node, Folder *folder){ 
 
-    NODE<File>::oncreate([](Node* node, File *file){ if (file->loaded) node->name = file->name+"."+file->extension+""; });
+
+
+
+    // });
+
+    ////////// FILE.HPP 
 
     NODE<File>::onrun([](Node* node, File *file){ 
 
@@ -92,24 +97,7 @@ void Callbacks::init() {
         return x->node(); 
         
     });
-
-    // NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
-        
-    //     auto dc = _this->is_a<DrawCall>();
-    //     auto file = node->is_a<File>();
-
-    //     dc->vbo.import(file);
-        
-    //     dc->update();
-
-    //     auto ptr = new Ptr<Model>(model);
-
-    //     _this->referings.push_back(ptr->node()); 
-        
-    //     return (ptr)->node();
-
-    // });
-
+    
     ////////// MODEL.HPP 
 
     NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->file->name; });
@@ -155,5 +143,9 @@ void Callbacks::init() {
         for (auto f : dir->list) node->addOwnr<File>(f);
         
     });
+
+
+
+
 
 }

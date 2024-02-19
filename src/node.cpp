@@ -122,11 +122,9 @@
 
     }
 
-    NodesList* UntypedNode::updateRefs(Node* of) { 
+    NodeList* UntypedNode::updateRefs(Node* of) { 
 
-        std::vector<UntypedNode*> list;
-
-        return new NodesList(list);
+        return nullptr;
 
     }
 
