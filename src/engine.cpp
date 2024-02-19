@@ -19,11 +19,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
 
     gui = new GUI(window.id);
 
-    tree = new Node("tree");
-
-    stack = tree->addOwnr<Stack>()->node();
-    // stack->active = true;
-
     dynamic_ubo = new UBO("dynamic_ubo");
 
     static_ubo = new UBO("static_ubo");
@@ -54,33 +49,33 @@ void Engine::init() {
     
     Editors::init();
 
+    tree = new Node("tree");
+
+    auto models = tree->addOwnr<Node>("Models");
+
+    models->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<Model>(node->is_a<File>())->referings.push_back(node); return _this; });
+
+    auto shaders = tree->addOwnr<Node>("Shaders");
+
+    shaders->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<Effector>(node->is_a<File>())->referings.push_back(node); return _this; });
+
+    auto shaders_dir = new Ownr<Directory>("assets/shaders/");
+    shaders->addList(&shaders_dir->childrens);
+
+    auto models_dir = new Ownr<Directory>("assets/model/");
+    models->addList(&models_dir->childrens);
+
+    stack = tree->addOwnr<Stack>()->node();
+    // stack->active = true;
+
     PLOGD << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
 
-    auto models = tree->addOwnr<Directory>("assets/model/");
-    auto shaders = tree->addOwnr<Directory>("assets/shaders/");
     auto dc = stack->addOwnr<DrawCall>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[0]); 
-
-    // auto models = tree->add("Models");
-
-    auto models_n = tree->addOwnr<Node>("Models");
-
-    models_n->onadd<File>([](Node* _this, Node* node){
-
-        PLOGD << "O";
-        return node;
-
-    });
-
-    models_n->add(models->childrens[0]);
-
-
-    ((Node*)shaders)->childrens[2]->update();
-
 
     // auto an = controllers->add(new Node{"Art-Net"});
 

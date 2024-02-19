@@ -80,6 +80,8 @@ void Callbacks::init() {
     
     NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
 
+    NODE<DrawCall>::onadd<Model>([](Node*_this,Node*node){ return (new Ptr<Model>(node->is_a<Model>()))->node(); });
+
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
         auto dc = _this->is_a<DrawCall>();
@@ -101,7 +103,7 @@ void Callbacks::init() {
 
     NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->file->name; });
 
-    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return node; });
+    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return (new Ptr<Effector>(node->is_a<Effector>()))->node(); });
 
     NODE<Model>::onadd<File>([](Node*_this,Node*node){ 
         

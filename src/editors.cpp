@@ -151,11 +151,17 @@ void Editors::init() {
 
     ////////// Effector.HPP 
 
-    Editor<Effector>([](Node* node, Effector *effector){ });
+    Editor<Effector>([](Node* node, Effector *effector){ Editor<File>::cb(node, effector->file); });
 
     ////////// MODEL.HPP 
 
-    Editor<Model>([](Node* node, Model *model){ Editor<Object>::cb(node, model->obj); });
+    Editor<Model>([](Node* node, Model *model){ 
+        
+        if (node->parent()->is_a<DrawCall>()) Editor<Object>::cb(node, model->obj); 
+        
+        else Editor<File>::cb(node, model->file);
+        
+    });
 
     ////////// OBJECT.HPP 
 

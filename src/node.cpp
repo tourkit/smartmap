@@ -31,6 +31,8 @@
 
     Node* UntypedNode::top() { auto top = node(); while(top->parent()) { top = top->parent(); } return top; }
 
+    void UntypedNode::addList(NodeList *nodes) { for (auto n : *nodes) add(n); }
+
     Node* UntypedNode::add(void* node_v)  {
         
         auto n = (Node*)node_v; 
@@ -80,8 +82,6 @@
         if(cb) cb(node());
 
     }
-
-    void UntypedNode::add(NodeList *nodes) { for (auto n : *nodes) add(n); }
 
     void UntypedNode::update() { 
                 

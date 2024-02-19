@@ -61,7 +61,7 @@ struct UntypedNode {
 
     NodesList* updateRefs(Node* of);
 
-    void add(NodeList *nodes);
+    void addList(NodeList *nodes);
     
     virtual Node* add(void *node);
 
@@ -102,12 +102,7 @@ struct UntypedNode {
     U* is_a() { 
         
         if (type() == typeid(U)) { return (U*)ptr_untyped(); }
-        else {
-            
-            PLOGD << "not what you think";
-            return nullptr;
-            
-        } 
+        else return nullptr;
         
     }
 
