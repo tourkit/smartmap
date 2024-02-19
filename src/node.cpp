@@ -73,6 +73,8 @@
 
     }
 
+    void UntypedNode::add(NodeList *nodes) { for (auto n : *nodes) add(n); }
+
     void UntypedNode::update() { 
                 
         if (parent_node) parent_node->update(); 

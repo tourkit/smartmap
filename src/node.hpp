@@ -27,6 +27,8 @@ struct Editor  {
 
 };
 
+using NodeList = std::vector<Node*>;
+
 struct UntypedNode {
 
     std::function<void(Node*)> onchange_cb = nullptr;
@@ -55,6 +57,8 @@ struct UntypedNode {
 
     NodesList* updateRefs(Node* of);
 
+    void add(NodeList *nodes);
+    
     virtual Node* add(void *node);
 
     uint32_t uid = 0;
