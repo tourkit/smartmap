@@ -34,7 +34,11 @@ struct UntypedNode {
     std::function<void(Node*)> onchange_cb = nullptr;
     std::function<void(Node*)> onrun_cb = nullptr;
 
-    static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onadd_cb;
+    std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
+    template <typename T>
+    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
+
+    static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
 
     std::string name;
 
@@ -212,11 +216,11 @@ struct TypedNode : UntypedNode {
         
         auto node = (TypedNode<Any>*)node_v;
 
-        if (onadd_cb[type()].size()) {
+        if (onaddtyped_cb[type()].size()) {
 
-            if (onadd_cb[type()].find(node->type()) != onadd_cb[type()].end()) {
+            if (onaddtyped_cb[type()].find(node->type()) != onaddtyped_cb[type()].end()) {
 
-                node = onadd_cb[type()][node->type()](this->node(),node->node());
+                node = onaddtyped_cb[type()][node->type()](this->node(),node->node());
 
                 if (node->node() == this->node()) return nullptr;
 
@@ -303,7 +307,7 @@ struct NODE : TypedNode<T> {
     NODE(T *ptr)  : TypedNode<T>(ptr)  { } 
 
     template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onadd_cb[typeid(T)][typeid(U)] = cb; }
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onaddtyped_cb[typeid(T)][typeid(U)] = cb; }
     
     static void oncreate(std::function<void(Node*,T*)> cb) { TypedNode<T>::oncreate_cb = cb;  }
     static void onchange(std::function<void(Node*,T*)> cb) { TypedNode<T>::onchange_cb = cb;  }

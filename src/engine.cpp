@@ -65,7 +65,22 @@ void Engine::init() {
     model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[0]); 
 
+    // auto models = tree->add("Models");
+
+    auto models_n = tree->addOwnr<Node>("Models");
+
+    models_n->onadd<File>([](Node* _this, Node* node){
+
+        PLOGD << "O";
+        return node;
+
+    });
+
+    models_n->add(models->childrens[0]);
+
+
     ((Node*)shaders)->childrens[2]->update();
+
 
     // auto an = controllers->add(new Node{"Art-Net"});
 

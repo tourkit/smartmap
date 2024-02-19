@@ -35,7 +35,15 @@
         
         auto n = (Node*)node_v; 
 
-         n->parent(node());
+        if (onadd_cb.find(n->type()) != onadd_cb.end()) {
+
+            n = onadd_cb[n->type()](this->node(),n->node());
+
+            if (n->node() == this->node()) return nullptr;
+
+        }
+
+        n->parent(node());
 
         return n;
 
