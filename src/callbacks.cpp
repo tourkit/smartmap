@@ -85,7 +85,7 @@ void Callbacks::init() {
         auto dc = _this->is_a<DrawCall>();
         auto model = node->is_a<Model>();
 
-        dc->vbo.import(model->file);  
+        dc->vbo.import(model);  
 
         auto x = new Ptr<Model>(model);
 
@@ -93,22 +93,22 @@ void Callbacks::init() {
         
     });
 
-    NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
+    // NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
         
-        auto dc = _this->is_a<DrawCall>();
-        auto file = node->is_a<File>();
+    //     auto dc = _this->is_a<DrawCall>();
+    //     auto file = node->is_a<File>();
 
-        auto model = dc->vbo.import(file);
+    //     dc->vbo.import(file);
         
-        dc->update();
+    //     dc->update();
 
-        auto ptr = new Ptr<Model>(model);
+    //     auto ptr = new Ptr<Model>(model);
 
-        _this->referings.push_back(ptr->node()); 
+    //     _this->referings.push_back(ptr->node()); 
         
-        return (ptr)->node();
+    //     return (ptr)->node();
 
-    });
+    // });
 
     ////////// MODEL.HPP 
 
@@ -116,14 +116,12 @@ void Callbacks::init() {
 
     NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return (new Ptr<Effector>(node->is_a<Effector>()))->node(); });
 
-    NODE<Model>::onadd<File>([](Node*_this,Node*node){ 
+    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
         
         auto model = _this->is_a<Model>();
-        auto file = node->is_a<File>();
+        auto effector = node->is_a<Effector>();
 
-        auto bad = new Effector(file); // unowned...
-
-        model->addFX(bad);
+        model->addFX(effector);
 
         auto dc = _this->parent()->is_a<DrawCall>();
         if (dc) {

@@ -8,7 +8,6 @@
 
 struct Object;
 struct Model;
-struct File;
 
 struct VBO : Buffer {
 
@@ -32,8 +31,8 @@ struct VBO : Buffer {
 
     void draw(int count = 1);
        
-    Model* import(File *file);
+    int import(Model *model);
 
-    std::vector<Model> models;
+    std::vector<Model*> models;
 
 };

@@ -36,7 +36,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
     for (auto m:vbo.models) { 
 
-        auto obj = m.obj; if (!obj->reserved || !obj->s->comps.size()) continue;
+        auto obj = m->obj; if (!obj->reserved || !obj->s->comps.size()) continue;
 
         std::string name = ""; for(int i =  0; i < obj->s->name.length(); i++) name += std::tolower(obj->s->name[i]); 
 
@@ -120,7 +120,7 @@ void DrawCall::update() {
     frag_shader += "vec2 uv;\n\n";
 
     std::set<Effector*> effectors;
-    for (auto &m : vbo.models) for (auto effector : m.effectors) effectors.insert(effector);
+    for (auto &m : vbo.models) for (auto effector : m->effectors) effectors.insert(effector);
     for (auto effector : effectors) frag_shader += effector->source() +"\n";
     
     // main loop
@@ -130,15 +130,15 @@ void DrawCall::update() {
     int model_id = 0;
     for (auto &model : vbo.models) {
 
-        for (int instance = 0; instance < model.obj->reserved; instance++) {
+        for (int instance = 0; instance < model->obj->reserved; instance++) {
 
-            auto name = model.file->name+std::to_string(model_id)+"["+std::to_string(instance)+"]";
+            auto name = model->file->name+std::to_string(model_id)+"["+std::to_string(instance)+"]";
 
             frag_shader += "\t// "+name+"\n";
             frag_shader += "\tuv = UV;\n";
             frag_shader += "\tcolor = vec4(1);\n";
             
-            for (auto effector : model.effectors) { 
+            for (auto effector : model->effectors) { 
                 
                 std::string arg_str;
 
