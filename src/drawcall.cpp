@@ -115,17 +115,17 @@ void DrawCall::update() {
     
     std::string frag_shader = header_commom;
     frag_shader += "in vec2 UV;\n\n";
-    frag_shader += "out vec4 out_color;\n\n";
+    frag_shader += "out vec4 COLOR;\n\n";
     frag_shader += "vec4 color;\n\n";
     frag_shader += "vec2 uv;\n\n";
 
     std::set<Effector*> effectors;
     for (auto &m : vbo.models) for (auto effector : m.effectors) effectors.insert(effector);
-    for (auto effector : effectors) frag_shader += effector->source() +"\n\n";
+    for (auto effector : effectors) frag_shader += effector->source() +"\n";
     
     // main loop
     frag_shader += "\nvoid main() {\n\n";
-    frag_shader += "\tout_color = vec4(0);\n\n";
+    frag_shader += "\tCOLOR = vec4(0);\n\n";
 
     int model_id = 0;
     for (auto &model : vbo.models) {
@@ -155,7 +155,7 @@ void DrawCall::update() {
                 frag_shader += "\t"+effector->file->name+"("+arg_str+");\n";
             }
 
-            frag_shader += "\tif (uv.x+uv.y>0) out_color += color;\n\n";
+            frag_shader += "\tif (uv.x+uv.y>0) COLOR += color;\n\n";
 
         }
 
@@ -180,7 +180,8 @@ void DrawCall::update() {
 
     vert_shader += "\nvoid main() {\n\n";
 
-    vert_shader += "\tUV = TEXCOORD;\n\n";
+    vert_shader += "\tUV = TEXCOORD;\n";
+    vert_shader += "\tUV.y = 1-UV.y;\n\n";
 
     vert_shader += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 
