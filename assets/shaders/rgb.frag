@@ -1,1 +1,10 @@
-void rgb(float r, float g, float b) { color = color * vec4 (r, g,b,1); } 
+//red(0,1,1)
+//green(0,1,1)
+//blue(0,1,1)
+
+
+void rgba(float red, float green, float blue) { 
+
+    color = color * vec4 (red, green, blue, 1);  
+
+}
