@@ -207,21 +207,23 @@ struct TypedNode : UntypedNode {
 
     Node* add(void *node_v) override { 
         
-        auto node = (TypedNode<Any>*)node_v;
+        auto n = (TypedNode<Any>*)node_v;
+
+        if (n->parent() == node()) return nullptr;
 
         if (onaddtyped_cb[type()].size()) {
 
-            if (onaddtyped_cb[type()].find(node->type()) != onaddtyped_cb[type()].end()) {
+            if (onaddtyped_cb[type()].find(n->type()) != onaddtyped_cb[type()].end()) {
 
-                node = onaddtyped_cb[type()][node->type()](this->node(),node->node());
+                n = onaddtyped_cb[type()][n->type()](node(),n->node());
 
-                if (node->node() == this->node()) return nullptr;
+                if (n->node() == this->node()) return nullptr;
 
             }
 
         }
 
-        return UntypedNode::add(node);
+        return UntypedNode::add(n);
 
     }
 

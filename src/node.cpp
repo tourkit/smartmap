@@ -38,6 +38,8 @@
     Node* UntypedNode::add(void* node_v)  {
         
         auto n = (Node*)node_v; 
+        
+        if (n->parent() == node()) return nullptr;
 
         if (onadd_cb.find(n->type()) != onadd_cb.end()) {
 
