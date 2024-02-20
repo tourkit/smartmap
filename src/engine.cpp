@@ -10,6 +10,7 @@
 #include "ubo.hpp"
 #include "node.hpp"
 #include "atlas.hpp"
+#include "artnet.hpp"
 
 #include "callbacks.hpp"
 
@@ -46,8 +47,7 @@ void Engine::run() {
 template <typename T>
 static Node* addFolder(std::string name, std::string path) {
 
-
-    auto folder = engine.tree->addOwnr<Node>(name);
+    auto folder = engine.tree->addOwnr<Node>(name)->close();
     folder->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<T>(node->is_a<File>())->referings.push_back(node); return _this; });
     folder->addList(&folder->addOwnr<Directory>(path)->hide()->childrens);
 
@@ -68,7 +68,7 @@ void Engine::init() {
     auto shaders = addFolder<Effector>("Shaders", "assets/shaders/");
 
     stack = tree->addOwnr<Stack>()->node();
-    // stack->active = true;
+    stack->active = true;
 
     PLOGD << "Engine initialized";
 
@@ -79,6 +79,8 @@ void Engine::init() {
     auto model = dc->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[0]); 
+
+    tree->addOwnr<Artnet>()->get()->callback = [](Artnet *_this){ PLOGD << "gummy bear"; };
 
     // auto an = controllers->add(new Node{"Art-Net"});3
 

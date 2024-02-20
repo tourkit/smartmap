@@ -50,7 +50,7 @@ struct UntypedNode {
     std::vector<Node*> childrens;
     std::vector<Node*> hidden_childrens;
 
-    bool active = false, locked = false, loaded = false, hidden = false;
+    bool active = false, locked = false, loaded = false, hidden = false, open = true;
 
     UntypedNode(std::string name = "node", glm::vec4 color = {1,1,1,1});
 
@@ -65,6 +65,7 @@ struct UntypedNode {
     void addList(NodeList *nodes);
 
     Node* hide();
+    Node* close();
     
     virtual Node* add(void *node);
 

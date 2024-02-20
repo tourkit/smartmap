@@ -19,7 +19,7 @@ struct Artnet {
 
   std::function<void(Artnet*)> callback = [](Artnet *_this){ };
 
-  Artnet(const char* ip);
+  Artnet(const char* ip = nullptr);
 
   ~Artnet();
 

@@ -59,9 +59,10 @@ void TreeWidget::drawChildrens(Node* node) {
 bool TreeWidget::TreeViewNode(Node* node) {
 using namespace ImGui;
 
-    ImGuiTreeNodeFlags flags =  ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow ;
+    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick ;
 
     if (!node->childrens.size()) flags |= ImGuiTreeNodeFlags_Leaf;
+    if (node->open) flags |= ImGuiTreeNodeFlags_DefaultOpen;
 
     ImGuiContext& g = *GImGui;
     ImGuiWindow* window = GetCurrentWindow();
@@ -86,7 +87,7 @@ using namespace ImGui;
         ImVec4 node_color = *(ImVec4*)&node->color;
         
         if (hovered) node_color = ImVec4(1, .4, 0, 1);
-        else if (engine.selected) node_color.w = .75; 
+        else if (engine.selected) node_color.w = .65; 
         
         ImGui::PushStyleColor(ImGuiCol_Text, node_color);
 

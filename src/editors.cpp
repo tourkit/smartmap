@@ -15,6 +15,7 @@
 #include "shader.hpp"
 #include "effector.hpp"
 #include "engine.hpp"
+#include "artnet.hpp"
 
 void Editors::init() {
 
@@ -30,6 +31,60 @@ void Editors::init() {
 
         Editor<Buffer>::cb(node, ubo); 
         
+    });
+
+    ////////// VBO.HPP 
+    
+    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
+
+    ////////// Artnet.HPP 
+    
+    Editor<Artnet>([](Node*node,Artnet* an){ 
+            ImGui::Text("yellowp "); 
+
+        for (auto &u : an->universes) {
+            ImGui::Text(("u "+std::to_string(u.first)).c_str()); 
+
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+            ImGui::SetWindowFontScale(.6666);
+
+            auto window_width = ImGui::GetWindowWidth();
+
+            int cells_count = 48, cell_min = 0, cell_max = 255;
+            int cell_width = window_width / cells_count - 2;
+            for (int i = 0; i < u.second.data.size(); i++) {
+
+                ImGui::PushID(i);
+
+                if (!(i%cells_count)) ImGui::NewLine();
+                ImGui::SameLine(((i%cells_count)*20)+8); 
+
+                ImGuiDataType_ datatype = ImGuiDataType_U8;
+
+                if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &u.second.data[i],  &cell_min,   &cell_max,   "")) { 
+                            
+                    
+                }
+
+                ImGui::SameLine(0);
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
+                ImGui::Text(std::to_string(i).c_str());
+
+                ImGui::PopID();
+
+            }
+            ImGui::SetWindowFontScale(1);
+
+            ImGui::PopStyleVar(5);
+
+
+        }
+
+
     });
 
     ////////// VBO.HPP 

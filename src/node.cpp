@@ -85,6 +85,12 @@
 
     }
 
+    Node* UntypedNode::close() { 
+
+        open = false;
+        return node();
+    }
+
     Node* UntypedNode::hide() { 
 
         parent_node->remove(node());
