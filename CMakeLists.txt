@@ -53,7 +53,6 @@ add_executable(smartmap
     src/gui.cpp
     src/tree.cpp
     src/editor.cpp
-    src/editors.cpp
 
 
     src/messagequeue.cpp

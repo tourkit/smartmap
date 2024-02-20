@@ -4,7 +4,7 @@
 #include "effector.hpp"
 #include "drawcall.hpp"
 #include "gui.hpp"
-#include "editors.hpp"
+#include "editor.hpp"
 #include "file.hpp"
 #include "gui.hpp"
 #include "ubo.hpp"
@@ -72,6 +72,7 @@ void Engine::init() {
 
     PLOGD << "Engine initialized";
 
+
     ///////////////////////////////////////////////////////////////////
 
     auto dc = stack->addOwnr<DrawCall>()->select();
@@ -79,7 +80,13 @@ void Engine::init() {
     model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[0]); 
 
-    tree->addOwnr<Artnet>();
+    gui->editors.back()->locked = true;
+    // gui->editors.push_back(new EditorWidget());
+    // gui->editors.back()->selected = model;
+    // gui->editors.back()->locked = true;
+    // gui->editors.push_back(new EditorWidget());
+    // gui->editors.back()->selected = tree->addOwnr<Artnet>()->node();
+    // gui->editors.back()->locked = true;
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
 

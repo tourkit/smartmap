@@ -1,7 +1,8 @@
 #pragma once
 
 #include "gui.hpp"
-#include "node.hpp"
+
+struct Node;
 
 struct EditorWidget : GUI::Window {
 
@@ -14,3 +15,5 @@ struct EditorWidget : GUI::Window {
     void draw() override;
 
 };
+
+struct Editors  { static void init(); };
