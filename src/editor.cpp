@@ -48,12 +48,12 @@ static void draw_raw(void *data, size_t size) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
-    ImGui::SetWindowFontScale(.6666);
+    ImGui::SetWindowFontScale(.8);
 
     auto window_width = ImGui::GetWindowWidth()-15;
 
     int cell_width = 20;
-    int cell_margin = 4;
+    int cell_margin = 1;
 
     int cells_per_line = (float)window_width/(cell_width+cell_margin);
 
