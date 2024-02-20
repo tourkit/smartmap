@@ -50,23 +50,34 @@ static void draw_raw(void *data, size_t size) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
     ImGui::SetWindowFontScale(.6666);
 
-    auto window_width = ImGui::GetWindowWidth();
+    auto window_width = ImGui::GetWindowWidth()-15;
 
-    int cells_count = 48, cell_min = 0, cell_max = 255;
-    int cell_width = window_width / cells_count - 2;
+    int cell_width = 20;
+    int cell_margin = 4;
+
+    int cells_per_line = (float)window_width/(cell_width+cell_margin);
+
+    uint8_t ndata = 0;
+    uint8_t cell_min = 0;
+    uint8_t cell_max = 255;
+
     for (int i = 0; i < size; i++) {
 
         ImGui::PushID(i);
 
-        if (!(i%cells_count)) ImGui::NewLine();
-        ImGui::SameLine(((i%cells_count)*20)+8); 
+        if (!(i%cells_per_line)) ImGui::NewLine();
+        ImGui::SameLine(((i%cells_per_line)*(cell_width+cell_margin))); 
 
         ImGuiDataType_ datatype = ImGuiDataType_U8;
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, ((*(((uint8_t*)data)+i))/255.0f)*30);
 
-        if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, ((char*)data)+i,  &cell_min,   &cell_max,   "")) { 
+        if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &ndata,  &cell_min,   &cell_max,   "")) { 
                     
             
         }
+        
+        ImGui::PopStyleVar(1);
 
         ImGui::SameLine(0);
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
