@@ -17,6 +17,108 @@
 #include "engine.hpp"
 #include "artnet.hpp"
 
+#include <cstring>
+
+static void draw_definition(Object *obj) {
+
+    ImGui::Text(("char[" +std::to_string( obj->buffer->data.size()) + "]").c_str());
+
+    for (auto &o: obj->buffer->objects) {
+        
+        ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size)+"]"+" * "+std::to_string(o.reserved)).c_str());
+
+        for (auto& c : o.s->comps) {
+
+            ImGui::Text(("    "+c->name+"["+std::to_string(c->size)+"]").c_str());
+
+            for (auto& m : c->members) {
+                ImGui::Text(("      "+m.name+"["+std::to_string(m.size)+"]").c_str());                
+            }
+
+
+        }
+    }
+
+}
+
+static void draw_raw(void *data, size_t size) {
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+    ImGui::SetWindowFontScale(.6666);
+
+    auto window_width = ImGui::GetWindowWidth();
+
+    int cells_count = 48, cell_min = 0, cell_max = 255;
+    int cell_width = window_width / cells_count - 2;
+    for (int i = 0; i < size; i++) {
+
+        ImGui::PushID(i);
+
+        if (!(i%cells_count)) ImGui::NewLine();
+        ImGui::SameLine(((i%cells_count)*20)+8); 
+
+        ImGuiDataType_ datatype = ImGuiDataType_U8;
+
+        if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, ((char*)data)+i,  &cell_min,   &cell_max,   "")) { 
+                    
+            
+        }
+
+        ImGui::SameLine(0);
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
+        ImGui::Text(std::to_string(i).c_str());
+
+        ImGui::PopID();
+
+    }
+    ImGui::SetWindowFontScale(1);
+
+    ImGui::PopStyleVar(5);
+
+}
+
+static bool draw_object(void*data, Struct* s) {
+
+    int uniform_offset = 0;
+
+    bool has_changed = false;
+
+    for (auto c:s->comps) {
+                
+        ImGui::SeparatorText(c->name.c_str());
+        
+        for (auto m:c->members) {
+
+            auto name = (m.name+"##"+c->name+m.name+"uid"+std::to_string(uniform_offset)).c_str();
+
+            float *f = (float*)(((char*)data)+uniform_offset);
+
+            uniform_offset += m.size; 
+
+            if (m.type == Component::Member::Type::VEC2) { ImGui::SliderFloat2(name, f, m.range_from, m.range_to); continue; }
+            if (m.type == Component::Member::Type::VEC3) { ImGui::SliderFloat3(name, f, m.range_from, m.range_to); continue; }
+            if (m.type == Component::Member::Type::VEC4) { ImGui::SliderFloat4(name, f, m.range_from, m.range_to); continue; }
+
+            auto type = ImGuiDataType_Float;
+
+            if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
+            if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
+            if (m.type == Component::Member::Type::UI32) type = ImGuiDataType_U16;
+
+            if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to))  has_changed = true;
+        }
+        
+    }
+
+    return has_changed;
+            
+ }
+
+
 void Editors::init() {
 
     // ////////// xxx.HPP 
@@ -43,44 +145,10 @@ void Editors::init() {
             ImGui::Text("yellowp "); 
 
         for (auto &u : an->universes) {
+
             ImGui::Text(("u "+std::to_string(u.first)).c_str()); 
 
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
-            ImGui::SetWindowFontScale(.6666);
-
-            auto window_width = ImGui::GetWindowWidth();
-
-            int cells_count = 48, cell_min = 0, cell_max = 255;
-            int cell_width = window_width / cells_count - 2;
-            for (int i = 0; i < u.second.data.size(); i++) {
-
-                ImGui::PushID(i);
-
-                if (!(i%cells_count)) ImGui::NewLine();
-                ImGui::SameLine(((i%cells_count)*20)+8); 
-
-                ImGuiDataType_ datatype = ImGuiDataType_U8;
-
-                if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &u.second.data[i],  &cell_min,   &cell_max,   "")) { 
-                            
-                    
-                }
-
-                ImGui::SameLine(0);
-                ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
-                ImGui::Text(std::to_string(i).c_str());
-
-                ImGui::PopID();
-
-            }
-            ImGui::SetWindowFontScale(1);
-
-            ImGui::PopStyleVar(5);
-
+            draw_raw(&u.second.data[0], u.second.data.size());
 
         }
 
@@ -223,11 +291,8 @@ void Editors::init() {
     Editor<Object>([](Node* node, Object *obj){
         
         static int elem_current = 0;
-        static std::string uid = "123";
 
-        Buffer* buffer = obj->buffer;
-
-        if (buffer->objects.size()) {
+        if (obj->buffer->objects.size()) {
 
             int max = obj->reserved-1;
             int min = 0;
@@ -235,104 +300,17 @@ void Editors::init() {
 
             if (ImGui::SliderInt("instance##current", &elem_current, min, max)) { }
 
-            ImGui::SameLine(); if (ImGui::Button("add")) {
+            ImGui::SameLine(); if (ImGui::Button("add")) { obj->push(); node->update(); }
 
-                obj->push();
-
-                node->update();
-
-            }
-
-            if (!obj->reserved) return;
-
-            int uniform_offset = obj->offset;
-
-            for (auto c:obj->s->comps) {
-                        
-                ImGui::SeparatorText(c->name.c_str());
-                
-                for (auto m:c->members) {
-
-                    auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
-
-                    auto data = &buffer->data[uniform_offset+(elem_current*obj->s->size)];
-                    uniform_offset += m.size; 
-
-                    if (m.type == Component::Member::Type::VEC2) { ImGui::SliderFloat2(name, (float*)data, m.range_from, m.range_to); continue; }
-                    if (m.type == Component::Member::Type::VEC3) { ImGui::SliderFloat3(name, (float*)data, m.range_from, m.range_to); continue; }
-                    if (m.type == Component::Member::Type::VEC4) { ImGui::SliderFloat4(name, (float*)data, m.range_from, m.range_to); continue; }
-
-                    auto type = ImGuiDataType_Float;
-
-                    if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
-                    if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
-                    if (m.type == Component::Member::Type::UI32) type = ImGuiDataType_U16;
-
-                    if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to))  buffer->update();
-                }
-                
-            }
+            if (obj->reserved) if (draw_object(obj->data()+(elem_current*obj->s->size), obj->s)) node->update(); 
             
         }
 
         //// RAW VIEW
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
-        ImGui::SetWindowFontScale(.6666);
-
-        auto window_width = ImGui::GetWindowWidth();
-
-        int cells_count = 48, cell_min = 0, cell_max = 255;
-        int cell_width = window_width / cells_count - 2;
-        for (int i = 0; i < buffer->data.size(); i++) {
-
-            ImGui::PushID(i);
-
-            if (!(i%cells_count)) ImGui::NewLine();
-            ImGui::SameLine(((i%cells_count)*20)+8); 
-
-            ImGuiDataType_ datatype = ImGuiDataType_U8;
-
-            if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &buffer->data[i],  &cell_min,   &cell_max,   "")) { 
-                        
-                buffer->update();
-                
-            }
-
-            ImGui::SameLine(0);
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
-            ImGui::Text(std::to_string(i).c_str());
-
-            ImGui::PopID();
-
-        }
-        ImGui::SetWindowFontScale(1);
-
-        ImGui::PopStyleVar(5);
         
-        ImGui::Separator();
-
-        ImGui::Text(("char[" +std::to_string(buffer->data.size()) + "]").c_str());
-
-        for (auto &o:buffer->objects) {
-            
-            ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size)+"]"+" * "+std::to_string(o.reserved)).c_str());
-
-            for (auto& c : o.s->comps) {
-
-                ImGui::Text(("    "+c->name+"["+std::to_string(c->size)+"]").c_str());
-
-                for (auto& m : c->members) {
-                    ImGui::Text(("      "+m.name+"["+std::to_string(m.size)+"]").c_str());                
-                }
-
-
-            }
-        }
+        ImGui::Separator();ImGui::Separator(); draw_raw(obj->data(), obj->buffer->data.size());
+        
+        ImGui::Separator();ImGui::Separator(); draw_definition(obj);
 
     });
 
