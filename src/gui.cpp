@@ -117,6 +117,31 @@ void GUI::draw() {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   
   newframe(); 
+
+      
+  if (ImGui::BeginMainMenuBar()) {
+      
+      if (ImGui::BeginMenu("new")) {  
+
+          if (ImGui::MenuItem("node")) {
+
+              // Engine::getInstance().tree->add(new Node());
+
+          }
+          if (ImGui::MenuItem("editor")) editors.push_back(new EditorWidget());
+
+          ImGui::EndMenu();
+      }
+
+      ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*3);
+      ImGui::TextUnformatted(std::to_string((int)std::round(ImGui::GetIO().Framerate)).c_str());
+
+      ImGui::EndMainMenuBar();
+
+  }
+
+
+
   if (draw_gui) {
     ImGui::ShowDemoWindow();
     for (auto window : Window::pool) { window->drawFull(); } 

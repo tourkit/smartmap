@@ -6,18 +6,18 @@ EditorWidget::EditorWidget() : GUI::Window("Editor")  {  }
 
 void EditorWidget::draw()  { 
     
-    if (!engine.selected) return;
+    if (!selected || !locked) selected = engine.selected;
 
-    std::string name = engine.selected->name;
+    std::string name = selected->name;
 
-    if (engine.selected->parent()) { name = engine.selected->parent()->name + "::" + name;  }
+    if (selected->parent()) { name = selected->parent()->name + "::" + name;  }
     // auto last_parent = selected->parent();  while (last_parent) { name = last_parent->name + "::" + name; last_parent = last_parent->parent(); }
 
-    ImGui::Text("%s", name.c_str());
+    ImGui::Text("%s", name.c_str()); ImGui::SameLine(); ImGui::Checkbox("lock##locked", &locked);
     
     // if (ImGui::BeginMenuBar()) { ImGui::EndMenuBar(); }
 
-    engine.selected->editor();
+    selected->editor();
 
 }
 

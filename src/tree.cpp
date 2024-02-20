@@ -11,26 +11,6 @@ void TreeWidget::draw()  {
   ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
 
     if (!selected) selected = engine.tree;
-    
-    if (ImGui::BeginMainMenuBar()) {
-        
-        if (ImGui::BeginMenu("new")) {  
-
-            if (ImGui::MenuItem("node")) {
-
-                // Engine::getInstance().tree->add(new Node());
-
-            }
-
-            ImGui::EndMenu();
-        }
-
-        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*3);
-        ImGui::TextUnformatted(std::to_string((int)std::round(ImGui::GetIO().Framerate)).c_str());
-
-        ImGui::EndMainMenuBar();
-
-    }
 
     std::string search_str = "filter";
     ImGui::PushItemWidth(-1);
