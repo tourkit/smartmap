@@ -74,15 +74,12 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
-
     auto dc = stack->addOwnr<DrawCall>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[0]); 
 
-    tree->addOwnr<Artnet>()->get()->callback = [](Artnet *_this){ PLOGD << "gummy bear"; };
-
-    // auto an = controllers->add(new Node{"Art-Net"});3
+    tree->addOwnr<Artnet>();
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
 

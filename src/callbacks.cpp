@@ -9,6 +9,7 @@
 #include "directory.hpp"
 #include "drawcall.hpp"
 #include "engine.hpp"
+#include "artnet.hpp"
 
 void Callbacks::init() {
     
@@ -49,6 +50,10 @@ void Callbacks::init() {
         }
 
      });
+
+    ////////// Artnet.HPP 
+
+    NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run(); });
 
     ////////// UBO.HPP 
 
