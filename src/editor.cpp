@@ -291,8 +291,11 @@ void Editors::init() {
     Editor<Object>([](Node* node, Object *obj){
         
         static int elem_current = 0;
+        static std::string uid = "123";
 
-        if (obj->buffer->objects.size()) {
+        Buffer* buffer = obj->buffer;
+
+        if (buffer->objects.size()) {
 
             int max = obj->reserved-1;
             int min = 0;
@@ -300,9 +303,43 @@ void Editors::init() {
 
             if (ImGui::SliderInt("instance##current", &elem_current, min, max)) { }
 
-            ImGui::SameLine(); if (ImGui::Button("add")) { obj->push(); node->update(); }
+            ImGui::SameLine(); if (ImGui::Button("add")) {
 
-            if (obj->reserved) if (draw_object(obj->data()+(elem_current*obj->s->size), obj->s)) node->update(); 
+                obj->push();
+
+                node->update();
+
+            }
+
+            if (!obj->reserved) return;
+
+            int uniform_offset = obj->offset;
+
+            for (auto c:obj->s->comps) {
+                        
+                ImGui::SeparatorText(c->name.c_str());
+                
+                for (auto m:c->members) {
+
+                    auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
+
+                    auto data = &buffer->data[uniform_offset+(elem_current*obj->s->size)];
+                    uniform_offset += m.size; 
+
+                    if (m.type == Component::Member::Type::VEC2) { ImGui::SliderFloat2(name, (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Component::Member::Type::VEC3) { ImGui::SliderFloat3(name, (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Component::Member::Type::VEC4) { ImGui::SliderFloat4(name, (float*)data, m.range_from, m.range_to); continue; }
+
+                    auto type = ImGuiDataType_Float;
+
+                    if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
+                    if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
+                    if (m.type == Component::Member::Type::UI32) type = ImGuiDataType_U16;
+
+                    if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to))  buffer->update();
+                }
+                
+            }
             
         }
 

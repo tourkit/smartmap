@@ -81,12 +81,12 @@ void Engine::init() {
     model->addPtr(shaders->childrens[0]); 
 
     gui->editors.back()->locked = true;
-    // gui->editors.push_back(new EditorWidget());
-    // gui->editors.back()->selected = model;
-    // gui->editors.back()->locked = true;
-    // gui->editors.push_back(new EditorWidget());
-    // gui->editors.back()->selected = tree->addOwnr<Artnet>()->node();
-    // gui->editors.back()->locked = true;
+    gui->editors.push_back(new EditorWidget());
+    gui->editors.back()->selected = model;
+    gui->editors.back()->locked = true;
+    gui->editors.push_back(new EditorWidget());
+    gui->editors.back()->selected = tree->addOwnr<Artnet>()->node();
+    gui->editors.back()->locked = true;
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
 

@@ -11,6 +11,45 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
+#include "imgui/imgui_internal.h"
+
+void GUI::Window::drawFull() { {
+
+      if (!active) return;
+
+      bool p_open = true;
+
+      ImGuiWindowFlags  flag = 0;ImGuiWindowFlags_NoTitleBar;
+
+      ImGui::Begin((name+"##"+uid).c_str(), &p_open, flag);
+
+
+
+   ImGuiWindow* window = ImGui::GetCurrentWindow();
+    if (window->SkipItems && (window->Flags & ImGuiWindowFlags_MenuBar)){
+
+    ImGui::BeginGroup(); // Backup position on layer 0 // FIXME: Misleading to use a group for that backup/restore
+    ImGui::PushID("##menubar");
+    ImRect bar_rect = window->MenuBarRect();
+    ImRect clip_rect(IM_ROUND(bar_rect.Min.x + window->WindowBorderSize), IM_ROUND(bar_rect.Min.y + window->WindowBorderSize), IM_ROUND(ImMax(bar_rect.Min.x, bar_rect.Max.x - ImMax(window->WindowRounding, window->WindowBorderSize))), IM_ROUND(bar_rect.Max.y));
+    clip_rect.ClipWith(window->OuterRectClipped);
+    ImGui::PushClipRect(clip_rect.Min, clip_rect.Max, false);
+    ImGui::PopClipRect();
+    ImGui::PopID();
+    ImGui::EndGroup(); 
+      }
+      draw();
+
+      ImGui::End();
+
+    }
+
+
+}
+
+///// GUIGUIGUIGUIGUIG
+
+
 GUI::GUI(GLFWwindow* window) {
 
   ImGui::CreateContext();
@@ -74,6 +113,8 @@ trees.push_back(new TreeWidget());
 
 }
 
+
+
 GUI::~GUI() {   
   
   ImGui_ImplOpenGL3_Shutdown();
@@ -88,27 +129,6 @@ void GUI::newframe() {
   ImGui_ImplOpenGL3_NewFrame();
   ImGui_ImplGlfw_NewFrame();
   ImGui::NewFrame();
-
-}
-
-void GUI::Window::drawFull() { 
-
-   {
-
-      if (!active) return;
-
-      bool p_open = true;
-
-      ImGuiWindowFlags  flag = 0;ImGuiWindowFlags_NoTitleBar;
-
-      ImGui::Begin((name+"##"+uid).c_str(), &p_open, flag);
-
-      draw();
-
-      ImGui::End();
-
-    }
-
 
 }
 
