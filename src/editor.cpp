@@ -279,7 +279,12 @@ void Editors::init() {
 
         ImGui::Checkbox("verbose", &verbose);
 
-        for (auto &m : engine.log.appender.list ){
+        int max_lines = 1000;
+        int to = engine.log.appender.list.size()-max_lines;
+        if (to<0)to = 0;
+        for (int i = engine.log.appender.list.size()-1; i>=to; i-- ) {
+
+            auto &m = engine.log.appender.list[i];
 
             ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
             if (m.severity == plog::Severity::warning) color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
