@@ -54,6 +54,13 @@ void Callbacks::init() {
     ////////// Artnet.HPP 
 
     NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run(); });
+    NODE<Artnet>::onchange([](Node* node, Artnet *an){ 
+
+        for (auto c :node->childrens) { delete c; };
+
+        for (auto uni :an->universes) { node->addOwnr<Node>("universe "+std::to_string(uni.first)); }
+
+    });
 
     ////////// UBO.HPP 
 

@@ -96,7 +96,11 @@ void Engine::init() {
     fixture->attributes[5].combining = 2;
     fixture->attributes[6].combining = 2;
 
-    an->get()->universes[0].remaps.push_back({0, 1, model->is_a<Model>()->obj->data(), fixture});
+    auto m = model->is_a<Model>();
+
+    an->get()->universes[0].remaps.push_back(DMX::Remap(&an->get()->universes[0].data[0], m->obj->data(), fixture, 1));
+
+    an->trigchange();
 
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
