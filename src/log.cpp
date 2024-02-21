@@ -1,12 +1,8 @@
 #include "log.hpp"
 
-#include "src/file.hpp"
+Log::Log() {
 
-Log::Log() : fileAppender(std::string(REPO_DIR+"logs.txt").c_str()) {
-
-    // plog::init(plog::debug, &consoleAppender);
-    plog::init(plog::debug, &myAppender); 
-    plog::init(plog::verbose, &fileAppender);
+    plog::init(plog::verbose, &appender); 
 
     
 }

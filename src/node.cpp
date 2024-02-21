@@ -4,8 +4,6 @@
 
     UntypedNode::UntypedNode(std::string name, glm::vec4 color) : name(name), color(color) {
 
-        PLOGV << name << " - " << type().name();
-
         uid = uid++;
         
     }

@@ -275,9 +275,28 @@ void Editors::init() {
     
     Editor<Stack>([](Node* node, Stack *log){ 
 
-        ;
-        for (auto &l : engine.log.myAppender.getMessageList() )
-        ImGui::Text(l.c_str()); 
+        static bool verbose = true;
+
+        ImGui::Checkbox("verbose", &verbose);
+
+        for (auto &m : engine.log.appender.list ){
+
+            ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+            if (m.severity == plog::Severity::warning) color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+            if (m.severity == plog::Severity::verbose) {
+                
+                if (!verbose) continue;
+                
+                color = ImVec4(0.0f, 0.0f, .8f, 1.0f);
+                
+            }
+
+            ImGui::PushStyleColor(ImGuiCol_Text, color);
+            ImGui::Text((" "+m.msg).c_str()); 
+            ImGui::PopStyleColor();
+
+
+        }
     });
 
     ////////// File.HPP 
