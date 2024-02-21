@@ -15,7 +15,9 @@ struct DMX {
     
     struct Fixture {
 
-        struct Attribute { uint8_t combining = 0; float min=0, max=1; };// !combining is JUMP member
+        Struct* s;
+
+        struct Attribute { int combining = 0; float min=0, max=1; };// !combining is JUMP member
 
         std::vector<Attribute> attributes;
 
@@ -37,6 +39,8 @@ struct DMX {
     // };
 
     std::array<uint8_t,512> data; 
+
+    int id = -1;
 
     std::vector<std::function<void(DMX*)>> callbacks;
 

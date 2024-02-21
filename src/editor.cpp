@@ -110,15 +110,15 @@ static bool draw_object(void*data, Struct* s) {
 
             uniform_offset += m.size; 
 
-            if (m.type == Component::Member::Type::VEC2) { ImGui::SliderFloat2(name, f, m.range_from, m.range_to); continue; }
-            if (m.type == Component::Member::Type::VEC3) { ImGui::SliderFloat3(name, f, m.range_from, m.range_to); continue; }
-            if (m.type == Component::Member::Type::VEC4) { ImGui::SliderFloat4(name, f, m.range_from, m.range_to); continue; }
+            if (m.type == Member::Type::VEC2) { ImGui::SliderFloat2(name, f, m.range_from, m.range_to); continue; }
+            if (m.type == Member::Type::VEC3) { ImGui::SliderFloat3(name, f, m.range_from, m.range_to); continue; }
+            if (m.type == Member::Type::VEC4) { ImGui::SliderFloat4(name, f, m.range_from, m.range_to); continue; }
 
             auto type = ImGuiDataType_Float;
 
-            if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
-            if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
-            if (m.type == Component::Member::Type::UI32) type = ImGuiDataType_U16;
+            if (m.type == Member::Type::UI8) type = ImGuiDataType_U8;
+            if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
+            if (m.type == Member::Type::UI32) type = ImGuiDataType_U16;
 
             if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to))  has_changed = true;
         }
@@ -152,6 +152,39 @@ void Editors::init() {
 
     ////////// Artnet.HPP 
     
+    Editor<DMX>([](Node*node,DMX* dmx){ 
+
+
+        // DMX is a univers
+
+        for (auto &r : dmx->remaps) {
+
+             int member_id = 0;
+
+            for (auto c:r.fixture->s->comps) {
+                        
+                ImGui::SeparatorText(c->name.c_str());
+                c->each([&](Member &m){
+
+                    ImGui::Text(m.name.c_str());
+
+                    static int e = 0;
+                    ImGui::SameLine(); ImGui::RadioButton("bypass", &r.fixture->attributes[member_id].combining , 0);
+                    ImGui::SameLine(); ImGui::RadioButton("coarse", &r.fixture->attributes[member_id].combining , 1);
+                    ImGui::SameLine(); ImGui::RadioButton("fine", &r.fixture->attributes[member_id].combining , 2);
+                    ImGui::SameLine(); ImGui::RadioButton("ultra", &r.fixture->attributes[member_id].combining , 3);
+
+                    member_id++;
+
+                });
+                
+            }
+
+        }
+
+
+    });
+
     Editor<Artnet>([](Node*node,Artnet* an){ 
             ImGui::Text("yellowp "); 
 
@@ -337,15 +370,15 @@ void Editors::init() {
                     auto data = &buffer->data[uniform_offset+(elem_current*obj->s->size)];
                     uniform_offset += m.size; 
 
-                    if (m.type == Component::Member::Type::VEC2) { ImGui::SliderFloat2(name, (float*)data, m.range_from, m.range_to); continue; }
-                    if (m.type == Component::Member::Type::VEC3) { ImGui::SliderFloat3(name, (float*)data, m.range_from, m.range_to); continue; }
-                    if (m.type == Component::Member::Type::VEC4) { ImGui::SliderFloat4(name, (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Member::Type::VEC2) { ImGui::SliderFloat2(name, (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Member::Type::VEC3) { ImGui::SliderFloat3(name, (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Member::Type::VEC4) { ImGui::SliderFloat4(name, (float*)data, m.range_from, m.range_to); continue; }
 
                     auto type = ImGuiDataType_Float;
 
-                    if (m.type == Component::Member::Type::UI8) type = ImGuiDataType_U8;
-                    if (m.type == Component::Member::Type::UI16) type = ImGuiDataType_U16;
-                    if (m.type == Component::Member::Type::UI32) type = ImGuiDataType_U16;
+                    if (m.type == Member::Type::UI8) type = ImGuiDataType_U8;
+                    if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
+                    if (m.type == Member::Type::UI32) type = ImGuiDataType_U16;
 
                     if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to))  buffer->update();
                 }

@@ -5,22 +5,9 @@
 DMX::DMX() { memset(&data[0],0,512); } 
 
 
-DMX::Fixture::Fixture(Struct* s) { 
+DMX::Fixture::Fixture(Struct* s) : s(s) {
 
-    for (auto c : s->comps) {
-
-        for (auto m: c->members){
-            
-            uint8_t q = 1;
-            if (m.type == Component::Member::Type::VEC2) q =2;
-            if (m.type == Component::Member::Type::VEC3) q =3;
-            if (m.type == Component::Member::Type::VEC4) q =4;
-            for (int i = 0; i < q; i++) attributes.push_back({1,m.range_from,m.range_to});
-
-        }
-
-    }
-
+    for (auto c : s->comps) c->each([this](Member &m){ attributes.push_back({1,m.range_from,m.range_to}); });
 
 }
 

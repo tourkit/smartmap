@@ -7,24 +7,27 @@
 #include <vector>
 #include <string>
 #include <cstdint>
+#include <functional>
+
+
+struct Member {
+
+    std::string name;
+
+    int size;
+    // int offset;
+    float range_from,range_to;  
+    enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
+    float default_val = 0;
+
+};
+
 
 struct Component  {
     
     std::string name;
 
     static inline std::vector<Component*> pool;
-
-    struct Member {
-
-        std::string name;
-
-        int size;
-        // int offset;
-        float range_from,range_to;  
-        enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
-        float default_val = 0;
-
-    };
 
     int size;
     std::vector<Member> members;
@@ -110,6 +113,21 @@ struct Component  {
         pool.push_back(new Component{name,0});
 
         return *pool.back();
+
+    }
+
+
+    void each(std::function<void(Member &m)> cb) {
+
+        for (auto &m:members) {
+                    
+            uint8_t q = 1;
+            if (m.type == Member::Type::VEC2) q =2;
+            if (m.type == Member::Type::VEC3) q =3;
+            if (m.type == Member::Type::VEC4) q =4;
+            for (int i = 0; i < q; i++) cb(m);
+
+        }
 
     }
 

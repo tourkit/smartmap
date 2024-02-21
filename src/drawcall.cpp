@@ -82,7 +82,7 @@ std::string DrawCall::layout(UBO* ubo) {
             
             std::string type = "float";
 
-            if (m.type == Component::Member::Type::VEC2) type = "vec2";
+            if (m.type == Member::Type::VEC2) type = "vec2";
 
             comp_str += "\t"+type+" "+m.name+";\n\n";
             

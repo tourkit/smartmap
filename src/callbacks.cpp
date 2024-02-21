@@ -54,11 +54,18 @@ void Callbacks::init() {
     ////////// Artnet.HPP 
 
     NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run(); });
+
     NODE<Artnet>::onchange([](Node* node, Artnet *an){ 
 
         for (auto c :node->childrens) { delete c; };
 
-        for (auto uni :an->universes) { node->addOwnr<Node>("universe "+std::to_string(uni.first)); }
+        for (auto &uni :an->universes) { 
+
+            uni.second.id = uni.first;
+
+            node->addPtr<DMX>(&uni.second)->name = "universe "+std::to_string(uni.first);
+
+        }
 
     });
 

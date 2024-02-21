@@ -106,9 +106,9 @@ void Object::addComp(std::string component){
 
             auto w = &c[i++].get<float>();        
             (*w) = member.default_val;
-            if (member.type == Component::Member::Type::VEC2) { *(w+1) = member.default_val; }
-            if (member.type == Component::Member::Type::VEC3) { *(w+1) = member.default_val; *(w+2) = member.default_val; }
-            if (member.type == Component::Member::Type::VEC4) { *(w+1) = member.default_val; *(w+2) = member.default_val; *(w+3) = member.default_val; }
+            if (member.type == Member::Type::VEC2) { *(w+1) = member.default_val; }
+            if (member.type == Member::Type::VEC3) { *(w+1) = member.default_val; *(w+2) = member.default_val; }
+            if (member.type == Member::Type::VEC4) { *(w+1) = member.default_val; *(w+2) = member.default_val; *(w+3) = member.default_val; }
             
         }
 
