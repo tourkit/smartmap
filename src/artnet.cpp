@@ -21,7 +21,7 @@ Artnet::Artnet(const char* ip) {
     artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this) {
 
         auto *an = (Artnet*)_this;
-
+        
         if (an->universes.find(p->data.admx.universe) == an->universes.end()) an->universes[p->data.admx.universe] = new DMX{p->data.admx.universe};
 
         auto u = an->universes[p->data.admx.universe];

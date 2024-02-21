@@ -71,7 +71,7 @@ void Callbacks::init() {
 
             uni.second->id = uni.first;
 
-            node->addPtr<DMX>(&uni.second)->name = "universe "+std::to_string(uni.first);
+            node->addPtr<DMX>(uni.second)->name = "universe "+std::to_string(uni.first);
 
         }
 
