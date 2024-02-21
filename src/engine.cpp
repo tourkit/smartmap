@@ -78,7 +78,7 @@ void Engine::init() {
 
     auto dc = stack->addOwnr<DrawCall>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
-    model->addPtr(shaders->childrens[1]); 
+    model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[0]); 
 
     auto an = tree->addOwnr<Artnet>();
@@ -96,10 +96,11 @@ void Engine::init() {
     gui->editors.back()->locked = true;
 
     auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
-    fixture->attributes[3].combining = 2;
+    fixture->attributes[3].combining = 0;
     fixture->attributes[4].combining = 2;
     fixture->attributes[5].combining = 2;
     fixture->attributes[6].combining = 2;
+    fixture->attributes[7].combining = 2;
 
     auto m = model->is_a<Model>();
 
@@ -107,6 +108,9 @@ void Engine::init() {
     an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
 
     an->trigchange();
+
+    // auto p = tree->addOwnr<Node>("prout");
+    // delete p;
 
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));

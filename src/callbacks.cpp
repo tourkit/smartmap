@@ -59,7 +59,7 @@ void Callbacks::init() {
     if (an->universes.size() != size) {
         size = an->universes.size();
         // node->get<Artnet>()->trigchange();
-        PLOGD << "new universdes";
+        PLOGD << "new universes";
     }
     });
 
