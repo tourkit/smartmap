@@ -82,12 +82,17 @@ void Engine::init() {
     model->addPtr(shaders->childrens[0]); 
 
     auto an = tree->addOwnr<Artnet>();
+    an->active = true;
+
     gui->editors.back()->locked = true;
     gui->editors.push_back(new EditorWidget());
     gui->editors.back()->selected = model;
     gui->editors.back()->locked = true;
     gui->editors.push_back(new EditorWidget());
     gui->editors.back()->selected = an->node();
+    gui->editors.back()->locked = true;
+    gui->editors.push_back(new EditorWidget());
+    gui->editors.back()->selected = stack;
     gui->editors.back()->locked = true;
 
     auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);

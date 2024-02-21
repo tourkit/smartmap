@@ -1,5 +1,6 @@
 #include "editor.hpp"
 
+#include "log.hpp"
 #include "node.hpp"
 #include "gui.hpp"
 #include "buffer.hpp"
@@ -273,9 +274,10 @@ void Editors::init() {
     ////////// Log.HPP 
     
     Editor<Stack>([](Node* node, Stack *log){ 
-        static File file(REPO_DIR+"logs.txt");
-        file.reload();
-        ImGui::Text(&file.data[0]); 
+
+        ;
+        for (auto &l : engine.log.myAppender.getMessageList() )
+        ImGui::Text(l.c_str()); 
     });
 
     ////////// File.HPP 
