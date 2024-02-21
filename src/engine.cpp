@@ -103,8 +103,8 @@ void Engine::init() {
 
     auto m = model->is_a<Model>();
 
-    an->get()->universes[0] = new DMX(0);
-    an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
+    // an->get()->universes[0] = new DMX(0);
+    // an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
 
     an->trigchange();
 

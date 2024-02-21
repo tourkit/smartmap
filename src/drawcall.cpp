@@ -24,6 +24,9 @@ void DrawCall::run() {
 
 }
 
+static std::string struct_taber = "";//"\t";
+static std::string struct_spacer = " ";//"\n\n";
+
 std::string DrawCall::layout(UBO* ubo) {
 
     std::string out = "";
@@ -42,13 +45,14 @@ std::string DrawCall::layout(UBO* ubo) {
 
         std::string Name = camel(name);
     
-        std::string struct_str = "struct "+Name+"{\n\n";
+
+        std::string struct_str = "struct "+Name+"{"+struct_spacer;
 
         int comp_id = 0;
 
         for (auto c: obj->s->comps) {
             
-            struct_str += "\t"+camel(c->name)+" "+c->name+";\n\n";
+            struct_str += struct_taber+camel(c->name)+" "+c->name+";"+struct_spacer;
             
             components.insert(c);
             
@@ -76,7 +80,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
     for (auto c: components) {
 
-        std::string comp_str = "struct "+camel(c->name)+" {\n\n";
+        std::string comp_str = "struct "+camel(c->name)+" {"+struct_spacer;
 
         for (auto &m : c->members) {
             
@@ -84,7 +88,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
             if (m.type == Member::Type::VEC2) type = "vec2";
 
-            comp_str += "\t"+type+" "+m.name+";\n\n";
+            comp_str += struct_taber+type+" "+m.name+";"+struct_spacer;
             
         }
 

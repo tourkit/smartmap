@@ -161,7 +161,7 @@ struct TypedNode : UntypedNode {
     T* get() { return ptr; }
     
     template <typename U>
-    U* get() { return (U*)ptr; }
+    TypedNode<U>* get() { return (TypedNode<U>*)this; }
     
     std::type_index type() override { return stored_type; }
 

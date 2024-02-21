@@ -53,7 +53,15 @@ void Callbacks::init() {
 
     ////////// Artnet.HPP 
 
-    NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run(); });
+    NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run(); 
+    static int size = 0;
+
+    if (an->universes.size() != size) {
+        size = an->universes.size();
+        // node->get<Artnet>()->trigchange();
+        PLOGD << "new universdes";
+    }
+    });
 
     NODE<Artnet>::onchange([](Node* node, Artnet *an){ 
 
