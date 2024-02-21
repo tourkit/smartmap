@@ -90,44 +90,13 @@ void Engine::init() {
     gui->editors.back()->selected = an->node();
     gui->editors.back()->locked = true;
 
+    auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
+    fixture->attributes[3].combining = 2;
+    fixture->attributes[4].combining = 2;
+    fixture->attributes[5].combining = 2;
+    fixture->attributes[6].combining = 2;
 
-    an->get()->universes[0].callbacks.push_back([](DMX* uni){
-
-        
-    });
-
-
-
-
-    DMX::Fixture fixture;
-    an->get()->universes[0].remaps.push_back({0,1,model->is_a<Model>()->obj->data()});
-    DMX::Remap &r = an->get()->universes[0].remaps.back();
-    r.attributes.push_back({1,0,1});
-    r.attributes.push_back({1,0,1});
-    r.attributes.push_back({1,0,1});
-    r.attributes.push_back({2,0,1});
-    r.attributes.push_back({2,0,1});
-    r.attributes.push_back({2,0,1});
-    r.attributes.push_back({2,0,1});
-
-    // auto s = model->is_a<Model>()->obj->s;
-
-    // for (auto c : s->comps) {
-
-    //     for (auto m: c->members){
-            
-    //         //hiow to kmow about combinings ? from a dmx fixture ? 
-    //         // if m.type == vec2 do next twice, 3 times if vec3 and so on 
-    //         uint8_t combining = 1;
-    //         float from = 0;
-    //         float to = 1;
-    //         r.attributes.push_back({combining,from,to});
-
-    //     }
-
-    // }
-
-    // la fixture arive par dessus la struct et comps
+    an->get()->universes[0].remaps.push_back({0, 1, model->is_a<Model>()->obj->data(), fixture});
 
 
     // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
