@@ -57,9 +57,9 @@ struct DMX {
 
         void update();
 
-        static uint16_t get16(void* data);
-        static uint32_t get24(void* data);
-        static uint32_t get32(void* data);
+        static uint16_t get16(char* data);
+        static uint32_t get24(char* data);
+        static uint32_t get32(char* data);
         
     };
     

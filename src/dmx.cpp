@@ -19,9 +19,9 @@ void DMX::update() {
 
 }
 
-uint16_t DMX::Remap::get16(void* data) { auto &ui8 = *(uint8_t*)data; return ((ui8 << 8) | ui8+1);  }
-uint32_t DMX::Remap::get24(void* data) { auto &ui8 = *(uint8_t*)data; return ((ui8 << 16) | (ui8+1 << 8) | ui8+2);  }
-uint32_t DMX::Remap::get32(void* data) { auto &ui8 = *(uint8_t*)data; return ((ui8 << 24) | (ui8+1 << 16) | (ui8+2 << 8) | ui8+3);  }
+uint16_t DMX::Remap::get16(char* data) { return ((data[0] << 8) | data[1]);  }
+uint32_t DMX::Remap::get24(char* data) { return ((data[0] << 16) | (data[1] << 8) | data[2]);  }
+uint32_t DMX::Remap::get32(char* data) { return ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]);  }
 
 void DMX::Remap::update() {
     
