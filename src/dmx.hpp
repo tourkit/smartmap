@@ -53,7 +53,7 @@ struct DMX {
         DMX::Fixture *fixture;
         uint16_t quantity;
 
-        Remap(void *src, void *dst, DMX::Fixture *f, uint16_t q = 1) : src((char*)src), dest((char*)dst), fixture(f), quantity(q) {}
+        Remap(void *src, void *dst, DMX::Fixture *f, uint16_t q = 1) : src((char*)src), dest((char*)dst), fixture(f), quantity(q) { update(); }
 
         void update();
 

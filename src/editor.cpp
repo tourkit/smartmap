@@ -164,19 +164,20 @@ void Editors::init() {
             for (auto c:r.fixture->s->comps) {
                         
                 ImGui::SeparatorText(c->name.c_str());
-                c->each([&](Member &m){
+                
+                for (auto m:c->members) {
 
                     ImGui::Text(m.name.c_str());
 
                     static int e = 0;
-                    ImGui::SameLine(); ImGui::RadioButton("bypass", &r.fixture->attributes[member_id].combining , 0);
-                    ImGui::SameLine(); ImGui::RadioButton("coarse", &r.fixture->attributes[member_id].combining , 1);
-                    ImGui::SameLine(); ImGui::RadioButton("fine", &r.fixture->attributes[member_id].combining , 2);
-                    ImGui::SameLine(); ImGui::RadioButton("ultra", &r.fixture->attributes[member_id].combining , 3);
+                    ImGui::SameLine(); ImGui::RadioButton(("bypass##rbt"+std::to_string(member_id)).c_str(), &r.fixture->attributes[member_id].combining , 0);
+                    ImGui::SameLine(); ImGui::RadioButton(("coarse##rbt"+std::to_string(member_id)).c_str(), &r.fixture->attributes[member_id].combining , 1);
+                    ImGui::SameLine(); ImGui::RadioButton(("fine##rbt"+std::to_string(member_id)).c_str(), &r.fixture->attributes[member_id].combining , 2);
+                    ImGui::SameLine(); ImGui::RadioButton(("ultra##rbt"+std::to_string(member_id)).c_str(), &r.fixture->attributes[member_id].combining , 3);
 
                     member_id++;
 
-                });
+                }
                 
             }
 

@@ -33,7 +33,7 @@ void DMX::Remap::update() {
 
         for (int i = 0; i < fixture->attributes.size(); i++) { 
 
-            float target;
+            float target = 0;
             auto c = fixture->attributes[i].combining;
             if (c==1) target      = GMAui2f[(uint8_t)*data];
             else if (c==2) target = get16(data)/65535.0f;
