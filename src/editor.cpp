@@ -194,7 +194,7 @@ void Editors::init() {
 
             ImGui::Text(("u "+std::to_string(u.first)).c_str()); 
 
-            draw_raw(&u.second.data[0], u.second.data.size());
+            draw_raw(&u.second->data[0], u.second->data.size());
 
         }
 
@@ -283,6 +283,7 @@ void Editors::init() {
         int to = engine.log.appender.list.size()-max_lines;
         if (to<0)to = 0;
         for (int i = engine.log.appender.list.size()-1; i>=to; i-- ) {
+        // for (auto &m : engine.log.appender.list ){
 
             auto &m = engine.log.appender.list[i];
 
@@ -416,9 +417,9 @@ void Editors::init() {
 
         //// RAW VIEW
         
-        ImGui::Separator();ImGui::Separator(); draw_raw(obj->data(), obj->buffer->data.size());
+        // ImGui::Separator();ImGui::Separator(); draw_raw(obj->data(), obj->buffer->data.size());
         
-        ImGui::Separator();ImGui::Separator(); draw_definition(obj);
+        // ImGui::Separator();ImGui::Separator(); draw_definition(obj);
 
     });
 

@@ -9,11 +9,14 @@
 
 #include "dmx.hpp"
 
+// template <int I>
+// struct Universe : DMX { Universe() : DMX() { id = I; } };
+
 struct Artnet {
 
   artnet_node artnet;
 
-  std::map<uint16_t, DMX> universes;
+  std::map<uint16_t, DMX *> universes;
 
   std::vector<uint16_t> listening = {0};
 

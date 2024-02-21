@@ -163,7 +163,7 @@ void GUI::draw() {
 
 
   if (draw_gui) {
-    ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
     for (auto window : Window::pool) { window->drawFull(); } 
     
 

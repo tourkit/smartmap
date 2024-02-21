@@ -1,8 +1,10 @@
 #include "dmx.hpp"
 #include "struct.hpp"
+#include "log.hpp"
 #include "component.hpp"
+#include "artnet.hpp"
 
-DMX::DMX() { memset(&data[0],0,512); } 
+DMX::DMX(int id) : id(id) { memset(&data[0],0,512); PLOGV << "universe " << id;  } 
 
 
 DMX::Fixture::Fixture(Struct* s) : s(s) {

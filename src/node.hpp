@@ -201,7 +201,7 @@ struct TypedNode : UntypedNode {
 
         UntypedNode::run();
 
-        if(onrun_cb) { onrun_cb(node(),this->ptr); }
+        if(active && onrun_cb) { onrun_cb(node(),this->ptr); }
 
     }
 

@@ -40,7 +40,7 @@ struct DMX {
 
     std::array<uint8_t,512> data; 
 
-    int id = -1;
+    int id;
 
     std::vector<std::function<void(DMX*)>> callbacks;
 
@@ -65,6 +65,6 @@ struct DMX {
     
     std::vector<Remap> remaps; 
 
-    DMX();
+    DMX(int id = -1);
 
 };

@@ -61,7 +61,7 @@ void Callbacks::init() {
 
         for (auto &uni :an->universes) { 
 
-            uni.second.id = uni.first;
+            uni.second->id = uni.first;
 
             node->addPtr<DMX>(&uni.second)->name = "universe "+std::to_string(uni.first);
 
