@@ -10,7 +10,6 @@ void DMX::update() {
 
     // auto frames = FPS::pool[0]->fps/std::max(44.0f,fps.fps);
 
-    fps.run();
 
     for (auto r : remaps) {
 
@@ -32,7 +31,7 @@ void DMX::update() {
                 // range remap
                 target = (target * (r.attributes[i].max - r.attributes[i].min)) + r.attributes[i].min;
 
-                (*(r.dest+i+pos)) = target;
+                (*(((float*)r.dest)+i+pos)) = target;
                 chan += c;
                 
             }
