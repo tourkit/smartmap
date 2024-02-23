@@ -79,8 +79,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     use();
 
-    PLOGV<<"create";
-
 }
 
 void ShaderProgram::use() {  glUseProgram(id); }
