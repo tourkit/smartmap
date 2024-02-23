@@ -96,7 +96,7 @@ void Engine::init() {
     gui->editors.back()->locked = true;
 
     auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
-    fixture->attributes[3].combining = 0;
+    fixture->attributes[0].combining = 0;
     fixture->attributes[4].combining = 2;
     fixture->attributes[5].combining = 2;
     fixture->attributes[6].combining = 2;

@@ -43,10 +43,9 @@ void DMX::Remap::update() {
             else if (c==4) target = get32(data)/4294967295.0f;
 
             // range remap
-            target = (target * (fixture->attributes[i].max - fixture->attributes[i].min)) + fixture->attributes[i].min;
-
-            (*(((float*)dest)+i+pos)) = target;
-
+            if (c) (*(((float*)dest)+i+pos)) = (target * (fixture->attributes[i].max - fixture->attributes[i].min)) + fixture->attributes[i].min;
+            else c = 1;
+            
             data += c;
             
         }
