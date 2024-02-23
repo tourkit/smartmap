@@ -117,7 +117,7 @@ void Window::keypress() {
                 else Engine::getInstance().gui->draw_gui = true;
                 break;
             default:
-                PLOGV << "keypress : " << (int)key ;
+                PLOGV << "key " << (int)key ;
                 break;
             }
         }
