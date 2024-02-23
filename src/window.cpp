@@ -60,7 +60,7 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
 #endif
 #endif
     if (uid_callbacks) {
-        initUidCallbacks();
+        keypress();
     }
 
     glfwMakeContextCurrent(id);
@@ -102,7 +102,7 @@ void Window::setSize(uint16_t width, uint16_t height) {
 
 Window::~Window() { glfwTerminate(); }
 
-void Window::initUidCallbacks() {
+void Window::keypress() {
     glfwSetKeyCallback(id, [](GLFWwindow* id, int key, int scancode, int action, int mode) {
         (void)scancode;
         (void)mode;

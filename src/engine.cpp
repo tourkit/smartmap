@@ -78,7 +78,7 @@ void Engine::init() {
 
     auto dc = stack->addOwnr<DrawCall>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
-    model->addPtr(shaders->childrens[2]); 
+    model->addPtr(shaders->childrens[1]); 
     model->addPtr(shaders->childrens[0]); 
 
     auto an = tree->addOwnr<Artnet>();
@@ -96,7 +96,7 @@ void Engine::init() {
     gui->editors.back()->locked = true;
 
     auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
-    fixture->attributes[0].combining = 0;
+    // fixture->attributes[0].combining = 0;
     fixture->attributes[4].combining = 2;
     fixture->attributes[5].combining = 2;
     fixture->attributes[6].combining = 2;

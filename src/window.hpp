@@ -39,7 +39,7 @@ struct Window {
 
     void render(std::function<void()> callback = [](){});
 
-    void initUidCallbacks();
+    void keypress();
     
     std::function<void()> clickCallBack = []() { /*  PLOGV << "click"; */ };
 
