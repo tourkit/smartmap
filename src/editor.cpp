@@ -271,7 +271,16 @@ void Editors::init() {
     
     Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
     
-    Editor<Layer>([](Node* node, Layer *layer){ Editor<ShaderProgram>::cb(node, &layer->shader); });
+    Editor<Layer>([](Node* node, Layer *layer){ 
+
+        using namespace ImGui;
+        InputScalarN("size",    ImGuiDataType_U32,  &layer->fb.width, 2);
+
+        // ImGui::
+        
+        Editor<ShaderProgram>::cb(node, &layer->shader); 
+        
+    });
 
     ////////// Log.HPP 
     

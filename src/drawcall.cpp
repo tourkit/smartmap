@@ -8,11 +8,18 @@
 #include <unordered_set>
 #include <set>
 
+
+Layer::Layer(uint16_t width, uint16_t height) : fb(width, height) {}
+
+Layer::Layer() : fb(engine.window.width,engine.window.height) {}
+
+
 static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
 
 DrawCall::DrawCall() {
 
     engine.dynamic_ubo->subscribers.push_back(&this->shader);
+    PLOGD<<"no";
 
 }
 

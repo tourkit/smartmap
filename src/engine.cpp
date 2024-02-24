@@ -44,7 +44,17 @@ void Engine::run() {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        if (engine.dc) engine.dc->run();
+        for (auto n : engine.stack->childrens) {
+
+            // auto layer = n->is_a<Layer>(); 
+
+            // if (!layer) continue;
+
+            // layer->texture.bind();
+
+            // engine.dc->vbo.draw();
+
+        }
 
         engine.gui->draw(); 
         
@@ -84,8 +94,8 @@ void Engine::init() {
 
     auto dc = stack->addOwnr<Layer>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
-    model->addPtr(shaders->childrens[1]); 
     model->addPtr(shaders->childrens[0]); 
+    model->addPtr(shaders->childrens[1]); 
 
     auto an = tree->addOwnr<Artnet>();
     an->active = true;

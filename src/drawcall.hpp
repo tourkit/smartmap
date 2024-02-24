@@ -3,7 +3,6 @@
 #include "vbo.hpp"
 #include "shader.hpp"
 #include "framebuffer.hpp"
-#include "texture.hpp"
 
 struct UBO;
 struct FrameBuffer;
@@ -28,13 +27,15 @@ struct Layer : DrawCall {
 
     FrameBuffer fb;
 
-    Texture texture;
-
     void run() override {
 
         fb.bind();
 
         DrawCall::run();
     }
+    
+    Layer(uint16_t width, uint16_t height);
+
+    Layer();
     
 };
