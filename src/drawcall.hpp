@@ -27,12 +27,7 @@ struct Layer : DrawCall {
 
     FrameBuffer fb;
 
-    void run() override {
-
-        fb.bind();
-
-        DrawCall::run();
-    }
+    void run() override;
     
     Layer(uint16_t width, uint16_t height);
 

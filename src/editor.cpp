@@ -17,6 +17,7 @@
 #include "effector.hpp"
 #include "engine.hpp"
 #include "artnet.hpp"
+#include "texture.hpp"
 
 #include <cstring>
 
@@ -276,7 +277,10 @@ void Editors::init() {
         using namespace ImGui;
         InputScalarN("size",    ImGuiDataType_U32,  &layer->fb.width, 2);
 
-        // ImGui::
+        float ratio = layer->fb.texture->height/(float)layer->fb.texture->width;
+        auto nw = std::min(layer->fb.texture->width,(GLuint)512);
+
+        ImGui::Image(&layer->fb.texture->id, ImVec2(nw,nw*ratio));
         
         Editor<ShaderProgram>::cb(node, &layer->shader); 
         
@@ -284,19 +288,19 @@ void Editors::init() {
 
     ////////// Log.HPP 
     
-    Editor<Stack>([](Node* node, Stack *log){ 
+    Editor<Log>([](Node* node, Log *log){ 
 
         static bool verbose = true;
 
         ImGui::Checkbox("verbose", &verbose);
 
         int max_lines = 1000;
-        int to = engine.log.appender.list.size()-max_lines;
+        int to = log->appender.list.size()-max_lines;
         if (to<0)to = 0;
-        for (int i = engine.log.appender.list.size()-1; i>=to; i-- ) {
-        // for (auto &m : engine.log.appender.list ){
+        for (int i = log->appender.list.size()-1; i>=to; i-- ) {
+        // for (auto &m : log->appender.list ){
 
-            auto &m = engine.log.appender.list[i];
+            auto &m = log->appender.list[i];
 
             ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
             if (m.severity == plog::Severity::warning) color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
@@ -304,7 +308,7 @@ void Editors::init() {
                 
                 if (!verbose) continue;
                 
-                color = ImVec4(0.0f, 0.0f, .8f, 1.0f);
+                color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
                 
             }
 
@@ -315,6 +319,10 @@ void Editors::init() {
 
         }
     });
+
+    ////////// Stack.HPP 
+    
+    Editor<Stack>([](Node* node, Stack *log){ Editor<Log>::cb(node, &engine.log); });
 
     ////////// File.HPP 
 

@@ -62,6 +62,8 @@ struct GUI {
   
   bool draw_gui = true;
 
+  bool demo = false;
+  
   GUI(GLFWwindow* window);
 
   ~GUI();

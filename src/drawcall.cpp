@@ -13,6 +13,14 @@ Layer::Layer(uint16_t width, uint16_t height) : fb(width, height) {}
 
 Layer::Layer() : fb(engine.window.width,engine.window.height) {}
 
+void Layer::run() {
+
+    fb.bind();
+
+    DrawCall::run();
+
+}
+
 
 static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
 

@@ -108,7 +108,7 @@ editors.push_back(new EditorWidget());
 trees.push_back(new TreeWidget());
 
 
-    
+    ImGui::GetIO().FontAllowUserScaling = true;
 
 
 }
@@ -148,6 +148,7 @@ void GUI::draw() {
               // Engine::getInstance().tree->add(new Node());
 
           }
+          ImGui::Checkbox("demo", &demo);
           if (ImGui::MenuItem("editor")) editors.push_back(new EditorWidget());
 
           ImGui::EndMenu();
@@ -163,7 +164,9 @@ void GUI::draw() {
 
 
   if (draw_gui) {
-    // ImGui::ShowDemoWindow();
+
+    if (demo) ImGui::ShowDemoWindow();
+
     for (auto window : Window::pool) { window->drawFull(); } 
     
 

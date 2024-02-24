@@ -4,13 +4,13 @@
 #include "freetype.hpp" 
 
 
-Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+Texture::Texture(uint32_t width, uint32_t height, uint32_t unit, int mipmaps, GLenum informat, GLenum outformat) {
 
     create(width,height,unit,mipmaps,informat,outformat);
 
 }
 
-void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+void Texture::create(uint32_t width, uint32_t height, uint32_t unit, int mipmaps, GLenum informat, GLenum outformat) {
 
     this->unit = unit;
     this->width = width;
@@ -19,10 +19,9 @@ void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLen
     this->outformat = outformat;
     this->mipmaps = mipmaps;
 
-
-    pool.push_back(this); 
-
     glGenTextures(1, &id); 
+
+    PLOGV << width << " x " << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
 
     glActiveTexture(GL_TEXTURE0+unit); 
 
@@ -39,7 +38,7 @@ void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLen
 
 }
 
-Texture::Texture(void* data, GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) { 
+Texture::Texture(void* data, uint32_t width, uint32_t height, uint32_t unit, int mipmaps, GLenum informat, GLenum outformat) { 
 
         create(width,height,unit,mipmaps,informat,outformat);
         
@@ -59,7 +58,7 @@ Texture::Texture(std::string path)   {
 
  }
 
-void Texture::addChar(const char* chr,  int size, GLuint offset_x, GLuint offset_y) { 
+void Texture::addChar(const char* chr,  int size, uint32_t offset_x, uint32_t offset_y) { 
 
     Freetype fr(chr, size);
 
@@ -67,7 +66,7 @@ void Texture::addChar(const char* chr,  int size, GLuint offset_x, GLuint offset
 
 }
 
-void Texture::addImage(std::string path, GLuint offset_x, GLuint offset_y) { 
+void Texture::addImage(std::string path, uint32_t offset_x, uint32_t offset_y) { 
 
     Image img(path);  
 
@@ -81,18 +80,15 @@ void Texture::destroy() {
     
     if (id) glDeleteTextures(1, &id); 
 
-    auto it = std::find(pool.begin(), pool.end(), this);
-    if (it != pool.end()) pool.erase(it);
-
 }
 
 void Texture::bind(int unit) { this->unit = unit; bind(); }
 
 void Texture::bind() { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0); }
 
-Texture::operator GLuint() { return id; }
+Texture::operator uint32_t() { return id; }
                     
-void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+void Texture::write(void* data, uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offset_y, uint32_t unit, int mipmaps, GLenum informat, GLenum outformat) {
 
     glActiveTexture(GL_TEXTURE0+unit); 
     
@@ -108,7 +104,7 @@ void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GL
 
 }
 
-void Texture::read(const Texture* texture, GLuint offset_x, GLuint offset_y) {
+void Texture::read(const Texture* texture, uint32_t offset_x, uint32_t offset_y) {
     
     glCopyImageSubData(texture->id, GL_TEXTURE_2D, 0, 0,0, 0, id, GL_TEXTURE_2D, 0, offset_x, offset_y, 0, texture->width,texture->height, 1);
 
