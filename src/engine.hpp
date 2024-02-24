@@ -1,6 +1,8 @@
 #pragma once
 
 #include "window.hpp"
+#include "shader.hpp"
+#include "drawcall.hpp"
 #include "ubo.hpp"
 
 #include "log.hpp"
@@ -30,6 +32,8 @@ struct Engine {
     Node* selected = tree;
     
     Atlas *atlas;
+
+    DrawCall *dc = nullptr;
     
     int sequid = 1000;
 

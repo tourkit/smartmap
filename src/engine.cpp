@@ -12,6 +12,7 @@
 #include "atlas.hpp"
 #include "artnet.hpp"
 #include "dmx.hpp"
+#include "ndi.hpp"
 
 #include "callbacks.hpp"
 
@@ -24,6 +25,8 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
     dynamic_ubo = new UBO("dynamic_ubo");
 
     static_ubo = new UBO("static_ubo");
+
+    // dc = new DrawCall();
 
 }
 
@@ -38,6 +41,10 @@ void Engine::run() {
         engine.dynamic_ubo->upload();
 
         engine.tree->run();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        if (engine.dc) engine.dc->run();
 
         engine.gui->draw(); 
         
@@ -73,10 +80,9 @@ void Engine::init() {
 
     PLOGD << "Engine initialized";
 
-
     ///////////////////////////////////////////////////////////////////
 
-    auto dc = stack->addOwnr<DrawCall>()->select();
+    auto dc = stack->addOwnr<Layer>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[1]); 
     model->addPtr(shaders->childrens[0]); 
@@ -106,8 +112,16 @@ void Engine::init() {
 
     an->get()->universes[0] = new DMX(0);
     an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
-
     an->trigchange();
+
+    auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
+
+    // ndi->onrun([](Node* n) { 
+
+    //     auto sender = n->is_a<NDI::Sender>();
+    //     sender->send()
+
+    //  });
 
     // auto p = tree->addOwnr<Node>("prout");
     // delete p;

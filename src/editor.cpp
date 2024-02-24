@@ -270,6 +270,8 @@ void Editors::init() {
     ////////// DRAWCALL.HPP 
     
     Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
+    
+    Editor<Layer>([](Node* node, Layer *layer){ Editor<ShaderProgram>::cb(node, &layer->shader); });
 
     ////////// Log.HPP 
     
@@ -352,7 +354,7 @@ void Editors::init() {
 
     Editor<Model>([](Node* node, Model *model){ 
         
-        if (node->parent()->is_a<DrawCall>()) Editor<Object>::cb(node, model->obj); 
+        if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj); 
         
         else Editor<File>::cb(node, model->file);
         

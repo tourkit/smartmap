@@ -10,6 +10,7 @@
 #include "drawcall.hpp"
 #include "engine.hpp"
 #include "artnet.hpp"
+#include "ndi.hpp"
 
 void Callbacks::init() {
     
@@ -102,22 +103,30 @@ void Callbacks::init() {
 
     });
 
+    NODE<Stack>::onadd<Layer>([](Node*_this,Node*node){ 
+
+        node->is_a<Layer>()->update();
+
+        return node;
+
+    });
+
     NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ return node; });
 
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){ return node; });
 
     ////////// DRAWCALL.HPP 
 
-    NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){  if (dc->shader.loaded) dc->run(); });
+    NODE<Layer>::onrun([](Node* node, Layer *layer){  if (layer->shader.loaded) layer->run(); });
     
-    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
+    NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
 
-    NODE<DrawCall>::onadd<Model>([](Node*_this,Node*node){
+    NODE<Layer>::onadd<Model>([](Node*_this,Node*node){
 
-        auto dc = _this->is_a<DrawCall>();
+        auto layer = _this->is_a<Layer>();
         auto model = node->is_a<Model>();
 
-        dc->vbo.import(model);  
+        layer->vbo.import(model);  
 
         auto x = new Ptr<Model>(model);
 
@@ -138,7 +147,7 @@ void Callbacks::init() {
 
         model->addFX(effector);
 
-        auto dc = _this->parent()->is_a<DrawCall>();
+        auto dc = _this->parent()->is_a<Layer>();
         if (dc) {
 
             dc->update();
@@ -170,6 +179,11 @@ void Callbacks::init() {
         for (auto f : dir->list) node->addOwnr<File>(f);
         
     });
+
+    ////////// NDI.HPP 
+
+    NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ sender->init(); });
+    NODE<NDI::Sender>::onrun([](Node* node, NDI::Sender *sender){ sender->tick(); });
 
 
 

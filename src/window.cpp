@@ -65,7 +65,7 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
 
     glfwMakeContextCurrent(id);
 
-    glfwSwapInterval(1); // VSYNC 
+    glfwSwapInterval(0); // VSYNC 
     
     gl3wInit();
 

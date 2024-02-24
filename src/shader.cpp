@@ -68,7 +68,7 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     frag.create(frag_src,0);
     glAttachShader(id, frag.id); 
 
-    vert.create(vert_src,1);
+    vert.create(vert_src,1); 
     glAttachShader(id, vert.id); 
 
     glLinkProgram( id );
