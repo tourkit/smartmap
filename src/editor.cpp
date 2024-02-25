@@ -18,6 +18,7 @@
 #include "engine.hpp"
 #include "artnet.hpp"
 #include "texture.hpp"
+#include "atlas.hpp"
 
 #include <cstring>
 
@@ -461,6 +462,10 @@ void Editors::init() {
     ////////// DRAWCALL.HPP 
     
     Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
+
+    ////////// Atlas.HPP 
+    
+    Editor<Atlas>([](Node* node, Atlas *atlas){ Editor<Texture>::cb(node, atlas->texture); });
 
 }
 

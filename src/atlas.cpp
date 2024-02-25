@@ -6,6 +6,8 @@
 #include "texture.hpp"
 #include "ubo.hpp"
 
+#include "image.hpp"
+
 
 Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)  {
 
@@ -66,13 +68,14 @@ void Atlas::fromDir(std::string path) {
     clear();
 
     Directory dir(path);
-
+    
     for (auto &file:dir.list) {
+        
+        Image img(file);
 
-        PLOGD << file;
-
+        if (img.is_image()) { }
+        
     }
-    for (auto &file:dir.list) {if (((Image*)&file)->is_image()) { }}
     return;
 
     // for (auto c : childrens) {

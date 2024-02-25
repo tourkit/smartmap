@@ -128,11 +128,8 @@ void Engine::init() {
     an->trigchange();
 
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
-
-    tree->addOwnr<Texture>("assets/media/boy.jpg")->select();
     
-    // new Atlas(4096, 4096, "assets/media/");
-    // tree->addOwnr<Atlas>(4096, 4096, "assets/media/");
+    tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
     
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
     

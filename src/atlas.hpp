@@ -1,9 +1,11 @@
 #pragma once
 
 #include "RectangleBinPack/MaxRectsBinPack.h"
-#include "image.hpp"
+#include <string>
 
-struct UBO; struct ShaderProgram; struct Image; struct Texture;
+struct Texture;
+struct UBO; 
+struct ShaderProgram; 
  
 struct Atlas {
 
