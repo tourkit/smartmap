@@ -57,16 +57,12 @@ std::string Effector::source() {
 
         size_t end = out_code.find("\n", pos);
         if (end == std::string::npos) end = out_code.length();
-        out_code.erase(pos, end - pos);
+        out_code.erase(pos, end - pos+1);
 
     }
 
-    std::string out_code_without_blank_lines;
-    std::istringstream iss(out_code);
-    std::string line;
-    while (std::getline(iss, line)) if (!line.empty()) out_code_without_blank_lines += line + "\n";
     
-    return out_code_without_blank_lines.c_str(); 
+    return out_code.c_str(); 
     
     // or...
     // size_t pos = file->data.find("void");

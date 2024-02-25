@@ -74,7 +74,6 @@ static Node* addFolder(std::string name, std::string path) {
 
 void Engine::init() {
 
-
     Callbacks::init();
     
     Editors::init();

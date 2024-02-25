@@ -40,6 +40,7 @@ void DrawCall::run() {
 
 static std::string struct_taber = "";//"\t";
 static std::string struct_spacer = " ";//"\n\n";
+static std::string comment_line  = "///////////////////////////////////////////\n\n";
 
 std::string DrawCall::layout(UBO* ubo) {
 
@@ -114,7 +115,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
     if (is_reserved) { 
         
-        out = comps_str+out+"layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+attr_str+" };\n\n";
+        out = comps_str+comment_line+out+comment_line+"layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+attr_str+" };\n\n";
     
     }
 
@@ -126,13 +127,15 @@ void DrawCall::update() {
 
     // COMMON
 
-    std::string header_commom = "#version 430 core\n\n";
+    std::string header_commom = "#version 430 core\n\n"+comment_line;
 
     header_commom += layout(engine.dynamic_ubo);
 
     // FRAGMENT
     
     std::string frag_shader = header_commom;
+
+    frag_shader += comment_line;
 
     frag_shader += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
 
@@ -141,12 +144,15 @@ void DrawCall::update() {
     frag_shader += "vec4 color;\n\n";
     frag_shader += "vec2 uv;\n\n";
 
+    frag_shader += comment_line;
+
     std::set<Effector*> effectors;
     for (auto &m : vbo.models) for (auto effector : m->effectors) effectors.insert(effector);
     for (auto effector : effectors) frag_shader += effector->source() +"\n";
     
     // main loop
-    frag_shader += "\nvoid main() {\n\n";
+    frag_shader += "\n"+comment_line;
+    frag_shader += "void main() {\n\n";
     frag_shader += "\tCOLOR = vec4(0);\n\n";
 
     int model_id = 0;
