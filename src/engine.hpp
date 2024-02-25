@@ -31,7 +31,7 @@ struct Engine {
     
     Atlas *atlas;
 
-    DrawCall *dc = nullptr;
+    Node *dc = nullptr;
     
     int sequid = 1000;
 

@@ -39,9 +39,11 @@ void Engine::run() {
         
         engine.dynamic_ubo->upload();
 
+        engine.tree->each<Texture>([](Node *n, Texture* tex) { tex->bind(); });
+
         engine.tree->run();
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // for (auto n : engine.stack->childrens) {
 
@@ -49,9 +51,8 @@ void Engine::run() {
 
         //     if (!layer) continue;
 
-            // layer->fb.texture->bind();
+        //     layer->fb.texture->bind();
 
-            // engine.dc->vbo.draw();
 
         // }
 
@@ -85,18 +86,14 @@ void Engine::init() {
     auto shaders = addFolder<Effector>("Shaders", "assets/shaders/");
 
     stack = tree->addOwnr<Stack>()->select();
-    stack->active = true;
-
-    // dc = new DrawCall();
-
-    // dc->vbo.import(models->childrens[0]->is_a<Model>());
+    stack->active = true; 
 
     PLOGD << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
 
-    auto dc = stack->addOwnr<Layer>()->select();
-    auto model = dc->addPtr(models->childrens[0]); 
+    auto layer1 = stack->addOwnr<Layer>()->select();
+    auto model = layer1->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
     model->addPtr(shaders->childrens[1]); 
     model->addPtr(shaders->childrens[2]); 
@@ -104,6 +101,7 @@ void Engine::init() {
     auto an = tree->addOwnr<Artnet>();
     an->active = true;
 
+    gui->editors.back()->selected = layer1;
     gui->editors.back()->locked = true;
     gui->editors.push_back(new EditorWidget());
     gui->editors.back()->selected = model;
@@ -131,7 +129,10 @@ void Engine::init() {
 
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
 
-    auto tex = tree->addOwnr<Texture>("assets/media/boy.jpg")->get();
+    tree->addOwnr<Texture>("assets/media/boy.jpg")->select();
+    
+    // new Atlas(4096, 4096, "assets/media/");
+    // tree->addOwnr<Atlas>(4096, 4096, "assets/media/");
     
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
     
@@ -151,6 +152,11 @@ void Engine::init() {
     // delete p;
 
 
-    // atlas = (Atlas*)tree->add(new Atlas(4096, 4096, "assets/media/"));
+
+    // auto dc = tree->addOwnr<DrawCall>();;
+    // this->dc = dc->node();
+    // dc->name = "engine";
+
+    // dc->addPtr(models->childrens[0]);
 
 }

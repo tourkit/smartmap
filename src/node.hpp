@@ -120,6 +120,19 @@ struct UntypedNode {
         }       
         
     }
+
+    template <typename V>
+    void each(std::function<void(Node*, V*)> cb) { 
+        
+        for (auto c : childrens) {
+
+            auto isa = ((UntypedNode*)c)->is_a<V>();
+
+            if (isa) cb(c,isa);
+
+        }       
+        
+    }
     
     virtual std::type_index type() { return typeid(*this); }
     
