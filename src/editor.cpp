@@ -212,6 +212,7 @@ void Editors::init() {
             frageditor.SetShowWhitespaces(false);
             frageditor.SetReadOnly(false);
             frageditor.SetText(shader->frag.src); 
+            // frageditor.
             init = true;
         }
 
@@ -227,7 +228,7 @@ void Editors::init() {
 	    // frageditor.SetLanguageDefinition(lang);
 
         // frageditor.SetPalette(TextEditor::GetDarkPalette());
-        
+
         frageditor.Render("frageditor");
         // verteditor.Render("frageditor");
         
@@ -235,7 +236,7 @@ void Editors::init() {
 
             auto x = frageditor.GetText();
 
-            memset(&x[x.size()-2],0,1);
+            memset(&x[frageditor.GetText().size()-2],0,1);
 
             shader->create(x,shader->vert.src);
 

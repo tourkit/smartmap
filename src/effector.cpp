@@ -66,7 +66,7 @@ std::string Effector::source() {
     std::string line;
     while (std::getline(iss, line)) if (!line.empty()) out_code_without_blank_lines += line + "\n";
     
-    return out_code_without_blank_lines; 
+    return out_code_without_blank_lines.c_str(); 
     
     // or...
     // size_t pos = file->data.find("void");

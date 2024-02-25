@@ -7,7 +7,7 @@ void rectangle(vec2 pos, vec2 size, float angle) {
     pos *= 1+size;
     pos -= size*.5;
     uv -= pos; 
-    //uv = rotate(uv*AR,-angle)*(1./AR);
+    
     uv /= size; 
     uv += .5;
     

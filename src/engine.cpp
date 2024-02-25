@@ -96,12 +96,6 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
-
-
-    // auto x = new File("assets/model/quad.obj", 1);
-
-    // PLOGD << x->data;
-
     auto dc = stack->addOwnr<Layer>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
@@ -136,7 +130,7 @@ void Engine::init() {
 
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
 
-    // tree->addOwnr<Texture>("assets/media/boy.jpg");
+    tree->addOwnr<Texture>("assets/media/boy.jpg");
     // auto tex = new Texture("assets/media/boy.jpg");
 
     // ndi->onrun([](Node* n) { 
