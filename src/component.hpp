@@ -17,7 +17,7 @@ struct Member {
     int size;
     // int offset;
     float range_from,range_to;  
-    enum Type { UNDEFINED, F16, I8, I16, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
+    enum Type { UNDEFINED, F16, I8, I16, I32, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
     float default_val = 0;
 
 };
@@ -55,6 +55,9 @@ struct Component  {
 
         }else if (typeid(T) == typeid(int16_t)) { 
             type = Member::Type::I16; 
+
+        }else if (typeid(T) == typeid(int32_t)) { 
+            type = Member::Type::I32; 
 
         }else if (typeid(T) == typeid(glm::vec2)) { 
             type = Member::Type::VEC2; 

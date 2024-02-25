@@ -101,6 +101,7 @@ std::string DrawCall::layout(UBO* ubo) {
             std::string type = "float";
 
             if (m.type == Member::Type::VEC2) type = "vec2";
+            if (m.type == Member::Type::I32) type = "int";
 
             comp_str += struct_taber+type+" "+m.name+";"+struct_spacer;
             
@@ -132,6 +133,9 @@ void DrawCall::update() {
     // FRAGMENT
     
     std::string frag_shader = header_commom;
+
+    frag_shader += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
+
     frag_shader += "in vec2 UV;\n\n";
     frag_shader += "out vec4 COLOR;\n\n";
     frag_shader += "vec4 color;\n\n";

@@ -100,6 +100,7 @@ void Engine::init() {
     auto model = dc->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
     model->addPtr(shaders->childrens[1]); 
+    model->addPtr(shaders->childrens[2]); 
 
     auto an = tree->addOwnr<Artnet>();
     an->active = true;
@@ -121,6 +122,7 @@ void Engine::init() {
     fixture->attributes[5].combining = 2;
     fixture->attributes[6].combining = 2;
     fixture->attributes[7].combining = 2;
+    fixture->attributes[8].combining = 0;
 
     auto m = model->is_a<Model>();
 
@@ -131,6 +133,7 @@ void Engine::init() {
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
 
     tree->addOwnr<Texture>("assets/media/boy.jpg");
+
     // auto tex = new Texture("assets/media/boy.jpg");
 
     // ndi->onrun([](Node* n) { 

@@ -19,6 +19,8 @@ Model::Model(File* file, int id, int quantity) : file(file), id(id), quantity(qu
 }
 
 void Model::addFX(Effector* effector) {
+
+    /// comp creation should move in effector.cpp
     
     Component* c = Component::exist(effector->file->name.c_str());
 
@@ -29,6 +31,8 @@ void Model::addFX(Effector* effector) {
         for (auto arg : effector->args) {
 
             if (arg.first == "vec2") c->member<glm::vec2>(arg.second.c_str()); 
+
+            else if (arg.first == "int") c->member<int>(arg.second.c_str()); 
             
             else c->member<float>(arg.second.c_str()); 
 
