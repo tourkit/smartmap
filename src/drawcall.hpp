@@ -19,7 +19,8 @@ struct DrawCall {
 
     virtual void run();
 
-    std::string layout(UBO* ubo);
+    std::string dynamic_layout();
+    std::string static_layout();
 };
 
 

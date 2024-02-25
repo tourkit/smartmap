@@ -42,7 +42,92 @@ static std::string struct_taber = "";//"\t";
 static std::string struct_spacer = " ";//"\n\n";
 static std::string comment_line  = "///////////////////////////////////////////\n\n";
 
-std::string DrawCall::layout(UBO* ubo) {
+std::string DrawCall::static_layout() {
+
+    UBO* ubo = engine.static_ubo;
+
+    std::string out = "";
+    
+    std::string attr_str = "";
+
+    bool is_reserved = false;
+
+    std::set<Component*> components;
+
+    for (auto &obj : ubo->objects) {
+
+        std::string name = ""; 
+        for(int i =  0; i < obj.s->name.length(); i++) name += std::tolower(obj.s->name[i]); 
+
+        std::string Name = camel(name);
+
+        std::string struct_str = "struct "+Name+"{"+struct_spacer;
+
+        int comp_id = 0;
+
+        for (auto c: obj.s->comps) {
+            
+            struct_str += struct_taber+camel(c->name)+" "+c->name+";"+struct_spacer;
+            
+            components.insert(c);
+            
+        }
+
+        struct_str += "};\n\n";
+
+        out += struct_str;
+
+        if(obj.reserved)  {
+
+            attr_str += Name+ " "+name+"["+std::to_string(obj.reserved)+"]";
+
+            attr_str+=";";
+
+            is_reserved = true;
+
+        }
+
+    }
+
+    // component Struct
+
+    std::string comps_str = "";
+
+    for (auto c: components) {
+
+        std::string comp_str = "struct "+camel(c->name)+" {"+struct_spacer;
+
+        for (auto &m : c->members) {
+            
+            std::string type = "float";
+
+            if (m.type == Member::Type::VEC2) type = "vec2";
+            if (m.type == Member::Type::I32) type = "int";
+
+            comp_str += struct_taber+type+" "+m.name+";"+struct_spacer;
+            
+        }
+
+        comp_str += "};\n\n";
+
+        comps_str += comp_str;
+    }
+
+    if (is_reserved) { 
+        
+        out = comps_str+comment_line+out+comment_line;
+        out += "layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+attr_str+" };\n\n";
+    
+    }
+
+    return out;
+
+}
+
+
+std::string DrawCall::dynamic_layout() {
+
+    UBO* ubo = engine.dynamic_ubo;
 
     std::string out = "";
     
@@ -115,7 +200,8 @@ std::string DrawCall::layout(UBO* ubo) {
 
     if (is_reserved) { 
         
-        out = comps_str+comment_line+out+comment_line+"layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+attr_str+" };\n\n";
+        out = comps_str+comment_line+out+comment_line;
+        out += "layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+attr_str+" };\n\n";
     
     }
 
@@ -129,7 +215,8 @@ void DrawCall::update() {
 
     std::string header_commom = "#version 430 core\n\n"+comment_line;
 
-    header_commom += layout(engine.dynamic_ubo);
+    header_commom += dynamic_layout();
+    header_commom += static_layout();
 
     // FRAGMENT
     

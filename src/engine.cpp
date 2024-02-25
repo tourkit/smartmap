@@ -88,6 +88,8 @@ void Engine::init() {
     stack = tree->addOwnr<Stack>()->select()->node();
     stack->active = true; 
 
+    auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
+
     PLOGD << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
@@ -97,6 +99,8 @@ void Engine::init() {
     model->addPtr(shaders->childrens[0]); 
     model->addPtr(shaders->childrens[1]); 
     model->addPtr(shaders->childrens[2]); 
+    
+    atlas->get()->link(&layer1->get()->shader);
 
     auto an = tree->addOwnr<Artnet>();
     an->active = true;
@@ -129,9 +133,6 @@ void Engine::init() {
 
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
     
-    auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
-
-    atlas->get()->link(&layer1->get()->shader);
     
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
     

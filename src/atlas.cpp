@@ -21,13 +21,6 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)
 
     if(path.length()) fromDir(path);
 
-    // ubo = new UBO("mediasCoords");
-    // ubo->buffer.add("mediasCoords", {
-    //     "Size",
-    //     "Position",
-    // }, normalized_list.size());
-    // memcpy(&ubo->buffer.data[0],&normalized_list[0],normalized_list.size()*16); // 16 is size of Rect
-
 }
 
 void Atlas::clear() {
