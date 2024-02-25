@@ -1,16 +1,14 @@
 #pragma once
 
 #include "window.hpp"
-#include "shader.hpp"
-#include "drawcall.hpp"
-#include "ubo.hpp"
-
 #include "log.hpp"
 
 struct Stack {};
 
 struct GUI;
 struct Node;
+struct UBO;
+struct DrawCall;
 struct Atlas;
 
 struct Engine {

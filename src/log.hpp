@@ -2,6 +2,7 @@
 
 #define PLOG_CHAR_IS_UTF8 1
 
+#include "file.hpp"
 #include "include/vendor/plog/Log.h"
 #include "include/vendor/plog/Init.h"
 #include "include/vendor/plog/Formatters/TxtFormatter.h"
@@ -12,6 +13,7 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <fstream>
 
 struct Log {
 
@@ -25,11 +27,9 @@ struct Log {
 
         };
 
-        virtual void write(const plog::Record& record) PLOG_OVERRIDE { 
-            
-            list.push_back(Message{plog::FuncMessageFormatter::format(record), record.getSeverity(), record.getTime()}); 
+        Appender();
 
-        }
+        virtual void write(const plog::Record& record) PLOG_OVERRIDE;
 
         std::vector<Message> list;
     };

@@ -13,6 +13,7 @@
 #include "artnet.hpp"
 #include "dmx.hpp"
 #include "ndi.hpp"
+#include "texture.hpp"
 
 #include "callbacks.hpp"
 
@@ -25,8 +26,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
     dynamic_ubo = new UBO("dynamic_ubo");
 
     static_ubo = new UBO("static_ubo");
-
-    // dc = new DrawCall();
 
 }
 
@@ -44,17 +43,17 @@ void Engine::run() {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        for (auto n : engine.stack->childrens) {
+        // for (auto n : engine.stack->childrens) {
 
-            // auto layer = n->is_a<Layer>(); 
+        //     auto layer = n->is_a<Layer>(); 
 
-            // if (!layer) continue;
+        //     if (!layer) continue;
 
-            // layer->texture.bind();
+            // layer->fb.texture->bind();
 
             // engine.dc->vbo.draw();
 
-        }
+        // }
 
         engine.gui->draw(); 
         
@@ -75,6 +74,7 @@ static Node* addFolder(std::string name, std::string path) {
 
 void Engine::init() {
 
+
     Callbacks::init();
     
     Editors::init();
@@ -85,12 +85,22 @@ void Engine::init() {
 
     auto shaders = addFolder<Effector>("Shaders", "assets/shaders/");
 
-    stack = tree->addOwnr<Stack>()->node();
+    stack = tree->addOwnr<Stack>()->node()->select();
     stack->active = true;
+
+    // dc = new DrawCall();
+
+    // dc->vbo.import(models->childrens[0]->is_a<Model>());
 
     PLOGD << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
+
+
+
+    // auto x = new File("assets/model/quad.obj", 1);
+
+    // PLOGD << x->data;
 
     auto dc = stack->addOwnr<Layer>()->select();
     auto model = dc->addPtr(models->childrens[0]); 
@@ -125,6 +135,9 @@ void Engine::init() {
     an->trigchange();
 
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
+
+    // tree->addOwnr<Texture>("assets/media/boy.jpg");
+    // auto tex = new Texture("assets/media/boy.jpg");
 
     // ndi->onrun([](Node* n) { 
 

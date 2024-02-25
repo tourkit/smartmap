@@ -7,6 +7,7 @@
 #include "struct.hpp"
 #include "object.hpp"
 #include "entry.hpp"
+#include "ubo.hpp"
 
 Model::Model(File* file, int id, int quantity) : file(file), id(id), quantity(quantity) { 
 

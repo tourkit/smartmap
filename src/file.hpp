@@ -10,6 +10,8 @@ struct File {
 
     std::string data;
 
+    std::vector<char> raw;
+
     int64_t last_modified = 1;
 
     bool loaded = false;
@@ -18,11 +20,13 @@ struct File {
     
     std::function<void(File*)> callback = [](File* f){};
 
-    File(std::string source = "");
+    File();
+    
+    File(std::string source, bool binary = false);
 
     int64_t getTimeModified();
 
-    void read(std::string source, bool binary = true);
+    void read(std::string source, bool binary = false);
     void write(const char* data);
     static void write(std::string path, std::string data);
 

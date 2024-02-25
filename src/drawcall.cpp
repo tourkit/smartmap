@@ -27,7 +27,6 @@ static std::string camel(std::string str) { str[0] = std::toupper(str[0]); retur
 DrawCall::DrawCall() {
 
     engine.dynamic_ubo->subscribers.push_back(&this->shader);
-    PLOGD<<"no";
 
 }
 

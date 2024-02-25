@@ -1,6 +1,6 @@
 #include "image.hpp"
 #include "file.hpp"
-#include "gui.hpp"
+#include "log.hpp"
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
@@ -11,7 +11,7 @@
 #include "stb/stb_image_write.h"
 #endif
  
-Image::Image(std::string path) : File(path) { read(path); }
+Image::Image(std::string path) { read(path); }
 
 bool Image::is_image() { 
     
@@ -26,20 +26,21 @@ bool Image::is_image() {
 
 void Image::read(std::string path) {
 
+    File::read(path, 1);
+
     if (data.size() != -1) {
 
-            auto pixels = stbi_load_from_memory((const stbi_uc*)&data[0],data.size(), &width, &height, &comp, 0);
-            if (!pixels) return;
+        auto pixels = stbi_load_from_memory((const stbi_uc*)&raw[0],raw.size(), &width, &height, &comp, 0);
 
-            auto count  =width*height*comp;
+        if (!pixels) { PLOGW << stbi_failure_reason(); return; }
 
-            data.clear();
-            data.resize(count);
-            memcpy(&data[0],&pixels[0],count);
+        auto count = width*height*comp;
 
-            stbi_image_free(pixels);
+        data.clear();
+        data.resize(count);
+        memcpy(&data[0],&pixels[0],count);
 
-            // name = name + " " + std::to_string(width) + "x" + std::to_string(height);
+        stbi_image_free(pixels);
 
     }
 

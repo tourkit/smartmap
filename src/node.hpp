@@ -7,14 +7,10 @@
 #include <typeindex>
 #include <functional>
 #include "log.hpp"
-#include "directory.hpp"
 
 #include <boost/type_index.hpp>
 
 #include "glm/glm.hpp"
-
-
-struct File;
 
 struct Node;
     

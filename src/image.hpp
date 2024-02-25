@@ -10,9 +10,7 @@ struct Image : File {
 
     std::string extension;
 
-    int width = 0, height, comp;  // comp: 1 = lumi, 2 = ?, 3 = rgb, 4 = rgba, 5 = bgra
-
-    std::vector<unsigned char> data;
+    int width = 0, height = 0, comp = 0;  // comp: 1 = lumi, 2 = ?, 3 = rgb, 4 = rgba, 5 = bgra
 
     Image(std::string source);
     // ~Image();

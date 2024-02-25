@@ -19,7 +19,9 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 // FILE
 //////////////////////////////////////
 
-File::File(std::string path) { read(path); }
+File::File() { }
+
+File::File(std::string path, bool binary) { read(path, binary); }
 
 int64_t File::getTimeModified() {
 
@@ -73,22 +75,28 @@ void File::read(std::string path, bool binary){
         file.seekg(0, std::ios::end);
         std::streamsize size = file.tellg();
 
+        if (!size) {PLOGW << "FAIL"; return;}
+
         file.seekg(0, std::ios::beg);
         data.resize(size);
+        raw.resize(size);
 
-        if (file.read(&data[0], size)) {
-            file.close();
-            last_modified = getTimeModified();
+        if (binary) {if (file.read(&raw[0], size)) file.close();}
+        else {if (file.read(&data[0], size)) file.close();}
 
-            PLOGV << path;
 
-            loaded = true;
-            return;
-        }
+        last_modified = getTimeModified();
+
+        PLOGV << path << " " << size << "kb";
+        
+        loaded = true;
+
+        return;
+    
 
     }
 
-    PLOGW << path;
+    PLOGW << "couldn't find: " << path;
 
     return;
 

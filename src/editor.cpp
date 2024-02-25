@@ -71,8 +71,7 @@ static void draw_raw(void *data, size_t size) {
         ImGui::SameLine(((i%cells_per_line)*(cell_width+cell_margin))); 
 
         ImGuiDataType_ datatype = ImGuiDataType_U8;
-        
-        ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, ((*(((uint8_t*)data)+i))/255.0f)*30);
+        ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, ((*(((uint8_t*)data)+i))/255.0f)*26);
 
         if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &ndata,  &cell_min,   &cell_max,   "")) { 
                     
@@ -138,32 +137,14 @@ void Editors::init() {
 
     // Editor<xxx>([](Node* node, xxx *x){ });
 
-    ////////// UBO.HPP 
-
-    Editor<UBO>([](Node* node, UBO *ubo){ 
-
-        ImGui::Text((""+std::to_string(ubo->subscribers.size())+" subs").c_str());
-
-        Editor<Buffer>::cb(node, ubo); 
-        
-    });
-
-    ////////// VBO.HPP 
-    
-    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
-
     ////////// Artnet.HPP 
     
-    Editor<DMX>([](Node*node,DMX* dmx){ 
+    Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){ 
 
-
-        // DMX is a univers
-
-        for (auto &r : dmx->remaps) {
 
              int member_id = 0;
 
-            for (auto c:r.fixture->s->comps) {
+            for (auto c:remap->fixture->s->comps) {
                         
                 ImGui::SeparatorText(c->name.c_str());
                 
@@ -172,18 +153,16 @@ void Editors::init() {
                     ImGui::Text(m.name.c_str());
 
                     static int e = 0;
-                    ImGui::SameLine(); ImGui::RadioButton(("bypass##rbt"+std::to_string(member_id)).c_str(), &r.fixture->attributes[member_id].combining , 0);
-                    ImGui::SameLine(); ImGui::RadioButton(("coarse##rbt"+std::to_string(member_id)).c_str(), &r.fixture->attributes[member_id].combining , 1);
-                    ImGui::SameLine(); ImGui::RadioButton(("fine##rbt"+std::to_string(member_id)).c_str(), &r.fixture->attributes[member_id].combining , 2);
-                    ImGui::SameLine(); ImGui::RadioButton(("ultra##rbt"+std::to_string(member_id)).c_str(), &r.fixture->attributes[member_id].combining , 3);
+                    ImGui::SameLine(); ImGui::RadioButton(("bypass##rbt"+std::to_string(member_id)).c_str(), &remap->fixture->attributes[member_id].combining , 0);
+                    ImGui::SameLine(); ImGui::RadioButton(("coarse##rbt"+std::to_string(member_id)).c_str(), &remap->fixture->attributes[member_id].combining , 1);
+                    ImGui::SameLine(); ImGui::RadioButton(("fine##rbt"+std::to_string(member_id)).c_str(), &remap->fixture->attributes[member_id].combining , 2);
+                    ImGui::SameLine(); ImGui::RadioButton(("ultra##rbt"+std::to_string(member_id)).c_str(), &remap->fixture->attributes[member_id].combining , 3);
 
                     member_id++;
 
                 }
                 
             }
-
-        }
 
 
     });
@@ -201,10 +180,6 @@ void Editors::init() {
 
 
     });
-
-    ////////// VBO.HPP 
-    
-    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
 
     ////////// STRUCT.HPP 
 
@@ -268,24 +243,6 @@ void Editors::init() {
    
     });
 
-    ////////// DRAWCALL.HPP 
-    
-    Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
-    
-    Editor<Layer>([](Node* node, Layer *layer){ 
-
-        using namespace ImGui;
-        InputScalarN("size",    ImGuiDataType_U32,  &layer->fb.width, 2);
-
-        float ratio = layer->fb.texture->height/(float)layer->fb.texture->width;
-        auto nw = std::min(layer->fb.texture->width,(GLuint)512);
-
-        ImGui::Image(&layer->fb.texture->id, ImVec2(nw,nw*ratio));
-        
-        Editor<ShaderProgram>::cb(node, &layer->shader); 
-        
-    });
-
     ////////// Log.HPP 
     
     Editor<Log>([](Node* node, Log *log){ 
@@ -319,10 +276,6 @@ void Editors::init() {
 
         }
     });
-
-    ////////// Stack.HPP 
-    
-    Editor<Stack>([](Node* node, Stack *log){ Editor<Log>::cb(node, &engine.log); });
 
     ////////// File.HPP 
 
@@ -361,20 +314,6 @@ void Editors::init() {
 
         }
 
-    });
-
-    ////////// Effector.HPP 
-
-    Editor<Effector>([](Node* node, Effector *effector){ Editor<File>::cb(node, effector->file); });
-
-    ////////// MODEL.HPP 
-
-    Editor<Model>([](Node* node, Model *model){ 
-        
-        if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj); 
-        
-        else Editor<File>::cb(node, model->file);
-        
     });
 
     ////////// OBJECT.HPP 
@@ -434,11 +373,18 @@ void Editors::init() {
             
         }
 
-        //// RAW VIEW
-        
-        // ImGui::Separator();ImGui::Separator(); draw_raw(obj->data(), obj->buffer->data.size());
-        
-        // ImGui::Separator();ImGui::Separator(); draw_definition(obj);
+    });
+
+    ////////// Texture.HPP 
+
+    Editor<Texture>([](Node* node, Texture *texture){
+
+        ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2);
+
+        float ratio = texture->height/(float)texture->width;
+        auto nw = std::min(texture->width,(GLuint)512);
+
+        ImGui::Image(&texture->id, ImVec2(nw,nw*ratio));
 
     });
 
@@ -456,6 +402,66 @@ void Editors::init() {
         Editor<Object>::cb(node, &buffer->objects[obj_current]);
 
     });
+    
+    Editor<Layer>([](Node* node, Layer *layer){ 
+
+        ImGui::InputScalar("basdb", ImGuiDataType_U16, &layer->fb.texture->id);
+        
+        Editor<Texture>::cb(node, layer->fb.texture); 
+
+        Editor<ShaderProgram>::cb(node, &layer->shader); 
+        
+    });
+
+    ////////// UBO.HPP 
+
+    Editor<UBO>([](Node* node, UBO *ubo){ 
+
+        std::string subs_str = std::to_string(ubo->subscribers.size())+" subs";
+        for (auto s: ubo->subscribers) subs_str += " "+std::to_string(s->id);
+        ImGui::Text(subs_str.c_str());
+
+        Editor<Buffer>::cb(node, ubo); 
+        
+    });
+
+    ////////// MODEL.HPP 
+
+    Editor<Model>([](Node* node, Model *model){ 
+        
+        if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj); 
+        
+        else Editor<File>::cb(node, model->file);
+        
+    });
+
+    ////////// Artnet.HPP 
+    
+    Editor<DMX>([](Node*node,DMX* dmx){ 
+        
+        for (auto &r : dmx->remaps) Editor<DMX::Remap>::cb(node, &r); 
+        
+    });
+
+    ////////// VBO.HPP 
+    
+    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
+
+    ////////// VBO.HPP 
+    
+    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
+
+    ////////// Effector.HPP 
+
+    Editor<Effector>([](Node* node, Effector *effector){ Editor<File>::cb(node, effector->file); });
+
+    ////////// Stack.HPP 
+    
+    Editor<Stack>([](Node* node, Stack *log){ Editor<Log>::cb(node, &engine.log); });
+
+    ////////// DRAWCALL.HPP 
+    
+    Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
 
 }
 
