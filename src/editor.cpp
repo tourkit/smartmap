@@ -385,7 +385,7 @@ void Editors::init() {
         float ratio = texture->height/(float)texture->width;
         auto nw = std::min(texture->width,(GLuint)512);
 
-        texture->bind();
+        // texture->bind();
 
         ImGui::Image(&texture->id, ImVec2(nw,nw*ratio));
 

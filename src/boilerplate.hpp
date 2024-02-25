@@ -11,11 +11,21 @@ unsigned int width = 400, height = 200, pos_x = 0, pos_y = 0;
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <cmath>
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
-void Boilerplate() {  
+
+#include "image.hpp"
+
+
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+
+struct Boilerplate {
+
+Boilerplate() {  
 
     // SET OPENGL
 
@@ -37,7 +47,7 @@ void Boilerplate() {
     glfwSwapInterval(0);
 
     gl3wInit();
-  
+
     // SET QUAD
 
     std::vector<std::array<float, 4>> vertices;
@@ -141,6 +151,38 @@ void Boilerplate() {
     glBindBuffer(GL_UNIFORM_BUFFER, ubo);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, data.size()*4, &data[0]); 
 
+
+    Image img2("assets/media/boy.jpg");
+    GLuint tex2;
+
+    glGenTextures(1, &tex2);
+    glActiveTexture(GL_TEXTURE0+1);
+    glBindTexture(GL_TEXTURE_2D, tex2);
+    glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, img2.width, img2.height);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glActiveTexture(GL_TEXTURE0); 
+
+
+    glActiveTexture(GL_TEXTURE0+1);
+    glBindTexture(GL_TEXTURE_2D, tex2);
+    glTexSubImage2D(GL_TEXTURE_2D,0,0,0,img2.width, img2.height,GL_RGB,GL_UNSIGNED_BYTE,&img2.data[0]);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE0); 
+
+    GLuint textureUniformLoc = glGetUniformLocation(shader, "texture0");
+    glUniform1i(textureUniformLoc, 1);
+
+   // GUI
+
+    ImGui::CreateContext(); 
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 430");
+
+
     // RENDER
 
     while (!glfwWindowShouldClose(window)) {
@@ -151,6 +193,25 @@ void Boilerplate() {
         glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
         glDrawElementsInstanced(GL_TRIANGLES, indices.size()*6, GL_UNSIGNED_INT, 0, 1);
+        
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("yellop");
+
+        float ratio = img2.height/(float)img2.width;
+        auto nw = std::min(img2.width,512);
+
+        ImGui::Image(&tex2, ImVec2(nw,nw*ratio));
+
+        ImGui::ShowDemoWindow();
+
+        ImGui::End();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
         glfwPollEvents();
 
@@ -159,3 +220,6 @@ void Boilerplate() {
     }
 
 } 
+};
+
+static Boilerplate boiler;

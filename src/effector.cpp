@@ -61,6 +61,10 @@ std::string Effector::source() {
 
     }
 
+    // std::string out_code_without_blank_lines;
+    // std::istringstream iss(out_code);
+    // std::string line;
+    // while (std::getline(iss, line)) if (!line.empty()) out_code_without_blank_lines += line + "\n";
     
     return out_code.c_str(); 
     
