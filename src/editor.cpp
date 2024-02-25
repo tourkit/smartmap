@@ -301,11 +301,11 @@ void Editors::init() {
         
         char data[512000]; 
         memset(data,0,512000);
-        memcpy(data,file->data.c_str(),file->data.size());
+        memcpy(data,&file->data[0],file->data.size());
 
         if(ImGui::InputTextMultiline("src", data, 512000, ImVec2(600,300))) {
 
-            if (strcmp(data, file->data.c_str())) {
+            if (strcmp(data, &file->data[0])) {
 
                 file->write(data); 
 

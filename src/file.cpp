@@ -78,12 +78,10 @@ void File::read(std::string path, bool binary){
         if (!size) {PLOGW << "FAIL"; return;}
 
         file.seekg(0, std::ios::beg);
+
         data.resize(size);
-        raw.resize(size);
 
-        if (binary) {if (file.read(&raw[0], size)) file.close();}
-        else {if (file.read(&data[0], size)) file.close();}
-
+        if (file.read(&data[0], size)) file.close();
 
         last_modified = getTimeModified();
 

@@ -8,9 +8,7 @@ struct File {
 
     std::string name, path, location, extension;
 
-    std::string data;
-
-    std::vector<char> raw;
+    std::vector<char> data;
 
     int64_t last_modified = 1;
 

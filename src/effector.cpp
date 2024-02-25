@@ -16,7 +16,7 @@ void Effector::import(File *file) {
     ranges.clear();
 
     int range_count = 0;
-    auto source = file->data;
+    std::string source = &file->data[0];
     std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*)?)?)?\))");
     std::sregex_iterator next(source.begin(), source.end(), regex);
     std::sregex_iterator end;
@@ -50,7 +50,7 @@ void Effector::import(File *file) {
 
 std::string Effector::source() { 
     
-    auto out_code = file->data;
+    std::string out_code = &file->data[0];
 
     size_t pos = 0;
     while ((pos = out_code.find("//", pos)) != std::string::npos) {
