@@ -133,9 +133,9 @@ void Engine::init() {
 
     auto tex = tree->addOwnr<Texture>("assets/media/boy.jpg")->get();
     
-    dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
+    // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
     
-    tex->bind();
+    // tex->bind();
 
 
     // auto tex = new Texture("assets/media/boy.jpg");

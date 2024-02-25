@@ -385,9 +385,7 @@ void Editors::init() {
         float ratio = texture->height/(float)texture->width;
         auto nw = std::min(texture->width,(GLuint)512);
 
-        // texture->bind();
-
-        ImGui::Image(&texture->id, ImVec2(nw,nw*ratio));
+        ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(nw,nw*ratio)); // pas comprendre implementation de ImTextureID (aka void*) , voir ImGui_ImplOpenGL3_RenderDrawData()
 
     });
 
@@ -407,8 +405,6 @@ void Editors::init() {
     });
     
     Editor<Layer>([](Node* node, Layer *layer){ 
-
-        ImGui::InputScalar("basdb", ImGuiDataType_U16, &layer->fb.texture->id);
         
         Editor<Texture>::cb(node, layer->fb.texture); 
 

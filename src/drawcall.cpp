@@ -15,7 +15,7 @@ Layer::Layer() : fb(engine.window.width,engine.window.height) {}
 
 void Layer::run() {
 
-    // fb.bind();
+    fb.bind();
 
     DrawCall::run();
 
