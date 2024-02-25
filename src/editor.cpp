@@ -206,33 +206,36 @@ void Editors::init() {
     Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
 
         static TextEditor frageditor;
-        static TextEditor verteditor;
+        // static TextEditor verteditor;
 
         static bool init = false;
         if (!init){
+
             frageditor.SetShowWhitespaces(false);
             frageditor.SetReadOnly(false);
             frageditor.SetText(shader->frag.src); 
-            // frageditor.
+            // verteditor.SetShowWhitespaces(false);
+            // verteditor.SetReadOnly(false);
+            // verteditor.SetText(shader->vert.src); 
+
             init = true;
         }
 
-        static std::chrono::_V2::system_clock::time_point last_change;
-        if (last_change != shader->last_change) { 
-
-            frageditor.SetText(shader->frag.src); 
-            last_change = shader->last_change;
-            
-        }
-        
 	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
 	    // frageditor.SetLanguageDefinition(lang);
 
         // frageditor.SetPalette(TextEditor::GetDarkPalette());
 
+        static std::chrono::_V2::system_clock::time_point frag_last_change;
+        if (frag_last_change != shader->last_change) { 
+
+            frageditor.SetText(shader->frag.src); 
+            frag_last_change = shader->last_change;
+            
+
+
+        }
         frageditor.Render("frageditor");
-        // verteditor.Render("frageditor");
-        
         if (frageditor.IsTextChanged()) {
 
             auto x = frageditor.GetText();
@@ -242,6 +245,25 @@ void Editors::init() {
             shader->create(x,shader->vert.src);
 
         }
+
+        // static std::chrono::_V2::system_clock::time_point vert_last_change;
+        // if (vert_last_change != shader->last_change) { 
+
+        //     verteditor.SetText(shader->vert.src); 
+        //     vert_last_change = shader->last_change;
+            
+        // }
+        
+        // verteditor.Render("frageditor");
+        // if (verteditor.IsTextChanged()) {
+
+        //     auto x = verteditor.GetText();
+
+        //     memset(&x[verteditor.GetText().size()],0,1);
+
+        //     shader->create(shader->frag.src,x);
+
+        // }
    
     });
 
@@ -364,6 +386,7 @@ void Editors::init() {
 
                     auto type = ImGuiDataType_Float;
 
+                    if (m.type == Member::Type::I32) type = ImGuiDataType_S32;
                     if (m.type == Member::Type::UI8) type = ImGuiDataType_U8;
                     if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
                     if (m.type == Member::Type::UI32) type = ImGuiDataType_U16;
