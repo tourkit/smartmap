@@ -102,7 +102,7 @@ void Engine::init() {
     an->active = true;
 
     gui->editors.back()->selected = layer1;
-    gui->editors.back()->locked = true;
+    // gui->editors.back()->locked = true;
     gui->editors.push_back(new EditorWidget());
     gui->editors.back()->selected = model;
     gui->editors.back()->locked = true;
