@@ -17,8 +17,6 @@ struct Image : File {
 
     void read(std::string source);
 
-    bool is_image();
-
     void convert(Encoding type, int quality = 80);
 
     void rawconvert(int destcomp);

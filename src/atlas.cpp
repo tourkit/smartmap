@@ -68,28 +68,22 @@ void Atlas::fromDir(std::string path) {
     clear();
 
     Directory dir(path);
-    
+
     for (auto &file:dir.list) {
         
         Image img(file);
 
-        if (img.is_image()) { }
+        if (!img.loaded) continue;
         
+        auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
+        if (!r.width) {PLOGW << "needniouatlas"; continue;} 
+
+        normalized_list.push_back({r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height});
+
+        texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
+
     }
-    return;
 
-    // for (auto c : childrens) {
-
-    //     auto img = ((ImagePtr*)c)->ptr;
-
-    //     auto r = binpack.Insert(img->width, img->height, rbp::MaxRectsBinPack::RectBestShortSideFit);
-    //     if (!r.width) {PLOGW << "needniouatlas"; continue;} 
-
-    //     normalized_list.push_back({r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height});
-
-    //     texture->write(&img->data[0],r.width,r.height,r.x,r.y,1,1);
-
-    // }
 }
 
 // void Atlas::editor() { 

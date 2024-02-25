@@ -13,17 +13,6 @@
  
 Image::Image(std::string path) { read(path); }
 
-bool Image::is_image() { 
-    
-    int width,height,comp;
-    
-    if (!data.size()) return false;
-    auto pixels = stbi_load_from_memory((const stbi_uc*)&data[0],data.size(), &width, &height, &comp, 0);
-    if (!pixels) return false;
-    return true;
-    
-}
-
 void Image::read(std::string path) {
 
     File::read(path, 1);
@@ -32,7 +21,7 @@ void Image::read(std::string path) {
 
         auto pixels = stbi_load_from_memory((const stbi_uc*)&data[0],data.size(), &width, &height, &comp, 0);
 
-        if (!pixels) { PLOGW << stbi_failure_reason(); return; }
+        if (!pixels) { PLOGW << stbi_failure_reason(); loaded = false; return; }
 
         auto count = width*height*comp;
 
