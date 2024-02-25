@@ -107,21 +107,6 @@ struct UntypedNode {
     }
 
     template <typename V>
-    void each(std::function<void(Node*)> ) { 
-        
-        for (auto c : childrens) {
-
-            if (((UntypedNode*)c)->is_a<V>()) {
-
-                (c);
-
-            }
-
-        }       
-        
-    }
-
-    template <typename V>
     void each(std::function<void(Node*, V*)> cb) { 
         
         for (auto c : childrens) {
@@ -185,6 +170,8 @@ struct TypedNode : UntypedNode {
         if(onchange_cb) { onchange_cb(node(),this->ptr); }
 
     }
+
+    TypedNode<T>* select() { UntypedNode::select(); return this; }
     
     TypedNode(void* ptr, bool owned = false) : 
 

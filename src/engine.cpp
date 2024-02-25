@@ -85,14 +85,14 @@ void Engine::init() {
 
     auto shaders = addFolder<Effector>("Shaders", "assets/shaders/");
 
-    stack = tree->addOwnr<Stack>()->select();
+    stack = tree->addOwnr<Stack>()->select()->node();
     stack->active = true; 
 
     PLOGD << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
 
-    auto layer1 = stack->addOwnr<Layer>()->select();
+    auto layer1 = stack->addOwnr<Layer>()->select()->node();
     auto model = layer1->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
     model->addPtr(shaders->childrens[1]); 
@@ -129,7 +129,10 @@ void Engine::init() {
 
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
     
-    tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
+    auto atlas_n = tree->addOwnr<Atlas>(4096, 4096, "assets/media/");
+    atlas_n->select();
+
+    // atlas_n->get()->link(&dc->is_a<DrawCall>()->shader);3
     
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
     
