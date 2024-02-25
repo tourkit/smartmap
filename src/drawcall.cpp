@@ -23,6 +23,7 @@ void Layer::run() {
 
 
 static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
+static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
 
 DrawCall::DrawCall() {
 
@@ -56,18 +57,23 @@ std::string DrawCall::static_layout() {
 
     for (auto &obj : ubo->objects) {
 
+
         std::string name = ""; 
         for(int i =  0; i < obj.s->name.length(); i++) name += std::tolower(obj.s->name[i]); 
 
         std::string Name = camel(name);
 
-        std::string struct_str = "struct "+Name+"{"+struct_spacer;
+        std::string struct_str;
+        
+        struct_str = "struct "+Name+"{"+struct_spacer;
 
         int comp_id = 0;
 
         for (auto c: obj.s->comps) {
-            
-            struct_str += struct_taber+camel(c->name)+" "+c->name+";"+struct_spacer;
+
+            if (c->members.size()<2) struct_str += struct_taber+c->members[0].type_name()+" "+lower(c->name)+";"+struct_spacer;
+
+            else struct_str += struct_taber+camel(c->name)+" "+lower(c->name)+";"+struct_spacer;
             
             components.insert(c);
             
@@ -94,6 +100,8 @@ std::string DrawCall::static_layout() {
     std::string comps_str = "";
 
     for (auto c: components) {
+
+        if (c->members.size()<2) continue;
 
         std::string comp_str = "struct "+camel(c->name)+" {"+struct_spacer;
 
@@ -182,16 +190,7 @@ std::string DrawCall::dynamic_layout() {
 
         std::string comp_str = "struct "+camel(c->name)+" {"+struct_spacer;
 
-        for (auto &m : c->members) {
-            
-            std::string type = "float";
-
-            if (m.type == Member::Type::VEC2) type = "vec2";
-            if (m.type == Member::Type::I32) type = "int";
-
-            comp_str += struct_taber+type+" "+m.name+";"+struct_spacer;
-            
-        }
+        for (auto &m : c->members) comp_str += struct_taber+m.type_name()+" "+m.name+";"+struct_spacer;
 
         comp_str += "};\n\n";
 

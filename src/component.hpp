@@ -20,6 +20,28 @@ struct Member {
     enum Type { UNDEFINED, F16, I8, I16, I32, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
     float default_val = 0;
 
+    const char* type_name() {
+
+        switch (type) {
+        
+            case VEC2:
+                return "vec2";
+                break;
+            case F16:
+                return "float";
+                break;
+            case I32:
+                return "int";
+                break;
+            
+            default:
+                return "";
+                break;
+
+        }
+
+    }
+
 };
 
 
@@ -165,8 +187,8 @@ private:
         ;
 
         Component::create("Position")
-            .member<float>("x").range(-1,1)
-            .member<float>("y").range(-1,1)
+            .member<glm::vec2>()
+            .range(-1,1)
         ;
         Component::create("Position3D")
             .member<float>("x")//.range(-1,1)
@@ -184,8 +206,7 @@ private:
         ;
 
         Component::create("Size")
-            .member<float>("x")
-            .member<float>("y")
+            .member<glm::vec2>()
         ;
         Component::create("Gobo")
             .member<float>("ID")
