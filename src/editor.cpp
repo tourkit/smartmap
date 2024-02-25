@@ -321,8 +321,8 @@ void Editors::init() {
     ////////// OBJECT.HPP 
 
     Editor<Object>([](Node* node, Object *obj){
-        
-        static int elem_current = 0;
+
+        static std::unordered_map<Object*,int> elem_current;
         static std::string uid = "123";
 
         Buffer* buffer = obj->buffer;
@@ -333,7 +333,7 @@ void Editors::init() {
             int min = 0;
             if (max<0) min = -1;
 
-            if (ImGui::SliderInt("instance##current", &elem_current, min, max)) { }
+            if (ImGui::SliderInt("instance##current", &elem_current[obj], min, max)) { }
 
             ImGui::SameLine(); if (ImGui::Button("add")) {
 
@@ -355,7 +355,7 @@ void Editors::init() {
 
                     auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
 
-                    auto data = &buffer->data[uniform_offset+(elem_current*obj->s->size)];
+                    auto data = &buffer->data[uniform_offset+(elem_current[obj]*obj->s->size)];
                     uniform_offset += m.size; 
 
                     if (m.type == Member::Type::VEC2) { ImGui::SliderFloat2(name, (float*)data, m.range_from, m.range_to); continue; }
@@ -465,7 +465,14 @@ void Editors::init() {
 
     ////////// Atlas.HPP 
     
-    Editor<Atlas>([](Node* node, Atlas *atlas){ Editor<Texture>::cb(node, atlas->texture); });
+    Editor<Atlas>([](Node* node, Atlas *atlas){ 
+        
+        Editor<Texture>::cb(node, atlas->texture); 
+        
+        Editor<Object>::cb(node, atlas->buffer); 
+        
+        
+    });
 
 }
 

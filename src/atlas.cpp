@@ -5,11 +5,15 @@
 #include "shader.hpp"  
 #include "texture.hpp"
 #include "ubo.hpp"
+#include "object.hpp"
+#include "struct.hpp"
 
 #include "image.hpp"
 
 
 Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)  {
+
+    if (!buffer) buffer = engine.static_ubo->addObj(new Struct("mediasCoords", {"Size","Position", }));
 
     texture = new Texture(width,height,1,1);
 
@@ -17,37 +21,16 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)
 
     if(path.length()) fromDir(path);
 
-    // for (auto file:dir.list) { 
-
-    //     auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
-
-    //     if (!r.width) {PLOGW << "needniouatlas"; continue;} 
-
-
-    //     normalized_list.push_back({r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height});
-
-    //     texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
-
-    // }
-
     // ubo = new UBO("mediasCoords");
     // ubo->buffer.add("mediasCoords", {
-
     //     "Size",
     //     "Position",
-
     // }, normalized_list.size());
-
     // memcpy(&ubo->buffer.data[0],&normalized_list[0],normalized_list.size()*16); // 16 is size of Rect
 
 }
 
 void Atlas::clear() {
-
-    // auto t = childrens;
-    // for (auto c:t) { delete c; }
-
-    // childrens.resize(0); // if enough remove above lines
 
     PLOGD << "clear";
 
@@ -80,38 +63,20 @@ void Atlas::fromDir(std::string path) {
 
         normalized_list.push_back({r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height});
 
+        buffer->push(&normalized_list[0][0]);
+
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 
     }
 
 }
 
-// void Atlas::editor() { 
-
-//     char path[512];
-
-//     memset(&path[0],0,512);
-
-//     if (ImGui::InputText("path", &path[0],512) && this->path != path) fromDir(path);
-
-//     float ratio = texture->height/(float)texture->width;
-//     auto nw = std::min(texture->width,(GLuint)512);
-//     ImGui::Image((void*)(intptr_t)(ImTextureID)(uintptr_t)texture->id,  ImVec2(nw,nw*ratio));
-
-//     ImGui::SameLine();;
-
-//     auto selected = Engine::getInstance().editorw.selected;
-    
-//     if (selected && typeid(*selected) == typeid(ImagePtr)) ImGui::InputInt2(selected->name.c_str(), &((ImagePtr*)selected)->ptr->width);
-
-// }
-
 void Atlas::link(ShaderProgram* shader) {
 
-    ubo->subscribers.push_back(shader);
-    ubo->update();
+    engine.static_ubo->subscribers.push_back(shader);
+    engine.static_ubo->update();
 
-    ubo->upload();
+    engine.static_ubo->upload();
     
     shader->sendUniform("mediasAtlas", 1);
     texture->bind();

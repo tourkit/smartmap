@@ -92,7 +92,7 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
-    auto layer1 = stack->addOwnr<Layer>()->select()->node();
+    auto layer1 = stack->addOwnr<Layer>()->select();
     auto model = layer1->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
     model->addPtr(shaders->childrens[1]); 
@@ -101,7 +101,7 @@ void Engine::init() {
     auto an = tree->addOwnr<Artnet>();
     an->active = true;
 
-    gui->editors.back()->selected = layer1;
+    gui->editors.back()->selected = layer1->node();
     // gui->editors.back()->locked = true;
     gui->editors.push_back(new EditorWidget());
     gui->editors.back()->selected = model;
@@ -129,10 +129,9 @@ void Engine::init() {
 
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
     
-    auto atlas_n = tree->addOwnr<Atlas>(4096, 4096, "assets/media/");
-    atlas_n->select();
+    auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
 
-    // atlas_n->get()->link(&dc->is_a<DrawCall>()->shader);3
+    atlas->get()->link(&layer1->get()->shader);
     
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
     

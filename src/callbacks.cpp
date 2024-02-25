@@ -11,6 +11,7 @@
 #include "engine.hpp"
 #include "artnet.hpp"
 #include "ndi.hpp"
+#include "atlas.hpp"
 
 void Callbacks::init() {
     
@@ -164,6 +165,10 @@ void Callbacks::init() {
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { node->name = effector->file->name; });
 
     NODE<Effector>::onchange([](Node* node, Effector *effector) { PLOGD<<"update " << effector->file->name; });
+
+    ////////// Atlas.HPP 
+
+    // NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { atlas->update(); });
     
     ////////// ShaderProgram.HPP 
 
