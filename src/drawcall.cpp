@@ -225,6 +225,7 @@ void DrawCall::update() {
     frag_shader += comment_line;
 
     frag_shader += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
+    frag_shader += "uniform sampler2D mediasAtlas;\n\n";
 
     frag_shader += "in vec2 UV;\n\n";
     frag_shader += "out vec4 COLOR;\n\n";

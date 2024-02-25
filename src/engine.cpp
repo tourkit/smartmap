@@ -97,8 +97,8 @@ void Engine::init() {
     auto layer1 = stack->addOwnr<Layer>()->select();
     auto model = layer1->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
-    model->addPtr(shaders->childrens[1]); 
     model->addPtr(shaders->childrens[2]); 
+    model->addPtr(shaders->childrens[1]); 
     
     atlas->get()->link(&layer1->get()->shader);
 
