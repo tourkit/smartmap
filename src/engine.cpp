@@ -39,11 +39,11 @@ void Engine::run() {
         
         engine.dynamic_ubo->upload();
 
-        engine.tree->each<Texture>([](Node *n, Texture* tex) { tex->bind(); });
+        // engine.tree->each<Texture>([](Node *n, Texture* tex) { tex->bind(); });
 
         engine.tree->run();
 
-        // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // for (auto n : engine.stack->childrens) {
 
@@ -88,7 +88,7 @@ void Engine::init() {
     stack = tree->addOwnr<Stack>()->select()->node();
     stack->active = true; 
 
-    auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
+    // auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
 
     PLOGD << "Engine initialized";
 
@@ -98,9 +98,9 @@ void Engine::init() {
     auto model = layer1->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
     model->addPtr(shaders->childrens[2]); 
-    model->addPtr(shaders->childrens[1]); 
+    // model->addPtr(shaders->childrens[1]); 
     
-    atlas->get()->link(&layer1->get()->shader);
+    // atlas->get()->link(&layer1->get()->shader);
 
     auto an = tree->addOwnr<Artnet>();
     an->active = true;

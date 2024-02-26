@@ -15,7 +15,7 @@ Layer::Layer() : fb(engine.window.width,engine.window.height) {}
 
 void Layer::run() {
 
-    fb.bind();
+    // fb.bind();
 
     DrawCall::run();
 
@@ -39,63 +39,51 @@ void DrawCall::run() {
 
 }
 
-static std::string struct_taber = "";//"\t";
-static std::string struct_spacer = " ";//"\n\n";
+static std::string struct_taber = "\t";
+static std::string struct_spacer = " \n\n";
 static std::string comment_line  = "///////////////////////////////////////////\n\n";
 
 std::string DrawCall::layout(UBO* ubo) {
 
-    std::string out = "";
+    std::string comps_str;
+
+    std::string obj_str;
     
-    std::string attr_str = "";
+    std::string content_str;
 
     bool is_reserved = false;
 
     std::set<Component*> components;
 
+    // Object Struct
+
     for (auto &obj : ubo->objects) {
 
+        if(!obj.reserved) continue;
 
-        std::string name = ""; 
-        for(int i =  0; i < obj.s->name.length(); i++) name += std::tolower(obj.s->name[i]); 
-
-        std::string Name = camel(name);
-
-        std::string struct_str;
+        is_reserved = true;
         
-        struct_str = "struct "+Name+"{"+struct_spacer;
+        obj_str += "struct "+camel(obj.s->name)+"{"+struct_spacer;
 
         int comp_id = 0;
 
         for (auto c: obj.s->comps) {
 
-            if (c->members.size()<2) struct_str += struct_taber+c->members[0].type_name()+" "+lower(c->name)+";"+struct_spacer;
+            if (c->members.size()<2) obj_str += struct_taber+c->members[0].type_name()+" "+lower(c->name)+"; "+struct_spacer;
 
-            else struct_str += struct_taber+camel(c->name)+" "+lower(c->name)+";"+struct_spacer;
+            else obj_str += struct_taber+camel(c->name)+" "+lower(c->name)+";"+struct_spacer;
             
             components.insert(c);
             
         }
 
-        struct_str += "};\n\n";
+        obj_str += "};\n\n";
 
-        out += struct_str;
-
-        if(obj.reserved)  {
-
-            attr_str += Name+ " "+name+"["+std::to_string(obj.reserved)+"]";
-
-            attr_str+=";";
-
-            is_reserved = true;
-
-        }
-
+        content_str += camel(obj.s->name) + " " + lower(obj.s->name) + "[" + std::to_string(obj.reserved) + "];";
+        
     }
 
     // component Struct
-
-    std::string comps_str = "";
 
     for (auto c: components) {
 
@@ -103,21 +91,24 @@ std::string DrawCall::layout(UBO* ubo) {
 
         std::string comp_str = "struct "+camel(c->name)+" {"+struct_spacer;
 
-        for (auto &m : c->members) comp_str += struct_taber+m.type_name()+" "+m.name+";"+struct_spacer;
+        for (auto &m : c->members) comp_str += struct_taber+std::string(m.type_name())+" "+m.name+" ; "+struct_spacer;
 
         comp_str += "};\n\n";
 
         comps_str += comp_str;
     }
 
-    if (is_reserved) { 
-        
-        out = comps_str+out+comment_line;
-        out += "layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+attr_str+" };\n\n";
+    std::string layout_str;
+    
+    if (comps_str.length()){
+    
+        layout_str += comps_str + comment_line + obj_str + comment_line;
+
+        layout_str += "layout (binding = "+std::to_string(ubo->binding)+", std140) uniform "+ubo->name+" { "+content_str+" };\n\n";
     
     }
-
-    return out;
+    
+    return layout_str;
 
 
 }
@@ -150,6 +141,7 @@ void DrawCall::update() {
     frag_shader += comment_line;
 
     std::set<Effector*> effectors;
+    
     for (auto &m : vbo.models) for (auto effector : m->effectors) effectors.insert(effector);
     for (auto effector : effectors) frag_shader += effector->source() +"\n";
     
