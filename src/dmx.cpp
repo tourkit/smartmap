@@ -28,7 +28,12 @@ DMX::Remap::Remap(void *src, void *dst, Fixture *f, uint16_t q) {
     this->fixture = f;
     this->quantity = q;
 
+    attributes = fixture->attributes;
+    
 } 
+
+
+uint8_t DMX::Remap::get8(uint8_t* data) { return GMAui2f[*data]; }
 
 void DMX::Remap::update() {
     

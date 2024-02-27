@@ -142,9 +142,36 @@ void Editors::init() {
     
     Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){ 
 
+            // string buffer for imgui::combo
+            static std::vector<char> models;
+            static std::vector<Model*> models_ptr;
 
-            std::string sss;
-            ImGui::InputText("##remap_name", sss.data(), sss.length());
+            if (!models.size()) {
+            
+                for (auto layer : engine.stack->childrens) {
+
+                    for (auto c : layer->childrens) {
+
+                        auto l = c->is_a<Model>(); if (!l) continue;
+
+                        models.insert(models.end(), l->file->name.c_str(), l->file->name.c_str() + strlen(l->file->name.c_str()) + 1); 
+
+                        models_ptr.push_back(l);
+
+                    }
+
+                }
+
+            }
+
+            // imgui::combo
+            static int model_id=0;
+            if (ImGui::Combo("Model##dddddddd", &model_id, &models[0], models.size())) remap->import(models_ptr[model_id]->obj->s);
+            
+
+            
+            std::string sss; 
+            ImGui::InputText("char *src##remap_name", sss.data(), sss.length());
 
             int member_id = 0;
 

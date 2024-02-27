@@ -1,7 +1,15 @@
 #include "struct.hpp"
 #include "component.hpp"
 
-Struct::Struct(const char* name, std::vector<std::string> components) : name(name) { for (auto c : components) addComp(c); }
+Struct::~Struct() { pool.erase(this); }
+
+Struct::Struct(const char* name, std::vector<std::string> components) : name(name) { 
+    
+    pool.insert(this);
+
+    for (auto c : components) addComp(c); 
+    
+}
 
 void Struct::addComp(std::string component){
 

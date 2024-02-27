@@ -97,7 +97,8 @@ void Engine::init() {
     ///////////////////////////////////////////////////////////////////
 
     auto layer1 = stack->addOwnr<Layer>()->select();
-    auto model = layer1->addPtr(models->childrens[0]); 
+    auto model = layer1->addPtr(models->childrens[0]); model->name = "quadA";
+    layer1->addPtr(models->childrens[0])->name = "quadB";
     model->addPtr(shaders->childrens[0]); 
     model->addPtr(shaders->childrens[2]); 
     model->addPtr(shaders->childrens[1]); 

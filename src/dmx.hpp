@@ -19,9 +19,7 @@ struct DMX {
 
         Struct* s;
 
-        struct Attribute { int combining = 0; float min=0, max=1; };// !combining is JUMP member
-
-        std::vector<Attribute> attributes;
+        std::vector<Remap::Attribute> attributes;
 
         Fixture(Struct* s);
 
@@ -53,8 +51,10 @@ struct DMX {
         Fixture *fixture;
 
         Remap(void *src, void *dst, Fixture *f, uint16_t q = 1);
-
+        
         void update() override;
+
+        uint8_t get8(uint8_t* data) override;
         
     };
     
