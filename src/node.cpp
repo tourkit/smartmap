@@ -23,7 +23,7 @@
 
         if (dtor) dtor(parent_node);
 
-        PLOGV << "~" << name;
+        PLOGD << "~" << name;
 
     }   
 
@@ -117,7 +117,7 @@
 
         if ( std::distance(childrens.begin(), it) < 0 ) {
             
-            PLOGD << "could not delete, didnt found";
+            PLOGI << "could not delete, didnt found";
             return; 
             
         }

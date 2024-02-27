@@ -15,7 +15,7 @@ Layer::~Layer() {
     auto it = std::find(pool.begin(), pool.end(), this);
     if (it != pool.end()) pool.erase(it);
 
-    PLOGD << name;
+    PLOGI << name;
 }
 
 
@@ -51,7 +51,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
     // layerUBO.set<uint32_t>(3,first_fixture); // irst fixture
 
     // matoffset = Engine::getInstance().matrices->quantity*32;
-    // PLOGV << "/!\\ " << matoffset;
+    // PLOGD << "/!\\ " << matoffset;
     // std::vector<std::array<float, 8>> mats;
     // mats = matrice(quantity_x,quantity_y);
     // for (auto &m:mats) { 
@@ -170,7 +170,7 @@ Layer::Layer(uint16_t chan, uint16_t uni, DMX::Fixture &fixture, uint16_t width,
     if (name) this->name = name;
     else this->name = "SM Layer "+std::to_string(id);
 
-    PLOGD <<  this->name;
+    PLOGI <<  this->name;
 
 };
 

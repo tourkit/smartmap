@@ -81,7 +81,7 @@ struct UntypedNode {
 
     void down();
 
-    virtual void editor() { PLOGD << "KOKO";}
+    virtual void editor() { PLOGI << "KOKO";}
 
     virtual void run(); 
     

@@ -11,7 +11,7 @@ Output::Output(std::string name, int width, int height)
     
         pool.push_back(this) ; 
 
-        PLOGD << name;
+        PLOGI << name;
     
     }
 
@@ -22,7 +22,7 @@ Output::~Output() {
         auto it = std::find(pool.begin(), pool.end(), this);
         if (it != pool.end()) pool.erase(it);
 
-        PLOGD << name;
+        PLOGI << name;
         
     }
 

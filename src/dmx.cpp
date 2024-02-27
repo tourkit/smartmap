@@ -4,7 +4,7 @@
 #include "component.hpp"
 #include "artnet.hpp"
 
-DMX::DMX(int id) : id(id) { memset(&data[0],0,512); PLOGV << "universe " << id;  } 
+DMX::DMX(int id) : id(id) { memset(&data[0],0,512); PLOGD << "universe " << id;  } 
 
 
 DMX::Fixture::Fixture(Struct* s) : s(s) {

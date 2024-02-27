@@ -96,7 +96,9 @@ using namespace ImGui;
             if(ImGui::MenuItem("Sure ?")){
                 
                 is_deleting = false;
+                auto parent = node->parent();
                 delete node;
+                if (parent) parent->update();
                 
             }
 
@@ -210,7 +212,7 @@ void TreeWidget::drawNode(Node* node) {
 
                 if (ImGui::BeginDragDropTarget()) {     
 
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGD << "TODO MOVE NODE";
+                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGI << "TODO MOVE NODE";
 
                     ImGui::EndDragDropTarget();
                 }

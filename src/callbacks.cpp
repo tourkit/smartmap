@@ -43,7 +43,7 @@ void Callbacks::init() {
 
         if (file->hasChanged()) { 
 
-            PLOGD <<  "file " << file->name << " changed";
+            PLOGI <<  "file " << file->name << " changed";
 
             file->reload(); 
 
@@ -164,7 +164,7 @@ void Callbacks::init() {
     
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { node->name = effector->file->name; });
 
-    NODE<Effector>::onchange([](Node* node, Effector *effector) { PLOGD<<"update " << effector->file->name; });
+    NODE<Effector>::onchange([](Node* node, Effector *effector) { PLOGI<<"update " << effector->file->name; });
 
     ////////// Atlas.HPP 
 

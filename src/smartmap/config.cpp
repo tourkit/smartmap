@@ -62,7 +62,7 @@ Config::Config () {
 
 void Config::import(std::string filepath) {
 
-    PLOGD << "SM IMPORT CONFIG";
+    PLOGI << "SM IMPORT CONFIG";
 
     bool is = false;
     if (Output::pool.size()) is = true;
@@ -193,7 +193,7 @@ void Config::import(std::string filepath) {
         auto* layer_mode = JSON::getString(layer, "layer_mode");
         Layer::Mode mode = Layer::Mode::Free;
         if (!strcmp(layer_mode, "Grid")) mode = Layer::Mode::Grid;
-        PLOGV << "mode: " << mode;
+        PLOGD << "mode: " << mode;
       
         new Layer(
 

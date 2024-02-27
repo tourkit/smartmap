@@ -25,7 +25,7 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)
 
 void Atlas::clear() {
 
-    PLOGD << "TODO buffer clear()";
+    PLOGI << "TODO buffer clear()";
 
     binpack.Init(texture->width,texture->height);
 

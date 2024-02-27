@@ -29,7 +29,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
 
 }
 
-Engine::~Engine() { PLOGD << "Engine destroyed"; }
+Engine::~Engine() { PLOGI << "Engine destroyed"; }
  
 void Engine::run() {
 
@@ -92,7 +92,7 @@ void Engine::init() {
 
     auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
 
-    PLOGD << "Engine initialized";
+    PLOGI << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
 

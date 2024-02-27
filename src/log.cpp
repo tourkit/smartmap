@@ -2,7 +2,7 @@
 
 Log::Log() {
 
-    // plog::init(plog::verbose, &file); PLOGV << "init";
+    // plog::init(plog::verbose, &file); PLOGD << "init";
     plog::init(plog::verbose, &appender); 
 
 }

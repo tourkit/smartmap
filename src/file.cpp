@@ -85,7 +85,7 @@ void File::read(std::string path, bool binary){
 
         last_modified = getTimeModified();
 
-        PLOGV << path << " " << size << "kb";
+        PLOGD << path << " " << size << "kb";
         
         loaded = true;
 

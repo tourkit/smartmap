@@ -169,7 +169,7 @@ void Editors::init() {
             if (ImGui::Combo("Model##dddddddd", &model_id, &models[0], models.size())) remap->import(models_ptr[model_id]->obj->s);
             
 
-            
+
             std::string sss; 
             ImGui::InputText("char *src##remap_name", sss.data(), sss.length());
 
@@ -326,9 +326,18 @@ void Editors::init() {
     
     Editor<Log>([](Node* node, Log *log){ 
 
-        static bool verbose = true;
 
-        ImGui::Checkbox("verbose", &verbose);
+        static bool is_verbose = false;
+
+        static ImVec4 info = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+        static ImVec4 debug = ImVec4(1.0f, 1.0f, 0.6f, 1.0f);
+        static ImVec4 warning = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
+        static ImVec4 verbose = ImVec4(0.4f, 0.4f, 1.0f, 1.0f);
+        ImGui::ColorButton("info", info);
+        ImGui::SameLine();ImGui::ColorButton("debug", debug);
+        ImGui::SameLine();ImGui::ColorButton("warning", warning);
+        ImGui::SameLine();ImGui::ColorButton("verbose##vcolop", verbose);
+        ImGui::SameLine();ImGui::Checkbox("verbose", &is_verbose);
 
         int max_lines = 1000;
         int to = log->appender.list.size()-max_lines;
@@ -338,15 +347,16 @@ void Editors::init() {
 
             auto &m = log->appender.list[i];
 
-            ImVec4 color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-            if (m.severity == plog::Severity::warning) color = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-            if (m.severity == plog::Severity::verbose) {
+            ImVec4 color = info;
+
+            if (m.severity == plog::Severity::debug) color = debug;
+            if (m.severity == plog::Severity::warning) color = warning;
+            if (m.severity == plog::Severity::verbose) {color = verbose;
+
                 
-                if (!verbose) continue;
+
                 
-                color = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
-                
-            }
+            if (!is_verbose) continue;}
 
             ImGui::PushStyleColor(ImGuiCol_Text, color);
             ImGui::Text((" "+m.msg).c_str()); 

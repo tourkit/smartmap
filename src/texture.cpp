@@ -21,7 +21,7 @@ void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLen
 
     glGenTextures(1, &id); 
 
-    PLOGV << width << " x " << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
+    PLOGD << width << " x " << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
 
     glActiveTexture(GL_TEXTURE0+unit); 
 

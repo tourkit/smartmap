@@ -41,7 +41,7 @@ struct Window {
 
     void keypress();
     
-    std::function<void()> clickCallBack = []() { /*  PLOGV << "click"; */ };
+    std::function<void()> clickCallBack = []() { /*  PLOGD << "click"; */ };
 
 };
 
