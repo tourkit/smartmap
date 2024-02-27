@@ -48,17 +48,17 @@ struct DMX {
 
     void update();
     
-    struct DMXRemap : Remap {
+    struct Remap : ::Remap {
 
         Fixture *fixture;
 
-        DMXRemap(void *src, void *dst, Fixture *f, uint16_t q = 1);
+        Remap(void *src, void *dst, Fixture *f, uint16_t q = 1);
 
         void update() override;
         
     };
     
-    std::vector<DMXRemap> remaps; 
+    std::vector<Remap> remaps; 
 
     DMX(int id = -1);
 

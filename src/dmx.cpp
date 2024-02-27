@@ -21,7 +21,7 @@ void DMX::update() {
 
 }
 
-DMX::DMXRemap::DMXRemap(void *src, void *dst, Fixture *f, uint16_t q) { 
+DMX::Remap::Remap(void *src, void *dst, Fixture *f, uint16_t q) { 
 
     this->src = (char*)src;
     this->dest = (char*)dst;
@@ -30,7 +30,7 @@ DMX::DMXRemap::DMXRemap(void *src, void *dst, Fixture *f, uint16_t q) {
 
 } 
 
-void DMX::DMXRemap::update() {
+void DMX::Remap::update() {
     
     auto data = (uint8_t*)src;
 

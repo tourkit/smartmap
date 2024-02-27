@@ -140,7 +140,7 @@ void Editors::init() {
 
     ////////// Artnet.HPP 
     
-    Editor<DMX::DMXRemap>([](Node*node,DMX::DMXRemap* remap){ 
+    Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){ 
 
 
             std::string sss;
@@ -491,7 +491,7 @@ void Editors::init() {
     
     Editor<DMX>([](Node*node,DMX* dmx){ 
         
-        for (auto &r : dmx->remaps) Editor<DMX::DMXRemap>::cb(node, &r); 
+        for (auto &r : dmx->remaps) Editor<DMX::Remap>::cb(node, &r); 
         
     });
 
