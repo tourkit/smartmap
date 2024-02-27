@@ -23,6 +23,12 @@ Entry &Object::push() {
 
 }
 
+void Object::clear() {
+
+    
+
+}
+
 void Object::update(Buffer bkp) {
 
     auto backup_data = bkp.data;

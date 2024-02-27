@@ -10,11 +10,9 @@ struct ShaderProgram;
  
 struct Atlas {
 
-    static inline Object* buffer = nullptr;
+    Object* buffer;
 
     rbp::MaxRectsBinPack binpack;
-
-    std::vector<std::array<float,4>> normalized_list;
 
     Texture *texture;
          

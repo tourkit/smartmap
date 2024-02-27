@@ -205,65 +205,90 @@ void Editors::init() {
 
     Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
 
-        static TextEditor frageditor;
-        // static TextEditor verteditor;
+         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
-        static bool init = false;
-        if (!init){
+        if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
-            frageditor.SetShowWhitespaces(false);
-            frageditor.SetReadOnly(false);
-            frageditor.SetText(shader->frag.src); 
-            // verteditor.SetShowWhitespaces(false);
-            // verteditor.SetReadOnly(false);
-            // verteditor.SetText(shader->vert.src); 
+            if (ImGui::BeginTabItem("fragment")) {
 
-            init = true;
+                static TextEditor frageditor;
+
+                static bool init = false;
+                if (!init){
+
+                    frageditor.SetShowWhitespaces(false);
+                    frageditor.SetReadOnly(false);
+                    frageditor.SetText(shader->frag.src); 
+
+                    init = true;
+                }
+
+                static std::chrono::_V2::system_clock::time_point frag_last_change;
+                if (frag_last_change != shader->last_change) { 
+
+                    frageditor.SetText(shader->frag.src); 
+
+                    frag_last_change = shader->last_change;
+
+                }
+
+                frageditor.Render("frageditor");
+
+                if (frageditor.IsTextChanged()) {
+
+                    auto x = frageditor.GetText();
+
+                    memset(&x[frageditor.GetText().size()-2],0,1);
+
+                    shader->create(x,shader->vert.src);
+
+                }
+                
+                ImGui::EndTabItem();
+
+            }
+
+            if (ImGui::BeginTabItem("vertex")) {
+
+                static TextEditor verteditor;
+
+                static bool init = false;
+                if (!init){
+
+                    verteditor.SetShowWhitespaces(false);
+                    verteditor.SetReadOnly(false);
+                    verteditor.SetText(shader->vert.src); 
+
+                    init = true;
+                }
+
+                static std::chrono::_V2::system_clock::time_point vert_last_change;
+                if (vert_last_change != shader->last_change) { 
+
+                    verteditor.SetText(shader->vert.src); 
+                    vert_last_change = shader->last_change;
+                    
+                }
+                
+                verteditor.Render("frageditor");
+                
+                if (verteditor.IsTextChanged()) {
+
+                    auto x = verteditor.GetText();
+
+                    memset(&x[verteditor.GetText().size()],0,1);
+
+                    shader->create(shader->frag.src,x);
+
+                }
+
+                ImGui::EndTabItem();
+
+            }
+
+            ImGui::EndTabBar();
+
         }
-
-	    // auto lang = TextEditor::LanguageDefinition::CPlusPlus();
-	    // frageditor.SetLanguageDefinition(lang);
-
-        // frageditor.SetPalette(TextEditor::GetDarkPalette());
-
-        static std::chrono::_V2::system_clock::time_point frag_last_change;
-        if (frag_last_change != shader->last_change) { 
-
-            frageditor.SetText(shader->frag.src); 
-            frag_last_change = shader->last_change;
-            
-
-
-        }
-        frageditor.Render("frageditor");
-        if (frageditor.IsTextChanged()) {
-
-            auto x = frageditor.GetText();
-
-            memset(&x[frageditor.GetText().size()-2],0,1);
-
-            shader->create(x,shader->vert.src);
-
-        }
-
-        // static std::chrono::_V2::system_clock::time_point vert_last_change;
-        // if (vert_last_change != shader->last_change) { 
-
-        //     verteditor.SetText(shader->vert.src); 
-        //     vert_last_change = shader->last_change;
-            
-        // }
-        
-        // verteditor.Render("frageditor");
-        // if (verteditor.IsTextChanged()) {
-
-        //     auto x = verteditor.GetText();
-
-        //     memset(&x[verteditor.GetText().size()],0,1);
-
-        //     shader->create(shader->frag.src,x);
-
-        // }
    
     });
 

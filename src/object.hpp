@@ -32,4 +32,6 @@ struct Object {
 
     void addComp(std::string components);
 
+    void clear();
+
 };
