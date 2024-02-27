@@ -81,9 +81,11 @@ void Engine::init() {
 
     tree = new Node("tree");
 
-    auto models = addFolder<Model>("Model", "assets/model/");
+    auto models = addFolder<Model>("Models", "assets/model/");
 
-    auto shaders = addFolder<Effector>("Shaders", "assets/shaders/");
+    auto shaders = addFolder<Effector>("Effectors", "assets/shaders/");
+    
+    auto remaps = tree->addOwnr<Node>("Remaps");
 
     stack = tree->addOwnr<Stack>()->select()->node();
     stack->active = true; 
@@ -128,7 +130,10 @@ void Engine::init() {
     auto m = model->is_a<Model>();
 
     an->get()->universes[0] = new DMX(0);
-    an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
+    an->get()->universes[0]->remaps.push_back(DMX::DMXRemap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
+
+    remaps->addPtr<DMX::DMXRemap>(&an->get()->universes[0]->remaps.back());
+
     an->trigchange();
 
     auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);

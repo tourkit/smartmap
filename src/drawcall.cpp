@@ -40,7 +40,7 @@ void DrawCall::run() {
 }
 
 static std::string struct_taber = "";//\t";
-static std::string struct_spacer = "";//\n\n";
+static std::string struct_spacer = " ";//\n\n";
 static std::string comment_line  = "///////////////////////////////////////////\n\n";
 
 std::string DrawCall::layout(UBO* ubo) {
@@ -59,7 +59,7 @@ std::string DrawCall::layout(UBO* ubo) {
         
         if (!obj.s->comps.size()) continue;
 
-        obj_str += "struct "+camel(obj.s->name)+"{"+struct_spacer;
+        obj_str += "struct "+camel(obj.s->name)+" {"+struct_spacer;
 
         int comp_id = 0;
 

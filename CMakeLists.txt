@@ -29,6 +29,7 @@ add_executable(smartmap
     src/ndi.cpp
 
     src/buffer.cpp
+    src/remap.cpp
     src/object.cpp
     src/component.cpp
     src/struct.cpp

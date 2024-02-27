@@ -21,11 +21,16 @@ void DMX::update() {
 
 }
 
-uint16_t DMX::Remap::get16(uint8_t* data) { return ((data[0] << 8) | data[1]);  }
-uint32_t DMX::Remap::get24(uint8_t* data) { return ((data[0] << 16) | (data[1] << 8) | data[2]);  }
-uint32_t DMX::Remap::get32(uint8_t* data) { return ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]);  }
+DMX::DMXRemap::DMXRemap(void *src, void *dst, Fixture *f, uint16_t q) { 
 
-void DMX::Remap::update() {
+    this->src = (char*)src;
+    this->dest = (char*)dst;
+    this->fixture = f;
+    this->quantity = q;
+
+} 
+
+void DMX::DMXRemap::update() {
     
     auto data = (uint8_t*)src;
 

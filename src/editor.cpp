@@ -140,10 +140,13 @@ void Editors::init() {
 
     ////////// Artnet.HPP 
     
-    Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){ 
+    Editor<DMX::DMXRemap>([](Node*node,DMX::DMXRemap* remap){ 
 
 
-             int member_id = 0;
+            std::string sss;
+            ImGui::InputText("##remap_name", sss.data(), sss.length());
+
+            int member_id = 0;
 
             for (auto c:remap->fixture->s->comps) {
                         
@@ -488,7 +491,7 @@ void Editors::init() {
     
     Editor<DMX>([](Node*node,DMX* dmx){ 
         
-        for (auto &r : dmx->remaps) Editor<DMX::Remap>::cb(node, &r); 
+        for (auto &r : dmx->remaps) Editor<DMX::DMXRemap>::cb(node, &r); 
         
     });
 
