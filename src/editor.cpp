@@ -271,7 +271,7 @@ void Editors::init() {
                 }
                 
                 verteditor.Render("frageditor");
-                
+
                 if (verteditor.IsTextChanged()) {
 
                     auto x = verteditor.GetText();
@@ -446,6 +446,7 @@ void Editors::init() {
         static int obj_current = 0;
         std::vector<std::string> obect_strs;
         for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
+        if (!obect_strs.size()) return;
         object_str.create(obect_strs);
         ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
