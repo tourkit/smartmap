@@ -148,27 +148,25 @@ void Editors::init() {
 
             if (!models.size()) {
             
-                for (auto layer : engine.stack->childrens) {
+                engine.stack->each<Layer>([&](Node* n, Layer* l) { 
 
-                    for (auto c : layer->childrens) {
+                    n->each<Model>([&](Node* n, Model* m) { 
 
-                        auto l = c->is_a<Model>(); if (!l) continue;
+                        for (auto c : n->name) models.push_back(c);
+                        models.push_back(0);
+                        models_ptr.push_back(m);
+          
+                    });
 
-                        models.insert(models.end(), l->file->name.c_str(), l->file->name.c_str() + strlen(l->file->name.c_str()) + 1); 
+                    models.push_back(0);
 
-                        models_ptr.push_back(l);
-
-                    }
-
-                }
+                });
 
             }
 
             // imgui::combo
             static int model_id=0;
             if (ImGui::Combo("Model##dddddddd", &model_id, &models[0], models.size())) remap->import(models_ptr[model_id]->obj->s);
-            
-
 
             std::string sss; 
             ImGui::InputText("char *src##remap_name", sss.data(), sss.length());
@@ -195,20 +193,17 @@ void Editors::init() {
                 
             }
 
-
     });
 
     Editor<Artnet>([](Node*node,Artnet* an){ 
-            ImGui::Text("yellowp "); 
 
         for (auto &u : an->universes) {
 
-            ImGui::Text(("u "+std::to_string(u.first)).c_str()); 
+            ImGui::Text(("universe "+std::to_string(u.first)).c_str()); 
 
             draw_raw(&u.second->data[0], u.second->data.size());
 
         }
-
 
     });
 
@@ -549,9 +544,11 @@ void Editors::init() {
 
     Editor<Effector>([](Node* node, Effector *effector){ Editor<File>::cb(node, effector->file); });
 
-    ////////// Stack.HPP 
+    ////////// Engine.HPP 
     
     Editor<Stack>([](Node* node, Stack *log){ Editor<Log>::cb(node, &engine.log); });
+    
+    Editor<Debug>([](Node* node, Debug *log){ Editor<Log>::cb(node, &engine.log); });
 
     ////////// DRAWCALL.HPP 
     

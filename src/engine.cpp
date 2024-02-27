@@ -81,6 +81,10 @@ void Engine::init() {
 
     tree = new Node("tree");
 
+    auto debug = tree->addOwnr<Debug>();
+    debug->addPtr<UBO>(static_ubo);
+    debug->addPtr<UBO>(dynamic_ubo);
+
     auto models = addFolder<Model>("Models", "assets/model/");
 
     auto shaders = addFolder<Effector>("Effectors", "assets/shaders/");
@@ -110,15 +114,15 @@ void Engine::init() {
 
     gui->editors.back()->selected = layer1->node();
     // gui->editors.back()->locked = true;
-    gui->editors.push_back(new EditorWidget());
-    gui->editors.back()->selected = model;
-    gui->editors.back()->locked = true;
-    gui->editors.push_back(new EditorWidget());
-    gui->editors.back()->selected = an->node();
-    gui->editors.back()->locked = true;
-    gui->editors.push_back(new EditorWidget());
-    gui->editors.back()->selected = stack;
-    gui->editors.back()->locked = true;
+    // gui->editors.push_back(new EditorWidget());
+    // gui->editors.back()->selected = model;
+    // gui->editors.back()->locked = true;
+    // gui->editors.push_back(new EditorWidget());
+    // gui->editors.back()->selected = an->node();
+    // gui->editors.back()->locked = true;
+    // gui->editors.push_back(new EditorWidget());
+    // gui->editors.back()->selected = stack;
+    // gui->editors.back()->locked = true;
 
     auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
     // fixture->attributes[0].combining = 0;
