@@ -329,15 +329,20 @@ void Editors::init() {
 
         static bool is_verbose = false;
 
-        static ImVec4 info = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-        static ImVec4 debug = ImVec4(1.0f, 1.0f, 0.6f, 1.0f);
+        static ImVec4 info = ImVec4(0.6f, 0.6f, 0.6f, 1.0f);
+        static ImVec4 debug = ImVec4(0.25f, 0.25f, 0.25f, 1.0f);
         static ImVec4 warning = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
         static ImVec4 verbose = ImVec4(0.4f, 0.4f, 1.0f, 1.0f);
-        ImGui::ColorButton("info", info);
-        ImGui::SameLine();ImGui::ColorButton("debug", debug);
-        ImGui::SameLine();ImGui::ColorButton("warning", warning);
-        ImGui::SameLine();ImGui::ColorButton("verbose##vcolop", verbose);
+
+        static float *curr = &info.x;
+
+        ImGui::SameLine();if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
+        ImGui::SameLine();if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
+        ImGui::SameLine();if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }
+        ImGui::SameLine();if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }
         ImGui::SameLine();ImGui::Checkbox("verbose", &is_verbose);
+
+        if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
 
         int max_lines = 1000;
         int to = log->appender.list.size()-max_lines;

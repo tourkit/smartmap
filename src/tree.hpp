@@ -20,4 +20,6 @@ private:
 
 bool is_deleting = false;
 
+Node* is_renaming = nullptr;
+
 };
