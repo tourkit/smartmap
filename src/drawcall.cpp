@@ -51,18 +51,14 @@ std::string DrawCall::layout(UBO* ubo) {
     
     std::string content_str;
 
-    bool is_reserved = false;
-
     std::set<Component*> components;
 
     // Object Struct
 
     for (auto &obj : ubo->objects) {
-
-        if(!obj.reserved) continue;
-
-        is_reserved = true;
         
+        if (!obj.s->comps.size()) continue;
+
         obj_str += "struct "+camel(obj.s->name)+"{"+struct_spacer;
 
         int comp_id = 0;
