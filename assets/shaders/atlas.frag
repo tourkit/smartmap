@@ -4,8 +4,8 @@ void atlas(int id) {
 
     int t_id = 0;
 
-    uv *= mediascoords[t_id].size;
-    uv += mediascoords[t_id].position;
+    uv *= media[t_id].size;
+    uv += media[t_id].pos;
     color *= texture(mediasAtlas, uv);
 
 }

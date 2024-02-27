@@ -30,6 +30,7 @@ add_executable(smartmap
 
     src/buffer.cpp
     src/object.cpp
+    src/component.cpp
     src/struct.cpp
     src/entry.cpp
     

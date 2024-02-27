@@ -28,6 +28,9 @@ struct Entry {
         
         };
 
+        template <typename T>
+        void set(T data) { memcpy(this->data(),(char*)&data, sizeof(T)); }
+
         int id;
 
         Entry *entry;

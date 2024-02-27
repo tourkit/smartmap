@@ -15,7 +15,7 @@ Layer::Layer() : fb(engine.window.width,engine.window.height) {}
 
 void Layer::run() {
 
-    // fb.bind();
+    fb.bind();
 
     DrawCall::run();
 
@@ -39,8 +39,8 @@ void DrawCall::run() {
 
 }
 
-static std::string struct_taber = "\t";
-static std::string struct_spacer = " \n\n";
+static std::string struct_taber = "";//\t";
+static std::string struct_spacer = "";//\n\n";
 static std::string comment_line  = "///////////////////////////////////////////\n\n";
 
 std::string DrawCall::layout(UBO* ubo) {
@@ -100,7 +100,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
     std::string layout_str;
     
-    if (comps_str.length()){
+    if (obj_str.length()){
     
         layout_str += comps_str + comment_line + obj_str + comment_line;
 

@@ -13,7 +13,7 @@
 
 Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)  {
 
-    buffer = engine.static_ubo->addObj(new Struct("atlas", {"Size","Position", }));
+    buffer = engine.static_ubo->addObj(new Struct("Media", {"size","pos"}));
 
     texture = new Texture(width,height,1,1);
 
@@ -50,7 +50,7 @@ void Atlas::fromDir(std::string path) {
         if (!img.loaded) continue;
         
         auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
-        if (!r.width) {PLOGW << "needniouatlas"; continue;} 
+        if (!r.width) {PLOGW << img.name << " can't fit, need more space."; continue;} 
 
         float x[4] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
 

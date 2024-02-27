@@ -88,52 +88,50 @@ void Engine::init() {
     stack = tree->addOwnr<Stack>()->select()->node();
     stack->active = true; 
 
-    // auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
+    auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
 
     PLOGD << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
 
-    tree->addPtr<UBO>(static_ubo);
-
     auto layer1 = stack->addOwnr<Layer>()->select();
     auto model = layer1->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
-    // model->addPtr(shaders->childrens[2]); 
-    // model->addPtr(shaders->childrens[1]); 
+    model->addPtr(shaders->childrens[2]); 
+    model->addPtr(shaders->childrens[1]); 
     
-    // atlas->get()->link(&layer1->get()->shader);
+    atlas->get()->link(&layer1->get()->shader);
 
-    // auto an = tree->addOwnr<Artnet>();
-    // an->active = true;
+    auto an = tree->addOwnr<Artnet>();
+    an->active = true;
 
     gui->editors.back()->selected = layer1->node();
     // gui->editors.back()->locked = true;
     gui->editors.push_back(new EditorWidget());
     gui->editors.back()->selected = model;
     gui->editors.back()->locked = true;
-    // gui->editors.push_back(new EditorWidget());
-    // gui->editors.back()->selected = an->node();
+    gui->editors.push_back(new EditorWidget());
+    gui->editors.back()->selected = an->node();
     gui->editors.back()->locked = true;
     gui->editors.push_back(new EditorWidget());
     gui->editors.back()->selected = stack;
     gui->editors.back()->locked = true;
 
-    // auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
-    // // fixture->attributes[0].combining = 0;
-    // fixture->attributes[4].combining = 2;
-    // fixture->attributes[5].combining = 2;
-    // fixture->attributes[6].combining = 2;
-    // fixture->attributes[7].combining = 2;
-    // fixture->attributes[8].combining = 0;
+    auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
+    // fixture->attributes[0].combining = 0;
+    fixture->attributes[4].combining = 2;
+    fixture->attributes[5].combining = 2;
+    fixture->attributes[6].combining = 2;
+    fixture->attributes[7].combining = 2;
+    fixture->attributes[8].combining = 0;
 
-    // auto m = model->is_a<Model>();
+    auto m = model->is_a<Model>();
 
-    // an->get()->universes[0] = new DMX(0);
-    // an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
-    // an->trigchange();
+    an->get()->universes[0] = new DMX(0);
+    an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
+    an->trigchange();
 
-    // auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
+    auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
     
     
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
