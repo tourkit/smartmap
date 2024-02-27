@@ -94,6 +94,8 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
+    tree->addPtr<UBO>(static_ubo);
+
     auto layer1 = stack->addOwnr<Layer>()->select();
     auto model = layer1->addPtr(models->childrens[0]); 
     model->addPtr(shaders->childrens[0]); 
