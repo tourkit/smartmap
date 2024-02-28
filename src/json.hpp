@@ -4,60 +4,33 @@
 #include "include/vendor/rapidjson/document.h"
 #include "include/vendor/rapidjson/stringbuffer.h"
 
-#include "file.hpp"
+
+struct File;
 
 struct JSON {
 
     rapidjson::Document document;
 
+    File * file = nullptr;
+
     JSON();
+
+    JSON(File* file);
+
     ~JSON();
 
-    bool load(const char* filename);
+    bool load(File* file);
 
     static bool exists(rapidjson::Value& source, const char* name);
 
-    static const char* getString(rapidjson::Value& source, const char* name,
-                                 const char* defaultValue = "UNDEFINED");
+    static const char* getString(rapidjson::Value& source, const char* name, const char* defaultValue = "UNDEFINED");
 
-    static unsigned int getUint(rapidjson::Value& source, const char* name,
-                                unsigned int defaultValue = 0);
+    static unsigned int getUint(rapidjson::Value& source, const char* name, unsigned int defaultValue = 0);
 
     static int getInt(rapidjson::Value& source, const char* name, int defaultValue = 0);
 
     operator rapidjson::Value&();
-    File* file = nullptr;
-
-    // struct Data {
-
-    //     rapidjson::Document* doc;
-    //     rapidjson::Value * val;
-
-
-    //     static int getInt(const char* name, int defaultValue = 0) {
-
-    //         return source[name].GetInt();
-
-    //     }
-
-    //     rapidjson::Value& operator[](const char* n) {
-
-
-
-    //         if (!val->HasMember(name)) {
-
-    //             PLOGW << "member '" << name << "' does not exist";
-    //             return;
-
-    //         }
-            
-    //         val = *(*val)[n];
-
-    //         return *val;
-
-    //     }
-
-    // } data{&document};
 
     rapidjson::Value& operator[](const char* n);
+
 };

@@ -4,6 +4,9 @@
 #include "shader.hpp"
 #include "framebuffer.hpp"
 
+#include <vector>
+#include <cstring>
+
 struct UBO;
 struct FrameBuffer;
 

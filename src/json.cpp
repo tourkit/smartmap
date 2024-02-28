@@ -5,12 +5,13 @@
 
 JSON::JSON() {}
 
-JSON::~JSON() { delete file; }
+JSON::JSON(File* file) { load(file); }
 
-bool JSON::load(const char* filename) {
+JSON::~JSON() {  }
 
-    delete file;
-    file = new File(filename);
+bool JSON::load(File* file) {
+
+    this->file = file;
 
     document.Parse(file->data.data());
 

@@ -14,6 +14,7 @@
 #include "dmx.hpp"
 #include "ndi.hpp"
 #include "texture.hpp"
+#include "json.hpp"
 
 #include "callbacks.hpp"
 
@@ -84,6 +85,8 @@ void Engine::init() {
     auto debug = tree->addOwnr<Debug>();
     debug->addPtr<UBO>(static_ubo);
     debug->addPtr<UBO>(dynamic_ubo);
+    auto comps = debug->addOwnr<Node>("Components");
+    for (auto c : Component::pool) comps->addPtr<Component>(c);
 
     auto models = addFolder<Model>("Models", "assets/model/");
 
@@ -99,6 +102,12 @@ void Engine::init() {
     PLOGI << "Engine initialized";
 
     ///////////////////////////////////////////////////////////////////
+
+    auto json = tree->addOwnr<JSON>(new File("project.json"));
+
+    auto j = json->get();
+
+    j->document.HasMember("test");
 
     auto layer1 = stack->addOwnr<Layer>()->select();
     auto model = layer1->addPtr(models->childrens[0]); model->name = "quadA";

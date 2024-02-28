@@ -19,6 +19,7 @@
 #include "artnet.hpp"
 #include "texture.hpp"
 #include "atlas.hpp"
+#include "json.hpp"
 
 #include <cstring>
 
@@ -506,7 +507,7 @@ void Editors::init() {
 
     Editor<UBO>([](Node* node, UBO *ubo){ 
 
-        std::string subs_str = std::to_string(ubo->subscribers.size())+" subs";
+        std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s).";
         for (auto s: ubo->subscribers) subs_str += " "+std::to_string(s->id);
         ImGui::Text(subs_str.c_str());
 
@@ -561,6 +562,27 @@ void Editors::init() {
         Editor<Texture>::cb(node, atlas->texture); 
         
         Editor<Object>::cb(node, atlas->buffer); 
+        
+        
+    });
+
+    ////////// Component.HPP 
+    
+    Editor<Component>([](Node* node, Component *comp){ 
+        
+        for (auto &m : comp->members) {
+
+            ImGui::Text((std::string(m.type_name()) + " " + m.name+ "; ").c_str());
+        }
+        
+        
+    });
+    ////////// JSON.HPP 
+    
+    Editor<JSON>([](Node* node, JSON *json){ 
+        
+        // if (json->document.HasMember("test")) ImGui::Text("m[0].GetString()");
+
         
         
     });

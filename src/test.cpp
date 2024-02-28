@@ -1,26 +1,29 @@
 #include "test.hpp"
 #include "log.hpp"
-
 #include "engine.hpp"
-#include "struct.hpp"
-#include "object.hpp"
-#include "entry.hpp"
+#include "node.hpp"
+
+
+#include "json.hpp"
 
 Test::Test() {
 
-    // auto obj = engine.dynamic_ubo->addObj(new Struct("MICHEL"));
+rapidjson::Document document;
 
-    // obj->s->addComp({"float"});
+Editor<rapidjson::Document>([](Node* node, rapidjson::Document *json){  });
 
-    // auto e1 = obj->push();
+NODE<rapidjson::Document>::onrun([](Node* node, rapidjson::Document *json){  });
 
-    // obj->addComp({"Vec2"}); 
+NODE<rapidjson::Document>::oncreate([](Node* node, rapidjson::Document *json){  });
 
-    // e1[0][0].set<float>(69);
-    // auto e2 = obj->push();
+auto json_n = engine.tree->addOwnr<rapidjson::Document>();
 
-    // auto z = *(std::vector<char>*)&e1[0][0].get<char>();
+auto json = json_n->get();
 
-    // PLOGI << z.size();
+    
+if (json->HasMember("test")) PLOGD << "SI";
+    
+    
+
 
 }

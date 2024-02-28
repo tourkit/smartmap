@@ -117,8 +117,6 @@ void DrawCall::update() {
 
     header_commom += layout(engine.dynamic_ubo);
     header_commom += layout(engine.static_ubo);
-    // header_commom += dynamic_layout();
-    // header_commom += static_layout();
 
     // FRAGMENT
     

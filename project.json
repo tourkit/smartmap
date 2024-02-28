@@ -1,0 +1,34 @@
+{
+    
+    "models" : [{
+        
+        "quad" : [[[-1,-1,0],[1,-1,0],[-1,1,0],[1,1,0]],[[0,1],[1,1],[0,0],[1,0]],[[1,2,3],[2,3,4]]]
+    
+    }],
+    
+    "effectors" : [{
+
+        "argb":"//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float blue) { \n\n\tcolor = color * vec4 (red, green, blue, alpha);  \n\n}",
+
+        "atlas":"//id(0,10,0)\n\nvoid atlas(int id) { \n\n\tuv *= media[id].size;\n\tuv += media[id].pos;\n\tcolor *= texture(medias, uv);\n\n}"
+
+    }],
+    
+    "layers" : [{
+
+        "layer1":[
+
+            ["quad", ["atlas", "argb"]],
+            ["quad", ["argb"]]
+
+        ],
+
+        "layer2":[["quad", ["atlas"]]]
+
+    }],
+    
+    "editors" : [{
+    
+    
+    }]
+}

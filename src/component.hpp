@@ -17,7 +17,7 @@ struct Member {
     int size;
     // int offset;
     float range_from,range_to;  
-    enum Type { UNDEFINED, F16, I8, I16, I32, UI8, UI16, UI32, VEC2, VEC3, VEC4 } type;
+    enum Type { UNDEFINED, F16, I8, I16, I32, UI8, UI16, UI32, VEC2, VEC3, VEC4, SAMPLER} type;
     float default_val = 0;
 
     const char* type_name() {
@@ -27,15 +27,34 @@ struct Member {
             case VEC2:
                 return "vec2";
                 break;
+            case VEC3:
+                return "vec3";
+                break;
+            case VEC4:
+                return "vec4";
+                break;
             case F16:
                 return "float";
+                break;
+            case I16:
+                return "int";
+                break;
+            case UI16:
+                return "uint";
                 break;
             case I32:
                 return "int";
                 break;
             
+            case UI32:
+                return "uint";
+                break;
+            case SAMPLER:
+                return "Sampler2D";
+                break;
+            
             default:
-                return "";
+                return "unknown";
                 break;
 
         }

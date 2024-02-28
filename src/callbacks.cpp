@@ -12,6 +12,8 @@
 #include "artnet.hpp"
 #include "ndi.hpp"
 #include "atlas.hpp"
+#include "component.hpp"
+#include "json.hpp"
 
 void Callbacks::init() {
     
@@ -190,7 +192,12 @@ void Callbacks::init() {
     NODE<NDI::Sender>::onrun([](Node* node, NDI::Sender *sender){ sender->tick(); });
 
 
+    ////////// Component.HPP 
 
+    NODE<Component>::oncreate([](Node* node, Component *comp){ node->name = comp->name; });
 
+    ////////// JSON.HPP 
+
+    NODE<JSON>::oncreate([](Node* node, JSON *json){ if (json->file) node->name = json->file->name; });
 
 }
