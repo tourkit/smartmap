@@ -27,6 +27,18 @@
 
     },
     
+    "devices" : {
+
+        "artnet" : [ "0.0.0.0" ]
+
+    },
+    
+    "remaps" : [
+
+        ["layer1[0]"]
+    
+    ],
+    
     "editors" : {
     
     
