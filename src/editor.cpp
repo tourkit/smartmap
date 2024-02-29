@@ -521,7 +521,7 @@ void Editors::init() {
         
         if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj); 
         
-        else Editor<File>::cb(node, model->file);
+        else if (model->file) Editor<File>::cb(node, model->file);
         
     });
 
@@ -537,13 +537,9 @@ void Editors::init() {
     
     Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
 
-    ////////// VBO.HPP 
-    
-    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
-
     ////////// Effector.HPP 
 
-    Editor<Effector>([](Node* node, Effector *effector){ Editor<File>::cb(node, effector->file); });
+    Editor<Effector>([](Node* node, Effector *effector){ if (effector->file) Editor<File>::cb(node, effector->file); });
 
     ////////// Engine.HPP 
     

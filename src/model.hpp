@@ -9,7 +9,7 @@ struct Effector;
 
 struct Model {
 
-    File * file;
+    File * file = nullptr;
 
     int id;
 
@@ -22,6 +22,12 @@ struct Model {
     int quantity;
 
     Model(File* file, int id = 0, int quantity = 1);
+
+    Model(const char *data, int id = 0, int quantity = 1);
+
+    bool import(File* file, int id = 0, int quantity = 1);
+
+    bool import(const char *data, int id = 0, int quantity = 1);
 
     void addFX(Effector*  effector);
 

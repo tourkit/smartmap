@@ -74,46 +74,63 @@ static Node* addFolder(std::string name, std::string path) {
 
 }
 
-void Engine::open(const char* filepath) {
+void Engine::open(const char* file) {
 
-    PLOGI << "opening " << filepath;
+    JSON json(File(file).data.data());
 
-    auto file = new File(filepath);
+    project_name = file;
 
-    JSON json(file);
+    for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
 
-    delete file;
+        auto n = models->addOwnr<File>();
+        auto model = n->get();
+        model->loadString(m.value.GetString());
+        model->name = m.name.GetString();
+        model->path = engine.project_name;
+        models->addOwnr<Model>(model);
+        n->hide();
 
-    for (auto &m : json["models"]) {
-
-        if (m.name.IsString() && m.value.IsString()) {
-
-        }
-
-    }
-
-    for (auto &m : json["effectors"])  {
-
-        if (m.name.IsString() && m.value.IsString()) {
-
-            // effectors->addOwnr<Effector>(m.value.GetString())->name = m.name.GetString();
-        }
 
     }
 
-    for (auto &m : json["layers"]) {
+    for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
+
+        auto n = effectors->addOwnr<File>();
+        auto f = n->get();
+        f->loadString(m.value.GetString());
+        f->name = m.name.GetString();
+        f->path = engine.project_name;
+        effectors->addOwnr<Effector>(f);
+        n->hide();
+
+    }
+
+    for (auto &l : json["layers"]) {
         
         auto layer = stack->addOwnr<Layer>();
 
-        layer->name = m.name.GetString();
+        layer->name = l.name.GetString();
 
-        if (m.value.IsArray()) for (auto &f : m.value.GetArray()) {
+        if (l.value.IsArray()) for (auto &m : l.value.GetArray()) {
 
-            if (f.IsString()) {
+            if (!m.IsArray()) continue;
+            if (!m[0].IsString()) continue;
 
-                auto effector = effectors->child(f.GetString());
+            auto model_n = models->child(m[0].GetString())->get<Model>();
+            if (!model_n)  { PLOGW << "no model : " << m[0].GetString(); continue; }
+            auto model = layer->addPtr(model_n);
+            
+            if (m.GetArray().Size() != 2) continue;
+            if (!m[1].IsArray()) continue;
 
-                if (effector) layer->addPtr(effector);
+            for (auto &f : m[1].GetArray()) {
+
+                if (!f.IsString()) continue;
+
+                auto effector = effectors->child(f.GetString())->get<Effector>();
+
+                if (effector) model->addPtr(effector);
+                else PLOGW << "no effector: " << f.GetString();
 
             }
 

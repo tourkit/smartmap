@@ -9,12 +9,19 @@
 #include "entry.hpp"
 #include "ubo.hpp"
 
-Model::Model(File* file, int id, int quantity) : file(file), id(id), quantity(quantity) { 
+Model::Model(File* file, int id, int quantity) { import(file,id,quantity); }
+
+bool Model::import(File* file, int id, int quantity) { 
+
+    this->file = file;
+    this->id = id;
+    this->quantity = quantity;
 
     obj = engine.dynamic_ubo->addObj(new Struct((file->name+""+std::to_string(id)).c_str()));
 
     entry = &obj->push();
-    // entry[0][0].set<float>(1);
+
+    return true;
 
 }
 

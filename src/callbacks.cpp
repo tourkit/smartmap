@@ -138,7 +138,7 @@ void Callbacks::init() {
     
     ////////// MODEL.HPP 
 
-    NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->file->name; });
+    NODE<Model>::oncreate([](Node* node, Model *model) { if (model->file) node->name = model->file->name; });
 
     NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return (new Ptr<Effector>(node->is_a<Effector>()))->node(); });
 
@@ -164,7 +164,7 @@ void Callbacks::init() {
 
     ////////// Effector.HPP 
     
-    NODE<Effector>::oncreate([](Node* node, Effector *effector) { node->name = effector->file->name; });
+    NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name; });
 
     NODE<Effector>::onchange([](Node* node, Effector *effector) { PLOGI<<"update " << effector->file->name; });
 

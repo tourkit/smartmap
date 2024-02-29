@@ -37,6 +37,8 @@ struct Engine {
     
     int sequid = 1000;
 
+    std::string project_name;
+
     void init();
     void open(const char* filepath);
 

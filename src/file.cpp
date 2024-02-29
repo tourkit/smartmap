@@ -51,7 +51,6 @@ bool File::hasChanged() {
 
 }
 
-
 void File::read(std::string path, bool binary){
 
     this->path = path;
@@ -97,6 +96,15 @@ void File::read(std::string path, bool binary){
     PLOGW << "couldn't find: " << path;
 
     return;
+
+}
+void File::loadString(std::string data) {
+
+    this->data.resize(data.length());
+
+    memcpy(&this->data[0],&data[0],data.length());
+    
+    loaded = true;
 
 }
 

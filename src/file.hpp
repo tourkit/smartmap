@@ -24,7 +24,8 @@ struct File {
 
     int64_t getTimeModified();
 
-    void read(std::string source, bool binary = false);
+    void loadString(std::string data);
+    void read(std::string path, bool binary = false);
     void write(const char* data);
     static void write(std::string path, std::string data);
 
