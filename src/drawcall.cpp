@@ -59,6 +59,8 @@ std::string DrawCall::layout(UBO* ubo) {
 
     // Object Struct
 
+    bool is_reserved = false;
+
     for (auto &obj : ubo->objects) {
         
         if (!obj.s->comps.size()) continue;
@@ -80,6 +82,8 @@ std::string DrawCall::layout(UBO* ubo) {
         obj_str += "};\n\n";
 
         content_str += camel(obj.s->name) + " " + lower(obj.s->name) + "[" + std::to_string(obj.reserved) + "];";
+
+        if (obj.reserved) is_reserved = true;
         
     }
 
@@ -100,7 +104,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
     std::string layout_str;
     
-    if (obj_str.length()){
+    if (is_reserved && obj_str.length()){
     
         layout_str += comps_str + comment_line + obj_str + comment_line;
 

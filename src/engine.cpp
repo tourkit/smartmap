@@ -104,6 +104,18 @@ void Engine::open(const char* file) {
         n->hide();
 
     }
+    // for (auto &m : json["devices"]) if (m.name.IsString() && m.value.IsString()) {
+
+        // if (!strcmp(m.name.GetString(),"artnet"))  { 
+            
+        //     if (!m.value.IsArray() || m.value.GetArray().Size() == 0) continue;
+        //     if (!m.value.GetArray()[0].IsString()) continue;
+
+        //     engine.tree->addOwnr<Artnet>(m.value.GetArray()[0].GetString());
+            
+        // }
+
+    // }
 
     for (auto &l : json["layers"]) {
         
@@ -148,24 +160,25 @@ void Engine::init() {
 
     tree = new Node("tree");
 
-    auto debug = tree->addOwnr<Debug>();
+    auto debug = tree->addOwnr<Debug>()->close();
     debug->addPtr<UBO>(static_ubo);
     debug->addPtr<UBO>(dynamic_ubo);
-    auto comps = debug->addOwnr<Node>("Components");
+    auto comps = debug->addOwnr<Node>("Components")->close();
     for (auto c : Component::pool) comps->addPtr<Component>(c);
 
-    // models = addFolder<Model>("Models", "assets/model/");
-
-    // effectors = addFolder<Effector>("Effectors", "assets/shaders/");
-    
     models = tree->addOwnr<Node>("Models")->node();
+
     effectors = tree->addOwnr<Node>("Effectors")->node();
+
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
-    stack = tree->addOwnr<Stack>()->select()->node();
+    stack = tree->addOwnr<Stack>()->node();
+
     stack->active = true; 
 
-    auto atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media/")->select();
+    atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media /")->get();
+
+    debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
 
     PLOGI << "Engine initialized";
 
@@ -173,23 +186,9 @@ void Engine::init() {
 
     open("project.json");
 
-    
-    // atlas->get()->link(&layer1->get()->shader);
-
     auto an = tree->addOwnr<Artnet>();
+    
     an->active = true;
-
-    // gui->editors.back()->selected = layer1->node();
-    // gui->editors.back()->locked = true;
-    // gui->editors.push_back(new EditorWidget());
-    // gui->editors.back()->selected = model;
-    // gui->editors.back()->locked = true;
-    // gui->editors.push_back(new EditorWidget());
-    // gui->editors.back()->selected = an->node();
-    // gui->editors.back()->locked = true;
-    // gui->editors.push_back(new EditorWidget());
-    // gui->editors.back()->selected = stack;
-    // gui->editors.back()->locked = true;
 
     // auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
     // fixture->attributes[0].combining = 0;
