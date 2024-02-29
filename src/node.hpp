@@ -98,6 +98,8 @@ struct UntypedNode {
 
     Node* select();
 
+    Node* child(const char* name);
+
     template <typename U>
     U* is_a() { 
         

@@ -580,10 +580,11 @@ void Editors::init() {
     ////////// JSON.HPP 
     
     Editor<JSON>([](Node* node, JSON *json){ 
-        
-        // if (json->document.HasMember("test")) ImGui::Text("m[0].GetString()");
 
-        
+        for (auto &m : (*json)["models"]) {ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString());}
+
+        for (auto &m : (*json)["effectors"]) {ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString());}
+            
         
     });
 

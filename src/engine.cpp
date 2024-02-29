@@ -74,6 +74,55 @@ static Node* addFolder(std::string name, std::string path) {
 
 }
 
+void Engine::open(const char* filepath) {
+
+    PLOGI << "opening " << filepath;
+
+    auto file = new File(filepath);
+
+    JSON json(file);
+
+    delete file;
+
+    for (auto &m : json["models"]) {
+
+        if (m.name.IsString() && m.value.IsString()) {
+
+        }
+
+    }
+
+    for (auto &m : json["effectors"])  {
+
+        if (m.name.IsString() && m.value.IsString()) {
+
+            // effectors->addOwnr<Effector>(m.value.GetString())->name = m.name.GetString();
+        }
+
+    }
+
+    for (auto &m : json["layers"]) {
+        
+        auto layer = stack->addOwnr<Layer>();
+
+        layer->name = m.name.GetString();
+
+        if (m.value.IsArray()) for (auto &f : m.value.GetArray()) {
+
+            if (f.IsString()) {
+
+                auto effector = effectors->child(f.GetString());
+
+                if (effector) layer->addPtr(effector);
+
+            }
+
+        }
+        
+    }
+
+}
+
 void Engine::init() {
 
     Callbacks::init();
@@ -88,11 +137,13 @@ void Engine::init() {
     auto comps = debug->addOwnr<Node>("Components");
     for (auto c : Component::pool) comps->addPtr<Component>(c);
 
-    auto models = addFolder<Model>("Models", "assets/model/");
+    // models = addFolder<Model>("Models", "assets/model/");
 
-    auto shaders = addFolder<Effector>("Effectors", "assets/shaders/");
+    // effectors = addFolder<Effector>("Effectors", "assets/shaders/");
     
-    auto remaps = tree->addOwnr<Node>("Remaps");
+    models = tree->addOwnr<Node>("Models")->node();
+    effectors = tree->addOwnr<Node>("Effectors")->node();
+    remaps = tree->addOwnr<Node>("Remaps")->node();
 
     stack = tree->addOwnr<Stack>()->select()->node();
     stack->active = true; 
@@ -103,25 +154,15 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
-    auto json = tree->addOwnr<JSON>(new File("project.json"));
+    open("project.json");
 
-    auto j = json->get();
-
-    j->document.HasMember("test");
-
-    auto layer1 = stack->addOwnr<Layer>()->select();
-    auto model = layer1->addPtr(models->childrens[0]); model->name = "quadA";
-    layer1->addPtr(models->childrens[0])->name = "quadB";
-    model->addPtr(shaders->childrens[0]); 
-    model->addPtr(shaders->childrens[2]); 
-    model->addPtr(shaders->childrens[1]); 
     
-    atlas->get()->link(&layer1->get()->shader);
+    // atlas->get()->link(&layer1->get()->shader);
 
     auto an = tree->addOwnr<Artnet>();
     an->active = true;
 
-    gui->editors.back()->selected = layer1->node();
+    // gui->editors.back()->selected = layer1->node();
     // gui->editors.back()->locked = true;
     // gui->editors.push_back(new EditorWidget());
     // gui->editors.back()->selected = model;
@@ -133,24 +174,24 @@ void Engine::init() {
     // gui->editors.back()->selected = stack;
     // gui->editors.back()->locked = true;
 
-    auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
+    // auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
     // fixture->attributes[0].combining = 0;
-    fixture->attributes[4].combining = 2;
-    fixture->attributes[5].combining = 2;
-    fixture->attributes[6].combining = 2;
-    fixture->attributes[7].combining = 2;
-    fixture->attributes[8].combining = 0;
+    // fixture->attributes[4].combining = 2;
+    // fixture->attributes[5].combining = 2;
+    // fixture->attributes[6].combining = 2;
+    // fixture->attributes[7].combining = 2;
+    // fixture->attributes[8].combining = 0;
 
-    auto m = model->is_a<Model>();
+    // auto m = model->is_a<Model>();
 
-    an->get()->universes[0] = new DMX(0);
-    an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
+    // an->get()->universes[0] = new DMX(0);
+    // an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
 
-    remaps->addPtr<DMX::Remap>(&an->get()->universes[0]->remaps.back());
+    // remaps->addPtr<DMX::Remap>(&an->get()->universes[0]->remaps.back());
 
-    an->trigchange();
+    // an->trigchange();
 
-    auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
+    // auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
     
     
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);

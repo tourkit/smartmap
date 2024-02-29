@@ -17,26 +17,28 @@ struct Engine {
     Log log;
 
     Window window;
-
+    
     GUI* gui;
-
+    
     UBO *dynamic_ubo;
-
     UBO *static_ubo;
-
-    Node* tree;
-
-    Node* stack;
-
-    Node* selected = tree;
     
     Atlas *atlas;
+
+    Node* tree;
+    Node* stack;
+    Node* models;
+    Node* effectors;
+    Node* remaps;
+
+    Node* selected = tree;
 
     Node *dc = nullptr;
     
     int sequid = 1000;
 
     void init();
+    void open(const char* filepath);
 
     static Engine& getInstance() { static Engine instance;  return instance; }
 

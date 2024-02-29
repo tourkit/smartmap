@@ -27,6 +27,13 @@
 
     }   
 
+    Node* UntypedNode::child(const char* name) {
+
+        for (auto c : childrens) if (!strcmp(name,c->name.c_str())) return c;
+        
+        return nullptr; 
+    }
+
     Node* UntypedNode::node() { return (Node*)this; }
 
     Node* UntypedNode::top() { auto top = node(); while(top->parent()) { top = top->parent(); } return top; }

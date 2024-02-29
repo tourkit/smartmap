@@ -7,15 +7,31 @@ JSON::JSON() {}
 
 JSON::JSON(File* file) { load(file); }
 
+JSON::JSON(const char* data) { load(data); }
+
 JSON::~JSON() {  }
 
 bool JSON::load(File* file) {
 
     this->file = file;
 
-    document.Parse(file->data.data());
+    return load(file->data.data());
 
+}
+bool JSON::load(const char* data) {
+
+    loaded = false;
+
+    document.Parse(data);
+
+    if (document.HasParseError()) PLOGW << document.GetParseError();
+
+    if (document.IsNull()) { PLOGW << "nothing loaded"; document.Parse("{}"); }
+
+    loaded = true;
+    
     return true;
+
 }
 
 bool JSON::exists(rapidjson::Value& source, const char* name) {
@@ -53,7 +69,3 @@ int JSON::getInt(rapidjson::Value& source, const char* name, int defaultValue) {
 
     return source[name].GetInt();
 }
-
-JSON::operator rapidjson::Value&() { return document; }
-
-rapidjson::Value& JSON::operator[](const char* n) { return document[n]; }

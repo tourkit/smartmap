@@ -7,16 +7,22 @@ Effector::Effector()  { }
 
 Effector::Effector(File *file) { import(file); }
 
-void Effector::import(File *file) {
+Effector::Effector(const char* data) { import(data); }
 
+void Effector::import(File *file) {
     this->file = file;
+
+    import(&file->data[0]);
+}
+
+void Effector::import(const char* data) {
 
     std::smatch match;
 
     ranges.clear();
 
     int range_count = 0;
-    std::string source = &file->data[0];
+    std::string source = data;
     std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*)?)?)?\))");
     std::sregex_iterator next(source.begin(), source.end(), regex);
     std::sregex_iterator end;

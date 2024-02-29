@@ -1,20 +1,20 @@
 {
     
-    "models" : [{
+    "models" : {
         
-        "quad" : [[[-1,-1,0],[1,-1,0],[-1,1,0],[1,1,0]],[[0,1],[1,1],[0,0],[1,0]],[[1,2,3],[2,3,4]]]
+        "quad" : "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3  \nf 2/2 3/3 4/4"
     
-    }],
+    },
     
-    "effectors" : [{
+    "effectors" : {
 
         "argb":"//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float blue) { \n\n\tcolor = color * vec4 (red, green, blue, alpha);  \n\n}",
 
         "atlas":"//id(0,10,0)\n\nvoid atlas(int id) { \n\n\tuv *= media[id].size;\n\tuv += media[id].pos;\n\tcolor *= texture(medias, uv);\n\n}"
 
-    }],
+    },
     
-    "layers" : [{
+    "layers" : {
 
         "layer1":[
 
@@ -25,10 +25,10 @@
 
         "layer2":[["quad", ["atlas"]]]
 
-    }],
+    },
     
-    "editors" : [{
+    "editors" : {
     
     
-    }]
+    }
 }
