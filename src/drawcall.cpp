@@ -4,6 +4,7 @@
 #include "log.hpp"
 #include "ubo.hpp"
 #include "engine.hpp"
+#include "atlas.hpp"
 
 #include <unordered_set>
 #include <set>
@@ -27,7 +28,10 @@ static std::string lower(std::string str) { str[0] = std::tolower(str[0]); retur
 
 DrawCall::DrawCall() {
 
-    engine.dynamic_ubo->subscribers.push_back(&this->shader);
+    engine.dynamic_ubo->subscribers.push_back(&shader);
+    // engine.static_ubo->subscribers.push_back(&shader);
+
+    // engine.atlas->link(&shader);
 
 }
 
