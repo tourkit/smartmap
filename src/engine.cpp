@@ -153,6 +153,7 @@ void Engine::open(const char* file) {
 
         Node* n = nullptr;
         if (e[4].IsString()) n = tree->child(e[4].GetString());
+        if (n) PLOGI<<"wiiii"; else PLOGW<<e[4].GetString();
         if (n) {
 
             engine.gui->editors.back()->selected = n;

@@ -29,21 +29,39 @@
 
     Node* UntypedNode::child(std::vector<std::string> names) {
 
-        for (auto c : childrens) if (!strcmp(names.back().c_str(), c->name.c_str())) {
+        auto traget = names.back();
+        
+        PLOGW << name;
 
-            if (names.size()== 1)return c;
+        for (auto c : childrens) {            
+
+            if (!strcmp(names.back().c_str(), c->name.c_str())) {
+
+                if (names.size()== 1)return c;
+
+                auto parent = c;
+
+                for (int i = names.size()-2; i >= 0; i--) {
             
-            // check parents
+                    PLOGW << names[i] << " " << parent->parent()->name;
+                    
+                    if (!strcmp(parent->parent()->name.c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
+                    
+                }
 
-            auto parent = c;
-
-            for (int i = names.size()-1; i > 0; i--) if (!strcmp(parent->parent()->name.c_str(),names[i].c_str())) { parent = parent->parent(); }else{ parent = nullptr; break; }
-
-            if (parent) return c;
+                if (c) return c;
+                
+            }
             
         }
 
-        if (names.size()> 1) for (auto c : childrens) c->child(names);
+        if (names.size()> 1) for (auto c : childrens) {
+            
+            auto x = c->child(names);
+
+            if (x) return x;    
+            
+        }
         
         return nullptr; 
 
