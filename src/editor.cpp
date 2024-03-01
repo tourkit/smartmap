@@ -539,7 +539,28 @@ void Editors::init() {
 
     ////////// Effector.HPP 
 
-    Editor<Effector>([](Node* node, Effector *effector){ if (effector->file) Editor<File>::cb(node, effector->file); });
+    Editor<Effector>([](Node* node, Effector *effector){ 
+        
+        if (effector->file) {
+            
+            auto x = effector->file->getTimeModified();
+            
+            Editor<File>::cb(node, effector->file); 
+
+            if (x != effector->file->getTimeModified()) effector->import(effector->file);
+            
+        }
+        
+        for (auto x : effector->args)  { 
+            
+            std::string out_str = x.first+ " "+x.second;
+            
+            if (effector->ranges.find(x.second) != effector->ranges.end()) for (auto x : effector->ranges[x.second])  out_str += " " + std::to_string(x).substr(0,3) + ",";
+
+            ImGui::Text(out_str.c_str());
+}
+        
+    });
 
     ////////// Engine.HPP 
     

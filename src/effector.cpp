@@ -23,7 +23,7 @@ void Effector::import(const char* data) {
 
     int range_count = 0;
     std::string source = data;
-    std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*(,\s*-?\d+(\.\d+)?\s*)?)?)?\))");
+    std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*)?)?)?\))");
     std::sregex_iterator next(source.begin(), source.end(), regex);
     std::sregex_iterator end;
     while (next != end) {

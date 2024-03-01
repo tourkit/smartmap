@@ -27,7 +27,7 @@ bool Model::import(File* file, int id, int quantity) {
 
 void Model::addFX(Effector* effector) {
 
-    /// comp creation should move in effector.cpp
+    /// comp creation should move in effector.cpp // ach q iso tem q ir em effectchor.hppou outra veiiissss
     
     Component* c = Component::exist(effector->file->name.c_str());
 
@@ -51,7 +51,7 @@ void Model::addFX(Effector* effector) {
 
     obj->addComp({effector->file->name});
 
-    // obj->resize(obj->reserved); // would fuck everything for moving data in heap
+    // obj->resize(obj->reserved); // would fuck everything for moving data in heap // should add safety though
     
     effectors.push_back(effector);
 

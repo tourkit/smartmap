@@ -127,6 +127,7 @@ private:
 
 
 struct Any {};
+struct xxx { xxx(int x) {} };
 struct Passing {};
 
 template <typename T>
@@ -256,18 +257,18 @@ struct TypedNode : UntypedNode {
     void editor() override { if(Editor<T>::cb) Editor<T>::cb(node(),this->ptr); }
 
     template <typename U>
-    static TypedNode<T>* addFolder(std::string name, std::string path) {
+    TypedNode<T>* addFolder(std::string name, std::string path) {
 
-        auto folder = addOwnr<TypedNode<Any>>();
+        auto folder = addOwnr<Any>();
         folder->name = name;
-        folder->close();
 
         auto dir = folder->TypedNode::addOwnr<Directory>(path);
+        
         dir->hide();
 
-        folder->addList(&dir->childrens); // should add refering automaticaly already somewhere else (onadd ?)
+        for (auto f : dir->get()->list) ((TypedNode<Any>*)dir)->addOwnr<File>(f);
 
-        // folder->addOwnr<U>(node->is_a<File>())->referings.push_back(node); return this;
+        for (auto f : dir->childrens) folder->TypedNode::addOwnr<U>(f->TypedNode::is_a<File>())->referings.push_back(f);
 
         return folder;
 

@@ -167,7 +167,7 @@ void DrawCall::update() {
                 
                 std::string arg_str;
 
-                auto comp = Component::id(effector->file->name.c_str());
+                auto comp = Component::id(effector->file->name.c_str()); 
 
                 if (comp->members.size()<2) arg_str += name+"."+effector->file->name;
 

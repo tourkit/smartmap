@@ -40,6 +40,8 @@ void Callbacks::init() {
     // });
 
     ////////// FILE.HPP 
+    
+    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name; });
 
     NODE<File>::onrun([](Node* node, File *file){ 
 
@@ -178,13 +180,7 @@ void Callbacks::init() {
 
     ////////// Directory.HPP 
 
-    NODE<Directory>::oncreate([](Node* node, Directory *dir){ 
-
-        node->name = dir->path;
-
-        for (auto f : dir->list) node->addOwnr<File>(f);
-        
-    });
+    NODE<Directory>::oncreate([](Node* node, Directory *dir){ node->name = dir->path; });
 
     ////////// NDI.HPP 
 

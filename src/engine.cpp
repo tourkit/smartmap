@@ -32,6 +32,44 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
 
+void Engine::init() {
+
+    Callbacks::init();
+    
+    Editors::init();
+
+    atlas = new Atlas(4096, 4096, "assets/medias/");
+
+    tree = new Node("tree");
+
+    auto debug = tree->addOwnr<Debug>()->close();
+    debug->addPtr<UBO>(static_ubo);
+    debug->addPtr<UBO>(dynamic_ubo);
+    debug->addPtr<Atlas>(atlas);
+    auto comps = debug->addOwnr<Node>("Components")->close();
+    for (auto c : Component::pool) comps->addPtr<Component>(c);
+
+    models = tree->addOwnr<Node>("Models")->node();
+
+    // effectors = tree->addOwnr<Node>("Effectors")->node();
+    effectors = tree->addFolder<Effector>("Effectors", "assets/shaders/")->node();
+
+    remaps = tree->addOwnr<Node>("Remaps")->node();
+
+    inputs = tree->addOwnr<Node>("Inputs")->node()->active(1);
+
+    outputs = tree->addOwnr<Node>("Outputs")->node();
+
+    stack = tree->addOwnr<Stack>()->node()->active(1); 
+
+    debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
+
+    PLOGI << "Engine initialized";
+
+    ///////////////////////////////////////////////////////////////////
+
+}
+
 void Engine::open(const char* file) {
 
     JSON json(File(file).data.data());
@@ -51,7 +89,7 @@ void Engine::open(const char* file) {
 
     }
 
-    for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
+    if (false) for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
 
         auto n = effectors->addOwnr<File>();
         auto f = n->get();
@@ -66,7 +104,7 @@ void Engine::open(const char* file) {
     // kassded la famille. pour toi public :) #inlineclub
     for (auto &m : json["inputs"]) if (m.name.IsString() && m.value.IsArray()) if (!strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>(((m.value.GetArray().Size() && m.value.GetArray()[0].IsString()) ? m.value.GetString() : nullptr ))->active(1);
 
-    for (auto &l : json["layers"]) {
+    if (true) for (auto &l : json["layers"]) {
         
         auto layer = stack->addOwnr<Layer>();
 
@@ -101,43 +139,6 @@ void Engine::open(const char* file) {
         }
         
     }
-
-}
-
-void Engine::init() {
-
-    Callbacks::init();
-    
-    Editors::init();
-
-    atlas = new Atlas(4096, 4096, "assets/medias/");
-
-    tree = new Node("tree");
-
-    auto debug = tree->addOwnr<Debug>()->close();
-    debug->addPtr<UBO>(static_ubo);
-    debug->addPtr<UBO>(dynamic_ubo);
-    debug->addPtr<Atlas>(atlas);
-    auto comps = debug->addOwnr<Node>("Components")->close();
-    for (auto c : Component::pool) comps->addPtr<Component>(c);
-
-    models = tree->addOwnr<Node>("Models")->node();
-
-    effectors = tree->addOwnr<Node>("Effectors")->node();
-
-    remaps = tree->addOwnr<Node>("Remaps")->node();
-
-    inputs = tree->addOwnr<Node>("Inputs")->node()->active(1);
-
-    outputs = tree->addOwnr<Node>("Outputs")->node();
-
-    stack = tree->addOwnr<Stack>()->node()->active(1); 
-
-    debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
-
-    PLOGI << "Engine initialized";
-
-    ///////////////////////////////////////////////////////////////////
 
 }
 

@@ -1,5 +1,5 @@
 //size(0,1,1) 
-//pos(0,1,0) 
+//pos(0,1,.6)  
 //angle(-1,1,0) 
 
 void rectangle(vec2 pos, vec2 size, float angle) {
