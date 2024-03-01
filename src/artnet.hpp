@@ -5,7 +5,7 @@
 #include <map>
 #include <functional>
 #include <iostream>
-#include "../../include/vendor/ofxLibArtnet/artnet/artnet.h"
+#include "../../vendors/ofxLibArtnet/artnet/artnet.h"
 
 #include "dmx.hpp"
 

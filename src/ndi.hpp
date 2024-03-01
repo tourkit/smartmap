@@ -1,6 +1,6 @@
 #pragma once
 
-#include "include/vendor/NDI/Include/Processing.NDI.Lib.h"
+#include "vendors/NDI/Include/Processing.NDI.Lib.h"
 #include "thread.hpp"
 
 namespace NDI {

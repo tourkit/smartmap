@@ -6,7 +6,7 @@
 #include <cstring>
 
 #include "imgui/imgui.h"
-#include "include/vendor/ImGuiColorTextEdit/TextEditor.h"
+#include "vendors/ImGuiColorTextEdit/TextEditor.h"
 
 struct EditorWidget;
 struct TreeWidget;

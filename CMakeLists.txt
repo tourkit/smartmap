@@ -67,28 +67,28 @@ add_executable(smartmap
 
     # src/widgets/artnet_widget.cpp
 
-    include/vendor/imgui/imgui.cpp
-    include/vendor/imgui/imgui_tables.cpp
-    include/vendor/imgui/imgui_widgets.cpp
-    include/vendor/imgui/imgui_demo.cpp
-    include/vendor/imgui/imgui_draw.cpp
-    include/vendor/imgui/backends/imgui_impl_glfw.cpp
-    include/vendor/imgui/backends/imgui_impl_opengl3.cpp
+    vendors/imgui/imgui.cpp
+    vendors/imgui/imgui_tables.cpp
+    vendors/imgui/imgui_widgets.cpp
+    vendors/imgui/imgui_demo.cpp
+    vendors/imgui/imgui_draw.cpp
+    vendors/imgui/backends/imgui_impl_glfw.cpp
+    vendors/imgui/backends/imgui_impl_opengl3.cpp
 
-    include/vendor/ImGuiColorTextEdit/TextEditor.cpp
+    vendors/ImGuiColorTextEdit/TextEditor.cpp
 
-    include/vendor/gl3w/src/gl3w.c
+    vendors/gl3w/src/gl3w.c
 
-    include/vendor/RectangleBinPack/MaxRectsBinPack.cpp
-    include/vendor/RectangleBinPack/Rect.cpp
+    vendors/RectangleBinPack/MaxRectsBinPack.cpp
+    vendors/RectangleBinPack/Rect.cpp
 
-    include/vendor/ofxLibArtnet/artnet/artnet.c
-    include/vendor/ofxLibArtnet/artnet/misc.c
-    include/vendor/ofxLibArtnet/artnet/network.c
-    include/vendor/ofxLibArtnet/artnet/receive.c
-    include/vendor/ofxLibArtnet/artnet/tod.c
-    include/vendor/ofxLibArtnet/artnet/transmit.c
-    include/vendor/ofxLibArtnet/ofxLibArtnet.cpp
+    vendors/ofxLibArtnet/artnet/artnet.c
+    vendors/ofxLibArtnet/artnet/misc.c
+    vendors/ofxLibArtnet/artnet/network.c
+    vendors/ofxLibArtnet/artnet/receive.c
+    vendors/ofxLibArtnet/artnet/tod.c
+    vendors/ofxLibArtnet/artnet/transmit.c
+    vendors/ofxLibArtnet/ofxLibArtnet.cpp
 )
 
 target_compile_features(smartmap PUBLIC cxx_std_20)
@@ -108,10 +108,10 @@ target_include_directories(smartmap PRIVATE
     .
     src
     include
-    include/vendor/
-    include/vendor/imgui/
-    include/vendor/gl3w/include/
-    include/vendors/glm/
+    vendors/
+    vendors/imgui/
+    vendors/gl3w/include/
+    vendorss/glm/
     ${FREETYPE_INCLUDE_DIRS}
     )
 
@@ -125,13 +125,13 @@ target_link_libraries(smartmap PRIVATE
 )
 
 target_link_directories(smartmap PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/vendor/NDI/Lib/
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendors/NDI/Lib/
     )
 
 if (WIN32)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/include/vendor/NDI/Lib/Processing.NDI.Lib.x64.dll DESTINATION .)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/vendors/NDI/Lib/Processing.NDI.Lib.x64.dll DESTINATION .)
 target_include_directories(smartmap PRIVATE
-    include/vendor/NDI/Include/
+    vendors/NDI/Include/
     )
 target_link_libraries(smartmap PRIVATE
     ws2_32
@@ -142,7 +142,7 @@ add_compile_definitions(WIN32="1")
 endif (WIN32)
 
 if(UNIX)
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/include/vendor/NDI/Lib/libndi.so DESTINATION .)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/vendors/NDI/Lib/libndi.so DESTINATION .)
 file(CREATE_LINK libndi.so ${CMAKE_CURRENT_BINARY_DIR}/libndi.so.4 COPY_ON_ERROR SYMBOLIC)
 target_link_libraries(smartmap PRIVATE
     -ldl

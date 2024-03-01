@@ -5,8 +5,8 @@
 #include "imgui/imgui.h"
 #include "smartmap/layer.hpp"
 
-#include "include/vendor/rapidjson/document.h"
-#include "include/vendor/rapidjson/stringbuffer.h"
+#include "vendors/rapidjson/document.h"
+#include "vendors/rapidjson/stringbuffer.h"
 
 namespace SmartMap {
 

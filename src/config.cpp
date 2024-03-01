@@ -1,7 +1,7 @@
 #pragma once
 
-#include "include/vendor/rapidjson/document.h"
-#include "include/vendor/rapidjson/stringbuffer.h"
+#include "vendors/rapidjson/document.h"
+#include "vendors/rapidjson/stringbuffer.h"
 
 
 #include "file.cpp"

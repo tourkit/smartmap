@@ -3,12 +3,12 @@
 #define PLOG_CHAR_IS_UTF8 1
 
 #include "file.hpp"
-#include "include/vendor/plog/Log.h"
-#include "include/vendor/plog/Init.h"
-#include "include/vendor/plog/Formatters/TxtFormatter.h"
-#include "include/vendor/plog/Formatters/FuncMessageFormatter.h"
-#include "include/vendor/plog/Appenders/ColorConsoleAppender.h"
-#include "include/vendor/plog/Appenders/RollingFileAppender.h"
+#include "vendors/plog/Log.h"
+#include "vendors/plog/Init.h"
+#include "vendors/plog/Formatters/TxtFormatter.h"
+#include "vendors/plog/Formatters/FuncMessageFormatter.h"
+#include "vendors/plog/Appenders/ColorConsoleAppender.h"
+#include "vendors/plog/Appenders/RollingFileAppender.h"
 
 #include <list>
 #include <vector>

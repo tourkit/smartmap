@@ -3,7 +3,7 @@
 
 #include <Windows.h>
 
-#include "include/vendor/citp-lib/CITPDefines.h"
+#include "vendors/citp-lib/CITPDefines.h"
 
 #include <winsock2.h>
 #include <ws2tcpip.h>

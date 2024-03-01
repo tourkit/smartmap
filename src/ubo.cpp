@@ -77,8 +77,8 @@ void UBO::upload(void* data, size_t size, uint32_t offset){
 ///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 
-#include "include/vendor/rapidjson/document.h"
-#include "include/vendor/rapidjson/stringbuffer.h"
+#include "vendors/rapidjson/document.h"
+#include "vendors/rapidjson/stringbuffer.h"
 
 // void UBO::fromJSON(){ 
 
@@ -127,7 +127,7 @@ void UBO::upload(void* data, size_t size, uint32_t offset){
 
 // }
 
-#include "include/vendor/rapidjson/prettywriter.h"
+#include "vendors/rapidjson/prettywriter.h"
 
 // void UBO::toJSON(){ 
 

@@ -1,6 +1,6 @@
 #include "artnet.hpp"
 #include "log.hpp"
-#include "../../include/vendor/ofxLibArtnet/artnet/misc.h"
+#include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
 
 Artnet::Artnet(const char* ip) {
