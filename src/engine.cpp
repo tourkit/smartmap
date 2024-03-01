@@ -49,7 +49,8 @@ void Engine::init() {
     auto comps = debug->addOwnr<Node>("Components")->close();
     for (auto c : Component::pool) comps->addPtr<Component>(c);
 
-    models = tree->addOwnr<Node>("Models")->node();
+    // models = tree->addOwnr<Node>("Models")->node();
+    models = tree->addFolder<Model>("Models", "assets/models/")->node();
 
     // effectors = tree->addOwnr<Node>("Effectors")->node();
     effectors = tree->addFolder<Effector>("Effectors", "assets/effectors/")->node();
@@ -68,6 +69,9 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
+    // auto p = engine.tree->child("layer1::MyQuad");
+    // if (!p) PLOGW << "nop";
+
 }
 
 void Engine::open(const char* file) {
@@ -76,7 +80,7 @@ void Engine::open(const char* file) {
 
     project_name = file;
 
-    for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
+    if (false) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
 
         auto n = models->addOwnr<File>();
         auto model = n->get();
@@ -139,6 +143,28 @@ void Engine::open(const char* file) {
         }
         
     }
+
+    if (json.document.HasMember("editors") && json.document["editors"].IsArray()) for (auto &e : json.document["editors"].GetArray()) {
+
+        if (!e.IsArray()) continue;
+
+        auto x = e.GetArray();
+
+        if (e.Size()!=5) continue;
+
+        engine.gui->editors.push_back(new EditorWidget());
+
+        Node* n = nullptr;
+        if (e[4].IsString()) n = tree->child(e[4].GetString());
+        if (n) {
+
+            engine.gui->editors.back()->selected = n;
+            engine.gui->editors.back()->locked = true;
+            
+        }
+
+    }
+
 
 }
 

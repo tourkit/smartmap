@@ -27,11 +27,46 @@
 
     }   
 
+    Node* UntypedNode::child(std::vector<std::string> names) {
+
+        for (auto c : childrens) if (!strcmp(names.back().c_str(), c->name.c_str())) {
+
+            if (names.size()== 1)return c;
+            
+            // check parents
+
+            auto parent = c;
+
+            for (int i = names.size()-1; i > 0; i--) if (!strcmp(parent->parent()->name.c_str(),names[i].c_str())) { parent = parent->parent(); }else{ parent = nullptr; break; }
+
+            if (parent) return c;
+            
+        }
+
+        if (names.size()> 1) for (auto c : childrens) c->child(names);
+        
+        return nullptr; 
+
+    }
     Node* UntypedNode::child(const char* name) {
 
         for (auto c : childrens) if (!strcmp(name,c->name.c_str())) return c;
+        return nullptr;
         
-        return nullptr; 
+        std::string input = name;
+        std::vector<std::string> names;
+        std::string delimiter = "::";
+        size_t pos = 0;
+        std::string token;
+        while ((pos = input.find(delimiter)) != std::string::npos) {
+            token = input.substr(0, pos);
+            names.push_back(token);
+            input.erase(0, pos + delimiter.length());
+        }
+        names.push_back(input);
+
+        return child(names);
+
     }
 
     Node* UntypedNode::active(bool value) { is_active = value; return node(); }
