@@ -52,7 +52,7 @@ void Engine::init() {
     models = tree->addOwnr<Node>("Models")->node();
 
     // effectors = tree->addOwnr<Node>("Effectors")->node();
-    effectors = tree->addFolder<Effector>("Effectors", "assets/shaders/")->node();
+    effectors = tree->addFolder<Effector>("Effectors", "assets/effectors/")->node();
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
