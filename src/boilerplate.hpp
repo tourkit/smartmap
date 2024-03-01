@@ -82,7 +82,7 @@ Boilerplate() {
 
     auto shader = glCreateProgram();
 
-    std::ifstream fragFile("C:/users/root/cpp/smartmap/assets/shader/basic.frag");
+    std::ifstream fragFile("C:/users/root/cpp/smartmap/assets/shaders/basic.frag");
     std::string fragCode((std::istreambuf_iterator<char>(fragFile)), (std::istreambuf_iterator<char>()));
     auto fragptr = (const GLchar* const ) fragCode.c_str();
 
@@ -107,7 +107,7 @@ Boilerplate() {
     }
 
 
-    std::ifstream vertFile("C:/users/root/cpp/smartmap/assets/shader/basic.vert");
+    std::ifstream vertFile("C:/users/root/cpp/smartmap/assets/shaders/basic.vert");
     std::string vertCode((std::istreambuf_iterator<char>(vertFile)), (std::istreambuf_iterator<char>()));
     auto vertptr = (const GLchar* const ) vertCode.c_str();
     std::cout << vertCode;
@@ -152,7 +152,7 @@ Boilerplate() {
     glBufferSubData(GL_UNIFORM_BUFFER, 0, data.size()*4, &data[0]); 
 
 
-    Image img2("assets/media/boy.jpg");
+    Image img2("assets/medias/boy.jpg");
     GLuint tex2;
 
     glGenTextures(1, &tex2);

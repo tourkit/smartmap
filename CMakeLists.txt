@@ -60,13 +60,6 @@ add_executable(smartmap
     src/messagequeue.cpp
     src/thread.cpp
 
-    # src/smartmap.cpp
-    # src/smartmap/layer.cpp
-    # src/smartmap/output.cpp
-    # src/smartmap/config.cpp
-
-    # src/widgets/artnet_widget.cpp
-
     vendors/imgui/imgui.cpp
     vendors/imgui/imgui_tables.cpp
     vendors/imgui/imgui_widgets.cpp
@@ -100,7 +93,6 @@ set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 include(CPack)
 
 file(COPY assets DESTINATION .)
-file(COPY config.json DESTINATION .)
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 

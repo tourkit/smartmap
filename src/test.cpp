@@ -15,7 +15,7 @@ Test::Test() {
 
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
     // tex->bind();
-    // auto tex = new Texture("assets/media/boy.jpg");
+    // auto tex = new Texture("assets/medias/boy.jpg");
     // ndi->onrun([](Node* n) { 
 
     //     auto sender = n->is_a<NDI::Sender>();

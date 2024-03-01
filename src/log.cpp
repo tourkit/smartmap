@@ -15,19 +15,19 @@ void Log::Appender::write(const plog::Record& record) {
 
 
     // post first line
-    std::ifstream ifile(REPO_DIR+"logs.txt");
+    std::ifstream ifile(REPO_DIR+"assets/logs/logs.txt");
     std::stringstream buffer;
     buffer << plog::FuncMessageFormatter::format(record);
     buffer << ifile.rdbuf();
     ifile.close();
 
-     std::ofstream file(REPO_DIR+"logs.txt");
+     std::ofstream file(REPO_DIR+"assets/logs/logs.txt");
     file << buffer.rdbuf();
     file.close();
 
 
     // post last line
-    // std::ofstream file(REPO_DIR+"logs.txt", std::ios_base::app);
+    // std::ofstream file(REPO_DIR+"assets/logs/logs.txt", std::ios_base::app);
     // if (file.is_open()) {
     //     file << plog::FuncMessageFormatter::format(record);
     //     file.close();

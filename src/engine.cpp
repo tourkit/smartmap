@@ -110,7 +110,7 @@ void Engine::init() {
     
     Editors::init();
 
-    atlas = new Atlas(4096, 4096, "assets/media/");
+    atlas = new Atlas(4096, 4096, "assets/medias/");
 
     tree = new Node("tree");
 
