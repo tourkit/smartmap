@@ -69,8 +69,8 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
-    // auto p = engine.tree->child("layer1::MyQuad");
-    // if (!p) PLOGW << "nop";
+    auto p = engine.tree->child("layer1::MyQuad");
+    if (!p) PLOGW << "nop";
 
 }
 

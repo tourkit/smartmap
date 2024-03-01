@@ -49,9 +49,6 @@
 
     }
     Node* UntypedNode::child(const char* name) {
-
-        for (auto c : childrens) if (!strcmp(name,c->name.c_str())) return c;
-        return nullptr;
         
         std::string input = name;
         std::vector<std::string> names;
