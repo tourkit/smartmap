@@ -2,7 +2,8 @@
     
     "models" : {
         
-        "quad" : "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
+        "quad" : "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4",
+        "circle" : "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
     
     },
     
@@ -20,7 +21,8 @@
 
         "layer1": {
 
-            "MyQuad" : ["quad", ["argb", "rectangle"]] 
+            "MyQuad" : ["quad", ["argb", "rectangle"]] ,
+            "MyCircle" : ["circle", ["argb", "rectangle"]] 
 
         }
 

@@ -65,7 +65,7 @@ std::string DrawCall::layout(UBO* ubo) {
         
         if (!obj.s->comps.size()) continue;
 
-        obj_str += "struct "+camel(obj.s->name)+" {"+struct_spacer;
+        obj_str += "struct "+camel(obj.s->name)+" {"+struct_spacer; // would love this to be a node name instead
 
         int comp_id = 0;
 
