@@ -4,6 +4,15 @@
 
 struct Node;
 
+template <typename T>
+struct Editor  {
+
+    static inline std::function<void(Node*,T*)> cb = nullptr;
+
+    Editor(std::function<void(Node*,T*)> cb) { Editor<T>::cb = cb; };
+
+};
+
 struct EditorWidget : GUI::Window {
 
     Node* selected = nullptr;

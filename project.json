@@ -16,25 +16,37 @@
     
     "layers" : {
 
-        "layer1":[
+        "layer1": {
 
-            ["quad", ["argb"]]
+            "MyQuad" : ["quad", ["argb"]] 
 
-        ]
-
-    },
-    
-    "devices" : {
-
-        "artnet" : [ "0.0.0.0" ]
+        }
 
     },
     
-    "remaps" : [
+    "inputs" : {
 
-        ["layer1[0]"]
+        "artnet" : [  ]
+
+    },
     
-    ],
+    "outputs" : {
+
+        "video 1" : [1920, 1080, 0, 0],
+
+        "NDI 1" : [1920, 1080, 0, 0, "NDI"],
+        
+        "ArtNet 1" : [1920, 1080, 0, 0, "DMX",0,0],
+        
+        "DMX 1" : [1920, 1080, 0, 0, "DMX",-1,0]
+
+    },
+    
+    "remaps" : {
+
+        "TestMap" : ["artnet::uni0::chan0", "layer1::MyQuad", [0,0,2,2,2,0,0,0,2,0,2,0,2,0,2,0,2,0,2,0]]
+    
+    },
     
     "editors" : {
     

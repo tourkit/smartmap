@@ -6,7 +6,11 @@
 #include <unordered_set>
 #include <typeindex>
 #include <functional>
+
 #include "log.hpp"
+#include "file.hpp"
+#include "editor.hpp"
+#include "directory.hpp"
 
 #include <boost/type_index.hpp>
 
@@ -16,34 +20,14 @@ struct Node;
     
 using NodeList = std::vector<Node*>;
 
-template <typename T>
-struct Editor  {
-
-    static inline std::function<void(Node*,T*)> cb = nullptr;
-
-    Editor(std::function<void(Node*,T*)> cb) { Editor<T>::cb = cb; };
-
-};
-
 struct UntypedNode {
-
-    std::function<void(Node*)> onchange_cb = nullptr;
-    std::function<void(Node*)> onrun_cb = nullptr;
-
-    std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
-    template <typename T>
-    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
-
-    static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
 
     std::string name;
 
     glm::vec4 color;
-
-    Node* parent_node = nullptr;
-    std::vector<Node*> referings;
  
     std::vector<Node*> childrens;
+
     std::vector<Node*> hidden_childrens;
 
     bool active = false, locked = false, loaded = false, hidden = false, open = true;
@@ -52,84 +36,89 @@ struct UntypedNode {
 
     virtual ~UntypedNode();
 
+    virtual void editor() {}
+
+    virtual void run(); 
+    
+    virtual void update();
+
+    Node* node();
+
+    virtual Node* add(void *node);
+
     void parent(Node* parent_node);
     
     Node* parent();
+
+    Node* child(const char* name);
+
+    uint32_t index();
 
     NodeList* updateRefs(Node* of);
 
     void addList(NodeList *nodes);
 
     Node* hide();
+
     Node* close();
-    
-    virtual Node* add(void *node);
-
-    uint32_t uid = 0;
-
-    void remove(Node *child);
-
-    uint32_t index();
-
-    bool is_typed = false;
-
-    void up();
-
-    virtual void trigchange();
-
-    Node* top();
-
-    void down();
-
-    virtual void editor() { PLOGI << "KOKO";}
-
-    virtual void run(); 
-    
-    virtual void update();
-
-    bool has_changed = false;
-
-    void onchange(std::function<void(Node*)> cb = nullptr);
-    void onrun(std::function<void(Node*)> cb = nullptr);
-
-    void runCB(std::function<void(Node*)> cb = nullptr);
-
-    std::function<void(Node*)> dtor = nullptr; // useless ?
 
     Node* select();
-
-    Node* child(const char* name);
-
-    template <typename U>
-    U* is_a() { 
-        
-        if (type() == typeid(U)) { return (U*)ptr_untyped(); }
-        else return nullptr;
-        
-    }
-
-    template <typename V>
-    void each(std::function<void(Node*, V*)> cb) { 
-        
-        for (auto c : childrens) {
-
-            auto isa = ((UntypedNode*)c)->is_a<V>();
-
-            if (isa) cb(c,isa);
-
-        }       
-        
-    }
+    
+    void remove(Node *child);
     
     virtual std::type_index type() { return typeid(*this); }
     
     virtual void* ptr_untyped() { return this; }
 
+    void onchange(std::function<void(Node*)> cb = nullptr);
+    
+    void ondelete(std::function<void(Node*)> cb = nullptr);
+
+    void onrun(std::function<void(Node*)> cb = nullptr);
+
+    template <typename U>
+    U* is_a() { if (type() == typeid(U)) { return (U*)ptr_untyped(); }else { return nullptr; } }
+
+    template <typename V>
+    void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { auto isa = ((UntypedNode*)c)->is_a<V>(); if (isa) cb(c,isa); } }
+
+    uint32_t uid = 0;
+
+    bool is_typed = false;
+
+    virtual void trigchange();
+
+    Node* top();
+
+    void up();
+
+    void down();
+
+    std::vector<Node*> referings;
+
+
     auto begin() { return childrens.begin(); }
 
     auto end() { return childrens.end(); }
 
-    Node* node();
+    std::function<void(Node*)> onchange_cb = nullptr;
+    std::function<void(Node*)> onrun_cb = nullptr;
+    std::function<void(Node*)> ondelete_cb = nullptr; 
+
+    template <typename T>
+    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
+    
+    std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
+
+    static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
+
+private:
+
+    Node* parent_node = nullptr;
+
+    bool has_changed = false;
+
+    void runCB(std::function<void(Node*)> cb = nullptr);
 
 };
 
@@ -264,9 +253,37 @@ struct TypedNode : UntypedNode {
 
     void editor() override { if(Editor<T>::cb) Editor<T>::cb(node(),this->ptr); }
 
+    template <typename U>
+    static TypedNode<T>* addFolder(std::string name, std::string path) {
+
+        auto folder = addOwnr<TypedNode<Any>>();
+        folder->name = name;
+        folder->close();
+
+        auto dir = folder->TypedNode::addOwnr<Directory>(path);
+        dir->hide();
+
+        folder->addList(&dir->childrens); // should add refering automaticaly already somewhere else (onadd ?)
+
+        // folder->addOwnr<U>(node->is_a<File>())->referings.push_back(node); return this;
+
+        return folder;
+
+    }
+
 private:
 
     bool isNode() { return std::is_base_of<UntypedNode, T>::value; } 
+
+};
+
+
+
+template <typename T>
+struct Ownr : TypedNode<T> {  
+
+    template <typename... Args>
+    Ownr(Args&&... args) : TypedNode<T>(new T(std::forward<Args>(args)...), true) { } 
 
 };
 
@@ -280,16 +297,6 @@ struct Node : TypedNode<Any> {
     void editor() override {  }
 
 };
-
-
-template <typename T>
-struct Ownr : TypedNode<T> {  
-
-    template <typename... Args>
-    Ownr(Args&&... args) : TypedNode<T>(new T(std::forward<Args>(args)...), true) { } 
-
-};
-
 
 
 template <typename T>

@@ -21,7 +21,7 @@
 
         if (parent_node) parent_node->remove(node());
 
-        if (dtor) dtor(parent_node);
+        if (ondelete_cb) ondelete_cb(this->node());
 
         PLOGD << "~" << name;
 
@@ -81,6 +81,7 @@
     
     }
 
+    void UntypedNode::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; }
     void UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; }
     void UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; }
     

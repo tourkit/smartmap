@@ -29,9 +29,9 @@ static std::string lower(std::string str) { str[0] = std::tolower(str[0]); retur
 DrawCall::DrawCall() {
 
     engine.dynamic_ubo->subscribers.push_back(&shader);
-    // engine.static_ubo->subscribers.push_back(&shader);
+    engine.static_ubo->subscribers.push_back(&shader);
 
-    // engine.atlas->link(&shader);
+    engine.atlas->link(&shader);
 
 }
 

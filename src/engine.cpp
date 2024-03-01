@@ -31,48 +31,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
 }
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
- 
-void Engine::run() {
-
-    auto &window = getInstance().window;
-
-    while (!glfwWindowShouldClose(window.id)) window.render([](){
-        
-        engine.dynamic_ubo->upload();
-
-        // engine.tree->each<Texture>([](Node *n, Texture* tex) { tex->bind(); });
-
-        engine.tree->run();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        // for (auto n : engine.stack->childrens) {
-
-        //     auto layer = n->is_a<Layer>(); 
-
-        //     if (!layer) continue;
-
-        //     layer->fb.texture->bind();
-
-
-        // }
-
-        engine.gui->draw(); 
-        
-    });
-
-};
-
-template <typename T>
-static Node* addFolder(std::string name, std::string path) {
-
-    auto folder = engine.tree->addOwnr<Node>(name)->close();
-    folder->onadd<File>([](Node* _this, Node* node){ _this->addOwnr<T>(node->is_a<File>())->referings.push_back(node); return _this; });
-    folder->addList(&folder->addOwnr<Directory>(path)->hide()->childrens);
-
-    return folder->node();
-
-}
 
 void Engine::open(const char* file) {
 
@@ -104,38 +62,32 @@ void Engine::open(const char* file) {
         n->hide();
 
     }
-    // for (auto &m : json["devices"]) if (m.name.IsString() && m.value.IsString()) {
 
-        // if (!strcmp(m.name.GetString(),"artnet"))  { 
-            
-        //     if (!m.value.IsArray() || m.value.GetArray().Size() == 0) continue;
-        //     if (!m.value.GetArray()[0].IsString()) continue;
-
-        //     engine.tree->addOwnr<Artnet>(m.value.GetArray()[0].GetString());
-            
-        // }
-
-    // }
+    // kassded la famille. pour toi public :) #inlineclub
+    for (auto &m : json["inputs"]) if (m.name.IsString() && m.value.IsArray()) if (!strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>(((m.value.GetArray().Size() && m.value.GetArray()[0].IsString()) ? m.value.GetString() : nullptr ))->active = true;
 
     for (auto &l : json["layers"]) {
         
         auto layer = stack->addOwnr<Layer>();
 
-        layer->name = l.name.GetString();
+        if (l.name.IsString()) layer->name = l.name.GetString();
 
-        if (l.value.IsArray()) for (auto &m : l.value.GetArray()) {
+        if (l.value.IsObject()) for (auto &m : l.value.GetObj()) {
 
-            if (!m.IsArray()) continue;
-            if (!m[0].IsString()) continue;
+            if (!m.value.IsArray()) continue;
 
-            auto model_n = models->child(m[0].GetString())->get<Model>();
-            if (!model_n)  { PLOGW << "no model : " << m[0].GetString(); continue; }
+            if (!m.value[0].IsString()) continue;
+
+            auto model_n = models->child(m.value[0].GetString()); if (!model_n)  { PLOGW << "no model : " << m.value[0].GetString(); continue; }
+
             auto model = layer->addPtr(model_n);
-            
-            if (m.GetArray().Size() != 2) continue;
-            if (!m[1].IsArray()) continue;
 
-            for (auto &f : m[1].GetArray()) {
+            if (m.name.IsString()) model->name = m.name.GetString();
+            
+            if (m.value.GetArray().Size() != 2) continue;
+            if (!m.value[1].IsArray()) continue;
+
+            for (auto &f : m.value[1].GetArray()) {
 
                 if (!f.IsString()) continue;
 
@@ -158,11 +110,14 @@ void Engine::init() {
     
     Editors::init();
 
+    atlas = new Atlas(4096, 4096, "assets/media/");
+
     tree = new Node("tree");
 
     auto debug = tree->addOwnr<Debug>()->close();
     debug->addPtr<UBO>(static_ubo);
     debug->addPtr<UBO>(dynamic_ubo);
+    debug->addPtr<Atlas>(atlas);
     auto comps = debug->addOwnr<Node>("Components")->close();
     for (auto c : Component::pool) comps->addPtr<Component>(c);
 
@@ -172,11 +127,13 @@ void Engine::init() {
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
+    inputs = tree->addOwnr<Node>("Inputs")->node();
+
+    outputs = tree->addOwnr<Node>("Outputs")->node();
+
     stack = tree->addOwnr<Stack>()->node();
 
     stack->active = true; 
-
-    atlas = tree->addOwnr<Atlas>(4096, 4096, "assets/media /")->get();
 
     debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
 
@@ -184,55 +141,22 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
-    open("project.json");
-
-    auto an = tree->addOwnr<Artnet>();
-    
-    an->active = true;
-
-    // auto fixture = new DMX::Fixture(model->is_a<Model>()->obj->s);
-    // fixture->attributes[0].combining = 0;
-    // fixture->attributes[4].combining = 2;
-    // fixture->attributes[5].combining = 2;
-    // fixture->attributes[6].combining = 2;
-    // fixture->attributes[7].combining = 2;
-    // fixture->attributes[8].combining = 0;
-
-    // auto m = model->is_a<Model>();
-
-    // an->get()->universes[0] = new DMX(0);
-    // an->get()->universes[0]->remaps.push_back(DMX::Remap(&an->get()->universes[0]->data[0], m->obj->data(), fixture, 1));
-
-    // remaps->addPtr<DMX::Remap>(&an->get()->universes[0]->remaps.back());
-
-    // an->trigchange();
-
-    // auto ndi = tree->addOwnr<NDI::Sender>(engine.window.width,engine.window.height);
-    
-    
-    // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);
-    
-    // tex->bind();
-
-
-    // auto tex = new Texture("assets/media/boy.jpg");
-
-    // ndi->onrun([](Node* n) { 
-
-    //     auto sender = n->is_a<NDI::Sender>();
-    //     sender->send()
-
-    //  });
-
-    // auto p = tree->addOwnr<Node>("prout");
-    // delete p;
-
-
-
-    // auto dc = tree->addOwnr<DrawCall>();;
-    // this->dc = dc->node();
-    // dc->name = "engine";
-
-    // dc->addPtr(models->childrens[0]);
-
 }
+
+void Engine::run() {
+
+    auto &window = getInstance().window;
+
+    while (!glfwWindowShouldClose(window.id)) window.render([](){
+        
+        engine.dynamic_ubo->upload();
+
+        engine.tree->run();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        engine.gui->draw(); 
+        
+    });
+
+};

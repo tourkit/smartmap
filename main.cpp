@@ -6,7 +6,6 @@
 
 #include "engine.hpp"
 #include "test.hpp"
-#include "file.hpp"
 
 int main() { 
     
@@ -16,8 +15,8 @@ int main() {
 
     Test test;
 
+    engine.open("project.json");
+
     engine.run();
  
 }
-
-

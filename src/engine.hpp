@@ -14,6 +14,16 @@ struct Atlas;
 
 struct Engine {
 
+    Node* tree;
+    Node* stack;
+    Node* models;
+    Node* effectors;
+    Node* remaps;
+    Node* inputs;
+    Node* outputs;
+
+    Node* selected;
+
     Log log;
 
     Window window;
@@ -21,25 +31,13 @@ struct Engine {
     GUI* gui;
     
     UBO *dynamic_ubo;
+
     UBO *static_ubo;
     
     Atlas *atlas;
 
-    Node* tree;
-    Node* stack;
-    Node* models;
-    Node* effectors;
-    Node* remaps;
-
-    Node* selected = tree;
-
-    Node *dc = nullptr;
-    
-    int sequid = 1000;
-
-    std::string project_name;
-
     void init();
+
     void open(const char* filepath);
 
     static Engine& getInstance() { static Engine instance;  return instance; }
@@ -47,6 +45,8 @@ struct Engine {
     void run();
 
 private:
+
+    std::string project_name;
 
     Engine(uint16_t width = 400, uint16_t height = 300);
 
