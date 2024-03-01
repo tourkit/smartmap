@@ -19,6 +19,8 @@ struct Log {
 
     struct Appender : public plog::IAppender {
 
+        bool cmd = false;
+
         struct Message {
 
             std::string msg;
@@ -36,6 +38,7 @@ struct Log {
 
     Appender appender;
 
+    void cout() { appender.cmd = true; }
     
     static Log& getInstance() { static Log instance;  return instance; }
 
