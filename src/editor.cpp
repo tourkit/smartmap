@@ -15,7 +15,6 @@
 #include "vbo.hpp"
 #include "shader.hpp"
 #include "effector.hpp"
-#include "engine.hpp"
 #include "artnet.hpp"
 #include "texture.hpp"
 #include "atlas.hpp"
