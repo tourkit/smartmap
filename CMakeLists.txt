@@ -3,8 +3,8 @@ project(smartmap VERSION 0.1.0)
 
 
 
-option(ROCH "Roch" OFF)
 option(PLUGREGIE "c moi" OFF)
+option(ROCH "nan c twa" OFF)
 
 
 find_package(glfw3 REQUIRED)
