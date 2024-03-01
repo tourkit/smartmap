@@ -320,7 +320,7 @@ void Editors::init() {
 
     ////////// Log.HPP 
     
-    Editor<Log>([](Node* node, Log *log){ 
+    Editor<Log>([](Node* node, Log *log_n){ 
 
 
         static bool is_verbose = false;
@@ -341,12 +341,12 @@ void Editors::init() {
         if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
 
         int max_lines = 1000;
-        int to = log->appender.list.size()-max_lines;
+        int to = log_n->appender.list.size()-max_lines;
         if (to<0)to = 0;
-        for (int i = log->appender.list.size()-1; i>=to; i-- ) {
-        // for (auto &m : log->appender.list ){
+        for (int i = log_n->appender.list.size()-1; i>=to; i-- ) {
+        // for (auto &m : log_n->appender.list ){
 
-            auto &m = log->appender.list[i];
+            auto &m = log_n->appender.list[i];
 
             ImVec4 color = info;
 
@@ -564,9 +564,9 @@ void Editors::init() {
 
     ////////// Engine.HPP 
     
-    Editor<Stack>([](Node* node, Stack *log){ Editor<Log>::cb(node, &engine.log); });
+    Editor<Stack>([](Node* node, Stack *stack){ Editor<Log>::cb(node, &logger); });
     
-    Editor<Debug>([](Node* node, Debug *log){ Editor<Log>::cb(node, &engine.log); });
+    Editor<Debug>([](Node* node, Debug *debug){ Editor<Log>::cb(node, &logger); });
 
     ////////// DRAWCALL.HPP 
     

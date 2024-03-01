@@ -69,9 +69,6 @@ void Engine::init() {
 
     ///////////////////////////////////////////////////////////////////
 
-    auto p = engine.tree->child("layer1::MyQuad");
-    if (!p) PLOGW << "nop";
-
 }
 
 void Engine::open(const char* file) {

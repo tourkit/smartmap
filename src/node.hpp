@@ -51,7 +51,6 @@ struct UntypedNode {
     Node* parent();
 
     Node* child(const char* name);
-    
     Node* child(std::vector<std::string> names);
 
     uint32_t index();

@@ -3,6 +3,7 @@
 #include "model.hpp"  
 #include "file.hpp"  
 #include "entry.hpp"  
+#include "log.hpp"  
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>

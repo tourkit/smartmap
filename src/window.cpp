@@ -1,5 +1,6 @@
 #include "window.hpp"
 #include "engine.hpp"
+#include "log.hpp"
 #include "gui.hpp"
 
 #include <chrono>

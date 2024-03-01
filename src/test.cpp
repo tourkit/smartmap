@@ -5,12 +5,11 @@
 
 #include <vector>
 
-
-
-
 Test::Test() {
 
 
+    auto p = engine.stack->child("layer1::MyQuad");
+    if (!p) PLOGW << "nop";
 
 
     // dc->is_a<Layer>()->shader.sendUniform("texture0", (int)tex->id);

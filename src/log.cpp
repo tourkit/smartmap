@@ -1,5 +1,6 @@
 #include "log.hpp"
 
+Log::~Log() {}
 Log::Log() {
 
     // plog::init(plog::verbose, &file); PLOGD << "init";
@@ -18,10 +19,11 @@ void Log::Appender::write(const plog::Record& record) {
     std::ifstream ifile(REPO_DIR+"assets/logs/logs.txt");
     std::stringstream buffer;
     buffer << plog::FuncMessageFormatter::format(record);
+    // std::cout << plog::FuncMessageFormatter::format(record);
     buffer << ifile.rdbuf();
     ifile.close();
 
-     std::ofstream file(REPO_DIR+"assets/logs/logs.txt");
+    std::ofstream file(REPO_DIR+"assets/logs/logs.txt");
     file << buffer.rdbuf();
     file.close();
 

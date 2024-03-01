@@ -9,6 +9,7 @@
 #include "struct.hpp"
 
 #include "image.hpp"
+#include "log.hpp"
 
 
 Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)  {

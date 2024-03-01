@@ -36,6 +36,20 @@ struct Log {
 
     Appender appender;
 
+    
+    static Log& getInstance() { static Log instance;  return instance; }
+
+private:
+
+    std::string project_name;
+
     Log();
 
-};;
+    Log(const Log&) = delete;
+    Log& operator=(const Log&) = delete;
+
+    ~Log();
+
+};
+
+static inline Log &logger = Log::getInstance();

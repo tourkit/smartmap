@@ -1,13 +1,12 @@
 #pragma once
 
-
-#include "log.hpp"
 #include "glm/glm.hpp"
 #include <typeinfo>
 #include <vector>
 #include <string>
 #include <cstdint>
 #include <functional>
+#include <cstring>
 
 
 struct Member {

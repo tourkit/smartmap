@@ -1,7 +1,6 @@
 #pragma once
 
 #include "window.hpp"
-#include "log.hpp"
 
 struct Stack {};
 struct Debug {};
@@ -23,8 +22,6 @@ struct Engine {
     Node* outputs;
 
     Node* selected;
-
-    Log log;
 
     Window window;
     

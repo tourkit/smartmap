@@ -2,7 +2,7 @@
 
 #include "shader.hpp"
 #include "struct.hpp"
-#include "engine.hpp"
+#include "log.hpp"
 #include <GL/gl3w.h>
 
 UBO::~UBO() { destroy(); }
