@@ -1,6 +1,6 @@
 # SmartMap :) 
 
-multi-purpose realtime engine ; advanced shader builder ; optimized memory management ; prototyping suite ; lightweight ( exept ndi_lib ...)
+lightweight ( exept ndi_lib ...) multi-purpose realtime engine : advanced shader builder,  optimized memory management, prototyping suite, ...
 
 dependencies : imgui, glm, glfw, gl3w, freetype, assimp, ndi, plog, rapidjson, ...
 
