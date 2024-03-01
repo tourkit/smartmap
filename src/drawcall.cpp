@@ -182,7 +182,7 @@ void DrawCall::update() {
                 frag_shader += "\t"+effector->file->name+"("+arg_str+");\n";
             }
 
-            frag_shader += "\tif (uv.x+uv.y>0) COLOR += color;\n\n";
+            frag_shader += "\tCOLOR += color;\n\n";
 
         }
 

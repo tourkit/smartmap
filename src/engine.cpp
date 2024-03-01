@@ -49,11 +49,11 @@ void Engine::init() {
     auto comps = debug->addOwnr<Node>("Components")->close();
     for (auto c : Component::pool) comps->addPtr<Component>(c);
 
-    // models = tree->addOwnr<Node>("Models")->node();
-    models = tree->addFolder<Model>("Models", "assets/models/")->node();
+    models = tree->addOwnr<Node>("Models")->node();
+    // models = tree->addFolder<Model>("Models", "assets/models/")->node();
 
-    // effectors = tree->addOwnr<Node>("Effectors")->node();
-    effectors = tree->addFolder<Effector>("Effectors", "assets/effectors/")->node();
+    effectors = tree->addOwnr<Node>("Effectors")->node();
+    // effectors = tree->addFolder<Effector>("Effectors", "assets/effectors/")->node();
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
@@ -77,7 +77,7 @@ void Engine::open(const char* file) {
 
     project_name = file;
 
-    if (false) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
+    if (true) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
 
         auto n = models->addOwnr<File>();
         auto model = n->get();
@@ -90,7 +90,7 @@ void Engine::open(const char* file) {
 
     }
 
-    if (false) for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
+    if (true) for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
 
         auto n = effectors->addOwnr<File>();
         auto f = n->get();
@@ -153,7 +153,6 @@ void Engine::open(const char* file) {
 
         Node* n = nullptr;
         if (e[4].IsString()) n = tree->child(e[4].GetString());
-        if (n) PLOGI<<"wiiii"; else PLOGW<<e[4].GetString();
         if (n) {
 
             engine.gui->editors.back()->selected = n;

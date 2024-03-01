@@ -30,8 +30,6 @@
     Node* UntypedNode::child(std::vector<std::string> names) {
 
         auto traget = names.back();
-        
-        PLOGW << name;
 
         for (auto c : childrens) {            
 
@@ -41,13 +39,7 @@
 
                 auto parent = c;
 
-                for (int i = names.size()-2; i >= 0; i--) {
-            
-                    PLOGW << names[i] << " " << parent->parent()->name;
-                    
-                    if (!strcmp(parent->parent()->name.c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
-                    
-                }
+                for (int i = names.size()-2; i >= 0; i--) if (!strcmp(parent->parent()->name.c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
 
                 if (c) return c;
                 
