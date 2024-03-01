@@ -1,1 +1,4 @@
+.vscode/*
 build/*
+imgui.ini
+assets/logs/*
