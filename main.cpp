@@ -3,21 +3,10 @@
     SMARTMAP (beta)
 
                         */
-
-// #include "engine.hpp"
+ 
 #include "node.hpp"
 
 int main() { 
-    
-    // auto &engine = Engine::getInstance();
-
-    // engine.init();
-
-    // engine.open("project.json");
-
-    // Test test;
-
-    // engine.run();
     
     logger.cout();
 
@@ -26,6 +15,9 @@ int main() {
     tree.addOwnr<Node>("a");
     tree.addOwnr<Node>("1")->addOwnr<Node>("2")->addOwnr<Node>("3");
 
-    PLOGW<< "hey";
+    auto x = tree.child("x::y");
+
+    if (x) PLOGW<< "SISISIISISIS";
+    else PLOGW<< "NONONONON";
  
 }

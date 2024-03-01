@@ -23,7 +23,7 @@
 
         if (ondelete_cb) ondelete_cb(this->node());
 
-        PLOGD << "~" << name;
+        PLOGV << "~" << name;
 
     }   
 
