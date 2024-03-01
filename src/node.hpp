@@ -30,7 +30,7 @@ struct UntypedNode {
 
     std::vector<Node*> hidden_childrens;
 
-    bool active = false, locked = false, loaded = false, hidden = false, open = true;
+    bool locked = false, loaded = false, hidden = false, open = true, is_active = false;
 
     UntypedNode(std::string name = "node", glm::vec4 color = {1,1,1,1});
 
@@ -61,6 +61,8 @@ struct UntypedNode {
     Node* hide();
 
     Node* close();
+
+    Node* active(bool value);
 
     Node* select();
     
@@ -188,7 +190,7 @@ struct TypedNode : UntypedNode {
 
         UntypedNode::run();
 
-        if(active && onrun_cb) { onrun_cb(node(),this->ptr); }
+        if(is_active && onrun_cb) { onrun_cb(node(),this->ptr); }
 
     }
 

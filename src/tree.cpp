@@ -165,7 +165,7 @@ using namespace ImGui;
     
     SetCursorPosX(GetWindowWidth()-30); 
      
-    Checkbox(("##active"+std::to_string(node->uid)).c_str(), &node->active);
+    Checkbox(("##active"+std::to_string(node->uid)).c_str(), &node->is_active);
 
     return x;
 

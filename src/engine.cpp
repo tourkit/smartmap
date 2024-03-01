@@ -64,7 +64,7 @@ void Engine::open(const char* file) {
     }
 
     // kassded la famille. pour toi public :) #inlineclub
-    for (auto &m : json["inputs"]) if (m.name.IsString() && m.value.IsArray()) if (!strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>(((m.value.GetArray().Size() && m.value.GetArray()[0].IsString()) ? m.value.GetString() : nullptr ))->active = true;
+    for (auto &m : json["inputs"]) if (m.name.IsString() && m.value.IsArray()) if (!strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>(((m.value.GetArray().Size() && m.value.GetArray()[0].IsString()) ? m.value.GetString() : nullptr ))->active(1);
 
     for (auto &l : json["layers"]) {
         
@@ -127,13 +127,11 @@ void Engine::init() {
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
-    inputs = tree->addOwnr<Node>("Inputs")->node();
+    inputs = tree->addOwnr<Node>("Inputs")->node()->active(1);
 
     outputs = tree->addOwnr<Node>("Outputs")->node();
 
-    stack = tree->addOwnr<Stack>()->node();
-
-    stack->active = true; 
+    stack = tree->addOwnr<Stack>()->node()->active(1); 
 
     debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
 

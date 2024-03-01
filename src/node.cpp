@@ -34,6 +34,8 @@
         return nullptr; 
     }
 
+    Node* UntypedNode::active(bool value) { is_active = value; return node(); }
+
     Node* UntypedNode::node() { return (Node*)this; }
 
     Node* UntypedNode::top() { auto top = node(); while(top->parent()) { top = top->parent(); } return top; }
@@ -75,7 +77,7 @@
 
         if (!parent_node) return;
 
-        active = parent_node->active;
+        is_active = parent_node->is_active;
 
         parent_node->childrens.push_back(node());
     
@@ -152,7 +154,7 @@
 
     void UntypedNode::run() { 
 
-        if (!active && this != engine.tree) return;
+        if (!is_active && this != engine.tree) return;
 
         if (onrun_cb) onrun_cb(node());
 
