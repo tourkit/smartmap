@@ -85,9 +85,7 @@ void Engine::open(const char* file) {
         model->loadString(m.value.GetString());
         model->name = m.name.GetString();
         model->path = engine.project_name;
-        models->addOwnr<Model>(model);
-        n->hide();
-
+        n->name = model->name;
 
     }
 
@@ -120,7 +118,7 @@ void Engine::open(const char* file) {
 
             auto model_n = models->child(m.value[0].GetString()); if (!model_n)  { PLOGW << "no model : " << m.value[0].GetString(); continue; }
 
-            auto model = layer->addPtr(model_n);
+            auto model = layer->addOwnr<Model>(model_n->is_a<File>());
 
             if (m.name.IsString()) model->name = m.name.GetString();
             

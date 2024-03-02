@@ -41,7 +41,7 @@ void Callbacks::init() {
 
     ////////// FILE.HPP 
     
-    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name; });
+    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name+"."; });
 
     NODE<File>::onrun([](Node* node, File *file){ 
 
@@ -125,13 +125,13 @@ void Callbacks::init() {
     
     NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
 
-    NODE<Layer>::onadd<Model>([](Node*_this,Node*node){
+    NODE<Layer>::onadd<File>([](Node*_this,Node*node){
 
         auto layer = _this->is_a<Layer>();
 
-        auto model = node->is_a<Model>();
+        auto file = node->is_a<File>();
 
-        auto x = new Ownr<Model>(model->file);
+        auto x = _this->addOwnr<Model>(file);
 
         layer->vbo.import(x->get());  
 
