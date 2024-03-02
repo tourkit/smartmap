@@ -2,7 +2,6 @@
 
 #include "effector.hpp"
 #include "file.hpp"
-#include "component.hpp"
 #include "engine.hpp"
 #include "struct.hpp"
 #include "object.hpp"
@@ -26,28 +25,6 @@ bool Model::import(File* file, int id, int quantity) {
 }
 
 void Model::addFX(Effector* effector) {
-
-    /// comp creation should move in effector.cpp // ach q iso tem q ir em effectchor.hppou outra veiiissss
-    
-    Component* c = Component::exist(effector->file->name.c_str());
-
-    if (!c) {
-        
-        c = &Component::create(effector->file->name.c_str());
-
-        for (auto arg : effector->args) {
-
-            if (arg.first == "vec2") c->member<glm::vec2>(arg.second.c_str()); 
-
-            else if (arg.first == "int") c->member<int>(arg.second.c_str()); 
-            
-            else c->member<float>(arg.second.c_str()); 
-
-            if (effector->ranges.find(arg.second) != effector->ranges.end()) c->range(effector->ranges[arg.second][0],effector->ranges[arg.second][1],effector->ranges[arg.second][2]);
-            
-        }
-    
-    }
 
     obj->addComp({effector->file->name});
 

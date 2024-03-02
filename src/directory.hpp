@@ -25,3 +25,15 @@ struct Directory {
 
 
 };
+
+struct File;
+
+struct Folder : Directory {
+
+    Folder(std::string path);
+
+    ~Folder();
+    
+    std::vector<File*> files;
+    
+};

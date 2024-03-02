@@ -1,6 +1,7 @@
 #include "effector.hpp"
 #include "file.hpp"
 #include "log.hpp"
+#include "component.hpp"
 #include <regex>
 
 Effector::Effector()  { }
@@ -10,9 +11,11 @@ Effector::Effector(File *file) { import(file); }
 Effector::Effector(const char* data) { import(data); }
 
 void Effector::import(File *file) {
+
     this->file = file;
 
     import(&file->data[0]);
+
 }
 
 void Effector::import(const char* data) {
@@ -50,6 +53,26 @@ void Effector::import(const char* data) {
             args.push_back({(*iter)[1].str(),(*iter)[2].str()});
             ++iter;
         }
+    }
+
+    Component* c = Component::exist(file->name.c_str());
+
+    if (!c) {
+        
+        c = &Component::create(file->name.c_str());
+
+        for (auto arg : args) {
+
+            if (arg.first == "vec2") c->member<glm::vec2>(arg.second.c_str()); 
+
+            else if (arg.first == "int") c->member<int>(arg.second.c_str()); 
+            
+            else c->member<float>(arg.second.c_str()); 
+
+            if (ranges.find(arg.second) != ranges.end()) c->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+            
+        }
+    
     }
 
 }

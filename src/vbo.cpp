@@ -34,6 +34,8 @@ void VBO::destroy() {
     glDeleteBuffers(1, &ibo);
     glDeleteVertexArrays(1, &vao);
 
+    for (auto m : models) delete m;
+
 }
 
 void VBO::create() {

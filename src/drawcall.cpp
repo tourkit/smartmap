@@ -5,6 +5,7 @@
 #include "ubo.hpp"
 #include "engine.hpp"
 #include "atlas.hpp"
+#include "model.hpp"
 
 #include <unordered_set>
 #include <set>
@@ -65,7 +66,7 @@ std::string DrawCall::layout(UBO* ubo) {
         
         if (!obj.s->comps.size()) continue;
 
-        obj_str += "struct "+camel(obj.s->name)+" {"+struct_spacer; // would love this to be a node name instead
+        obj_str += "struct "+camel(obj.s->name)+" {"+struct_spacer; 
 
         int comp_id = 0;
 
@@ -159,7 +160,7 @@ void DrawCall::update() {
 
             auto name = model->file->name+std::to_string(model_id)+"["+std::to_string(instance)+"]";
 
-            frag_shader += "\t// "+name+"\n";
+            frag_shader += "\t// "+name+"\n"; // would love this to be a node name instead
             frag_shader += "\tuv = UV;\n";
             frag_shader += "\tcolor = vec4(1);\n";
             

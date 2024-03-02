@@ -128,11 +128,12 @@ void Callbacks::init() {
     NODE<Layer>::onadd<Model>([](Node*_this,Node*node){
 
         auto layer = _this->is_a<Layer>();
+
         auto model = node->is_a<Model>();
 
-        layer->vbo.import(model);  
+        auto x = new Ownr<Model>(model->file);
 
-        auto x = new Ptr<Model>(model);
+        layer->vbo.import(x->get());  
 
         return x->node(); 
         

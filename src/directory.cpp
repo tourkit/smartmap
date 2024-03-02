@@ -37,3 +37,7 @@ bool Directory::import(std::string path)  {
     return true;
 
 }
+
+Folder::Folder(std::string path) : Directory(path) { for (auto f : list) files.push_back(new File(f)); }
+
+Folder::~Folder() { for (auto f : files) delete f; }

@@ -2,7 +2,6 @@
 
 #include "struct.hpp"
 #include "buffer.hpp"
-#include "model.hpp"
 #include <cstdint>
 #include <vector>
 

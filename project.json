@@ -22,7 +22,7 @@
         "layer1": {
 
             "MyQuad" : ["quad", ["argb", "rectangle"]] ,
-            "MyCircle" : ["circle", ["argb", "rectangle"]] 
+            "MyCircle" : ["quad", ["rectangle"]] 
 
         }
 

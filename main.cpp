@@ -13,9 +13,9 @@ int main() {
 
     engine.init();
 
-    Test test;
-
     engine.open("project.json");
+
+    Test test;
 
     engine.run();
 

@@ -15,6 +15,7 @@
 #include "ndi.hpp"
 #include "texture.hpp"
 #include "json.hpp"
+#include "model.hpp"
 
 #include "callbacks.hpp"
 
