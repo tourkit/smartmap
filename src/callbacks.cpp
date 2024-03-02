@@ -131,9 +131,11 @@ void Callbacks::init() {
 
         auto file = node->is_a<File>();
 
-        auto x = _this->addOwnr<Model>(file);
+        // Two following lines very similar to Engine::open()
 
-        layer->vbo.import(x->get());  
+        layer->vbo.import(file);  
+
+        auto x = _this->addPtr<Model>(layer->vbo.models.back());
 
         return x->node(); 
         
