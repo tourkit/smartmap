@@ -89,9 +89,7 @@ void VBO::draw(int count) {
 }
 	
 
-int VBO::import(Model *model) {    
-
-    File* file = model->file;
+int VBO::import(File *file) {    
 
     Assimp::Importer importer;
 
@@ -136,7 +134,7 @@ int VBO::import(Model *model) {
     
     upload();
 
-    models.push_back(model);
+    models.push_back(new Model(file, models.size()));
 
     return models.size()-1;
     
