@@ -215,9 +215,13 @@ void Engine::save(const char* file) {
 
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-    writer.SetIndent(' ', 4); // Set indent to 4 spaces
+    writer.SetIndent(' ', 2); // Set indent to 2 spaces
     json.document.Accept(writer);
 
-    File::write(file,buffer.GetString());
+    // inline from depth 
+    std::string result = std::regex_replace(buffer.GetString(), std::regex(R"(\s{5}(([\]\}])|\s{2,}))"), " $2");
+    // result = std::regex_replace(result, std::regex(R"(\n)"), " \n\n");
+
+    File::write(file,result);
 
 }
