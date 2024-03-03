@@ -17,9 +17,9 @@ Test::Test() {
 
     logger.cout();
     
-    auto comps = engine.tree->child("Debug::Components");
-    comps->childrens.resize(0);
-    for (auto c : Component::pool) comps->addPtr<Component>(c);
+    // auto comps = engine.tree->child("Debug::Components");
+    // comps->childrens.resize(0);
+    // for (auto c : Component::pool) comps->addPtr<Component>(c);
 
 
     // atlas is fucked

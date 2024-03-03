@@ -6,7 +6,6 @@
 
 struct File;
 struct Component;
-// #include "component.hpp"
 
 struct Effector   {
 
@@ -14,7 +13,7 @@ struct Effector   {
 
     File * file = nullptr;
 
-    Component* comp; // owned
+    Component* comp = nullptr; // owned
 
     std::string source();
     

@@ -1,121 +1,32 @@
 {
-    "models": {
-        "quad": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4",
-        "circle": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
-    },
-    "effectors": {
-        "argb": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float blue) { \n\n\tcolor = color * vec4 (red, green, blue, alpha); \n\n}",
-        "atlas": "//id(0,10,0)\n\nvoid atlas(int id) { \n\n\tuv *= media[id].size;\n\tuv += media[id].pos;\n\tcolor *= texture(medias, uv);\n\n}",
-        "rectangle": "//size(0,1,1) \n//pos(0,1,0.5) \n//angle(-1,1,0) \n\nvoid rectangle(vec2 pos, vec2 size, float angle) {\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}"
-    },
-    "layers": {
-        "layer1": {
-            "MyQuad": [
-                "quad",
-                [
-                    "argb"
-                ]
-            ]
-        }
-    },
-    "inputs": {
-        "artnet": []
-    },
-    "outputs": {
-        "video 1": [
-            1920,
-            1080,
-            0,
-            0
-        ],
-        "NDI 1": [
-            1920,
-            1080,
-            0,
-            0,
-            "NDI"
-        ],
-        "ArtNet 1": [
-            1920,
-            1080,
-            0,
-            0,
-            "DMX",
-            0,
-            0
-        ],
-        "DMX 1": [
-            1920,
-            1080,
-            0,
-            0,
-            "DMX",
-            -1,
-            0
-        ]
-    },
-    "remaps": {
-        "layer1::MyQuad": [
-            [
-                "DMX",
-                0,
-                0
-            ],
-            [
-                0,
-                0,
-                2,
-                2,
-                2,
-                0,
-                0,
-                0,
-                2,
-                0,
-                2,
-                0,
-                2,
-                0,
-                2,
-                0,
-                2,
-                0,
-                2,
-                0
-            ]
-        ]
-    },
-    "editors": [
-        [
-            0,
-            0,
-            0,
-            0,
-            "Stack::layer1",
-            true
-        ],
-        [
-            0,
-            0,
-            0,
-            0,
-            "layer1::MyQuad",
-            true
-        ],
-        [
-            0,
-            0,
-            0,
-            0,
-            "tree::Debug",
-            true
-        ],
-        [
-            0,
-            0,
-            0,
-            0,
-            "layer1::MyQuad"
-        ]
-    ]
+  "models": {
+    "quad": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4",
+    "circle": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
+  },
+  "effectors": {
+    "argb": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float blue) { \n\n\tcolor = color * vec4 (red, green, blue, alpha); \n\n}",
+    "atlas": "//id(0,10,0)\n\nvoid atlas(int id) { \n\n\tuv *= media[id].size;\n\tuv += media[id].pos;\n\tcolor *= texture(medias, uv);\n\n}",
+    "rectangle": "//size(0,1,1) \n//pos(0,1,0.5) \n//angle(-1,1,0) \n\nvoid rectangle(vec2 pos, vec2 size, float angle) {\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}"
+  },
+  "layers": {
+    "layer1": { "MyQuad": [ "quad", [ "argb" ] ] }
+  },
+  "inputs": {
+    "artnet": []
+  },
+  "outputs": {
+    "video 1": [ 1920, 1080, 0, 0 ],
+    "NDI 1": [ 1920, 1080, 0, 0, "NDI" ],
+    "ArtNet 1": [ 1920, 1080, 0, 0, "DMX", 0, 0 ],
+    "DMX 1": [ 1920, 1080, 0, 0, "DMX", -1, 0 ]
+  },
+  "remaps": {
+    "layer1::MyQuad": [ [ "DMX", 0, 0 ], [ 0, 0, 2, 2, 2, 0, 0, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0 ] ]
+  },
+  "editors": [
+    [ 0, 0, 0, 0, "Stack::layer1", true ],
+    [ 0, 0, 0, 0, "layer1::MyQuad", true ],
+    [ 0, 0, 0, 0, "tree::Debug", true ],
+    [ 0, 0, 0, 0, "tree::Debug" ]
+  ]
 }

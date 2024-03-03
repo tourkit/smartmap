@@ -441,14 +441,14 @@ void Editors::init() {
                 
                 for (auto m:c->members) {
 
-                    auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
+                    std::string name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset));
 
                     auto data = &buffer->data[uniform_offset+(elem_current[obj]*obj->s->size())];
                     uniform_offset += m.size; 
 
-                    if (m.type == Member::Type::VEC2) { ImGui::SliderFloat2(name, (float*)data, m.range_from, m.range_to); continue; }
-                    if (m.type == Member::Type::VEC3) { ImGui::SliderFloat3(name, (float*)data, m.range_from, m.range_to); continue; }
-                    if (m.type == Member::Type::VEC4) { ImGui::SliderFloat4(name, (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Member::Type::VEC2) { ImGui::SliderFloat2(name.c_str(), (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Member::Type::VEC3) { ImGui::SliderFloat3(name.c_str(), (float*)data, m.range_from, m.range_to); continue; }
+                    if (m.type == Member::Type::VEC4) { ImGui::SliderFloat4(name.c_str(), (float*)data, m.range_from, m.range_to); continue; }
 
                     auto type = ImGuiDataType_Float;
 
@@ -457,7 +457,7 @@ void Editors::init() {
                     if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
                     if (m.type == Member::Type::UI32) type = ImGuiDataType_U16;
 
-                    if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to))  buffer->update();
+                    if (ImGui::SliderScalar(name.c_str(), type, data, &m.range_from, &m.range_to))  buffer->update();
                 }
                 
             }
