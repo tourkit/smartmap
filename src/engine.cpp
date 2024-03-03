@@ -29,6 +29,12 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
 
     static_ubo = new UBO("static_ubo");
 
+    window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
+
+    window.keypress_cbs[GLFW_KEY_S] = [](int key) { engine.save("project2.json"); };
+    
+    window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
+
 }
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
@@ -93,6 +99,7 @@ void Engine::open(const char* file) {
     json.load(File(file).data.data());
 
     project_name = file;
+    project_filepath = file;
 
     if (true) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
 
@@ -167,23 +174,22 @@ void Engine::open(const char* file) {
 
         auto x = e.GetArray();
 
-        if (e.Size()!=5) continue;
+        if (e.Size()<5) continue;
 
         engine.gui->editors.push_back(new EditorWidget());
 
         Node* n = nullptr;
         if (e[4].IsString()) n = tree->child(e[4].GetString());
-        if (n) {
+        if (n) engine.gui->editors.back()->selected = n;
 
-            engine.gui->editors.back()->selected = n;
-            engine.gui->editors.back()->locked = true;
-            
-        }
+        if (e.Size() > 5 && e[5].IsBool() ) engine.gui->editors.back()->locked = e[5].GetBool();
 
     }
 
 
 }
+
+void Engine::save() { save(project_filepath.c_str()); }
 
 void Engine::save(const char* file) {
 
@@ -197,22 +203,23 @@ void Engine::save(const char* file) {
 
         auto v = rapidjson::Value(rapidjson::kArrayType);
 
-        std::string name = "none";
-        if (e->selected) name = e->selected->namesdf();
-
         v.PushBack(0, json.document.GetAllocator());
         v.PushBack(0, json.document.GetAllocator());
         v.PushBack(0, json.document.GetAllocator());
         v.PushBack(0, json.document.GetAllocator());
-        v.PushBack(rapidjson::Value(name.c_str(), json.document.GetAllocator()), json.document.GetAllocator());
+        
+        if (e->selected) v.PushBack(rapidjson::Value(e->selected->namesdf().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
+        if (e->locked) v.PushBack(rapidjson::Value(true), json.document.GetAllocator());
 
         auto &x = json.document["editors"].PushBack(v, json.document.GetAllocator());
         
     }
 
     rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+    writer.SetIndent(' ', 4); // Set indent to 4 spaces
     json.document.Accept(writer);
-    PLOGW << buffer.GetString();
+
+    File::write(file,buffer.GetString());
 
 }

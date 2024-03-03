@@ -109,18 +109,11 @@ void Window::keypress() {
         (void)mode;
         auto _this = (Window*)glfwGetWindowUserPointer(id);
         if (action == GLFW_PRESS) {
-            switch (key) {
-            case GLFW_KEY_ESCAPE:
-                exit(0);
-                break;
-            case 73:
-                if (Engine::getInstance().gui->draw_gui) Engine::getInstance().gui->draw_gui = false;
-                else Engine::getInstance().gui->draw_gui = true;
-                break;
-            default:
-                PLOGD << "key " << (int)key ;
-                break;
-            }
+
+            if (_this->keypress_cbs.find(key) != _this->keypress_cbs.end()) return _this->keypress_cbs[key](key);
+        
+            PLOGD << "key " << (int)key ;
+
         }
     });
     glfwSetCursorPosCallback(id, [](GLFWwindow* id, double mouse_x, double mouse_y) {

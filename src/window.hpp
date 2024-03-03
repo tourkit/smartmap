@@ -43,6 +43,8 @@ struct Window {
     
     std::function<void()> clickCallBack = []() { /*  PLOGD << "click"; */ };
 
+    std::unordered_map<int, std::function<void(int)>> keypress_cbs;
+
 };
 
 
