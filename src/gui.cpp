@@ -101,15 +101,9 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
 
-
-
-editors.push_back(new EditorWidget());
-
 trees.push_back(new TreeWidget());
 
-
     ImGui::GetIO().FontAllowUserScaling = true;
-
 
 }
 

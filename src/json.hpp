@@ -3,7 +3,7 @@
 
 #include "vendors/rapidjson/document.h"
 #include "vendors/rapidjson/stringbuffer.h"
-#include "../vendors/rapidjson/writer.h"
+#include "../vendors/rapidjson/prettywriter.h"
 
 #include "log.hpp"
 

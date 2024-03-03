@@ -394,10 +394,12 @@ void Editors::init() {
 
             if (strcmp(data, &file->data[0])) {
 
-                file->write(data); 
+                if (strcmp(file->path.c_str(),engine.project_filepath.c_str())) file->write(data); 
+
+                else file->loadString(data);
 
                 node->update(); 
-                
+
             }
 
         }
@@ -626,6 +628,7 @@ void EditorWidget::draw() {
     if (!selected || !locked) selected = engine.selected;
 
     std::string name = selected->name;
+    // this->name = name;
 
     if (selected->parent()) { name = selected->parent()->name + "::" + name;  }
 

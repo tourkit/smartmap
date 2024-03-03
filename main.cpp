@@ -13,7 +13,7 @@ int main() {
 
     engine.init();
 
-    engine.open("project.json");
+    engine.open("project2.json");
 
     Test test;
 

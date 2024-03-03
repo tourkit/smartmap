@@ -123,7 +123,7 @@ void File::write(const char* data){
 
 void File::write(std::string path, std::string data){
 
-    std::fstream bin (path.c_str(), std::ios :: out | std::ios :: binary);
+    std::fstream bin (std::filesystem::path(REPO_DIR) / path.c_str(), std::ios :: out | std::ios :: binary);
     bin.write(&data[0],data.size());
     bin.close();
 
