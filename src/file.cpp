@@ -112,9 +112,7 @@ void File::write(const char* data){
 
     if (!loaded) return;
 
-    std::fstream bin (std::filesystem::path(REPO_DIR) / path.c_str(), std::ios :: out | std::ios :: binary);
-    bin.write(&data[0],strlen(data));
-    bin.close();
+    File::write(path,data);
 
     reload();
 
