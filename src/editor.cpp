@@ -28,7 +28,7 @@ static void draw_definition(Object *obj) {
 
     for (auto &o: obj->buffer->objects) {
         
-        ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size)+"]"+" * "+std::to_string(o.reserved)).c_str());
+        ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size())+"]"+" * "+std::to_string(o.reserved)).c_str());
 
         for (auto& c : o.s->comps) {
 
@@ -40,6 +40,7 @@ static void draw_definition(Object *obj) {
 
 
         }
+        for (int i = 0; i< o.s->diff()/sizeof(float); i++) ImGui::Text(("    float stride"+std::to_string(i)).c_str());   
     }
 
 }
@@ -211,7 +212,7 @@ void Editors::init() {
 
     Editor<Struct>([](Node* node, Struct *s){ 
         
-        ImGui::Text((s->name+" " +std::to_string(s->size)).c_str());
+        ImGui::Text((s->name+" " +std::to_string(s->size())).c_str());
 
         for (auto& c : s->comps) {
 
@@ -442,7 +443,7 @@ void Editors::init() {
 
                     auto name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset)).c_str();
 
-                    auto data = &buffer->data[uniform_offset+(elem_current[obj]*obj->s->size)];
+                    auto data = &buffer->data[uniform_offset+(elem_current[obj]*obj->s->size())];
                     uniform_offset += m.size; 
 
                     if (m.type == Member::Type::VEC2) { ImGui::SliderFloat2(name, (float*)data, m.range_from, m.range_to); continue; }
@@ -462,6 +463,11 @@ void Editors::init() {
             }
             
         }
+
+        draw_definition(obj);
+        draw_raw(obj->data(),obj->size());
+
+        ImGui::Text(("size : "+std::to_string(obj->size())).c_str());
 
     });
 

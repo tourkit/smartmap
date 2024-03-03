@@ -9,7 +9,11 @@
 
 #include <vector>
 
+static int nextFactor2(int x, int factor = 4) { return ((int)(x/(float)factor)+1)*factor; }
+
 Test::Test() {
+
+    // logger.cout();
 
     // atlas is fucked
 

@@ -48,7 +48,6 @@ void UBO::update() { // on Buffer change
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferData(GL_UNIFORM_BUFFER, data.size(), NULL, GL_DYNAMIC_COPY);
 
-
     for (auto shader:subscribers) { // need link after resize ?
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
@@ -64,6 +63,8 @@ void UBO::update() { // on Buffer change
 void UBO::upload(){ upload(&data[0], data.size()); }
 
 void UBO::upload(void* data, size_t size, uint32_t offset){
+
+    // PLOGV << name << ": " << size;
     
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 

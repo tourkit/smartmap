@@ -13,10 +13,13 @@ Struct::Struct(const char* name, std::vector<std::string> components) : name(nam
 
 void Struct::addComp(std::string component){
 
-    auto x = Component::id(component.c_str());
+    auto c = Component::id(component.c_str());
 
-    comps.push_back(x);
+    comps.push_back(c);
 
-    size += x->size;
+    size_v += c->size;
 
 }
+
+size_t Struct::size() { return nextFactor(size_v-1,16); }
+size_t Struct::diff() { return size()-size_v; }

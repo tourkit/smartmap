@@ -11,12 +11,12 @@ size_t Object::size() { return eq(reserved); }
 
 char *Object::data(size_t id) { return &buffer->data[offset + eq(id)]; }
 
-int Object::eq(size_t id) { return (s->size * id); }
+int Object::eq(size_t id) { return (s->size() * id); }
 
 Entry &Object::push() { 
 
     std::vector<char> data;
-    data.resize(s->size);
+    data.resize(s->size());
     memset(&data[0],0,data.size());
 
     return push(&data[0]);
@@ -28,6 +28,8 @@ void Object::clear() {
     
 
 }
+
+
 
 void Object::update(Buffer bkp) {
 
@@ -45,6 +47,7 @@ void Object::update(Buffer bkp) {
     }
 
     buffer->data.resize(offset);
+
     memset(&buffer->data[0],0,buffer->data.size()); 
     
     for (int obj_id = 0; obj_id < backup_objects.size(); obj_id++) {
@@ -61,7 +64,7 @@ void Object::update(Buffer bkp) {
                 
                 for (int member_id = 0; member_id < o.s->comps[comp_id]->members.size(); member_id++) {
                            
-                    auto offset = o.offset+(o.s->size*entry_id)+member_offset;
+                    auto offset = o.offset+(o.s->size()*entry_id)+member_offset;
 
                     auto x = &backup_data[offset];
 
@@ -91,6 +94,8 @@ void Object::update(Buffer bkp) {
 
 void Object::addComp(std::string component){
 
+    // need stride ctrl, ds obj.update ou buffer.update ?
+
     auto s = *this->s;
     auto s_ptr = this->s;
     this->s = &s;
@@ -101,8 +106,7 @@ void Object::addComp(std::string component){
 
     update(bkp);
 
-    // niquons l'opti :)
-
+    // niquons l'opti :) | whats teh pb ?
     for (auto e : entrys){
 
         auto c = (*e)[component.c_str()];
@@ -135,7 +139,7 @@ Entry &Object::push(void* data) {
 
     int id = entrys.size();
 
-    memcpy(this->data()+eq(id),data,s->size); 
+    memcpy(this->data()+eq(id),data,s->size()); 
 
     entrys.push_back(new Entry{this,id});
 

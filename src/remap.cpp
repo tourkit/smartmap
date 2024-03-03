@@ -43,7 +43,7 @@ void Remap::update() {
 
     for (int offset = 0; offset < quantity; offset++) {  
 
-        auto size = s->size;
+        auto size = s->size();
         auto pos = (offset*size);
 
         for (int i = 0; i < attributes.size(); i++) {

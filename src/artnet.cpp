@@ -8,6 +8,7 @@ Artnet::Artnet(const char* ip) {
     artnet = artnet_new(ip, 0); // 1 for VERBOSE
     if (!artnet) {
         PLOGW << "artnet_new ERROR: " << artnet_errstr;
+        artnet_new(ip, 1);
         return;
     }
 

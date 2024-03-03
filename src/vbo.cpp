@@ -71,11 +71,11 @@ void VBO::upload() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size(), indices->data(), GL_STATIC_DRAW );
 
     // make this parametric from Object vertices definition
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->s->size, (GLvoid *) 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) 0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->s->size, (GLvoid *) (2*sizeof(float)));
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) (2*sizeof(float)));
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->s->size, (GLvoid *) (4*sizeof(float)));
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) (4*sizeof(float)));
     glEnableVertexAttribArray(3);
 
 }
