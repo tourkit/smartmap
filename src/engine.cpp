@@ -197,10 +197,8 @@ void Engine::save(const char* file) {
 
     json.document["editors"].Clear();
 
-    for (int i = 1; i < gui->editors.size(); i++) {
-    
-        auto e = gui->editors[i];
-
+    for (auto e : gui->editors) {
+        
         auto v = rapidjson::Value(rapidjson::kArrayType);
 
         v.PushBack(0, json.document.GetAllocator());

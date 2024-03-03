@@ -15,8 +15,11 @@ static int nextFactor2(int x, int factor = 4) { return ((int)(x/(float)factor)+1
 
 Test::Test() {
 
-    // logger.cout();
-
+    logger.cout();
+    
+    auto comps = engine.tree->child("Debug::Components");
+    comps->childrens.resize(0);
+    for (auto c : Component::pool) comps->addPtr<Component>(c);
 
 
     // atlas is fucked

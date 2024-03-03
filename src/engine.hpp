@@ -46,10 +46,10 @@ struct Engine {
 
     void run();
 
+    std::string project_filepath;
 private:
 
     std::string project_name;
-    std::string project_filepath;
 
     Engine(uint16_t width = 400, uint16_t height = 300);
 
