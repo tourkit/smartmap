@@ -171,16 +171,36 @@ void Callbacks::init() {
     
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name; });
 
+    NODE<Model>::onchange([](Node* node, Model *model) { 
+        
+        PLOGI<<"C Model";
+        //gloubiboulbakup
+    // auto s = *this->s;
+    // auto s_ptr = this->s;
+    // this->s = &s;
+    // Buffer bkp = *buffer;
+    // this->s = s_ptr;
+    
+    //  model->obj->update(); 
+     
+     });
+
     NODE<Effector>::onchange([](Node* node, Effector *effector) { 
         
-        
-        PLOGI<<"update " << effector->file->name;
+        PLOGI<<"B"; 
 
-        // effector.reload(); // need to rename struct and all .
+        auto parent = node->parent();
+        if (parent) {
 
-        //comment dc.cpp sait deja ?
+            effector->import(effector->file);
+            
+            //update all ubo objects contAINUING  thie effector
 
-        // effector.
+            // try PLOGD "update" Model::obj  linked to this effector M<odel obchange
+
+            // wich 
+
+        } 
     
     
      });

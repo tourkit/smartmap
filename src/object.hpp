@@ -31,6 +31,7 @@ struct Object {
     void update(Buffer bkp);
 
     void addComp(std::string components);
+    void removeComp(std::string components);
 
     void clear();
 

@@ -93,8 +93,7 @@ void Object::update(Buffer bkp) {
 
 void Object::addComp(std::string component){
 
-    // need stride ctrl, ds obj.update ou buffer.update ?
-
+    //gloubiboulbakup
     auto s = *this->s;
     auto s_ptr = this->s;
     this->s = &s;
@@ -122,6 +121,22 @@ void Object::addComp(std::string component){
         }
 
     }
+
+    buffer->update();
+
+}
+void Object::removeComp(std::string component){
+
+    //gloubiboulbakup
+    auto s = *this->s;
+    auto s_ptr = this->s;
+    this->s = &s;
+    Buffer bkp = *buffer;
+    this->s = s_ptr;
+
+    this->s->removeComp(component);
+
+    update(bkp);
 
     buffer->update();
 

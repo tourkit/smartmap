@@ -30,5 +30,7 @@ struct Model {
     bool import(const char *data, int id = 0, int quantity = 1);
 
     void addFX(Effector*  effector);
+    
+    void removeFX(Effector*  effector);
 
 };

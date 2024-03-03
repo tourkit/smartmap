@@ -20,6 +20,15 @@ void Struct::addComp(std::string component){
     size_v += c->size;
 
 }
+void Struct::removeComp(std::string component){
+
+    auto c = Component::exist(component.c_str()); if (!c) return;
+
+    comps.erase(std::remove(comps.begin(), comps.end(), c), comps.end());
+
+    size_v -= c->size;
+
+}
 
 size_t Struct::size() { return size_v; }
 size_t Struct::stride() { return nextFactor(size_v-1,16)-size_v; }

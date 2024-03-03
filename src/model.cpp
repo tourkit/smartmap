@@ -24,6 +24,16 @@ bool Model::import(File* file, int id, int quantity) {
 
 }
 
+void Model::removeFX(Effector* effector) {
+
+    auto x = std::remove(effectors.begin(), effectors.end(), effector);
+    effectors.erase(x, effectors.end());
+
+    obj->removeComp({effector->file->name});
+    
+
+}
+
 void Model::addFX(Effector* effector) {
 
     obj->addComp({effector->file->name});

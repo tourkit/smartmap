@@ -11,7 +11,7 @@
 
     UntypedNode::~UntypedNode() {
 
-        top()->runCB([this](Node* node){ for (auto r : node->referings) if (r == this) r = nullptr; });
+        engine.tree->runCB([this](Node* node){ for (auto r : node->referings) if (r == this) r = nullptr; });
 
         auto t_childrens = childrens;
         for (auto c : t_childrens) delete c;
@@ -155,13 +155,13 @@
     }
 
     void UntypedNode::update() { 
-                
+        
+        if (onchange_cb) onchange_cb(node());
+
         if (parent_node) parent_node->update(); 
         
-        top()->runCB([this](Node* curr){ for (auto r : curr->referings)if (r == this) curr->update(); });
+        engine.tree->runCB([this](Node* curr){ for (auto r : curr->referings) if (r == this) curr->update(); });
 
-        if (onchange_cb) onchange_cb(node());
-        
     }
 
     void UntypedNode::remove(Node *child) {  

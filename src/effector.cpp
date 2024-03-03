@@ -2,6 +2,8 @@
 #include "file.hpp"
 #include "log.hpp"
 #include "component.hpp"
+#include "engine.hpp"
+#include "node.hpp"
 #include <regex>
 
 Effector::Effector()  { }
@@ -55,12 +57,6 @@ void Effector::import(const char* data) {
         }
     }
 
-    if (comp) { 
-
-        comp->name = file->name.c_str();
-        
-    }
-
     if (!comp) {
 
         comp = Component::exist(file->name.c_str());
@@ -74,6 +70,8 @@ void Effector::import(const char* data) {
     for (auto arg : args) {
 
         if (arg.first == "vec2") comp->member<glm::vec2>(arg.second.c_str()); 
+        if (arg.first == "vec3") comp->member<glm::vec3>(arg.second.c_str()); 
+        if (arg.first == "vec4") comp->member<glm::vec4>(arg.second.c_str()); 
 
         else if (arg.first == "int") comp->member<int>(arg.second.c_str()); 
         

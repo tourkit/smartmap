@@ -106,6 +106,8 @@ void File::loadString(std::string data) {
     
     loaded = true;
 
+    last_modified = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+
 }
 
 void File::write(const char* data){

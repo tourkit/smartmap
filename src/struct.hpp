@@ -21,6 +21,8 @@ struct Struct {
     ~Struct();
 
     void addComp(std::string component);
+    
+    void removeComp(std::string component);
 
     size_t size();
     

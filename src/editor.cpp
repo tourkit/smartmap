@@ -456,8 +456,14 @@ void Editors::init() {
                     if (m.type == Member::Type::UI8) type = ImGuiDataType_U8;
                     if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
                     if (m.type == Member::Type::UI32) type = ImGuiDataType_U16;
+                    
+                    int q = 1;
+                    if (m.type == Member::Type::VEC2) q = 2;
+                    if (m.type == Member::Type::VEC3) q = 3;
+                    if (m.type == Member::Type::VEC4) q = 4;
 
-                    if (ImGui::SliderScalar(name.c_str(), type, data, &m.range_from, &m.range_to))  buffer->update();
+                    if (ImGui::SliderScalarN(name.c_str(), type, data, q, &m.range_from, &m.range_to))  buffer->update();
+
                 }
                 
             }
@@ -550,16 +556,8 @@ void Editors::init() {
     ////////// Effector.HPP 
 
     Editor<Effector>([](Node* node, Effector *effector){ 
-        
-        if (effector->file) {
-            
-            auto x = effector->file->getTimeModified();
-            
-            Editor<File>::cb(node, effector->file); 
-
-            if (x != effector->file->getTimeModified()) effector->import(effector->file);
-            
-        }
+  
+        if (effector->file) Editor<File>::cb(node, effector->file); 
         
         for (auto x : effector->args)  { 
             
@@ -568,8 +566,8 @@ void Editors::init() {
             if (effector->ranges.find(x.second) != effector->ranges.end()) for (auto x : effector->ranges[x.second])  out_str += " " + std::to_string(x).substr(0,3) + ",";
 
             ImGui::Text(out_str.c_str());
-}
-        
+        }
+                
     });
 
     ////////// Engine.HPP 
@@ -641,6 +639,9 @@ void EditorWidget::draw() {
     
     ImGui::SameLine(); ImGui::Checkbox("lock##locked", &locked);
 
+    std::string referings;
+    for (auto r : selected->referings) referings += " "+(r->name)+",";
+    if (referings.length()) { ImGui::SameLine(); ImGui::Text(("("+referings.substr(0,referings.length()-2)+")").c_str()); }
 
     selected->editor();
 

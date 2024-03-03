@@ -162,9 +162,9 @@ struct TypedNode : UntypedNode {
 
     void update() override {
 
-        UntypedNode::update();
-
         if(onchange_cb) { onchange_cb(node(),this->ptr); }
+
+        UntypedNode::update();
 
     }
 
@@ -271,7 +271,7 @@ struct TypedNode : UntypedNode {
 
         for (auto f : dir->get()->list) ((TypedNode<Any>*)dir)->addOwnr<File>(f);
 
-        for (auto f : dir->childrens) folder->TypedNode::addOwnr<U>(f->TypedNode::is_a<File>())->referings.push_back(f);
+        for (auto f : dir->childrens) folder->TypedNode::addOwnr<U>(f->TypedNode::is_a<File>());//->referings.push_back(f); this shjouldnt hpn here
 
         return folder;
 
