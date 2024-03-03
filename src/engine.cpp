@@ -136,7 +136,7 @@ void Engine::open(const char* file) {
 
                 auto effector = effectors->child(f.GetString())->get<Effector>();
 
-                if (effector) model->addPtr(effector);
+                if (effector) model->add(effector);
                 else PLOGW << "no effector: " << f.GetString();
 
             }
