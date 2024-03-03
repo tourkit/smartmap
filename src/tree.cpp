@@ -62,16 +62,17 @@ using namespace ImGui;
 
     auto hovered = IsItemHovered();
 
+    ImVec4 node_color = *(ImVec4*)&node->color;
+    
     if(engine.selected != node) {
-        
-        ImVec4 node_color = *(ImVec4*)&node->color;
-        
+
         if (hovered) node_color = ImVec4(1, .4, 0, 1);
+
         else if (engine.selected) node_color.w = .65; 
-        
-        ImGui::PushStyleColor(ImGuiCol_Text, node_color);
 
     }
+
+    ImGui::PushStyleColor(ImGuiCol_Text, node_color);
 
     SameLine();
     SetCursorPosX(GetCursorPosX()-text_size.x);
@@ -127,11 +128,8 @@ using namespace ImGui;
         ImGui::EndPopup();
     }
     
-    if(engine.selected != node) {
+    PopStyleColor();
 
-        PopStyleColor();
-
-    }
         if (ImGui::BeginDragDropSource()) {
 
             auto ptr = (uint64_t)node;
