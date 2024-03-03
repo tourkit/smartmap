@@ -171,7 +171,19 @@ void Callbacks::init() {
     
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name; });
 
-    NODE<Effector>::onchange([](Node* node, Effector *effector) { PLOGI<<"update " << effector->file->name; });
+    NODE<Effector>::onchange([](Node* node, Effector *effector) { 
+        
+        
+        PLOGI<<"update " << effector->file->name;
+
+        // effector.reload(); // need to rename struct and all .
+
+        //comment dc.cpp sait deja ?
+
+        // effector.
+    
+    
+     });
 
     ////////// Atlas.HPP 
 

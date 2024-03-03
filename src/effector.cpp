@@ -55,24 +55,27 @@ void Effector::import(const char* data) {
         }
     }
 
-    Component* c = Component::exist(file->name.c_str());
+    Component* comp = this->comp;
 
-    if (!c) {
-        
-        c = &Component::create(file->name.c_str());
+    if (comp) comp->name = file->name.c_str();
 
-        for (auto arg : args) {
+    else comp = Component::exist(file->name.c_str());
 
-            if (arg.first == "vec2") c->member<glm::vec2>(arg.second.c_str()); 
+    if (!comp) comp = &Component::create(file->name.c_str());
 
-            else if (arg.first == "int") c->member<int>(arg.second.c_str()); 
-            
-            else c->member<float>(arg.second.c_str()); 
-
-            if (ranges.find(arg.second) != ranges.end()) c->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
-            
-        }
+    this->comp = comp;
     
+    // comp->reset();
+    for (auto arg : args) {
+
+        if (arg.first == "vec2") comp->member<glm::vec2>(arg.second.c_str()); 
+
+        else if (arg.first == "int") comp->member<int>(arg.second.c_str()); 
+        
+        else comp->member<float>(arg.second.c_str()); 
+
+        if (ranges.find(arg.second) != ranges.end()) comp->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+        
     }
 
 }

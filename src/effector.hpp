@@ -5,12 +5,16 @@
 #include <string>
 
 struct File;
+struct Component;
+// #include "component.hpp"
 
 struct Effector   {
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
     File * file = nullptr;
+
+    Component* comp; // owned
 
     std::string source();
     

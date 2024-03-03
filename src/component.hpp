@@ -136,6 +136,7 @@ struct Component  {
         return nullptr;
 
     }
+
     static Component *id(const char* name) {
 
         auto exist_v = exist(name);
@@ -159,7 +160,6 @@ struct Component  {
 
     }
 
-
     void each(std::function<void(Member &m)> cb) {
 
         for (auto &m:members) {
@@ -174,6 +174,13 @@ struct Component  {
 
     }
 
+    void reset() {
+
+        size = 0;
+
+        members.resize(0);
+        
+    }
 };
 
 struct Components {
