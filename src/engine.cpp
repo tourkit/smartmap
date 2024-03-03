@@ -187,6 +187,32 @@ void Engine::open(const char* file) {
 
 void Engine::save(const char* file) {
 
+    if (!json.document.HasMember("editors")) json.document.AddMember("editors", rapidjson::Value(rapidjson::kArrayType), json.document.GetAllocator());
 
+    json.document["editors"].Clear();
+
+    for (int i = 1; i < gui->editors.size(); i++) {
+    
+        auto e = gui->editors[i];
+
+        auto v = rapidjson::Value(rapidjson::kArrayType);
+
+        std::string name = "none";
+        if (e->selected) name = e->selected->namesdf();
+
+        v.PushBack(0, json.document.GetAllocator());
+        v.PushBack(0, json.document.GetAllocator());
+        v.PushBack(0, json.document.GetAllocator());
+        v.PushBack(0, json.document.GetAllocator());
+        v.PushBack(rapidjson::Value(name.c_str(), json.document.GetAllocator()), json.document.GetAllocator());
+
+        auto &x = json.document["editors"].PushBack(v, json.document.GetAllocator());
+        
+    }
+
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+    json.document.Accept(writer);
+    PLOGW << buffer.GetString();
 
 }

@@ -8,7 +8,6 @@
 #include "model.hpp"
 #include "json.hpp"
 
-#include "../vendors/rapidjson/writer.h"
 
 #include <vector>
 
@@ -16,35 +15,8 @@ static int nextFactor2(int x, int factor = 4) { return ((int)(x/(float)factor)+1
 
 Test::Test() {
 
-    logger.cout();
+    // logger.cout();
 
-    // Create a JSON document
-
-    if (!engine.json.document.HasMember("editors")) engine.json.document.AddMember("editors", rapidjson::Value(rapidjson::kArrayType), engine.json.document.GetAllocator());
-
-    for (int i = 1; i < engine.gui->editors.size(); i++) {
-    
-        auto e = engine.gui->editors[i];
-
-        auto v = rapidjson::Value(rapidjson::kArrayType);
-
-        std::string name = "none";
-        if (e->selected) name = e->selected->namesdf();
-
-        v.PushBack(0, engine.json.document.GetAllocator());
-        v.PushBack(0, engine.json.document.GetAllocator());
-        v.PushBack(0, engine.json.document.GetAllocator());
-        v.PushBack(0, engine.json.document.GetAllocator());
-        v.PushBack(rapidjson::Value(name.c_str(), engine.json.document.GetAllocator()), engine.json.document.GetAllocator());
-
-        auto &x = engine.json.document["editors"].PushBack(v, engine.json.document.GetAllocator());
-        
-    }
-
-    rapidjson::StringBuffer buffer;
-    rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
-    engine.json.document.Accept(writer);
-    PLOGW << buffer.GetString();
 
 
     // atlas is fucked
