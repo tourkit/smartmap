@@ -68,13 +68,29 @@ void Engine::init() {
 
     PLOGI << "Engine initialized";
 
-    ///////////////////////////////////////////////////////////////////
+}
+
+void Engine::run() {
+
+    auto &window = getInstance().window;
+
+    while (!glfwWindowShouldClose(window.id)) window.render([](){
+        
+        engine.dynamic_ubo->upload();
+
+        engine.tree->run();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        engine.gui->draw(); 
+        
+    });
 
 }
 
 void Engine::open(const char* file) {
 
-    JSON json(File(file).data.data());
+    json.load(File(file).data.data());
 
     project_name = file;
 
@@ -169,20 +185,8 @@ void Engine::open(const char* file) {
 
 }
 
-void Engine::run() {
+void Engine::save(const char* file) {
 
-    auto &window = getInstance().window;
 
-    while (!glfwWindowShouldClose(window.id)) window.render([](){
-        
-        engine.dynamic_ubo->upload();
 
-        engine.tree->run();
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-        engine.gui->draw(); 
-        
-    });
-
-};
+}

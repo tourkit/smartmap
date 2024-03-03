@@ -23,6 +23,7 @@ struct Struct {
     void addComp(std::string component);
 
     size_t size();
-    size_t diff();
+    
+    size_t stride();
     
 };

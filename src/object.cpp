@@ -11,7 +11,7 @@ size_t Object::size() { return eq(reserved); }
 
 char *Object::data(size_t id) { return &buffer->data[offset + eq(id)]; }
 
-int Object::eq(size_t id) { return (s->size() * id); }
+int Object::eq(size_t id) { return ((s->size()+s->stride()) * id); }
 
 Entry &Object::push() { 
 
@@ -28,7 +28,6 @@ void Object::clear() {
     
 
 }
-
 
 
 void Object::update(Buffer bkp) {

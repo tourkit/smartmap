@@ -22,25 +22,23 @@
 
 #include <cstring>
 
-static void draw_definition(Object *obj) {
+static void draw_definition(Buffer *buffer) {
 
-    ImGui::Text(("char[" +std::to_string( obj->buffer->data.size()) + "]").c_str());
+    ImGui::Text(("char[" +std::to_string( buffer->data.size()) + "]").c_str());
 
-    for (auto &o: obj->buffer->objects) {
+    for (auto &o: buffer->objects) {
         
-        ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size())+"]"+" * "+std::to_string(o.reserved)).c_str());
+        ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size()+o.s->stride())+"]"+" * "+std::to_string(o.reserved)).c_str());
 
         for (auto& c : o.s->comps) {
 
             ImGui::Text(("    "+c->name+"["+std::to_string(c->size)+"]").c_str());
 
-            for (auto& m : c->members) {
-                ImGui::Text(("      "+m.name+"["+std::to_string(m.size)+"]").c_str());                
-            }
-
+            for (auto& m : c->members) ImGui::Text(("      "+m.name+"["+std::to_string(m.size)+"]").c_str());                
 
         }
-        for (int i = 0; i< o.s->diff()/sizeof(float); i++) ImGui::Text(("    float stride"+std::to_string(i)).c_str());   
+        
+        for (int i = 0; i< o.s->stride()/sizeof(float); i++) ImGui::Text(("    stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]").c_str());   
     }
 
 }
@@ -464,11 +462,6 @@ void Editors::init() {
             
         }
 
-        draw_definition(obj);
-        draw_raw(obj->data(),obj->size());
-
-        ImGui::Text(("size : "+std::to_string(obj->size())).c_str());
-
     });
 
     ////////// Texture.HPP 
@@ -487,6 +480,16 @@ void Editors::init() {
     ////////// BUFFER.HPP 
 
     Editor<Buffer>([](Node* node, Buffer *buffer){
+
+        ImGui::Separator();
+
+        draw_definition(buffer);
+
+        ImGui::Separator();
+
+        draw_raw(buffer->data.data(),buffer->data.size());
+
+        return;
 
         static StringsBuffer object_str;
         static int obj_current = 0;
@@ -512,8 +515,8 @@ void Editors::init() {
 
     Editor<UBO>([](Node* node, UBO *ubo){ 
 
-        std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s).";
-        for (auto s: ubo->subscribers) subs_str += " "+std::to_string(s->id);
+        std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s):";
+        for (auto s: ubo->subscribers) subs_str += " #"+std::to_string(s->id);
         ImGui::Text(subs_str.c_str());
 
         Editor<Buffer>::cb(node, ubo); 

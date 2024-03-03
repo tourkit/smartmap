@@ -97,6 +97,8 @@ struct UntypedNode {
 
     void down();
 
+    std::string namesdf();
+
     std::vector<Node*> referings;
 
 

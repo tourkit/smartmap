@@ -1,6 +1,7 @@
 #pragma once
 
 #include "window.hpp"
+#include "json.hpp"
 
 struct Stack {};
 struct Debug {};
@@ -32,10 +33,13 @@ struct Engine {
     UBO *static_ubo;
     
     Atlas *atlas;
+    
+    JSON json;
 
     void init();
 
     void open(const char* filepath);
+    void save(const char* filepath);
 
     static Engine& getInstance() { static Engine instance;  return instance; }
 

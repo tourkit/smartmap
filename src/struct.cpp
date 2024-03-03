@@ -21,5 +21,5 @@ void Struct::addComp(std::string component){
 
 }
 
-size_t Struct::size() { return nextFactor(size_v-1,16); }
-size_t Struct::diff() { return size()-size_v; }
+size_t Struct::size() { return size_v; }
+size_t Struct::stride() { return nextFactor(size_v-1,16)-size_v; }
