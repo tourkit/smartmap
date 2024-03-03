@@ -1,6 +1,8 @@
 #include "node.hpp"
 #include "log.hpp"
 #include "engine.hpp"
+#include "buffer.hpp"
+#include "ubo.hpp"
 
     UntypedNode::UntypedNode(std::string name, ImVec4 color) : name(name), color(color) {
 
@@ -11,7 +13,7 @@
 
     UntypedNode::~UntypedNode() {
 
-        engine.tree->runCB([this](Node* node){ for (auto r : node->referings) if (r == this) r = nullptr; });
+        updateRefs();
 
         auto t_childrens = childrens;
         for (auto c : t_childrens) delete c;
@@ -154,13 +156,24 @@
 
     }
 
+    void UntypedNode::bkpupdate() {
+            
+        Buffer::bkps[engine.static_ubo]  = engine.static_ubo->bkp();
+        Buffer::bkps[engine.dynamic_ubo]  = engine.dynamic_ubo->bkp();
+        PLOGD << "BKP";
+
+        update();
+
+    } 
+
+
     void UntypedNode::update() { 
         
-        if (onchange_cb) onchange_cb(node());
+        updateRefs();
 
         if (parent_node) parent_node->update(); 
         
-        engine.tree->runCB([this](Node* curr){ for (auto r : curr->referings) if (r == this) curr->update(); });
+        if (onchange_cb) onchange_cb(node());
 
     }
 
@@ -181,11 +194,7 @@
 
     }
 
-    NodeList* UntypedNode::updateRefs(Node* of) { 
-
-        return nullptr;
-
-    }
+    void UntypedNode::updateRefs() { engine.tree->runCB([this](Node* curr){ for (auto r : curr->referings) if (r == this) curr->update(); }); }
 
     uint32_t UntypedNode::index() { 
 

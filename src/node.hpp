@@ -42,6 +42,8 @@ struct UntypedNode {
     
     virtual void update();
 
+    void bkpupdate();
+
     Node* node();
 
     virtual Node* add(void *node);
@@ -55,7 +57,7 @@ struct UntypedNode {
 
     uint32_t index();
 
-    NodeList* updateRefs(Node* of);
+    void updateRefs();
 
     void addList(NodeList *nodes);
 
@@ -162,9 +164,9 @@ struct TypedNode : UntypedNode {
 
     void update() override {
 
-        if(onchange_cb) { onchange_cb(node(),this->ptr); }
-
         UntypedNode::update();
+
+        if(onchange_cb) { onchange_cb(node(),this->ptr); }
 
     }
 
@@ -295,6 +297,8 @@ struct Ownr : TypedNode<T> {
 
 struct Node : TypedNode<Any> { 
 
+    static inline Node* onchange_payload = nullptr;
+    
     Node(std::string name = "any") : TypedNode<Any>(this) { this->name = name; } 
 
     template <typename U>

@@ -6,6 +6,7 @@ struct Entry;
 struct Effector;
 
 #include <vector>
+#include "component.hpp"
 
 struct Model {
 
@@ -32,5 +33,7 @@ struct Model {
     void addFX(Effector*  effector);
     
     void removeFX(Effector*  effector);
+    
+    void changeFX(Effector*  effector, Component *new_component);
 
 };

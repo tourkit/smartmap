@@ -6,6 +6,7 @@
 #include "struct.hpp"
 #include "buffer.hpp"
 #include "entry.hpp"
+#include "log.hpp"
 
 size_t Object::size() { return eq(reserved); }
 
@@ -30,81 +31,24 @@ void Object::clear() {
 }
 
 
-void Object::update(Buffer bkp) {
 
-    auto backup_data = bkp.data;
-    auto backup_objects = bkp.objects;
-
-    int offset = 0;
-
-    for (auto obj : buffer->objects) {
-
-        obj.offset = offset;
-
-        offset += obj.size();
-        
-    }
-
-    buffer->data.resize(offset);
-
-    memset(&buffer->data[0],0,buffer->data.size()); 
-    
-    for (int obj_id = 0; obj_id < backup_objects.size(); obj_id++) {
-
-        auto &o = backup_objects[obj_id];
-
-        for (int entry_id = 0; entry_id < o.entrys.size(); entry_id++) {
-
-            int comp_offset = 0;
-            
-            for (int comp_id = 0; comp_id < o.s->comps.size(); comp_id++) {
-                
-                int member_offset = comp_offset;
-                
-                for (int member_id = 0; member_id < o.s->comps[comp_id]->members.size(); member_id++) {
-                           
-                    auto offset = o.offset+(o.s->size()*entry_id)+member_offset;
-
-                    auto x = &backup_data[offset];
-
-                    memcpy((*buffer)[obj_id]->data(entry_id)+member_offset,x,o.s->comps[comp_id]->members[member_id].size);
-                           
-                    member_offset += o.s->comps[comp_id]->members[member_id].size;
-
-                }
-
-                comp_offset += o.s->comps[comp_id]->size;
-
-            }
-
-        }
-
-    }
-
-    int obj_offset = 0;
-    for (auto& o : buffer->objects) {
-
-        o.offset = obj_offset;
-        obj_offset += o.size();
-
-    }
-
-}
 
 void Object::addComp(std::string component){
 
-    //gloubiboulbakup
-    auto s = *this->s;
-    auto s_ptr = this->s;
-    this->s = &s;
-    Buffer bkp = *buffer;
-    this->s = s_ptr;
+    auto bkp = buffer->bkp();
 
-    this->s->addComp(component);
+    PLOGD << "NEEDBKPHERE";
 
-    update(bkp);
+    s->addComp(component);
 
-    // niquons l'opti :) | whats teh pb ?
+    buffer->transpose(bkp);
+
+    // niquons l'opti :) | whats teh pb ? a kwa sasssair ? ca pourrait etre ds update ? 
+    
+    // 1 test de le mettre avanrt buffer->transpose(bkp_v);
+
+    // 2 test de le mettre dans this->s->addComp(component)
+
     for (auto e : entrys){
 
         auto c = (*e)[component.c_str()];
@@ -122,21 +66,20 @@ void Object::addComp(std::string component){
 
     }
 
+    // -  fin
+
     buffer->update();
 
 }
 void Object::removeComp(std::string component){
 
-    //gloubiboulbakup
-    auto s = *this->s;
-    auto s_ptr = this->s;
-    this->s = &s;
-    Buffer bkp = *buffer;
-    this->s = s_ptr;
+    auto bkp = buffer->bkp();
+
+    PLOGD << "NEEDBKPHERE";
 
     this->s->removeComp(component);
 
-    update(bkp);
+    buffer->transpose(bkp);
 
     buffer->update();
 
@@ -147,9 +90,11 @@ Entry &Object::push(void* data) {
 
     Buffer bkp = *buffer;
 
+    PLOGD << "NEEDBKPHERE";
+
     reserved+=1;
 
-    update(bkp);
+    buffer->transpose(bkp);
 
     int id = entrys.size();
 

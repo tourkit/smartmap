@@ -65,11 +65,12 @@ struct Member {
 
 struct Component  {
     
-    std::string name;
-
     static inline std::vector<Component*> pool;
 
+    std::string name;
+
     int size;
+
     std::vector<Member> members;
 
     template <typename T>
@@ -147,8 +148,33 @@ struct Component  {
 
     }
 
+    static bool erase(const char* name) {
+
+        auto exist_v = exist(name);
+        
+        if (exist_v){
+
+            Component::pool.erase(std::remove(Component::pool.begin(), Component::pool.end(), exist_v), Component::pool.end());
+
+             delete exist_v;
+            
+            return true;
+             
+        }
+        return false;
+
+    }
+
     Component(std::string name, int size = -1) : name(name), size(size) {
 
+
+    }
+
+    Component(const Component& other) {
+
+        name = other.name;
+        size = other.size;
+        members = other.members;
 
     }
 

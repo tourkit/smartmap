@@ -14,6 +14,7 @@
 #include "atlas.hpp"
 #include "component.hpp"
 #include "json.hpp"
+#include "buffer.hpp"
 
 void Callbacks::init() {
     
@@ -43,20 +44,6 @@ void Callbacks::init() {
     
     NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name+"."; });
 
-    NODE<File>::onrun([](Node* node, File *file){ 
-
-        if (file->hasChanged()) { 
-
-            PLOGI <<  "file " << file->name << " changed";
-
-            file->reload(); 
-
-            node->update();
-   
-        }
-
-     });
-
     ////////// Artnet.HPP 
 
     NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run(); 
@@ -85,8 +72,12 @@ void Callbacks::init() {
     ////////// UBO.HPP 
 
     NODE<UBO>::onrun([](Node* node, UBO *ubo){ ubo->upload(); });
-    NODE<UBO>::onchange([](Node* node, UBO *ubo){ ubo->update(); 
-    node->updateRefs(node); 
+    NODE<UBO>::onchange([](Node* node, UBO *ubo){ 
+        
+        ubo->update(); 
+        
+        node->updateRefs(); 
+
     });
     
     NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name; });
@@ -173,7 +164,27 @@ void Callbacks::init() {
 
     NODE<Model>::onchange([](Node* node, Model *model) { 
         
-        PLOGI<<"C Model";
+        PLOGI<<"C Model backup dyn buffer somewhere (in model ?)";
+
+        auto n = Node::onchange_payload;
+
+        if (n) {
+
+            auto f = n->is_a<Effector>();
+
+            if (f) {
+
+                // f->import(f->file);
+                
+                // transpose
+
+            }
+            
+        }
+
+        // changeFX
+
+
         //gloubiboulbakup
     // auto s = *this->s;
     // auto s_ptr = this->s;
@@ -192,7 +203,16 @@ void Callbacks::init() {
         auto parent = node->parent();
         if (parent) {
 
+            Node::onchange_payload = node;
+
+            PLOGD << "change of comps";
+
             effector->import(effector->file);
+
+            engine.static_ubo->transpose(Buffer::bkps[engine.static_ubo]);
+            engine.dynamic_ubo->transpose(Buffer::bkps[engine.dynamic_ubo]);
+
+            PLOGD << "transpose";
             
             //update all ubo objects contAINUING  thie effector
 
@@ -208,6 +228,10 @@ void Callbacks::init() {
     ////////// Atlas.HPP 
 
     // NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { atlas->update(); });
+
+    //////// Buffer.HPP 
+
+    NODE<Buffer>::onchange([](Node* node, Buffer *buffer) { PLOGD<<"ooo"; });
     
     ////////// ShaderProgram.HPP 
 

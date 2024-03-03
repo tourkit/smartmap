@@ -5,8 +5,8 @@
 #include <string>
 
 struct Struct;
-struct Buffer;
 struct Entry;
+struct Buffer;
 
 struct Object { 
 
@@ -27,8 +27,6 @@ struct Object {
     Entry &push();
 
     Entry &push(void* data);
-
-    void update(Buffer bkp);
 
     void addComp(std::string components);
     void removeComp(std::string components);

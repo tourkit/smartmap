@@ -398,7 +398,7 @@ void Editors::init() {
 
                 else file->loadString(data);
 
-                node->update(); 
+                node->bkpupdate(); 
 
             }
 
