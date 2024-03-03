@@ -2,7 +2,7 @@
 #include "log.hpp"
 #include "engine.hpp"
 
-    UntypedNode::UntypedNode(std::string name, glm::vec4 color) : name(name), color(color) {
+    UntypedNode::UntypedNode(std::string name, ImVec4 color) : name(name), color(color) {
 
         uid = uid++;
         

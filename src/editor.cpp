@@ -489,8 +489,6 @@ void Editors::init() {
 
         draw_raw(buffer->data.data(),buffer->data.size());
 
-        return;
-
         static StringsBuffer object_str;
         static int obj_current = 0;
         std::vector<std::string> obect_strs;
@@ -508,6 +506,8 @@ void Editors::init() {
         Editor<Texture>::cb(node, layer->fb.texture); 
 
         Editor<ShaderProgram>::cb(node, &layer->shader); 
+
+        Editor<VBO>::cb(node, &layer->vbo); 
         
     });
 
@@ -629,7 +629,15 @@ void EditorWidget::draw() {
 
     if (selected->parent()) { name = selected->parent()->name + "::" + name;  }
 
-    ImGui::Text("%s", name.c_str()); ImGui::SameLine(); ImGui::Checkbox("lock##locked", &locked);
+    ImGui::PushStyleColor(ImGuiCol_Text, selected->color);
+    ImGui::Text("%s", name.c_str()); 
+    ImGui::PopStyleColor(1);
+
+    if (ImGui::IsItemClicked()) ImGui::OpenPopup("nodecolorpicker");
+    if (ImGui::BeginPopup("nodecolorpicker")) { ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color.x); ImGui::EndPopup(); }
+    
+    ImGui::SameLine(); ImGui::Checkbox("lock##locked", &locked);
+
 
     selected->editor();
 

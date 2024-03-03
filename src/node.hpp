@@ -14,7 +14,7 @@
 
 #include <boost/type_index.hpp>
 
-#include "glm/glm.hpp"
+#include "imgui/imgui.h"
 
 struct Node;
     
@@ -24,7 +24,7 @@ struct UntypedNode {
 
     std::string name;
 
-    glm::vec4 color;
+    ImVec4 color;
  
     std::vector<Node*> childrens;
 
@@ -32,7 +32,7 @@ struct UntypedNode {
 
     bool locked = false, loaded = false, hidden = false, open = true, is_active = false;
 
-    UntypedNode(std::string name = "node", glm::vec4 color = {1,1,1,1});
+    UntypedNode(std::string name = "node", ImVec4 color = {1,1,1,1});
 
     virtual ~UntypedNode();
 
