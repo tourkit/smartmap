@@ -48,6 +48,8 @@ struct Engine {
     void run();
 
     std::string project_filepath;
+
+    void* debug_payload = nullptr;
 private:
 
     std::string project_name;

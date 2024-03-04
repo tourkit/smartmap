@@ -6,6 +6,7 @@
 #include "struct.hpp"
 #include "buffer.hpp"
 #include "entry.hpp"
+#include "engine.hpp"
 #include "log.hpp"
 
 size_t Object::size() { return eq(reserved); }
@@ -36,7 +37,7 @@ void Object::clear() {
 
 void Object::addComp(std::string component){
 
-    auto bkp = buffer->bkp();
+    auto bkp = buffer->bkp(); // still needed IF GLOBAL ??
 
     s->addComp(component);
 
@@ -72,7 +73,7 @@ void Object::addComp(std::string component){
 }
 void Object::removeComp(std::string component){
 
-    auto bkp = buffer->bkp();
+    auto bkp = buffer->bkp(); // still needed IF GLOBAL ??
 
     this->s->removeComp(component);
 
@@ -85,7 +86,7 @@ void Object::removeComp(std::string component){
 
 Entry &Object::push(void* data) { 
 
-    Buffer bkp = *buffer;
+    auto bkp = buffer->bkp(); // still needed IF GLOBAL ?? this one maybe
 
     reserved+=1;
 

@@ -160,6 +160,7 @@
             
         Buffer::bkps[engine.static_ubo]  = engine.static_ubo->bkp();
         Buffer::bkps[engine.dynamic_ubo]  = engine.dynamic_ubo->bkp();
+        PLOGW << "BKPhere";
 
         update();
 

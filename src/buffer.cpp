@@ -1,5 +1,6 @@
 #include "log.hpp" 
 #include "buffer.hpp" 
+#include "engine.hpp" 
 #include "struct.hpp" 
 #include "entry.hpp" 
 #include <cstring>
@@ -26,6 +27,8 @@ Object* Buffer::addObj(Struct* s, int reserved) {
 
 Buffer Buffer::bkp(){ //gloubiboulbakup
 
+    PLOGW << "BKPlalala";
+
     Buffer bkp = *this;;
 
     for (auto &bkpobj : bkp.objects) {
@@ -39,6 +42,8 @@ Buffer Buffer::bkp(){ //gloubiboulbakup
     return bkp;
 
 };
+
+struct LeIntATontonRocky { int value = 0; };
 
 void Buffer::remap(Buffer bkp) {
 
@@ -64,26 +69,44 @@ void Buffer::remap(Buffer bkp) {
         for (auto &o : objects) if (!strcmp(bkpobj.s->name.c_str(),o.s->name.c_str())) newobj = &o;
         if (!newobj) { PLOGW << bkpobj.s->name; continue; }
 
+        logger.cout();
         for (int entry_id = 0; entry_id < bkpobj.entrys.size(); entry_id++) {
-
+                    
+            std::map<std::string,LeIntATontonRocky> member_count;
+    
             int bkpcomp_offset = 0;
             int newcomp_offset = 0;
             
             for (int comp_id = 0; comp_id < bkpobj.s->comps.size(); comp_id++) {
+                
+                Component* newcomp = nullptr;                       
 
-                Component* newcomp = nullptr;
-
+                int newmember_count = 0;
                 for (auto c : newobj->s->comps) {
 
-                    if (!strcmp(newobj->s->comps[comp_id]->name.c_str(),c->name.c_str())) { newcomp = c; break; }
+                    if (!strcmp(newobj->s->comps[comp_id]->name.c_str(),c->name.c_str())) { 
+                        
+                        if (newmember_count == member_count[c->name].value) {
+                            
+                            newcomp = c; 
+                            
+                            member_count[newcomp->name].value++;
+                            PLOGD  <<newmember_count<< "new"  << newcomp->name << " found"<<member_count[newcomp->name].value; // should be fore comp too
+
+                            break; 
+                        
+                        }  
+                         
+                        newmember_count++;
+                        
+                    }
 
                     newcomp_offset+= c->size;
                 }
 
                 if (!newcomp) { PLOGW << newobj->s->comps[comp_id]->name; continue; }
-                
+
                 int bkpmember_offset = bkpcomp_offset;
-                
                 for (int member_id = 0; member_id < bkpobj.s->comps[comp_id]->members.size(); member_id++) {
 
                     int newmember_offset = newcomp_offset;
@@ -91,13 +114,14 @@ void Buffer::remap(Buffer bkp) {
                     Member* newmember = nullptr;
 
                     for (auto &m : newcomp->members) {
-                        
-                        if (!strcmp(newcomp->members[member_id].name.c_str(),m.name.c_str())) { newmember = &m; break; }
+
+                        if (!strcmp(m.name.c_str(),bkpobj.s->comps[comp_id]->members[member_id].name.c_str())) { newmember = &m; break; }
 
                         newmember_offset+= m.size;
                     }
 
-                    if (!newmember) { PLOGW << newcomp->members[member_id].name; continue; }
+
+                    if (!newmember) { PLOGV << bkpobj.s->comps[comp_id]->members[member_id].name; continue; }
 
                     Member* oldmember = &bkpobj.s->comps[comp_id]->members[member_id];
                            

@@ -3,6 +3,7 @@
 #include "model.hpp"  
 #include "file.hpp"  
 #include "entry.hpp"  
+#include "engine.hpp"  
 #include "log.hpp"  
 
 #include <GL/gl3w.h>
@@ -124,43 +125,27 @@ int VBO::import(File *file) {
 
 
     }
-    
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
-        
-        const aiFace& face = mesh->mFaces[i];
 
+    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+      
+        const aiFace& face = mesh->mFaces[i];
         auto indices = this->indices->push();
 
-        if (i ==1 ) {
-            
-        // indices[0].set<uint16_t>(6868);
-        // indices[1].set<uint16_t>(6868);
-        // indices[2].set<uint16_t>(6868);
-
-        }else{
-
-            indices[0].set<uint16_t>(face.mIndices[0]);
-            indices[1].set<uint16_t>(face.mIndices[1]);
-            indices[2].set<uint16_t>(face.mIndices[2]);
-
-        }
-
-        logger.cout();
-        auto &x = *this->indices->entrys[0];
-        PLOGW<<"s; "<< this->indices->entrys.size();
-        PLOGW<< x[0][0].get<uint16_t>();
-        PLOGW<< x[1][0].get<uint16_t>();
-        PLOGW<< x[2][0].get<uint16_t>();
+        indices[0].set<uint32_t>(face.mIndices[0]);
+        indices[1].set<uint32_t>(face.mIndices[1]);
+        indices[2].set<uint32_t>(face.mIndices[2]);
 
     }
 
     //WTF 
 
+    logger.cout();
+
     auto &x = *indices->entrys[0];
 
-    PLOGW<< x[0][0].get<uint16_t>();
-    PLOGW<< x[1][0].get<uint16_t>();
-    PLOGW<< x[2][0].get<uint16_t>();
+    PLOGW<< x[0][0].get<uint32_t>();
+    PLOGW<< x[1][0].get<uint32_t>();
+    PLOGW<< x[2][0].get<uint32_t>();
 
     upload();
 
