@@ -120,7 +120,7 @@ int VBO::import(File *file) {
         v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
         v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
 
-        v["ID"][0].set<float>(0);
+        v["ID"][0].set<uint32_t>(0);
 
 
     }

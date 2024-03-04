@@ -189,10 +189,10 @@ void DrawCall::update() {
 
         }
 
+
         frag_shader += "\n\n";
 
         model_id++;
-
     }
     
     frag_shader += "} ";

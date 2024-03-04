@@ -142,7 +142,6 @@ void Engine::open(const char* file) {
             auto model_n = models->child(m.value[0].GetString()); if (!model_n)  { PLOGW << "no model : " << m.value[0].GetString(); continue; }
 
 
-
             // auto model = layer->add(model_n);
             // Two two following lines are from NODE<Layer>::onadd<File> to replace above line wich is not working IDK why
             layer->get()->vbo.import(model_n->is_a<File>());
@@ -165,6 +164,8 @@ void Engine::open(const char* file) {
             }
 
         }
+
+        layer->update();
         
     }
 
