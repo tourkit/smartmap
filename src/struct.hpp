@@ -27,5 +27,7 @@ struct Struct {
     size_t size();
     
     size_t stride();
+
+    Struct (const Struct& other);
     
 };

@@ -28,11 +28,10 @@ bool Model::import(File* file, int id, int quantity) {
 void Model::changeFX(Effector*  effector, Component *new_component){
 
     
-    obj->removeComp({effector->file->name});
-    Component::erase(effector->file->name.c_str());
-    Component::pool.push_back(new_component);
-    obj->addComp({new_component->name});
-
+    // obj->removeComp({effector->file->name});
+    // Component::erase(effector->file->name.c_str()); // delete
+    // Component::pool.push_back(new_component);
+    // obj->addComp({new_component->name});
 
 }
 

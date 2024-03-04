@@ -160,7 +160,6 @@
             
         Buffer::bkps[engine.static_ubo]  = engine.static_ubo->bkp();
         Buffer::bkps[engine.dynamic_ubo]  = engine.dynamic_ubo->bkp();
-        PLOGD << "BKP";
 
         update();
 
@@ -169,11 +168,11 @@
 
     void UntypedNode::update() { 
         
-        updateRefs();
+        if (onchange_cb) onchange_cb(node());
 
         if (parent_node) parent_node->update(); 
         
-        if (onchange_cb) onchange_cb(node());
+        updateRefs();
 
     }
 

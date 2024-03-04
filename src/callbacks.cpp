@@ -163,65 +163,34 @@ void Callbacks::init() {
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name; });
 
     NODE<Model>::onchange([](Node* node, Model *model) { 
-        
-        PLOGI<<"C Model backup dyn buffer somewhere (in model ?)";
 
-        auto n = Node::onchange_payload;
-
-        if (n) {
-
-            auto f = n->is_a<Effector>();
-
-            if (f) {
-
-                // f->import(f->file);
-                
-                // transpose
-
-            }
+        PLOGD << "MODEL";
+        model->obj->s->size_v = 0;
+        for (auto f : model->effectors) { 
             
+            auto c = f->comp; 
+        
+        for (auto&m : c->members)PLOGW << c->name << " :: " << m.name;
+            model->obj->s->size_v += c->size;
+        
         }
 
-        // changeFX
-
-
-        //gloubiboulbakup
-    // auto s = *this->s;
-    // auto s_ptr = this->s;
-    // this->s = &s;
-    // Buffer bkp = *buffer;
-    // this->s = s_ptr;
-    
-    //  model->obj->update(); 
-     
+        PLOGW << model->obj->s->size_v;
      });
-
     NODE<Effector>::onchange([](Node* node, Effector *effector) { 
-        
-        PLOGI<<"B"; 
+        PLOGD << "EFEFCTOR";
 
-        auto parent = node->parent();
-        if (parent) {
+        effector->import(effector->file);
 
-            Node::onchange_payload = node;
+        PLOGD << effector->args.size();
 
-            PLOGD << "change of comps";
+        // engine.static_ubo->transpose(Buffer::bkps[engine.static_ubo]);
+        engine.dynamic_ubo->transpose(Buffer::bkps[engine.dynamic_ubo]);
 
-            effector->import(effector->file);
-
-            engine.static_ubo->transpose(Buffer::bkps[engine.static_ubo]);
-            engine.dynamic_ubo->transpose(Buffer::bkps[engine.dynamic_ubo]);
-
-            PLOGD << "transpose";
-            
-            //update all ubo objects contAINUING  thie effector
-
-            // try PLOGD "update" Model::obj  linked to this effector M<odel obchange
-
-            // wich 
-
-        } 
-    
+        //doafterhere
+        auto comps = engine.tree->child("Debug::Components");
+        comps->childrens.resize(0);
+        for (auto c : Component::pool) comps->addPtr<Component>(c);
     
      });
 

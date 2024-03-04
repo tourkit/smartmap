@@ -56,7 +56,7 @@ void Effector::import(const char* data) {
             ++iter;
         }
     }
-
+ // if (comp) devrait rajouter struct::size += comp.size (or remove(old) and add(new))
     if (!comp) {
 
         comp = Component::exist(file->name.c_str());

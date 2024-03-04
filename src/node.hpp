@@ -164,9 +164,9 @@ struct TypedNode : UntypedNode {
 
     void update() override {
 
-        UntypedNode::update();
-
         if(onchange_cb) { onchange_cb(node(),this->ptr); }
+
+        UntypedNode::update();
 
     }
 
