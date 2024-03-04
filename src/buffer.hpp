@@ -38,4 +38,5 @@ struct Buffer {
 
     Object* operator[](int id) { return &objects[id]; }
 
+
 };

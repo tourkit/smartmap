@@ -19,6 +19,12 @@ Components::Components() {
             .member<float>("x")
             .member<float>("y")
         ;
+        Component::create("ID")
+            .member<uint32_t>("value")
+        ;
+        Component::create("Vertex")
+            .member<uint32_t>("id")
+        ;
         
         Component::create("pos")
             .member<glm::vec2>()
@@ -37,12 +43,6 @@ Components::Components() {
             .member<glm::vec2>()
         ;
         Component::create("int")
-            .member<uint32_t>("value")
-        ;
-        Component::create("Vertex")
-            .member<uint32_t>("id")
-        ;
-        Component::create("ID")
             .member<uint32_t>("value")
         ;
 

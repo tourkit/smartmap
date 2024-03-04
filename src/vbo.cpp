@@ -14,9 +14,11 @@
 
 VBO::VBO() {  
 
-    vertices = addObj(vertices_s);
+    vertices = addObj(vertices_s);    
+    vertices->is_stride = false;
 
     indices = addObj(indices_s);
+    indices->is_stride = false;
 
     create();
 }
@@ -68,7 +70,7 @@ void VBO::upload() {
     // (s->size() * reserved);
 
 
-    glBufferData(GL_ARRAY_BUFFER,  vertices->s->size()*vertices->reserved, vertices->data(), GL_STATIC_DRAW );
+    glBufferData(GL_ARRAY_BUFFER,  vertices->size()*vertices->reserved, vertices->data(), GL_STATIC_DRAW );
     // glBufferData(GL_ARRAY_BUFFER,  vertices->size(), &backup_quad[0], GL_STATIC_DRAW );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);

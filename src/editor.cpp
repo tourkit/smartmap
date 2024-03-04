@@ -28,7 +28,7 @@ static void draw_definition(Buffer *buffer) {
 
     for (auto &o: buffer->objects) {
         
-        ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size()+o.s->stride())+"]"+" * "+std::to_string(o.reserved)).c_str());
+        ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size()+o.stride())+"]"+" * "+std::to_string(o.reserved)).c_str());
 
         for (auto& c : o.s->comps) {
 
@@ -38,7 +38,7 @@ static void draw_definition(Buffer *buffer) {
 
         }
         
-        for (int i = 0; i< o.s->stride()/sizeof(float); i++) ImGui::Text(("    stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]").c_str());   
+        for (int i = 0; i< o.stride()/sizeof(float); i++) ImGui::Text(("    stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]").c_str());   
     }
 
 }
@@ -121,9 +121,9 @@ static bool draw_object(void*data, Struct* s) {
             if (m.type == Member::Type::VEC3) q = 3;
             if (m.type == Member::Type::VEC4) q = 4;
 
-            std::string name = (m.name+"xxx"+std::to_string(q)+"##"+c->name+m.name+std::to_string(uniform_offset));
+            std::string name = (m.name+"##"+c->name+m.name+std::to_string(uniform_offset));
 
-            if (ImGui::SliderScalarN(name.c_str(), type, data, q, &m.range_from, &m.range_to)) has_changed = true;  
+            if (ImGui::SliderScalarN(name.c_str(), type, f, q, &m.range_from, &m.range_to)) has_changed = true;  
 
         }
         
@@ -436,13 +436,8 @@ void Editors::init() {
 
             if (!obj->reserved) return;
 
-            if(draw_object(obj->data(),obj->s)) {
+            if(draw_object(obj->data(elem_current[obj]),obj->s)) buffer->update();
 
-                buffer->update();
-
-            }
-
-            
         }
 
     });
@@ -480,7 +475,7 @@ void Editors::init() {
         object_str.create(obect_strs);
         ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-        Editor<Object>::cb(node, &buffer->objects[obj_current]);
+        if (buffer->objects.size()) Editor<Object>::cb(node, &buffer->objects[obj_current]);
 
     });
     

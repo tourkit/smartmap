@@ -9,10 +9,11 @@
 #include "log.hpp"
 
 size_t Object::size() { return eq(reserved); }
+size_t Object::stride() { return s->stride()*is_stride; }
 
 char *Object::data(size_t id) { return &buffer->data[offset + eq(id)]; }
 
-int Object::eq(size_t id) { return ((s->size()+s->stride()) * id); }
+int Object::eq(size_t id) { return ((s->size()+stride()) * id); }
 
 Entry &Object::push() { 
 

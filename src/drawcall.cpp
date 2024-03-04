@@ -80,7 +80,7 @@ std::string DrawCall::layout(UBO* ubo) {
             
         }
 
-        for (int i = 0; i< obj.s->stride()/sizeof(float); i++) obj_str += "float stride"+std::to_string(i)+";"+struct_spacer;
+        for (int i = 0; i< obj.stride()/sizeof(float); i++) obj_str += "float stride"+std::to_string(i)+";"+struct_spacer;
 
         obj_str += "};\n\n";
 
