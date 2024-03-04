@@ -148,7 +148,7 @@ void GUI::draw() {
           ImGui::EndMenu();
       }
 
-      ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*3);
+      ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*4);
       ImGui::TextUnformatted(std::to_string((int)std::round(ImGui::GetIO().Framerate)).c_str());
 
       ImGui::EndMainMenuBar();

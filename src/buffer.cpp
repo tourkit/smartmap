@@ -48,7 +48,7 @@ void Buffer::transpose(Buffer bkp) {
 
         obj.offset = offset;
 
-        offset += obj.size();
+        offset += obj.size(); // has stride
         
     }
 
