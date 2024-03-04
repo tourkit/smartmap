@@ -78,7 +78,7 @@ using namespace ImGui;
     SetCursorPosX(GetCursorPosX()-text_size.x);
     bool x = false;
     
-    if (is_renaming != node) {x = TreeNodeEx((node->name).c_str(), flags);}
+    if (is_renaming != node) {x = TreeNodeEx(node->name.c_str(), flags);}
     else {
 
         // std::vector<char> name;
@@ -163,7 +163,8 @@ using namespace ImGui;
     
     SetCursorPosX(GetWindowWidth()-30); 
      
-    Checkbox(("##active"+std::to_string(node->uid)).c_str(), &node->is_active);
+    std::string str = "##active"+std::to_string(node->uid);
+    Checkbox(str.c_str(), &node->is_active);
 
     return x;
 

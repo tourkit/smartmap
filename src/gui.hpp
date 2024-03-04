@@ -84,7 +84,7 @@ struct GUI {
     std::string uid;
     bool active = true;
 
-    Window(std::string name) : name(name), uid(("window"+std::to_string(pool.size())).c_str()) { pool.push_back(this); }
+    Window(std::string name) : name(name), uid(("window"+std::to_string(pool.size()))) { pool.push_back(this); }
 
     void drawFull();
 

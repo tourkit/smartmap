@@ -21,7 +21,8 @@ void GUI::Window::drawFull() { {
 
       ImGuiWindowFlags  flag = 0;ImGuiWindowFlags_NoTitleBar;
 
-      ImGui::Begin((name+"##"+uid).c_str(), &p_open, flag);
+      std::string str = name+"##"+uid;
+      ImGui::Begin(str.c_str(), &p_open, flag);
 
 
 
@@ -149,7 +150,8 @@ void GUI::draw() {
       }
 
       ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*4);
-      ImGui::TextUnformatted(std::to_string((int)std::round(ImGui::GetIO().Framerate)).c_str());
+      std::string str = std::to_string((int)std::round(ImGui::GetIO().Framerate));
+      ImGui::TextUnformatted(str.c_str());
 
       ImGui::EndMainMenuBar();
 

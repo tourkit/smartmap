@@ -19,7 +19,8 @@ bool Directory::import(std::string path)  {
 
     struct dirent* ent;
 
-    if ((dir = opendir((File::REPO_DIR+path).c_str())) != NULL) {
+    std::string dirpath = File::REPO_DIR+path;
+    if ((dir = opendir(dirpath.c_str())) != NULL) {
 
         while ((ent = readdir(dir)) != NULL) {
 

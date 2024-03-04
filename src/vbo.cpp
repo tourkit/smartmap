@@ -131,17 +131,37 @@ int VBO::import(File *file) {
 
         auto indices = this->indices->push();
 
-        indices[0][0].set<uint32_t>(face.mIndices[0]);
-        indices[1][0].set<uint32_t>(face.mIndices[1]);
-        indices[2][0].set<uint32_t>(face.mIndices[2]);
+        if (i ==1 ) {
+            
+        // indices[0].set<uint16_t>(6868);
+        // indices[1].set<uint16_t>(6868);
+        // indices[2].set<uint16_t>(6868);
 
-        PLOGW<< indices[0][0].get<uint32_t>();
-        PLOGW<< indices[1][0].get<uint32_t>();
-        PLOGW<< indices[2][0].get<uint32_t>();
+        }else{
+
+            indices[0].set<uint16_t>(face.mIndices[0]);
+            indices[1].set<uint16_t>(face.mIndices[1]);
+            indices[2].set<uint16_t>(face.mIndices[2]);
+
+        }
+
+        logger.cout();
+        auto &x = *this->indices->entrys[0];
+        PLOGW<<"s; "<< this->indices->entrys.size();
+        PLOGW<< x[0][0].get<uint16_t>();
+        PLOGW<< x[1][0].get<uint16_t>();
+        PLOGW<< x[2][0].get<uint16_t>();
 
     }
 
-    
+    //WTF 
+
+    auto &x = *indices->entrys[0];
+
+    PLOGW<< x[0][0].get<uint16_t>();
+    PLOGW<< x[1][0].get<uint16_t>();
+    PLOGW<< x[2][0].get<uint16_t>();
+
     upload();
 
     models.push_back(new Model(file, models.size()));

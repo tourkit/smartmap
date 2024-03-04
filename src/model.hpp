@@ -22,6 +22,8 @@ struct Model {
 
     int quantity;
 
+    std::string name;
+
     Model(File* file, int id = 0, int quantity = 1);
 
     Model(const char *data, int id = 0, int quantity = 1);

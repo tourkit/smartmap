@@ -24,21 +24,37 @@
 
 static void draw_definition(Buffer *buffer) {
 
-    ImGui::Text(("char[" +std::to_string( buffer->data.size()) + "]").c_str());
+    std::string str = "char[" +std::to_string( buffer->data.size()) + "]";
+
+    ImGui::Text(str.c_str());
 
     for (auto &o: buffer->objects) {
         
-        ImGui::Text(("  "+o.s->name+"[" +std::to_string(o.s->size()+o.stride())+"]"+" * "+std::to_string(o.reserved)).c_str());
+        std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size()+o.stride())+"]"+" * "+std::to_string(o.reserved);
+
+        ImGui::Text(str.c_str());
 
         for (auto& c : o.s->comps) {
 
-            ImGui::Text(("    "+c->name+"["+std::to_string(c->size)+"]").c_str());
+            std::string str = "    "+c->name+"["+std::to_string(c->size)+"]";
 
-            for (auto& m : c->members) ImGui::Text(("      "+m.name+"["+std::to_string(m.size)+"]").c_str());                
+            ImGui::Text(str.c_str());
+
+            for (auto& m : c->members) {
+                
+                std::string str = "      "+m.name+"["+std::to_string(m.size)+"]";
+                ImGui::Text(str.c_str());
+                
+            }                
 
         }
         
-        for (int i = 0; i< o.stride()/sizeof(float); i++) ImGui::Text(("    stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]").c_str());   
+        for (int i = 0; i< o.stride()/sizeof(float); i++) {
+            
+            std::string str = "    stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]";
+            ImGui::Text(str.c_str());   
+            
+        }
     }
 
 }
@@ -82,7 +98,8 @@ static void draw_raw(void *data, size_t size) {
 
         ImGui::SameLine(0);
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
-        ImGui::Text(std::to_string(i).c_str());
+        std::string str = std::to_string(i);
+        ImGui::Text(str.c_str());
 
         ImGui::PopID();
 
@@ -188,10 +205,18 @@ void Editors::init() {
                     ImGui::Text(m.name.c_str());
 
                     static int e = 0;
-                    ImGui::SameLine(); ImGui::RadioButton(("bypass##rbt"+std::to_string(member_id)).c_str(), &remap->fixture->attributes[member_id].combining , 0);
-                    ImGui::SameLine(); ImGui::RadioButton(("coarse##rbt"+std::to_string(member_id)).c_str(), &remap->fixture->attributes[member_id].combining , 1);
-                    ImGui::SameLine(); ImGui::RadioButton(("fine##rbt"+std::to_string(member_id)).c_str(), &remap->fixture->attributes[member_id].combining , 2);
-                    ImGui::SameLine(); ImGui::RadioButton(("ultra##rbt"+std::to_string(member_id)).c_str(), &remap->fixture->attributes[member_id].combining , 3);
+                    std::string strbypa = "bypass##rbt"+std::to_string(member_id);
+                    ImGui::SameLine(); 
+                    ImGui::RadioButton(strbypa.c_str(), &remap->fixture->attributes[member_id].combining , 0);
+                    std::string strcoar = "coarse##rbt"+std::to_string(member_id);
+                    ImGui::SameLine(); 
+                    ImGui::RadioButton(strcoar.c_str(), &remap->fixture->attributes[member_id].combining , 1);
+                    std::string strfine = "fine##rbt"+std::to_string(member_id);
+                    ImGui::SameLine(); 
+                    ImGui::RadioButton(strfine.c_str(), &remap->fixture->attributes[member_id].combining , 2);
+                    std::string strultr = "ultra##rbt"+std::to_string(member_id);
+                    ImGui::SameLine(); 
+                    ImGui::RadioButton(strultr.c_str(), &remap->fixture->attributes[member_id].combining , 3);
 
                     member_id++;
 
@@ -205,7 +230,8 @@ void Editors::init() {
 
         for (auto &u : an->universes) {
 
-            ImGui::Text(("universe "+std::to_string(u.first)).c_str()); 
+            std::string str = "universe "+std::to_string(u.first);
+            ImGui::Text(str.c_str()); 
 
             draw_raw(&u.second->data[0], u.second->data.size());
 
@@ -217,14 +243,17 @@ void Editors::init() {
 
     Editor<Struct>([](Node* node, Struct *s){ 
         
-        ImGui::Text((s->name+" " +std::to_string(s->size())).c_str());
+        std::string str = s->name+" " +std::to_string(s->size());
+        ImGui::Text(str.c_str());
 
         for (auto& c : s->comps) {
 
-            ImGui::Text((" - "+c->name+" "+std::to_string(c->size)).c_str());
+            std::string str = " - "+c->name+" "+std::to_string(c->size);
+            ImGui::Text(str.c_str());
 
             for (auto& m : c->members) {
-                ImGui::Text(("  -- "+m.name+" "+std::to_string(m.size)).c_str());                
+                std::string str = "  -- "+m.name+" "+std::to_string(m.size);
+                ImGui::Text(str.c_str());                
             }
 
 
@@ -365,7 +394,8 @@ void Editors::init() {
             if (!is_verbose) continue;}
 
             ImGui::PushStyleColor(ImGuiCol_Text, color);
-            ImGui::Text((" "+m.msg).c_str()); 
+            std::string str = " "+m.msg;
+            ImGui::Text(str.c_str()); 
             ImGui::PopStyleColor();
 
 
@@ -580,7 +610,8 @@ void Editors::init() {
         
         for (auto &m : comp->members) {
 
-            ImGui::Text((std::string(m.type_name()) + " " + m.name+ "; ").c_str());
+            std::string str = std::string(m.type_name()) + " " + m.name+ "; ";
+            ImGui::Text(str.c_str());
         }
         
         
@@ -624,7 +655,9 @@ void EditorWidget::draw() {
 
     std::string referings;
     for (auto r : selected->referings) referings += " "+(r->name)+",";
-    if (referings.length()) { ImGui::SameLine(); ImGui::Text(("("+referings.substr(0,referings.length()-2)+")").c_str()); }
+    if (referings.length()) { 
+        std::string str = "("+referings.substr(0,referings.length()-2)+")";
+        ImGui::SameLine(); ImGui::Text(str.c_str()); }
 
     selected->editor();
 

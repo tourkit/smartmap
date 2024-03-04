@@ -16,7 +16,9 @@ bool Model::import(File* file, int id, int quantity) {
     this->id = id;
     this->quantity = quantity;
 
-    obj = engine.dynamic_ubo->addObj(new Struct((file->name+""+std::to_string(id)).c_str()));
+    name = file->name+""+std::to_string(id);
+
+    obj = engine.dynamic_ubo->addObj(new Struct(name.c_str()));
 
     entry = &obj->push();
 
