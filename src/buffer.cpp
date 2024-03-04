@@ -109,9 +109,6 @@ void Buffer::transpose(Buffer bkp) {
                     Member* oldmember = &bkpobj.s->comps[comp_id]->members[member_id];
                            
                     auto bkpoffset = bkpobj.offset+(bkpobj.s->size()*entry_id)+bkpmember_offset;
-                    
-
-                    PLOGD << oldmember->name<< bkpmember_offset << " - " << newmember_offset;
 
 
                     // if(newobj->buffer->data.size()<= newobj->data(entry_id)+newmember_offset)PLOGW << "ZUBIMALEKOUM";
@@ -149,7 +146,5 @@ void Buffer::transpose(Buffer bkp) {
         obj_offset += o.size();
 
     }
-    
-    PLOGD << "transpose";
 
 }
