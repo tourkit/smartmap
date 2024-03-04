@@ -484,7 +484,7 @@ void Editors::init() {
         object_str.create(obect_strs);
         ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-        if (buffer->objects.size()) Editor<Object>::cb(node, &buffer->objects[obj_current]);
+        if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
 
     });
     
