@@ -141,7 +141,6 @@ void Engine::open(const char* file) {
         auto f = n->get();
         f->loadString(m.value.GetString());
         f->name = m.name.GetString();
-        f->path = engine.project_name;
         effectors->addOwnr<Effector>(f);
         n->hide();
 

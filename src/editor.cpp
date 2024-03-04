@@ -395,21 +395,22 @@ void Editors::init() {
         memcpy(data,&file->data[0],file->data.size());
 
         static TextEditor codeeditor;
-        static bool init = false;
-        if (!init){
+        static File *curr = nullptr;
+        if (curr != file) {
 
             codeeditor.SetShowWhitespaces(false);
             codeeditor.SetReadOnly(false);
-            codeeditor.SetText(data); 
+            codeeditor.SetText(file->data.data()); 
+            curr = file;
         }
         
         codeeditor.Render("codeeditor");
 
         if (codeeditor.IsTextChanged()) {
 
-            if (file->path.length()) file->write(data); 
+            if (file->path.length()) file->write(codeeditor.GetText().c_str()); 
 
-            else file->loadString(data);
+            else file->loadString(codeeditor.GetText().c_str());
 
             node->bkpupdate(); 
 
