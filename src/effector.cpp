@@ -70,8 +70,8 @@ void Effector::import(const char* data) {
     for (auto arg : args) {
 
         if (arg.first == "vec2") comp->member<glm::vec2>(arg.second.c_str()); 
-        if (arg.first == "vec3") comp->member<glm::vec3>(arg.second.c_str()); 
-        if (arg.first == "vec4") comp->member<glm::vec4>(arg.second.c_str()); 
+        else if (arg.first == "vec3") comp->member<glm::vec3>(arg.second.c_str()); 
+        else if (arg.first == "vec4") comp->member<glm::vec4>(arg.second.c_str()); 
 
         else if (arg.first == "int") comp->member<int>(arg.second.c_str()); 
         

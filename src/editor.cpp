@@ -105,23 +105,26 @@ static bool draw_object(void*data, Struct* s) {
         
         for (auto m:c->members) {
 
-            auto name = (m.name+"##"+c->name+m.name+"uid"+std::to_string(uniform_offset)).c_str();
-
             float *f = (float*)(((char*)data)+uniform_offset);
 
             uniform_offset += m.size; 
 
-            if (m.type == Member::Type::VEC2) { ImGui::SliderFloat2(name, f, m.range_from, m.range_to); continue; }
-            if (m.type == Member::Type::VEC3) { ImGui::SliderFloat3(name, f, m.range_from, m.range_to); continue; }
-            if (m.type == Member::Type::VEC4) { ImGui::SliderFloat4(name, f, m.range_from, m.range_to); continue; }
-
             auto type = ImGuiDataType_Float;
 
+            if (m.type == Member::Type::I32) type = ImGuiDataType_S32;
             if (m.type == Member::Type::UI8) type = ImGuiDataType_U8;
             if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
             if (m.type == Member::Type::UI32) type = ImGuiDataType_U16;
+            
+            int q = 1;
+            if (m.type == Member::Type::VEC2) q = 2;
+            if (m.type == Member::Type::VEC3) q = 3;
+            if (m.type == Member::Type::VEC4) q = 4;
 
-            if (ImGui::SliderScalar(name, type, data, &m.range_from, &m.range_to))  has_changed = true;
+            std::string name = (m.name+"xxx"+std::to_string(q)+"##"+c->name+m.name+std::to_string(uniform_offset));
+
+            if (ImGui::SliderScalarN(name.c_str(), type, data, q, &m.range_from, &m.range_to)) has_changed = true;  
+
         }
         
     }
@@ -433,40 +436,12 @@ void Editors::init() {
 
             if (!obj->reserved) return;
 
-            int uniform_offset = obj->offset;
+            if(draw_object(obj->data(),obj->s)) {
 
-            for (auto c:obj->s->comps) {
-                        
-                ImGui::SeparatorText(c->name.c_str());
-                
-                for (auto m:c->members) {
+                buffer->update();
 
-                    std::string name = (m.name+"##"+c->name+m.name+uid+std::to_string(uniform_offset));
-
-                    auto data = &buffer->data[uniform_offset+(elem_current[obj]*obj->s->size())];
-                    uniform_offset += m.size; 
-
-                    if (m.type == Member::Type::VEC2) { ImGui::SliderFloat2(name.c_str(), (float*)data, m.range_from, m.range_to); continue; }
-                    if (m.type == Member::Type::VEC3) { ImGui::SliderFloat3(name.c_str(), (float*)data, m.range_from, m.range_to); continue; }
-                    if (m.type == Member::Type::VEC4) { ImGui::SliderFloat4(name.c_str(), (float*)data, m.range_from, m.range_to); continue; }
-
-                    auto type = ImGuiDataType_Float;
-
-                    if (m.type == Member::Type::I32) type = ImGuiDataType_S32;
-                    if (m.type == Member::Type::UI8) type = ImGuiDataType_U8;
-                    if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
-                    if (m.type == Member::Type::UI32) type = ImGuiDataType_U16;
-                    
-                    int q = 1;
-                    if (m.type == Member::Type::VEC2) q = 2;
-                    if (m.type == Member::Type::VEC3) q = 3;
-                    if (m.type == Member::Type::VEC4) q = 4;
-
-                    if (ImGui::SliderScalarN(name.c_str(), type, data, q, &m.range_from, &m.range_to))  buffer->update();
-
-                }
-                
             }
+
             
         }
 
