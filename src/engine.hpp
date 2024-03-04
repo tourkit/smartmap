@@ -21,6 +21,7 @@ struct Engine {
     Node* remaps;
     Node* inputs;
     Node* outputs;
+    Node* debug;
 
     Node* selected;
 

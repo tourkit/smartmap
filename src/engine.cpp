@@ -49,7 +49,7 @@ void Engine::init() {
 
     tree = new Node("tree");
 
-    auto debug = tree->addOwnr<Debug>()->close();
+    debug = tree->addOwnr<Debug>()->close()->node();
     debug->addPtr<UBO>(static_ubo);
     debug->addPtr<UBO>(dynamic_ubo);
     debug->addPtr<Atlas>(atlas);
@@ -97,6 +97,13 @@ void Engine::run() {
 void Engine::open(const char* file) {
 
     json.load(File(file).data.data());
+    if (!json.loaded) { 
+        
+        engine.gui->editors.push_back(new EditorWidget()); return; 
+        // deubg
+        // debug->addOwnr<File>() // + survey
+        
+    }
 
     project_name = file;
     project_filepath = file;

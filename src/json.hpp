@@ -17,7 +17,7 @@ struct JSON {
 
     File * file = nullptr;
 
-    bool loaded;
+    bool loaded = false;
 
     JSON();
 

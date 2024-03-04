@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <functional>
 
+
 struct File {
 
     std::string name, path, location, extension;
@@ -32,11 +33,11 @@ struct File {
     void reload();
 
     bool hasChanged();
+
+    #ifdef ROCH
+    static inline std::string REPO_DIR = "C:/users/root/cpp/smartmap/";
+    #else
+    static inline std::string REPO_DIR = "./";
+    #endif
     
 };
-
-#ifdef ROCH
-static std::string REPO_DIR = "C:/users/root/cpp/smartmap/";
-#else
-static std::string REPO_DIR = "./";
-#endif

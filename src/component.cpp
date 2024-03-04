@@ -2,8 +2,6 @@
 
 Components::Components() {
 
-    Component::pool.resize(0);
-
     Component::create("Position")
         .member<float>("x").range(-1,1)
         .member<float>("y").range(-1,1)

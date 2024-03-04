@@ -9,7 +9,7 @@
 #include "log.hpp"
 
 size_t Object::size() { return eq(reserved); }
-size_t Object::stride() { return s->stride()*is_stride; }
+size_t Object::stride() { return s->stride()*is_stride*(!!s->size()); }
 
 char *Object::data(size_t id) { return &buffer->data[offset + eq(id)]; }
 

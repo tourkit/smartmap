@@ -1,5 +1,5 @@
 #include "directory.hpp"
-#include "file.hpp" // REPO_DIR
+#include "file.hpp" 
 #include <filesystem>
 #include <dirent.h>
 
@@ -7,7 +7,7 @@ Directory::~Directory()  { }
 
 Directory::Directory(std::string path) { import(path); }
 
-bool Directory::exist(std::string path) { return std::filesystem::is_directory(REPO_DIR+path); }
+bool Directory::exist(std::string path) { return std::filesystem::is_directory(File::REPO_DIR+path); }
 
 bool Directory::import(std::string path)  { 
 
@@ -19,7 +19,7 @@ bool Directory::import(std::string path)  {
 
     struct dirent* ent;
 
-    if ((dir = opendir((REPO_DIR+path).c_str())) != NULL) {
+    if ((dir = opendir((File::REPO_DIR+path).c_str())) != NULL) {
 
         while ((ent = readdir(dir)) != NULL) {
 

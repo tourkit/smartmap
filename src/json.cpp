@@ -2,6 +2,7 @@
 
 #include "file.hpp"
 #include "log.hpp"
+#include "rapidjson/error/en.h"
 
 JSON::JSON() {}
 
@@ -24,9 +25,15 @@ bool JSON::load(const char* data) {
 
     document.Parse(data);
 
-    if (document.HasParseError()) PLOGW << document.GetParseError();
+    if (document.IsNull()) { 
+        
+        PLOGW << rapidjson::GetParseError_En(document.GetParseError()); 
 
-    if (document.IsNull()) { PLOGW << "nothing loaded"; document.Parse("{}"); }
+        document.Parse("{}");
+        
+        return false; 
+        
+    }
 
     loaded = true;
     

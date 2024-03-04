@@ -16,6 +16,8 @@ static int nextFactor2(int x, int factor = 4) { return ((int)(x/(float)factor)+1
 Test::Test() {
 
     logger.cout();
+
+    PLOGD << "TEST";
     
     // auto comps = engine.tree->child("Debug::Components");
     // comps->childrens.resize(0);

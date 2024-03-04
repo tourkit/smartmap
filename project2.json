@@ -27,7 +27,7 @@
     [ 0, 0, 0, 0, "Stack::layer1", true ],
     [ 0, 0, 0, 0, "tree::Debug", true ],
     [ 0, 0, 0, 0, "layer1::MyQuad", true ],
-    [ 0, 0, 0, 0, "Effectors::argb", true ],
+    [ 0, 0, 0, 0, "Inputs::Artnet", true ],
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ]
   ]
 }
