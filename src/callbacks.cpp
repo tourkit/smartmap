@@ -176,6 +176,15 @@ void Callbacks::init() {
         }
 
         PLOGW << model->obj->s->size_v;
+
+        // engine.static_ubo->transpose(Buffer::bkps[engine.static_ubo]);
+        engine.dynamic_ubo->transpose(Buffer::bkps[engine.dynamic_ubo]);
+        engine.dynamic_ubo->update();
+
+        ///// resize fucking buffer accordingly damned
+
+
+        // model->obj->buffer->update();
      });
     NODE<Effector>::onchange([](Node* node, Effector *effector) { 
         PLOGD << "EFEFCTOR";
@@ -183,9 +192,6 @@ void Callbacks::init() {
         effector->import(effector->file);
 
         PLOGD << effector->args.size();
-
-        // engine.static_ubo->transpose(Buffer::bkps[engine.static_ubo]);
-        engine.dynamic_ubo->transpose(Buffer::bkps[engine.dynamic_ubo]);
 
         //doafterhere
         auto comps = engine.tree->child("Debug::Components");
