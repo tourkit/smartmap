@@ -372,6 +372,7 @@ void Editors::init() {
 
     Editor<File>([](Node* node, File *file){ 
 
+
         char path[512]; 
         memset(path,0,512);
         memcpy(path,file->path.c_str(),file->path.size());
@@ -393,17 +394,24 @@ void Editors::init() {
         memset(data,0,512000);
         memcpy(data,&file->data[0],file->data.size());
 
-        if(ImGui::InputTextMultiline("src", data, 512000, ImVec2(600,300))) {
+        static TextEditor codeeditor;
+        static bool init = false;
+        if (!init){
 
-            if (strcmp(data, &file->data[0])) {
+            codeeditor.SetShowWhitespaces(false);
+            codeeditor.SetReadOnly(false);
+            codeeditor.SetText(data); 
+        }
+        
+        codeeditor.Render("codeeditor");
 
-                if (file->path.length()) file->write(data); 
+        if (codeeditor.IsTextChanged()) {
 
-                else file->loadString(data);
+            if (file->path.length()) file->write(data); 
 
-                node->bkpupdate(); 
+            else file->loadString(data);
 
-            }
+            node->bkpupdate(); 
 
         }
 

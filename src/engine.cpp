@@ -131,7 +131,6 @@ void Engine::open(const char* file) {
         auto model = n->get();
         model->loadString(m.value.GetString());
         model->name = m.name.GetString();
-        model->path = engine.project_name;
         n->name = model->name;
 
     }
