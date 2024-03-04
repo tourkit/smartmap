@@ -164,34 +164,19 @@ void Callbacks::init() {
 
     NODE<Model>::onchange([](Node* node, Model *model) { 
 
-        PLOGD << "MODEL";
         model->obj->s->size_v = 0;
-        for (auto f : model->effectors) { 
-            
-            auto c = f->comp; 
-        
-        for (auto&m : c->members)PLOGW << c->name << " :: " << m.name;
-            model->obj->s->size_v += c->size;
-        
-        }
-
-        PLOGW << model->obj->s->size_v;
-
-        // engine.static_ubo->transpose(Buffer::bkps[engine.static_ubo]);
+        for (auto f : model->effectors) model->obj->s->size_v += f->comp->size;
+    
         engine.dynamic_ubo->transpose(Buffer::bkps[engine.dynamic_ubo]);
         engine.dynamic_ubo->update();
+        engine.static_ubo->transpose(Buffer::bkps[engine.static_ubo]);
+        engine.static_ubo->update();
 
-        ///// resize fucking buffer accordingly damned
+    });
 
-
-        // model->obj->buffer->update();
-     });
     NODE<Effector>::onchange([](Node* node, Effector *effector) { 
-        PLOGD << "EFEFCTOR";
 
         effector->import(effector->file);
-
-        PLOGD << effector->args.size();
 
         //doafterhere
         auto comps = engine.tree->child("Debug::Components");
