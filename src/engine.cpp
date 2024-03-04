@@ -97,16 +97,33 @@ void Engine::run() {
 void Engine::open(const char* file) {
 
     json.load(File(file).data.data());
+
+
+    // for (auto e :engine.gui->editors) delete e; // editor widget deletion is fucked
+
     if (!json.loaded) { 
+
+        if (!project_filepath.length()) {
+
+            project_filepath = file;
+            
+            engine.gui->editors.push_back(new EditorWidget()); 
+
+            engine.gui->editors.push_back(new EditorWidget()); 
+            engine.gui->editors.back()->selected = debug;
+            engine.gui->editors.back()->locked = true;
+
+            auto f = debug->addOwnr<File>(project_filepath);
+            f->onchange([](Node* n) { engine.open(engine.project_filepath.c_str()); });
+            f->select();
         
-        engine.gui->editors.push_back(new EditorWidget()); return; 
-        // deubg
-        // debug->addOwnr<File>() // + survey
+        }
+
+        return; 
         
     }
 
     project_name = file;
-    project_filepath = file;
 
     if (true) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
 

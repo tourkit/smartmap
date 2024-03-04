@@ -397,7 +397,7 @@ void Editors::init() {
 
             if (strcmp(data, &file->data[0])) {
 
-                if (strcmp(file->path.c_str(),engine.project_filepath.c_str())) file->write(data); 
+                if (file->path.length()) file->write(data); 
 
                 else file->loadString(data);
 
