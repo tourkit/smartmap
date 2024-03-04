@@ -40,7 +40,7 @@ Buffer Buffer::bkp(){ //gloubiboulbakup
 
 };
 
-void Buffer::transpose(Buffer bkp) {
+void Buffer::remap(Buffer bkp) {
 
     int offset = 0;
 

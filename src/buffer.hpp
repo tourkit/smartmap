@@ -34,7 +34,7 @@ struct Buffer {
     
     void destroy();
 
-    void transpose(Buffer bkp);
+    void remap(Buffer bkp);
 
     Object* operator[](int id) { return &objects[id]; }
 

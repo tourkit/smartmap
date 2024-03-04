@@ -40,11 +40,11 @@ void Object::addComp(std::string component){
 
     s->addComp(component);
 
-    buffer->transpose(bkp);
+    buffer->remap(bkp);
 
     // niquons l'opti :) | whats teh pb ? a kwa sasssair ? ca pourrait etre ds update ? 
     
-    // 1 test de le mettre avanrt buffer->transpose(bkp_v);
+    // 1 test de le mettre avanrt buffer->remap(bkp_v);
 
     // 2 test de le mettre dans this->s->addComp(component)
 
@@ -76,7 +76,7 @@ void Object::removeComp(std::string component){
 
     this->s->removeComp(component);
 
-    buffer->transpose(bkp);
+    buffer->remap(bkp);
 
     buffer->update();
 
@@ -89,7 +89,7 @@ Entry &Object::push(void* data) {
 
     reserved+=1;
 
-    buffer->transpose(bkp);
+    buffer->remap(bkp);
 
     int id = entrys.size();
 
