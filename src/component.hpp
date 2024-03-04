@@ -19,6 +19,7 @@ struct Member {
     enum Type { UNDEFINED, F16, I8, I16, I32, UI8, UI16, UI32, VEC2, VEC3, VEC4, SAMPLER} type;
     float default_val = 0;
 
+
     const char* type_name() {
 
         switch (type) {
@@ -185,6 +186,9 @@ struct Component  {
         return *pool.back();
 
     }
+
+    template <typename T>
+    static Component &create(const char* name) { return create(name).member<T>(); }
 
     void each(std::function<void(Member &m)> cb) {
 

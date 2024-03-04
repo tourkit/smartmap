@@ -144,7 +144,7 @@ void Engine::open(const char* file) {
 
             // auto model = layer->add(model_n);
             // Two two following lines are from NODE<Layer>::onadd<File> to replace above line wich is not working IDK why
-            layer->get()->vbo.import(model_n->is_a<File>());
+            layer->get()->vbo.import(model_n->is_a<File>());  // model_n might be fucked
             auto model = layer->addPtr<Model>(layer->get()->vbo.models.back());
 
             if (m.name.IsString()) model->name = m.name.GetString();

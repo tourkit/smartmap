@@ -135,6 +135,10 @@ int VBO::import(File *file) {
         indices[1][0].set<uint32_t>(face.mIndices[1]);
         indices[2][0].set<uint32_t>(face.mIndices[2]);
 
+        PLOGW<< indices[0][0].get<uint32_t>();
+        PLOGW<< indices[1][0].get<uint32_t>();
+        PLOGW<< indices[2][0].get<uint32_t>();
+
     }
 
     

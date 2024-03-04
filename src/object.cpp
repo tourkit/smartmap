@@ -38,8 +38,6 @@ void Object::addComp(std::string component){
 
     auto bkp = buffer->bkp();
 
-    PLOGD << "NEEDBKPHERE";
-
     s->addComp(component);
 
     buffer->transpose(bkp);
@@ -76,8 +74,6 @@ void Object::removeComp(std::string component){
 
     auto bkp = buffer->bkp();
 
-    PLOGD << "NEEDBKPHERE";
-
     this->s->removeComp(component);
 
     buffer->transpose(bkp);
@@ -90,8 +86,6 @@ void Object::removeComp(std::string component){
 Entry &Object::push(void* data) { 
 
     Buffer bkp = *buffer;
-
-    PLOGD << "NEEDBKPHERE";
 
     reserved+=1;
 
