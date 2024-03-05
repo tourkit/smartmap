@@ -103,17 +103,11 @@ void Buffer::remap(Buffer* bkp) {
                 int newmember_count = 0;
                 int newcomp_offset = 0;
 
-                PLOGD<<"gottafind: "<<bkpcomp->name<<member_count[bkpcomp->name].value;
-
                 for (auto c : newobj->s->comps) {
 
-                    // PLOGD<<"is ? "<<c->name<<newmember_count;
-
                     if (!strcmp(bkpcomp->name.c_str(),c->name.c_str())) { 
-                    // PLOGD<<"yes";
                         
                         if (newmember_count == member_count[c->name].value) {
-                            // PLOGD<<bkpcomp_offset<<" - " << newcomp_offset;
                             
                             newcomp = c; 
                             
@@ -121,63 +115,44 @@ void Buffer::remap(Buffer* bkp) {
 
                             break; 
                         
-                        }  else { 
-                            // PLOGD<<"reno"; 
-                            newmember_count++; }
+                        }
+                        
+                        newmember_count++;
                         
                     }
-                    // else{ PLOGD<<"no"; }
 
                     newcomp_offset+= c->size;
                 }
 
-                // continue; 
-
                 if (!newcomp) { PLOGW << newobj->s->comps[comp_id]->name; continue; }
 
+                // if (member.size == 1 and member[0].name.lenght == 0 and newmember_count == 1) // could be for mono member comps
 
-
-                // if (member.size == 1 and member[0].name.lenght == 0 and newmember_count == 1)
+                //go thought bkp members
 
                 int bkpmember_offset = 0;
                 
-                for (int member_id = 0; member_id < bkpobj.s->comps[comp_id]->members.size(); member_id++) {
+                for (int member_id = 0; member_id < bkpcomp->members.size(); member_id++) {
+
+                    auto &bkpmember = bkpcomp->members[member_id];
 
                     Member* newmember = nullptr;
 
                     int newmember_offset = 0;
+
                     for (auto &m : newcomp->members) {
 
-                        if (!strcmp(m.name.c_str(),bkpobj.s->comps[comp_id]->members[member_id].name.c_str())) { newmember = &m; break; }
+                        if (!strcmp(m.name.c_str(),bkpmember.name.c_str())) { newmember = &m; break; }
 
                         newmember_offset+= m.size;
                         
                     }
 
-                    if (!newmember) { PLOGV << bkpobj.s->comps[comp_id]->members[member_id].name; continue; }
-
-                    Member* oldmember = &bkpobj.s->comps[comp_id]->members[member_id];
-                           
-                    // auto bkpmemnber_offset = bkpobj.offset+(bkpobj.s->size()*entry_id)+bkpmember_offset;
-
-                    PLOGD<<"-from:"<<bkpcomp_offset<<"+"<<bkpmember_offset<<"-to:"<<newcomp_offset<<"+"<<newmember_offset<<"- val:"<<*((uint32_t*)(bkpobj.data(0)));
-
-                    // bkpobj.data(entry_id)// fucked
-
-
-                    for (auto &o : bkp->objects) {
-                        
-                        std::string str;
-                        for (int i = 0; i < 5; i++) str+=std::to_string(*((uint32_t*)(bkp->data.data()+o.offset)+i))+" ";
-                        for (int i = 0; i < 5; i++) str+=std::to_string(*((uint32_t*)(o.data())+i))+" ";
-                        PLOGD<<o.s->name<<" " <<o.offset<<str;
-                        if (bkp!=o.buffer) PLOGW << "pppppppppppppppppppppppppp";
-                        if (this!=o.buffer) PLOGW << "ddddddddddddddddddddddddd";
-                    }
+                    if (!newmember) { PLOGV << bkpmember.name; continue; }
 
                     memcpy(
-                        newobj->data(entry_id)+newmember_offset, 
-                        bkpobj.data(entry_id)+bkpmember_offset, 
+                        newobj->data(entry_id)+newcomp_offset+newmember_offset, 
+                        bkpobj.data(entry_id)+bkpcomp_offset+bkpmember_offset, 
                         bkpobj.s->comps[comp_id]->members[member_id].size 
                     );
   
@@ -201,6 +176,6 @@ void Buffer::remap(Buffer* bkp) {
         o.offset = obj_offset;
         obj_offset += o.size();
 
-    }
+    } // encore besoin ? ca change qqchose ? deja lieu au debut de la fx
 
 }

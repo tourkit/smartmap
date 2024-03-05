@@ -9,7 +9,6 @@
 #include "object.hpp"
 
 struct Struct;
-
 struct Buffer {
     
     static inline std::map<Buffer*,Buffer> bkps;

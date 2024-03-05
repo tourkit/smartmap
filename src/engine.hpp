@@ -2,6 +2,7 @@
 
 #include "window.hpp"
 #include "json.hpp"
+#include "node.hpp"
 
 struct Stack {};
 struct Debug {};

@@ -3,9 +3,9 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include "struct.hpp"
+#include "entry.hpp"
 
-struct Struct;
-struct Entry;
 struct Buffer;
 
 struct Object { 
