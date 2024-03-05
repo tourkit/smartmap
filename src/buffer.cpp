@@ -27,8 +27,6 @@ Object* Buffer::addObj(Struct* s, int reserved) {
 
 Buffer* Buffer::bkp(){ //gloubiboulbakup
 
-    PLOGW << "BKPlalala";
-
     bkps[this] = *this;
     auto bkp = &bkps[this];
     

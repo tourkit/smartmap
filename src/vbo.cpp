@@ -137,16 +137,6 @@ int VBO::import(File *file) {
 
     }
 
-    //WTF 
-
-    logger.cout();
-
-    auto &x = *indices->entrys[0];
-
-    PLOGW<< x[0][0].get<uint32_t>();
-    PLOGW<< x[1][0].get<uint32_t>();
-    PLOGW<< x[2][0].get<uint32_t>();
-
     upload();
 
     models.push_back(new Model(file, models.size()));
