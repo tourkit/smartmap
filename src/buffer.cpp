@@ -27,6 +27,18 @@ Object* Buffer::addObj(Struct* s, int reserved) {
 
 Buffer* Buffer::bkp(){ //gloubiboulbakup
 
+    if (bkps.find(this) != bkps.end()) {
+
+        for (auto &bkpobj : bkps[this].objects) {
+
+            for (auto c : bkpobj.s->comps) delete c;
+
+            delete bkpobj.s;
+            
+        }
+
+    }
+
     bkps[this] = *this;
     auto bkp = &bkps[this];
     
