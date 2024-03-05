@@ -119,6 +119,11 @@ static bool draw_object(void*data, Struct* s) {
     for (auto c:s->comps) {
                 
         ImGui::SeparatorText(c->name.c_str());
+        ImGui::Text("delete");
+        if(ImGui::IsItemClicked()){
+            s->removeComp(c->name);
+            has_changed = true;
+        }
         
         for (auto m:c->members) {
 

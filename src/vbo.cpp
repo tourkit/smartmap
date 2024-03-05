@@ -109,6 +109,8 @@ int VBO::import(File *file) {
 
     auto mesh = scene->mMeshes[0];
 
+    int next_indice =  vertices->entrys.size();
+
     for (int i = 0; i < mesh->mNumVertices; i++) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
@@ -131,9 +133,9 @@ int VBO::import(File *file) {
         const aiFace& face = mesh->mFaces[i];
         auto indices = this->indices->push();
 
-        indices[0].set<uint32_t>(face.mIndices[0]);
-        indices[1].set<uint32_t>(face.mIndices[1]);
-        indices[2].set<uint32_t>(face.mIndices[2]);
+        indices[0].set<uint32_t>(next_indice+face.mIndices[0]);
+        indices[1].set<uint32_t>(next_indice+face.mIndices[1]);
+        indices[2].set<uint32_t>(next_indice+face.mIndices[2]);
 
     }
 

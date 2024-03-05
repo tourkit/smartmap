@@ -31,7 +31,7 @@ Buffer* Buffer::bkp(){ //gloubiboulbakup
 
         for (auto &bkpobj : bkps[this].objects) {
 
-            for (auto c : bkpobj.s->comps) delete c;
+            for (auto c : bkpobj.s->comps) delete c; // struct and comp should be smarter poiters wacko
 
             delete bkpobj.s;
             
@@ -171,8 +171,6 @@ void Buffer::remap(Buffer* bkp) {
                 }
 
                 bkpcomp_offset += bkpcomp->size; 
-
-                // gotta delete comp here
 
             }
 
