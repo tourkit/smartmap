@@ -54,7 +54,7 @@ void Buffer::remap(Buffer* bkp) {
 
     int offset = 0;
 
-    for (auto obj : objects) {
+    for (auto &obj : objects) {
 
         obj.offset = offset;
 
