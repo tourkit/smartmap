@@ -22,7 +22,7 @@ struct Buffer {
     
     Buffer();
     
-    Buffer bkp();
+    Buffer* bkp();
 
     Object* addObj(Struct* s, int reserved = 0);
 
@@ -34,7 +34,7 @@ struct Buffer {
     
     void destroy();
 
-    void remap(Buffer bkp);
+    void remap(Buffer* bkp);
 
     Object* operator[](int id) { return &objects[id]; }
 

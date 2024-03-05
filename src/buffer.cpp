@@ -25,17 +25,20 @@ Object* Buffer::addObj(Struct* s, int reserved) {
 
 }
 
-Buffer Buffer::bkp(){ //gloubiboulbakup
+Buffer* Buffer::bkp(){ //gloubiboulbakup
 
     PLOGW << "BKPlalala";
 
-    Buffer bkp = *this;;
-
-    for (auto &bkpobj : bkp.objects) {
+    bkps[this] = *this;
+    auto bkp = &bkps[this];
+    
+    for (auto &bkpobj : bkp->objects) {
 
         bkpobj.s = new Struct(*bkpobj.s);
 
         for (auto i = 0; i < bkpobj.s->comps.size(); i++) bkpobj.s->comps[i] = new Component(*bkpobj.s->comps[i]);
+
+        bkpobj.buffer = bkp;
         
     }
 
@@ -45,7 +48,9 @@ Buffer Buffer::bkp(){ //gloubiboulbakup
 
 struct LeIntATontonRocky { int value = 0; };
 
-void Buffer::remap(Buffer bkp) {
+void Buffer::remap(Buffer* bkp) {
+
+    // reset each buffer::objects offsets
 
     int offset = 0;
 
@@ -53,87 +58,134 @@ void Buffer::remap(Buffer bkp) {
 
         obj.offset = offset;
 
-        offset += obj.size(); // has stride
+        offset += obj.size(); // has stride (if is_stride) !!
         
     }
+
+    // resize full  buffer
 
     data.resize(offset);
 
     memset(&data[0],0,data.size()); 
-    
-    for (int obj_id = 0; obj_id < bkp.objects.size(); obj_id++) {
 
-        auto &bkpobj = bkp.objects[obj_id];
+    //go thought bkp objs
+
+    for (int obj_id = 0; obj_id < bkp->objects.size(); obj_id++) {
+
+        auto &bkpobj = bkp->objects[obj_id];
+
+        //find corresponding new obj
 
         Object *newobj = nullptr;
         for (auto &o : objects) if (!strcmp(bkpobj.s->name.c_str(),o.s->name.c_str())) newobj = &o;
-        if (!newobj) { PLOGW << bkpobj.s->name; continue; }
-
-        logger.cout();
+        if (!newobj) { PLOGW << bkpobj.s->name; continue; }  // if not, next
+        
+        //go thought bkp entrys // repeat from comp per entry_id
+        
         for (int entry_id = 0; entry_id < bkpobj.entrys.size(); entry_id++) {
-                    
+
             std::map<std::string,LeIntATontonRocky> member_count;
     
             int bkpcomp_offset = 0;
-            int newcomp_offset = 0;
+
+            //go thought bkp comps
             
             for (int comp_id = 0; comp_id < bkpobj.s->comps.size(); comp_id++) {
+
+                auto bkpcomp = bkpobj.s->comps[comp_id];
+
+                //find corresponding new comp
                 
-                Component* newcomp = nullptr;                       
+                Component* newcomp = nullptr;     
+
+                logger.cout();                  
 
                 int newmember_count = 0;
+                int newcomp_offset = 0;
+
+                PLOGD<<"gottafind: "<<bkpcomp->name<<member_count[bkpcomp->name].value;
+
                 for (auto c : newobj->s->comps) {
 
-                    if (!strcmp(newobj->s->comps[comp_id]->name.c_str(),c->name.c_str())) { 
+                    // PLOGD<<"is ? "<<c->name<<newmember_count;
+
+                    if (!strcmp(bkpcomp->name.c_str(),c->name.c_str())) { 
+                    // PLOGD<<"yes";
                         
                         if (newmember_count == member_count[c->name].value) {
+                            // PLOGD<<bkpcomp_offset<<" - " << newcomp_offset;
                             
                             newcomp = c; 
                             
-                            member_count[newcomp->name].value++;
-                            PLOGD  <<newmember_count<< "new"  << newcomp->name << " found"<<member_count[newcomp->name].value; // should be fore comp too
+                            member_count[bkpcomp->name].value++;
 
                             break; 
                         
-                        }  
-                         
-                        newmember_count++;
+                        }  else { 
+                            // PLOGD<<"reno"; 
+                            newmember_count++; }
                         
                     }
+                    // else{ PLOGD<<"no"; }
 
                     newcomp_offset+= c->size;
                 }
 
+                // continue; 
+
                 if (!newcomp) { PLOGW << newobj->s->comps[comp_id]->name; continue; }
 
-                int bkpmember_offset = bkpcomp_offset;
-                for (int member_id = 0; member_id < bkpobj.s->comps[comp_id]->members.size(); member_id++) {
 
-                    int newmember_offset = newcomp_offset;
+
+                // if (member.size == 1 and member[0].name.lenght == 0 and newmember_count == 1)
+
+                int bkpmember_offset = 0;
+                
+                for (int member_id = 0; member_id < bkpobj.s->comps[comp_id]->members.size(); member_id++) {
 
                     Member* newmember = nullptr;
 
+                    int newmember_offset = 0;
                     for (auto &m : newcomp->members) {
 
                         if (!strcmp(m.name.c_str(),bkpobj.s->comps[comp_id]->members[member_id].name.c_str())) { newmember = &m; break; }
 
                         newmember_offset+= m.size;
+                        
                     }
-
 
                     if (!newmember) { PLOGV << bkpobj.s->comps[comp_id]->members[member_id].name; continue; }
 
                     Member* oldmember = &bkpobj.s->comps[comp_id]->members[member_id];
                            
-                    auto bkpoffset = bkpobj.offset+(bkpobj.s->size()*entry_id)+bkpmember_offset;
+                    // auto bkpmemnber_offset = bkpobj.offset+(bkpobj.s->size()*entry_id)+bkpmember_offset;
 
-                    memcpy(newobj->data(entry_id)+newmember_offset, &bkp.data[bkpoffset], bkpobj.s->comps[comp_id]->members[member_id].size );
+                    PLOGD<<"-from:"<<bkpcomp_offset<<"+"<<bkpmember_offset<<"-to:"<<newcomp_offset<<"+"<<newmember_offset<<"- val:"<<*((uint32_t*)(bkpobj.data(0)));
+
+                    // bkpobj.data(entry_id)// fucked
+
+
+                    for (auto &o : bkp->objects) {
+                        
+                        std::string str;
+                        for (int i = 0; i < 5; i++) str+=std::to_string(*((uint32_t*)(bkp->data.data()+o.offset)+i))+" ";
+                        for (int i = 0; i < 5; i++) str+=std::to_string(*((uint32_t*)(o.data())+i))+" ";
+                        PLOGD<<o.s->name<<" " <<o.offset<<str;
+                        if (bkp!=o.buffer) PLOGW << "pppppppppppppppppppppppppp";
+                        if (this!=o.buffer) PLOGW << "ddddddddddddddddddddddddd";
+                    }
+
+                    memcpy(
+                        newobj->data(entry_id)+newmember_offset, 
+                        bkpobj.data(entry_id)+bkpmember_offset, 
+                        bkpobj.s->comps[comp_id]->members[member_id].size 
+                    );
   
                     bkpmember_offset += bkpobj.s->comps[comp_id]->members[member_id].size;
 
                 }
 
-                bkpcomp_offset += bkpobj.s->comps[comp_id]->size; 
+                bkpcomp_offset += bkpcomp->size; 
 
                 // gotta delete comp here
 

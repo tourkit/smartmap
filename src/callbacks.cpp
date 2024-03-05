@@ -167,9 +167,9 @@ void Callbacks::init() {
         model->obj->s->size_v = 0;
         for (auto f : model->effectors) model->obj->s->size_v += f->comp->size;
     
-        engine.dynamic_ubo->remap(Buffer::bkps[engine.dynamic_ubo]);
+        engine.dynamic_ubo->remap(&Buffer::bkps[engine.dynamic_ubo]);
         engine.dynamic_ubo->update();
-        engine.static_ubo->remap(Buffer::bkps[engine.static_ubo]);
+        engine.static_ubo->remap(&Buffer::bkps[engine.static_ubo]);
         engine.static_ubo->update();
         
         PLOGW << "BKPthayre";
