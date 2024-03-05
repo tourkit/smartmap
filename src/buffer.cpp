@@ -170,12 +170,4 @@ void Buffer::remap(Buffer* bkp) {
 
     }
 
-    int obj_offset = 0;
-    for (auto& o : objects) {
-
-        o.offset = obj_offset;
-        obj_offset += o.size();
-
-    } // encore besoin ? ca change qqchose ? deja lieu au debut de la fx
-
 }
