@@ -16,10 +16,10 @@
 VBO::VBO() {  
 
     vertices = addObj(vertices_s);    
-    vertices->is_stride = false;
+    vertices->s->stride(false);
 
     indices = addObj(indices_s);
-    indices->is_stride = false;
+    indices->s->stride(false);
 
     create();
 }

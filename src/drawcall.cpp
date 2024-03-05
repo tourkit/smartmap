@@ -80,8 +80,6 @@ std::string DrawCall::layout(UBO* ubo) {
             
         }
 
-        for (int i = 0; i< obj.stride()/sizeof(float); i++) obj_str += "float stride"+std::to_string(i)+";"+struct_spacer;
-
         obj_str += "};\n\n";
 
         content_str += camel(obj.s->name) + " " + lower(obj.s->name) + "[" + std::to_string(obj.reserved) + "];";
@@ -99,6 +97,8 @@ std::string DrawCall::layout(UBO* ubo) {
         std::string comp_str = "struct "+camel(c->name)+" {"+struct_spacer;
 
         for (auto &m : c->members) comp_str += struct_taber+std::string(m.type_name())+" "+m.name+" ; "+struct_spacer;
+
+        for (int i = 0; i< (nextFactor(c->size,16)-c->size)/sizeof(float); i++) comp_str += "float stride"+std::to_string(i)+";"+struct_spacer;
 
         comp_str += "};\n\n";
 

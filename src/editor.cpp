@@ -30,7 +30,7 @@ static void draw_definition(Buffer *buffer) {
 
     for (auto &o: buffer->objects) {
         
-        std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size()+o.stride())+"]"+" * "+std::to_string(o.reserved);
+        std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size())+"]"+" * "+std::to_string(o.reserved);
 
         ImGui::Text(str.c_str());
 
@@ -45,16 +45,13 @@ static void draw_definition(Buffer *buffer) {
                 std::string str = "      "+m.name+"["+std::to_string(m.size)+"]";
                 ImGui::Text(str.c_str());
                 
-            }                
+            }
+
+            ImGui::Text(("      stride["+std::to_string((o.s->size()-c->size))+"]").c_str());
+            // for (int i = 0; i< (o.s->size()-c->size)/sizeof(float); i++) ImGui::Text(("      stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]").c_str());   
 
         }
         
-        for (int i = 0; i< o.stride()/sizeof(float); i++) {
-            
-            std::string str = "    stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]";
-            ImGui::Text(str.c_str());   
-            
-        }
     }
 
 }

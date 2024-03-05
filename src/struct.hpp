@@ -7,7 +7,6 @@
 struct Component;
 
 static int nextFactor(int x, int factor = 4) { return ((int)(x/(float)factor)+1)*factor; }
-
 struct Struct { 
 
     static inline std::unordered_set<Struct*> pool;
@@ -15,7 +14,7 @@ struct Struct {
     std::string name;
     std::vector<Component*> comps; 
     size_t size_v = 0; 
-
+    
     Struct(const char* name = "struct", std::vector<std::string> components = {});
 
     ~Struct();
@@ -26,8 +25,13 @@ struct Struct {
 
     size_t size();
     
-    size_t stride();
+    bool is_striding = true;
+    void stride(bool is_stride);
+    bool stride();
 
     Struct (const Struct& other);
+
+private:
+void addSize(int size);
     
 };
