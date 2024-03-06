@@ -136,12 +136,19 @@ static void draw_raw(void *data, size_t size) {
     uint8_t cell_min = 0;
     uint8_t cell_max = 255;
 
+    bool colorized = false;
+
     for (int i = 0; i < size; i++) {
 
-        if (i == hovered_offset) ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,0,0,1));
-        // if (( i == size-1 && hovered_offset > -1 )) ImGui::PopStyleColor(1);
 
         ImGui::PushID(i);
+        if (i == hovered_offset) {
+
+            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,0,0,1));
+
+            colorized = true;
+
+        }
 
         if (!(i%cells_per_line)) ImGui::NewLine();
         ImGui::SameLine(((i%cells_per_line)*(cell_width+cell_margin))); 
@@ -162,7 +169,7 @@ static void draw_raw(void *data, size_t size) {
         ImGui::Text(str.c_str());
 
         ImGui::PopID();
-        if (i == hovered_offset+hovered_size-1 ) ImGui::PopStyleColor();
+        if (colorized && (i == hovered_offset+hovered_size-1 || i == size-1)) { ImGui::PopStyleColor(); colorized= false; }
 
     }
     ImGui::SetWindowFontScale(1);
