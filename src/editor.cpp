@@ -55,6 +55,8 @@ namespace ImGui {
 };
 
 static void draw_definition(Buffer *buffer) {
+            
+    is_hovered=false;
     
     std::string str = "char[" +std::to_string( buffer->data.size()) + "]";
 
@@ -142,7 +144,7 @@ static void draw_raw(void *data, size_t size) {
 
 
         ImGui::PushID(i);
-        if (i == hovered_offset) {
+        if (is_hovered && i == hovered_offset) {
 
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,0,0,1));
 
