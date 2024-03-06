@@ -62,7 +62,6 @@ static void draw_definition(Buffer *buffer) {
 
     for (auto &o: buffer->objects) {
         
-        // std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size()+o.stride())+"]"+" * "+std::to_string(o.reserved);
         std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size())+"]"+" * "+std::to_string(o.reserved);
 
         ImGui::TextX(str.c_str(), o.offset, o.s->size());
@@ -70,40 +69,47 @@ static void draw_definition(Buffer *buffer) {
         int comp_offset = o.offset;
         for (auto& c : o.s->comps) {
 
-            std::string str = "    "+c->name+"["+std::to_string(c->size)+"]";
+            auto size = c->size;
 
-            ImGui::TextX(str.c_str(), comp_offset, o.s->addSize(c->size));
+            if (o.s->is_striding) size = nextFactor(c->size,16);
+
+            std::string str = "    "+c->name+"["+std::to_string(size)+"]";
+
+            ImGui::TextX(str.c_str(), comp_offset, o.s->addSize(size));
 
             int member_offset = comp_offset;
             for (auto& m : c->members) {
                 
                 std::string str = "      "+m.name+"["+std::to_string(m.size)+"]";
+
                 ImGui::TextX(str.c_str(), member_offset, m.size);
                 
-                
                 member_offset+= m.size;
+                
             }
 
-            if (o.s->is_striding) ImGui::Text(("      stride["+std::to_string((o.s->size()-c->size))+"]").c_str());
-            // for (int i = 0; i< (o.s->size()-c->size)/sizeof(float); i++) ImGui::Text(("      stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]").c_str());   
+            if (o.s->is_striding) {
+                
+                auto x = size-c->size;
+                if (x) {
+                
+                    std::string str = "      stride["+std::to_string(x)+"]";
+                    ImGui::TextX(str.c_str(), member_offset, x);
+                
+                }
+                
+            }
 
-            comp_offset+= o.s->addSize(c->size);
+            comp_offset+= o.s->addSize(size);
 
         }
         
-        // if (o.is_striding) {
+        if (o.is_striding && o.stride()) { 
 
-                // std::string str = "    stride"+std::to_string(o.stride());
-                // ImGui::Text(str.c_str());   
+            std::string str = "    stride["+std::to_string(o.stride())+"]";
+            ImGui::TextX(str.c_str(), comp_offset, o.stride());   
 
-            // for (int i = 0; i< o.stride()/sizeof(float); i++) {
-            
-            //     std::string str = "    stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]";
-            //     ImGui::Text(str.c_str());   
-                
-            // }
-
-        // }
+        }
         
     }
 

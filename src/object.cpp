@@ -12,9 +12,8 @@
 size_t Object::size() { //return eq(reserved);
     
     auto val = eq(reserved);
-    if (!s->is_striding) return val;
-    auto factor = nextFactor(val,16);
-    return  factor;
+    if (!is_striding) return val;
+    return nextFactor(val,16);
     
 }
 

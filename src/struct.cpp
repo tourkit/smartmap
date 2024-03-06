@@ -43,7 +43,9 @@ size_t Struct::size() { return size_v; }
 
 bool Struct::stride() { return is_striding; }
 
-void Struct::stride(bool is_stride) {
+void Struct::stride(bool is_striding) {
+
+    this->is_striding = is_striding;
 
     size_v = 0; 
 
@@ -52,7 +54,7 @@ void Struct::stride(bool is_stride) {
 }
 int Struct::addSize(int size) {
 
-    if (is_striding) size = ((int)(size/(float)16)+1)*16; //nextFactor(size,16);
+    if (is_striding) size = nextFactor(size,16);
     
     return size;
 

@@ -36,6 +36,8 @@ struct UBO : Buffer {
     void upload() override;
 
     void upload(void* data, size_t size, uint32_t offset = 0);
+
+    Object* addObj(Struct* s, int reserved = 0) override;
     
     // static void toJSON();
     

@@ -23,7 +23,7 @@ struct Buffer {
     
     Buffer* bkp();
 
-    Object* addObj(Struct* s, int reserved = 0);
+    virtual Object* addObj(Struct* s, int reserved = 0);
 
     virtual void update() { }
 

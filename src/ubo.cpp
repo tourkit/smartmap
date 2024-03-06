@@ -36,6 +36,12 @@ void UBO::create(std::string name, std::vector<ShaderProgram*> subscribers) {
 
 }
 
+Object* UBO::addObj(Struct* s, int reserved) {
+
+    s->stride(true);
+    return Buffer::addObj(s,reserved);
+    
+}
 
 void UBO::update() { // on Buffer change
 

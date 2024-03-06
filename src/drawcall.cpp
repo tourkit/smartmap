@@ -103,7 +103,7 @@ std::string DrawCall::layout(UBO* ubo) {
         // if (val!=factor) factor = factor-val;
 
         // for (int i = 0; i< (factor-c->size)/sizeof(float); i++) comp_str += "float stride"+std::to_string(i)+";"+struct_spacer;
-        for (int i = 0; i< (nextFactor(c->size-1,16)-c->size)/sizeof(float); i++) comp_str += "float stride"+std::to_string(i)+";"+struct_spacer;
+        for (int i = 0; i< (nextFactor(c->size,16)-c->size)/sizeof(float); i++) comp_str += "float stride"+std::to_string(i)+";"+struct_spacer;
 
         comp_str += "};\n\n";
 
