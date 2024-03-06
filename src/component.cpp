@@ -2,6 +2,11 @@
 
 Components::Components() {
 
+    Component::create("Rect")
+        .member<glm::vec2>("pos").range(-1,1)
+        .member<glm::vec2>("size")
+    ;
+
     Component::create("Position")
         .member<float>("x").range(-1,1)
         .member<float>("y").range(-1,1)
