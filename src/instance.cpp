@@ -1,5 +1,6 @@
 #include "instance.hpp"
 #include "buffer.hpp"
+#include "log.hpp"
 
 
 #include "object.hpp"
@@ -15,13 +16,13 @@ Instance::Comp::Comp(int id, Instance* instance) : id(id), instance(instance) {
 
 }
 
-char* Instance::Comp::data() { return instance->data()+offset; }
+char* Instance::Comp::data() { return instance->data()+nextFactor(offset,16); }
 
 Instance::Comp::Member Instance::Comp::operator[](const char* name) { 
 
     int id = 0;
 
-    for (auto m : instance->obj->s->comps[id]->members) { if (!(strcmp(m.name.c_str(),name))) { break;} id++; }
+    for (auto m : instance->obj->s->comps[this->id]->members) { if (!(strcmp(m.name.c_str(),name))) { break;} id++; }
 
     return (*this)[id];
 
@@ -31,10 +32,19 @@ Instance::Comp::Comp::Member Instance::Comp::operator[](int id) {
 
     int member_offset = 0;
     int current = 0;
-    for (auto m : instance->obj->s->comps[this->id]->members) {
+    auto comp  = instance->obj->s->comps[this->id];
+    for (auto m : comp->members) {
+        
         if (current++ == id) break;
+        
         member_offset += m.size;
+
+
     }
+
+    logger.cout();
+
+    PLOGD <<instance->obj->s->comps[this->id]->name << " . " << offset << " . " << member_offset;
 
     return Member{data()+member_offset};
     
