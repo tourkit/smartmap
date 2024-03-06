@@ -71,9 +71,12 @@ static void draw_definition(Buffer *buffer) {
         int comp_offset = o.offset;
         for (auto& c : o.s->comps) {
 
-            std::string str = "    "+c->name+"["+std::to_string(c->size)+"]";
+            auto size = c->size;
+            if (c->members.size() > 1 && o.s->is_striding) size = nextFactor(size,16);
+            
+            std::string str = "    "+c->name+"["+std::to_string(size)+"]";
 
-            ImGui::TextX(str.c_str(), comp_offset, c->size);
+            ImGui::TextX(str.c_str(), comp_offset, size);
 
             int member_offset = comp_offset;
             for (auto& m : c->members) {
@@ -87,7 +90,7 @@ static void draw_definition(Buffer *buffer) {
             }
 
 
-            comp_offset+= c->size;
+            comp_offset+= size;
 
         }
                 

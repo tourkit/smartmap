@@ -5,6 +5,7 @@
 #include "ubo.hpp"
 #include "engine.hpp"
 #include "atlas.hpp"
+#include "texture.hpp"
 #include "model.hpp"
 
 #include <unordered_set>
@@ -38,6 +39,8 @@ DrawCall::DrawCall() {
 
 void DrawCall::run() {
  
+     shader.sendUniform("medias", 1);
+     engine.atlas->texture->bind();
     vbo.draw();
 
     shader.use(); 
@@ -74,26 +77,27 @@ std::string DrawCall::layout(UBO* ubo) {
 
         for (auto c: obj.s->comps) {
 
+            auto size = c->size;
+
             if (c->members.size()<2) {
 
                 obj_str += struct_taber+c->members[0].type_name()+" "+lower(c->name)+"; "+struct_spacer;
 
+            } else {
+                
+                obj_str += struct_taber+camel(c->name)+" "+lower(c->name)+";"+struct_spacer;
+            
+                if (obj.s->is_striding) size = nextFactor(size,16);
             
             }
-
-            else obj_str += struct_taber+camel(c->name)+" "+lower(c->name)+";"+struct_spacer;
             
             components.insert(c);
 
-            offset += c->size;
+            offset += size;
             
         }
 
-        // for (int i = 0; i< (nextFactor(c->size,16)-c->size)/sizeof(float); i++) obj_str += "float stride"+std::to_string(i)+";"+struct_spacer;
-        
-        obj_str += "float stride"+std::to_string(offset)+";"+struct_spacer;
-
-
+        for (int i = 0; i< (nextFactor(offset,16)-offset)/sizeof(float); i++) obj_str += "float stride"+std::to_string(i)+";"+struct_spacer;
 
         obj_str += "};\n\n";
 

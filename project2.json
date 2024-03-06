@@ -9,7 +9,7 @@
     "rectangle": "//size(0,1,1) \n//pos(0,1,0.5) \n//angle(-1,1,0) \n\nvoid rectangle(vec2 pos, vec2 size, float rectangle) {\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}"
   },
   "layers": {
-    "layer1": { "MyQuad": [ "quad", [ "atlas", "rectangle" ] ] }
+    "layer1": { "MyQuad": [ "quad", [ "rectangle", "atlas" ] ] }
   },
   "inputs": {
     "artnet": []
@@ -26,7 +26,7 @@
   "editors": [
     [ 0, 0, 0, 0, "Stack::layer1", true ],
     [ 0, 0, 0, 0, "tree::Debug", true ],
-    [ 0, 0, 0, 0, "tree::Debug" ],
+    [ 0, 0, 0, 0, "layer1::quad" ],
     [ 0, 0, 0, 0, "Inputs::Artnet", true ],
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ]
   ]
