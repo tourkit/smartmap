@@ -1,4 +1,4 @@
-//atlas(0,10,0)
+//id(0,10,0)
 
 void atlas(int id) { 
 

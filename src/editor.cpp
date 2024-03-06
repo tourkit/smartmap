@@ -207,7 +207,7 @@ static bool draw_object(void*data, Struct* s) {
 
             auto type = ImGuiDataType_Float;
 
-            if (m.type == Member::Type::I32) type = ImGuiDataType_S32;
+            if (m.type == Member::Type::I32) {type = ImGuiDataType_S32; range_to = &range; }
             if (m.type == Member::Type::UI8) type = ImGuiDataType_U8;
             if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
             if (m.type == Member::Type::UI32) { type = ImGuiDataType_U16; range_to = &range; }
@@ -219,7 +219,7 @@ static bool draw_object(void*data, Struct* s) {
 
             std::string name = (m.name+"##"+c->name+m.name+std::to_string(uniform_offset));
 
-            if (ImGui::SliderScalarN(name.c_str(), type, f, q, &m.range_from, range_to)) has_changed = true;  
+            if (ImGui::SliderScalarN(name.c_str(), type, f, q, &m.range_from, range_to)) has_changed = true; 
 
         }
         
