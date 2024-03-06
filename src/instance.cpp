@@ -16,7 +16,7 @@ Instance::Comp::Comp(int id, Instance* instance) : id(id), instance(instance) {
 
 }
 
-char* Instance::Comp::data() { return instance->data()+offset; }
+char* Instance::Comp::data() { return instance->data()+nextFactor(offset,16); }
 
 Instance::Comp::Member Instance::Comp::operator[](const char* name) { 
 
@@ -41,6 +41,10 @@ Instance::Comp::Comp::Member Instance::Comp::operator[](int id) {
         member_offset += m.size;
 
     }
+
+    logger.cout();
+
+    PLOGD <<instance->obj->s->comps[this->id]->name << " . " << offset << " . " << member_offset;
 
     return Member{data()+member_offset};
     
