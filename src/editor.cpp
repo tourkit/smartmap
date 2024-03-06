@@ -529,6 +529,8 @@ void Editors::init() {
 
     Editor<Object>([](Node* node, Object *obj){
 
+        ImGui::SeparatorText(obj->s->name.c_str());
+
         static std::unordered_map<Object*,int> elem_current;
         static std::string uid = "123";
 
@@ -583,15 +585,15 @@ void Editors::init() {
 
         draw_raw(buffer->data.data(),buffer->data.size());
 
-        static StringsBuffer object_str;
-        static int obj_current = 0;
-        std::vector<std::string> obect_strs;
-        for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
-        if (!obect_strs.size()) return;
-        object_str.create(obect_strs);
-        ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
+        // static StringsBuffer object_str;
+        // static int obj_current = 0;
+        // std::vector<std::string> obect_strs;
+        // for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
+        // if (!obect_strs.size()) return;
+        // object_str.create(obect_strs);
+        // ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-        if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
+        // if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
 
     });
     
@@ -601,6 +603,11 @@ void Editors::init() {
 
         Editor<ShaderProgram>::cb(node, &layer->shader); 
 
+        ImGui::Separator();
+        Editor<Object>::cb(node, layer->vbo.vertices); 
+        ImGui::Separator();
+        Editor<Object>::cb(node, layer->vbo.indices); 
+        ImGui::Separator();
         Editor<VBO>::cb(node, &layer->vbo); 
         
     });

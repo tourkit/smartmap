@@ -171,8 +171,6 @@ void Callbacks::init() {
         engine.dynamic_ubo->update();
         engine.static_ubo->remap(&Buffer::bkps[engine.static_ubo]);
         engine.static_ubo->update();
-        
-        PLOGW << "BKPthayre";
 
     });
 

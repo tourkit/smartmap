@@ -160,7 +160,6 @@
             
         engine.static_ubo->bkp();
         engine.dynamic_ubo->bkp();
-        PLOGW << "BKPhere";
 
         update();
 
