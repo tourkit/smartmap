@@ -9,8 +9,6 @@
 
 int main() {
 
-    auto &engine = Engine::getInstance();
-
     engine.init();
 
     engine.open("project2.json");
