@@ -71,13 +71,9 @@ static void draw_definition(Buffer *buffer) {
         int comp_offset = o.offset;
         for (auto& c : o.s->comps) {
 
-            auto size = c->size;
+            std::string str = "    "+c->name+"["+std::to_string(c->size)+"]";
 
-            if (o.s->is_striding) size = nextFactor(c->size,16);
-
-            std::string str = "    "+c->name+"["+std::to_string(size)+"]";
-
-            ImGui::TextX(str.c_str(), comp_offset, o.s->addSize(size));
+            ImGui::TextX(str.c_str(), comp_offset, c->size);
 
             int member_offset = comp_offset;
             for (auto& m : c->members) {
@@ -90,26 +86,27 @@ static void draw_definition(Buffer *buffer) {
                 
             }
 
-            if (o.s->is_striding) {
-                
-                auto x = size-c->size;
-                if (x) {
-                
-                    std::string str = "      stride["+std::to_string(x)+"]";
-                    ImGui::TextX(str.c_str(), member_offset, x);
-                
-                }
-                
-            }
 
-            comp_offset+= o.s->addSize(size);
+            comp_offset+= c->size;
 
         }
+                
         
+
+        // maybe could merge two following thingyz
+        auto x = o.s->size()-comp_offset;
+        if (x) {
+        
+            std::string str = "      stride["+std::to_string(x)+"]";
+            ImGui::TextX(str.c_str(), comp_offset, x);
+        
+        }
+                
+        //with that
         if (o.is_striding && o.stride()) { 
 
             std::string str = "    stride["+std::to_string(o.stride())+"]";
-            ImGui::TextX(str.c_str(), comp_offset, o.stride());   
+            ImGui::TextX(str.c_str(), comp_offset+x, o.stride());   
 
         }
         
@@ -225,8 +222,8 @@ static bool draw_object(void*data, Struct* s) {
 
         }
 
-        if (s->is_striding) uniform_offset += nextFactor(uniform_member_offset,16);
-        else  uniform_offset += uniform_member_offset;
+        
+        uniform_offset += uniform_member_offset;
         
     }
 

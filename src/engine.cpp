@@ -35,6 +35,13 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
     
     window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
 
+    tree = new Node("tree");
+
+    debug = tree->addOwnr<Debug>()->close()->node();
+    debug->addPtr<UBO>(static_ubo);
+    debug->addPtr<UBO>(dynamic_ubo);
+    debug->addPtr<Atlas>(atlas);
+    
 }
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
@@ -47,12 +54,6 @@ void Engine::init() {
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
 
-    tree = new Node("tree");
-
-    debug = tree->addOwnr<Debug>()->close()->node();
-    debug->addPtr<UBO>(static_ubo);
-    debug->addPtr<UBO>(dynamic_ubo);
-    debug->addPtr<Atlas>(atlas);
     auto comps = debug->addOwnr<Node>("Components")->close();
     for (auto c : Component::pool) comps->addPtr<Component>(c);
 

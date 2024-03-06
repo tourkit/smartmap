@@ -70,17 +70,29 @@ std::string DrawCall::layout(UBO* ubo) {
 
         int comp_id = 0;
 
+        int offset = 0;
+
         for (auto c: obj.s->comps) {
 
-            if (c->members.size()<2) obj_str += struct_taber+c->members[0].type_name()+" "+lower(c->name)+"; "+struct_spacer;
+            if (c->members.size()<2) {
+
+                obj_str += struct_taber+c->members[0].type_name()+" "+lower(c->name)+"; "+struct_spacer;
+
+            
+            }
 
             else obj_str += struct_taber+camel(c->name)+" "+lower(c->name)+";"+struct_spacer;
             
             components.insert(c);
+
+            offset += c->size;
             
         }
 
-        for (int i = 0; i< obj.stride()/sizeof(float); i++) obj_str += "float stride"+std::to_string(i)+";"+struct_spacer;
+        // for (int i = 0; i< (nextFactor(c->size,16)-c->size)/sizeof(float); i++) obj_str += "float stride"+std::to_string(i)+";"+struct_spacer;
+        
+        obj_str += "float stride"+std::to_string(offset)+";"+struct_spacer;
+
 
 
         obj_str += "};\n\n";
