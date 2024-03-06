@@ -82,7 +82,7 @@ static void draw_definition(Buffer *buffer) {
             int member_offset = comp_offset;
             for (auto& m : c->members) {
                 
-                std::string str = "      "+m.name+"["+std::to_string(m.size)+"]";
+                std::string str = "      "+(m.name.length()?m.name:"val")+"["+std::to_string(m.size)+"]";
 
                 ImGui::TextX(str.c_str(), member_offset, m.size);
                 
@@ -194,12 +194,14 @@ static bool draw_object(void*data, Struct* s) {
             s->removeComp(c->name);
             has_changed = true;
         }
+
+        int uniform_member_offset = 0;
         
         for (auto m:c->members) {
 
-            float *f = (float*)(((char*)data)+uniform_offset);
+            float *f = (float*)(((char*)data)+uniform_offset+uniform_member_offset);
 
-            uniform_offset += m.size; 
+            uniform_member_offset += m.size; 
 
             void* range_to = &m.range_to;
 
@@ -217,11 +219,14 @@ static bool draw_object(void*data, Struct* s) {
             if (m.type == Member::Type::VEC3) q = 3;
             if (m.type == Member::Type::VEC4) q = 4;
 
-            std::string name = (m.name+"##"+c->name+m.name+std::to_string(uniform_offset));
+            std::string name = (m.name+"##"+c->name+m.name+std::to_string(uniform_offset+uniform_member_offset));
 
             if (ImGui::SliderScalarN(name.c_str(), type, f, q, &m.range_from, range_to)) has_changed = true; 
 
         }
+
+        if (s->is_striding) uniform_offset += nextFactor(uniform_member_offset,16);
+        else  uniform_offset += uniform_member_offset;
         
     }
 
@@ -587,15 +592,15 @@ void Editors::init() {
 
         draw_raw(buffer->data.data(),buffer->data.size());
 
-        // static StringsBuffer object_str;
-        // static int obj_current = 0;
-        // std::vector<std::string> obect_strs;
-        // for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
-        // if (!obect_strs.size()) return;
-        // object_str.create(obect_strs);
-        // ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
+        static StringsBuffer object_str;
+        static int obj_current = 0;
+        std::vector<std::string> obect_strs;
+        for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
+        if (!obect_strs.size()) return;
+        object_str.create(obect_strs);
+        ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-        // if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
+        if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
 
     });
     
