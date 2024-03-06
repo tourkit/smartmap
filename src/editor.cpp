@@ -22,8 +22,40 @@
 
 #include <cstring>
 
-static void draw_definition(Buffer *buffer) {
+static int hovered_offset = -1;
+static int hovered_size = -1;
+static bool is_hovered = false;
+namespace ImGui {
 
+    static void TextX(const char* label, int offset, int size) {
+
+        ImGui::Text(label);
+
+        if (ImGui::IsItemHovered()) { 
+
+            hovered_offset = offset;
+            hovered_size = size;
+            is_hovered=true;
+
+        }
+        // else{ 
+
+        //     if (is_hovered){
+
+        //         hovered_offset = -1;
+        //         hovered_size = -1;
+        //         is_hovered = false;
+
+        //     }
+        // }
+        
+
+    };
+
+};
+
+static void draw_definition(Buffer *buffer) {
+    
     std::string str = "char[" +std::to_string( buffer->data.size()) + "]";
 
     ImGui::Text(str.c_str());
@@ -32,23 +64,29 @@ static void draw_definition(Buffer *buffer) {
         
         std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size())+"]"+" * "+std::to_string(o.reserved);
 
-        ImGui::Text(str.c_str());
+        ImGui::TextX(str.c_str(), o.offset, o.s->size());
 
+        int comp_offset = o.offset;
         for (auto& c : o.s->comps) {
 
             std::string str = "    "+c->name+"["+std::to_string(c->size)+"]";
 
-            ImGui::Text(str.c_str());
+            ImGui::TextX(str.c_str(), comp_offset, o.s->addSize(c->size));
 
+            int member_offset = comp_offset;
             for (auto& m : c->members) {
                 
                 std::string str = "      "+m.name+"["+std::to_string(m.size)+"]";
-                ImGui::Text(str.c_str());
+                ImGui::TextX(str.c_str(), member_offset, m.size);
                 
+                
+                member_offset+= m.size;
             }
 
             ImGui::Text(("      stride["+std::to_string((o.s->size()-c->size))+"]").c_str());
             // for (int i = 0; i< (o.s->size()-c->size)/sizeof(float); i++) ImGui::Text(("      stride"+std::to_string(i)+"["+std::to_string(sizeof(float))+"]").c_str());   
+
+            comp_offset+= o.s->addSize(c->size);
 
         }
         
@@ -63,6 +101,7 @@ static void draw_raw(void *data, size_t size) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+    
     ImGui::SetWindowFontScale(.8);
 
     auto window_width = ImGui::GetWindowWidth()-15;
@@ -77,6 +116,9 @@ static void draw_raw(void *data, size_t size) {
     uint8_t cell_max = 255;
 
     for (int i = 0; i < size; i++) {
+
+        if (i == hovered_offset) ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,0,0,1));
+        // if (( i == size-1 && hovered_offset > -1 )) ImGui::PopStyleColor(1);
 
         ImGui::PushID(i);
 
@@ -99,6 +141,7 @@ static void draw_raw(void *data, size_t size) {
         ImGui::Text(str.c_str());
 
         ImGui::PopID();
+        if (i == hovered_offset+hovered_size-1 ) ImGui::PopStyleColor();
 
     }
     ImGui::SetWindowFontScale(1);

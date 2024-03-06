@@ -98,7 +98,7 @@ std::string DrawCall::layout(UBO* ubo) {
 
         for (auto &m : c->members) comp_str += struct_taber+std::string(m.type_name())+" "+m.name+" ; "+struct_spacer;
 
-        for (int i = 0; i< (nextFactor(c->size,16)-c->size)/sizeof(float); i++) comp_str += "float stride"+std::to_string(i)+";"+struct_spacer;
+        for (int i = 0; i< (nextFactor(c->size-1,16)-c->size)/sizeof(float); i++) comp_str += "float stride"+std::to_string(i)+";"+struct_spacer;
 
         comp_str += "};\n\n";
 

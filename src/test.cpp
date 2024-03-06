@@ -14,10 +14,8 @@
 #include <string>
 
 
-Test::Test() {
+Test::Test() { logger.cout();
 
-    logger.cout();
-    
     // auto comps = engine.tree->child("Debug::Components");
     // comps->childrens.resize(0);
     // for (auto c : Component::pool) comps->addPtr<Component>(c);

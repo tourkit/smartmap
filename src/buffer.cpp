@@ -106,9 +106,7 @@ void Buffer::remap(Buffer* bkp) {
 
                 //find corresponding new comp
                 
-                Component* newcomp = nullptr;     
-
-                logger.cout();                  
+                Component* newcomp = nullptr;                   
 
                 int newmember_count = 0;
                 int newcomp_offset = 0;

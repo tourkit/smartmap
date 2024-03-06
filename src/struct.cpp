@@ -25,7 +25,7 @@ void Struct::addComp(std::string component){
 
     comps.push_back(c);
 
-    addSize(c->size); 
+    size_v += addSize(c->size); 
 
 }
 
@@ -35,7 +35,7 @@ void Struct::removeComp(std::string component){
 
     comps.erase(std::remove(comps.begin(), comps.end(), c), comps.end());
 
-    addSize(-c->size);
+    size_v -= addSize(c->size);
 
 }
 
@@ -47,13 +47,13 @@ void Struct::stride(bool is_stride) {
 
     size_v = 0; 
 
-    for (auto c: comps) addSize(c->size); 
+    for (auto c: comps) size_v += addSize(c->size); 
     
 }
-void Struct::addSize(int size) {
+int Struct::addSize(int size) {
 
-    if (is_striding) size_v += ((int)(size/(float)16)+1)*16; //nextFactor(size,16);
-
-    else size_v += size; 
+    if (is_striding) size = ((int)(size/(float)16)+1)*16; //nextFactor(size,16);
+    
+    return size;
 
 }

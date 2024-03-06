@@ -31,7 +31,8 @@ struct Struct {
 
     Struct (const Struct& other);
 
+    
+    int addSize(int size);
 private:
-void addSize(int size);
     
 };
