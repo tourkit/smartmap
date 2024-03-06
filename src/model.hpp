@@ -2,7 +2,7 @@
 
 struct File;
 struct Object;
-struct Entry;
+struct Instance;
 struct Effector;
 
 #include <vector>
@@ -16,7 +16,7 @@ struct Model {
 
     Object* obj;
     
-    Entry* entry;
+    Instance* entry;
 
     std::vector<Effector*> effectors; 
 

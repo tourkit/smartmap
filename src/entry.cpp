@@ -1,10 +1,10 @@
-#include "entry.hpp"
+#include "instance.hpp"
 #include "buffer.hpp"
 
 
 #include "object.hpp"
 
-Entry::Comp::Comp(int id, Entry* entry) : id(id), entry(entry) { 
+Instance::Comp::Comp(int id, Instance* entry) : id(id), entry(entry) { 
 
     offset = 0;
     int curr = 0;
@@ -15,9 +15,9 @@ Entry::Comp::Comp(int id, Entry* entry) : id(id), entry(entry) {
 
 }
 
-char* Entry::Comp::data() { return entry->data()+offset; }
+char* Instance::Comp::data() { return entry->data()+offset; }
 
-Entry::Comp::Member Entry::Comp::operator[](const char* name) { 
+Instance::Comp::Member Instance::Comp::operator[](const char* name) { 
 
     int id = 0;
 
@@ -27,7 +27,7 @@ Entry::Comp::Member Entry::Comp::operator[](const char* name) {
 
 }
 
-Entry::Comp::Comp::Member Entry::Comp::operator[](int id) { 
+Instance::Comp::Comp::Member Instance::Comp::operator[](int id) { 
 
     int member_offset = 0;
     int current = 0;
@@ -41,13 +41,13 @@ Entry::Comp::Comp::Member Entry::Comp::operator[](int id) {
 }
 
 
-Entry::Comp Entry::operator[](int id) { 
+Instance::Comp Instance::operator[](int id) { 
     
     return Comp{id,this}; 
     
 }
 
-Entry::Comp Entry::operator[](const char* name) { 
+Instance::Comp Instance::operator[](const char* name) { 
     
     int id = 0;
 
@@ -57,4 +57,4 @@ Entry::Comp Entry::operator[](const char* name) {
 
 }
 
-char*  Entry::data() { return obj->data(id); }
+char*  Instance::data() { return obj->data(id); }

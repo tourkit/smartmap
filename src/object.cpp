@@ -5,7 +5,7 @@
 
 #include "struct.hpp"
 #include "buffer.hpp"
-#include "entry.hpp"
+#include "instance.hpp"
 #include "engine.hpp"
 #include "log.hpp"
 
@@ -23,7 +23,7 @@ char *Object::data(size_t id) { return &buffer->data[ offset + eq(id) ]; }
 
 int Object::eq(size_t id) { return (s->size()) * id; }
 
-Entry &Object::push() { 
+Instance &Object::push() { 
 
     std::vector<char> data;
     data.resize(s->size());
@@ -91,7 +91,7 @@ void Object::removeComp(std::string component){
 }
 
 
-Entry &Object::push(void* data) { 
+Instance &Object::push(void* data) { 
 
     auto bkp = buffer->bkp(); // still needed IF GLOBAL ?? this one maybe
 
@@ -103,7 +103,7 @@ Entry &Object::push(void* data) {
 
     memcpy(this->data()+eq(id),data,s->size()); 
 
-    entrys.push_back(new Entry{this,id});
+    entrys.push_back(new Instance{this,id});
 
     // shouldnt buffer->update() here ? if not find where does it happn now and if is logic ?
     

@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "struct.hpp"
-#include "entry.hpp"
+#include "instance.hpp"
 
 struct Buffer;
 
@@ -26,11 +26,11 @@ struct Object {
 
     size_t stride();
 
-    std::vector<Entry*> entrys;
+    std::vector<Instance*> entrys;
     
-    Entry &push();
+    Instance &push();
 
-    Entry &push(void* data);
+    Instance &push(void* data);
 
     void addComp(std::string components);
     void removeComp(std::string components);

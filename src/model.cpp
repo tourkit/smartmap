@@ -5,7 +5,7 @@
 #include "engine.hpp"
 #include "struct.hpp"
 #include "object.hpp"
-#include "entry.hpp"
+#include "instance.hpp"
 #include "ubo.hpp"
 
 Model::Model(File* file, int id, int quantity) { import(file,id,quantity); }

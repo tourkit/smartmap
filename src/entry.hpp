@@ -7,7 +7,7 @@
 
 struct Object;
 
-struct Entry {
+struct Instance {
 
     Object* obj;
 
@@ -32,11 +32,11 @@ struct Entry {
 
         int id;
 
-        Entry *entry;
+        Instance *entry;
 
         int offset;
 
-        Comp(int id, Entry* entry);
+        Comp(int id, Instance* entry);
 
         char* data();
 
