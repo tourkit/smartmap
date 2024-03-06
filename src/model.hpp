@@ -16,7 +16,7 @@ struct Model {
 
     Object* obj;
     
-    Instance* entry;
+    Instance* instance;
 
     std::vector<Effector*> effectors; 
 

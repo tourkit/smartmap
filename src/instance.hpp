@@ -32,11 +32,11 @@ struct Instance {
 
         int id;
 
-        Instance *entry;
+        Instance *instance;
 
         int offset;
 
-        Comp(int id, Instance* entry);
+        Comp(int id, Instance* instance);
 
         char* data();
 

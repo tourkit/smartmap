@@ -26,7 +26,7 @@ struct Object {
 
     size_t stride();
 
-    std::vector<Instance*> entrys;
+    std::vector<Instance*> instances;
     
     Instance &push();
 

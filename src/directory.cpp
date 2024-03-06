@@ -24,8 +24,8 @@ bool Directory::import(std::string path)  {
 
         while ((ent = readdir(dir)) != NULL) {
 
-            std::string entryName(ent->d_name);
-            if (entryName == ".." || entryName == ".") continue;
+            std::string instanceName(ent->d_name);
+            if (instanceName == ".." || instanceName == ".") continue;
             
             list.push_back(path+ent->d_name);
 

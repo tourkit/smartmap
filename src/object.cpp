@@ -56,7 +56,7 @@ void Object::addComp(std::string component){
 
     // 2 test de le mettre dans this->s->addComp(component)
 
-    for (auto e : entrys){
+    for (auto e : instances){
 
         auto c = (*e)[component.c_str()];
 
@@ -99,14 +99,14 @@ Instance &Object::push(void* data) {
 
     buffer->remap(bkp);
 
-    int id = entrys.size();
+    int id = instances.size();
 
     memcpy(this->data()+eq(id),data,s->size()); 
 
-    entrys.push_back(new Instance{this,id});
+    instances.push_back(new Instance{this,id});
 
     // shouldnt buffer->update() here ? if not find where does it happn now and if is logic ?
     
-    return *entrys.back();
+    return *instances.back();
 
 }   

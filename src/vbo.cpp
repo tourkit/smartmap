@@ -109,7 +109,7 @@ int VBO::import(File *file) {
 
     auto mesh = scene->mMeshes[0];
 
-    int next_indice =  vertices->entrys.size();
+    int next_indice =  vertices->instances.size();
 
     for (int i = 0; i < mesh->mNumVertices; i++) {
 

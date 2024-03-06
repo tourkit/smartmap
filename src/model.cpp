@@ -20,7 +20,7 @@ bool Model::import(File* file, int id, int quantity) {
 
     obj = engine.dynamic_ubo->addObj(new Struct(name.c_str()));
 
-    entry = &obj->push();
+    instance = &obj->push();
 
     return true;
 

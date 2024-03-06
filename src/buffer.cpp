@@ -90,9 +90,9 @@ void Buffer::remap(Buffer* bkp) {
         for (auto &o : objects) if (!strcmp(bkpobj.s->name.c_str(),o.s->name.c_str())) newobj = &o;
         if (!newobj) { PLOGW << bkpobj.s->name; continue; }  // if not, next
         
-        //go thought bkp entrys // repeat from comp per entry_id
+        //go thought bkp instances // repeat from comp per instance_id
         
-        for (int entry_id = 0; entry_id < bkpobj.entrys.size(); entry_id++) {
+        for (int instance_id = 0; instance_id < bkpobj.instances.size(); instance_id++) {
 
             std::map<std::string,LeIntATontonRocky> member_count;
     
@@ -159,8 +159,8 @@ void Buffer::remap(Buffer* bkp) {
                     if (!newmember) { PLOGV << bkpmember.name; continue; }
 
                     memcpy(
-                        newobj->data(entry_id)+newcomp_offset+newmember_offset, 
-                        bkpobj.data(entry_id)+bkpcomp_offset+bkpmember_offset, 
+                        newobj->data(instance_id)+newcomp_offset+newmember_offset, 
+                        bkpobj.data(instance_id)+bkpcomp_offset+bkpmember_offset, 
                         bkpobj.s->comps[comp_id]->members[member_id].size 
                     );
   
