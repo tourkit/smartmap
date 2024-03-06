@@ -4,7 +4,7 @@
 #include <vector>
 #include <unordered_set>
 
-struct Component;
+#include "component.hpp"
 
 static int nextFactor(int x, int factor = 4) { return ((int)((x-1)/(float)factor)+1)*factor*!!x; }
 struct Struct { 
