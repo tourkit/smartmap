@@ -129,7 +129,7 @@ void Buffer::remap(Buffer* bkp) {
                         
                     }
 
-                    newcomp_offset+= c->size;
+                    newcomp_offset+= (bkpobj.s->is_striding ? nextFactor(c->size,16) : c->size);
                 }
 
                 if (!newcomp) { PLOGW << newobj->s->comps[comp_id]->name; continue; }
@@ -157,7 +157,7 @@ void Buffer::remap(Buffer* bkp) {
                     }
 
                     if (!newmember) { PLOGV << bkpmember.name; continue; }
-
+                    static float wer = 9;
                     memcpy(
                         newobj->data(instance_id)+newcomp_offset+newmember_offset, 
                         bkpobj.data(instance_id)+bkpcomp_offset+bkpmember_offset, 

@@ -40,7 +40,7 @@ Object* UBO::addObj(Struct* s, int reserved) {
 
     s->stride(true);
     auto o = Buffer::addObj(s,reserved);
-    // o->is_striding = true;
+    o->is_striding = true;
     return o;
     
 }

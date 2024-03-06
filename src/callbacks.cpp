@@ -136,8 +136,6 @@ void Callbacks::init() {
 
     NODE<Model>::oncreate([](Node* node, Model *model) { if (model->file) node->name = model->file->name; });
 
-    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return (new Ptr<Effector>(node->is_a<Effector>()))->node(); });
-
     NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
         
         auto model = _this->is_a<Model>();

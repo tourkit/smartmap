@@ -93,7 +93,7 @@ void Object::removeComp(std::string component){
 
 Instance &Object::push(void* data) { 
 
-    auto bkp = buffer->bkp(); // still needed IF GLOBAL ?? this one maybe
+    auto bkp = buffer->bkp();
 
     reserved+=1;
 
