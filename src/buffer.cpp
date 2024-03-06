@@ -68,7 +68,7 @@ void Buffer::remap(Buffer* bkp) {
 
         obj.offset = offset;
 
-        offset += obj.size(); // has stride (if is_stride) !!
+        offset += obj.size();
         
     }
 

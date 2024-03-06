@@ -9,11 +9,21 @@
 #include "engine.hpp"
 #include "log.hpp"
 
-size_t Object::size() { return eq(reserved); }
+size_t Object::size() { //return eq(reserved);
+    
+    auto val = eq(reserved);
+    if (!s->is_striding) return val;
+    auto factor = nextFactor(val-1,16);
+    if (val!=factor) val = factor-val;
+    return  val;
+    
+}
+
+size_t Object::stride() { return (size() - eq(reserved)) ; }
 
 char *Object::data(size_t id) { return &buffer->data[ offset + eq(id) ]; }
 
-int Object::eq(size_t id) { return s->size() * id; }
+int Object::eq(size_t id) { return (s->size()) * id; }
 
 Entry &Object::push() { 
 

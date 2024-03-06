@@ -25,7 +25,7 @@ struct Struct {
 
     size_t size();
     
-    bool is_striding = true;
+    bool is_striding = false;
     void stride(bool is_stride);
     bool stride();
 

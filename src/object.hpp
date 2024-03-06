@@ -16,6 +16,8 @@ struct Object {
 
     Buffer* buffer;
     size_t offset;
+    
+    bool is_striding = true;
 
     char *data(size_t id = 0);
     int  eq(size_t id = 0);
