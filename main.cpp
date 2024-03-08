@@ -23,25 +23,16 @@ namespace TEST {
         static inline std::unordered_set<std::shared_ptr<AnyMember>> pool;
 
         AnyMember(std::string name_v = "") { name(name_v); pool.insert(std::shared_ptr<AnyMember>(this)); }
+
         ~AnyMember() { pool.erase(std::shared_ptr<AnyMember>(this)); }
 
         uint32_t quantity = 1; // ! \\ ONLY FOR Array !
 
-        std::shared_ptr<AnyMember> owner = nullptr;
-
         virtual bool owns(AnyMember& m) { return false; }
 
         virtual void update() { 
-            
-            if (owner) {
 
-                auto topmost = owner.get(); 
-
-                topmost->update();
-                
-                while ( topmost->owner ) { topmost = topmost->owner.get(); }  
-
-            }
+            for (auto a : pool) if (a.get()->owns(*this)) a.get()->update();
 
         }
 
@@ -199,13 +190,13 @@ namespace TEST {
 
         std::string type() override { if (members.size() == 1) { return members[0]->type(); } return "Struct"; }
 
-        // bool owns(AnyMember& m) override { 
+        bool owns(AnyMember& m) override { 
 
-        //     for (auto &s : members) if (s.get() == &m) return true;
+            for (auto &s : members) if (s.get() == &m) return true;
 
-        //     return false;
+            return false;
 
-        // }
+        }
 
         void remove(const Struct& s) {
 
@@ -288,13 +279,12 @@ namespace TEST {
 
          }
 
+
     protected:
         
         virtual Struct& addPtr(std::shared_ptr<AnyMember> s) {
 
             members.push_back(s);
-
-            s.get()->owner = std::shared_ptr<Struct>(this);
 
             size_v += members.back()->footprint_all();
 
@@ -339,16 +329,19 @@ using namespace TEST;
 
     Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");
     Struct& rectangle = Struct::create("rectangle").add<vec2>("pos").add<vec2>("size").add<float_>("angle");
-    Struct& ID = Struct::create("ID").add<ui>();
+    // Struct& ID = Struct::create("ID").add<ui>();
 
-    Struct quad("myquad",2);
+    Struct quad("myquad");
 
+    quad.add(rectangle);
     quad.add(Rect);
-    Rect.add<float_>("angle");
+    rectangle.add(Rect);
+    // quad.add(Rect);
+    // Rect.add<float_>("angle");
 
     quad.striding(true);
 
-    Rect.striding(true);
+    rectangle.striding(true);
 
     Buffer buff;
 
@@ -356,55 +349,13 @@ using namespace TEST;
 
     buff.print();
 
-    AnyMember* last_owner = nullptr;
-
-    int depth = 0;
-
     buff.each([&](AnyMember& m, int offset){ 
-
-        if (m.owner.get() != last_owner) {
-            
-            if (m.owner.get()->owner.get() == last_owner) { depth++; }
-
-            else {
-
-                while(m.owner.get() != last_owner) {
-
-                    depth--;
-
-                    last_owner = last_owner->owner.get(); 
-
-                }
-                
-            }
-            
-            
-        }
         
         std::string str;
-        for (int i = 0; i < depth; i++) str += "  ";
         str += m.type() + " " + m.name();
-        str += " " + std::to_string(m.footprint());
-        str += " " + std::to_string(offset);
+        str += " " +  std::to_string(offset);
+        str += " (" +std::to_string(m.footprint())+")";
         PLOGD << str;
-
-        // auto owner = m.owner.get();
-        // if (owner && !m.size()) {
-
-        //     auto s = (Struct*)owner;
-
-        //     if (s->members.size() && &m == s->members.back().get()) {
-                
-        //         std::string str;
-        //         for (int i = 0; i < depth; i++) str += "  ";
-        //         str+=m.name()+ " "+s->name()+ " "+s->members.back().get()->name()+ " stride";
-        //         // PLOGD << str;
-                
-        //     }
-
-        // } 
-
-        last_owner = m.owner.get();
 
     });
 
