@@ -38,16 +38,20 @@ using namespace TEST;
     
     Buffer buff;
 
-    Struct quad("myquad");
+    // buff.add(rectangle);
+    // buff.add(Rect);
 
-    quad.striding(true);
-    rectangle.striding(true);
 
+    Struct quad("myquad",2);
     quad.add(rectangle);
     quad.add(Rect);
-
     buff.add(quad);
+    quad.striding(true);
 
+
+    rectangle.striding(true);
+
+    
     buff.print();
 
     buff.each([&](AnyMember& m, int offset){ 
@@ -63,9 +67,9 @@ using namespace TEST;
     // set
     
 
-    PLOGD << buff["myquad"]["Rect"]["size"].offset;
+    PLOGD << buff["myquad"].eq(1)["Rect"]["size"].offset;
 
-    PLOGD << rectangle.size()<<"out" ;
+    PLOGD << "out" ;
  
 }
 

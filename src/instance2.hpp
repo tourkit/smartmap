@@ -18,12 +18,17 @@ namespace TEST {
         Buffer* buffer;
         int offset;
         AnyMember* member = nullptr;
+        int id = 0;
 
         Instance operator[](const char* name);
 
         bool exist();
 
-        // void set
+
+        Instance& eq(int id);
+
+        // template <typename T>
+        // Instance& set(T val) {}
         
     };
 

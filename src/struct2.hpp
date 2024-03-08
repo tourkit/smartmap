@@ -147,6 +147,14 @@ namespace TEST {
 
             return false;
 
+        }
+
+        static Struct& find(std::string name) { 
+
+            for (auto &s : pool) if (s->name() == name) return *s;
+            
+            return create(name);
+
          }
 
         Struct copy() {

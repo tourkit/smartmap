@@ -12,35 +12,41 @@
 
         TEST::Instance TEST::Instance::operator[](const char* name) { 
 
-
-            int offset = 0;
+            if  (offset < 0) return Instance{buffer,offset-1,member};
 
             AnyMember* found = nullptr;
-            PLOGD << "find " << name << " in " << (found?found->name():"buff");
-            if (!member) member = buffer;
-            int yy = 0;
-            for (auto &m : member->members) { 
 
-                PLOGD << m.get()->name()<<"_"<<m.get()->footprint();
+            if (!member) member = buffer;
+
+            for (auto &m : member->members) { 
 
                 if (!(strcmp(m.get()->name().c_str(),name))) {
                 
                     found = m.get();
-                    
-                    PLOGD << m.get()->name().c_str() <<yy<< " is " << name<<offset;
 
                     break;
                 
                 }
-
                 
                 offset += m.get()->footprint();
                 
             }
-            if (!found) offset = -1;
 
-            return Instance{buffer,this->offset+offset,found};
+            if (!found) { offset = -1; PLOGW << "\"" << name << "\" does not exist"; }
+        
+            return Instance{buffer,offset,found};
 
         }
 
 
+TEST::Instance& TEST::Instance::eq(int id) {
+
+        if (id >= member->quantity) return *this;
+        
+        id = id-this->id;
+
+        offset += member->footprint() * id;
+        
+        return *this;
+
+}
