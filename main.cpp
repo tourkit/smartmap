@@ -47,15 +47,15 @@ namespace TEST {
 
         virtual uint32_t size() { return 0; }
 
-        virtual uint32_t footprint() { return instance_footprint() * quantity; } 
-
-        virtual uint32_t instance_footprint() { 
+        virtual uint32_t footprint() { 
 
             if (is_striding) return nextFactor(size_v,16);
             
             return size_v; 
-            
-        }
+        
+        } 
+
+        virtual uint32_t footprint_all() { return footprint() * quantity; }
 
         virtual std::string type() { return "uknw"; }
         
@@ -72,8 +72,8 @@ namespace TEST {
             std::string str;
             for (int i = 0; i < tab; i++) str += "  ";
             str += type() + " " + name();
-            if (quantity>1) str += "[" + std::to_string(quantity) + "] - " + std::to_string(footprint()/quantity) + "B * " + std::to_string(quantity) + " = " + std::to_string(footprint()) + "B";
-            else str += " - " + std::to_string(footprint()/quantity) + "B";
+            if (quantity>1) str += "[" + std::to_string(quantity) + "] - " + std::to_string(footprint()) + "B * " + std::to_string(quantity) + " = " + std::to_string(footprint_all()) + "B";
+            else str += " - " + std::to_string(footprint()) + "B";
             PLOGD << str ;
 
         }
@@ -82,7 +82,7 @@ namespace TEST {
         void* range_to_ptr = nullptr;
         void* default_val_ptr = nullptr;
 
-        uint32_t stride() { return (footprint()-size_v); }
+        uint32_t stride() { return (footprint_all()-size_v); }
 
         void striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
@@ -213,7 +213,7 @@ namespace TEST {
 
                 if ((*it).get() == &s) {
 
-                    size_v -= (*it)->footprint();
+                    size_v -= (*it)->footprint_all();
                     members.erase(it);
 
                     break;
@@ -236,11 +236,11 @@ namespace TEST {
                         
                         m.get()->each(cb, offset+size);
 
-                        size+=m.get()->footprint();
+                        size+=m.get()->footprint_all();
 
                     }
 
-                    if (i!=quantity-1) offset+=instance_footprint();
+                    if (i!=quantity-1) offset+=footprint();
                     
                 }
                 
@@ -260,7 +260,7 @@ namespace TEST {
                     
                     m.get()->print(tab+1);
 
-                    offset+=m.get()->footprint();
+                    offset+=m.get()->footprint_all();
 
                 }
 
@@ -282,7 +282,7 @@ namespace TEST {
 
             size_v = 0;
 
-            for (auto &m : members) size_v += m->footprint();
+            for (auto &m : members) size_v += m->footprint_all();
 
             AnyMember::update();
 
@@ -296,7 +296,7 @@ namespace TEST {
 
             s.get()->owner = std::shared_ptr<Struct>(this);
 
-            size_v += members.back()->footprint();
+            size_v += members.back()->footprint_all();
 
             update();
 
@@ -319,7 +319,7 @@ namespace TEST {
 
         void set(AnyMember& m, void* data) { }
 
-        void update() override { data.resize( footprint() ); Struct::update(); }
+        void update() override { data.resize( footprint_all() ); Struct::update(); }
 
     };
 
@@ -348,7 +348,7 @@ using namespace TEST;
 
     quad.striding(true);
 
-    rectangle.striding(true);
+    Rect.striding(true);
 
     Buffer buff;
 
@@ -356,27 +356,58 @@ using namespace TEST;
 
     buff.print();
 
-    int last_offset = 0;
+    AnyMember* last_owner = nullptr;
 
-    int local_offset = 0;
-
-    int tab = 0;
+    int depth = 0;
 
     buff.each([&](AnyMember& m, int offset){ 
+
+        if (m.owner.get() != last_owner) {
+            
+            if (m.owner.get()->owner.get() == last_owner) { depth++; }
+
+            else {
+
+                while(m.owner.get() != last_owner) {
+
+                    depth--;
+
+                    last_owner = last_owner->owner.get(); 
+
+                }
+                
+            }
+            
+            
+        }
         
         std::string str;
+        for (int i = 0; i < depth; i++) str += "  ";
+        str += m.type() + " " + m.name();
+        str += " " + std::to_string(m.footprint());
+        str += " " + std::to_string(offset);
+        PLOGD << str;
 
-        for (int i = 0; i < tab; i++) str += "  ";
+        // auto owner = m.owner.get();
+        // if (owner && !m.size()) {
 
-        PLOGD << m.name() << " " << offset << " " << (m.size()?std::to_string(m.size()):"");
+        //     auto s = (Struct*)owner;
 
-        last_offset = offset;
-        local_offset += m.size();
+        //     if (s->members.size() && &m == s->members.back().get()) {
+                
+        //         std::string str;
+        //         for (int i = 0; i < depth; i++) str += "  ";
+        //         str+=m.name()+ " "+s->name()+ " "+s->members.back().get()->name()+ " stride";
+        //         // PLOGD << str;
+                
+        //     }
+
+        // } 
+
+        last_owner = m.owner.get();
 
     });
 
-
-    
     // set
     
     PLOGD << "out";
