@@ -34,6 +34,8 @@ add_executable(smartmap
     src/component.cpp
     src/struct.cpp
     src/instance.cpp
+    src/instance2.cpp
+    src/buffer2.cpp
     
     src/node.cpp
     src/callbacks.cpp

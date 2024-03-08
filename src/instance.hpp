@@ -5,6 +5,13 @@
 
 #include <cstring>
 
+
+
+
+
+
+
+
 struct Object;
 
 struct Instance {

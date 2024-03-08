@@ -8,6 +8,7 @@
 
 #include "object.hpp"
 
+
 struct Struct;
 struct Buffer {
     
