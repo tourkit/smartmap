@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <map>
 
+#include "buffer2.hpp"
 
 namespace TEST {
 
@@ -27,12 +28,19 @@ namespace TEST {
 
         Instance& eq(int id);
 
-        // template <typename T>
-        // Instance& set(T val) {}
+        template <typename T>
+        T get() { return *((T*)&buffer->data[offset]); }
+
+        template <typename T>
+        Instance& set(T val) {
+
+            memcpy(&buffer->data[offset], &val, member->size());
+
+            return *this;
+
+        }
         
     };
-
-
 
 };
 

@@ -27,6 +27,8 @@ struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
 
 int main() {
 
+    // todo : delete , auto create, 
+
 using namespace TEST;
 
     logger.cout();
@@ -41,16 +43,15 @@ using namespace TEST;
     // buff.add(rectangle);
     // buff.add(Rect);
 
-
     Struct quad("myquad",2);
+
     quad.add(rectangle);
+    // quad.remove(rectangle);
     quad.add(Rect);
     buff.add(quad);
     quad.striding(true);
 
-
     rectangle.striding(true);
-
     
     buff.print();
 
@@ -66,10 +67,16 @@ using namespace TEST;
 
     // set
     
+    buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(123);
+
+    auto ptr = buff.data.data();
+    
+    std::string str;
+    for (int i = 0 ; i < 48; i++) str += " "+std::to_string(*(uint8_t*)(ptr+i));
 
     PLOGD << buff["myquad"].eq(1)["Rect"]["size"].offset;
 
-    PLOGD << "out" ;
+    PLOGD << "out" << str << buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
  
 }
 

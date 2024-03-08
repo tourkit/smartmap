@@ -168,6 +168,8 @@ namespace TEST {
 
 
         Struct& add(Struct& s) { return addPtr(std::shared_ptr<Struct>(&s)); }  
+
+        Struct& remove(Struct& s) { ; PLOGD <<"OOO"; return removePtr(std::make_shared<Struct>(s)); }  
     
         template <typename T> 
         Struct& add(std::string name = "") { return addPtr(std::make_shared<Member<T>>(name)); }
@@ -307,6 +309,27 @@ namespace TEST {
             size_v += members.back()->footprint_all();
 
             update();
+
+            return *this;
+
+        } 
+        virtual Struct& removePtr(std::shared_ptr<AnyMember> s) {
+            
+            // auto it = std::remove(members.begin(), members.end(), s);
+
+            // if (it == members.end()) {
+                
+            //     PLOGW << "error " << s.get()->name(); 
+                
+            //     return *this;
+            
+            // }
+
+            // members.erase(it, members.end());
+
+            // size_v -= members.back()->footprint_all();
+
+            // update();
 
             return *this;
 
