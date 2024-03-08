@@ -84,7 +84,7 @@ namespace TEST {
 
         uint32_t stride() { return (footprint()-size_v); }
 
-        void striding(bool is_striding){ this->is_striding = is_striding; }
+        void striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
         bool striding() { return is_striding; }
 
@@ -156,6 +156,15 @@ namespace TEST {
             return false;
 
          }
+
+        Struct copy() {
+
+            Struct s = * this;
+            // for (auto &m : members) // make copry
+
+            return s;
+
+        }
 
         std::vector<std::shared_ptr<AnyMember>> members;
 
@@ -269,6 +278,16 @@ namespace TEST {
             } 
         }
 
+        void update() override { 
+
+            size_v = 0;
+
+            for (auto &m : members) size_v += m->footprint();
+
+            AnyMember::update();
+
+         }
+
     protected:
         
         virtual Struct& addPtr(std::shared_ptr<AnyMember> s) {
@@ -300,7 +319,7 @@ namespace TEST {
 
         void set(AnyMember& m, void* data) { }
 
-        void update() override { data.resize( footprint() ); PLOGD <<name()<< "resize" << footprint() ; }
+        void update() override { data.resize( footprint() ); Struct::update(); }
 
     };
 
@@ -319,37 +338,43 @@ using namespace TEST;
     logger.cout();
 
     Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");
-    // Rect.striding(true);
     Struct& rectangle = Struct::create("rectangle").add<vec2>("pos").add<vec2>("size").add<float_>("angle");
-    rectangle.striding(true);
     Struct& ID = Struct::create("ID").add<ui>();
 
     Struct quad("myquad",2);
+
     quad.add(Rect);
-    quad.striding(true);
-
-    Buffer buff;
-    buff.add(quad);
-
-    PLOGD<<"crever";
-
     Rect.add<float_>("angle");
 
-    PLOGD<<"----";
+    quad.striding(true);
+
+    rectangle.striding(true);
+
+    Buffer buff;
+
+    buff.add(quad);
 
     buff.print();
 
+    int last_offset = 0;
 
-    // for (auto a : AnyMember::pool) PLOGD << a.get()->name() << a.get()->owns(Rect);
+    int local_offset = 0;
 
+    int tab = 0;
 
-    // buff.each([](AnyMember& m, int offset){ 
+    buff.each([&](AnyMember& m, int offset){ 
+        
+        std::string str;
 
-    //     PLOGD << m.name() << " " << offset << " " << (m.size()?std::to_string(m.size()):"");
+        for (int i = 0; i < tab; i++) str += "  ";
 
-    // });
+        PLOGD << m.name() << " " << offset << " " << (m.size()?std::to_string(m.size()):"");
 
-    // buf.ser
+        last_offset = offset;
+        local_offset += m.size();
+
+    });
+
 
     
     // set
