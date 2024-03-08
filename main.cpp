@@ -27,11 +27,23 @@ namespace TEST {
 
         uint32_t quantity = 1; // ! \\ ONLY FOR Array !
 
-        // std::shared_ptr<AnyMember> owner = nullptr;
+        std::shared_ptr<AnyMember> owner = nullptr;
 
-        // virtual bool owns(AnyMember& m) { return false; }
+        virtual bool owns(AnyMember& m) { return false; }
 
-        // virtual void update() { auto topmost = owner.get(); while ( topmost->owner ) { topmost = topmost->owner.get(); } topmost->update(); }
+        virtual void update() { 
+            
+            if (owner) {
+
+                auto topmost = owner.get(); 
+
+                topmost->update();
+                
+                while ( topmost->owner ) { topmost = topmost->owner.get(); }  
+
+            }
+
+        }
 
         virtual uint32_t size() { return 0; }
 
@@ -263,13 +275,11 @@ namespace TEST {
 
             members.push_back(s);
 
-            // s.get()->owner = std::shared_ptr<Struct>(this);
+            s.get()->owner = std::shared_ptr<Struct>(this);
 
             size_v += members.back()->footprint();
 
-            // update();
-
-            // for (auto a : AnyMember::pool) if (a.get()->owns(*this->any())){ PLOGD<<"OWENS"<<a.get()->name(); a.get()->update();}
+            update();
 
             return *this;
 
@@ -290,7 +300,7 @@ namespace TEST {
 
         void set(AnyMember& m, void* data) { }
 
-        // void update() override { data.resize( footprint() ); PLOGD <<name()<< "resize" << footprint() ; }
+        void update() override { data.resize( footprint() ); PLOGD <<name()<< "resize" << footprint() ; }
 
     };
 
@@ -308,28 +318,24 @@ using namespace TEST;
 
     logger.cout();
 
-
-    PLOGD << "OK";
     Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");
+    // Rect.striding(true);
     Struct& rectangle = Struct::create("rectangle").add<vec2>("pos").add<vec2>("size").add<float_>("angle");
     rectangle.striding(true);
     Struct& ID = Struct::create("ID").add<ui>();
-    // ID.striding(true);
-    // ID.print();
+
     Struct quad("myquad",2);
-    quad
-        .add(Rect)
-        // .add(ID)
-    ;
+    quad.add(Rect);
     quad.striding(true);
 
     Buffer buff;
     buff.add(quad);
+
     PLOGD<<"crever";
+
     Rect.add<float_>("angle");
 
-    // Struct quad2("myquad2",2);
-    // buff.add(quad2);
+    PLOGD<<"----";
 
     buff.print();
 
