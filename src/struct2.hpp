@@ -23,7 +23,7 @@ namespace TEST {
 
         AnyMember(std::string name_v = "") { name(name_v); pool.insert(std::shared_ptr<AnyMember>(this)); }
 
-        ~AnyMember() { pool.erase(std::shared_ptr<AnyMember>(this)); }
+        // ~AnyMember() { PLOGD << "deleting << " << name(); pool.erase(std::shared_ptr<AnyMember>(this)); }
 
         uint32_t quantity = 1; // ! \\ ONLY FOR Array !
 
@@ -169,7 +169,7 @@ namespace TEST {
 
         Struct& add(Struct& s) { return addPtr(std::shared_ptr<Struct>(&s)); }  
 
-        Struct& remove(Struct& s) { ; PLOGD <<"OOO"; return removePtr(std::make_shared<Struct>(s)); }  
+        Struct& remove(Struct& s) { ; PLOGD <<"OOO"; return removePtr(s); }  
     
         template <typename T> 
         Struct& add(std::string name = "") { return addPtr(std::make_shared<Member<T>>(name)); }
@@ -313,23 +313,29 @@ namespace TEST {
             return *this;
 
         } 
-        virtual Struct& removePtr(std::shared_ptr<AnyMember> s) {
-            
-            // auto it = std::remove(members.begin(), members.end(), s);
+        virtual Struct& removePtr(Struct&  s) {
 
-            // if (it == members.end()) {
+            auto found = members.begin();
+
+            for(auto it = members.begin(); it != members.end(); it++ ) if ((*it).get() == &s) {
                 
-            //     PLOGW << "error " << s.get()->name(); 
+                found = it;
                 
-            //     return *this;
+                break;
+                
+            }
             
-            // }
+            if (found == members.end()) PLOGW << "error " << (*found).get()->name(); 
 
-            // members.erase(it, members.end());
+            else {
+            
+                members.erase(found, members.end());
 
-            // size_v -= members.back()->footprint_all();
+            //     size_v -= members.back()->footprint_all();
 
-            // update();
+            //     update();
+
+            }
 
             return *this;
 
