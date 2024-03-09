@@ -20,15 +20,15 @@
 
             for (auto &m : member->members) { 
 
-                if (!(strcmp(m.get()->name().c_str(),name))) {
+                if (!(strcmp(m->name().c_str(),name))) {
                 
-                    found = m.get();
+                    found = m;
 
                     break;
                 
                 }
                 
-                offset += m.get()->footprint();
+                offset += m->footprint();
                 
             }
 

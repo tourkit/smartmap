@@ -16,24 +16,19 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
 
 namespace TEST {
 
-
     struct AnyMember {
 
-        static inline std::unordered_set<std::shared_ptr<AnyMember>> owned;
+        static inline std::unordered_set<AnyMember*> pool;
 
-        AnyMember(std::string name_v = "") { name(name_v); owned.insert(std::shared_ptr<AnyMember>(this)); }
+        AnyMember(std::string name_v = "") { name(name_v); pool.insert(this); }
 
-        // ~AnyMember() { PLOGD << "deleting << " << name(); owned.erase(std::shared_ptr<AnyMember>(this)); }
+        ~AnyMember() { PLOGD << "~" << name(); pool.erase(this); }
 
         uint32_t quantity = 1; // ! \\ ONLY FOR Array !
 
         virtual bool owns(AnyMember& m) { return false; }
 
-        virtual void update() { 
-
-            for (auto a : owned) if (a.get()->owns(*this)) a.get()->update();
-
-        }
+        virtual void update() { for (auto a : pool) if (a->owns(*this)) a->update(); }
 
         virtual uint32_t size() { return 0; }
 
@@ -78,7 +73,7 @@ namespace TEST {
 
         bool striding() { return is_striding; }
 
-        std::vector<std::shared_ptr<AnyMember>> members;
+        std::vector<AnyMember*> members;
 
     protected:
 
@@ -117,33 +112,17 @@ namespace TEST {
 
     };
 
-    struct Struct;
-    // struct Instance : AnyMember {
-
-    //     Struct* s;
-
-    //     std::string name() override { if (quantity > 1) { return AnyMember::name()+"_"+std::to_string(quantity); } return AnyMember::name(); }
-
-    // };
 
     struct Struct : AnyMember {
 
+        Struct(std::string name = "", uint32_t quantity = 1) : AnyMember(name) { this->quantity = quantity; }
 
-        Struct(std::string name = "", uint32_t quantity = 1) : AnyMember(name) { this->quantity = quantity; pool.insert(std::make_shared<Struct>(std::move(*this))); }
-
-        ~Struct() { for (auto &s : pool) if (s.get() == this) { pool.erase(s); break; } PLOGD << "~" << name(); }
-
-        static inline std::unordered_set<std::shared_ptr<Struct>> owned;
-        static inline std::set<std::shared_ptr<Struct>> pool;
+        static inline std::set<Struct*> owned;
 
         template <typename... Args> 
         static Struct& create(Args&&... args) { 
-
-            Struct s(std::forward<Args>(args)...);
             
-            auto x = owned.insert(std::shared_ptr<Struct>(*pool.rbegin())); 
-        
-            return *x.first->get(); 
+            return **owned.insert(new Struct(std::forward<Args>(args)...)).first;
             
         }
 
@@ -174,7 +153,7 @@ namespace TEST {
 
         Struct& add(Struct& s) { 
 
-            for (auto &c : pool) if (c.get() == &s) return addPtr(std::shared_ptr<AnyMember>(c));
+            for (auto &c : pool) if (c == &s) return addPtr(&s);
 
             PLOGW << " noadd" << s.name();
 
@@ -184,7 +163,7 @@ namespace TEST {
 
         Struct& remove(Struct& s) { 
 
-            for (auto &m : members) if (m.get() == &s) return removePtr(m);
+            for (auto &m : members) if (m == &s) return removePtr(&s);
 
             PLOGW << " noadd" << s.name();
 
@@ -193,14 +172,14 @@ namespace TEST {
         };
     
         template <typename T> 
-        Struct& add(std::string name = "") { return addPtr(std::make_shared<Member<T>>(name)); }
+        Struct& add(std::string name = "") { return addPtr(new Member<T>(name)); }
     
         Struct& range(float from, float to) { 
             
-            auto a = members.back().get();
+            auto a = members.back();
             if (typeid(*a).hash_code() == typeid(Member<float>).hash_code()) {
-                ((Member<float>*)members.back().get())->range_from = from;
-                ((Member<float>*)members.back().get())->range_to = to;
+                ((Member<float>*)members.back())->range_from = from;
+                ((Member<float>*)members.back())->range_to = to;
             }
             return *this; 
         
@@ -208,10 +187,10 @@ namespace TEST {
     
         Struct& range(uint32_t from, uint32_t to) { 
             
-            auto a = members.back().get();
+            auto a = members.back();
             if (typeid(*a).hash_code() == typeid(Member<uint32_t>).hash_code()) {
-                ((Member<uint32_t>*)members.back().get())->range_from = from;
-                ((Member<uint32_t>*)members.back().get())->range_to = to;
+                ((Member<uint32_t>*)members.back())->range_from = from;
+                ((Member<uint32_t>*)members.back())->range_to = to;
             }
             return *this; 
         
@@ -223,7 +202,7 @@ namespace TEST {
             
             uint32_t size_v = 0;
             
-            for (auto &m : members) size_v += m.get()->size();
+            for (auto &m : members) size_v += m->size();
 
             return size_v; 
 
@@ -233,7 +212,7 @@ namespace TEST {
 
         bool owns(AnyMember& m) override { 
 
-            for (auto &s : members) if (s.get() == &m) return true;
+            for (auto &s : members) if (s == &m) return true;
 
             return false;
         }
@@ -246,13 +225,13 @@ namespace TEST {
 
                 int size = 0;
 
-                if (members.size() > 1 || members[0].get()->name().length() ||  striding()) {
+                if (members.size() > 1 || members[0]->name().length() ||  striding()) {
                 
                     for (auto &m :members) {
                         
-                        m.get()->each(cb, offset+size);
+                        m->each(cb, offset+size);
 
-                        size+=m.get()->footprint_all();
+                        size+=m->footprint_all();
 
                     }
 
@@ -270,13 +249,13 @@ namespace TEST {
 
             int offset = 0;
 
-            if (members.size() > 1 || members[0].get()->name().length() ||  striding()) {
+            if (members.size() > 1 || members[0]->name().length() ||  striding()) {
             
                 for (auto &m :members) {
                     
-                    m.get()->print(tab+1);
+                    m->print(tab+1);
 
-                    offset+=m.get()->footprint_all();
+                    offset+=m->footprint_all();
 
                 }
 
@@ -307,7 +286,7 @@ namespace TEST {
 
     protected:
         
-        virtual Struct& addPtr(std::shared_ptr<AnyMember> s) {
+        virtual Struct& addPtr(AnyMember* s) {
 
             members.push_back(s);
 
@@ -319,7 +298,7 @@ namespace TEST {
 
         } 
 
-        virtual Struct& removePtr(std::shared_ptr<AnyMember>&  m) {
+        virtual Struct& removePtr(AnyMember*  m) {
 
             members.erase(std::remove(members.begin(),members.end(),m),members.end());
 
