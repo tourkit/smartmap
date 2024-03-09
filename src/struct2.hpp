@@ -87,15 +87,22 @@ namespace TEST {
 
     };
 
-
+    struct AnyData : AnyMember {         
+        
+        template <typename... Args> 
+        AnyData(Args&&... args) : AnyMember(std::forward<Args>(args)...) { } 
+        
+    };
+    
     template <typename T>
-    struct Data : AnyMember {
+    struct Data : AnyData {
 
         T range_from;
         T range_to;
         T default_val;
 
-        Data(std::string name = "")  : AnyMember(name) {
+        template <typename... Args> 
+        Data(Args&&... args) : AnyData(std::forward<Args>(args)...) {
 
             range_from_ptr = &range_from;
             range_to_ptr = &range_to;

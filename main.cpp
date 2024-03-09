@@ -61,7 +61,7 @@ using namespace TEST;
 
     });
 
-    // todo : hardcopy/bkp/remap
+    // todo : resize, hardcopy/bkp/remap
     
     buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(123);
 
