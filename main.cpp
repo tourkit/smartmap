@@ -116,7 +116,7 @@ using namespace TEST;
     Struct quad("myquad",2);
 
     quad.add(rectangle);
-    // quad.remove(rectangle);
+    quad.remove(rectangle);
     quad.add(Rect);
     buff.add(quad);
     quad.striding(true);

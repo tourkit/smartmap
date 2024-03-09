@@ -300,9 +300,9 @@ namespace TEST {
 
         virtual Struct& removePtr(AnyMember*  m) {
 
-            members.erase(std::remove(members.begin(),members.end(),m),members.end());
 
             size_v -= members.back()->footprint_all();
+            members.erase(std::remove(members.begin(),members.end(),m),members.end());
 
             update();
 
