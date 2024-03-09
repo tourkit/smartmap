@@ -116,7 +116,6 @@ namespace TEST {
 
         uint32_t footprint() override { return size(); }
 
-
     };
 
 
@@ -151,6 +150,16 @@ namespace TEST {
 
         }
 
+        Struct&  resize(int quantity) {
+
+            this->quantity = quantity;
+            
+            update();
+
+            return *this;
+        
+        }
+
         Struct& add(Struct& s) { 
 
             for (auto &c : pool) if (c == &s) return addPtr(&s);
@@ -181,17 +190,12 @@ namespace TEST {
                 ((Data<float>*)members.back())->range_from = from;
                 ((Data<float>*)members.back())->range_to = to;
             }
-            return *this; 
-        
-        }
-    
-        Struct& range(uint32_t from, uint32_t to) { 
-            
-            auto a = members.back();
+
             if (typeid(*a).hash_code() == typeid(Data<uint32_t>).hash_code()) {
-                ((Data<uint32_t>*)members.back())->range_from = from;
-                ((Data<uint32_t>*)members.back())->range_to = to;
+                ((Data<uint32_t>*)members.back())->range_from = (uint32_t) from;
+                ((Data<uint32_t>*)members.back())->range_to = (uint32_t) to;
             }
+
             return *this; 
         
         }

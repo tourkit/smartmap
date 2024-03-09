@@ -28,7 +28,7 @@
                 
                 }
                 
-                offset += m->footprint();
+                offset += m->footprint()*m->quantity;
                 
             }
 

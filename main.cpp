@@ -40,39 +40,47 @@ using namespace TEST;
     Struct quad("myquad",2);
 
     quad.add(rectangle);
+    
     quad.remove(rectangle);
+
     quad.add(Rect);
+
     buff.add(quad);
+    
     buff.add(rectangle);
+
+    Rect.add<float_>("angle").range(0.0f,1.0f);
+
+    quad.add<ui>("somadem").range(100,200);
+    
     quad.striding(true);
 
     rectangle.striding(true);
+
+    quad.resize(3);
     
     buff.print();
 
     buff.each([&](AnyMember& m, int offset, int depth){ 
         
         std::string str;
-        for (int i = 0 ; i < depth; i++) str+= "  ";
+        for (int i = 0 ; i < depth; i++) str+= "    ";
         str += m.type() + " " + m.name();
-        str += " " +  std::to_string(offset);
+        str += "    " +  std::to_string(offset);
         str += " (" +std::to_string(m.footprint())+")";
         PLOGD << str;
 
     });
-
-    // todo : resize, hardcopy/bkp/remap
     
     buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(123);
-
     auto ptr = buff.data.data();
-    
     std::string str;
     for (int i = 0 ; i < 48; i++) str += " "+std::to_string(*(uint8_t*)(ptr+i));
-
     PLOGD << buff["myquad"].eq(1)["Rect"]["size"].offset;
-
+    PLOGD << buff["rectangle"]["size"].offset;
     PLOGD << "out" << str << buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
+
+    // todo : striding, hardcopy/bkp/remap
  
 }
 
