@@ -35,7 +35,13 @@ std::string glsl_layout(AnyMember& s) {
 
     std::string str = "struct " + s.name() + " {";
 
-    for (auto &m : s.members) str += " " + m->type() + " " + m->name() + ";";
+    for (auto &m : s.members) {
+        
+        std::string name = !m->typed() ? "struct" : m->type().name();
+    
+        str += " " + name + " " + m->name() + ";";
+    
+    }
 
     for (int i = 0; i < s.stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
     
@@ -117,7 +123,8 @@ using namespace TEST;
 
         std::string str; 
         str += tab;
-        str += m.type() + " " + m.name();
+        std::string name = !m.typed() ? "struct" : m.type().name();
+        str += name + " " + m.name();
         str += "    " +  std::to_string(offset);
         str += " (" +std::to_string(m.footprint())+")";
 

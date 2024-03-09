@@ -8,6 +8,7 @@
 #include <memory>
 #include <unordered_set>
 #include <set>
+#include <typeindex>
 #include "log.hpp"
 
 
@@ -16,6 +17,7 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
 
 namespace TEST {
 
+    struct uknw {};
     struct AnyMember {
 
         static inline std::unordered_set<AnyMember*> pool;
@@ -42,7 +44,7 @@ namespace TEST {
 
         virtual uint32_t footprint_all() { return footprint() * quantity; }
 
-        virtual std::string type() { return "uknw"; }
+        virtual std::type_index type() { return typeid(uknw); }
         
         void name(std::string name_v) { this->name_v = name_v; }
 
@@ -101,7 +103,7 @@ namespace TEST {
 
         }
 
-        std::string type() override { return std::string(typeid(T).name()); }
+        std::type_index type() override { return typeid(T); }
 
         uint32_t size() override { return sizeof(T); }
 
@@ -169,11 +171,13 @@ namespace TEST {
             if (typeid(*a).hash_code() == typeid(Data<float>).hash_code()) {
                 ((Data<float>*)members.back())->range_from = from;
                 ((Data<float>*)members.back())->range_to = to;
+                PLOGD << " ----- is : float";
             }
 
             if (typeid(*a).hash_code() == typeid(Data<uint32_t>).hash_code()) {
                 ((Data<uint32_t>*)members.back())->range_from = (uint32_t) from;
                 ((Data<uint32_t>*)members.back())->range_to = (uint32_t) to;
+                PLOGD << " ----- is : uint32_t";
             }
 
             return *this; 
@@ -192,13 +196,14 @@ namespace TEST {
 
         }
 
-        std::string type() override { if (members.size() == 1) { return members[0]->type(); } return "Struct"; }
+        std::type_index type() override { if (members.size() == 1) { return members[0]->type(); } return typeid(Struct); }
 
         bool owns(AnyMember& m) override { 
 
             for (auto &s : members) if (s == &m) return true;
 
             return false;
+            
         }
 
          void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth, std::function<void(AnyMember&)> after_cb) override {
@@ -226,7 +231,6 @@ namespace TEST {
                 if (after_cb) after_cb(*this);
 
             }
-
 
         }
 
@@ -263,8 +267,8 @@ namespace TEST {
 
         virtual Struct& removePtr(AnyMember*  m) {
 
-
             size_v -= members.back()->footprint_all();
+
             members.erase(std::remove(members.begin(),members.end(),m),members.end());
 
             update();
