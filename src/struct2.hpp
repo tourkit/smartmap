@@ -50,7 +50,7 @@ namespace TEST {
 
         AnyMember* any() { return this; }
 
-        virtual void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth) { cb(*this, offset,depth); }
+        virtual void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth, std::function<void(AnyMember&)> after_cb = nullptr) { cb(*this, offset,depth); }
 
         virtual void print(int tab = 0) {
 
@@ -67,7 +67,7 @@ namespace TEST {
         void* range_to_ptr = nullptr;
         void* default_val_ptr = nullptr;
 
-        uint32_t stride() { return (footprint_all()-size_v); }
+        uint32_t stride() { return (footprint()-size_v); }
 
         void striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
@@ -221,11 +221,11 @@ namespace TEST {
             return false;
         }
 
-         void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset = 0, int depth = 0) override {
+         void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth, std::function<void(AnyMember&)> after_cb) override {
 
             for (int i = 0 ; i < quantity; i++) {
 
-                AnyMember::each(cb, offset,depth);
+                cb(*this, offset,depth);
 
                 int size = 0;
 
@@ -233,7 +233,7 @@ namespace TEST {
                 
                     for (auto &m :members) {
                         
-                        m->each(cb, offset+size, depth+1);
+                        m->each(cb, offset+size, depth+1, after_cb);
 
                         size+=m->footprint_all();
 
@@ -243,13 +243,18 @@ namespace TEST {
                     
                 }
                 
+                if (after_cb) after_cb(*this);
+                
             }
 
+
         }
+
+        void each(std::function<void(AnyMember&, int, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr) { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset,depth); }, 0, 0, after_cb); }
+
+        void each(std::function<void(AnyMember&, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset); }, 0, 0, after_cb); }
         
-        void each(std::function<void(AnyMember& m, int offset)> cb, int offset = 0)  { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset); }, offset, 0); }
-        
-        void each(std::function<void(AnyMember& m)> cb, int offset = 0)  { each([cb](AnyMember& m, int offset, int depth){ cb(m); }, offset, 0); }
+        void each(std::function<void(AnyMember&)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m); }, 0, 0, after_cb); }
 
         void print(int tab = 0) override {
 

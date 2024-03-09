@@ -40,7 +40,7 @@ using namespace TEST;
     Struct quad("myquad",2);
 
     quad.add(rectangle);
-    
+
     quad.remove(rectangle);
 
     quad.add(Rect);
@@ -55,22 +55,25 @@ using namespace TEST;
     
     quad.striding(true);
 
-    rectangle.striding(true);
+    Rect.striding(true);
 
     quad.resize(3);
     
     buff.print();
 
+    std::string tab;
     buff.each([&](AnyMember& m, int offset, int depth){ 
         
-        std::string str;
-        for (int i = 0 ; i < depth; i++) str+= "    ";
+        tab = "";
+        for (int i = 0 ; i < depth; i++) tab+= "    ";
+        std::string str = tab; 
         str += m.type() + " " + m.name();
         str += "    " +  std::to_string(offset);
         str += " (" +std::to_string(m.footprint())+")";
+
         PLOGD << str;
 
-    });
+    }, [&](AnyMember& m){ if (m.striding()) PLOGD << tab<<"stride" << m.stride(); });
     
     buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(123);
     auto ptr = buff.data.data();
@@ -80,7 +83,7 @@ using namespace TEST;
     PLOGD << buff["rectangle"]["size"].offset;
     PLOGD << "out" << str << buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
 
-    // todo : striding, hardcopy/bkp/remap
+    // todo : hardcopy/bkp/remap, struct to layout
  
 }
 
