@@ -19,11 +19,11 @@ namespace TEST {
 
     struct AnyMember {
 
-        static inline std::unordered_set<std::shared_ptr<AnyMember>> pool;
+        static inline std::unordered_set<std::shared_ptr<AnyMember>> owned;
 
-        AnyMember(std::string name_v = "") { name(name_v); pool.insert(std::shared_ptr<AnyMember>(this)); }
+        AnyMember(std::string name_v = "") { name(name_v); owned.insert(std::shared_ptr<AnyMember>(this)); }
 
-        // ~AnyMember() { PLOGD << "deleting << " << name(); pool.erase(std::shared_ptr<AnyMember>(this)); }
+        // ~AnyMember() { PLOGD << "deleting << " << name(); owned.erase(std::shared_ptr<AnyMember>(this)); }
 
         uint32_t quantity = 1; // ! \\ ONLY FOR Array !
 
@@ -31,7 +31,7 @@ namespace TEST {
 
         virtual void update() { 
 
-            for (auto a : pool) if (a.get()->owns(*this)) a.get()->update();
+            for (auto a : owned) if (a.get()->owns(*this)) a.get()->update();
 
         }
 
@@ -128,14 +128,20 @@ namespace TEST {
 
     struct Struct : AnyMember {
 
-        Struct(std::string name = "", uint32_t quantity = 1) : AnyMember(name) { this->quantity = quantity; }
 
-        static inline std::unordered_set<std::shared_ptr<Struct>> pool;
+        Struct(std::string name = "", uint32_t quantity = 1) : AnyMember(name) { this->quantity = quantity; pool.insert(std::make_shared<Struct>(std::move(*this))); }
+
+        ~Struct() { for (auto &s : pool) if (s.get() == this) { pool.erase(s); break; } PLOGD << "~" << name(); }
+
+        static inline std::unordered_set<std::shared_ptr<Struct>> owned;
+        static inline std::set<std::shared_ptr<Struct>> pool;
 
         template <typename... Args> 
         static Struct& create(Args&&... args) { 
+
+            Struct s(std::forward<Args>(args)...);
             
-            auto x = pool.insert(std::make_shared<Struct>(std::forward<Args>(args)...)); 
+            auto x = owned.insert(std::shared_ptr<Struct>(*pool.rbegin())); 
         
             return *x.first->get(); 
             
@@ -143,7 +149,7 @@ namespace TEST {
 
         static bool destroy(std::string name) { 
 
-            for (auto &s : pool) if (s->name() == name) { pool.erase(s); return true; }
+            for (auto &s : owned) if (s->name() == name) { owned.erase(s); delete &s; return true; }
 
             return false;
 
@@ -151,7 +157,7 @@ namespace TEST {
 
         static Struct& find(std::string name) { 
 
-            for (auto &s : pool) if (s->name() == name) return *s;
+            for (auto &s : owned) if (s->name() == name) return *s;
             
             return create(name);
 
@@ -166,10 +172,25 @@ namespace TEST {
 
         }
 
+        Struct& add(Struct& s) { 
 
-        Struct& add(Struct& s) { return addPtr(std::shared_ptr<Struct>(&s)); }  
+            for (auto &c : pool) if (c.get() == &s) return addPtr(std::shared_ptr<AnyMember>(c));
 
-        Struct& remove(Struct& s) { ; PLOGD <<"OOO"; return removePtr(s); }  
+            PLOGW << " noadd" << s.name();
+
+            return *this;
+            
+        }  
+
+        Struct& remove(Struct& s) { 
+
+            for (auto &m : members) if (m.get() == &s) return removePtr(m);
+
+            PLOGW << " noadd" << s.name();
+
+            return *this;
+
+        };
     
         template <typename T> 
         Struct& add(std::string name = "") { return addPtr(std::make_shared<Member<T>>(name)); }
@@ -215,22 +236,6 @@ namespace TEST {
             for (auto &s : members) if (s.get() == &m) return true;
 
             return false;
-
-        }
-
-        void remove(const Struct& s) {
-
-            for (auto it = members.begin(); it != members.end(); ++it) {
-
-                if ((*it).get() == &s) {
-
-                    size_v -= (*it)->footprint_all();
-                    members.erase(it);
-
-                    break;
-
-                }
-            }
         }
         
          void each(std::function<void(AnyMember& m, int offset)> cb, int offset = 0) override {
@@ -313,33 +318,18 @@ namespace TEST {
             return *this;
 
         } 
-        virtual Struct& removePtr(Struct&  s) {
 
-            auto found = members.begin();
+        virtual Struct& removePtr(std::shared_ptr<AnyMember>&  m) {
 
-            for(auto it = members.begin(); it != members.end(); it++ ) if ((*it).get() == &s) {
-                
-                found = it;
-                
-                break;
-                
-            }
-            
-            if (found == members.end()) PLOGW << "error " << (*found).get()->name(); 
+            members.erase(std::remove(members.begin(),members.end(),m),members.end());
 
-            else {
-            
-                members.erase(found, members.end());
+            size_v -= members.back()->footprint_all();
 
-            //     size_v -= members.back()->footprint_all();
+            update();
 
-            //     update();
+            return *this; 
 
-            }
-
-            return *this;
-
-        } 
+        }
 
     };
 

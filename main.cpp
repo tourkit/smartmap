@@ -103,20 +103,6 @@ using namespace TEST;
 
     logger.cout();
 
-    {    
-
-        OBJ foo("foo");
-
-        OBJ& bar = OBJ::create("bar");
-
-        foo.add(bar);
-        foo.remove(bar);
-        
-        PLOGD<<"ou"<<foo.childrens.size();
-
-    }
-
-    exit(0);
 
     Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");
     Struct& rectangle = Struct::create("rectangle").add<vec2>("pos").add<vec2>("size").add<float_>("angle");
