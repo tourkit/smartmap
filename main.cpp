@@ -23,9 +23,12 @@ struct vec2 { float x = 0, y = 0; };
 struct vec3 { float x = 0, y = 0, z = 0; };
 struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
 
-std::string glsl_layout(TEST::AnyMember& s) {
+namespace TEST {
+    
+std::string glsl_layout(AnyMember& s) {
 
     auto bkp_srtiding = s.striding();
+
     s.striding(true);
 
     if (!s.members.size()) return "";
@@ -43,6 +46,8 @@ std::string glsl_layout(TEST::AnyMember& s) {
     return str;
 
 }
+
+};
 
 int main() {
 
@@ -78,22 +83,21 @@ using namespace TEST;
     Rect.striding(true);
 
     quad.resize(3);
-    
-    buff.print();
 
     std::string tab;
     buff.each([&](AnyMember& m, int offset, int depth){ 
         
-        tab = "";
-        for (int i = 0 ; i < depth; i++) tab+= "    ";
-        std::string str = tab; 
+        tab = ""; for (int i = 0 ; i < depth; i++) tab+= "    ";
+
+        std::string str; 
+        str += tab;
         str += m.type() + " " + m.name();
         str += "    " +  std::to_string(offset);
         str += " (" +std::to_string(m.footprint())+")";
 
         PLOGD << str;
 
-    }, [&](AnyMember& m){ if (m.striding()) PLOGD << tab<<"stride" << m.stride(); });
+    }, [&](AnyMember& m){ if (m.striding()) PLOGD << tab <<"stride    " << m.stride(); });
     
     buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(123);
     auto ptr = buff.data.data();

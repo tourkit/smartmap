@@ -52,17 +52,6 @@ namespace TEST {
 
         virtual void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth, std::function<void(AnyMember&)> after_cb = nullptr) { cb(*this, offset,depth); }
 
-        virtual void print(int tab = 0) {
-
-            std::string str;
-            for (int i = 0; i < tab; i++) str += "  ";
-            str += type() + " " + name();
-            if (quantity>1) str += "[" + std::to_string(quantity) + "] - " + std::to_string(footprint()) + "B * " + std::to_string(quantity) + " = " + std::to_string(footprint_all()) + "B";
-            else str += " - " + std::to_string(footprint()) + "B";
-            PLOGD << str ;
-
-        }
-
         void* range_from_ptr = nullptr;
         void* range_to_ptr = nullptr;
         void* default_val_ptr = nullptr;
@@ -244,7 +233,7 @@ namespace TEST {
                 }
                 
                 if (after_cb) after_cb(*this);
-                
+
             }
 
 
@@ -255,36 +244,6 @@ namespace TEST {
         void each(std::function<void(AnyMember&, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset); }, 0, 0, after_cb); }
         
         void each(std::function<void(AnyMember&)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m); }, 0, 0, after_cb); }
-
-        void print(int tab = 0) override {
-
-            AnyMember::print(tab);
-
-            int offset = 0;
-
-            if (members.size() > 1 || members[0]->name().length() ||  striding()) {
-            
-                for (auto &m :members) {
-                    
-                    m->print(tab+1);
-
-                    offset+=m->footprint_all();
-
-                }
-
-            }
-
-            if (is_striding) {
-
-                int stride = nextFactor2(offset,16)-offset;
-                if (!stride) return;
-                std::string str;
-                for (int i = 0; i < tab+1; i++) str+="  ";
-                str += "  char stride[" + std::to_string(stride) + "] - 1B";
-                PLOGD << str;
-
-            } 
-        }
 
         void update() override { 
 
