@@ -16,7 +16,7 @@ namespace TEST {
 
     struct Instance { 
 
-        Buffer* buffer;
+        char* data;
         int offset;
         AnyMember* member = nullptr;
         int id = 0;
@@ -29,12 +29,12 @@ namespace TEST {
         Instance& eq(int id);
 
         template <typename T>
-        T get() { return *((T*)&buffer->data[offset]); }
+        T get() { return *((T*)(data+offset)); }
 
         template <typename T>
         Instance& set(T val) {
 
-            memcpy(&buffer->data[offset], &val, member->size());
+            memcpy(data+offset, &val, member->size());
 
             return *this;
 

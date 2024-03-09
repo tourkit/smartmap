@@ -34,6 +34,20 @@ namespace TEST {
 
         Instance operator[](const char* name);
 
+        AnyMember* copy(AnyMember* x) override { 
+            
+            if (!x) x = new Buffer(); 
+
+            Struct::copy(x);
+
+            ((Buffer*)x)->data = data;
+
+            return x; 
+            
+        }
+        
+        Buffer& copy() { return *(Buffer*)copy(nullptr); }
+
     };
 
     

@@ -12,11 +12,11 @@
 
         TEST::Instance TEST::Instance::operator[](const char* name) { 
 
-            if  (offset < 0) return Instance{buffer,offset-1,member};
+            if  (offset < 0) return Instance{data,offset-1,member};
 
             AnyMember* found = nullptr;
 
-            if (!member) member = buffer;
+            if (!member) {PLOGW << "BUGGY";exit(0);}
 
             for (auto &m : member->members) { 
 
@@ -34,14 +34,14 @@
 
             if (!found) { offset = -1; PLOGW << "\"" << name << "\" does not exist"; }
         
-            return Instance{buffer,offset,found};
+            return Instance{data,offset,found};
 
         }
 
 
 TEST::Instance& TEST::Instance::eq(int id) {
 
-        if (id >= member->quantity) return *this;
+        if (!member || id >= member->quantity) return *this;
         
         id = id-this->id;
 

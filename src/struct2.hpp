@@ -17,7 +17,6 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
 
 namespace TEST {
 
-    struct uknw {};
     struct AnyMember {
 
         static inline std::unordered_set<AnyMember*> pool;
@@ -38,7 +37,7 @@ namespace TEST {
 
         virtual uint32_t footprint_all() { return footprint() * quantity; }
 
-        virtual std::type_index type() { return typeid(uknw); }
+        virtual std::type_index type() { return typeid(*this); }
         
         void name(std::string name_v) { this->name_v = name_v; }
 
@@ -58,11 +57,15 @@ namespace TEST {
 
         bool striding() { return is_striding; }
 
-        virtual AnyMember* copy() { 
+        virtual AnyMember* copy(AnyMember* x = nullptr) { 
+
+            if(!x) x = new AnyMember(); 
             
-            auto x = new AnyMember(name()); 
+            x->name(name()+"_bkp");
 
             x->striding(striding());
+
+            x->members = members;
             
             return x; 
             
@@ -72,12 +75,30 @@ namespace TEST {
 
         std::vector<AnyMember*> members;
 
-    protected:
+        void print() {
 
-        bool is_striding = false;
+            std::string tab;
+
+            each([&](AnyMember& m, int offset, int depth){ 
+                
+                tab = ""; for (int i = 0 ; i < depth; i++) tab+= "  ";
+
+                std::string str; 
+                str += tab;
+                str += !m.typed() ? "struct" : m.type().name();
+                str += " " + m.name();
+                str += "    " +  std::to_string(offset);
+                str += " (" +std::to_string(m.footprint())+")";
+
+                PLOGD << str;
+
+            }, 0, 0, [&](AnyMember& m){ if (m.striding()) PLOGD << tab <<"float stride    " << m.stride()/sizeof(float); });
+
+        }
 
     private:
     
+        bool is_striding = false;
         std::string name_v;
 
     };
@@ -113,13 +134,15 @@ namespace TEST {
         
         bool typed() override { return true; }
 
-        virtual AnyMember* copy() { 
+        AnyMember* copy(AnyMember* x = nullptr) override { 
             
-            auto x = new Data<T>(name()); 
+            if (!x) x = new Data<T>(name()); 
+            
+            AnyMember::copy(x);
 
-            x->range_from = range_from;
-            x->range_to = range_to;
-            x->default_val = default_val;
+            memcpy(x->range_from_ptr,range_from_ptr,sizeof(T));
+            memcpy(x->range_to_ptr,range_to_ptr,sizeof(T));
+            memcpy(x->default_val_ptr,default_val_ptr,sizeof(T));
 
             return x; 
             
@@ -158,26 +181,22 @@ namespace TEST {
 
         Struct& add(Struct& s) { 
 
-            for (auto &c : pool) if (c == &s) return addPtr(&s);
+            for (auto &c : pool) if (c == &s) return add(&s);
 
-            PLOGW << " noadd" << s.name();
-
-            return *this;
+            PLOGW << " noadd" << s.name(); return *this;
             
         }  
 
         Struct& remove(Struct& s) { 
 
-            for (auto &m : members) if (m == &s) return removePtr(&s);
+            for (auto &m : members) if (m == &s) return remove(&s);
 
-            PLOGW << " noadd" << s.name();
-
-            return *this;
+            PLOGW << " noadd" << s.name(); return *this;
 
         };
     
         template <typename T> 
-        Struct& add(std::string name = "") { return addPtr(new Data<T>(name)); }
+        Struct& add(std::string name = "") { return add(new Data<T>(name)); }
     
         Struct& range(float from, float to) { 
             
@@ -211,7 +230,7 @@ namespace TEST {
         }
         uint32_t footprint() override { 
 
-            if (is_striding) return nextFactor2(size_v,16);
+            if (striding()) return nextFactor2(size_v,16);
             
             return size_v; 
         
@@ -226,6 +245,40 @@ namespace TEST {
             
         }
 
+
+
+        void each(std::function<void(AnyMember&, int, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr) { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset,depth); }, 0, 0, after_cb); }
+
+        void each(std::function<void(AnyMember&, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset); }, 0, 0, after_cb); }
+        
+        void each(std::function<void(AnyMember&)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m); }, 0, 0, after_cb); }
+
+        void update() override { 
+
+            size_v = 0;
+
+            for (auto &m : members) size_v += m->footprint_all();
+
+            AnyMember::update();
+
+         }
+
+        AnyMember* copy(AnyMember* x = nullptr) override { 
+            
+            if (!x) x = new Struct(); 
+            
+            AnyMember::copy(x);  
+
+            x->quantity = quantity;    
+
+            for (auto m : members) m = m->copy();
+
+            return x; 
+            
+        }
+
+
+    protected:
          void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth, std::function<void(AnyMember&)> after_cb) override {
 
             for (int i = 0 ; i < quantity; i++) {
@@ -252,38 +305,8 @@ namespace TEST {
 
             }
 
-        }
-
-        void each(std::function<void(AnyMember&, int, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr) { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset,depth); }, 0, 0, after_cb); }
-
-        void each(std::function<void(AnyMember&, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset); }, 0, 0, after_cb); }
-        
-        void each(std::function<void(AnyMember&)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m); }, 0, 0, after_cb); }
-
-        void update() override { 
-
-            size_v = 0;
-
-            for (auto &m : members) size_v += m->footprint_all();
-
-            AnyMember::update();
-
-         }
-
-        virtual AnyMember* copy() { 
-            
-            auto x = new Struct(name()); 
-
-            for (auto m : members) m = m->copy();
-
-            return x; 
-            
-        }
-
-
-    protected:
-        
-        virtual Struct& addPtr(AnyMember* s) {
+        }        
+        virtual Struct& add(AnyMember* s) {
 
             members.push_back(s);
 
@@ -295,7 +318,7 @@ namespace TEST {
 
         } 
 
-        virtual Struct& removePtr(AnyMember*  m) {
+        virtual Struct& remove(AnyMember*  m) {
 
             size_v -= members.back()->footprint_all();
 

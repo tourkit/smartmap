@@ -53,30 +53,8 @@ std::string glsl_layout(AnyMember& s) {
 
 }
 
-struct Bkp : Buffer {
-
-    std::vector<Struct> structs;
-
-    Bkp(Buffer& buffer) { 
-
-        data = buffer.data;
-
-        for (auto m : members) m = m->copy();
-        
-    }
-
 };
 
-};
-
-struct Foo {};
-struct Bar : Foo {};
-struct And : Foo {};
-struct Many : Foo {};
-struct More : Foo {};
-std::vector<Foo*> list = { new Foo(), new Bar(), new And(), new Many(), new More() };
-
-// how can I create a hard copy of all elements in list ?
 
 int main() {
 
@@ -113,21 +91,7 @@ using namespace TEST;
 
     quad.resize(3);
 
-    std::string tab;
-    buff.each([&](AnyMember& m, int offset, int depth){ 
-        
-        tab = ""; for (int i = 0 ; i < depth; i++) tab+= "    ";
-
-        std::string str; 
-        str += tab;
-        std::string name = !m.typed() ? "struct" : m.type().name();
-        str += name + " " + m.name();
-        str += "    " +  std::to_string(offset);
-        str += " (" +std::to_string(m.footprint())+")";
-
-        PLOGD << str;
-
-    }, [&](AnyMember& m){ if (m.striding()) PLOGD << tab <<"stride    " << m.stride(); });
+    buff.print();
     
     buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(123);
     auto ptr = buff.data.data();
@@ -136,8 +100,6 @@ using namespace TEST;
     PLOGD << buff["myquad"].eq(1)["Rect"]["size"].offset;
     PLOGD << buff["rectangle"]["size"].offset;
     PLOGD << "out" << str << buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
-
-    // todo : hardcopy/bkp/remap
 
     for (auto &m : quad.members) {
         
@@ -149,9 +111,14 @@ using namespace TEST;
 
     PLOGD << glsl_layout(quad);
 
-    Bkp bkp(buff);
+    auto bkp = buff.copy();
 
-    PLOGD<<"oooo"<<bkp["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
+    // bkp.print();
+
+    buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(245);
+    PLOGD<<"oooo";
+    PLOGD<<bkp["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
+    PLOGD<<buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
 
  
 }
