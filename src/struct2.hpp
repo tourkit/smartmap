@@ -61,6 +61,8 @@ namespace TEST {
         void striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
         bool striding() { return is_striding; }
+        
+        virtual bool typed() { return false; }
 
         std::vector<AnyMember*> members;
 
@@ -104,38 +106,27 @@ namespace TEST {
         uint32_t size() override { return sizeof(T); }
 
         uint32_t footprint() override { return size(); }
+        
+        bool typed() override { return true; }
 
     };
-
 
     struct Struct : AnyMember {
 
         Struct(std::string name = "", uint32_t quantity = 1) : AnyMember(name) { this->quantity = quantity; }
 
+        ~Struct() { for (auto m : members) if (m->typed()) delete m; }
+
         static inline std::set<Struct*> owned;
 
         template <typename... Args> 
-        static Struct& create(Args&&... args) { 
-            
-            return **owned.insert(new Struct(std::forward<Args>(args)...)).first;
-            
-        }
+        static Struct& create(Args&&... args) { return **owned.insert(new Struct(std::forward<Args>(args)...)).first; }
 
         static bool destroy(std::string name) { 
 
             for (auto &s : owned) if (s->name() == name) { owned.erase(s); delete &s; return true; }
 
             return false;
-
-        }
-
-
-        Struct copy() {
-
-            Struct s = * this;
-            // for (auto &m : members) // make copry
-
-            return s;
 
         }
 

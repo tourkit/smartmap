@@ -24,7 +24,7 @@ struct vec3 { float x = 0, y = 0, z = 0; };
 struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
 
 namespace TEST {
-    
+
 std::string glsl_layout(AnyMember& s) {
 
     auto bkp_srtiding = s.striding();
@@ -46,6 +46,32 @@ std::string glsl_layout(AnyMember& s) {
     return str;
 
 }
+
+struct Bkp : Buffer {
+
+    std::vector<Struct> structs;
+
+    Bkp(Buffer& buffer) { 
+
+        data = buffer.data;
+
+        members = buffer.members;
+
+        // for (int i =0; i < members.size(); i++) {
+            
+        //     AnyMember& m : *members[i];
+
+        //     structs.push_back(*members[i])
+            
+        // }
+
+        // structs = buffer
+        PLOGD<<"oooo";
+        // *this = buffer; 
+        
+    }
+
+};
 
 };
 
@@ -118,6 +144,10 @@ using namespace TEST;
     }
 
     PLOGD << glsl_layout(quad);
+
+    Bkp bkp(buff);
+
+    // PLOGD<<"oooo";<<bkp["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
 
  
 }
