@@ -61,25 +61,22 @@ struct Bkp : Buffer {
 
         data = buffer.data;
 
-        members = buffer.members;
-
-        // for (int i =0; i < members.size(); i++) {
-            
-        //     AnyMember& m : *members[i];
-
-        //     structs.push_back(*members[i])
-            
-        // }
-
-        // structs = buffer
-        PLOGD<<"oooo";
-        // *this = buffer; 
+        for (auto m : members) m = m->copy();
         
     }
 
 };
 
 };
+
+struct Foo {};
+struct Bar : Foo {};
+struct And : Foo {};
+struct Many : Foo {};
+struct More : Foo {};
+std::vector<Foo*> list = { new Foo(), new Bar(), new And(), new Many(), new More() };
+
+// how can I create a hard copy of all elements in list ?
 
 int main() {
 
@@ -154,7 +151,7 @@ using namespace TEST;
 
     Bkp bkp(buff);
 
-    // PLOGD<<"oooo";<<bkp["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
+    PLOGD<<"oooo"<<bkp["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
 
  
 }

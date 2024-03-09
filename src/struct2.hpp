@@ -34,13 +34,7 @@ namespace TEST {
 
         virtual uint32_t size() { return 0; }
 
-        virtual uint32_t footprint() { 
-
-            if (is_striding) return nextFactor2(size_v,16);
-            
-            return size_v; 
-        
-        } 
+        virtual uint32_t footprint() { return 0; } 
 
         virtual uint32_t footprint_all() { return footprint() * quantity; }
 
@@ -58,11 +52,21 @@ namespace TEST {
         void* range_to_ptr = nullptr;
         void* default_val_ptr = nullptr;
 
-        uint32_t stride() { return (footprint()-size_v); }
+        uint32_t stride() { return (footprint()-size()); }
 
         void striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
         bool striding() { return is_striding; }
+
+        virtual AnyMember* copy() { 
+            
+            auto x = new AnyMember(name()); 
+
+            x->striding(striding());
+            
+            return x; 
+            
+        }
         
         virtual bool typed() { return false; }
 
@@ -71,8 +75,6 @@ namespace TEST {
     protected:
 
         bool is_striding = false;
-    
-        uint32_t size_v = 0;
 
     private:
     
@@ -110,6 +112,18 @@ namespace TEST {
         uint32_t footprint() override { return size(); }
         
         bool typed() override { return true; }
+
+        virtual AnyMember* copy() { 
+            
+            auto x = new Data<T>(name()); 
+
+            x->range_from = range_from;
+            x->range_to = range_to;
+            x->default_val = default_val;
+
+            return x; 
+            
+        }
 
     };
 
@@ -195,7 +209,13 @@ namespace TEST {
             return size_v; 
 
         }
+        uint32_t footprint() override { 
 
+            if (is_striding) return nextFactor2(size_v,16);
+            
+            return size_v; 
+        
+        } 
         std::type_index type() override { if (members.size() == 1) { return members[0]->type(); } return typeid(Struct); }
 
         bool owns(AnyMember& m) override { 
@@ -250,6 +270,16 @@ namespace TEST {
 
          }
 
+        virtual AnyMember* copy() { 
+            
+            auto x = new Struct(name()); 
+
+            for (auto m : members) m = m->copy();
+
+            return x; 
+            
+        }
+
 
     protected:
         
@@ -276,7 +306,10 @@ namespace TEST {
             return *this; 
 
         }
+private :
 
+    
+        uint32_t size_v = 0;
     };
 
 
