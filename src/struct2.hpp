@@ -50,7 +50,7 @@ namespace TEST {
 
         AnyMember* any() { return this; }
 
-        virtual void each(std::function<void(AnyMember& m, int offset)> cb, int offset = 0) { cb(*this, offset); }
+        virtual void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth) { cb(*this, offset,depth); }
 
         virtual void print(int tab = 0) {
 
@@ -89,13 +89,13 @@ namespace TEST {
 
 
     template <typename T>
-    struct Member : AnyMember {
+    struct Data : AnyMember {
 
         T range_from;
         T range_to;
         T default_val;
 
-        Member(std::string name = "")  : AnyMember(name) {
+        Data(std::string name = "")  : AnyMember(name) {
 
             range_from_ptr = &range_from;
             range_to_ptr = &range_to;
@@ -134,13 +134,6 @@ namespace TEST {
 
         }
 
-        static Struct& find(std::string name) { 
-
-            for (auto &s : owned) if (s->name() == name) return *s;
-            
-            return create(name);
-
-         }
 
         Struct copy() {
 
@@ -172,14 +165,14 @@ namespace TEST {
         };
     
         template <typename T> 
-        Struct& add(std::string name = "") { return addPtr(new Member<T>(name)); }
+        Struct& add(std::string name = "") { return addPtr(new Data<T>(name)); }
     
         Struct& range(float from, float to) { 
             
             auto a = members.back();
-            if (typeid(*a).hash_code() == typeid(Member<float>).hash_code()) {
-                ((Member<float>*)members.back())->range_from = from;
-                ((Member<float>*)members.back())->range_to = to;
+            if (typeid(*a).hash_code() == typeid(Data<float>).hash_code()) {
+                ((Data<float>*)members.back())->range_from = from;
+                ((Data<float>*)members.back())->range_to = to;
             }
             return *this; 
         
@@ -188,9 +181,9 @@ namespace TEST {
         Struct& range(uint32_t from, uint32_t to) { 
             
             auto a = members.back();
-            if (typeid(*a).hash_code() == typeid(Member<uint32_t>).hash_code()) {
-                ((Member<uint32_t>*)members.back())->range_from = from;
-                ((Member<uint32_t>*)members.back())->range_to = to;
+            if (typeid(*a).hash_code() == typeid(Data<uint32_t>).hash_code()) {
+                ((Data<uint32_t>*)members.back())->range_from = from;
+                ((Data<uint32_t>*)members.back())->range_to = to;
             }
             return *this; 
         
@@ -216,12 +209,12 @@ namespace TEST {
 
             return false;
         }
-        
-         void each(std::function<void(AnyMember& m, int offset)> cb, int offset = 0) override {
+
+         void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset = 0, int depth = 0) override {
 
             for (int i = 0 ; i < quantity; i++) {
 
-                AnyMember::each(cb, offset);
+                AnyMember::each(cb, offset,depth);
 
                 int size = 0;
 
@@ -229,7 +222,7 @@ namespace TEST {
                 
                     for (auto &m :members) {
                         
-                        m->each(cb, offset+size);
+                        m->each(cb, offset+size, depth+1);
 
                         size+=m->footprint_all();
 
@@ -242,6 +235,10 @@ namespace TEST {
             }
 
         }
+        
+        void each(std::function<void(AnyMember& m, int offset)> cb, int offset = 0)  { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset); }, offset, 0); }
+        
+        void each(std::function<void(AnyMember& m)> cb, int offset = 0)  { each([cb](AnyMember& m, int offset, int depth){ cb(m); }, offset, 0); }
 
         void print(int tab = 0) override {
 
