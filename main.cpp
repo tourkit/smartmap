@@ -62,63 +62,32 @@ using namespace TEST;
 
     logger.cout();
 
-    Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");
-    Struct& rectangle = Struct::create("rectangle").add<vec2>("pos").add<vec2>("size").add<float_>("angle");
-    // Struct& ID = Struct::create("ID").add<ui>();
+    Struct& rectangle = Struct::create("rectangle").add<vec2>("pos").add<vec2>("size");
+    Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size").add(rectangle);
     
     Buffer buff;
 
-    Struct quad("myquad");
-
-    quad.add(rectangle);
-
-    quad.remove(rectangle);
+    Struct quad("myquad",1);
 
     quad.add(Rect);
 
     buff.add(quad);
-    
-    buff.add(rectangle);
-
-    Rect.add<float_>("angle").range(0.0f,1.0f);
-
-    quad.add<ui>("somadem").range(100,200);
-    
-    quad.striding(true);
-
-    Rect.striding(true);
-
-    quad.resize(3);
 
     buff.print();
     
-    buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(123);
-
-    auto ptr = buff.data.data();
-    std::string str;
-    for (int i = 0 ; i < 48; i++) str += " "+std::to_string(*(uint8_t*)(ptr+i));
-    PLOGD << "out" << str << buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
-
-    PLOGD << buff["myquad"].eq(1)["Rect"]["size"].offset;
-    PLOGD << buff["rectangle"]["size"].offset;
-
-    for (auto &m : quad.members) {
-        
-        auto x = glsl_layout(*m);
-
-        if (x.length()) PLOGD << x;
-        
-    }
-
-    PLOGD << glsl_layout(quad);
+    buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
 
     auto bkp = buff.copy();
 
-    // bkp.print();
+    bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
 
-    buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(245);
-    PLOGD<<bkp["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
-    PLOGD<<buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
+    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    buff.remap(bkp);
+
+    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
  
 }

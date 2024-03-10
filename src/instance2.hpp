@@ -22,6 +22,7 @@ namespace TEST {
         int id = 0;
 
         Instance operator[](const char* name);
+        Instance operator[](int id);
 
         bool exist();
 

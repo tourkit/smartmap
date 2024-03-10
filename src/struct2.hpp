@@ -59,7 +59,7 @@ namespace TEST {
 
             if(!x) x = new AnyMember(); 
             
-            x->name(name()+"_bkp");
+            x->name(name());
 
             x->striding(striding());
 
@@ -145,6 +145,7 @@ namespace TEST {
             return x; 
             
         }
+
 
     };
 
@@ -243,8 +244,6 @@ namespace TEST {
             return false;
             
         }
-
-
 
         void each(std::function<void(AnyMember&, int, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr) { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset,depth); }, 0, 0, after_cb); }
 

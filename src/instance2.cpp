@@ -37,8 +37,6 @@
             return Instance{data,offset,found};
 
         }
-
-
 TEST::Instance& TEST::Instance::eq(int id) {
 
         if (!member || id >= member->quantity) return *this;
