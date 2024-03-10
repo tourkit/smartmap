@@ -49,13 +49,7 @@ namespace TEST {
         void* range_to_ptr = nullptr;
         void* default_val_ptr = nullptr;
 
-        uint32_t stride() { 
-            auto f = footprint();
-            auto n = name();
-            auto s = size();
-             return (f-s); 
-            
-            }
+        uint32_t stride() { return (footprint()-size()); }
 
         void striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
@@ -227,14 +221,12 @@ namespace TEST {
             
             uint32_t size_v = 0;
             
-            for (auto m : members) {
-                auto s = m->footprint();
-                size_v += s;
-                }
+            for (auto m : members) size_v += m->footprint();
 
             return size_v; 
 
         }
+
         uint32_t footprint() override { 
 
             if (striding()) return nextFactor2(size_v,16);

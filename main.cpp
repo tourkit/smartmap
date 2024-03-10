@@ -68,7 +68,7 @@ using namespace TEST;
     
     Buffer buff;
 
-    Struct quad("myquad",2);
+    Struct quad("myquad");
 
     quad.add(rectangle);
 
