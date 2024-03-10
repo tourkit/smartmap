@@ -62,7 +62,6 @@ using namespace TEST;
 
     logger.cout();
 
-
     Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");
     Struct& rectangle = Struct::create("rectangle").add<vec2>("pos").add<vec2>("size").add<float_>("angle");
     // Struct& ID = Struct::create("ID").add<ui>();
@@ -94,18 +93,20 @@ using namespace TEST;
     buff.print();
     
     buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(123);
+
     auto ptr = buff.data.data();
     std::string str;
     for (int i = 0 ; i < 48; i++) str += " "+std::to_string(*(uint8_t*)(ptr+i));
+    PLOGD << "out" << str << buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
+
     PLOGD << buff["myquad"].eq(1)["Rect"]["size"].offset;
     PLOGD << buff["rectangle"]["size"].offset;
-    PLOGD << "out" << str << buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
 
     for (auto &m : quad.members) {
         
         auto x = glsl_layout(*m);
 
-        if (x.length())PLOGD << x;
+        if (x.length()) PLOGD << x;
         
     }
 
@@ -116,7 +117,6 @@ using namespace TEST;
     // bkp.print();
 
     buff["myquad"].eq(0)["Rect"]["size"].set<uint32_t>(245);
-    PLOGD<<"oooo";
     PLOGD<<bkp["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
     PLOGD<<buff["myquad"].eq(0)["Rect"]["size"].get<uint32_t>();
 

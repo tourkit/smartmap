@@ -11,8 +11,6 @@
 #include <typeindex>
 #include "log.hpp"
 
-
-
 static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)factor)+1)*factor*!!x; }
 
 namespace TEST {
@@ -23,7 +21,7 @@ namespace TEST {
 
         AnyMember(std::string name_v = "") { name(name_v); pool.insert(this); }
 
-        ~AnyMember() { PLOGD << "~" << name(); pool.erase(this); }
+        ~AnyMember() { pool.erase(this); }
 
         uint32_t quantity = 1; // ! \\ ONLY FOR Array !
 
@@ -51,7 +49,13 @@ namespace TEST {
         void* range_to_ptr = nullptr;
         void* default_val_ptr = nullptr;
 
-        uint32_t stride() { return (footprint()-size()); }
+        uint32_t stride() { 
+            auto f = footprint();
+            auto n = name();
+            auto s = size();
+             return (f-s); 
+            
+            }
 
         void striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
@@ -92,7 +96,7 @@ namespace TEST {
 
                 PLOGD << str;
 
-            }, 0, 0, [&](AnyMember& m){ if (m.striding()) PLOGD << tab <<"float stride    " << m.stride()/sizeof(float); });
+            }, 0, 0, [&](AnyMember& m){ if (m.striding()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.name() << ")"; });
 
         }
 
@@ -223,7 +227,10 @@ namespace TEST {
             
             uint32_t size_v = 0;
             
-            for (auto &m : members) size_v += m->size();
+            for (auto m : members) {
+                auto s = m->footprint();
+                size_v += s;
+                }
 
             return size_v; 
 
