@@ -55,39 +55,78 @@ std::string glsl_layout(AnyMember& s) {
 
 };
 
+void hard_delete(TEST::AnyMember* a) {
+    
+          for (auto m : a->members) {
+                
+                hard_delete(m);
+
+
+            }
+                if (!a->typed()) {
+                PLOGD << "delete " << a->name() << " :" << a->type().name();    
+                    
+                    delete a;
+                    
+                }
+}
+
+
+
+struct Foo { virtual ~Foo() { PLOGD << "foo"; } };
+struct Bar : Foo { ~Bar() { PLOGD << "bar"; }};
+
+void del(Foo* a) {
+    
+    delete a;
+}
 
 int main() {
 
-using namespace TEST;
-
     logger.cout();
 
-    Struct& rectangle = Struct::create("rectangle").add<vec2>("pos").add<vec2>("size");
-    Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size").add(rectangle);
+
+    Foo* f = new Bar;
+    del(f);
+
+    return;
+
+using namespace TEST;
+
+    // Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
+    // Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size").add(rectangle);
     
-    Buffer buff;
+    // Buffer buff;
 
-    Struct quad("myquad",1);
+    // Struct quad("myquad",3);
 
-    quad.add(Rect);
+    // quad.add(Rect);
 
-    buff.add(quad);
+    // buff.add(quad);
 
-    buff.print();
+    // buff.print();
     
-    buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
+    // buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
 
-    auto bkp = buff.copy();
+    // auto bkp = buff.copy();
 
-    bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
+    // bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
 
-    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
-    PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    // PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
-    buff.remap(bkp);
+    // buff.remap(bkp);
 
-    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    auto top = Struct("top");
+    // top.add<vec2>("pos").add<vec2>("size").add(rectangle);
+    
+    hard_delete(&top);
+
+
+    PLOGD<<"yolo";
+    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
  
 }

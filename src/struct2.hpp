@@ -15,13 +15,16 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
 
 namespace TEST {
 
+    template <typename T>
+    struct Bkp;
+
     struct AnyMember {
 
         static inline std::unordered_set<AnyMember*> pool;
 
-        AnyMember(std::string name_v = "") { name(name_v); pool.insert(this); }
+        AnyMember(std::string name_v = "") { name(name_v); pool.insert(this);}
 
-        ~AnyMember() { pool.erase(this); }
+        virtual ~AnyMember() { PLOGD << "~ " << name(); pool.erase(this); }
 
         uint32_t quantity = 1; // ! \\ ONLY FOR Array !
 
@@ -94,6 +97,21 @@ namespace TEST {
 
         }
 
+        void hard_delete() { 
+
+            for (auto m : members) {
+                
+                m->hard_delete();
+
+
+                if (!m->typed()) {
+                PLOGD << "delete " << m->name();    
+                    
+                    delete m;}
+            }
+
+        }
+
     private:
     
         bool is_striding = false;
@@ -153,7 +171,12 @@ namespace TEST {
 
         Struct(std::string name = "", uint32_t quantity = 1) : AnyMember(name) { this->quantity = quantity; }
 
-        ~Struct() { for (auto m : members) if (m->typed()) delete m; }
+        ~Struct() { 
+             
+            // for (auto m : members) if (m->typed()) {
+            //     PLOGD << "~ " << m->name();   delete m;} 
+                
+                }
 
         static inline std::set<Struct*> owned;
 
@@ -235,7 +258,7 @@ namespace TEST {
             return size_v; 
         
         } 
-        std::type_index type() override { if (members.size() == 1) { return members[0]->type(); } return typeid(Struct); }
+        std::type_index type() override { if (typed()) { return members[0]->type(); } return typeid(Struct); }
 
         bool owns(AnyMember& m) override { 
 
