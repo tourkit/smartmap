@@ -3,9 +3,9 @@
 
 namespace TEST {
 
-        virtual Bkp* AnyMember::copy(AnyMember* x = nullptr) { 
+        virtual Bkp* Member::copy(Member* x = nullptr) { 
 
-            if(!x) x = new Bkp<AnyMember>(); 
+            if(!x) x = new Bkp<Member>(); 
             
             x->name(name());
 

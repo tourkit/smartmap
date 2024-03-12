@@ -14,7 +14,7 @@
 
             if  (offset < 0) return Instance{data,offset-1,member};
 
-            AnyMember* found = nullptr;
+            Member* found = nullptr;
 
             if (!member) {PLOGW << "BUGGY";exit(0);}
 

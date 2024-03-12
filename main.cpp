@@ -25,7 +25,7 @@ struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
 
 namespace TEST {
 
-std::string glsl_layout(AnyMember& s) {
+std::string glsl_layout(Member& s) {
 
     auto bkp_srtiding = s.striding();
 
@@ -55,7 +55,7 @@ std::string glsl_layout(AnyMember& s) {
 
 };
 
-void hard_delete(TEST::AnyMember* a) {
+void hard_delete(TEST::Member* a) {
     
           for (auto m : a->members) {
                 
@@ -73,59 +73,72 @@ void hard_delete(TEST::AnyMember* a) {
 
 
 
-struct Foo { virtual ~Foo() { PLOGD << "foo"; } };
-struct Bar : Foo { ~Bar() { PLOGD << "bar"; }};
+// struct Foo { 
 
-void del(Foo* a) {
+//     virtual ~Foo() { PLOGD << "foo:"<<name; } 
+
+//     std::string name = "foo"
     
-    delete a;
-}
+// };
+
+// struct Bar : Foo { 
+    
+//     Bar() { name = "bar"; }
+//     ~Bar() { PLOGD << "bar:"<<name; }
+    
+// };
+
+// void del(Foo* a) { delete a; }
+// Foo* f = new Bar; del(f); return 0;
 
 int main() {
 
-    logger.cout();
-
-
-    Foo* f = new Bar;
-    del(f);
-
-    return;
-
 using namespace TEST;
 
+    logger.cout();
+
     // Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
-    // Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size").add(rectangle);
+    Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");//.add(rectangle);
     
-    // Buffer buff;
+    Buffer buff;
 
-    // Struct quad("myquad",3);
+    Struct quad("myquad");
 
-    // quad.add(Rect);
+    quad.add(Rect);
 
-    // buff.add(quad);
+    buff.add(quad);
 
     // buff.print();
     
-    // buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
-
-    // auto bkp = buff.copy();
-
-    // bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
-
-    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
-
-    // PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
-
-    // buff.remap(bkp);
+    buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
 
 
-    auto top = Struct("top");
-    // top.add<vec2>("pos").add<vec2>("size").add(rectangle);
+    PLOGD << "BKP";
+
+    auto bkp = buff.copy();
+
+    /// is myquad copyed ? compre adresses
+
+    PLOGD <<buff["myquad"].member;
+
+    PLOGD <<bkp["myquad"].member;
+
+    PLOGD <<"out";
+
+    return 0;
+
+    bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
+
+    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    buff.remap(bkp);
+
     
-    hard_delete(&top);
+    hard_delete(&bkp);
 
 
-    PLOGD<<"yolo";
     // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
  

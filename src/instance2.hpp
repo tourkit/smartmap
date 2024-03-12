@@ -12,13 +12,13 @@ namespace TEST {
 
 
     struct Buffer;
-    struct AnyMember;
+    struct Member;
 
     struct Instance { 
 
         char* data;
         int offset;
-        AnyMember* member = nullptr;
+        Member* member = nullptr;
         int id = 0;
 
         Instance operator[](const char* name);

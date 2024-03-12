@@ -26,13 +26,13 @@ namespace TEST {
 
         }
 
-        void set(AnyMember& m, void* data) { }
+        void set(Member& m, void* data) { }
 
         void update() override { data.resize( footprint_all() ); Struct::update(); }
 
         Instance operator[](const char* name);
 
-        AnyMember* copy(AnyMember* x) override { 
+        Member* copy(Member* x) override { 
             
             if (!x) x = new Buffer(); 
 
@@ -46,7 +46,7 @@ namespace TEST {
         
         Buffer& copy() { return *(Buffer*)copy(nullptr); }
 
-        void remapEach(Buffer& from, AnyMember* from_m = nullptr, AnyMember* to_m = nullptr, int from_offset = 0, int to_offset = 0) {
+        void remapEach(Buffer& from, Member* from_m = nullptr, Member* to_m = nullptr, int from_offset = 0, int to_offset = 0) {
 
             if (!from_m) from_m = &from;
 
@@ -58,7 +58,7 @@ namespace TEST {
                 
                 for (auto from_m_curr : from_m->members) {
 
-                    AnyMember* found =nullptr;
+                    Member* found =nullptr;
 
                     int to_offset_curr = 0;
 
@@ -87,7 +87,7 @@ namespace TEST {
 
         }
 
-        void remapEach2(Buffer& buffer, AnyMember* from_m = nullptr, AnyMember* to_m = nullptr, int from_offset = 0, int to_offset = 0) {
+        void remapEach2(Buffer& buffer, Member* from_m = nullptr, Member* to_m = nullptr, int from_offset = 0, int to_offset = 0) {
 
             if (!from_m) from_m = &buffer;
 

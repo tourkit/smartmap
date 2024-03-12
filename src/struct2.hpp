@@ -18,17 +18,17 @@ namespace TEST {
     template <typename T>
     struct Bkp;
 
-    struct AnyMember {
+    struct Member {
 
-        static inline std::unordered_set<AnyMember*> pool;
+        static inline std::unordered_set<Member*> pool;
 
-        AnyMember(std::string name_v = "") { name(name_v); pool.insert(this);}
+        Member(std::string name_v = "") { name(name_v); PLOGD << "" << name(); pool.insert(this);}
 
-        virtual ~AnyMember() { PLOGD << "~ " << name(); pool.erase(this); }
+        virtual ~Member() { PLOGD << "~ " << name(); pool.erase(this); }
 
-        uint32_t quantity = 1; // ! \\ ONLY FOR Array !
+        uint32_t quantity = 1;
 
-        virtual bool owns(AnyMember& m) { return false; }
+        virtual bool owns(Member& m) { return false; }
 
         virtual void update() { for (auto a : pool) if (a->owns(*this)) a->update(); }
 
@@ -44,9 +44,9 @@ namespace TEST {
 
         virtual std::string name() { return name_v; }
 
-        AnyMember* any() { return this; }
+        Member* any() { return this; }
 
-        virtual void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth, std::function<void(AnyMember&)> after_cb = nullptr) { cb(*this, offset,depth); }
+        virtual void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb = nullptr) { cb(*this, offset,depth); }
 
         void* range_from_ptr = nullptr;
         void* range_to_ptr = nullptr;
@@ -58,15 +58,21 @@ namespace TEST {
 
         bool striding() { return is_striding; }
 
-        virtual AnyMember* copy(AnyMember* x = nullptr) { 
+        virtual Member* copy(Member* x = nullptr) { 
 
-            if(!x) x = new AnyMember(); 
+            if(!x) x = new Member(); 
             
             x->name(name());
 
             x->striding(striding());
 
-            x->members = members;
+            x->quantity = quantity;    
+
+            x->members = members;    
+
+            for (auto m : x->members) {
+                m = nullptr;
+            }
             
             return x; 
             
@@ -74,13 +80,13 @@ namespace TEST {
         
         virtual bool typed() { return false; }
 
-        std::vector<AnyMember*> members;
+        std::vector<Member*> members;
 
         void print() {
 
             std::string tab;
 
-            each([&](AnyMember& m, int offset, int depth){ 
+            each([&](Member& m, int offset, int depth){ 
                 
                 tab = ""; for (int i = 0 ; i < depth; i++) tab+= "  ";
 
@@ -93,7 +99,7 @@ namespace TEST {
 
                 PLOGD << str;
 
-            }, 0, 0, [&](AnyMember& m){ if (m.striding()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.name() << ")"; });
+            }, 0, 0, [&](Member& m){ if (m.striding()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.name() << ")"; });
 
         }
 
@@ -119,10 +125,10 @@ namespace TEST {
 
     };
 
-    struct AnyData : AnyMember {         
+    struct AnyData : Member {         
         
         template <typename... Args> 
-        AnyData(Args&&... args) : AnyMember(std::forward<Args>(args)...) { } 
+        AnyData(Args&&... args) : Member(std::forward<Args>(args)...) { } 
         
     };
     
@@ -150,15 +156,15 @@ namespace TEST {
         
         bool typed() override { return true; }
 
-        AnyMember* copy(AnyMember* x = nullptr) override { 
+        Member* copy(Member* x = nullptr) override { 
             
             if (!x) x = new Data<T>(name()); 
             
-            AnyMember::copy(x);
+            Member::copy(x);
 
-            memcpy(x->range_from_ptr,range_from_ptr,sizeof(T));
-            memcpy(x->range_to_ptr,range_to_ptr,sizeof(T));
-            memcpy(x->default_val_ptr,default_val_ptr,sizeof(T));
+            ((Data<T>*)x)->range_from = *(T*)range_from_ptr;
+            ((Data<T>*)x)->range_to = *(T*)range_to_ptr;
+            ((Data<T>*)x)->default_val = *(T*)default_val_ptr;
 
             return x; 
             
@@ -167,16 +173,11 @@ namespace TEST {
 
     };
 
-    struct Struct : AnyMember {
+    struct Struct : Member {
 
-        Struct(std::string name = "", uint32_t quantity = 1) : AnyMember(name) { this->quantity = quantity; }
+        Struct(std::string name = "", uint32_t quantity = 1) : Member(name) { this->quantity = quantity; }
 
-        ~Struct() { 
-             
-            // for (auto m : members) if (m->typed()) {
-            //     PLOGD << "~ " << m->name();   delete m;} 
-                
-                }
+        ~Struct() { for (auto m : members) if (m->typed()) delete m; }
 
         static inline std::set<Struct*> owned;
 
@@ -260,7 +261,7 @@ namespace TEST {
         } 
         std::type_index type() override { if (typed()) { return members[0]->type(); } return typeid(Struct); }
 
-        bool owns(AnyMember& m) override { 
+        bool owns(Member& m) override { 
 
             for (auto &s : members) if (s == &m) return true;
 
@@ -268,11 +269,11 @@ namespace TEST {
             
         }
 
-        void each(std::function<void(AnyMember&, int, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr) { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset,depth); }, 0, 0, after_cb); }
+        void each(std::function<void(Member&, int, int)> cb, std::function<void(Member&)> after_cb = nullptr) { each([cb](Member& m, int offset, int depth){ cb(m,offset,depth); }, 0, 0, after_cb); }
 
-        void each(std::function<void(AnyMember&, int)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m,offset); }, 0, 0, after_cb); }
+        void each(std::function<void(Member&, int)> cb, std::function<void(Member&)> after_cb = nullptr)  { each([cb](Member& m, int offset, int depth){ cb(m,offset); }, 0, 0, after_cb); }
         
-        void each(std::function<void(AnyMember&)> cb, std::function<void(AnyMember&)> after_cb = nullptr)  { each([cb](AnyMember& m, int offset, int depth){ cb(m); }, 0, 0, after_cb); }
+        void each(std::function<void(Member&)> cb, std::function<void(Member&)> after_cb = nullptr)  { each([cb](Member& m, int offset, int depth){ cb(m); }, 0, 0, after_cb); }
 
         void update() override { 
 
@@ -280,27 +281,21 @@ namespace TEST {
 
             for (auto &m : members) size_v += m->footprint_all();
 
-            AnyMember::update();
+            Member::update();
 
          }
 
-        AnyMember* copy(AnyMember* x = nullptr) override { 
+        Member* copy(Member* x = nullptr) override { 
             
             if (!x) x = new Struct(); 
             
-            AnyMember::copy(x);  
-
-            x->quantity = quantity;    
-
-            for (auto m : members) m = m->copy();
-
-            return x; 
+            return Member::copy(x);  
             
         }
 
 
     protected:
-         void each(std::function<void(AnyMember& m, int offset, int depth)> cb, int offset, int depth, std::function<void(AnyMember&)> after_cb) override {
+         void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb) override {
 
             for (int i = 0 ; i < quantity; i++) {
 
@@ -327,7 +322,7 @@ namespace TEST {
             }
 
         }        
-        virtual Struct& add(AnyMember* s) {
+        virtual Struct& add(Member* s) {
 
             members.push_back(s);
 
@@ -339,7 +334,7 @@ namespace TEST {
 
         } 
 
-        virtual Struct& remove(AnyMember*  m) {
+        virtual Struct& remove(Member*  m) {
 
             size_v -= members.back()->footprint_all();
 
