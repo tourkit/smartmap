@@ -93,7 +93,7 @@ using namespace TEST;
 
     // buff.remap(bkp);
 
-    hard_delete(&bkp);
+    // hard_delete(&bkp);
 
     // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
