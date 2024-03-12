@@ -34,17 +34,22 @@ namespace TEST {
 
         Member* copy(Member* x) override { 
             
-            if (!x) x = new Buffer(); 
+            if (!x) {x = new Buffer();PLOGD<<x;} 
 
             Struct::copy(x);
 
             ((Buffer*)x)->data = data;
-
+    
             return x; 
             
         }
         
-        Buffer& copy() { return *(Buffer*)copy(nullptr); }
+        Buffer& copy() { 
+            Buffer* x= (Buffer*)Buffer::copy(nullptr); 
+            Buffer& y= *x; 
+            Buffer*z= &y; 
+            return y;
+        }
 
         void remapEach(Buffer& from, Member* from_m = nullptr, Member* to_m = nullptr, int from_offset = 0, int to_offset = 0) {
 

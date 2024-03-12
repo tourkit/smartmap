@@ -79,7 +79,7 @@ using namespace TEST;
 
     PLOGD << "BKP";
 
-    auto bkp = buff.copy();
+    auto &bkp = buff.copy();
 
     PLOGD <<buff["myquad"].member;
 
@@ -93,7 +93,9 @@ using namespace TEST;
 
     // buff.remap(bkp);
 
-    // hard_delete(&bkp);
+    bkp.hard_delete();
+    PLOGD << &bkp;
+    delete &bkp;
 
     // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 

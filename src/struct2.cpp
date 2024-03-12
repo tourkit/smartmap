@@ -1,21 +1,23 @@
 #include "struct2.hpp"
 
-
 namespace TEST {
 
-        virtual Bkp* Member::copy(Member* x = nullptr) { 
+        Member* TEST::Member::copy(Member* x = nullptr) { 
 
-            if(!x) x = new Bkp<Member>(); 
+            if(!x) x = new Member(); 
             
             x->name(name());
 
             x->striding(striding());
 
-            x->members = members;
+            x->quantity = quantity;    
+
+            x->members = members;    
+
+            for (auto &m : x->members) m = m->copy();
             
             return x; 
             
         }
-
 
 };

@@ -15,7 +15,6 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
 
 namespace TEST {
 
-    template <typename T>
     struct Bkp;
 
     struct Member {
@@ -103,15 +102,19 @@ namespace TEST {
 
         void hard_delete() { 
 
-            for (auto m : members) {
+            for (auto &m : members) {
                 
                 m->hard_delete();
 
 
                 if (!m->typed()) {
-                PLOGD << "delete " << m->name();    
+
+                    members.erase(std::remove(members.begin(), members.end(), m), members.end());
                     
-                    delete m;}
+                    delete m;
+                    
+                }
+
             }
 
         }
@@ -123,7 +126,28 @@ namespace TEST {
 
     };
 
+    struct Bkp : Member {
+
+        static void hard_delete(TEST::Member* a) {
+    
+          for (auto m : a->members) {
+                
+                hard_delete(m);
+
+                if (!m->typed()) delete m;
+
+            }
+
+        }
+
+        Bkp(Member* m) {}
+
+        ~Bkp() { hard_delete(this); }
+
+    };
+
     struct AnyData : Member {         
+        
         
         template <typename... Args> 
         AnyData(Args&&... args) : Member(std::forward<Args>(args)...) { } 
@@ -350,6 +374,5 @@ private :
     };
 
 
-
-
+ 
 };

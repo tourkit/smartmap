@@ -33,6 +33,7 @@ add_executable(smartmap
     src/object.cpp
     src/component.cpp
     src/struct.cpp
+    # src/struct2.cpp
     src/instance.cpp
     src/instance2.cpp
     src/buffer2.cpp
