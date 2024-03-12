@@ -70,9 +70,7 @@ namespace TEST {
 
             x->members = members;    
 
-            for (auto m : x->members) {
-                m = nullptr;
-            }
+            for (auto &m : x->members) m = m->copy();
             
             return x; 
             
