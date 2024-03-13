@@ -229,7 +229,7 @@ namespace TEST {
         template <typename... Args> 
         static Struct& create(Args&&... args) { return **owned.insert(new Struct(std::forward<Args>(args)...)).first; }
 
-        static void clear() { for ( auto s : Member::pool ) if (!s->typed()) delete s;  }
+        static void clear() { for ( auto s : owned ) delete s;  }
 
         static bool destroy(std::string name) { 
 
