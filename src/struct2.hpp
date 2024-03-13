@@ -23,7 +23,24 @@ namespace TEST {
 
         Member(std::string name_v = "") { name(name_v); PLOGD << "#" << name(); pool.insert(this);}
 
-        virtual ~Member() { PLOGD << "~ " << name(); pool.erase(this); }
+        virtual ~Member() { PLOGD << "~ " << name(); pool.erase(this); 
+        
+        for (auto m : pool) {
+
+            m->each([this](Member& m) { 
+                
+                if (m.owns(*this)) {
+                    
+                    m.members.erase(std::remove(m.members.begin(), m.members.end(), this), m.members.end()); 
+                    
+                    }
+                
+
+                });
+
+        }
+
+        }
 
         uint32_t quantity = 1;
 
@@ -47,6 +64,8 @@ namespace TEST {
 
         virtual void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb = nullptr) { cb(*this, offset,depth); }
 
+        void each(std::function<void(Member&)> cb)  { each([cb](Member& m, int offset, int depth){ cb(m); }, 0, 0, nullptr); }
+
         void* range_from_ptr = nullptr;
         void* range_to_ptr = nullptr;
         void* default_val_ptr = nullptr;
@@ -59,9 +78,7 @@ namespace TEST {
 
         virtual Member* copy(Member* x = nullptr) { 
 
-            if(!x) x = new Member(); 
-            
-            x->name(name());
+            if(!x) x = new Member(name_v); 
 
             x->striding(striding());
 
@@ -120,10 +137,11 @@ namespace TEST {
 
         }
 
+    protected:
+        std::string name_v;
     private:
     
         bool is_striding = false;
-        std::string name_v;
 
     };
 
@@ -181,7 +199,7 @@ namespace TEST {
 
         Member* copy(Member* x = nullptr) override { 
             
-            if (!x) x = new Data<T>(name()); 
+            if (!x) x = new Data<T>(name_v); 
             
             Member::copy(x);
 
@@ -202,13 +220,16 @@ namespace TEST {
 
         ~Struct() { for (auto m : members) if (m->typed()) {
             
+                    auto to_delete = m;
                     members.erase(std::remove(members.begin(), members.end(), m), members.end());
-                    delete m;} }
+                    delete to_delete;} }
 
         static inline std::set<Struct*> owned;
 
         template <typename... Args> 
         static Struct& create(Args&&... args) { return **owned.insert(new Struct(std::forward<Args>(args)...)).first; }
+
+        static void clear() { for ( auto s : Member::pool ) if (!s->typed()) delete s;  }
 
         static bool destroy(std::string name) { 
 
@@ -313,7 +334,7 @@ namespace TEST {
 
         Member* copy(Member* x = nullptr) override { 
             
-            if (!x) x = new Struct(); 
+            if (!x) x = new Struct(name_v); 
             
             return Member::copy(x);  
             

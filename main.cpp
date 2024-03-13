@@ -58,50 +58,44 @@ using namespace TEST;
 
     logger.cout();
 
-    // Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
+    Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
     Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");//.add(rectangle);
-    
-    Buffer buff;
-
+  
     Struct quad("myquad");
 
     quad.add(Rect);
 
-    buff.add(quad);
-
-    // buff.print();
+    quad.add(rectangle);
     
-    buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
 
 
     PLOGD << "BKP";
 
-    auto bkp = buff.copy();
+    // auto bkp = quad.copy();
 
-    /// is myquad copyed ? compre adresses
-
-    PLOGD <<buff["myquad"].member;
-
-    PLOGD <<bkp["myquad"].member;
+    // bkp->hard_delete();
 
     PLOGD <<"out";
 
-    // return 0;
+    Struct::clear();
 
-    bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
+    return 0;
 
-    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
-    PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    // bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
 
-    buff.remap(bkp);
+    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    // PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    // buff.remap(bkp);
 
     
-    bkp.hard_delete();
+    // bkp.hard_delete();
 
-    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
-    PLOGD <<"in";
+    // PLOGD <<"in";
     
 
     PLOGD <<"out";

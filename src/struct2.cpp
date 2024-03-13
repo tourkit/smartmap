@@ -4,7 +4,7 @@ namespace TEST {
 
         Member* TEST::Member::copy(Member* x = nullptr) { 
 
-            if(!x) x = new Member(); 
+            if(!x) x = new Member(name_v); 
             
             x->name(name());
 

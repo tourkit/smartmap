@@ -34,7 +34,7 @@ namespace TEST {
 
         Member* copy(Member* x) override { 
             
-            if (!x) {x = new Buffer();PLOGD<<x;} 
+            if (!x) {x = new Buffer();} 
 
             Struct::copy(x);
 
