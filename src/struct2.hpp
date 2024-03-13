@@ -21,7 +21,7 @@ namespace TEST {
 
         static inline std::unordered_set<Member*> pool;
 
-        Member(std::string name_v = "") { name(name_v); PLOGD << "" << name(); pool.insert(this);}
+        Member(std::string name_v = "") { name(name_v); PLOGD << "#" << name(); pool.insert(this);}
 
         virtual ~Member() { PLOGD << "~ " << name(); pool.erase(this); }
 
@@ -75,7 +75,7 @@ namespace TEST {
             
         }
         
-        virtual bool typed() { return false; }
+        virtual bool typed() { return false; if (members.size() == 1 && members[0]->name_v.length()) return true; return false; }
 
         std::vector<Member*> members;
 
@@ -106,12 +106,13 @@ namespace TEST {
                 
                 m->hard_delete();
 
-
                 if (!m->typed()) {
 
-                    members.erase(std::remove(members.begin(), members.end(), m), members.end());
-                    
+                    auto to_delete =  m;
+
                     delete m;
+                    
+                    members.erase(std::remove(members.begin(), members.end(), to_delete), members.end());
                     
                 }
 
@@ -199,7 +200,10 @@ namespace TEST {
 
         Struct(std::string name = "", uint32_t quantity = 1) : Member(name) { this->quantity = quantity; }
 
-        ~Struct() { for (auto m : members) if (m->typed()) delete m; }
+        ~Struct() { for (auto m : members) if (m->typed()) {
+            
+                    members.erase(std::remove(members.begin(), members.end(), m), members.end());
+                    delete m;} }
 
         static inline std::set<Struct*> owned;
 

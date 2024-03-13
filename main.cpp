@@ -4,18 +4,15 @@
 
                         */
 
-
 #include "log.hpp"
 #include <memory>
 #include <unordered_set>
 #include <set>
 #include <typeindex>
 
-
 #include "struct2.hpp"
 #include "buffer2.hpp"
 #include "instance2.hpp"
-
 
 struct ui { uint32_t v; };
 struct float_ { float v; };
@@ -79,30 +76,35 @@ using namespace TEST;
 
     PLOGD << "BKP";
 
-    auto &bkp = buff.copy();
+    auto bkp = buff.copy();
+
+    /// is myquad copyed ? compre adresses
 
     PLOGD <<buff["myquad"].member;
 
     PLOGD <<bkp["myquad"].member;
 
-    // bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
+    PLOGD <<"out";
 
-    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    // return 0;
 
-    // PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
 
-    // buff.remap(bkp);
+    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
+    PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    buff.remap(bkp);
+
+    
     bkp.hard_delete();
-    PLOGD << &bkp;
-    delete &bkp;
 
-    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
+    PLOGD <<"in";
+    
 
     PLOGD <<"out";
 
  
 }
-
-
