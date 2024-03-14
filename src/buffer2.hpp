@@ -28,7 +28,10 @@ namespace TEST {
 
         void set(Member& m, void* data) { }
 
-        void update() override { data.resize( footprint_all() ); Struct::update(); }
+        void update() override { 
+            Struct::update(); 
+            data.resize( footprint_all() ); 
+        }
 
         Instance operator[](const char* name);
 

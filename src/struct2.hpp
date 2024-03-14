@@ -21,11 +21,19 @@ namespace TEST {
 
         static inline std::unordered_set<Member*> pool;
 
-        Member(std::string name_v = "") { name(name_v); PLOGD << "#" << name(); pool.insert(this);}
-
-        virtual ~Member() { PLOGD << "~ " << name(); pool.erase(this); 
+        Member(std::string name_v = "") { name(name_v); 
         
-        for (auto m : pool) {
+        // PLOGD << "#" << name(); 
+        
+        pool.insert(this);}
+
+        virtual ~Member() { 
+            
+            // PLOGD << "~ " << name(); 
+            
+            pool.erase(this); 
+        
+            for (auto m : pool) {
 
             m->each([this](Member& m) { 
                 
@@ -46,7 +54,14 @@ namespace TEST {
 
         virtual bool owns(Member& m) { return false; }
 
-        virtual void update() { for (auto a : pool) if (a->owns(*this)) a->update(); }
+        virtual void update() { 
+            PLOGD<<name()<<pool.size(); 
+            for (auto a : pool) {
+                if (a->owns(*this)) {
+                    a->update();
+                } 
+            }
+        }
 
         virtual uint32_t size() { return 0; }
 
@@ -251,7 +266,13 @@ namespace TEST {
 
         Struct& add(Struct& s) { 
 
-            for (auto &c : pool) if (c == &s) return add(&s);
+            PLOGD << "add " << s.name() << " to " << name();
+
+            for (auto &c : pool) {
+                if (c == &s) {
+                    return add(&s); // why check if s is already in pool  ?
+                }
+            }
 
             PLOGW << " noadd" << s.name(); return *this;
             
@@ -268,7 +289,7 @@ namespace TEST {
         template <typename T> 
         Struct& add(std::string name = "") { return add(new Data<T>(name)); }
     
-        Struct& range(float from, float to) { 
+        Struct& range(float from, float to) {   
             
             auto a = members.back();
             if (typeid(*a).hash_code() == typeid(Data<float>).hash_code()) {

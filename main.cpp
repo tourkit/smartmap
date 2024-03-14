@@ -59,42 +59,30 @@ using namespace TEST;
     logger.cout();
 
     Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
-    
-    Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");//.add(rectangle);
 
     Buffer buff;
-  
-    Struct quad("myquad",3);
 
-    quad.add(Rect);
-
-    quad.add(rectangle);
+    Struct wrapper("wrapper",2);
     
-    buff.add(quad);
+    buff.add(wrapper);
 
-    buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
+    wrapper.add(rectangle);
+
+    PLOGD << buff.data.size();
+
+    buff["wrapper"].eq(1)["rectangle"]["reca"].set<uint32_t>(123);
     
     auto &bkp = buff.copy();
 
-    bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
+    bkp["wrapper"].eq(0)["rectangle"]["reca"].set<uint32_t>(123);
 
-    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    buff.remap(bkp); 
 
-    PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+    std::string str;
 
-    buff.remap(bkp);
+    for (auto i = 0; i<buff.data.size(); i++) str += std::to_string((uint8_t)buff.data[i]) + " ";
 
-    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
-
-    PLOGD <<"in";
-
-    bkp.hard_delete();
-
-    delete &bkp;
-
-    PLOGD <<"out";
-
-    Struct::clear();
+    PLOGD << str;
 
     return 0;
 
