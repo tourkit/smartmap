@@ -60,45 +60,46 @@ using namespace TEST;
 
     Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
     Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");//.add(rectangle);
+
+    Buffer buff;
   
-    Struct quad("myquad");
+    Struct quad("myquad",3);
 
     quad.add(Rect);
 
     quad.add(rectangle);
     
-
+    buff.add(quad);
 
     PLOGD << "BKP";
 
-    // auto bkp = quad.copy();
+    auto &bkp = buff.copy();
 
-    // bkp->hard_delete();
+    buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
+
+    bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
+
+    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    buff.remap(bkp);
+
+    // bkp.hard_delete();
+
+    PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
+
+    PLOGD <<"in";
+
+    bkp.hard_delete();
+
+    delete &bkp;
 
     PLOGD <<"out";
 
     Struct::clear();
 
     return 0;
-
-
-    // bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
-
-    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
-
-    // PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
-
-    // buff.remap(bkp);
-
-    
-    // bkp.hard_delete();
-
-    // PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
-
-    // PLOGD <<"in";
-    
-
-    PLOGD <<"out";
 
  
 }
