@@ -59,6 +59,7 @@ using namespace TEST;
     logger.cout();
 
     Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
+    
     Struct& Rect = Struct::create("Rect").add<vec2>("pos").add<vec2>("size");//.add(rectangle);
 
     Buffer buff;
@@ -71,11 +72,9 @@ using namespace TEST;
     
     buff.add(quad);
 
-    PLOGD << "BKP";
-
-    auto &bkp = buff.copy();
-
     buff["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(123);
+    
+    auto &bkp = buff.copy();
 
     bkp["myquad"].eq(1)["Rect"]["size"].set<uint32_t>(245);
 
@@ -84,8 +83,6 @@ using namespace TEST;
     PLOGD<<bkp["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
     buff.remap(bkp);
-
-    // bkp.hard_delete();
 
     PLOGD<<buff["myquad"].eq(1)["Rect"]["size"].get<uint32_t>();
 
