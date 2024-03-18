@@ -8,7 +8,6 @@
 #include <memory>
 #include <unordered_set>
 #include <set>
-#include <typeindex>
 
 #include "member.hpp"
 #include "data.hpp"

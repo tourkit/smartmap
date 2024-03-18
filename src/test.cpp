@@ -1,11 +1,5 @@
 #include "test.hpp"
 #include "log.hpp"
-#include "engine.hpp"
-#include "node.hpp"
-#include "drawcall.hpp"
-#include "effector.hpp"
-#include "model.hpp"
-#include "json.hpp"
 
 
 #include <vector>

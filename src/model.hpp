@@ -35,6 +35,6 @@ struct Model {
     
     void removeFX(Effector*  effector);
     
-    void changeFX(Effector*  effector, Component *new_component);
+    // void changeFX(Effector*  effector, Component *new_component);
 
 };

@@ -30,13 +30,10 @@ add_executable(smartmap
 
     src/buffer.cpp
     src/remap.cpp
-    src/object.cpp
-    src/component.cpp
+    src/data.cpp
+    src/member.cpp
     src/struct.cpp
-    # src/struct2.cpp
     src/instance.cpp
-    src/instance2.cpp
-    src/buffer2.cpp
     
     src/node.cpp
     src/callbacks.cpp
@@ -50,8 +47,8 @@ add_executable(smartmap
     src/shader.cpp
     
     src/engine.cpp
-    src/model.cpp
-    src/effector.cpp
+    # src/model.cpp
+    # src/effector.cpp
     src/drawcall.cpp
     src/atlas.cpp
     

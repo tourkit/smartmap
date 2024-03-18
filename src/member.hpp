@@ -4,6 +4,7 @@
 #include "log.hpp"
 #include <cstdint>
 #include <unordered_set>
+#include <typeindex>
 
 static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)factor)+1)*factor*!!x; }
 

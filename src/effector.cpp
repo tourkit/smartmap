@@ -1,7 +1,6 @@
 #include "effector.hpp"
 #include "file.hpp"
 #include "log.hpp"
-#include "component.hpp"
 #include "engine.hpp"
 #include "node.hpp"
 #include <regex>
