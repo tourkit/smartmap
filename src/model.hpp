@@ -6,7 +6,6 @@ struct Instance;
 struct Effector;
 
 #include <vector>
-#include "component.hpp"
 
 struct Model {
 

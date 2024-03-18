@@ -1,71 +1,51 @@
 #include "instance.hpp"
+#include "struct.hpp"
 #include "buffer.hpp"
-#include "log.hpp"
 
+bool Instance::exist(){ 
 
-#include "object.hpp"
+    if (offset == -1) return false;
 
-Instance::Comp::Comp(int id, Instance* instance) : id(id), instance(instance) { 
+    return true;
 
-    offset = 0;
-    int curr = 0;
-    for (auto c : instance->obj->s->comps) {
-        if (curr++ >= id) break;
-        offset += c->size;
+}
+
+Instance Instance::operator[](const char* name) { 
+
+    if  (offset < 0) return Instance{data,offset-1,member};
+
+    Member* found = nullptr;
+
+    if (!member) {PLOGW << "BUGGY";exit(0);}
+
+    for (auto &m : member->members) { 
+
+        if (!(strcmp(m->name().c_str(),name))) {
+        
+            found = m;
+
+            break;
+        
+        }
+        
+        offset += m->footprint()*m->quantity;
+        
     }
 
-}
+    if (!found) { offset = -1; PLOGW << "\"" << name << "\" does not exist"; }
 
-char* Instance::Comp::data() { return instance->data()+nextFactor(offset,16); }
-
-Instance::Comp::Member Instance::Comp::operator[](const char* name) { 
-
-    int id = 0;
-
-    for (auto m : instance->obj->s->comps[this->id]->members) { if (!(strcmp(m.name.c_str(),name))) { break;} id++; }
-    if (id == instance->obj->s->comps[this->id]->members.size()) PLOGW <<name;
-
-    return (*this)[id];
+    return Instance{data,offset,found};
 
 }
 
-Instance::Comp::Comp::Member Instance::Comp::operator[](int id) { 
+Instance& Instance::eq(int id) {
 
-    int member_offset = 0;
-    int current = 0;
-    auto comp  = instance->obj->s->comps[this->id];
-    for (auto m : comp->members) {
-        
-        if (current++ == id) break;
-        
-        member_offset += m.size;
-
-    }
-
-    logger.cout();
-
-    PLOGD <<instance->obj->s->comps[this->id]->name << " . " << offset << " . " << member_offset;
-
-    return Member{data()+member_offset};
+    if (!member || id >= member->quantity) return *this;
     
-}
+    id = id-this->id;
 
-
-Instance::Comp Instance::operator[](int id) { 
+    offset += member->footprint() * id;
     
-    return Comp{id,this}; 
-    
-}
-
-Instance::Comp Instance::operator[](const char* name) { 
-    
-    int id = 0;
-
-    for (auto c : obj->s->comps) { if (!(strcmp(c->name.c_str(),name))) { break;} id++; }
-    if (id == obj->s->comps.size()) PLOGW <<name;
-
-    return (*this)[id];
+    return *this;
 
 }
-
-char*  Instance::data() { return obj->data(id); }

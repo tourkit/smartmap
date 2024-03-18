@@ -3,7 +3,6 @@
 #include "engine.hpp"
 #include "node.hpp"
 #include "drawcall.hpp"
-#include "component.hpp"
 #include "effector.hpp"
 #include "model.hpp"
 #include "json.hpp"

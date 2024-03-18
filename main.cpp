@@ -10,17 +10,15 @@
 #include <set>
 #include <typeindex>
 
-#include "struct2.hpp"
-#include "buffer2.hpp"
-#include "instance2.hpp"
+#include "struct.hpp"
+#include "buffer.hpp"
+#include "instance.hpp"
 
 struct ui { uint32_t v; };
 struct float_ { float v; };
 struct vec2 { float x = 0, y = 0; };
 struct vec3 { float x = 0, y = 0, z = 0; };
 struct vec4 { float x = 0, y = 0, z = 0, w = 0; };
-
-namespace TEST {
 
 std::string glsl_layout(Member& s) {
 
@@ -50,14 +48,9 @@ std::string glsl_layout(Member& s) {
 
 }
 
-
-};
-
 int main() {
 
     logger.cout();
-
-using namespace TEST;
 
     Struct& rectangle = Struct::create("rectangle").add<vec2>("size").add<vec2>("pos");
 

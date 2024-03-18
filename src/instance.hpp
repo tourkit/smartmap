@@ -1,62 +1,43 @@
 #pragma once
 
-#include "struct.hpp"
-#include "component.hpp"
+#include <string>
+#include <vector>
+#include <functional>
+#include <cstddef>
+#include <map>
 
-#include <cstring>
+#include "buffer.hpp"
 
+struct Buffer;
+struct Member;
 
+struct Instance { 
 
+    char* data;
+    int offset;
+    Member* member = nullptr;
+    int id = 0;
 
+    Instance operator[](const char* name);
+    Instance operator[](int id);
 
-
-
-
-struct Object;
-
-struct Instance {
-
-    Object* obj;
-
-    int id;
-
-    struct Comp {
-
-        struct Member{
-
-            char* data;
-
-            template <typename T>
-            void set(T data) { memcpy(this->data,(char*)&data,sizeof(data)); }
-
-            template <typename T>
-            T& get() { return *((T*)data); }
-        
-        };
-
-        template <typename T>
-        void set(T data) { memcpy(this->data(),(char*)&data, sizeof(T)); }
-
-        int id;
-
-        Instance *instance;
-
-        int offset;
-
-        Comp(int id, Instance* instance);
-
-        char* data();
-
-        Member operator[](const char* name);
-        Member operator[](int id);
+    bool exist();
 
 
-    };
+    Instance& eq(int id);
 
-    Comp operator[](int id);
+    template <typename T>
+    T get() { return *((T*)(data+offset)); }
 
-    Comp operator[](const char* name);
+    template <typename T>
+    Instance& set(T val) {
 
-    char* data();
 
+
+        memcpy(data+offset, &val, sizeof(T));
+
+        return *this;
+
+    }
+    
 };
