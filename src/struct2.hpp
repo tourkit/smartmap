@@ -23,13 +23,13 @@ namespace TEST {
 
         Member(std::string name_v = "") { name(name_v); 
         
-        // PLOGD << "#" << name(); 
+        PLOGV << name(); 
         
         pool.insert(this);}
 
         virtual ~Member() { 
             
-            // PLOGD << "~ " << name(); 
+            PLOGV << "~" << name(); 
             
             pool.erase(this); 
         
@@ -66,6 +66,8 @@ namespace TEST {
         virtual uint32_t size() { return 0; }
 
         virtual uint32_t footprint() { return 0; } 
+        
+        uint32_t eq(int i) { return i*footprint(); } 
 
         virtual uint32_t footprint_all() { return footprint() * quantity; }
 
@@ -99,10 +101,11 @@ namespace TEST {
 
             x->quantity = quantity;    
 
-            x->members = members;    
+            x->members = members;
 
             for (auto &m : x->members) m = m->copy();
             
+            x->size_v = size_v;
             return x; 
             
         }
@@ -128,7 +131,7 @@ namespace TEST {
 
                 PLOGD << str;
 
-            }, 0, 0, [&](Member& m){ if (m.striding()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.name() << ")"; });
+            }, 0, 0, [&](Member& m){ if (m.striding() && m.stride()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.name() << ")"; });
 
         }
 
@@ -154,9 +157,11 @@ namespace TEST {
 
     protected:
         std::string name_v;
+        uint32_t size_v = 0;
     private:
     
         bool is_striding = false;
+
 
     };
 
@@ -265,8 +270,6 @@ namespace TEST {
         }
 
         Struct& add(Struct& s) { 
-
-            PLOGD << "add " << s.name() << " to " << name();
 
             for (auto &c : pool) {
                 if (c == &s) {
@@ -392,6 +395,8 @@ namespace TEST {
         }        
         virtual Struct& add(Member* s) {
 
+            PLOGV << "add " << s->name() << " to " << name();
+
             members.push_back(s);
 
             size_v += members.back()->footprint_all();
@@ -413,10 +418,6 @@ namespace TEST {
             return *this; 
 
         }
-private :
-
-    
-        uint32_t size_v = 0;
     };
 
 

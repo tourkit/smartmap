@@ -19,7 +19,7 @@ void Log::Appender::write(const plog::Record& record) {
     std::ifstream ifile(File::REPO_DIR+"assets/logs/logs.txt");
     std::stringstream buffer;
     buffer << plog::FuncMessageFormatter::format(record);
-    if (cmd && record.getSeverity() != plog::Severity::verbose) std::cout << plog::FuncMessageFormatter::format(record);
+    if (cmd) if (is_verbose || record.getSeverity() != plog::Severity::verbose) std::cout << plog::FuncMessageFormatter::format(record); 
     buffer << ifile.rdbuf();
     ifile.close();
 

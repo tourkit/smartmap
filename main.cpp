@@ -50,6 +50,7 @@ std::string glsl_layout(Member& s) {
 
 }
 
+
 };
 
 int main() {
@@ -58,35 +59,67 @@ int main() {
 
 using namespace TEST;
 
-    Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
+    Struct& rectangle = Struct::create("rectangle").add<vec2>("size").add<vec2>("pos");
+
+    Struct& argb = Struct::create("argb").add<float_>("alpha").add<float_>("red").add<float_>("green").add<float_>("blue");
 
     Buffer buff;
 
-    Struct quad("MyQuad");
+    Struct quad("MyQuad", 2);
+
+    rectangle.striding(true);
     
+    quad.add(argb);
+
     buff.add(quad);
-
-    quad.add(rectangle);
     
-    quad.resize(2);
+    quad.add(rectangle);
 
-    buff["MyQuad"].eq(1)["rectangle"]["reca"].set<uint32_t>(123);
+    rectangle.add<float_>("angle");
+
+    buff.print();
+
+    buff["MyQuad"].eq(0)["rectangle"]["size"].set<uint32_t>(123);
 
     auto &bkp = buff.copy();
+
+    Struct inv("MyQuad", 2);
+    inv.add(rectangle).add(argb);
     
-    buff["MyQuad"].eq(1)["rectangle"]["reca"].set<uint32_t>(235);
+    Buffer buff2;
+
+    buff2.add(inv);
+    
+    // buff2.print();
+
+    buff2.remap(buff); 
+
+    buff["MyQuad"].eq(0)["rectangle"]["size"].set<uint32_t>(245);
+
+    bkp.remap(buff); 
+
+    buff["MyQuad"].eq(0)["rectangle"]["size"].set<uint32_t>(69);
+    bkp["MyQuad"].eq(1)["rectangle"]["size"].set<uint32_t>(33);
 
     std::string str;
 
-    buff.remap(bkp); 
-
-    str = std::to_string(buff.data.size()) + " : ";
+    str = "buff: " + std::to_string(buff.data.size()) + " : ";
 
     for (auto i = 0; i<buff.data.size(); i++) str += std::to_string((uint8_t)buff.data[i]) + " ";
 
     PLOGD << str;
 
-    return 0;
+    str = "buff2: " + std::to_string(buff2.data.size()) + " : ";
+
+    for (auto i = 0; i<buff2.data.size(); i++) str += std::to_string((uint8_t)buff2.data[i]) + " ";
+
+    PLOGD << str;
+
+    str = "bkp: " + std::to_string(bkp.data.size()) + " : ";
+
+    for (auto i = 0; i<bkp.data.size(); i++) str += std::to_string((uint8_t)bkp.data[i]) + " ";
+
+    PLOGD << str;
 
     
 }

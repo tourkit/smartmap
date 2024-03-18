@@ -28,10 +28,11 @@ namespace TEST {
 
         void set(Member& m, void* data) { }
 
-        void update() override { 
+        void update() override {
+             
             Struct::update(); 
+
             data.resize( footprint_all() ); 
-            
             
             memset(data.data(),0,data.size());
 
@@ -58,51 +59,48 @@ namespace TEST {
             return y;
         }
 
-        void remapEach(Buffer& from, Member* from_m = nullptr, Member* to_m = nullptr, int from_offset = 0, int to_offset = 0) {
+        void remapEach(Buffer& src_buffer, Member* src_member = nullptr, Member* this_member = nullptr, int src_offset = 0, int this_offset = 0) {
 
-            if (!from_m) from_m = &from;
+            if (!src_member) src_member = &src_buffer;
 
-            if (!to_m) to_m = this;
+            if (!this_member) this_member = this;
 
-            int from_offset_curr = 0;
-
-            auto quantity = from_m->quantity;
-
-            if (quantity > to_m->quantity) quantity = to_m->quantity;
-
-            for (int i = 0 ; i < quantity; i ++) {
+            for (int i = 0 ; i < ( src_member->quantity < this_member->quantity ? src_member->quantity :  this_member->quantity ); i ++) {
+            
+                int src_offset_ = src_offset + src_member->eq(i);
                 
-                for (auto from_m_curr : from_m->members) {
-
+                for (auto src_member_ : src_member->members) {
                     Member* found = nullptr;
 
-                    int to_offset_curr = 0;
+                    int this_offset_ = this_offset + this_member->eq(i);
 
-                    for (auto to_m_curr : to_m->members) {
+                    for (auto this_member_ : this_member->members) {
                     
-                        if (!strcmp(from_m_curr->name().c_str(), to_m_curr->name().c_str())) { found = to_m_curr; break; }
+                        if (
+
+                            !strcmp(src_member_->name().c_str(), this_member_->name().c_str())
+
+                            && src_member_->type() == this_member_->type()
+                            
+                        ) { found = this_member_; break; }
                     
-                        else to_offset_curr += to_m_curr->size();
+                        else this_offset_ += this_member_->size();
                     
                     }
                     
-                    if (!found) { PLOGW << "couldnt find " << from_m_curr->name(); continue; }
+                    if (!found) { PLOGV << "couldnt find " << src_member_->name(); continue; }
+
+                    remapEach(src_buffer, src_member_, found, src_offset_, this_offset+this_offset_); 
 
                     if (found->typed()) {
-
-                        to_offset_curr += ( to_m->size() * i ) + to_offset;
-
-                        from_offset_curr += from_offset;
                         
-                        PLOGV << from_m->name() << " change : " << found->name() << " " <<(from_m->size()*i)+from_offset_curr << " to " <<to_offset_curr << to_m->name() << " (" << to_m->size() << ") = " << (unsigned int)data[to_offset_curr];
-                     
-                        memcpy(&data[to_offset_curr], &from.data[(from_m->size()*i)+from_offset_curr],to_m->size()); // dst ? this !
-                        
+                        PLOGV  << src_offset_ << " -> "  << this_offset_ << " " << src_member->name() << "::" << src_member_->name() << "(" << src_member_->size() << ")";
+
+                        memcpy(&data[src_offset_], &src_buffer.data[this_offset_],found->size());
+                                             
                     }
-
-                    remapEach(from, from_m_curr, found, from_offset_curr, to_offset_curr);
                 
-                    from_offset_curr += from_m_curr->size();
+                    src_offset_ += src_member_->footprint();
 
                 }
                 
@@ -110,7 +108,16 @@ namespace TEST {
 
         }
 
-        void remap(Buffer& from); 
+        void remap(Buffer& from){
+
+            data.resize(from.data.size());
+            
+            memset(data.data(),0,data.size());
+
+            remapEach(from);
+            
+        }        
+
 
     };
 

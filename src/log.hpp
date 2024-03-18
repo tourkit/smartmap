@@ -20,6 +20,7 @@ struct Log {
     struct Appender : public plog::IAppender {
 
         bool cmd = false;
+        bool is_verbose = false;
 
         struct Message {
 
@@ -38,7 +39,7 @@ struct Log {
 
     Appender appender;
 
-    void cout() { appender.cmd = true; }
+    void cout(bool is_verbose = false) { appender.cmd = true; appender.is_verbose = is_verbose; }
     
     static Log& getInstance() { static Log instance;  return instance; }
 
