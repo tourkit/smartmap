@@ -103,13 +103,11 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
 
         void striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
-        bool striding() { return is_striding; }
-
         virtual Member* copy(Member* x = nullptr) { 
 
             if(!x) x = new Member(name_v); 
 
-            x->striding(striding());
+            x->striding(is_striding);
 
             x->quantity = quantity;    
 
@@ -143,7 +141,7 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
 
                 PLOGD << str;
 
-            }, 0, 0, [&](Member& m){ if (m.striding() && m.stride()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.name() << ")"; });
+            }, 0, 0, [&](Member& m){ if (m.is_striding && m.stride()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.name() << ")"; });
 
         }
 
@@ -170,9 +168,9 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
     protected:
         std::string name_v;
         uint32_t size_v = 0;
+        bool is_striding = false;
     private:
     
-        bool is_striding = false;
 
 
     };

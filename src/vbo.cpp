@@ -15,11 +15,9 @@
 
 VBO::VBO() {  
 
-    vertices = addObj(vertices_s);    
-    vertices->s->stride(false);
+    vertices = &add(vertices_s);    
 
-    indices = addObj(indices_s);
-    indices->s->stride(false);
+    indices = &add(indices_s);
 
     create();
 }
@@ -55,35 +53,37 @@ void VBO::update() {upload();}
 
 void VBO::upload() {
 
-    static std::vector<float> backup_quad = {
+    // tofix
 
-        -1,-1, 0,0, 0,
-        1,-1, 1,0, 0,
-        -1,1, 0,1, 0,
-        1,1, 1,1, 0,
+    // static std::vector<float> backup_quad = {
 
-    };
+    //     -1,-1, 0,0, 0,
+    //     1,-1, 1,0, 0,
+    //     -1,1, 0,1, 0,
+    //     1,1, 1,1, 0,
 
-    glBindVertexArray(vao);
+    // };
 
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    // glBindVertexArray(vao);
 
-    // (s->size() * reserved);
+    // glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+    // // (s->size() * reserved);
 
 
-    glBufferData(GL_ARRAY_BUFFER,  vertices->size()*vertices->reserved, vertices->data(), GL_STATIC_DRAW );
-    // glBufferData(GL_ARRAY_BUFFER,  vertices->size(), &backup_quad[0], GL_STATIC_DRAW );
+    // glBufferData(GL_ARRAY_BUFFER,  vertices->size()*vertices->reserved, vertices->data(), GL_STATIC_DRAW );
+    // // glBufferData(GL_ARRAY_BUFFER,  vertices->size(), &backup_quad[0], GL_STATIC_DRAW );
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size(), indices->data(), GL_STATIC_DRAW );
+    // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    // glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices->size(), indices->data(), GL_STATIC_DRAW );
 
-    // make this parametric from Object vertices definition
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) 0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) (2*sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) (4*sizeof(float)));
-    glEnableVertexAttribArray(3);
+    // // make this parametric from Object vertices definition
+    // glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) 0);
+    // glEnableVertexAttribArray(0);
+    // glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) (2*sizeof(float)));
+    // glEnableVertexAttribArray(1);
+    // glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, vertices->s->size(), (GLvoid *) (4*sizeof(float)));
+    // glEnableVertexAttribArray(3);
 
 }
 
@@ -98,51 +98,53 @@ void VBO::draw(int count) {
 
 int VBO::import(File *file) {    
 
-    Assimp::Importer importer;
+    return 0;  // tofix
 
-    const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       | 
-        aiProcess_Triangulate            |
-        aiProcess_JoinIdenticalVertices  |
-        aiProcess_SortByPType);
+    // Assimp::Importer importer;
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) PLOGW << "Failed to load OBJ file: " << importer.GetErrorString();
+    // const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       | 
+    //     aiProcess_Triangulate            |
+    //     aiProcess_JoinIdenticalVertices  |
+    //     aiProcess_SortByPType);
 
-    auto mesh = scene->mMeshes[0];
+    // if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) PLOGW << "Failed to load OBJ file: " << importer.GetErrorString();
 
-    int next_indice =  vertices->instances.size();
+    // auto mesh = scene->mMeshes[0];
 
-    for (int i = 0; i < mesh->mNumVertices; i++) {
+    // int next_indice =  vertices->instances.size();
 
-        const aiVector3D& vertex = mesh->mVertices[i];
+    // for (int i = 0; i < mesh->mNumVertices; i++) {
+
+    //     const aiVector3D& vertex = mesh->mVertices[i];
         
-        auto v = vertices->push();
+    //     auto v = vertices->push();
 
-        v["Position"]["x"].set<float>(vertex.x);
-        v["Position"]["y"].set<float>(vertex.y);
+    //     v["Position"]["x"].set<float>(vertex.x);
+    //     v["Position"]["y"].set<float>(vertex.y);
 
-        v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
-        v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
+    //     v["UV"]["x"].set<float>(mesh->mTextureCoords[0][i].x);
+    //     v["UV"]["y"].set<float>(mesh->mTextureCoords[0][i].y);
 
-        v["ID"][0].set<uint32_t>(0);
+    //     v["ID"][0].set<uint32_t>(0);
 
 
-    }
+    // }
 
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+    // for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
       
-        const aiFace& face = mesh->mFaces[i];
-        auto indices = this->indices->push();
+    //     const aiFace& face = mesh->mFaces[i];
+    //     auto indices = this->indices->push();
 
-        indices[0].set<uint32_t>(next_indice+face.mIndices[0]);
-        indices[1].set<uint32_t>(next_indice+face.mIndices[1]);
-        indices[2].set<uint32_t>(next_indice+face.mIndices[2]);
+    //     indices[0].set<uint32_t>(next_indice+face.mIndices[0]);
+    //     indices[1].set<uint32_t>(next_indice+face.mIndices[1]);
+    //     indices[2].set<uint32_t>(next_indice+face.mIndices[2]);
 
-    }
+    // }
 
-    upload();
+    // upload();
 
-    models.push_back(new Model(file, models.size()));
+    // models.push_back(new Model(file, models.size()));
 
-    return models.size()-1;
+    // return models.size()-1;
     
 }

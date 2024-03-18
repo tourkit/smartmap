@@ -158,8 +158,9 @@
 
     void UntypedNode::bkpupdate() {
             
-        engine.static_ubo->bkp();
-        engine.dynamic_ubo->bkp();
+        //TOFIX
+        // engine.static_ubo->bkp();
+        // engine.dynamic_ubo->bkp();
 
         update();
 

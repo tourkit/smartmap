@@ -5,12 +5,12 @@
 
 struct Texture;
 struct UBO; 
-struct Object; 
+struct Struct; 
 struct ShaderProgram; 
  
 struct Atlas {
 
-    Object* buffer;
+    Struct* buffer;
 
     rbp::MaxRectsBinPack binpack;
 

@@ -5,7 +5,6 @@
 #include "gui.hpp"
 #include "buffer.hpp"
 #include "directory.hpp"
-#include "component.hpp"
 #include "struct.hpp"
 #include "model.hpp"
 #include "file.hpp"
@@ -55,65 +54,66 @@ namespace ImGui {
 };
 
 static void draw_definition(Buffer *buffer) {
-            
-    is_hovered=false;
+
+    // tofix           
+    // is_hovered=false;
     
-    std::string str = "char[" +std::to_string( buffer->data.size()) + "]";
+    // std::string str = "char[" +std::to_string( buffer->data.size()) + "]";
 
-    ImGui::Text(str.c_str());
+    // ImGui::Text(str.c_str());
 
-    for (auto &o: buffer->objects) {
+    // for (auto &o: buffer->objects) {
         
-        std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size())+"]"+" * "+std::to_string(o.reserved);
+    //     std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size())+"]"+" * "+std::to_string(o.reserved);
 
-        ImGui::TextX(str.c_str(), o.offset, o.s->size());
+    //     ImGui::TextX(str.c_str(), o.offset, o.s->size());
 
-        int comp_offset = o.offset;
-        for (auto& c : o.s->comps) {
+    //     int comp_offset = o.offset;
+    //     for (auto& c : o.s->comps) {
 
-            auto size = c->size;
-            if (c->members.size() > 1 && o.s->is_striding) size = nextFactor(size,16);
+    //         auto size = c->size;
+    //         if (c->members.size() > 1 && o.s->is_striding) size = nextFactor(size,16);
             
-            std::string str = "    "+c->name+"["+std::to_string(size)+"]";
+    //         std::string str = "    "+c->name+"["+std::to_string(size)+"]";
 
-            ImGui::TextX(str.c_str(), comp_offset, size);
+    //         ImGui::TextX(str.c_str(), comp_offset, size);
 
-            int member_offset = comp_offset;
-            for (auto& m : c->members) {
+    //         int member_offset = comp_offset;
+    //         for (auto& m : c->members) {
                 
-                std::string str = "      "+(m.name.length()?m.name:"val")+"["+std::to_string(m.size)+"]";
+    //             std::string str = "      "+(m.name.length()?m.name:"val")+"["+std::to_string(m.size)+"]";
 
-                ImGui::TextX(str.c_str(), member_offset, m.size);
+    //             ImGui::TextX(str.c_str(), member_offset, m.size);
                 
-                member_offset+= m.size;
+    //             member_offset+= m.size;
                 
-            }
+    //         }
 
 
-            comp_offset+= size;
+    //         comp_offset+= size;
 
-        }
+    //     }
                 
         
 
-        // maybe could merge two following thingyz
-        auto x = o.s->size()-comp_offset;
-        if (x) {
+    //     // maybe could merge two following thingyz
+    //     auto x = o.s->size()-comp_offset;
+    //     if (x) {
         
-            std::string str = "      stride["+std::to_string(x)+"]";
-            ImGui::TextX(str.c_str(), comp_offset, x);
+    //         std::string str = "      stride["+std::to_string(x)+"]";
+    //         ImGui::TextX(str.c_str(), comp_offset, x);
         
-        }
+    //     }
                 
-        //with that
-        if (o.is_striding && o.stride()) { 
+    //     //with that
+    //     if (o.is_striding && o.stride()) { 
 
-            std::string str = "    stride["+std::to_string(o.stride())+"]";
-            ImGui::TextX(str.c_str(), comp_offset+x, o.stride());   
+    //         std::string str = "    stride["+std::to_string(o.stride())+"]";
+    //         ImGui::TextX(str.c_str(), comp_offset+x, o.stride());   
 
-        }
+    //     }
         
-    }
+    // }
 
 }
 
@@ -182,55 +182,59 @@ static void draw_raw(void *data, size_t size) {
 
 static bool draw_object(void*data, Struct* s) {
 
-    int uniform_offset = 0;
+    // TOFIX 
 
-    bool has_changed = false;
+    // int uniform_offset = 0;
 
-    for (auto c:s->comps) {
+    // bool has_changed = false;
+
+    // for (auto& m : s->members) {
                 
-        ImGui::SeparatorText(c->name.c_str());
-        ImGui::Text("delete");
-        if(ImGui::IsItemClicked()){
-            s->removeComp(c->name);
-            has_changed = true;
-        }
+    //     ImGui::SeparatorText(m->name().c_str());
+    //     ImGui::Text("delete");
+    //     if(ImGui::IsItemClicked()){
+    //         // s->remove(m->name()); // TODFIX
+    //         has_changed = true;
+    //     }
 
-        int uniform_member_offset = 0;
+    //     int uniform_member_offset = 0;
         
-        for (auto m:c->members) {
+    //     for (auto& m_ : m->members) {
 
-            float *f = (float*)(((char*)data)+uniform_offset+uniform_member_offset);
+    //         float *f = (float*)(((char*)data)+uniform_offset+uniform_member_offset);
 
-            uniform_member_offset += m.size; 
+    //         uniform_member_offset += m_.size; 
 
-            void* range_to = &m.range_to;
+    //         void* range_to = &m_.range_to;
 
-            static int range = 65000;
+    //         static int range = 65000;
 
-            auto type = ImGuiDataType_Float;
+    //         auto type = ImGuiDataType_Float;
 
-            if (m.type == Member::Type::I32) {type = ImGuiDataType_S32; range_to = &range; }
-            if (m.type == Member::Type::UI8) type = ImGuiDataType_U8;
-            if (m.type == Member::Type::UI16) type = ImGuiDataType_U16;
-            if (m.type == Member::Type::UI32) { type = ImGuiDataType_U16; range_to = &range; }
+    //         if (m_.type() == typeid(int)) {type = ImGuiDataType_S32; range_to = &range; }
+    //         if (m_.type() == typeid(uint8_t)) type = ImGuiDataType_U8;
+    //         if (m_.type() == typeid(uint16_t)) type = ImGuiDataType_U16;
+    //         if (m_.type() == typeid(uint32_t)) { type = ImGuiDataType_U16; range_to = &range; }
             
-            int q = 1;
-            if (m.type == Member::Type::VEC2) q = 2;
-            if (m.type == Member::Type::VEC3) q = 3;
-            if (m.type == Member::Type::VEC4) q = 4;
+    //         int q = 1;
+    //         if (m_.type() == typeid(glm::vec2)) q = 2;
+    //         if (m_.type() == typeid(glm::vec3)) q = 3;
+    //         if (m_.type() == typeid(glm::vec4)) q = 4;
 
-            std::string name = (m.name+"##"+c->name+m.name+std::to_string(uniform_offset+uniform_member_offset));
+    //         std::string name = (m_.name+"##"+c->name+m_.name+std::to_string(uniform_offset+uniform_member_offset));
 
-            if (ImGui::SliderScalarN(name.c_str(), type, f, q, &m.range_from, range_to)) has_changed = true; 
+    //         if (ImGui::SliderScalarN(name.c_str(), type, f, q, &m_.range_from, range_to)) has_changed = true; 
 
-        }
+    //     }
 
         
-        uniform_offset += uniform_member_offset;
+    //     uniform_offset += uniform_member_offset;
         
-    }
+    // }
 
-    return has_changed;
+    // return has_changed;
+
+    return true; // torfix
             
  }
 
@@ -245,64 +249,66 @@ void Editors::init() {
     
     Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){ 
 
-            // string buffer for imgui::combo
-            static std::vector<char> models;
-            static std::vector<Model*> models_ptr;
+        // TOFIX
 
-            if (!models.size()) {
+            // // string buffer for imgui::combo
+            // static std::vector<char> models;
+            // static std::vector<Model*> models_ptr;
+
+            // if (!models.size()) {
             
-                engine.stack->each<Layer>([&](Node* n, Layer* l) { 
+            //     engine.stack->each<Layer>([&](Node* n, Layer* l) { 
 
-                    n->each<Model>([&](Node* n, Model* m) { 
+            //         n->each<Model>([&](Node* n, Model* m) { 
 
-                        for (auto c : n->name) models.push_back(c);
-                        models.push_back(0);
-                        models_ptr.push_back(m);
+            //             for (auto c : n->name) models.push_back(c);
+            //             models.push_back(0);
+            //             models_ptr.push_back(m);
           
-                    });
+            //         });
 
-                    models.push_back(0);
+            //         models.push_back(0);
 
-                });
+            //     });
 
-            }
+            // }
 
-            // imgui::combo
-            static int model_id=0;
-            if (ImGui::Combo("Model##dddddddd", &model_id, &models[0], models.size())) remap->import(models_ptr[model_id]->obj->s);
+            // // imgui::combo
+            // static int model_id=0;
+            // if (ImGui::Combo("Model##dddddddd", &model_id, &models[0], models.size())) remap->import(models_ptr[model_id]->obj->s);
 
-            std::string sss; 
-            ImGui::InputText("char *src##remap_name", sss.data(), sss.length());
+            // std::string sss; 
+            // ImGui::InputText("char *src##remap_name", sss.data(), sss.length());
 
-            int member_id = 0;
+            // int member_id = 0;
 
-            for (auto c:remap->fixture->s->comps) {
+            // for (auto c:remap->fixture->s->comps) {
                         
-                ImGui::SeparatorText(c->name.c_str());
+            //     ImGui::SeparatorText(c->name.c_str());
                 
-                for (auto m:c->members) {
+            //     for (auto m:c->members) {
 
-                    ImGui::Text(m.name.c_str());
+            //         ImGui::Text(m.name.c_str());
 
-                    static int e = 0;
-                    std::string strbypa = "bypass##rbt"+std::to_string(member_id);
-                    ImGui::SameLine(); 
-                    ImGui::RadioButton(strbypa.c_str(), &remap->fixture->attributes[member_id].combining , 0);
-                    std::string strcoar = "coarse##rbt"+std::to_string(member_id);
-                    ImGui::SameLine(); 
-                    ImGui::RadioButton(strcoar.c_str(), &remap->fixture->attributes[member_id].combining , 1);
-                    std::string strfine = "fine##rbt"+std::to_string(member_id);
-                    ImGui::SameLine(); 
-                    ImGui::RadioButton(strfine.c_str(), &remap->fixture->attributes[member_id].combining , 2);
-                    std::string strultr = "ultra##rbt"+std::to_string(member_id);
-                    ImGui::SameLine(); 
-                    ImGui::RadioButton(strultr.c_str(), &remap->fixture->attributes[member_id].combining , 3);
+            //         static int e = 0;
+            //         std::string strbypa = "bypass##rbt"+std::to_string(member_id);
+            //         ImGui::SameLine(); 
+            //         ImGui::RadioButton(strbypa.c_str(), &remap->fixture->attributes[member_id].combining , 0);
+            //         std::string strcoar = "coarse##rbt"+std::to_string(member_id);
+            //         ImGui::SameLine(); 
+            //         ImGui::RadioButton(strcoar.c_str(), &remap->fixture->attributes[member_id].combining , 1);
+            //         std::string strfine = "fine##rbt"+std::to_string(member_id);
+            //         ImGui::SameLine(); 
+            //         ImGui::RadioButton(strfine.c_str(), &remap->fixture->attributes[member_id].combining , 2);
+            //         std::string strultr = "ultra##rbt"+std::to_string(member_id);
+            //         ImGui::SameLine(); 
+            //         ImGui::RadioButton(strultr.c_str(), &remap->fixture->attributes[member_id].combining , 3);
 
-                    member_id++;
+            //         member_id++;
 
-                }
+            //     }
                 
-            }
+            // }
 
     });
 
@@ -321,25 +327,27 @@ void Editors::init() {
 
     ////////// STRUCT.HPP 
 
-    Editor<Struct>([](Node* node, Struct *s){ 
+    // TOFIX
+
+    // Editor<Struct>([](Node* node, Struct *s){ 
         
-        std::string str = s->name+" " +std::to_string(s->size());
-        ImGui::Text(str.c_str());
+    //     std::string str = s->name+" " +std::to_string(s->size());
+    //     ImGui::Text(str.c_str());
 
-        for (auto& c : s->comps) {
+    //     for (auto& c : s->comps) {
 
-            std::string str = " - "+c->name+" "+std::to_string(c->size);
-            ImGui::Text(str.c_str());
+    //         std::string str = " - "+c->name+" "+std::to_string(c->size);
+    //         ImGui::Text(str.c_str());
 
-            for (auto& m : c->members) {
-                std::string str = "  -- "+m.name+" "+std::to_string(m.size);
-                ImGui::Text(str.c_str());                
-            }
+    //         for (auto& m : c->members) {
+    //             std::string str = "  -- "+m.name+" "+std::to_string(m.size);
+    //             ImGui::Text(str.c_str());                
+    //         }
 
 
-        }
+    //     }
     
-    });
+    // });
 
     ////////// SHADER.HPP 
 
@@ -534,38 +542,40 @@ void Editors::init() {
 
     ////////// OBJECT.HPP 
 
-    Editor<Object>([](Node* node, Object *obj){
+    // TOFIX
 
-        ImGui::SeparatorText(obj->s->name.c_str());
+    // Editor<Object>([](Node* node, Object *obj){
 
-        static std::unordered_map<Object*,int> elem_current;
-        static std::string uid = "123";
+    //     ImGui::SeparatorText(obj->s->name.c_str());
 
-        Buffer* buffer = obj->buffer;
+    //     static std::unordered_map<Object*,int> elem_current;
+    //     static std::string uid = "123";
 
-        if (buffer->objects.size()) {
+    //     Buffer* buffer = obj->buffer;
 
-            int max = obj->reserved-1;
-            int min = 0;
-            if (max<0) min = -1;
+    //     if (buffer->objects.size()) {
 
-            if (ImGui::SliderInt("instance##current", &elem_current[obj], min, max)) { }
+    //         int max = obj->reserved-1;
+    //         int min = 0;
+    //         if (max<0) min = -1;
 
-            ImGui::SameLine(); if (ImGui::Button("add")) {
+    //         if (ImGui::SliderInt("instance##current", &elem_current[obj], min, max)) { }
 
-                obj->push();
+    //         ImGui::SameLine(); if (ImGui::Button("add")) {
 
-                node->update();
+    //             obj->push();
 
-            }
+    //             node->update();
 
-            if (!obj->reserved) return;
+    //         }
 
-            if(draw_object(obj->data(elem_current[obj]),obj->s)) buffer->update();
+    //         if (!obj->reserved) return;
 
-        }
+    //         if(draw_object(obj->data(elem_current[obj]),obj->s)) buffer->update();
 
-    });
+    //     }
+
+    // });
 
     ////////// Texture.HPP 
 
@@ -582,42 +592,46 @@ void Editors::init() {
 
     ////////// BUFFER.HPP 
 
-    Editor<Buffer>([](Node* node, Buffer *buffer){
+    // tofix
 
-        ImGui::Separator();
+    // Editor<Buffer>([](Node* node, Buffer *buffer){
 
-        draw_definition(buffer);
+    //     ImGui::Separator();
 
-        ImGui::Separator();
+    //     draw_definition(buffer);
 
-        draw_raw(buffer->data.data(),buffer->data.size());
+    //     ImGui::Separator();
 
-        static StringsBuffer object_str;
-        static int obj_current = 0;
-        std::vector<std::string> obect_strs;
-        for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
-        if (!obect_strs.size()) return;
-        object_str.create(obect_strs);
-        ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
+    //     draw_raw(buffer->data.data(),buffer->data.size());
 
-        if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
+    //     static StringsBuffer object_str;
+    //     static int obj_current = 0;
+    //     std::vector<std::string> obect_strs;
+    //     for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
+    //     if (!obect_strs.size()) return;
+    //     object_str.create(obect_strs);
+    //     ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-    });
-    
-    Editor<Layer>([](Node* node, Layer *layer){ 
+    //     if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
+
+    // });
+
+    // tofix
+
+    // Editor<Layer>([](Node* node, Layer *layer){ 
         
-        Editor<Texture>::cb(node, layer->fb.texture); 
+    //     Editor<Texture>::cb(node, layer->fb.texture); 
 
-        Editor<ShaderProgram>::cb(node, &layer->shader); 
+    //     Editor<ShaderProgram>::cb(node, &layer->shader); 
 
-        ImGui::Separator();
-        Editor<Object>::cb(node, layer->vbo.vertices); 
-        ImGui::Separator();
-        Editor<Object>::cb(node, layer->vbo.indices); 
-        ImGui::Separator();
-        Editor<VBO>::cb(node, &layer->vbo); 
+    //     ImGui::Separator();
+    //     Editor<Object>::cb(node, layer->vbo.vertices); 
+    //     ImGui::Separator();
+    //     Editor<Object>::cb(node, layer->vbo.indices); 
+    //     ImGui::Separator();
+    //     Editor<VBO>::cb(node, &layer->vbo); 
         
-    });
+    // });
 
     ////////// UBO.HPP 
 
@@ -635,9 +649,9 @@ void Editors::init() {
 
     Editor<Model>([](Node* node, Model *model){ 
         
-        if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj); 
+        // if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj);  // tofix
         
-        else if (model->file) Editor<File>::cb(node, model->file);
+        // else if (model->file) Editor<File>::cb(node, model->file);
         
     });
 
@@ -686,23 +700,23 @@ void Editors::init() {
         
         Editor<Texture>::cb(node, atlas->texture); 
         
-        Editor<Object>::cb(node, atlas->buffer); 
+        // Editor<Object>::cb(node, atlas->buffer);  // tofix
         
         
     });
 
     ////////// Component.HPP 
     
-    Editor<Component>([](Node* node, Component *comp){ 
+    // Editor<Component>([](Node* node, Component *comp){ 
         
-        for (auto &m : comp->members) {
+    //     for (auto &m : comp->members) {
 
-            std::string str = std::string(m.type_name()) + " " + m.name+ "; ";
-            ImGui::Text(str.c_str());
-        }
+    //         std::string str = std::string(m.type_name()) + " " + m.name+ "; ";
+    //         ImGui::Text(str.c_str());
+    //     }
         
         
-    });
+    // });
     ////////// JSON.HPP 
     
     Editor<JSON>([](Node* node, JSON *json){ 

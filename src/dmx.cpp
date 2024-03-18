@@ -1,7 +1,7 @@
 #include "dmx.hpp"
 #include "struct.hpp"
 #include "log.hpp"
-#include "component.hpp"
+#include "struct.hpp"
 #include "artnet.hpp"
 
 DMX::DMX(int id) : id(id) { memset(&data[0],0,512); PLOGD << "universe " << id;  } 
@@ -9,7 +9,7 @@ DMX::DMX(int id) : id(id) { memset(&data[0],0,512); PLOGD << "universe " << id; 
 
 DMX::Fixture::Fixture(Struct* s) : s(s) {
 
-    for (auto c : s->comps) c->each([this](Member &m){ attributes.push_back({1,m.range_from,m.range_to}); });
+    // for (auto& m : s->members) c->each([this](Member &m){ attributes.push_back({1,m.range_from,m.range_to}); });
 
 }
 

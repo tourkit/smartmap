@@ -21,64 +21,66 @@ void Effector::import(File *file) {
 
 void Effector::import(const char* data) {
 
-    std::smatch match;
+// tofix
 
-    ranges.clear();
+//     std::smatch match;
 
-    int range_count = 0;
-    std::string source = data;
-    std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*)?)?)?\))");
-    std::sregex_iterator next(source.begin(), source.end(), regex);
-    std::sregex_iterator end;
-    while (next != end) {
+//     ranges.clear();
 
-        std::smatch match = *next++;
-        std::string range;
-        int i = 0;
-        std::istringstream stream(match[2].str());
-        while (std::getline(stream, range, ',')) ranges[match[1]][i++] = std::stof(range);
-        range_count++;
+//     int range_count = 0;
+//     std::string source = data;
+//     std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*)?)?)?\))");
+//     std::sregex_iterator next(source.begin(), source.end(), regex);
+//     std::sregex_iterator end;
+//     while (next != end) {
 
-    }
+//         std::smatch match = *next++;
+//         std::string range;
+//         int i = 0;
+//         std::istringstream stream(match[2].str());
+//         while (std::getline(stream, range, ',')) ranges[match[1]][i++] = std::stof(range);
+//         range_count++;
 
-    args.resize(0);
+//     }
+
+//     args.resize(0);
     
-    if (std::regex_search(source, match, std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))"))) {
+//     if (std::regex_search(source, match, std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))"))) {
 
-        std::string argsStr = match[2].str();
+//         std::string argsStr = match[2].str();
         
-        std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
-        std::sregex_iterator iter(argsStr.begin(), argsStr.end(), regex);
-        std::sregex_iterator end;
-        while (iter != end) {
-            args.push_back({(*iter)[1].str(),(*iter)[2].str()});
-            ++iter;
-        }
-    }
- // if (comp) devrait rajouter struct::size += comp.size (or remove(old) and add(new))
-    if (!comp) {
+//         std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
+//         std::sregex_iterator iter(argsStr.begin(), argsStr.end(), regex);
+//         std::sregex_iterator end;
+//         while (iter != end) {
+//             args.push_back({(*iter)[1].str(),(*iter)[2].str()});
+//             ++iter;
+//         }
+//     }
+//  // if (comp) devrait rajouter struct::size += comp.size (or remove(old) and add(new))
+//     if (!comp) {
 
-        comp = Component::exist(file->name.c_str());
+//         comp = Component::exist(file->name.c_str());
         
-        if (!comp) comp = &Component::create(file->name.c_str());
+//         if (!comp) comp = &Component::create(file->name.c_str());
 
-    }
+//     }
         
-    comp->reset();
+//     comp->reset();
 
-    for (auto arg : args) {
+//     for (auto arg : args) {
 
-        if (arg.first == "vec2") comp->member<glm::vec2>(arg.second.c_str()); 
-        else if (arg.first == "vec3") comp->member<glm::vec3>(arg.second.c_str()); 
-        else if (arg.first == "vec4") comp->member<glm::vec4>(arg.second.c_str()); 
+//         if (arg.first == "vec2") comp->member<glm::vec2>(arg.second.c_str()); 
+//         else if (arg.first == "vec3") comp->member<glm::vec3>(arg.second.c_str()); 
+//         else if (arg.first == "vec4") comp->member<glm::vec4>(arg.second.c_str()); 
 
-        else if (arg.first == "int") comp->member<int>(arg.second.c_str()); 
+//         else if (arg.first == "int") comp->member<int>(arg.second.c_str()); 
         
-        else comp->member<float>(arg.second.c_str()); 
+//         else comp->member<float>(arg.second.c_str()); 
 
-        if (ranges.find(arg.second) != ranges.end()) comp->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+//         if (ranges.find(arg.second) != ranges.end()) comp->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
         
-    }
+//     }
 
 
 }

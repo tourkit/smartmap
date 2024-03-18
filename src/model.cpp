@@ -11,15 +11,17 @@ Model::Model(File* file, int id, int quantity) { import(file,id,quantity); }
 
 bool Model::import(File* file, int id, int quantity) { 
 
-    this->file = file;
-    this->id = id;
-    this->quantity = quantity;
+    // tofix
 
-    name = file->name+""+std::to_string(id);
+    // this->file = file;
+    // this->id = id;
+    // this->quantity = quantity;
 
-    obj = engine.dynamic_ubo->addObj(new Struct(name.c_str()));
+    // name = file->name+""+std::to_string(id);
 
-    instance = &obj->push();
+    // obj = engine.dynamic_ubo->addObj(new Struct(name.c_str()));
+
+    // instance = &obj->push();
 
     return true;
 
@@ -39,20 +41,24 @@ bool Model::import(File* file, int id, int quantity) {
 
 void Model::removeFX(Effector* effector) {
 
-    auto x = std::remove(effectors.begin(), effectors.end(), effector);
-    effectors.erase(x, effectors.end());
+// tofix
 
-    obj->removeComp({effector->file->name});
+    // auto x = std::remove(effectors.begin(), effectors.end(), effector);
+    // effectors.erase(x, effectors.end());
+
+    // obj->removeComp({effector->file->name});
     
 
 }
 
 void Model::addFX(Effector* effector) {
 
-    obj->addComp({effector->file->name});
+// tofix
 
-    // obj->resize(obj->reserved); // would fuck everything for moving data in heap // should add safety though
+    // obj->addComp({effector->file->name});
+
+    // // obj->resize(obj->reserved); // would fuck everything for moving data in heap // should add safety though
     
-    effectors.push_back(effector);
+    // effectors.push_back(effector);
 
 }

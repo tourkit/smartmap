@@ -5,7 +5,7 @@
 #include "shader.hpp"  
 #include "texture.hpp"
 #include "ubo.hpp"
-#include "object.hpp"
+#include "buffer.hpp"
 #include "struct.hpp"
 
 #include "image.hpp"
@@ -14,7 +14,9 @@
 
 Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)  {
 
-    buffer = engine.static_ubo->addObj(new Struct("Media", {"size","pos"}));
+    static Struct& media_struct = Struct::create("Media").add<glm::vec2>("size").add<glm::vec2>("pos");
+
+    buffer = &engine.static_ubo->add(media_struct);
 
     texture = new Texture(width,height,1,1);
 
@@ -55,7 +57,7 @@ void Atlas::fromDir(std::string path) {
 
         float x[4] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
 
-        buffer->push(&x[0]);
+        // buffer->push(&x[0]); // TOFIX
 
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 

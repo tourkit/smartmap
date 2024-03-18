@@ -12,7 +12,6 @@
 #include "artnet.hpp"
 #include "ndi.hpp"
 #include "atlas.hpp"
-#include "component.hpp"
 #include "json.hpp"
 #include "buffer.hpp"
 
@@ -84,7 +83,7 @@ void Callbacks::init() {
 
     ////////// STRUCT.HPP 
 
-    NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name = s->name; });
+    NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name = s->name(); });
 
     ////////// ENGINE.HPP (and Stack)
 
@@ -160,26 +159,27 @@ void Callbacks::init() {
     
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name; });
 
-    NODE<Model>::onchange([](Node* node, Model *model) { 
+    // TOFIX
+    // NODE<Model>::onchange([](Node* node, Model *model) { 
 
-        model->obj->s->size_v = 0;
-        for (auto f : model->effectors) model->obj->s->size_v += f->comp->size;
+    //     model->obj->s->size_v = 0;
+    //     for (auto f : model->effectors) model->obj->s->size_v += f->comp->size;
     
-        engine.dynamic_ubo->remap(&Buffer::bkps[engine.dynamic_ubo]);
-        engine.dynamic_ubo->update();
-        engine.static_ubo->remap(&Buffer::bkps[engine.static_ubo]);
-        engine.static_ubo->update();
+    //     engine.dynamic_ubo->remap(&Buffer::bkps[engine.dynamic_ubo]);
+    //     engine.dynamic_ubo->update();
+    //     engine.static_ubo->remap(&Buffer::bkps[engine.static_ubo]);
+    //     engine.static_ubo->update();
 
-    });
+    // });
 
     NODE<Effector>::onchange([](Node* node, Effector *effector) { 
 
         effector->import(effector->file);
 
         //doafterhere
-        auto comps = engine.tree->child("Debug::Components");
-        comps->childrens.resize(0);
-        for (auto c : Component::pool) comps->addPtr<Component>(c);
+        // auto comps = engine.tree->child("Debug::Components");
+        // comps->childrens.resize(0);
+        // for (auto c : Component::pool) comps->addPtr<Component>(c);
     
      });
 
@@ -207,7 +207,7 @@ void Callbacks::init() {
 
     ////////// Component.HPP 
 
-    NODE<Component>::oncreate([](Node* node, Component *comp){ node->name = comp->name; });
+    // NODE<Component>::oncreate([](Node* node, Component *comp){ node->name = comp->name; });
 
     ////////// JSON.HPP 
 

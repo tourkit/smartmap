@@ -47,8 +47,8 @@ add_executable(smartmap
     src/shader.cpp
     
     src/engine.cpp
-    # src/model.cpp
-    # src/effector.cpp
+    src/model.cpp
+    src/effector.cpp
     src/drawcall.cpp
     src/atlas.cpp
     

@@ -1,11 +1,12 @@
 #pragma once
 
 struct File;
-struct Object;
+struct Struct;
 struct Instance;
 struct Effector;
 
 #include <vector>
+#include <string>
 
 struct Model {
 
@@ -13,7 +14,7 @@ struct Model {
 
     int id;
 
-    Object* obj;
+    Struct* obj;
     
     Instance* instance;
 

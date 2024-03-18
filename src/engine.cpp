@@ -57,7 +57,7 @@ void Engine::init() {
     atlas = new Atlas(4096, 4096, "assets/medias/");
 
     auto comps = debug->addOwnr<Node>("Components")->close();
-    for (auto c : Component::pool) comps->addPtr<Component>(c);
+    // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
     models = tree->addOwnr<Node>("Models")->node();
     // models = tree->addFolder<Model>("Models", "assets/models/")->node();

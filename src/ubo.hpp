@@ -3,7 +3,6 @@
 #include <vector>
 
 #include "buffer.hpp"
-#include "component.hpp"
 
 struct ShaderProgram;
 
@@ -18,8 +17,6 @@ struct UBO : Buffer {
     bool loaded = false;
 
     static inline uint32_t binding_count = 0;
-
-    static inline Components &comps = Components::getInstance();
 
     std::vector<ShaderProgram*> subscribers;
 
@@ -37,10 +34,6 @@ struct UBO : Buffer {
 
     void upload(void* data, size_t size, uint32_t offset = 0);
 
-    Object* addObj(Struct* s, int reserved = 0) override;
-    
-    // static void toJSON();
-    
-    // static void fromJSON();
+    Struct& add(Struct& s) override;
 
 };

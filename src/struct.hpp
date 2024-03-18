@@ -50,7 +50,7 @@
         
         }
 
-        Struct& add(Struct& s) { 
+        virtual Struct& add(Struct& s) { 
 
             for (auto &c : pool) {
                 if (c == &s) {
@@ -61,6 +61,20 @@
             PLOGW << " noadd" << s.name(); return *this;
             
         }  
+
+        Struct& add(const char* name) { 
+
+            for (auto &s : owned) {
+                if (!strcmp(name,s->name().c_str())) {
+                    return add(*s); 
+                }
+            }
+
+            PLOGW << " noadd" << name; return *this;
+            
+        }  
+
+        Struct& striding(bool v) { Member::striding(v); return *this;}
 
         Struct& remove(Struct& s) { 
 
@@ -106,7 +120,7 @@
 
         uint32_t footprint() override { 
 
-            if (striding()) return nextFactor2(size_v,16);
+            if (is_striding) return nextFactor2(size_v,16);
             
             return size_v; 
         
@@ -167,7 +181,7 @@
 
                 int size = 0;
 
-                if (members.size() > 1 || members[0]->name().length() ||  striding()) {
+                if (members.size() > 1 || members[0]->name().length() ||  is_striding) {
                 
                     for (auto &m :members) {
                         

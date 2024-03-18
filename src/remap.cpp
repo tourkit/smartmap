@@ -1,7 +1,7 @@
 #include "remap.hpp"
 
 #include "struct.hpp"
-#include "component.hpp"
+#include "struct.hpp"
 
 uint8_t Remap::get8(uint8_t* data) { return data[0]; }
 uint16_t Remap::get16(uint8_t* data) { return ((data[0] << 8) | data[1]);  }
@@ -10,17 +10,17 @@ uint32_t Remap::get32(uint8_t* data) { return ((data[0] << 24) | (data[1] << 16)
 
 void Remap::import(Struct *s) {
 
-    this->s = s;
+    // this->s = s;
 
-    for (auto c: s->comps) {
+    // for (auto c: s->comps) {
 
-        for (auto &m: c->members) {
+    //     for (auto &m: c->members) {
 
-            attributes.push_back({1,m.range_from,m.range_to});
+    //         attributes.push_back({1,m.range_from,m.range_to});
             
-        }
+    //     }
 
-    }
+    // }
 
 }
 
