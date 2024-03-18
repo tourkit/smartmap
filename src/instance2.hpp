@@ -35,7 +35,9 @@ namespace TEST {
         template <typename T>
         Instance& set(T val) {
 
-            memcpy(data+offset, &val, member->size());
+
+
+            memcpy(data+offset, &val, sizeof(T));
 
             return *this;
 

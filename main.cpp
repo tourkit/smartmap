@@ -54,31 +54,33 @@ std::string glsl_layout(Member& s) {
 
 int main() {
 
-using namespace TEST;
-
     logger.cout();
+
+using namespace TEST;
 
     Struct& rectangle = Struct::create("rectangle").add<vec2>("reca").add<vec2>("recb");
 
     Buffer buff;
 
-    Struct wrapper("wrapper",2);
+    Struct quad("MyQuad");
     
-    buff.add(wrapper);
+    buff.add(quad);
 
-    wrapper.add(rectangle);
-
-    PLOGD << buff.data.size();
-
-    buff["wrapper"].eq(1)["rectangle"]["reca"].set<uint32_t>(123);
+    quad.add(rectangle);
     
+    quad.resize(2);
+
+    buff["MyQuad"].eq(1)["rectangle"]["reca"].set<uint32_t>(123);
+
     auto &bkp = buff.copy();
+    
+    buff["MyQuad"].eq(1)["rectangle"]["reca"].set<uint32_t>(235);
 
-    bkp["wrapper"].eq(0)["rectangle"]["reca"].set<uint32_t>(123);
+    std::string str;
 
     buff.remap(bkp); 
 
-    std::string str;
+    str = std::to_string(buff.data.size()) + " : ";
 
     for (auto i = 0; i<buff.data.size(); i++) str += std::to_string((uint8_t)buff.data[i]) + " ";
 
@@ -86,5 +88,5 @@ using namespace TEST;
 
     return 0;
 
- 
+    
 }

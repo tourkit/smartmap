@@ -55,7 +55,7 @@ namespace TEST {
         virtual bool owns(Member& m) { return false; }
 
         virtual void update() { 
-            PLOGD<<name()<<pool.size(); 
+            PLOGV<<name(); 
             for (auto a : pool) {
                 if (a->owns(*this)) {
                     a->update();

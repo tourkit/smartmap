@@ -31,6 +31,10 @@ namespace TEST {
         void update() override { 
             Struct::update(); 
             data.resize( footprint_all() ); 
+            
+            
+            memset(data.data(),0,data.size());
+
         }
 
         Instance operator[](const char* name);
@@ -62,11 +66,15 @@ namespace TEST {
 
             int from_offset_curr = 0;
 
-            for (int i = 0 ; i < from_m->quantity ; i ++) {
+            auto quantity = from_m->quantity;
+
+            if (quantity > to_m->quantity) quantity = to_m->quantity;
+
+            for (int i = 0 ; i < quantity; i ++) {
                 
                 for (auto from_m_curr : from_m->members) {
 
-                    Member* found =nullptr;
+                    Member* found = nullptr;
 
                     int to_offset_curr = 0;
 
@@ -74,18 +82,25 @@ namespace TEST {
                     
                         if (!strcmp(from_m_curr->name().c_str(), to_m_curr->name().c_str())) { found = to_m_curr; break; }
                     
-                        else to_offset_curr+=to_m_curr->size();
+                        else to_offset_curr += to_m_curr->size();
                     
                     }
                     
-                    if (!found) { PLOGW << "nofiund " << from_m_curr->name(); continue; }
+                    if (!found) { PLOGW << "couldnt find " << from_m_curr->name(); continue; }
+
                     if (found->typed()) {
+
+                        to_offset_curr += ( to_m->size() * i ) + to_offset;
+
+                        from_offset_curr += from_offset;
                         
-                        PLOGD << from_m->name() << " change : " << found->name() << " " <<(from_m->size()*i)+from_offset+from_offset_curr << " to " <<(to_m->size()*i)+to_offset+to_offset_curr << to_m->name();// << " from : " << lm.g
+                        PLOGV << from_m->name() << " change : " << found->name() << " " <<(from_m->size()*i)+from_offset_curr << " to " <<to_offset_curr << to_m->name() << " (" << to_m->size() << ") = " << (unsigned int)data[to_offset_curr];
+                     
+                        memcpy(&data[to_offset_curr], &from.data[(from_m->size()*i)+from_offset_curr],to_m->size()); // dst ? this !
                         
                     }
 
-                    remapEach(from, from_m_curr, found, from_offset+from_offset_curr, (to_m->size()*i)+to_offset+to_offset_curr);
+                    remapEach(from, from_m_curr, found, from_offset_curr, to_offset_curr);
                 
                     from_offset_curr += from_m_curr->size();
 
@@ -93,20 +108,6 @@ namespace TEST {
                 
             }
 
-        }
-
-        void remapEach2(Buffer& buffer, Member* from_m = nullptr, Member* to_m = nullptr, int from_offset = 0, int to_offset = 0) {
-
-            if (!from_m) from_m = &buffer;
-
-            for (auto m : from_m->members) {
-                
-                remapEach2(buffer,m);
-
-            }
-
-            PLOGD << from_m->name();
-        
         }
 
         void remap(Buffer& from); 

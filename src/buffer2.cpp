@@ -13,9 +13,14 @@ Instance Buffer::operator[](const char* name) { return Instance{data.data(),0,th
         void Buffer::remap(Buffer& from) {
 
             data.resize(from.data.size());
+            
+            memset(data.data(),0,data.size());
+
+            PLOGW <<"la"<< &from.data;
 
             remapEach(from);
 
+            PLOGW <<"la"<< &from.data;
         }        
 
 
