@@ -96,7 +96,10 @@ using namespace TEST;
 
     buff["MyQuad"].eq(0)["rectangle"]["size"].set<uint32_t>(245);
 
+    ((Struct*)bkp["MyQuad"]["rectangle"].member)->remove(bkp["MyQuad"]["rectangle"]["angle"].member);
+
     bkp.remap(buff); 
+
 
     buff["MyQuad"].eq(0)["rectangle"]["size"].set<uint32_t>(69);
     bkp["MyQuad"].eq(1)["rectangle"]["size"].set<uint32_t>(33);

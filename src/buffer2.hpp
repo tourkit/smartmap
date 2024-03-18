@@ -19,9 +19,10 @@ namespace TEST {
 
         std::vector<char> data;
         
-        Buffer() : Struct("buffer_definition") {
+        Buffer(std::string name = "buffer_definition") : Struct(name) {
 
-            data.reserve(1000);
+            data.reserve(10000);
+
             memset(data.data(),0,data.size());
 
         }
@@ -33,8 +34,6 @@ namespace TEST {
             Struct::update(); 
 
             data.resize( footprint_all() ); 
-            
-            memset(data.data(),0,data.size());
 
         }
 
@@ -59,7 +58,7 @@ namespace TEST {
             return y;
         }
 
-        void remapEach(Buffer& src_buffer, Member* src_member = nullptr, Member* this_member = nullptr, int src_offset = 0, int this_offset = 0) {
+        void remap(Buffer& src_buffer, Member* src_member = nullptr, Member* this_member = nullptr, int src_offset = 0, int this_offset = 0) {
 
             if (!src_member) src_member = &src_buffer;
 
@@ -70,6 +69,7 @@ namespace TEST {
                 int src_offset_ = src_offset + src_member->eq(i);
                 
                 for (auto src_member_ : src_member->members) {
+                    
                     Member* found = nullptr;
 
                     int this_offset_ = this_offset + this_member->eq(i);
@@ -90,7 +90,7 @@ namespace TEST {
                     
                     if (!found) { PLOGV << "couldnt find " << src_member_->name(); continue; }
 
-                    remapEach(src_buffer, src_member_, found, src_offset_, this_offset+this_offset_); 
+                    remap(src_buffer, src_member_, found, src_offset_, this_offset+this_offset_); 
 
                     if (found->typed()) {
                         
@@ -108,22 +108,7 @@ namespace TEST {
 
         }
 
-        void remap(Buffer& from){
-
-            data.resize(from.data.size());
-            
-            memset(data.data(),0,data.size());
-
-            remapEach(from);
-            
-        }        
-
-
     };
-
-    
-
-
 
 
 };

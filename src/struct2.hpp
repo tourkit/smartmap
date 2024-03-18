@@ -364,6 +364,18 @@ namespace TEST {
             
         }
 
+        virtual Struct& remove(Member*  m) {
+
+            size_v -= members.back()->footprint_all();
+
+            members.erase(std::remove(members.begin(),members.end(),m),members.end());
+
+            update();
+
+            return *this; 
+
+        }
+
 
     protected:
          void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb) override {
@@ -406,18 +418,6 @@ namespace TEST {
             return *this;
 
         } 
-
-        virtual Struct& remove(Member*  m) {
-
-            size_v -= members.back()->footprint_all();
-
-            members.erase(std::remove(members.begin(),members.end(),m),members.end());
-
-            update();
-
-            return *this; 
-
-        }
     };
 
 
