@@ -8,9 +8,6 @@
 
 #include "struct.hpp"
 
-
-
-
 struct Instance;
 
 struct Buffer : Struct {
@@ -37,7 +34,8 @@ struct Buffer : Struct {
 
     }
 
-    Instance operator[](const char* name);
+    Instance operator[](std::string name);
+    Instance operator[](int id);
 
     Member* copy(Member* x) override { 
         

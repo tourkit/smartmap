@@ -61,7 +61,7 @@ struct Member {
 
     virtual uint32_t footprint() { return 0; } 
 
-    void resize(uint32_t quantity_v) { this->quantity_v = quantity_v; update(); }
+    void quantity(uint32_t quantity_v) { this->quantity_v = quantity_v; update(); }
 
     uint32_t quantity() { return quantity_v; }
     
@@ -90,7 +90,21 @@ struct Member {
         return "unknown";
 
     }
-    
+
+    uint8_t count() { 
+        
+        // if (type() == typeid(Struct)) { int x = 0; each([](Member* m){ x += m.count()}; ); return x; }
+
+        if (type() == typeid(glm::vec2)) return 2;
+            
+        if (type() == typeid(glm::vec3)) return 3;
+            
+        if (type() == typeid(glm::vec4)) return 4;
+        
+        return 1; 
+        
+    }
+
     void name(std::string name_v) { this->name_v = name_v; }
 
     virtual std::string name() { return name_v; }
@@ -142,14 +156,14 @@ struct Member {
 
             std::string str; 
             str += tab;
-            str += !m.typed() ? "struct" : m.type().name();
+            str += !m.typed() ? "struct" : m.type_name();
             str += " " + m.name();
             str += "    " +  std::to_string(offset);
             str += " (" +std::to_string(m.footprint())+")";
 
             PLOGD << str;
 
-        }, 0, 0, [&](Member& m){ if (m.striding() && m.stride()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.name() << ")"; });
+        }, 0, 0, [&](Member& m){ if (m.striding() && m.stride()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.stride() << ")"; });
 
     }
 

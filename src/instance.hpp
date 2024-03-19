@@ -18,31 +18,52 @@ struct Instance {
     Member* member = nullptr;
     int id = 0;
 
-    Instance operator[](const char* name);
+    Instance operator[](std::string name);
     Instance operator[](int id);
 
     bool exist();
 
+    char* data() { return buff->data.data()+offset; }
+    uint32_t size() { return member->footprint_all(); }
 
     Instance& eq(int id);
 
     template <typename T>
-    T get() { return *((T*)(buff->data.data()+offset)); }
+    T get() { return *((T*)(data())); }
 
     template <typename T>
     Instance& set(T val) {
 
-        memcpy(buff->data.data()+offset, &val, sizeof(T));
+        memcpy(data(), &val, sizeof(T));
 
         return *this;
 
     }
 
-    Instance& push(void* data, size_t size) {
-        
-        member->resize(member->quantity()+1);
-        // buff->update();
+    Instance& set(void* ptr, size_t size) {
+
+        memcpy(data(), ptr, size);
+
         return *this;
+
+    }
+
+    Instance& push(void* ptr = nullptr, size_t size = 0) {
+
+        member->quantity(member->quantity()+1);
+
+        auto &inst = eq(member->quantity()-1);
+
+        if (ptr) {
+        
+            if (!size) size = inst.member->size();
+            
+            inst.set(ptr,size);
+
+        }
+
+        return inst;
+
     }
     
 };

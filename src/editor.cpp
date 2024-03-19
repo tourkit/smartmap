@@ -26,9 +26,13 @@ static int hovered_size = -1;
 static bool is_hovered = false;
 namespace ImGui {
 
-    static void TextX(const char* label, int offset, int size) {
+    static void TextX(std::string label, int offset, int size, int depth) {
 
-        ImGui::Text(label);
+        label += " " +  std::to_string(offset);
+        label += " (" +std::to_string(size)+")";
+
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX()+depth*20);
+        ImGui::Text(label.c_str());
 
         if (ImGui::IsItemHovered()) { 
 
@@ -53,67 +57,20 @@ namespace ImGui {
 
 };
 
-static void draw_definition(Buffer *buffer) {
+static void draw_definition(Member *s, int offset = 0, int depth = 0) {
+         
+    is_hovered=false;
 
-    // tofix           
-    // is_hovered=false;
-    
-    // std::string str = "char[" +std::to_string( buffer->data.size()) + "]";
+    ImGui::TextX(std::string(!s->typed() ? "struct" : s->type_name()) + " " + s->name(), offset, s->footprint(), depth);
 
-    // ImGui::Text(str.c_str());
+    for (auto m : s->members) {
 
-    // for (auto &o: buffer->objects) {
-        
-    //     std::string str = "  "+o.s->name+"[" +std::to_string(o.s->size())+"]"+" * "+std::to_string(o.reserved);
+        draw_definition(m, offset, depth+1);
 
-    //     ImGui::TextX(str.c_str(), o.offset, o.s->size());
+        offset += m->footprint();
+    }
 
-    //     int comp_offset = o.offset;
-    //     for (auto& c : o.s->comps) {
-
-    //         auto size = c->size;
-    //         if (c->members.size() > 1 && o.s->is_striding) size = nextFactor(size,16);
-            
-    //         std::string str = "    "+c->name+"["+std::to_string(size)+"]";
-
-    //         ImGui::TextX(str.c_str(), comp_offset, size);
-
-    //         int member_offset = comp_offset;
-    //         for (auto& m : c->members) {
-                
-    //             std::string str = "      "+(m.name.length()?m.name:"val")+"["+std::to_string(m.size)+"]";
-
-    //             ImGui::TextX(str.c_str(), member_offset, m.size);
-                
-    //             member_offset+= m.size;
-                
-    //         }
-
-
-    //         comp_offset+= size;
-
-    //     }
-                
-        
-
-    //     // maybe could merge two following thingyz
-    //     auto x = o.s->size()-comp_offset;
-    //     if (x) {
-        
-    //         std::string str = "      stride["+std::to_string(x)+"]";
-    //         ImGui::TextX(str.c_str(), comp_offset, x);
-        
-    //     }
-                
-    //     //with that
-    //     if (o.is_striding && o.stride()) { 
-
-    //         std::string str = "    stride["+std::to_string(o.stride())+"]";
-    //         ImGui::TextX(str.c_str(), comp_offset+x, o.stride());   
-
-    //     }
-        
-    // }
+    if (s->striding()) ImGui::TextX("float stride", offset, s->stride(), depth+1);
 
 }
 
@@ -592,15 +549,15 @@ void Editors::init() {
 
     ////////// BUFFER.HPP 
 
+    Editor<Buffer>([](Node* node, Buffer *buffer){
+
     // tofix
 
-    // Editor<Buffer>([](Node* node, Buffer *buffer){
+        ImGui::Separator();
 
-    //     ImGui::Separator();
+        draw_definition(buffer);
 
-    //     draw_definition(buffer);
-
-    //     ImGui::Separator();
+        ImGui::Separator();
 
     //     draw_raw(buffer->data.data(),buffer->data.size());
 
@@ -614,7 +571,7 @@ void Editors::init() {
 
     //     if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
 
-    // });
+    });
 
     // tofix
 

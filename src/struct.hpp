@@ -17,7 +17,7 @@
 
     struct Struct : Member {
 
-        Struct(std::string name = "", uint32_t quantity = 1) : Member(name) { quantity_v = quantity; }
+        Struct(std::string name = "", uint32_t quantity = 1) : Member(name) { quantity_v = quantity; if (!name.length()) quantity_v = 0; }
 
         ~Struct() { for (auto m : members) if (m->typed()) {
             
@@ -159,8 +159,6 @@
 
         }
 
-
-    protected:
          void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb) override {
 
             for (int i = 0 ; i < quantity(); i++) {
@@ -188,6 +186,8 @@
             }
 
         }        
+
+    protected:
         virtual Struct& add(Member* s) {
 
             PLOGV << "add " << s->name() << " to " << name();

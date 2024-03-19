@@ -1,7 +1,8 @@
 #pragma once
 
-#include "struct.hpp"
 #include "buffer.hpp"
+#include "instance.hpp"
+
 #include <cstdint>
 #include <vector>
 
@@ -10,14 +11,20 @@ struct File;
 
 struct VBO : Buffer {
 
-    static inline Struct &vertices_s = Struct::create("Vertex").add("Position").add("UV").add("ID");//.striding(true);
-    static inline Struct &indices_s = Struct::create("Index").add("Vertex").add( "Vertex").add("Vertex");//.striding(true);
+    static inline Struct &vertice = Struct::create("Vertice").add<glm::vec2>("Position").add<glm::vec2>("UV").add<uint32_t>("ID");
+    
+    static inline Struct &indice = Struct::create("Indice").add<uint32_t>("Vertice1").add<uint32_t>( "Vertice2").add<uint32_t>("Vertice3");
 
     uint32_t vao, vbo, ibo;
     
-    Struct *vertices;
-    Struct *indices;
+    Instance vertices;
+    Instance indices;
+
+    bool init = false;
     
+    Struct vertice_array;
+    Struct indice_array;
+
     VBO();
 
     ~VBO();
