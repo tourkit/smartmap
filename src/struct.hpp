@@ -17,7 +17,7 @@
 
     struct Struct : Member {
 
-        Struct(std::string name = "", uint32_t quantity = 1) : Member(name) { this->quantity = quantity; }
+        Struct(std::string name = "", uint32_t quantity = 1) : Member(name) { quantity_v = quantity; }
 
         ~Struct() { for (auto m : members) if (m->typed()) {
             
@@ -38,16 +38,6 @@
 
             return false;
 
-        }
-
-        Struct&  resize(int quantity) {
-
-            this->quantity = quantity;
-            
-            update();
-
-            return *this;
-        
         }
 
         virtual Struct& add(Struct& s) { 
@@ -73,8 +63,6 @@
             PLOGW << " noadd" << name; return *this;
             
         }  
-
-        Struct& striding(bool v) { Member::striding(v); return *this;}
 
         Struct& remove(Struct& s) { 
 
@@ -120,7 +108,7 @@
 
         uint32_t footprint() override { 
 
-            if (is_striding) return nextFactor2(size_v,16);
+            if (striding()) return nextFactor2(size_v,16);
             
             return size_v; 
         
@@ -175,13 +163,13 @@
     protected:
          void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb) override {
 
-            for (int i = 0 ; i < quantity; i++) {
+            for (int i = 0 ; i < quantity(); i++) {
 
                 cb(*this, offset,depth);
 
                 int size = 0;
 
-                if (members.size() > 1 || members[0]->name().length() ||  is_striding) {
+                if (members.size() > 1 || members[0]->name().length() ||  striding()) {
                 
                     for (auto &m :members) {
                         
@@ -191,7 +179,7 @@
 
                     }
 
-                    if (i!=quantity-1) offset+=footprint();
+                    if (i!=quantity()-1) offset+=footprint();
                     
                 }
                 

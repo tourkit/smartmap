@@ -13,7 +13,7 @@ struct Member;
 
 struct Instance { 
 
-    char* data;
+    Buffer* buff;
     int offset;
     Member* member = nullptr;
     int id = 0;
@@ -27,17 +27,22 @@ struct Instance {
     Instance& eq(int id);
 
     template <typename T>
-    T get() { return *((T*)(data+offset)); }
+    T get() { return *((T*)(buff->data.data()+offset)); }
 
     template <typename T>
     Instance& set(T val) {
 
-
-
-        memcpy(data+offset, &val, sizeof(T));
+        memcpy(buff->data.data()+offset, &val, sizeof(T));
 
         return *this;
 
+    }
+
+    Instance& push(void* data, size_t size) {
+        
+        member->resize(member->quantity()+1);
+        // buff->update();
+        return *this;
     }
     
 };

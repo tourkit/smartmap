@@ -50,7 +50,20 @@ struct Buffer : Struct {
         return x; 
         
     }
-    
+
+
+    void printData(int max = 0) {
+
+        if (!max) max = data.size();
+
+        std::string str;
+
+        for (auto i = 0 ; i < max; i++) str += std::to_string(data[i]) + " "; 
+
+        PLOGD << str;
+
+    }
+
     Buffer& copy() { 
         Buffer* x= (Buffer*)Buffer::copy(nullptr); 
         Buffer& y= *x; 
@@ -64,7 +77,7 @@ struct Buffer : Struct {
 
         if (!this_member) this_member = this;
 
-        for (int i = 0 ; i < ( src_member->quantity < this_member->quantity ? src_member->quantity :  this_member->quantity ); i ++) {
+        for (int i = 0 ; i < ( src_member->quantity() < this_member->quantity() ? src_member->quantity() :  this_member->quantity() ); i ++) {
         
             int src_offset_ = src_offset + src_member->eq(i);
             
