@@ -32,6 +32,7 @@ namespace ImGui {
         label += " (" +std::to_string(size)+")";
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX()+depth*20);
+
         ImGui::Text(label.c_str());
 
         if (ImGui::IsItemHovered()) { 
@@ -41,16 +42,6 @@ namespace ImGui {
             is_hovered=true;
 
         }
-        // else{ 
-
-        //     if (is_hovered){
-
-        //         hovered_offset = -1;
-        //         hovered_size = -1;
-        //         is_hovered = false;
-
-        //     }
-        // }
         
 
     };
@@ -58,8 +49,6 @@ namespace ImGui {
 };
 
 static void draw_definition(Member *s, int offset = 0, int depth = 0) {
-         
-    is_hovered=false;
 
     ImGui::TextX(std::string(!s->typed() ? "struct" : s->type_name()) + " " + s->name(), offset, s->footprint(), depth);
 
@@ -559,7 +548,7 @@ void Editors::init() {
 
         ImGui::Separator();
 
-    //     draw_raw(buffer->data.data(),buffer->data.size());
+        draw_raw(buffer->data.data(),buffer->data.size());
 
     //     static StringsBuffer object_str;
     //     static int obj_current = 0;
