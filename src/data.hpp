@@ -11,8 +11,27 @@ struct Data : Member {
     T range_to;
     T default_val;
 
-    template <typename... Args> 
-    Data(Args&&... args) : Member(std::forward<Args>(args)...) {
+    Data(std::string name = "") : Member(name) {
+
+        if (std::is_arithmetic<T>::value) {
+            
+            memset(&default_val,0,sizeof(T));
+            memset(&range_from,0,sizeof(T));
+            memset(&range_to,0,sizeof(T));
+
+            if ( typeid(T) == typeid(float) || typeid(T) == typeid(glm::vec2) || typeid(T) == typeid(glm::vec3) || typeid(T) == typeid(glm::vec4) ) *(float*)range_to_ptr = 1.0f;
+            // if (typeid(T) == typeid(int)) *(int*)range_to_ptr = 65535;
+            // if (typeid(T) == typeid(uint32_t)) *(uint32_t*)range_to_ptr = 65535;
+
+        }
+
+        range_from_ptr = &range_from;
+        range_to_ptr = &range_to;
+        default_val_ptr = &default_val;
+
+    }
+
+    Data(std::string name ,T range_from, T range_to, T default_val) : Member(name), range_from(range_from), range_to(range_to), default_val(default_val) {
 
         range_from_ptr = &range_from;
         range_to_ptr = &range_to;

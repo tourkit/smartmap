@@ -14,6 +14,8 @@ Instance Instance::operator[](std::string name) {
 
     if  (offset < 0) return Instance{buff,offset-1,member};
 
+    auto offset = this->offset;
+
     Member* found = nullptr;
 
     if (!member) {PLOGW << "BUGGY";exit(0);}
@@ -43,7 +45,7 @@ Instance Instance::operator[](int id) {
 
     if (!member) {PLOGW << "BUGGY";exit(0);}
 
-    if (id >= member->members.size()) {PLOGW << "WAWWA"; exit(0);}
+    // if (id >= member->members.size()) {PLOGW << "WAWWA"; exit(0);}
 
     for (int i = 0 ; i < id-1; i ++ ){
 

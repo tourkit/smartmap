@@ -33,7 +33,7 @@ struct Instance {
 
     template <typename T>
     Instance& set(T val) {
-
+        
         memcpy(data(), &val, sizeof(T));
 
         return *this;

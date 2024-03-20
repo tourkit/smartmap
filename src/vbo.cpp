@@ -13,16 +13,18 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-VBO::VBO() : Buffer("VBO") {
+VBO::VBO() : Buffer("VBO"), vertice_array("Vertice_arr", 0), indice_array("Indice_arr", 0) {
 
     vertice_array.add(vertice);
     vertice_array.striding(true);
     add(vertice_array);
-    vertices = (*this)[0];
 
     indice_array.add(indice);
     indice_array.striding(true);
     add(indice_array);
+
+
+    vertices = (*this)[0];
     indices = (*this)[1];
 
     create();
@@ -129,6 +131,10 @@ int VBO::import(File *file) {
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) PLOGW << "Failed to load OBJ file: " << importer.GetErrorString();
 
+
+    auto vertices = (*this)[0][0];
+    auto indices = (*this)[1][0];
+
     auto mesh = scene->mMeshes[0];
 
     int next_indice =  vertices.member->members.size();
@@ -138,6 +144,9 @@ int VBO::import(File *file) {
         const aiVector3D& vertex = mesh->mVertices[i];
         
         auto v = vertices.push();
+
+        v.member->print();
+        PLOGD << v.member->name();
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });

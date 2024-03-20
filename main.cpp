@@ -18,9 +18,18 @@ int main() {
 
     auto &vbo = *engine.tree->addOwnr<VBO>()->select()->get();
 
+    auto v1 = vbo.vertices.push()[0];
 
-    vbo.vertices.push();
-    vbo.print();
+
+    v1["Position"].set<glm::vec2>({123,245});
+    v1["UV"].set<glm::vec2>({88,66});
+    // v2["Position"].set<glm::vec2>({88,66});
+    // PLOGD << v.member->name();
+
+
+    // vbo.import(new File("assets/models/quad.obj"));
+    // vbo.print();
+    // vbo.printData();
     // PLOGD << vbo.vertices.size();
 
     

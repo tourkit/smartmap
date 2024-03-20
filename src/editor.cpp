@@ -126,61 +126,67 @@ static void draw_raw(void *data, size_t size) {
 
 }
 
-static bool draw_object(void*data, Struct* s) {
+static bool draw_instance(Instance inst) {
 
-    // TOFIX 
+    int elem_current = 0;
 
-    // int uniform_offset = 0;
+    if (inst.member->quantity() > 1 && ImGui::SliderInt("instance##current", &elem_current, 0, inst.member->quantity()-1)) { }
 
-    // bool has_changed = false;
+    bool has_changed = false;
+    int i = 0;
+    int offset = 0;
+    for (auto& m : inst.eq(elem_current).member->members) {
 
-    // for (auto& m : s->members) {
+        if (m->typed()) {
+
+                auto f = (float*)(inst.data()+offset);
+
+                static int t_range_i = 65000;
+                static float t_range_f = 1.0f;
+                static int f_range = 0;
                 
-    //     ImGui::SeparatorText(m->name().c_str());
-    //     ImGui::Text("delete");
-    //     if(ImGui::IsItemClicked()){
-    //         // s->remove(m->name()); // TODFIX
-    //         has_changed = true;
-    //     }
+                void* range_from;
+                if (m->range_from_ptr) range_from = m->range_from_ptr;
+                else range_from = &f_range;
 
-    //     int uniform_member_offset = 0;
+                void* range_to;
+                if (m->range_to_ptr) range_to = m->range_to_ptr;
+                else range_to = &t_range_f;
+
+                auto type = ImGuiDataType_Float;
+
+                if (m->type() == typeid(int)) {type = ImGuiDataType_S32; range_to = &t_range_i; }
+                if (m->type() == typeid(uint8_t)) type = ImGuiDataType_U8;
+                if (m->type() == typeid(uint16_t)) type = ImGuiDataType_U16;
+                if (m->type() == typeid(uint32_t)) { type = ImGuiDataType_U16; range_to = &t_range_i; }
+                
+                int q = 1;
+                if (m->type() == typeid(glm::vec2)) q = 2;
+                if (m->type() == typeid(glm::vec3)) q = 3;
+                if (m->type() == typeid(glm::vec4)) q = 4;
+
+                std::string name = (m->name()+std::to_string(offset)+"##IE"+m->name()+std::to_string(i++));
+
+                if (ImGui::SliderScalarN(name.c_str(), type, f, q, range_from, range_to)) has_changed = true;
+
+
+        }else{
+                
+            ImGui::SeparatorText(m->name().c_str());
+            draw_instance(inst[i]);
+            // ImGui::Text("delete");
+            // if(ImGui::IsItemClicked()){
+            //     // s->remove(m->name()); // TOdoFIX
+            //     has_changed = true;
+            // }
         
-    //     for (auto& m_ : m->members) {
-
-    //         float *f = (float*)(((char*)data)+uniform_offset+uniform_member_offset);
-
-    //         uniform_member_offset += m_.size; 
-
-    //         void* range_to = &m_.range_to;
-
-    //         static int range = 65000;
-
-    //         auto type = ImGuiDataType_Float;
-
-    //         if (m_.type() == typeid(int)) {type = ImGuiDataType_S32; range_to = &range; }
-    //         if (m_.type() == typeid(uint8_t)) type = ImGuiDataType_U8;
-    //         if (m_.type() == typeid(uint16_t)) type = ImGuiDataType_U16;
-    //         if (m_.type() == typeid(uint32_t)) { type = ImGuiDataType_U16; range_to = &range; }
-            
-    //         int q = 1;
-    //         if (m_.type() == typeid(glm::vec2)) q = 2;
-    //         if (m_.type() == typeid(glm::vec3)) q = 3;
-    //         if (m_.type() == typeid(glm::vec4)) q = 4;
-
-    //         std::string name = (m_.name+"##"+c->name+m_.name+std::to_string(uniform_offset+uniform_member_offset));
-
-    //         if (ImGui::SliderScalarN(name.c_str(), type, f, q, &m_.range_from, range_to)) has_changed = true; 
-
-    //     }
-
+        }
         
-    //     uniform_offset += uniform_member_offset;
+                offset+=m->footprint();
         
-    // }
+    }
 
-    // return has_changed;
-
-    return true; // torfix
+    return has_changed;
             
  }
 
@@ -486,42 +492,6 @@ void Editors::init() {
 
     });
 
-    ////////// OBJECT.HPP 
-
-    // TOFIX
-
-    // Editor<Object>([](Node* node, Object *obj){
-
-    //     ImGui::SeparatorText(obj->s->name.c_str());
-
-    //     static std::unordered_map<Object*,int> elem_current;
-    //     static std::string uid = "123";
-
-    //     Buffer* buffer = obj->buffer;
-
-    //     if (buffer->objects.size()) {
-
-    //         int max = obj->reserved-1;
-    //         int min = 0;
-    //         if (max<0) min = -1;
-
-    //         if (ImGui::SliderInt("instance##current", &elem_current[obj], min, max)) { }
-
-    //         ImGui::SameLine(); if (ImGui::Button("add")) {
-
-    //             obj->push();
-
-    //             node->update();
-
-    //         }
-
-    //         if (!obj->reserved) return;
-
-    //         if(draw_object(obj->data(elem_current[obj]),obj->s)) buffer->update();
-
-    //     }
-
-    // });
 
     ////////// Texture.HPP 
 
@@ -550,15 +520,21 @@ void Editors::init() {
 
         draw_raw(buffer->data.data(),buffer->data.size());
 
-    //     static StringsBuffer object_str;
-    //     static int obj_current = 0;
-    //     std::vector<std::string> obect_strs;
-    //     for (auto &obj : buffer->objects) obect_strs.push_back(obj.s->name);
-    //     if (!obect_strs.size()) return;
-    //     object_str.create(obect_strs);
-    //     ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
+        ImGui::Separator();
 
-    //     if (obj_current <= buffer->objects.size()-1) Editor<Object>::cb(node, &buffer->objects[obj_current]);
+        // draw_instance(buffer->data.data(),buffer->data.size());
+
+        static StringsBuffer object_str;
+        static int obj_current = 0;
+        std::vector<std::string> obect_strs;
+        for (auto &m : buffer->members) obect_strs.push_back(m->name());
+        if (!obect_strs.size()) return;
+        object_str.create(obect_strs);
+        ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
+
+        auto inst = (*buffer)[obj_current];
+
+        if (obj_current <= buffer->members.size()-1) draw_instance(inst);
 
     });
 
