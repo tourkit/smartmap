@@ -128,46 +128,48 @@ static void draw_raw(void *data, size_t size) {
 
 static bool draw_instance(Instance inst) {
 
-    int elem_current = 0;
+    static int elem_current = 0;
 
     if (inst.member->quantity() > 1 && ImGui::SliderInt("instance##current", &elem_current, 0, inst.member->quantity()-1)) { }
 
     bool has_changed = false;
     int i = 0;
     int offset = 0;
-    for (auto& m : inst.eq(elem_current).member->members) {
+    inst = inst.eq(elem_current);
+    for (auto& m : inst.member->members) {
 
         if (m->typed()) {
 
-                auto f = (float*)(inst.data()+offset);
-
-                static int t_range_i = 65000;
+                static int t_range_i = 65535;
                 static float t_range_f = 1.0f;
-                static int f_range = 0;
+                static int f_range_i = 0;
+                static float f_range_f = 0;
                 
                 void* range_from;
                 if (m->range_from_ptr) range_from = m->range_from_ptr;
-                else range_from = &f_range;
+                else range_from = &f_range_f;
+                range_from = &f_range_f;
 
                 void* range_to;
                 if (m->range_to_ptr) range_to = m->range_to_ptr;
                 else range_to = &t_range_f;
+                range_to = &t_range_f;
 
                 auto type = ImGuiDataType_Float;
 
-                if (m->type() == typeid(int)) {type = ImGuiDataType_S32; range_to = &t_range_i; }
+                if (m->type() == typeid(int)) {type = ImGuiDataType_S32; range_to = &t_range_i; range_from = &f_range_i; }
                 if (m->type() == typeid(uint8_t)) type = ImGuiDataType_U8;
                 if (m->type() == typeid(uint16_t)) type = ImGuiDataType_U16;
-                if (m->type() == typeid(uint32_t)) { type = ImGuiDataType_U16; range_to = &t_range_i; }
+                if (m->type() == typeid(uint32_t)) { type = ImGuiDataType_U16; range_to = &t_range_i; range_from = &f_range_i; }
                 
                 int q = 1;
                 if (m->type() == typeid(glm::vec2)) q = 2;
                 if (m->type() == typeid(glm::vec3)) q = 3;
                 if (m->type() == typeid(glm::vec4)) q = 4;
 
-                std::string name = (m->name()+std::to_string(offset)+"##IE"+m->name()+std::to_string(i++));
+                std::string name = (m->name()+"##SIE"+m->name()+std::to_string(i++));
 
-                if (ImGui::SliderScalarN(name.c_str(), type, f, q, range_from, range_to)) has_changed = true;
+                if (ImGui::SliderScalarN(name.c_str(), type, inst.data()+offset, q, range_from, range_to)) has_changed = true;
 
 
         }else{

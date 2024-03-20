@@ -13,19 +13,15 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-VBO::VBO() : Buffer("VBO"), vertice_array("Vertice_arr", 0), indice_array("Indice_arr", 0) {
+VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
 
-    vertice_array.add(vertice);
-    vertice_array.striding(true);
-    add(vertice_array);
+    vertices.add(vertice);
+    vertices.striding(true);
+    add(vertices);
 
-    indice_array.add(indice);
-    indice_array.striding(true);
-    add(indice_array);
-
-
-    vertices = (*this)[0];
-    indices = (*this)[1];
+    indices.add(indice);
+    indices.striding(true);
+    add(indices);
 
     create();
 
@@ -67,6 +63,9 @@ void VBO::update() { Buffer::update(); if (init) upload(); }
 void VBO::upload() {
 
     // tofix
+    
+    auto vertices = (*this)[0];
+    auto indices = (*this)[1];
 
     static std::vector<float> backup_quad = {
 
@@ -113,7 +112,7 @@ void VBO::draw(int count) {
 
     glBindVertexArray(vao); 
 
-    glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0, count);
+    glDrawElementsInstanced(GL_TRIANGLES, indice.size()*quantity(), GL_UNSIGNED_INT, 0, count);
 
 }
 	
@@ -132,21 +131,15 @@ int VBO::import(File *file) {
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) PLOGW << "Failed to load OBJ file: " << importer.GetErrorString();
 
 
-    auto vertices = (*this)[0][0];
-    auto indices = (*this)[1][0];
-
     auto mesh = scene->mMeshes[0];
 
-    int next_indice =  vertices.member->members.size();
+    int next_indice =  (*this)[0].member->members.size();
 
     for (int i = 0; i < mesh->mNumVertices; i++) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
         
-        auto v = vertices.push();
-
-        v.member->print();
-        PLOGD << v.member->name();
+        auto v = (*this)[0].push();
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
@@ -158,7 +151,7 @@ int VBO::import(File *file) {
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
       
         const aiFace& face = mesh->mFaces[i];
-        auto indice = indices.push();
+        auto indice = (*this)[1].push();
 
         indice[0].set<uint32_t>(next_indice+face.mIndices[0]);
         indice[1].set<uint32_t>(next_indice+face.mIndices[1]);

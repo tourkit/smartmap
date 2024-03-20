@@ -12,13 +12,9 @@ bool Instance::exist(){
 
 Instance Instance::operator[](std::string name) { 
 
-    if  (offset < 0) return Instance{buff,offset-1,member};
-
     auto offset = this->offset;
 
     Member* found = nullptr;
-
-    if (!member) {PLOGW << "BUGGY";exit(0);}
 
     for (auto &m : member->members) { 
 
@@ -30,43 +26,41 @@ Instance Instance::operator[](std::string name) {
         
         }
         
-        offset += m->footprint()*m->quantity();
+        offset += m->footprint_all();
         
     }
 
-    if (!found) { offset = -1; PLOGW << "\"" << name << "\" does not exist"; }
+    if (!found) PLOGW << "\"" << name << "\" does not exist";
 
     return Instance{buff,offset,found};
 
 }
 Instance Instance::operator[](int id) { 
 
-    if  (offset < 0) return Instance{buff,offset-1,member};
+    auto offset = this->offset;
+    auto member = this->member;
 
-    if (!member) {PLOGW << "BUGGY";exit(0);}
-
-    // if (id >= member->members.size()) {PLOGW << "WAWWA"; exit(0);}
-
-    for (int i = 0 ; i < id-1; i ++ ){
+    if (id >= member->members.size()) {PLOGW << id << "exceed"; exit(0);}
+    
+    
+    for (int i = 0 ; i < id; i ++ ){
 
         auto &m = member->members[i];
 
-        offset += m->footprint()*m->quantity();
+        offset += m->footprint_all();
         
     }
+    
+    member = member->members[id];
 
-    return Instance{buff,offset,member->members[id]};
+    return Instance{buff,offset,member};
 
 }
 
-Instance& Instance::eq(int id) {
+Instance Instance::eq(int id) {
 
     if (!member || id >= member->quantity()) return *this;
     
-    id = id-this->id;
-
-    offset += member->footprint() * id;
-    
-    return *this;
+    return Instance{buff,offset + member->footprint() * (id-this->id) ,member->members[0]};
 
 }

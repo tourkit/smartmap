@@ -16,14 +16,11 @@ struct VBO : Buffer {
     static inline Struct &indice = Struct::create("Indice").add<uint32_t>("vert1").add<uint32_t>( "vert2").add<uint32_t>("vert3");
 
     uint32_t vao, vbo, ibo;
-    
-    Instance vertices;
-    Instance indices;
 
     bool init = false;
     
-    Struct vertice_array;
-    Struct indice_array;
+    Struct vertices;
+    Struct indices;
 
     VBO();
 
