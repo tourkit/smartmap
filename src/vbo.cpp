@@ -77,12 +77,13 @@ void VBO::upload() {
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    glBufferData(GL_ARRAY_BUFFER,  members[0]->footprint_all(), backup_quad.data(), GL_STATIC_DRAW );
+    glBufferData(GL_ARRAY_BUFFER,  members[0]->footprint_all(), data.data(), GL_STATIC_DRAW );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, members[1]->footprint_all(), data.data() + members[0]->footprint_all() -1 , GL_STATIC_DRAW );
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, members[1]->footprint_all(), data.data() + members[0]->footprint_all() , GL_STATIC_DRAW );
 
+    PLOGD << data.size();
     PLOGD << members[0]->footprint_all();
     PLOGD << members[1]->footprint_all();
     
