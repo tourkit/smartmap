@@ -128,14 +128,22 @@ static void draw_raw(void *data, size_t size) {
 
 static bool draw_instance(Instance inst) {
 
-    static int elem_current = 0;
+    struct int_ { int val = 0; };
+    static std::map<Member*,int_> elem_currents;
+    int &elem_current = elem_currents[inst.member].val;
 
-    if (inst.member->quantity() > 1 && ImGui::SliderInt("instance##current", &elem_current, 0, inst.member->quantity()-1)) { }
+    if (inst.member->quantity() > 1 ) {
+        
+        if (ImGui::SliderInt(("instance##current"+inst.member->name()).c_str(), &elem_current, 0, inst.member->quantity()-1)) { }
+
+        inst = inst.eq(elem_current);
+
+     }
 
     bool has_changed = false;
     int i = 0;
     int offset = 0;
-    inst = inst.eq(elem_current);
+
     for (auto& m : inst.member->members) {
 
         if (m->typed()) {
@@ -175,7 +183,7 @@ static bool draw_instance(Instance inst) {
         }else{
                 
             ImGui::SeparatorText(m->name().c_str());
-            draw_instance(inst[i]);
+            draw_instance(inst[i++]);
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
             //     // s->remove(m->name()); // TOdoFIX
@@ -526,17 +534,18 @@ void Editors::init() {
 
         // draw_instance(buffer->data.data(),buffer->data.size());
 
-        static StringsBuffer object_str;
-        static int obj_current = 0;
-        std::vector<std::string> obect_strs;
-        for (auto &m : buffer->members) obect_strs.push_back(m->name());
-        if (!obect_strs.size()) return;
-        object_str.create(obect_strs);
-        ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
+        // static StringsBuffer object_str;
+        // static int obj_current = 0;
+        // std::vector<std::string> obect_strs;
+        // for (auto &m : buffer->members) obect_strs.push_back(m->name());
+        // if (!obect_strs.size()) return;
+        // object_str.create(obect_strs);
+        // ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
 
-        auto inst = (*buffer)[obj_current];
+        // auto inst = (*buffer)[obj_current];
 
-        if (obj_current <= buffer->members.size()-1) draw_instance(inst);
+        // if (obj_current <= buffer->members.size()-1) 
+        draw_instance(Instance{buffer,0,buffer});
 
     });
 

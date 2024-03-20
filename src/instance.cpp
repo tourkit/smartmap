@@ -59,7 +59,7 @@ Instance Instance::operator[](int id) {
 
 Instance Instance::eq(int id) {
 
-    if (!member || id >= member->quantity()) return *this;
+    if (!member || id >= member->quantity()) {PLOGD<<"WAWA";return *this;}
     
     return Instance{buff,offset + member->footprint() * (id-this->id) ,member->members[0]};
 
