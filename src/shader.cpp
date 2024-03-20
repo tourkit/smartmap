@@ -4,6 +4,145 @@
 #include <GL/gl3w.h>
 #include <chrono>
 
+#include <set>
+#include "struct.hpp"
+
+//// SHADERBUILDER
+
+std::string ShaderProgram::Builder::layout(Member& s) {
+
+    auto bkp_srtiding = s.striding();
+
+    s.striding(true);
+
+    if (!s.members.size()) return "";
+
+    std::string str = "struct " + s.name() + " {";
+
+    for (auto &m : s.members) {
+        
+        std::string name = !m->typed() ? "struct" : m->type().name();
+    
+        str += " " + name + " " + m->name() + ";";
+    
+    }
+
+    for (int i = 0; i < s.stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
+    
+    str += " };";
+    
+    s.striding(bkp_srtiding);
+
+    return str;
+
+}
+
+ShaderProgram::Builder::Builder() {
+
+    header_common = "#version 430 core\n\n"+comment_line;
+
+    // header_common += layout(engine.dynamic_ubo);
+    // header_common += layout(engine.static_ubo);
+
+}
+
+std::string ShaderProgram::Builder::frag() {
+
+    std::string str = header_common;
+
+    // str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
+    // str += "uniform sampler2D medias;\n\n";
+
+    // str += "vec4 color;\n\n";
+    // str += "vec2 uv;\n\n";
+
+    str += "in vec2 UV;\n\n";
+    str += "out vec4 COLOR;\n\n";
+
+    // str += comment_line;
+
+    // std::set<Effector*> effectors;
+    
+    // for (auto &m : vbo.models) for (auto effector : m->effectors) effectors.insert(effector);
+    // for (auto effector : effectors) str += effector->source() +"\n";
+    
+    str += "\n";
+
+    // main loop
+    str += "void main() {\n\n";
+    str += "\tCOLOR = vec4(UV.x);\n\n";
+
+    // tofix
+    // for (auto &model : vbo.models) {
+
+    //     for (int instance = 0; instance < model->obj->reserved; instance++) {
+
+    //         auto name = model->file->name+std::to_string(model_id)+"["+std::to_string(instance)+"]";
+
+    //         str += "\t// "+name+"\n"; // would love this to be a node name instead
+    //         str += "\tuv = UV;\n";
+    //         str += "\tcolor = vec4(1);\n";
+            
+    //         for (auto effector : model->effectors) { 
+                
+    //             std::string arg_str;
+
+    //             auto comp = Component::id(effector->file->name.c_str()); 
+
+    //             if (comp->members.size()<2) arg_str += name+"."+effector->file->name;
+
+    //             else for (auto &m: comp->members) {
+                    
+    //                 arg_str += name+"."+effector->file->name+"."+m.name;
+
+    //                 if (&m != &comp->members.back()) arg_str += ", ";
+                    
+    //             }
+
+    //             str += "\t"+effector->file->name+"("+arg_str+");\n";
+    //         }
+
+    //         str += "\tCOLOR += color;\n\n";
+
+    //     }
+
+
+    //     str += "\n\n";
+
+    //     model_id++;
+    // }
+    
+    str += "} ";
+
+    return str;
+
+}
+
+std::string ShaderProgram::Builder::vert() {
+
+    std::string str = header_common;
+
+    str += "layout (location = 0) in vec2 POSITION;\n";
+    str += "layout (location = 1) in vec2 TEXCOORD;\n";
+    // str += "layout (location = 3) in int OBJ;\n\n";
+
+    str += "out vec2 UV;\n\n";
+
+    str += "\nvoid main() {\n\n";
+
+    str += "\tUV = TEXCOORD;\n";
+    // str += "\tUV.y = 1-UV.y;\n\n";
+
+    str += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
+
+    str += "}";
+
+    return str;
+
+}
+
+//// SHADER
+
 Shader::Shader() { }
 
 Shader::~Shader() { if (id > -1) glDeleteShader(id);  }
@@ -48,7 +187,7 @@ Shader::operator GLuint() { return id; }
 
 ShaderProgram::~ShaderProgram() { destroy(); }
 
-ShaderProgram::ShaderProgram() { }
+ShaderProgram::ShaderProgram() { Builder builder; create(builder.frag(),builder.vert()); }
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 

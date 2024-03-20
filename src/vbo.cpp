@@ -63,16 +63,13 @@ void VBO::update() { Buffer::update(); if (init) upload(); }
 void VBO::upload() {
 
     // tofix
-    
-    auto vertices = (*this)[0];
-    auto indices = (*this)[1];
 
     static std::vector<float> backup_quad = {
 
-        -1,-1, 0,0, 0,
-        1,-1, 1,0, 0,
-        -1,1, 0,1, 0,
-        1,1, 1,1, 0,
+        -1,-1, 0,0, 
+        1,-1, 1,0, 
+        -1,1, 0,1, 
+        1,1, 1,1, 
 
     };
 
@@ -80,39 +77,26 @@ void VBO::upload() {
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    glBufferData(GL_ARRAY_BUFFER,  vertices.size(), vertices.data(), GL_STATIC_DRAW );
+    glBufferData(GL_ARRAY_BUFFER,  members[0]->footprint_all(), backup_quad.data(), GL_STATIC_DRAW );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size(), indices.data(), GL_STATIC_DRAW );
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, members[1]->footprint_all(), data.data() + members[0]->footprint_all() , GL_STATIC_DRAW );
 
-    int offset = 0;
-    int i = 0;
-    for (auto & m : indice.members) {
-
-        auto type = GL_FLOAT;
-        if (m->type() == typeid(float)) type = GL_FLOAT;
-
-        auto count = 1; // m->count(); does it
-        if (m->type() == typeid(glm::vec2)) count = 2;
-        else if (m->type() == typeid(glm::vec3)) count = 3;
-        else if (m->type() == typeid(glm::vec4)) count = 4;
-
-        glVertexAttribPointer(i, count, type, GL_TRUE, m->size(), (const void*)offset);
-
-        glEnableVertexAttribArray(i++);
-
-        offset+= m->size();
-
-    }
-
+    PLOGD << members[0]->footprint_all();
+    PLOGD << members[1]->footprint_all();
+    
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 16, (GLvoid *) 0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, 16, (GLvoid *) 16);
+    glEnableVertexAttribArray(1);
 }
 
 void VBO::draw(int count) {
 
     glBindVertexArray(vao); 
 
-    glDrawElementsInstanced(GL_TRIANGLES, indice.size()*quantity(), GL_UNSIGNED_INT, 0, count);
+    glDrawElementsInstanced(GL_TRIANGLES, members[1]->footprint_all(), GL_UNSIGNED_INT, 0, count);
 
 }
 	
@@ -143,7 +127,7 @@ int VBO::import(File *file) {
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["ID"].set<uint32_t>(0);
+        // v["ID"].set<uint32_t>(0);
 
 
     }
@@ -153,9 +137,9 @@ int VBO::import(File *file) {
         const aiFace& face = mesh->mFaces[i];
         auto indice = (*this)[1].push();
 
-        indice[0].set<uint32_t>(next_indice+face.mIndices[0]);
-        indice[1].set<uint32_t>(next_indice+face.mIndices[1]);
-        indice[2].set<uint32_t>(next_indice+face.mIndices[2]);
+        indice[0].set<int>(next_indice+face.mIndices[0]);
+        indice[1].set<int>(next_indice+face.mIndices[1]);
+        indice[2].set<int>(next_indice+face.mIndices[2]);
 
 
     }

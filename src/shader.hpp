@@ -26,6 +26,7 @@ struct Shader {
 
 };
 
+struct Member;
 struct ShaderProgram {
 
   uint32_t id = -1;
@@ -57,5 +58,22 @@ struct ShaderProgram {
   operator uint32_t();
 
   std::chrono::_V2::system_clock::time_point last_change;
+
+  struct Builder {
+
+    static inline std::string struct_taber = "";//\t";
+    static inline std::string struct_spacer = " ";//\n\n";
+    static inline std::string comment_line  = "///////////////////////////////////////////\n\n";
+
+    std::string header_common , footer_common;
+
+    std::string frag();
+    std::string vert();
+
+    Builder();
+
+    std::string layout(Member &s);
+
+  };
 
 };

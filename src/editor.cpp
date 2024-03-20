@@ -140,7 +140,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
         offset += member->footprint()*elem_current;
 
-     }
+    }
 
     bool has_changed = false;
 
@@ -185,7 +185,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                 
             ImGui::SeparatorText(m->name().c_str());
 
-            draw_guis(buff, m, offset);
+            if (draw_guis(buff, m, offset)) has_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
@@ -548,7 +548,7 @@ void Editors::init() {
         // auto inst = (*buffer)[obj_current];
 
         // if (obj_current <= buffer->members.size()-1) 
-        draw_guis(buffer);
+        if (draw_guis(buffer)) buffer->update();
 
     });
 
