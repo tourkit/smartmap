@@ -86,11 +86,11 @@ static void draw_raw(void *data, size_t size) {
 
     bool colorized = false;
 
-    for (int i = 0; i < size; i++) {
+    for (int member_count = 0; member_count < size; member_count++) {
 
 
-        ImGui::PushID(i);
-        if (is_hovered && i == hovered_offset) {
+        ImGui::PushID(member_count);
+        if (is_hovered && member_count == hovered_offset) {
 
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,0,0,1));
 
@@ -98,11 +98,11 @@ static void draw_raw(void *data, size_t size) {
 
         }
 
-        if (!(i%cells_per_line)) ImGui::NewLine();
-        ImGui::SameLine(((i%cells_per_line)*(cell_width+cell_margin))); 
+        if (!(member_count%cells_per_line)) ImGui::NewLine();
+        ImGui::SameLine(((member_count%cells_per_line)*(cell_width+cell_margin))); 
 
         ImGuiDataType_ datatype = ImGuiDataType_U8;
-        ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, ((*(((uint8_t*)data)+i))/255.0f)*26);
+        ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, ((*(((uint8_t*)data)+member_count))/255.0f)*26);
 
         if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &ndata,  &cell_min,   &cell_max,   "")) { 
                     
@@ -113,11 +113,11 @@ static void draw_raw(void *data, size_t size) {
 
         ImGui::SameLine(0);
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
-        std::string str = std::to_string(i);
+        std::string str = std::to_string(member_count);
         ImGui::Text(str.c_str());
 
         ImGui::PopID();
-        if (colorized && (i == hovered_offset+hovered_size-1 || i == size-1)) { ImGui::PopStyleColor(); colorized= false; }
+        if (colorized && (member_count == hovered_offset+hovered_size-1 || member_count == size-1)) { ImGui::PopStyleColor(); colorized= false; }
 
     }
     ImGui::SetWindowFontScale(1);
@@ -126,25 +126,27 @@ static void draw_raw(void *data, size_t size) {
 
 }
 
-static bool draw_instance(Instance inst) {
+static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 0) {
+
+    if (!member) member = buff;
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
-    int &elem_current = elem_currents[inst.member].val;
+    int &elem_current = elem_currents[member].val;
 
-    if (inst.member->quantity() > 1 ) {
+    if (member->quantity() > 1 ) {
         
-        if (ImGui::SliderInt(("instance##current"+inst.member->name()).c_str(), &elem_current, 0, inst.member->quantity()-1)) { }
+        if (ImGui::SliderInt(("instance##current"+member->name()).c_str(), &elem_current, 0, member->quantity()-1)) { }
 
-        inst = inst.eq(elem_current);
+        offset += member->footprint()*elem_current;
 
      }
 
     bool has_changed = false;
-    int i = 0;
-    int offset = 0;
 
-    for (auto& m : inst.member->members) {
+    int member_count = 0;
+
+    for (auto& m : member->members) {
 
         if (m->typed()) {
 
@@ -175,15 +177,16 @@ static bool draw_instance(Instance inst) {
                 if (m->type() == typeid(glm::vec3)) q = 3;
                 if (m->type() == typeid(glm::vec4)) q = 4;
 
-                std::string name = (m->name()+"##SIE"+m->name()+std::to_string(i++));
+                std::string name = (m->name()+"##SIE"+m->name()+std::to_string(member_count++));
 
-                if (ImGui::SliderScalarN(name.c_str(), type, inst.data()+offset, q, range_from, range_to)) has_changed = true;
-
+                if (ImGui::SliderScalarN(name.c_str(), type, buff->data.data()+offset, q, range_from, range_to)) has_changed = true;
 
         }else{
                 
             ImGui::SeparatorText(m->name().c_str());
-            draw_instance(inst[i++]);
+
+            draw_guis(buff, m, offset);
+
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
             //     // s->remove(m->name()); // TOdoFIX
@@ -192,7 +195,7 @@ static bool draw_instance(Instance inst) {
         
         }
         
-                offset+=m->footprint();
+        offset+=m->footprint_all();
         
     }
 
@@ -427,10 +430,10 @@ void Editors::init() {
         int max_lines = 1000;
         int to = log_n->appender.list.size()-max_lines;
         if (to<0)to = 0;
-        for (int i = log_n->appender.list.size()-1; i>=to; i-- ) {
+        for (int member_count = log_n->appender.list.size()-1; member_count>=to; member_count-- ) {
         // for (auto &m : log_n->appender.list ){
 
-            auto &m = log_n->appender.list[i];
+            auto &m = log_n->appender.list[member_count];
 
             ImVec4 color = info;
 
@@ -532,7 +535,7 @@ void Editors::init() {
 
         ImGui::Separator();
 
-        // draw_instance(buffer->data.data(),buffer->data.size());
+        // draw_guis(buffer->data.data(),buffer->data.size());
 
         // static StringsBuffer object_str;
         // static int obj_current = 0;
@@ -545,7 +548,7 @@ void Editors::init() {
         // auto inst = (*buffer)[obj_current];
 
         // if (obj_current <= buffer->members.size()-1) 
-        draw_instance(Instance{buffer,0,buffer});
+        draw_guis(buffer);
 
     });
 
