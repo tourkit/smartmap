@@ -82,13 +82,27 @@ void VBO::upload() {
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, members[1]->footprint_all(), data.data() + members[0]->footprint_all() , GL_STATIC_DRAW );
 
+    int offset = 0;
+    int i = 0;
+    for (auto & m : members[0]->members[0]->members) {
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 20, (GLvoid *) 0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, 20, (GLvoid *) 8);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, 20, (GLvoid *) 16);
-    glEnableVertexAttribArray(3);
+        auto type = GL_FLOAT;
+        if (m->type() == typeid(float)) type = GL_FLOAT;
+
+        auto count = 1; // m->count(); does it
+        if (m->type() == typeid(glm::vec2)) count = 2;
+        else if (m->type() == typeid(glm::vec3)) count = 3;
+        else if (m->type() == typeid(glm::vec4)) count = 4;
+
+        glVertexAttribPointer(i, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
+
+        PLOGD << i << " " << count << " " << members[0]->footprint() << " " << m->footprint() << " " << offset;
+
+        glEnableVertexAttribArray(i++);
+
+        offset+= m->footprint();
+
+    }
 
 }
 
@@ -117,7 +131,7 @@ int VBO::import(File *file) {
 
     auto mesh = scene->mMeshes[0];
 
-    int next_indice =  (*this)[0].member->members.size();
+    int next_indice =  members[1]->quantity();
 
     for (int i = 0; i < mesh->mNumVertices; i++) {
 
@@ -129,7 +143,6 @@ int VBO::import(File *file) {
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
         v["ID"].set<uint32_t>(0);
 
-
     }
 
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
@@ -137,10 +150,9 @@ int VBO::import(File *file) {
         const aiFace& face = mesh->mFaces[i];
         auto indice = (*this)[1].push();
 
-        indice[0].set<int>(next_indice+face.mIndices[0]-1);
-        indice[1].set<int>(next_indice+face.mIndices[1]-1);
-        indice[2].set<int>(next_indice+face.mIndices[2]-1);
-
+        indice[0].set<int>(next_indice+face.mIndices[0]);
+        indice[1].set<int>(next_indice+face.mIndices[1]);
+        indice[2].set<int>(next_indice+face.mIndices[2]);
 
     }
 
