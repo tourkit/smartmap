@@ -28,10 +28,12 @@ namespace ImGui {
 
     static void TextX(std::string label, int offset, int size, int depth) {
 
+        for (int i = 0; i < depth; i++) label = "    "+label;
+        label += "[" +std::to_string(size)+"]";
+        while (strlen(label.c_str()) < 30) label += " ";
         label += " " +  std::to_string(offset);
-        label += " (" +std::to_string(size)+")";
 
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX()+depth*20);
+        // ImGui::SetCursorPosX(ImGui::GetCursorPosX()+depth*20);
 
         ImGui::Text(label.c_str());
 
