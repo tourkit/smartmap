@@ -16,11 +16,9 @@
 VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
 
     vertices.add(vertice);
-    vertices.striding(true);
     add(vertices);
 
     indices.add(indice);
-    indices.striding(true);
     add(indices);
 
     create();
@@ -66,12 +64,13 @@ void VBO::upload() {
 
     static std::vector<float> backup_quad = {
 
-        -1,-1, 0,0, 
-        1,-1, 1,0, 
-        -1,1, 0,1, 
-        1,1, 1,1, 
+        -1,-1, 0,0, 0,
+        1,-1, 1,0, 0,
+        -1,1, 0,1, 0,
+        1,1, 1,1, 0,
 
     };
+
 
     glBindVertexArray(vao);
 
@@ -83,14 +82,14 @@ void VBO::upload() {
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, members[1]->footprint_all(), data.data() + members[0]->footprint_all() , GL_STATIC_DRAW );
 
-    PLOGD << data.size();
-    PLOGD << members[0]->footprint_all();
-    PLOGD << members[1]->footprint_all();
-    
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 16, (GLvoid *) 0);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 20, (GLvoid *) 0);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, 16, (GLvoid *) 16);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, 20, (GLvoid *) 8);
     glEnableVertexAttribArray(1);
+    glVertexAttribPointer(3, 1, GL_FLOAT, GL_TRUE, 20, (GLvoid *) 16);
+    glEnableVertexAttribArray(3);
+
 }
 
 void VBO::draw(int count) {
@@ -128,7 +127,7 @@ int VBO::import(File *file) {
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        // v["ID"].set<uint32_t>(0);
+        v["ID"].set<uint32_t>(0);
 
 
     }
@@ -138,9 +137,9 @@ int VBO::import(File *file) {
         const aiFace& face = mesh->mFaces[i];
         auto indice = (*this)[1].push();
 
-        indice[0].set<int>(next_indice+face.mIndices[0]);
-        indice[1].set<int>(next_indice+face.mIndices[1]);
-        indice[2].set<int>(next_indice+face.mIndices[2]);
+        indice[0].set<int>(next_indice+face.mIndices[0]-1);
+        indice[1].set<int>(next_indice+face.mIndices[1]-1);
+        indice[2].set<int>(next_indice+face.mIndices[2]-1);
 
 
     }

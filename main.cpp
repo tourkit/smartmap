@@ -28,7 +28,10 @@ int main() {
 
     vbo.import(new File("assets/models/quad.obj"));
 
-    auto &shader_n = *engine.tree->addOwnr<ShaderProgram>()->select();
+    File frag("assets/basic.frag");
+    File vert("assets/basic.vert");
+
+    auto &shader_n = *engine.tree->addOwnr<ShaderProgram>(frag.data, vert.data)->select();
 
     shader_n.get()->use();
 
