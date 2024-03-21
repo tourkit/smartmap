@@ -117,17 +117,19 @@ void Callbacks::init() {
 
     NODE<Layer>::onadd<File>([](Node*_this,Node*node){
 
-        auto layer = _this->is_a<Layer>();
+        return _this; // tofix;
 
-        auto file = node->is_a<File>();
+        // auto layer = _this->is_a<Layer>();
 
-        // Two following lines very similar to Engine::open()
+        // auto file = node->is_a<File>();
 
-        layer->vbo.import(file);  
+        // // Two following lines very similar to Engine::open()
 
-        auto x = _this->addPtr<Model>(layer->vbo.models.back());
+        // layer->vbo.import(file);  
 
-        return x->node(); 
+        // auto x = _this->addPtr<Struct>(&layer->vbo.models.back());
+
+        // return x->node(); 
         
     });
     

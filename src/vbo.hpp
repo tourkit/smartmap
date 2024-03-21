@@ -6,7 +6,6 @@
 #include <cstdint>
 #include <vector>
 
-struct Model;
 struct File;
 
 struct VBO : Buffer {
@@ -36,6 +35,6 @@ struct VBO : Buffer {
        
     int import(File *file);
 
-    std::vector<Model*> models;
+    std::vector<Struct> models;
 
 };

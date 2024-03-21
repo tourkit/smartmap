@@ -168,9 +168,11 @@ void DrawCall::update() {
     frag_shader += comment_line;
 
     std::set<Effector*> effectors;
+
+    // tofix
     
-    for (auto &m : vbo.models) for (auto effector : m->effectors) effectors.insert(effector);
-    for (auto effector : effectors) frag_shader += effector->source() +"\n";
+    // for (auto &m : vbo.models) for (auto effector : m->effectors) effectors.insert(effector);
+    // for (auto effector : effectors) frag_shader += effector->source() +"\n";
     
     // main loop
     frag_shader += "\n"+comment_line;

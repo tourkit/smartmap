@@ -40,8 +40,6 @@ void VBO::destroy() {
     glDeleteBuffers(1, &ibo);
     glDeleteVertexArrays(1, &vao);
 
-    for (auto m : models) delete m;
-
 }
 
 void VBO::create() {
@@ -154,7 +152,9 @@ int VBO::import(File *file) {
 
     upload();
 
-    models.push_back(new Model(file, models.size()));
+    models.emplace_back(file->name+""+std::to_string(models.size()));
+
+    engine.dynubo.add(models.back());
 
     return models.size()-1;
 

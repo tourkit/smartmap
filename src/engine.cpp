@@ -167,26 +167,27 @@ void Engine::open(const char* file) {
             auto model_n = models->child(m.value[0].GetString()); if (!model_n)  { PLOGW << "no model : " << m.value[0].GetString(); continue; }
 
 
-            // auto model = layer->add(model_n);
-            // Two two following lines are from NODE<Layer>::onadd<File> to replace above line wich is not working IDK why
-            layer->get()->vbo.import(model_n->is_a<File>());  // model_n might be fucked
-            auto model = layer->addPtr<Model>(layer->get()->vbo.models.back());
+            // tofix
+            // // auto model = layer->add(model_n);
+            // // Two two following lines are from NODE<Layer>::onadd<File> to replace above line wich is not working IDK why
+            // layer->get()->vbo.import(model_n->is_a<File>());  // model_n might be fucked
+            // auto model = layer->addPtr<Struct>(&layer->get()->vbo.models.back());
 
-            if (m.name.IsString()) model->name = m.name.GetString();
+            // if (m.name.IsString()) model->name = m.name.GetString();
             
-            if (m.value.GetArray().Size() != 2) continue;
-            if (!m.value[1].IsArray()) continue;
+            // if (m.value.GetArray().Size() != 2) continue;
+            // if (!m.value[1].IsArray()) continue;
 
-            for (auto &f : m.value[1].GetArray()) {
+            // for (auto &f : m.value[1].GetArray()) {
 
-                if (!f.IsString()) continue;
+            //     if (!f.IsString()) continue;
 
-                auto effector = effectors->child(f.GetString())->get<Effector>();
+            //     auto effector = effectors->child(f.GetString())->get<Effector>();
 
-                if (effector) model->add(effector);
-                else PLOGW << "no effector: " << f.GetString();
+            //     if (effector) model->add(effector);
+            //     else PLOGW << "no effector: " << f.GetString();
 
-            }
+            // }
 
         }
 
