@@ -60,8 +60,6 @@ void VBO::update() { Buffer::update(); if (init) upload(); }
 
 void VBO::upload() {
 
-    // tofix
-
     static std::vector<float> backup_quad = {
 
         -1,-1, 0,0, 0,
@@ -117,8 +115,6 @@ void VBO::draw(int count) {
 
 int VBO::import(File *file) {    
 
-    // return 0;  // tofix
-
     Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       | 
@@ -158,9 +154,9 @@ int VBO::import(File *file) {
 
     upload();
 
-    // models.push_back(new Model(file, models.size()));
+    models.push_back(new Model(file, models.size()));
 
-    // return models.size()-1;
+    return models.size()-1;
 
     return 0;
     

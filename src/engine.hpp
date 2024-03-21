@@ -3,6 +3,7 @@
 #include "window.hpp"
 #include "json.hpp"
 #include "node.hpp"
+#include "buffer.hpp"
 
 struct Stack {};
 struct Debug {};
@@ -33,6 +34,8 @@ struct Engine {
     UBO *dynamic_ubo;
 
     UBO *static_ubo;
+
+    Buffer dynubo,statubo;
     
     Atlas *atlas;
     

@@ -51,7 +51,7 @@ void Engine::init() {
 
     debug = tree->addOwnr<Debug>()->close()->node();
     debug->addPtr<UBO>(static_ubo);
-    debug->addPtr<UBO>(dynamic_ubo);
+    debug->addPtr<Buffer>(&dynubo)->name = "dynubo";
     debug->addPtr<Atlas>(atlas);   
 
     atlas = new Atlas(4096, 4096, "assets/medias/");

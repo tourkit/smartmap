@@ -13,15 +13,15 @@ bool Model::import(File* file, int id, int quantity) {
 
     // tofix
 
-    // this->file = file;
-    // this->id = id;
-    // this->quantity = quantity;
+    this->file = file;
+    this->id = id;
+    this->quantity = quantity;
 
-    // name = file->name+""+std::to_string(id);
+    name = file->name+""+std::to_string(id);
 
-    // obj = engine.dynamic_ubo->addObj(new Struct(name.c_str()));
+    s = &Struct::create(name.c_str());
 
-    // instance = &obj->push();
+    engine.dynubo.add(*s);
 
     return true;
 
