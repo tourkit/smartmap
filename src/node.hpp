@@ -212,7 +212,7 @@ struct TypedNode : UntypedNode {
 
                 n = onaddtyped_cb[type()][n->type()](node(),n->node());
 
-                if (n->node() == this->node()) return nullptr;
+                if (!n || n->node() == this->node()) return nullptr;
 
             }
 
