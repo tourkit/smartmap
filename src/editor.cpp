@@ -58,7 +58,7 @@ static void draw_definition(Member *s, int offset = 0, int depth = 0) {
 
         draw_definition(m, offset, depth+1);
 
-        offset += m->footprint();
+        offset += m->footprint_all();
     }
 
     if (s->striding()) ImGui::TextX("float stride", offset, s->stride(), depth+1);
