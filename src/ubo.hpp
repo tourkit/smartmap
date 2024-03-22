@@ -36,6 +36,4 @@ struct UBO : Buffer {
 
     void bind(ShaderProgram* ubo);
 
-    Struct& add(Struct& s) override;
-
 };

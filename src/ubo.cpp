@@ -20,17 +20,6 @@ UBO::UBO(std::string name) : Buffer(name) {
 
 } 
 
-Struct& UBO::add(Struct& s) {
-
-        Buffer::add(s);
-
-        update();
-        upload();
-
-        return *this;
-        
-}
-
 void UBO::destroy() { if (id<0) {glDeleteBuffers(1, &id); id = -1;} } 
 
 void UBO::resize(uint32_t size) {

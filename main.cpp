@@ -29,8 +29,7 @@ int main() {
 
     vbo_n.onrun([](Node* node) { node->is_a<VBO>()->draw(); });
 
-    engine.static_ubo->Struct::add<float>("test2");
-
+    engine.static_ubo->add<float>("test2");
 
     Struct myeffector("MYEffecty");
 
@@ -40,8 +39,10 @@ int main() {
 
     (*engine.dynamic_ubo)["quad0"]["MYEffecty"]["test"].set<float>(.2);
 
-    auto shader = engine.tree->addOwnr<ShaderProgram>()->select()->get(); // ubo striding here
+    auto shader = engine.tree->addOwnr<ShaderProgram>()->select()->get(); 
     
+    engine.dynamic_ubo->bind(shader);
+    engine.static_ubo->bind(shader);
 
     shader->use();
 
