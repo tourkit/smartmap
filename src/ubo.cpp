@@ -12,9 +12,8 @@ UBO::UBO(std::string name) : Buffer(name) {
     striding(true);
 
     binding = binding_count++;
+    
     if (binding > 100) PLOGW << "MAX_UBO might soon be reached";// can do better ^^
-     
-    //  for (auto shader:subscribers) link(shader);
 
     create();
 
@@ -36,8 +35,6 @@ void UBO::create() {
     resize(footprint_all());
 
 }
-
-
 
 void UBO:: bind(ShaderProgram* shader) {  
 
@@ -68,6 +65,6 @@ void UBO::upload(void* data, size_t size, uint32_t offset){
     // PLOGV << name() << " " << binding << ": " << size << " - " << str;
     
     glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 
+    glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data); 
     
 }

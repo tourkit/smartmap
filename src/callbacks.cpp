@@ -41,7 +41,7 @@ void Callbacks::init() {
 
     ////////// FILE.HPP 
     
-    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name+"."; });
+    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name(); });
 
     ////////// Artnet.HPP 
 
@@ -109,6 +109,19 @@ void Callbacks::init() {
     
     NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
 
+    NODE<VBO>::onadd<File>([](Node*_this,Node*node){
+
+        auto vbo = _this->is_a<VBO>();
+        auto file = node->is_a<File>();
+
+        // vbo->import(file);
+
+        // _this->addPtr<Model>(&vbo->models.back());
+
+        return _this;
+
+    });
+    
     NODE<Layer>::onadd<File>([](Node*_this,Node*node){
 
         return _this; // tofix;
@@ -133,11 +146,10 @@ void Callbacks::init() {
 
     NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
         
-        // tofix
-        // auto model = _this->is_a<Model>();
-        // auto effector = node->is_a<Effector>();
+        auto model = _this->is_a<Model>();
+        auto effector = node->is_a<Effector>();
 
-        // model->addFX(effector);
+        // model->import(effector);
 
         // auto dc = _this->parent()->is_a<Layer>();
         // if (dc) {
@@ -154,7 +166,7 @@ void Callbacks::init() {
 
     ////////// Effector.HPP 
     
-    NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name; });
+    // NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name; });
 
     // TOFIX
     // NODE<Model>::onchange([](Node* node, Model *model) { 
@@ -208,6 +220,6 @@ void Callbacks::init() {
 
     ////////// JSON.HPP 
 
-    NODE<JSON>::oncreate([](Node* node, JSON *json){ if (json->file) node->name = json->file->name; });
+    NODE<JSON>::oncreate([](Node* node, JSON *json){ if (json->file) node->name = json->file->name(); });
 
 }

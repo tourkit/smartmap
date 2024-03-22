@@ -7,7 +7,7 @@
 
 struct File {
 
-    std::string name, path, location, extension;
+    std::string name_v, path, location, extension;
 
     std::string data;
 
@@ -17,6 +17,8 @@ struct File {
 
     void update();
     
+    std::string name();
+
     std::function<void(File*)> callback = [](File* f){};
 
     File();

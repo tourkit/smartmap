@@ -126,8 +126,8 @@ void Engine::open(const char* file) {
         auto n = models->addOwnr<File>();
         auto model = n->get();
         model->loadString(m.value.GetString());
-        model->name = m.name.GetString();
-        n->name = model->name;
+        // model->name = m.name.GetString(); // tofix
+        // n->name = model->name;
 
     }
 
@@ -135,10 +135,10 @@ void Engine::open(const char* file) {
 
         auto n = effectors->addOwnr<File>();
         auto f = n->get();
-        f->loadString(m.value.GetString());
-        f->name = m.name.GetString();
-        effectors->addOwnr<Effector>(f);
-        n->hide();
+        // f->loadString(m.value.GetString()); // tofix
+        // f->name = m.name.GetString();
+        // effectors->addOwnr<Effector>(f);
+        // n->hide();
 
     }
 

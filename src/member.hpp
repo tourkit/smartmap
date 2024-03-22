@@ -171,19 +171,8 @@ struct Member {
 protected:
     std::string name_v;
 
-    Member& add(Member* s) {
-
-        PLOGV << "add " << s->name() << " to " << name();
-
-        members.push_back(s);
-
-        size_v += members.back()->footprint_all();
-
-        update();
-
-        return *this;
-
-    } 
+    Member& add(Member* s);
+    
     Member& remove(Member* s) {
 
         if (std::find(members.begin(), members.end(), s) != members.end()) {

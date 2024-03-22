@@ -51,6 +51,10 @@ bool File::hasChanged() {
 
 }
 
+
+std::string File::name() { return name_v; }
+
+
 void File::read(std::string path, bool binary){
 
     this->path = path;
@@ -65,7 +69,7 @@ void File::read(std::string path, bool binary){
 
     if (file) {
 
-        name = std::filesystem::path(path).stem().filename().string();
+        name_v = std::filesystem::path(path).stem().filename().string();
 
         extension = std::filesystem::path(path).extension().string().substr(1);   
 

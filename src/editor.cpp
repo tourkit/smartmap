@@ -473,7 +473,7 @@ void Editors::init() {
                 file->read(path);
 
                 if (!file->loaded) node->name = "File";
-                else node->name = node->name = file->name+"."+file->extension+"";
+                else node->name = node->name = file->name()+"."+file->extension+"";
                 
             }
         

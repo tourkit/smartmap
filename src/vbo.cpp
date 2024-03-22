@@ -49,6 +49,27 @@ void VBO::create() {
 
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
 
+    int offset = 0;
+    int i = 0;
+
+    for (auto & m : members[0]->members[0]->members) {
+
+        auto type = GL_FLOAT;
+        if (m->type() == typeid(float)) type = GL_FLOAT;
+
+        auto count = 1; // m->count(); does it
+        if (m->type() == typeid(glm::vec2)) count = 2;
+        else if (m->type() == typeid(glm::vec3)) count = 3;
+        else if (m->type() == typeid(glm::vec4)) count = 4;
+
+        glVertexAttribPointer(i, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
+
+        glEnableVertexAttribArray(i++);
+
+        offset+= m->footprint();
+
+    }
+
     init = true;
 
 }
@@ -58,6 +79,13 @@ VBO::~VBO()  { destroy(); }
 void VBO::update() { 
     
     Buffer::update(); 
+
+
+    for (auto m : members) {
+
+        PLOGD << m->type().name();
+        
+    } 
     
     if (init) upload(); 
      
@@ -85,25 +113,7 @@ void VBO::upload() {
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, members[1]->footprint_all(), data.data() + members[0]->footprint_all() , GL_STATIC_DRAW );
 
-    int offset = 0;
-    int i = 0;
-    for (auto & m : members[0]->members[0]->members) {
 
-        auto type = GL_FLOAT;
-        if (m->type() == typeid(float)) type = GL_FLOAT;
-
-        auto count = 1; // m->count(); does it
-        if (m->type() == typeid(glm::vec2)) count = 2;
-        else if (m->type() == typeid(glm::vec3)) count = 3;
-        else if (m->type() == typeid(glm::vec4)) count = 4;
-
-        glVertexAttribPointer(i, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
-
-        glEnableVertexAttribArray(i++);
-
-        offset+= m->footprint();
-
-    }
 
 }
 
@@ -116,7 +126,7 @@ void VBO::draw(int count) {
 }
 	
 
-int VBO::import(File *file) {    
+int VBO::import(File* file, int id) {    
 
     Assimp::Importer importer;
 
@@ -140,7 +150,7 @@ int VBO::import(File *file) {
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["ID"].set<uint32_t>(0);
+        v["ID"].set<uint32_t>(id);
 
     }
 
@@ -155,12 +165,11 @@ int VBO::import(File *file) {
 
     }
 
-    models.emplace_back(file->name, models.size());
 
-    engine.dynamic_ubo.add(models.back());
+    engine.dynamic_ubo.add(models.emplace_back(file,id));
 
     update();
 
-    return models.size()-1;
+    return members.size()-1;
     
 }

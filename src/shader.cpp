@@ -37,7 +37,7 @@ std::string ShaderProgram::Builder::struct_(Member* s) {
     
     }
 
-    for (int i = 0; i < s->stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
+    if (s->stride()) for (int i = 0; i < s->stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
 
     str += "}";
 
@@ -47,7 +47,7 @@ std::string ShaderProgram::Builder::struct_(Member* s) {
 
 std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
-    if (!ubo->members.size()) return "";
+    if (!ubo->members.size() || !ubo->data.size()) return "";
 
     std::string str = "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " {";
 
@@ -73,9 +73,9 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
     
     }
 
-    for (int i = 0; i < ubo->stride()/sizeof(float); i++) str += " float stride" + std::to_string(stride_count++) + ";";
+    if (ubo->stride()) for (int i = 0; i < ubo->stride()/sizeof(float); i++) str += " float stride" + std::to_string(stride_count++) + ";";
     
-    str += " };";
+    str += " };\n\n";
     
     return str;
 
@@ -87,8 +87,8 @@ ShaderProgram::Builder::Builder() {
 
     stride_count = 0;
 
-    header_common += layout(&engine.dynamic_ubo) + "\n\n";
-    header_common += layout(&engine.static_ubo) + "\n\n";
+    header_common += layout(&engine.dynamic_ubo);
+    header_common += layout(&engine.static_ubo);
 
 }
 
@@ -116,7 +116,7 @@ std::string ShaderProgram::Builder::frag() {
 
     // main loop
     str += "void main() {\n\n";
-    str += "\tCOLOR = vec4(UV.x+test2+test);\n\n";
+    str += "\tCOLOR = vec4(UV.x);\n\n";
 
     // tofix
     // for (auto &model : vbo.models) {

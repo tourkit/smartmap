@@ -14,3 +14,18 @@ Member::~Member() {
             PLOGV << "~" << name(); 
             
     }
+
+
+    Member& Member::add(Member* s) {
+
+        PLOGV << "add " << s->name() << " to " << name();
+
+        members.push_back(s);
+
+        size_v += members.back()->footprint_all();
+
+        update();
+
+        return *this;
+
+    } 

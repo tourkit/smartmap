@@ -34,26 +34,12 @@
 
         }
 
-        virtual Struct& add(Struct& s) { 
-
-            for (auto &c : pool) {
-                if (c == &s) {
-                    return add(&s); // why check if s is already in pool  ?
-                }
-            }
-
-            PLOGW << " noadd" << s.name(); return *this;
-            
-        }  
+        Struct& add(Struct& s) { return (Struct&)Member::add(&s); }
 
         Struct& add(const char* name) { 
-
-            for (auto &s : owned) {
-                if (!strcmp(name,s->name().c_str())) {
-                    return add(*s); 
-                }
-            }
-
+            
+            for (auto s : owned) if (!strcmp(name,s->name().c_str())) return add((*s)); 
+            
             PLOGW << " noadd" << name; return *this;
             
         }  
@@ -67,7 +53,7 @@
         };
     
         template <typename T> 
-        Struct& add(std::string name = "") { return add(new Data<T>(name)); }
+        Struct& add(std::string name = "") { return (Struct&)Member::add(new Data<T>(name)); }
     
         Struct& range(float from, float to) {   
             
@@ -90,7 +76,7 @@
 
         uint32_t size() override { 
             
-            if (members.size() == 1) { return members[0]->size(); } 
+            if (members.size() == 1 && members[0]->typed()) { return members[0]->size(); } 
 
             return size_v; 
 
@@ -177,12 +163,4 @@
 
         }        
 
-    protected:
-        virtual Struct& add(Member* s) {
-
-            Member::add(s);
-
-            return *this;
-
-        } 
     };

@@ -34,7 +34,7 @@ struct VBO : Buffer {
 
     void draw(int count = 1);
        
-    int import(File *file);
+    int import(File *file, int quantity);
 
     std::vector<Model> models;
 

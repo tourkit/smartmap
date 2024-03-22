@@ -7,18 +7,14 @@ struct Effector;
 #include <string>
 
 #include "struct.hpp"
+#include "effector.hpp"
 
 struct Model : Struct {
 
-    // Data data ?
+    File* file;
 
-    Model(std::string name = "Model", int id = 0, int quantity = 1);
-
-    int id;
+    Model(File* file, int quantity = 1) : Struct (file->name(), quantity) { }
 
     int quantity;
-
-    std::vector<Effector*> effectors; 
- 
 
 };
