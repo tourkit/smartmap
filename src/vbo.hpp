@@ -2,6 +2,7 @@
 
 #include "buffer.hpp"
 #include "instance.hpp"
+#include "model.hpp"
 
 #include <cstdint>
 #include <vector>
@@ -9,22 +10,6 @@
 struct File;
 
 struct VBO : Buffer {
-
-    struct Model : Struct {
-
-        VBO* owner;
-
-        Model(std::string name, VBO* owner) : Struct(name), owner(owner) {}
-
-        void update() override {
-
-            if (owner) owner->update();
-
-            Struct::update();
-
-        }
-
-    };
 
     static inline Struct &vertice = Struct::create("Vertice").add<glm::vec2>("Position").add<glm::vec2>("UV").add<uint32_t>("ID");
     

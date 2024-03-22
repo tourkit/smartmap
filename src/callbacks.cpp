@@ -129,23 +129,24 @@ void Callbacks::init() {
     
     ////////// MODEL.HPP 
 
-    NODE<Model>::oncreate([](Node* node, Model *model) { if (model->file) node->name = model->file->name; });
+    NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->name(); });
 
     NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
         
-        auto model = _this->is_a<Model>();
-        auto effector = node->is_a<Effector>();
+        // tofix
+        // auto model = _this->is_a<Model>();
+        // auto effector = node->is_a<Effector>();
 
-        model->addFX(effector);
+        // model->addFX(effector);
 
-        auto dc = _this->parent()->is_a<Layer>();
-        if (dc) {
+        // auto dc = _this->parent()->is_a<Layer>();
+        // if (dc) {
 
-            dc->update();
+        //     dc->update();
 
-            _this->referings.push_back(node);
+        //     _this->referings.push_back(node);
 
-        }
+        // }
 
         return _this;
 

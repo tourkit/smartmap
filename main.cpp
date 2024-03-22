@@ -10,6 +10,7 @@
 #include "ubo.hpp"
 #include "vbo.hpp"
 #include "shader.hpp"
+#include "model.hpp"
 
 void ttt(Member* www) {}
 
@@ -27,17 +28,13 @@ int main() {
 
     vbo_n.get()->import(new File("assets/models/quad.obj"));
 
+    vbo_n.addPtr<Model>(&vbo_n.get()->models.back());
+
     vbo_n.onrun([](Node* node) { node->is_a<VBO>()->draw(); });
 
     engine.static_ubo.add<float>("test2");
-
-    Struct myeffector("MYEffecty");
-
-    myeffector.add<float>("test");
-
-    vbo_n.get()->models[0].add(myeffector);
-
-    engine.dynamic_ubo["quad0"]["MYEffecty"]["test"].set<float>(.2);
+    vbo_n.get()->models[0].add<float>("test");
+    engine.dynamic_ubo["quad0"]["test"].set<float>(.2);
 
     auto shader = engine.tree->addOwnr<ShaderProgram>()->select()->get(); 
     
