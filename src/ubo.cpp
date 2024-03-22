@@ -57,6 +57,8 @@ void UBO::update() { Buffer::update(); reset();  }
 
 void UBO::reset() {
 
+    PLOGD << "golio";
+
     destroy();
 
     create();
