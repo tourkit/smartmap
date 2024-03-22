@@ -272,6 +272,7 @@ bool ShaderProgram:: bind(UBO* ubo) {
     glUniformBlockBinding(id, glGetUniformBlockIndex(id, ubo->name().c_str()), ubo->binding);
     glBindBufferBase(GL_UNIFORM_BUFFER, ubo->binding, ubo->id);
     
+    return true;
 }
 
 void ShaderProgram::use() {  glUseProgram(id); }

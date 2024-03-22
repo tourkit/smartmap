@@ -7,6 +7,7 @@ struct Texture;
 struct UBO; 
 struct Struct; 
 struct ShaderProgram; 
+struct Instance; 
  
 struct Atlas {
 
@@ -17,6 +18,8 @@ struct Atlas {
     Texture *texture;
          
     UBO *ubo; 
+
+    Instance* medias;
 
     std::string path;
 
