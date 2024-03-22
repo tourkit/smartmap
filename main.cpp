@@ -12,12 +12,12 @@
 
 int main() {
 
-    logger.cout();
+    logger.cout(true);
 
     engine.init();
 
     engine.tree->addOwnr<ShaderProgram>()->select()->get()->use();
-
+    
     auto &vbo_n = *engine.tree->addOwnr<VBO>()->select();
     
     vbo_n.active(true);
@@ -26,7 +26,7 @@ int main() {
 
     vbo_n.onrun([](Node* node) { node->is_a<VBO>()->draw(); });
 
-    // engine.open("project2.json");
+    // // engine.open("project2.json");
 
     engine.gui->editors.push_back(new EditorWidget());
 

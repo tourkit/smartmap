@@ -19,12 +19,6 @@
 
         Struct(std::string name = "", uint32_t quantity = 1) : Member(name) { quantity_v = quantity; if (!name.length()) quantity_v = 0; }
 
-        ~Struct() { for (auto m : members) if (m->typed()) {
-            
-                    auto to_delete = m;
-                    members.erase(std::remove(members.begin(), members.end(), m), members.end());
-                    delete to_delete;} }
-
         static inline std::set<Struct*> owned;
 
         template <typename... Args> 
@@ -167,7 +161,7 @@
 
                 int size = 0;
 
-                if (members.size() > 1 || members[0]->name().length() ||  striding()) {
+                if ((members.size() > 1 && members[0]->name().length()) ||  striding()) {
                 
                     for (auto &m :members) {
                         
@@ -190,13 +184,7 @@
     protected:
         virtual Struct& add(Member* s) {
 
-            PLOGV << "add " << s->name() << " to " << name();
-
-            members.push_back(s);
-
-            size_v += members.back()->footprint_all();
-
-            update();
+            Member::add(s);
 
             return *this;
 

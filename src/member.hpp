@@ -10,39 +10,19 @@ static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)facto
 
 struct Member {
 
-    static inline std::unordered_set<Member*> pool;
+    static inline std::unordered_set<Member*> pool; // has a ptr to all axisting Members;
 
     Member(std::string name_v = "") { 
         
         name(name_v); 
     
-        PLOGV << name(); 
+        PLOGV << "#" << name(); 
         
         pool.insert(this);
         
     }
 
-    virtual ~Member() { 
-            
-            PLOGV << "~" << name(); 
-            
-            pool.erase(this); 
-        
-            for (auto m : pool) {
-
-            m->each([this](Member& m) { 
-                
-                if (m.owns(*this)) {
-                    
-                    m.members.erase(std::remove(m.members.begin(), m.members.end(), this), m.members.end()); 
-                    
-                }
-
-            });
-
-        }
-
-    }
+    virtual ~Member();
 
     uint32_t quantity_v = 1;
 
@@ -190,6 +170,35 @@ struct Member {
 protected:
     std::string name_v;
     uint32_t size_v = 0;
+
+    Member& add(Member* s) {
+
+        PLOGV << "add " << s->name() << " to " << name();
+
+        members.push_back(s);
+
+        size_v += members.back()->footprint_all();
+
+        update();
+
+        return *this;
+
+    } 
+    Member& remove(Member* s) {
+
+        if (std::find(members.begin(), members.end(), s) != members.end()) {
+
+            PLOGV << "remove " << s->name() << " from " << name();
+            
+            members.erase(std::remove(members.begin(), members.end(), s), members.end()); 
+
+        }
+
+        return *this;
+
+    } 
+
+
 private:
 
     bool is_striding = false;

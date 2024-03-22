@@ -92,8 +92,6 @@ void VBO::upload() {
 
         glVertexAttribPointer(i, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
 
-        PLOGD << i << " " << count << " " << members[0]->footprint() << " " << m->footprint() << " " << offset;
-
         glEnableVertexAttribArray(i++);
 
         offset+= m->footprint();
