@@ -17,7 +17,7 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)
 
     static Struct& media_struct = Struct::create("Media",0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
-    buffer = &engine.static_ubo->add(media_struct);
+    buffer = &engine.static_ubo.add(media_struct);
 
     texture = new Texture(width,height,1,1);
 
@@ -57,10 +57,8 @@ void Atlas::fromDir(std::string path) {
         if (!r.width) {PLOGW << img.name << " can't fit, need more space."; continue;} 
 
         float x[4] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
-
-        // buffer->push(&x[0]); // TOFIX
         
-        (*engine.static_ubo)["Media"].push(&x[0]);
+        engine.static_ubo["Media"].push(&x[0]);
 
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 
@@ -70,10 +68,7 @@ void Atlas::fromDir(std::string path) {
 
 void Atlas::link(ShaderProgram* shader) {
 
-    // engine.static_ubo->subscribers.push_back(shader); // tofix
-    engine.static_ubo->update();
-
-    engine.static_ubo->upload();
+    engine.static_ubo.update();
     
     shader->sendUniform("medias", 1);
     texture->bind();

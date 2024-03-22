@@ -19,15 +19,11 @@
 
 #include "callbacks.hpp"
 
-Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
+Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
 
     window.max_fps = 59;
 
-    gui = new GUI(window.id);
-
-    dynamic_ubo = new UBO("dynamic_ubo");
-
-    static_ubo = new UBO("static_ubo");
+    gui = new GUI(window.id); 
 
     window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
 
@@ -47,8 +43,8 @@ void Engine::init() {
     tree = new Node("tree");
 
     debug = tree->addOwnr<Debug>()->close()->node();
-    debug->addPtr<UBO>(static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); });
-    debug->addPtr<UBO>(dynamic_ubo);
+    debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); });
+    debug->addPtr<UBO>(&dynamic_ubo);
     debug->addPtr<Atlas>(atlas);   
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
@@ -82,7 +78,7 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
         
-        engine.dynamic_ubo->upload();
+        engine.dynamic_ubo.upload();
 
         engine.tree->run();
 

@@ -157,7 +157,7 @@ int VBO::import(File *file) {
 
     models.emplace_back(file->name+""+std::to_string(models.size()), this);
 
-    engine.dynamic_ubo->add(models.back());
+    engine.dynamic_ubo.add(models.back());
 
     update();
 

@@ -87,8 +87,8 @@ ShaderProgram::Builder::Builder() {
 
     stride_count = 0;
 
-    header_common += layout(engine.dynamic_ubo) + "\n\n";
-    header_common += layout(engine.static_ubo) + "\n\n";
+    header_common += layout(&engine.dynamic_ubo) + "\n\n";
+    header_common += layout(&engine.static_ubo) + "\n\n";
 
 }
 

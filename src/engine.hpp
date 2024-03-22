@@ -3,7 +3,7 @@
 #include "window.hpp"
 #include "json.hpp"
 #include "node.hpp"
-#include "buffer.hpp"
+#include "ubo.hpp"
 
 struct Stack {};
 struct Debug {};
@@ -11,7 +11,6 @@ struct Debug {};
 struct GUI;
 struct Node;
 struct DrawCall;
-struct UBO;
 struct Atlas;
 
 struct Engine {
@@ -31,9 +30,7 @@ struct Engine {
     
     GUI* gui;
     
-    UBO *dynamic_ubo;
-
-    UBO *static_ubo;
+    UBO dynamic_ubo, static_ubo;
     
     Atlas *atlas;
     

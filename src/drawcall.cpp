@@ -29,8 +29,8 @@ void Layer::run() {
 DrawCall::DrawCall() {
 
     // tofix 
-    // engine.dynamic_ubo->subscribers.push_back(&shader);
-    // engine.static_ubo->subscribers.push_back(&shader);
+    // engine.dynamic_ubo.subscribers.push_back(&shader);
+    // engine.static_ubo.subscribers.push_back(&shader);
 
     // engine.atlas->link(&shader);
 
@@ -147,8 +147,8 @@ void DrawCall::update() {
 
     std::string header_commom = "#version 430 core\n\n"+comment_line;
 
-    header_commom += layout(engine.dynamic_ubo);
-    header_commom += layout(engine.static_ubo);
+    header_commom += layout(&engine.dynamic_ubo);
+    header_commom += layout(&engine.static_ubo);
 
     // FRAGMENT
     
