@@ -13,10 +13,6 @@
 
 std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
-    auto bkp_srtiding = ubo->striding();
-
-    ubo->striding(true);
-
     if (!ubo->members.size()) return "";
 
     std::string str = "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " {";
@@ -35,8 +31,6 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
     
     str += " };";
     
-    ubo->striding(bkp_srtiding);
-
     return str;
 
 }

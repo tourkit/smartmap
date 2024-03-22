@@ -38,7 +38,7 @@ void UBO::create() {
     glGenBuffers(1, &id);
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glBufferData(GL_UNIFORM_BUFFER, data.size(), NULL, GL_DYNAMIC_COPY);
+    glBufferData(GL_UNIFORM_BUFFER, footprint_all(), NULL, GL_DYNAMIC_COPY);
 
     for (auto shader:subscribers) { // need link after resize ?
 
@@ -53,11 +53,9 @@ void UBO::create() {
 
 }
 
-void UBO::update() { Buffer::update(); reset();  }
+void UBO::update() { Buffer::update(); upload();  }
 
 void UBO::reset() {
-
-    PLOGD << "golio";
 
     destroy();
 
@@ -71,9 +69,9 @@ void UBO::upload(){ upload(data.data(), data.size()); }
 
 void UBO::upload(void* data, size_t size, uint32_t offset){
 
-    std::string str;
-    for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
-    PLOGV << name() << " " << binding << ": " << size << " - " << str;
+    // std::string str;
+    // for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
+    // PLOGV << name() << " " << binding << ": " << size << " - " << str;
     
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 

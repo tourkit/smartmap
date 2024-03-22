@@ -87,7 +87,7 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
         
-        // engine.dynamic_ubo->upload();
+        engine.dynamic_ubo->upload();
 
         engine.tree->run();
 

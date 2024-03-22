@@ -37,7 +37,19 @@ int main() {
 
     (*engine.dynamic_ubo)["quad0"]["MYEffecty"]["test"].set<float>(.5);
 
-    auto shader = engine.tree->addOwnr<ShaderProgram>()->select()->get(); 
+    // engine.dynamic_ubo->Buffer::update(); 
+    
+    glDeleteBuffers(1, &engine.dynamic_ubo->id);
+
+    glGenBuffers(1, &engine.dynamic_ubo->id);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, engine.dynamic_ubo->id);
+
+    glBufferData(GL_UNIFORM_BUFFER, engine.dynamic_ubo->data.size(), NULL, GL_DYNAMIC_COPY);
+
+    engine.dynamic_ubo->upload();
+
+    auto shader = engine.tree->addOwnr<ShaderProgram>()->select()->get(); // ubo striding here
 
     shader->use();
 
