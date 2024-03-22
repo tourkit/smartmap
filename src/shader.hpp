@@ -4,6 +4,8 @@
 #include <string>
 #include <chrono>
 
+struct UBO;
+
 struct Shader {
   
   uint32_t id = -1;
@@ -72,7 +74,7 @@ struct ShaderProgram {
 
     Builder();
 
-    std::string layout(Member &s);
+    std::string layout(UBO *s);
 
   };
 

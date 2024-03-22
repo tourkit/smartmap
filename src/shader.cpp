@@ -1,5 +1,7 @@
+#include "engine.hpp"
 #include "shader.hpp"
 #include "log.hpp"
+#include "ubo.hpp"
 
 #include <GL/gl3w.h>
 #include <chrono>
@@ -9,29 +11,31 @@
 
 //// SHADERBUILDER
 
-std::string ShaderProgram::Builder::layout(Member& s) {
+std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
-    auto bkp_srtiding = s.striding();
+    auto bkp_srtiding = ubo->striding();
 
-    s.striding(true);
+    ubo->striding(true);
 
-    if (!s.members.size()) return "";
+    if (!ubo->members.size()) return "";
 
-    std::string str = "struct " + s.name() + " {";
+    std::string str = "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " {";
 
-    for (auto &m : s.members) {
+    for (auto m : ubo->members) {
+
+        while (m->members.size() == 1) m = m->members[0];
         
-        std::string name = !m->typed() ? "struct" : m->type().name();
+        std::string name = !m->typed() ? "struct" : m->type_name();
     
         str += " " + name + " " + m->name() + ";";
     
     }
 
-    for (int i = 0; i < s.stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
+    for (int i = 0; i < ubo->stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
     
     str += " };";
     
-    s.striding(bkp_srtiding);
+    ubo->striding(bkp_srtiding);
 
     return str;
 
@@ -41,7 +45,7 @@ ShaderProgram::Builder::Builder() {
 
     header_common = "#version 430 core\n\n"+comment_line;
 
-    // header_common += layout(engine.dynamic_ubo);
+    header_common += layout(engine.dynamic_ubo) + "\n\n";
     // header_common += layout(engine.static_ubo);
 
 }
@@ -70,7 +74,7 @@ std::string ShaderProgram::Builder::frag() {
 
     // main loop
     str += "void main() {\n\n";
-    str += "\tCOLOR = vec4(UV.x);\n\n";
+    str += "\tCOLOR = vec4(UV.x+test);\n\n";
 
     // tofix
     // for (auto &model : vbo.models) {

@@ -79,7 +79,7 @@ void Callbacks::init() {
 
     });
     
-    NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name; });
+    NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name(); });
 
     ////////// STRUCT.HPP 
 

@@ -26,8 +26,10 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
     gui = new GUI(window.id);
 
     dynamic_ubo = new UBO("dynamic_ubo");
+    dynamic_ubo->striding(true);
 
     static_ubo = new UBO("static_ubo");
+    static_ubo->striding(true);
 
     window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
 
@@ -51,7 +53,7 @@ void Engine::init() {
 
     debug = tree->addOwnr<Debug>()->close()->node();
     debug->addPtr<UBO>(static_ubo);
-    debug->addPtr<Buffer>(&dynubo)->name = "dynubo";
+    debug->addPtr<UBO>(dynamic_ubo);
     debug->addPtr<Atlas>(atlas);   
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
@@ -85,7 +87,7 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
         
-        engine.dynamic_ubo->upload();
+        // engine.dynamic_ubo->upload();
 
         engine.tree->run();
 

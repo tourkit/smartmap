@@ -21,7 +21,7 @@ bool Model::import(File* file, int id, int quantity) {
 
     s = &Struct::create(name.c_str());
 
-    engine.dynubo.add(*s);
+    engine.dynamic_ubo->add(*s);
 
     return true;
 

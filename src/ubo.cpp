@@ -7,9 +7,9 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) { 
-    
-    create(name,subscribers);
+UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : Buffer(name) { 
+
+    this->subscribers = subscribers;
 
     binding = binding_count++;
     if (binding > 100) PLOGW << "MAX_UBO might soon be reached";// can do better ^^
@@ -20,7 +20,7 @@ UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) {
 
 Struct& UBO::add(Struct& s) {
 
-        Struct::add(s);
+        Buffer::add(s);
 
         update();
         upload();
@@ -29,20 +29,9 @@ Struct& UBO::add(Struct& s) {
         
 }
 
-void UBO::destroy() { if (id<0) {glDeleteBuffers(1, &id); id = -1;} } // delete name; ?
+void UBO::destroy() { if (id<0) {glDeleteBuffers(1, &id); id = -1;} } 
 
-void UBO::create(std::string name, std::vector<ShaderProgram*> subscribers) {
-
-    this->name = name;
-    this->subscribers = subscribers;
-
-    // update();
-
-}
-
-void UBO::update() { // on Buffer change
-
-    destroy();
+void UBO::create() {
 
     if (!data.size()) return;
 
@@ -54,20 +43,35 @@ void UBO::update() { // on Buffer change
     for (auto shader:subscribers) { // need link after resize ?
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name.c_str()), binding);
+        glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name().c_str()), binding);
         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 
-        // shader update
+        // shader update ?
 
     }
 
+
 }
 
-void UBO::upload(){ upload(&data[0], data.size()); }
+void UBO::update() { Buffer::update(); reset();  }
+
+void UBO::reset() {
+
+    destroy();
+
+    create();
+
+    upload();
+
+}
+
+void UBO::upload(){ upload(data.data(), data.size()); }
 
 void UBO::upload(void* data, size_t size, uint32_t offset){
 
-    // PLOGV << name << ": " << size;
+    std::string str;
+    for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
+    PLOGV << name() << " " << binding << ": " << size << " - " << str;
     
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, size, data); 

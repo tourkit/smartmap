@@ -10,8 +10,8 @@ struct Debug {};
 
 struct GUI;
 struct Node;
-struct UBO;
 struct DrawCall;
+struct UBO;
 struct Atlas;
 
 struct Engine {
@@ -34,8 +34,6 @@ struct Engine {
     UBO *dynamic_ubo;
 
     UBO *static_ubo;
-
-    Buffer dynubo,statubo;
     
     Atlas *atlas;
     

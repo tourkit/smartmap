@@ -1,4 +1,5 @@
 #include "vbo.hpp"  
+#include "ubo.hpp"  
 
 #include "model.hpp"  
 #include "file.hpp"  
@@ -54,7 +55,13 @@ void VBO::create() {
 
 VBO::~VBO()  { destroy(); }
 
-void VBO::update() { Buffer::update(); if (init) upload(); }
+void VBO::update() { 
+    
+    Buffer::update(); 
+    
+    if (init) upload(); 
+     
+}
 
 void VBO::upload() {
 
@@ -148,14 +155,12 @@ int VBO::import(File *file) {
 
     }
 
-    upload();
+    models.emplace_back(file->name+""+std::to_string(models.size()), this);
 
-    models.emplace_back(file->name+""+std::to_string(models.size()));
+    engine.dynamic_ubo->add(models.back());
 
-    engine.dynubo.add(models.back());
+    update();
 
     return models.size()-1;
-
-    return 0;
     
 }

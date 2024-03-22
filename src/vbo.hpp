@@ -10,6 +10,22 @@ struct File;
 
 struct VBO : Buffer {
 
+    struct Model : Struct {
+
+        VBO* owner;
+
+        Model(std::string name, VBO* owner) : Struct(name), owner(owner) {}
+
+        void update() override {
+
+            if (owner) owner->update();
+
+            Struct::update();
+
+        }
+
+    };
+
     static inline Struct &vertice = Struct::create("Vertice").add<glm::vec2>("Position").add<glm::vec2>("UV").add<uint32_t>("ID");
     
     static inline Struct &indice = Struct::create("Indice").add<int>("vert1").add<int>( "vert2").add<int>("vert3");
@@ -35,6 +51,6 @@ struct VBO : Buffer {
        
     int import(File *file);
 
-    std::vector<Struct> models;
+    std::vector<Model> models;
 
 };

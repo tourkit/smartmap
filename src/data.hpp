@@ -2,6 +2,7 @@
 
 
 #include <typeindex>
+#include <boost/type_index.hpp>
 #include "member.hpp"
 
 template <typename T>
@@ -12,6 +13,10 @@ struct Data : Member {
     T default_val;
 
     Data(std::string name = "") : Member(name) {
+
+        range_from_ptr = &range_from;
+        range_to_ptr = &range_to;
+        default_val_ptr = &default_val;
 
         if (std::is_arithmetic<T>::value) {
             
@@ -25,9 +30,6 @@ struct Data : Member {
 
         }
 
-        range_from_ptr = &range_from;
-        range_to_ptr = &range_to;
-        default_val_ptr = &default_val;
 
     }
 

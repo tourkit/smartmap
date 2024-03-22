@@ -8,8 +8,6 @@ struct ShaderProgram;
 
 struct UBO : Buffer {
 
-    std::string name;
-
     uint32_t id = -1;
 
     uint32_t binding;
@@ -26,7 +24,9 @@ struct UBO : Buffer {
 
     void destroy();
 
-    void create(std::string name, std::vector<ShaderProgram*> subscribers);
+    void create();
+
+    void reset();
 
     void update() override;
 
