@@ -9,11 +9,14 @@ UBO::~UBO() { destroy(); }
 
 UBO::UBO(std::string name) : Buffer(name) { 
 
+    striding(true);
 
     binding = binding_count++;
     if (binding > 100) PLOGW << "MAX_UBO might soon be reached";// can do better ^^
      
     //  for (auto shader:subscribers) link(shader);
+
+    create();
 
 } 
 
@@ -30,18 +33,32 @@ Struct& UBO::add(Struct& s) {
 
 void UBO::destroy() { if (id<0) {glDeleteBuffers(1, &id); id = -1;} } 
 
-void UBO::create() {
-
-    if (!data.size()) return;
-
-    glGenBuffers(1, &id);
+void UBO::resize(uint32_t size) {
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glBufferData(GL_UNIFORM_BUFFER, footprint_all(), NULL, GL_DYNAMIC_COPY);
+    glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_DYNAMIC_COPY);
 
 }
 
-void UBO::update() { Buffer::update(); upload();  }
+void UBO::create() {
+
+    glGenBuffers(1, &id);
+
+    resize(footprint_all());
+
+}
+
+
+
+void UBO:: bind(ShaderProgram* shader) {  
+
+    glBindBuffer(GL_UNIFORM_BUFFER, id);
+    glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name().c_str()), binding);
+    glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
+
+}
+
+void UBO::update() { Buffer::update(); resize(footprint_all()); upload();  }
 
 void UBO::reset() {
 

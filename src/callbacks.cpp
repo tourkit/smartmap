@@ -71,13 +71,7 @@ void Callbacks::init() {
     ////////// UBO.HPP 
 
     NODE<UBO>::onrun([](Node* node, UBO *ubo){ ubo->upload(); });
-    NODE<UBO>::onchange([](Node* node, UBO *ubo){ 
-        
-        ubo->update(); 
-        
-        node->updateRefs(); 
 
-    });
     
     NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name(); });
 

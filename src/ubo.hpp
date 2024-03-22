@@ -26,11 +26,15 @@ struct UBO : Buffer {
 
     void reset();
 
+    void resize(uint32_t size);
+
     void update() override;
 
     void upload() override;
 
     void upload(void* data, size_t size, uint32_t offset = 0);
+
+    void bind(ShaderProgram* ubo);
 
     Struct& add(Struct& s) override;
 

@@ -116,7 +116,7 @@ std::string ShaderProgram::Builder::frag() {
 
     // main loop
     str += "void main() {\n\n";
-    str += "\tCOLOR = vec4(UV.x+test);\n\n";
+    str += "\tCOLOR = vec4(UV.x+test2+test);\n\n";
 
     // tofix
     // for (auto &model : vbo.models) {
@@ -264,15 +264,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     use();
 
-}
-
-bool ShaderProgram:: bind(UBO* ubo) {  
-
-    glBindBuffer(GL_UNIFORM_BUFFER, ubo->id);
-    glUniformBlockBinding(id, glGetUniformBlockIndex(id, ubo->name().c_str()), ubo->binding);
-    glBindBufferBase(GL_UNIFORM_BUFFER, ubo->binding, ubo->id);
-    
-    return true;
 }
 
 void ShaderProgram::use() {  glUseProgram(id); }

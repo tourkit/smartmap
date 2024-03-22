@@ -169,7 +169,7 @@
 
     void UntypedNode::update() { 
         
-        if (onchange_cb) onchange_cb(node());
+        if (onchange_cb) onchange_cb(node()); 
 
         if (parent_node) parent_node->update(); 
         

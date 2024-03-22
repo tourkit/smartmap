@@ -26,22 +26,18 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0) {
     gui = new GUI(window.id);
 
     dynamic_ubo = new UBO("dynamic_ubo");
-    dynamic_ubo->striding(true);
 
     static_ubo = new UBO("static_ubo");
-    static_ubo->striding(true);
 
     window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
 
     window.keypress_cbs[GLFW_KEY_S] = [](int key) { engine.save("project2.json"); };
     
     window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
-
     
 }
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
-
 void Engine::init() {
 
     Callbacks::init(); 
@@ -50,9 +46,8 @@ void Engine::init() {
 
     tree = new Node("tree");
 
-
     debug = tree->addOwnr<Debug>()->close()->node();
-    debug->addPtr<UBO>(static_ubo);
+    debug->addPtr<UBO>(static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); });
     debug->addPtr<UBO>(dynamic_ubo);
     debug->addPtr<Atlas>(atlas);   
 

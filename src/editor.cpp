@@ -550,7 +550,7 @@ void Editors::init() {
         // auto inst = (*buffer)[obj_current];
 
         // if (obj_current <= buffer->members.size()-1) 
-        if (draw_guis(buffer)) buffer->update();
+        if (draw_guis(buffer)) node->update();
 
     });
 

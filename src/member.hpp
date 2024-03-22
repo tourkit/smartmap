@@ -167,9 +167,9 @@ struct Member {
 
     }
 
+    uint32_t size_v = 0;
 protected:
     std::string name_v;
-    uint32_t size_v = 0;
 
     Member& add(Member* s) {
 

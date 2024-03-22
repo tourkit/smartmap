@@ -91,10 +91,6 @@
         uint32_t size() override { 
             
             if (members.size() == 1) { return members[0]->size(); } 
-            
-            uint32_t size_v = 0;
-            
-            for (auto m : members) size_v += m->footprint();
 
             return size_v; 
 

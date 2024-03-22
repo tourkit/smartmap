@@ -46,8 +46,6 @@ struct ShaderProgram {
   void use();
   void use(uint32_t x, uint32_t y = 1, uint32_t z = 1);
 
-  bool bind(UBO* ubo);
-
   void reset();
   void destroy();
   void create(std::string frag, std::string vert);

@@ -33,6 +33,8 @@ struct Instance {
 
     template <typename T>
     Instance& set(T val) {
+
+        PLOGV << "set " << member->name() ;
         
         memcpy(data(), &val, sizeof(T));
 
