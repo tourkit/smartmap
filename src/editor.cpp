@@ -575,9 +575,9 @@ void Editors::init() {
 
     Editor<UBO>([](Node* node, UBO *ubo){ 
 
-        std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s):";
-        for (auto s: ubo->subscribers) subs_str += " #"+std::to_string(s->id);
-        ImGui::Text(subs_str.c_str());
+        // std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s):";
+        // for (auto s: ubo->subscribers) subs_str += " #"+std::to_string(s->id);
+        // ImGui::Text(subs_str.c_str());
 
         Editor<Buffer>::cb(node, ubo); 
         

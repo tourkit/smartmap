@@ -46,6 +46,8 @@ struct ShaderProgram {
   void use();
   void use(uint32_t x, uint32_t y = 1, uint32_t z = 1);
 
+  bool bind(UBO* ubo);
+
   void reset();
   void destroy();
   void create(std::string frag, std::string vert);
@@ -74,7 +76,12 @@ struct ShaderProgram {
 
     Builder();
 
-    std::string layout(UBO *s);
+    std::string layout(UBO *ubo);
+    std::string struct_(Member *s);
+
+
+  private:
+    int stride_count = 0;
 
   };
 

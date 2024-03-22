@@ -67,7 +67,7 @@ void Atlas::fromDir(std::string path) {
 
 void Atlas::link(ShaderProgram* shader) {
 
-    engine.static_ubo->subscribers.push_back(shader);
+    // engine.static_ubo->subscribers.push_back(shader); // tofix
     engine.static_ubo->update();
 
     engine.static_ubo->upload();

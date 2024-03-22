@@ -7,9 +7,8 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name, std::vector<ShaderProgram*> subscribers) : Buffer(name) { 
+UBO::UBO(std::string name) : Buffer(name) { 
 
-    this->subscribers = subscribers;
 
     binding = binding_count++;
     if (binding > 100) PLOGW << "MAX_UBO might soon be reached";// can do better ^^
@@ -39,17 +38,6 @@ void UBO::create() {
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferData(GL_UNIFORM_BUFFER, footprint_all(), NULL, GL_DYNAMIC_COPY);
-
-    for (auto shader:subscribers) { // need link after resize ?
-
-        glBindBuffer(GL_UNIFORM_BUFFER, id);
-        glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name().c_str()), binding);
-        glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
-
-        // shader update ?
-
-    }
-
 
 }
 

@@ -16,11 +16,9 @@ struct UBO : Buffer {
 
     static inline uint32_t binding_count = 0;
 
-    std::vector<ShaderProgram*> subscribers;
-
     ~UBO();
     
-    UBO(std::string name = "ubo", std::vector<ShaderProgram*> subscribers = {});
+    UBO(std::string name = "ubo");
 
     void destroy();
 

@@ -25,15 +25,14 @@ void Layer::run() {
 }
 
 
-static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
-static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
 
 DrawCall::DrawCall() {
 
-    engine.dynamic_ubo->subscribers.push_back(&shader);
-    engine.static_ubo->subscribers.push_back(&shader);
+    // tofix 
+    // engine.dynamic_ubo->subscribers.push_back(&shader);
+    // engine.static_ubo->subscribers.push_back(&shader);
 
-    engine.atlas->link(&shader);
+    // engine.atlas->link(&shader);
 
 }
 

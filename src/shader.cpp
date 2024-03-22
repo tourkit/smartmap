@@ -11,6 +11,40 @@
 
 //// SHADERBUILDER
 
+
+static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
+static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
+
+std::string ShaderProgram::Builder::struct_(Member* s) {
+
+    std::string str = "struct " + camel(s->name())  + " {";
+
+    for (auto m : s->members) {
+
+        while (m->members.size() == 1) m = m->members[0];
+
+        if (!m->typed()) {
+
+            if (m->quantity()) str +=struct_(m);
+
+        }else{
+
+            str += " ";
+            str += m->type_name();
+            str += " " + m->name() + ";";
+
+        }
+    
+    }
+
+    for (int i = 0; i < s->stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
+
+    str += "}";
+
+    return str;
+
+}
+
 std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     if (!ubo->members.size()) return "";
@@ -20,14 +54,26 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
     for (auto m : ubo->members) {
 
         while (m->members.size() == 1) m = m->members[0];
-        
-        std::string name = !m->typed() ? "struct" : m->type_name();
+
+        if (!m->typed()) {
+
+            str += " " + struct_(m) + " " + lower(m->name()) ;
     
-        str += " " + name + " " + m->name() + ";";
+            if (m->quantity()>1) str += "["+std::to_string(m->quantity())+"]";
+
+            str += " ;";
+
+        }else{
+
+            str += " ";
+            str += m->type_name();
+            str += " " + m->name() + ";";
+
+        }
     
     }
 
-    for (int i = 0; i < ubo->stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
+    for (int i = 0; i < ubo->stride()/sizeof(float); i++) str += " float stride" + std::to_string(stride_count++) + ";";
     
     str += " };";
     
@@ -39,8 +85,10 @@ ShaderProgram::Builder::Builder() {
 
     header_common = "#version 430 core\n\n"+comment_line;
 
+    stride_count = 0;
+
     header_common += layout(engine.dynamic_ubo) + "\n\n";
-    // header_common += layout(engine.static_ubo);
+    header_common += layout(engine.static_ubo) + "\n\n";
 
 }
 
@@ -216,6 +264,14 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     use();
 
+}
+
+bool ShaderProgram:: bind(UBO* ubo) {  
+
+    glBindBuffer(GL_UNIFORM_BUFFER, ubo->id);
+    glUniformBlockBinding(id, glGetUniformBlockIndex(id, ubo->name().c_str()), ubo->binding);
+    glBindBufferBase(GL_UNIFORM_BUFFER, ubo->binding, ubo->id);
+    
 }
 
 void ShaderProgram::use() {  glUseProgram(id); }
