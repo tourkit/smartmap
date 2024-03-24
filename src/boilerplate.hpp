@@ -115,8 +115,9 @@ struct Boilerplate {
 
             shader = glCreateProgram();
 
-            std::ifstream fragFile("C:/users/root/cpp/smartmap/assets/basic.frag");
-            std::string fragCode((std::istreambuf_iterator<char>(fragFile)), (std::istreambuf_iterator<char>()));
+            // std::ifstream fragFile("C:/users/root/cpp/smartmap/assets/basic.frag");
+            // std::string fragCode((std::istreambuf_iterator<char>(fragFile)), (std::istreambuf_iterator<char>()));
+            std::string fragCode = "#version 430 core \nout vec4 COLOR; \nvoid main() { COLOR = vec4(1,0,0,1); }";
             auto fragptr = (const GLchar* const ) fragCode.c_str();
 
             std::cout << fragCode;
@@ -140,8 +141,9 @@ struct Boilerplate {
             }
 
 
-            std::ifstream vertFile("C:/users/root/cpp/smartmap/assets/basic.vert");
-            std::string vertCode((std::istreambuf_iterator<char>(vertFile)), (std::istreambuf_iterator<char>()));
+            // std::ifstream vertFile("C:/users/root/cpp/smartmap/assets/basic.vert");
+            // std::string vertCode((std::istreambuf_iterator<char>(vertFile)), (std::istreambuf_iterator<char>()));
+            std::string vertCode = "#version 430 core\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nvoid main() { gl_Position = vec4(POSITION.x,POSITION.y,0,1); }";
             auto vertptr = (const GLchar* const ) vertCode.c_str();
             std::cout << vertCode;
 
