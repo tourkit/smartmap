@@ -169,6 +169,8 @@ struct Boilerplate {
 
         }
 
+        void use() { glUseProgram(shader); }
+
         void ubo(std::string name = "ubo", int id = 0){ glUniformBlockBinding(shader, glGetUniformBlockIndex(shader, name.c_str()), id); }
 
         void texture(std::string name = "tex", int loc = 0){ auto x = glGetUniformLocation(shader, name.c_str()) ; glUniform1i(x, loc); }
@@ -258,7 +260,7 @@ struct Boilerplate {
 
         // RENDER
 
-        window.run([quad](){
+        window.run([&](){
 
             quad.draw();
             
@@ -284,5 +286,3 @@ struct Boilerplate {
 
     } 
 };
-
-static Boilerplate boiler;
