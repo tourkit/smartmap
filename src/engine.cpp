@@ -49,7 +49,7 @@ void Engine::init() {
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
 
-    auto comps = debug->addOwnr<Node>("Components")->close();
+    // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
     models = tree->addOwnr<Node>("Models")->node();
@@ -78,7 +78,7 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
         
-        engine.dynamic_ubo.upload();
+        // engine.dynamic_ubo.upload();
 
         engine.tree->run();
 

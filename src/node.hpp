@@ -119,6 +119,8 @@ struct UntypedNode {
 
     static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
 
+    Node* operator[](int id);
+
 private:
 
     Node* parent_node = nullptr;
@@ -212,7 +214,7 @@ struct TypedNode : UntypedNode {
 
                 n = onaddtyped_cb[type()][n->type()](node(),n->node());
 
-                if (!n || n->node() == this->node()) return nullptr;
+                if (n != node_v) return n->node();
 
             }
 
@@ -264,18 +266,20 @@ struct TypedNode : UntypedNode {
     template <typename U>
     TypedNode<T>* addFolder(std::string name, std::string path) {
 
-        auto folder = addOwnr<Any>();
-        folder->name = name;
+        // auto folder = addOwnr<Any>();
+        // folder->name = name;
 
-        auto dir = folder->TypedNode::addOwnr<Directory>(path);
+        // auto dir = folder->TypedNode::addOwnr<Directory>(path);
+        auto dir = TypedNode::addOwnr<Directory>(path);
         
-        dir->hide();
+        // dir->hide();
 
-        for (auto f : dir->get()->list) ((TypedNode<Any>*)dir)->addOwnr<File>(f);
+        for (auto f : dir->get()->list)  dir->node()->TypedNode::addOwnr<File>(f);
 
-        for (auto f : dir->childrens) folder->TypedNode::addOwnr<U>(f->TypedNode::is_a<File>());//->referings.push_back(f); this shjouldnt hpn here
+        // for (auto f : dir->childrens) folder->TypedNode::addOwnr<U>(f->TypedNode::is_a<File>());//->referings.push_back3(f); this shjouldnt hpn here
 
-        return folder;
+        return dir->node();
+        // return folder;
 
     }
 

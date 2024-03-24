@@ -1,8 +1,13 @@
 #include "model.hpp"
 
-#include "effector.hpp"
-#include "file.hpp"
-#include "engine.hpp"
-#include "struct.hpp"
-#include "instance.hpp"
-#include "ubo.hpp"
+Effector& Model::add(File* file) {
+
+    auto &x = effectors.emplace_back(file);
+
+    Struct::add(x);
+
+    // vbo->update();
+
+    return x;
+    
+}

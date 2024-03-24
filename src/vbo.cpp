@@ -17,11 +17,13 @@
 VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
 
     vertices.add(vertice);
-    add(vertices);
+    Buffer::add(vertices);
 
     indices.add(indice);
-    add(indices);
+    Buffer::add(indices);
 
+    // engine.dynamic_ubo.add(models);
+    
     create();
 
 }
@@ -80,12 +82,11 @@ void VBO::update() {
     
     Buffer::update(); 
 
+    // for (auto m : models) {
 
-    for (auto m : members) {
-
-        PLOGD << m->type().name();
+    //     PLOGD << m.file->name();
         
-    } 
+    // } 
     
     if (init) upload(); 
      
@@ -93,27 +94,27 @@ void VBO::update() {
 
 void VBO::upload() {
 
-    static std::vector<float> backup_quad = {
+    auto v_size = members[0]->footprint_all();
 
-        -1,-1, 0,0, 0,
-        1,-1, 1,0, 0,
-        -1,1, 0,1, 0,
-        1,1, 1,1, 0,
-
-    };
-
+    auto i_size = members[1]->footprint_all();
 
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    glBufferData(GL_ARRAY_BUFFER,  members[0]->footprint_all(), data.data(), GL_STATIC_DRAW );
+    glBufferData(GL_ARRAY_BUFFER,  v_size, data.data(), GL_STATIC_DRAW );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, members[1]->footprint_all(), data.data() + members[0]->footprint_all() , GL_STATIC_DRAW );
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_size, data.data() + v_size , GL_STATIC_DRAW );
 
-
+    std::string str;
+    str += std::to_string(v_size) + " : ";
+    for (int i = 0 ; i < v_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i)) + " "; }
+    str += "\n";
+    str += std::to_string(i_size) + " : ";
+    for (int i = 0 ; i < i_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i+ v_size)) + " "; }
+    PLOGV << str;
 
 }
 
@@ -126,7 +127,7 @@ void VBO::draw(int count) {
 }
 	
 
-int VBO::import(File* file, int id) {    
+Model& VBO::add(File* file, int quantity) {   
 
     Assimp::Importer importer;
 
@@ -136,7 +137,6 @@ int VBO::import(File* file, int id) {
         aiProcess_SortByPType);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) PLOGW << "Failed to load OBJ file: " << importer.GetErrorString();
-
 
     auto mesh = scene->mMeshes[0];
 
@@ -150,7 +150,7 @@ int VBO::import(File* file, int id) {
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["ID"].set<uint32_t>(id);
+        v["ID"].set<uint32_t>(models.size());
 
     }
 
@@ -165,11 +165,10 @@ int VBO::import(File* file, int id) {
 
     }
 
-
-    engine.dynamic_ubo.add(models.emplace_back(file,id));
+    models.emplace_back(file,quantity,this);
 
     update();
 
-    return members.size()-1;
+    return  models.back();
     
 }

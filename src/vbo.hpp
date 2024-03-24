@@ -14,6 +14,8 @@ struct VBO : Buffer {
     static inline Struct &vertice = Struct::create("Vertice").add<glm::vec2>("Position").add<glm::vec2>("UV").add<uint32_t>("ID");
     
     static inline Struct &indice = Struct::create("Indice").add<int>("vert1").add<int>( "vert2").add<int>("vert3");
+    
+    // static inline Struct &models = Struct::create("Models").add<File*>("file").add<int>("quantity");
 
     uint32_t vao, vbo, ibo;
 
@@ -34,8 +36,8 @@ struct VBO : Buffer {
 
     void draw(int count = 1);
        
-    int import(File *file, int quantity);
+    Model& add(File *file, int quantity = 1);
 
-    std::vector<Model> models;
+    std::vector<Model> models ;
 
 };

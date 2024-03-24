@@ -81,14 +81,25 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
 }
 
+ShaderProgram::Builder::Builder(std::vector<Model> &models) {
+
+    header_common = "#version 430 core\n\n"+comment_line;
+
+    stride_count = 0; 
+
+    // header_common += layout(&engine.dynamic_ubo);
+    // header_common += layout(&engine.static_ubo);
+
+}
+
 ShaderProgram::Builder::Builder() {
 
     header_common = "#version 430 core\n\n"+comment_line;
 
     stride_count = 0;
 
-    header_common += layout(&engine.dynamic_ubo);
-    header_common += layout(&engine.static_ubo);
+    // header_common += layout(&engine.dynamic_ubo);
+    // header_common += layout(&engine.static_ubo);
 
 }
 
@@ -116,7 +127,7 @@ std::string ShaderProgram::Builder::frag() {
 
     // main loop
     str += "void main() {\n\n";
-    str += "\tCOLOR = vec4(UV.x);\n\n";
+    str += "\tCOLOR = vec4(1);\n\n";
 
     // tofix
     // for (auto &model : vbo.models) {

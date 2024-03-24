@@ -55,19 +55,19 @@
         template <typename T> 
         Struct& add(std::string name = "") { return (Struct&)Member::add(new Data<T>(name)); }
     
-        Struct& range(float from, float to) {   
+        Struct& range(float from, float to, float def) {   
             
             auto a = members.back();
-            if (typeid(*a).hash_code() == typeid(Data<float>).hash_code()) {
+            if (typeid(*a) == typeid(Data<float>)) {
                 ((Data<float>*)members.back())->range_from = from;
                 ((Data<float>*)members.back())->range_to = to;
-                PLOGD << " ----- is : float";
+                // PLOGD << " ----- is : float";
             }
 
-            if (typeid(*a).hash_code() == typeid(Data<uint32_t>).hash_code()) {
+            if (typeid(*a) == typeid(Data<uint32_t>)) {
                 ((Data<uint32_t>*)members.back())->range_from = (uint32_t) from;
                 ((Data<uint32_t>*)members.back())->range_to = (uint32_t) to;
-                PLOGD << " ----- is : uint32_t";
+                // PLOGD << " ----- is : uint32_t";
             }
 
             return *this; 

@@ -5,6 +5,7 @@
 #include <chrono>
 
 struct UBO;
+struct Model;
 
 struct Shader {
   
@@ -73,6 +74,7 @@ struct ShaderProgram {
     std::string vert();
 
     Builder();
+    Builder(std::vector<Model> &models);
 
     std::string layout(UBO *ubo);
     std::string struct_(Member *s);

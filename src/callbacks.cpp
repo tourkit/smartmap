@@ -109,16 +109,14 @@ void Callbacks::init() {
     
     NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
 
+    NODE<VBO>::onrun([](Node* node, VBO *vbo){ vbo->draw(); });
+    
     NODE<VBO>::onadd<File>([](Node*_this,Node*node){
 
         auto vbo = _this->is_a<VBO>();
         auto file = node->is_a<File>();
 
-        // vbo->import(file);
-
-        // _this->addPtr<Model>(&vbo->models.back());
-
-        return _this;
+        return _this->addPtr<Model>(&vbo->add(file))->node();
 
     });
     
@@ -144,29 +142,28 @@ void Callbacks::init() {
 
     NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->name(); });
 
-    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
+    NODE<Model>::onadd<File>([](Node*_this,Node*node){ 
         
         auto model = _this->is_a<Model>();
-        auto effector = node->is_a<Effector>();
-
-        // model->import(effector);
+        auto file = node->is_a<File>();
 
         // auto dc = _this->parent()->is_a<Layer>();
+
         // if (dc) {
+
+            _this->addPtr<Effector>(&model->add(file));
 
         //     dc->update();
 
-        //     _this->referings.push_back(node);
-
         // }
 
-        return _this;
+        return nullptr;
 
     });
 
     ////////// Effector.HPP 
     
-    // NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name; });
+    NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name(); });
 
     // TOFIX
     // NODE<Model>::onchange([](Node* node, Model *model) { 
@@ -183,7 +180,6 @@ void Callbacks::init() {
 
     NODE<Effector>::onchange([](Node* node, Effector *effector) { 
 
-        effector->import(effector->file);
 
         //doafterhere
         // auto comps = engine.tree->child("Debug::Components");

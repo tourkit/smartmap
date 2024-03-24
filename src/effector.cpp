@@ -5,82 +5,60 @@
 #include "node.hpp"
 #include <regex>
 
-Effector::Effector()  { }
 
-Effector::Effector(File *file) { import(file); }
+Effector::Effector(File *file) : Struct(file->name()), file(file) {
 
-Effector::Effector(const char* data) { import(data); }
+    const char* data = (&file->data[0]);
 
-void Effector::import(File *file) {
+    // ranges.clear();
+    // args.resize(0);
 
-    this->file = file;
+    std::smatch match;
 
-    import(&file->data[0]);
 
-}
+    int range_count = 0;
+    std::string source = data;
+    std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*)?)?)?\))");
+    std::sregex_iterator next(source.begin(), source.end(), regex);
+    std::sregex_iterator end;
+    while (next != end) {
 
-void Effector::import(const char* data) {
+        std::smatch match = *next++;
+        std::string range;
+        int i = 0;
+        std::istringstream stream(match[2].str());
+        while (std::getline(stream, range, ',')) ranges[match[1]][i++] = std::stof(range);
+        range_count++;
 
-// tofix
+    }
 
-//     std::smatch match;
-
-//     ranges.clear();
-
-//     int range_count = 0;
-//     std::string source = data;
-//     std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*)?)?)?\))");
-//     std::sregex_iterator next(source.begin(), source.end(), regex);
-//     std::sregex_iterator end;
-//     while (next != end) {
-
-//         std::smatch match = *next++;
-//         std::string range;
-//         int i = 0;
-//         std::istringstream stream(match[2].str());
-//         while (std::getline(stream, range, ',')) ranges[match[1]][i++] = std::stof(range);
-//         range_count++;
-
-//     }
-
-//     args.resize(0);
     
-//     if (std::regex_search(source, match, std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))"))) {
+    if (std::regex_search(source, match, std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))"))) {
 
-//         std::string argsStr = match[2].str();
+        std::string argsStr = match[2].str();
         
-//         std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
-//         std::sregex_iterator iter(argsStr.begin(), argsStr.end(), regex);
-//         std::sregex_iterator end;
-//         while (iter != end) {
-//             args.push_back({(*iter)[1].str(),(*iter)[2].str()});
-//             ++iter;
-//         }
-//     }
-//  // if (comp) devrait rajouter struct::size += comp.size (or remove(old) and add(new))
-//     if (!comp) {
+        std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
+        std::sregex_iterator iter(argsStr.begin(), argsStr.end(), regex);
+        std::sregex_iterator end;
+        while (iter != end) {
+            args.push_back({(*iter)[1].str(),(*iter)[2].str()});
+            ++iter;
+        }
+    }
 
-//         comp = Component::exist(file->name.c_str());
+    for (auto arg : args) {
+
+        if (arg.first == "vec2") add<glm::vec2>(arg.second.c_str()); 
+        else if (arg.first == "vec3") add<glm::vec3>(arg.second.c_str()); 
+        else if (arg.first == "vec4") add<glm::vec4>(arg.second.c_str()); 
+
+        else if (arg.first == "int") add<int>(arg.second.c_str()); 
         
-//         if (!comp) comp = &Component::create(file->name.c_str());
+        else add<float>(arg.second.c_str()); 
 
-//     }
+        if (ranges.find(arg.second) != ranges.end()) range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
         
-//     comp->reset();
-
-//     for (auto arg : args) {
-
-//         if (arg.first == "vec2") comp->member<glm::vec2>(arg.second.c_str()); 
-//         else if (arg.first == "vec3") comp->member<glm::vec3>(arg.second.c_str()); 
-//         else if (arg.first == "vec4") comp->member<glm::vec4>(arg.second.c_str()); 
-
-//         else if (arg.first == "int") comp->member<int>(arg.second.c_str()); 
-        
-//         else comp->member<float>(arg.second.c_str()); 
-
-//         if (ranges.find(arg.second) != ranges.end()) comp->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
-        
-//     }
+    }
 
 
 }

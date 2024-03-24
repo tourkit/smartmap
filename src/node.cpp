@@ -104,7 +104,7 @@
 
         return n;
 
-     }
+                             }
 
     std::string UntypedNode::namesdf(){ if (parent()) { return parent()->name + "::" + name; } return name; }
 
@@ -166,6 +166,7 @@
 
     } 
 
+    Node* UntypedNode::operator[](int id) { return childrens[id]->node(); }
 
     void UntypedNode::update() { 
         

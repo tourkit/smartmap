@@ -5,28 +5,19 @@
 #include <string>
 
 struct File;
-struct Component;
 
-struct Effector   {
+#include "struct.hpp"
+
+struct Effector : Struct  {
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
-    File * file = nullptr;
-
-    Component* comp = nullptr; // owned
+    File * file;
 
     std::string source();
+
+    Effector(File *file = nullptr);
     
-    Effector();
-
-    Effector(File *file);
-
-    Effector(const char* data);
-
-    void import(File *file);
-    
-    void import(const char* data);
-
     std::vector<std::pair<std::string,std::string>> args;
 
     std::map<std::string, float[3]> ranges;

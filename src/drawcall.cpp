@@ -58,7 +58,7 @@ std::string DrawCall::layout(UBO* ubo) {
     
     std::string content_str;
 
-    std::set<Component*> components;
+    // std::set<Component*> components;
 
     // Object Struct
 
