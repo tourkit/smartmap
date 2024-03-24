@@ -18,6 +18,7 @@ unsigned int width = 400, height = 200, pos_x = 0, pos_y = 0;
 
 
 #include "image.hpp"
+#include "log.hpp"
 
 
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -118,8 +119,6 @@ struct Boilerplate {
             std::string fragCode = "#version 430 core \nout vec4 COLOR; \nvoid main() { COLOR = vec4(1,0,0,1); }";
             auto fragptr = (const GLchar* const ) fragCode.c_str();
 
-            std::cout << fragCode;
-
             auto frag = glCreateShader(GL_FRAGMENT_SHADER);
             glShaderSource(frag, 1, &fragptr, nullptr);
             glCompileShader(frag);
@@ -134,13 +133,12 @@ struct Boilerplate {
 
                 glGetShaderInfoLog(frag, 512, NULL, infoLog);
 
-                std::cout << infoLog;
+                PLOGD << infoLog;
                 
             }
 
             std::string vertCode = "#version 430 core\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nvoid main() { gl_Position = vec4(POSITION.x,POSITION.y,0,1); }";
             auto vertptr = (const GLchar* const ) vertCode.c_str();
-            std::cout << vertCode;
 
             auto vert = glCreateShader(GL_VERTEX_SHADER);
             glShaderSource(vert, 1, &vertptr, nullptr);
@@ -152,7 +150,7 @@ struct Boilerplate {
 
                 glGetShaderInfoLog(vert, 512, NULL, infoLog);
 
-                std::cout << infoLog;
+                PLOGD << infoLog;
                 
             }
 
