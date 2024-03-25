@@ -21,8 +21,6 @@ VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
 
     indices.add(indice);
     Buffer::add(indices);
-
-    // engine.dynamic_ubo.add(models);
     
     create();
 
@@ -32,15 +30,12 @@ void VBO::destroy() {
 
     init = false;
 
-    if (vbo<0) return;
-
-    glDisableVertexAttribArray(0); 
-    glDisableVertexAttribArray(1); 
-    glDisableVertexAttribArray(2); 
-    glDisableVertexAttribArray(3); 
-
+    for (int i = 0 ; i < enabled_attrs; i++) glDisableVertexAttribArray(i); 
+        
     glDeleteBuffers(1, &vbo);
+
     glDeleteBuffers(1, &ibo);
+
     glDeleteVertexArrays(1, &vao);
 
 }
@@ -50,27 +45,6 @@ void VBO::create() {
     destroy();
 
     glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
-
-    int offset = 0;
-    int i = 0;
-
-    for (auto & m : members[0]->members[0]->members) {
-
-        auto type = GL_FLOAT;
-        if (m->type() == typeid(float)) type = GL_FLOAT;
-
-        auto count = 1; // m->count(); does it
-        if (m->type() == typeid(glm::vec2)) count = 2;
-        else if (m->type() == typeid(glm::vec3)) count = 3;
-        else if (m->type() == typeid(glm::vec4)) count = 4;
-
-        glVertexAttribPointer(i, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
-
-        glEnableVertexAttribArray(i++);
-
-        offset+= m->footprint();
-
-    }
 
     init = true;
 
@@ -104,17 +78,37 @@ void VBO::upload() {
 
     glBufferData(GL_ARRAY_BUFFER,  v_size, data.data(), GL_STATIC_DRAW );
 
+    int offset = 0;
+    enabled_attrs = 0;
+    for (auto & m : members[0]->members[0]->members) {
+
+        auto type = GL_FLOAT;
+        if (m->type() == typeid(float)) type = GL_FLOAT;
+
+        auto count = 1; // m->count(); does it
+        if (m->type() == typeid(glm::vec2)) count = 2;
+        else if (m->type() == typeid(glm::vec3)) count = 3;
+        else if (m->type() == typeid(glm::vec4)) count = 4;
+
+        glVertexAttribPointer(enabled_attrs, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
+
+        glEnableVertexAttribArray(enabled_attrs++);
+
+        offset+= m->footprint();
+
+    }
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_size, data.data() + v_size , GL_STATIC_DRAW );
 
-    std::string str;
-    str += std::to_string(v_size) + " : ";
-    for (int i = 0 ; i < v_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i)) + " "; }
-    str += "\n";
-    str += std::to_string(i_size) + " : ";
-    for (int i = 0 ; i < i_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i+ v_size)) + " "; }
-    PLOGV << str;
+    // std::string str;
+    // str += std::to_string(v_size) + " : ";
+    // for (int i = 0 ; i < v_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i)) + " "; }
+    // str += "\n";
+    // str += std::to_string(i_size) + " : ";
+    // for (int i = 0 ; i < i_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i+ v_size)) + " "; }
+    // PLOGV << str;
 
 }
 
@@ -122,7 +116,7 @@ void VBO::draw(int count) {
 
     glBindVertexArray(vao); 
 
-    glDrawElementsInstanced(GL_TRIANGLES, members[1]->footprint_all(), GL_UNSIGNED_INT, 0, count);
+    glDrawElementsInstanced(        GL_TRIANGLES,         members[1]->footprint_all()/sizeof(int),         GL_UNSIGNED_INT,         0,         count    );
 
 }
 	

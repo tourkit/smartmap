@@ -83,26 +83,30 @@ struct Boilerplate {
 
         Quad() {
 
-            glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
-
+            glGenVertexArrays(1, &vao);
+            glGenBuffers(1, &vbo);
+            glGenBuffers(1, &ibo);
+            
             glBindVertexArray(vao);
 
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER,  vertices.size()*16 , &vertices[0], GL_STATIC_DRAW );
+            glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(std::array<float, 4>), vertices.data(), GL_STATIC_DRAW);
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+            glEnableVertexAttribArray(0);
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+            glEnableVertexAttribArray(1);
 
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*12 , &indices[0], GL_STATIC_DRAW );
-
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_TRUE, 16, (GLvoid *) 0);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_TRUE, 16, (GLvoid *) (8));
-            glEnableVertexAttribArray(1);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(std::array<int, 3>), indices.data(), GL_STATIC_DRAW);
 
         }
 
         void draw() {
 
-            glDrawElementsInstanced(GL_TRIANGLES, indices.size()*6, GL_UNSIGNED_INT, 0, 1);
+            glBindVertexArray(vao);
+            
+            glDrawElementsInstanced(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0, 1);
 
         }
 

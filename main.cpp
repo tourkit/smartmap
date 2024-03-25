@@ -15,24 +15,27 @@
 
 
 
-int main() {
+int main() { logger.cout(true); 
 
-
-    logger.cout(true); engine.init(); engine.gui->editors.push_back(new EditorWidget());
+    // Boilerplate(); 
     
-    Boilerplate::Quad quad;
+    engine.init(); engine.gui->editors.push_back(new EditorWidget());
+    
+    Boilerplate::Quad quad1,quad2;
+    Boilerplate::Shader shader;
 
-    auto &vbo_n = *engine.tree->addOwnr<VBO>()->select();
-    // vbo_n.addPtr<Model>(&vbo_n.get()->add(new File("assets/models/quad.obj")));
-    // vbo_n.active(true);
+    auto &vbo_n = *engine.tree->addOwnr<VBO>();
+    
+    vbo_n.addPtr<Model>(&vbo_n.get()->add(new File("assets/models/quad.obj")));
 
     engine.tree->addOwnr<ShaderProgram>()->select()->get()->use();
 
-    engine.tree->addOwnr<Node>()->active(true)->onrun([&](Node* node){ 
-        
-        quad.draw(); 
-        // vbo_n.get()->draw();
-        
+    engine.tree->addOwnr<Node>("boil")->active(true)->onrun([&](Node* node){ 
+
+        shader.use();
+
+        vbo_n.get()->draw();
+
     });
 
     engine.run();

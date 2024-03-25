@@ -17,7 +17,7 @@ struct VBO : Buffer {
     
     // static inline Struct &models = Struct::create("Models").add<File*>("file").add<int>("quantity");
 
-    uint32_t vao, vbo, ibo;
+    uint32_t vao = 0, vbo = 0 , ibo = 0, enabled_attrs = 0;
 
     bool init = false;
     
