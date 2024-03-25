@@ -64,7 +64,6 @@ Effector::Effector(File *file) : Struct(file->name()), file(file) {
 }
 
 std::string Effector::source() { 
-    
     std::string out_code = &file->data[0];
 
     size_t pos = 0;
@@ -76,15 +75,9 @@ std::string Effector::source() {
 
     }
 
-    // std::string out_code_without_blank_lines;
-    // std::istringstream iss(out_code);
-    // std::string line;
-    // while (std::getline(iss, line)) if (!line.empty()) out_code_without_blank_lines += line + "\n";
+    out_code.resize(out_code.find("}")+1);
+
+    return out_code.c_str()+out_code.find("void");
     
-    return out_code; 
-    
-    // or...
-    // size_t pos = file->data.find("void");
-    // return std::string(&file->data[pos]);
     
 }

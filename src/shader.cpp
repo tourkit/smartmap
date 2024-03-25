@@ -31,9 +31,11 @@ std::string ShaderProgram::Builder::struct_(Member* s, int recurse) {
 
         else str += m->type_name();
     
-        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
+        str += " " + lower(m->name());
 
-        str += " " + m->name() + ";";
+        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
+        
+        str += ";";
     
     }
 
@@ -52,24 +54,27 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     std::string str;
 
-    std::set<Member*> effectors;
+    std::set<Effector*> effectors;
 
-    for (auto m : ubo->members) for (auto m_ : m->members) effectors.insert(m_);
+    for (auto m : ubo->members) for (auto m_ : m->members) effectors.insert((Effector*)m_);
 
     for (auto x : effectors)  if (!x->typed()) str += struct_(x)+";\n\n";
 
-    str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " {";
+    for (auto x : effectors) if (!x->typed()) str += x->source() + "\n\n";
+
+    if (effectors.size()) str += comment_line;
+
+    str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
     
     auto s = struct_(ubo,1);
 
-    str += s.c_str()+s.find("{")+1;
+    str += s.c_str()+s.find("{");
     
-    str += " };\n\n";
+    str += ";\n\n";
     
     return str;
 
 }
-
 
 ShaderProgram::Builder::Builder() {
 
@@ -77,8 +82,8 @@ ShaderProgram::Builder::Builder() {
 
     stride_count = 0;
 
-    header_common += layout(&engine.dynamic_ubo);
-    header_common += layout(&engine.static_ubo);
+    footer_common += layout(&engine.dynamic_ubo);
+    footer_common += layout(&engine.static_ubo);
 
 }
 
@@ -95,12 +100,9 @@ std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
     str += "vec2 uv = UV;\n\n";
     str += "vec4 color = vec4(1);\n\n";
 
-    // str += comment_line;
+    str += comment_line;
 
-    // std::set<Effector*> effectors;
-    
-    // for (auto &m : vbo.models) for (auto effector : m->effectors) effectors.insert(effector);
-    // for (auto effector : effectors) str += effector->source() +"\n";
+    str += footer_common;
 
     str += "void next() { COLOR = color; uv = UV; color = vec4(1); }\n\n";
 
@@ -123,19 +125,15 @@ std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
                 
                 std::string arg_str;
 
-                auto &s = Struct::id(effector.file->name()); 
-
-                if (s.members.size()<2) arg_str += name+"."+s.name();
-
-                else for (auto &m: s.members) {
+                for (auto &arg : effector.args) {
                     
-                    arg_str += name+"."+s.name()+"."+m->name();
-
-                    if (m != s.members.back()) arg_str += ", ";
+                    arg_str += name+"."+effector.name()+"."+arg.second+", ";
                     
                 }
 
-                str += "\t"+s.name()+"("+arg_str+");\n";
+                arg_str.resize(arg_str.size()-2);
+
+                str += "\t"+effector.name()+"("+arg_str+");\n";
             }
 
             str += "\tnext();\n\n";
@@ -159,14 +157,13 @@ std::string ShaderProgram::Builder::vert(std::vector<Model> &models) {
 
     str += "layout (location = 0) in vec2 POSITION;\n";
     str += "layout (location = 1) in vec2 TEXCOORD;\n";
-    // str += "layout (location = 3) in int OBJ;\n\n";
+    str += "layout (location = 3) in int OBJ;\n\n";
 
     str += "out vec2 UV;\n\n";
 
     str += "\nvoid main() {\n\n";
 
     str += "\tUV = TEXCOORD;\n";
-    // str += "\tUV.y = 1-UV.y;\n\n";
 
     str += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 
