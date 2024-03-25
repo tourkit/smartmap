@@ -21,9 +21,16 @@
 
         static inline std::set<Struct*> owned;
 
-        template <typename... Args> 
-        static Struct& create(Args&&... args) { return **owned.insert(new Struct(std::forward<Args>(args)...)).first; }
+        static Struct& create(std::string name, uint32_t quantity = 1) { return **owned.insert(new Struct(name, quantity)).first; }
 
+        static Struct& id(std::string name) { 
+
+            for (auto &s : owned) if (s->name() == name) return *s; 
+            
+            return create(name); 
+            
+        }
+        
         static void clear() { for ( auto s : owned ) delete s;  }
 
         static bool destroy(std::string name) { 
