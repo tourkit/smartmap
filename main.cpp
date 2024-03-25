@@ -13,35 +13,26 @@
 #include "shader.hpp"
 #include "model.hpp"
 
-
-
 int main() { logger.cout(true); 
-
-    // Boilerplate(); 
     
     engine.init(); engine.gui->editors.push_back(new EditorWidget());
-    
-    Boilerplate::Quad quad1,quad2;
-    Boilerplate::Shader shader;
 
     auto &vbo_n = *engine.tree->addOwnr<VBO>();
+    vbo_n.active(true);
     
-    vbo_n.addPtr<Model>(&vbo_n.get()->add(new File("assets/models/quad.obj")));
+    auto &model = *vbo_n.addPtr<Model>(&vbo_n.get()->add(new File("assets/models/quad.obj")));
 
-    engine.tree->addOwnr<ShaderProgram>()->select()->get()->use();
+    model.addPtr<Effector>(&model.get()->add(new File("assets/effectors/argb.frag")))->get();
 
-    engine.tree->addOwnr<Node>("boil")->active(true)->onrun([&](Node* node){ 
+    auto shader = engine.tree->addOwnr<ShaderProgram>()->select()->get();
+    
+    shader->use();
 
-        // quad2.draw();
-        // quad2.draw();
-
-        shader.use();
-
-        vbo_n.get()->draw();
-
-    });
+    engine.dynamic_ubo.bind(shader);
 
     engine.run();
     
-    
 }
+
+
+//update shader

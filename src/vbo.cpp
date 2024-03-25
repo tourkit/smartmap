@@ -119,9 +119,9 @@ void VBO::upload() {
 
 void VBO::draw(int count) {
 
-    glBindVertexArray(vao); 
+    // glBindVertexArray(vao); // VAO is curently static wich I like GL being what it is with its fucking legacys
 
-    glDrawElementsInstanced(        GL_TRIANGLES,         members[1]->footprint_all()/sizeof(int),         GL_UNSIGNED_INT,         0,         count    );
+    glDrawElementsInstanced(GL_TRIANGLES, members[1]->footprint_all()/sizeof(int), GL_UNSIGNED_INT, 0, count);
 
 }
 	
