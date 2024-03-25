@@ -16,65 +16,53 @@
 static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
 static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
 
-std::string ShaderProgram::Builder::struct_(Member* s) {
+
+std::string ShaderProgram::Builder::struct_(Member* s, int recurse) {
 
     std::string str = "struct " + camel(s->name())  + " {";
 
     for (auto m : s->members) {
 
-        while (m->members.size() == 1) m = m->members[0];
+        while (m->members.size() == 1 && m->members[0]->typed()) m = m->members[0];
 
-        if (!m->typed()) {
+        str += " ";
 
-            if (m->quantity()) str +=struct_(m);
+        if (!m->typed()) if (recurse) { str += struct_(m, recurse-1);} else {str += camel(m->name()); }
 
-        }else{
+        else str += m->type_name();
+    
+        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
 
-            str += " ";
-            str += m->type_name();
-            str += " " + m->name() + ";";
-
-        }
+        str += " " + m->name() + ";";
     
     }
 
     if (s->stride()) for (int i = 0; i < s->stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
 
-    str += "}";
+    str += " }";
 
     return str;
 
 }
 
+
 std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     if (!ubo->members.size() || !ubo->data.size()) return "";
 
-    std::string str = "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " {";
+    std::string str;
 
-    for (auto m : ubo->members) {
+    std::set<Member*> effectors;
 
-        while (m->members.size() == 1) m = m->members[0];
+    for (auto m : ubo->members) for (auto m_ : m->members) effectors.insert(m_);
 
-        if (!m->typed()) {
+    for (auto x : effectors)  if (!x->typed()) str += struct_(x)+";\n\n";
 
-            str += " " + struct_(m) + " " + lower(m->name()) ;
+    str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " {";
     
-            if (m->quantity()>1) str += "["+std::to_string(m->quantity())+"]";
+    auto s = struct_(ubo,1);
 
-            str += " ;";
-
-        }else{
-
-            str += " ";
-            str += m->type_name();
-            str += " " + m->name() + ";";
-
-        }
-    
-    }
-
-    if (ubo->stride()) for (int i = 0; i < ubo->stride()/sizeof(float); i++) str += " float stride" + std::to_string(stride_count++) + ";";
+    str += s.c_str()+s.find("{")+1;
     
     str += " };\n\n";
     

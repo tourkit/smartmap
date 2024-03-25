@@ -78,7 +78,7 @@ struct ShaderProgram {
     Builder();
 
     std::string layout(UBO *ubo);
-    std::string struct_(Member *s);
+    std::string struct_(Member *s, int recurse = 0);
 
 
   private:
