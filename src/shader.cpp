@@ -2,6 +2,7 @@
 #include "shader.hpp"
 #include "log.hpp"
 #include "ubo.hpp"
+#include "model.hpp"
 
 #include <GL/gl3w.h>
 #include <chrono>
@@ -81,16 +82,6 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
 }
 
-ShaderProgram::Builder::Builder(std::vector<Model> &models) {
-
-    header_common = "#version 430 core\n\n"+comment_line;
-
-    stride_count = 0; 
-
-    // header_common += layout(&engine.dynamic_ubo);
-    // header_common += layout(&engine.static_ubo);
-
-}
 
 ShaderProgram::Builder::Builder() {
 
@@ -103,7 +94,7 @@ ShaderProgram::Builder::Builder() {
 
 }
 
-std::string ShaderProgram::Builder::frag() {
+std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
 
     std::string str = header_common;
 
@@ -130,9 +121,12 @@ std::string ShaderProgram::Builder::frag() {
     str += "\tCOLOR = vec4(1);\n\n";
 
     // tofix
-    // for (auto &model : vbo.models) {
 
-    //     for (int instance = 0; instance < model->obj->reserved; instance++) {
+    int model_id = 0;
+
+    for (auto &model : models) {
+
+        for (int instance = 0; instance < model.quantity; instance++) {
 
     //         auto name = model->file->name+std::to_string(model_id)+"["+std::to_string(instance)+"]";
 
@@ -161,13 +155,13 @@ std::string ShaderProgram::Builder::frag() {
 
     //         str += "\tCOLOR += color;\n\n";
 
-    //     }
+        }
 
 
     //     str += "\n\n";
 
-    //     model_id++;
-    // }
+        model_id++;
+    }
     
     str += "} ";
 
@@ -175,7 +169,7 @@ std::string ShaderProgram::Builder::frag() {
 
 }
 
-std::string ShaderProgram::Builder::vert() {
+std::string ShaderProgram::Builder::vert(std::vector<Model> &models) {
 
     std::string str = header_common;
 
@@ -244,7 +238,9 @@ Shader::operator GLuint() { return id; }
 
 ShaderProgram::~ShaderProgram() { destroy(); }
 
-ShaderProgram::ShaderProgram() { Builder builder; create(builder.frag(),builder.vert()); }
+ShaderProgram::ShaderProgram() { std::vector<Model> none; Builder builder; create(builder.frag(none),builder.vert(none)); }
+
+ShaderProgram::ShaderProgram(std::vector<Model> &models) { Builder builder; create(builder.frag(models),builder.vert(models)); }
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 
@@ -279,9 +275,9 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
 void ShaderProgram::use() {  glUseProgram(id); }
 
-void ShaderProgram::use(GLuint x, GLuint y, GLuint z) {  glUseProgram(id); glDispatchCompute(x,y,z); }
+void ShaderProgram::use(uint32_t x, uint32_t y, uint32_t z) {  glUseProgram(id); glDispatchCompute(x,y,z); }
 
-ShaderProgram::operator GLuint() { return id; }
+ShaderProgram::operator uint32_t() { return id; }
 
 int ShaderProgram::getLoc(const std::string& name) { return glGetUniformLocation(id, name.c_str()); }
 

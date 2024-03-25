@@ -44,10 +44,12 @@ struct ShaderProgram {
 
   ShaderProgram(std::string frag, std::string vert);
 
+  ShaderProgram(std::vector<Model> &models);
+
   void use();
+
   void use(uint32_t x, uint32_t y = 1, uint32_t z = 1);
 
-  void reset();
   void destroy();
   void create(std::string frag, std::string vert);
 
@@ -70,11 +72,10 @@ struct ShaderProgram {
 
     std::string header_common , footer_common;
 
-    std::string frag();
-    std::string vert();
+    std::string frag(std::vector<Model> &models);
+    std::string vert(std::vector<Model> &models);
 
     Builder();
-    Builder(std::vector<Model> &models);
 
     std::string layout(UBO *ubo);
     std::string struct_(Member *s);
