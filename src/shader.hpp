@@ -70,7 +70,7 @@ struct ShaderProgram {
     static inline std::string struct_spacer = " ";//\n\n";
     static inline std::string comment_line  = "///////////////////////////////////////////\n\n";
 
-    std::string header_common , footer_common;
+    std::string header_common, header_fragment , header_vertex , footer_common;
 
     std::string frag(std::vector<Model> &models);
     std::string vert(std::vector<Model> &models);
@@ -78,8 +78,6 @@ struct ShaderProgram {
     Builder();
 
     std::string layout(UBO *ubo);
-    std::string struct_(Member *s, int recurse = 0);
-
 
   private:
     int stride_count = 0;

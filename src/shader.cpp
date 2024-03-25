@@ -12,42 +12,6 @@
 
 //// SHADERBUILDER
 
-
-static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
-static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
-
-
-std::string ShaderProgram::Builder::struct_(Member* s, int recurse) {
-
-    std::string str = "struct " + camel(s->name())  + " {";
-
-    for (auto m : s->members) {
-
-        while (m->members.size() == 1 && m->members[0]->typed()) m = m->members[0];
-
-        str += " ";
-
-        if (!m->typed()) if (recurse) { str += struct_(m, recurse-1);} else {str += camel(m->name()); }
-
-        else str += m->type_name();
-    
-        str += " " + lower(m->name());
-
-        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
-        
-        str += ";";
-    
-    }
-
-    if (s->stride()) for (int i = 0; i < s->stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
-
-    str += " }";
-
-    return str;
-
-}
-
-
 std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     if (!ubo->members.size() || !ubo->data.size()) return "";
@@ -58,7 +22,7 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     for (auto m : ubo->members) for (auto m_ : m->members) effectors.insert((Effector*)m_);
 
-    for (auto x : effectors)  if (!x->typed()) str += struct_(x)+";\n\n";
+    for (auto x : effectors)  if (!x->typed()) str += x->print()+";\n\n";
 
     for (auto x : effectors) if (!x->typed()) str += x->source() + "\n\n";
 
@@ -66,7 +30,7 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
     
-    auto s = struct_(ubo,1);
+    auto s = ubo->print(1);
 
     str += s.c_str()+s.find("{");
     
@@ -78,18 +42,20 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
 ShaderProgram::Builder::Builder() {
 
-    header_common = "#version 430 core\n\n"+comment_line;
+    header_common = "#version 430 core\n\n";
 
     stride_count = 0;
 
-    footer_common += layout(&engine.dynamic_ubo);
-    footer_common += layout(&engine.static_ubo);
+    header_fragment += layout(&engine.dynamic_ubo);
+    header_fragment += layout(&engine.static_ubo);
 
 }
 
 std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
 
     std::string str = header_common;
+
+    str += comment_line;
 
     // str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
     // str += "uniform sampler2D medias;\n\n";
@@ -102,7 +68,7 @@ std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
 
     str += comment_line;
 
-    str += footer_common;
+    str += header_fragment;
 
     str += "void next() { COLOR = color; uv = UV; color = vec4(1); }\n\n";
 

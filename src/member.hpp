@@ -125,27 +125,40 @@ struct Member {
     virtual bool typed() { return false; if (members.size() == 1 && members[0]->name_v.length()) return true; return false; }
 
     std::vector<Member*> members;
-    
-    void print() {
 
-        std::string tab;
+    static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
+    static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
 
-        each([&](Member& m, int offset, int depth){ 
+    std::string print(int recurse = 0) {
+
+        std::string str = "struct " + camel(name())  + " {";
+
+        for (auto m : members) {
+
+            while (m->members.size() == 1 && m->members[0]->typed()) m = m->members[0];
+
+            str += " ";
+
+            if (!m->typed()) if (recurse) { str += m->print(recurse-1);} else {str += camel(m->name()); }
+
+            else str += m->type_name();
+        
+            str += " " + lower(m->name());
+
+            if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
             
-            tab = ""; for (int i = 0 ; i < depth; i++) tab+= "  ";
+            str += ";";
+    
+        }
 
-            std::string str; 
-            str += tab;
-            str += !m.typed() ? "struct" : m.type_name();
-            str += " " + m.name();
-            str += "    " +  std::to_string(offset);
-            str += " (" +std::to_string(m.footprint())+")";
+        if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
 
-            PLOGD << str;
+        str += " }";
 
-        }, 0, 0, [&](Member& m){ if (m.striding() && m.stride()) PLOGD << tab <<"stride    " << m.stride() << " (" << m.stride() << ")"; });
+        return str;
 
     }
+        
 
     void hard_delete() { 
 
