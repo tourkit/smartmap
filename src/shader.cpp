@@ -101,11 +101,11 @@ std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
     // str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
     // str += "uniform sampler2D medias;\n\n";
 
-    // str += "vec4 color;\n\n";
-    // str += "vec2 uv;\n\n";
-
     str += "in vec2 UV;\n\n";
     str += "out vec4 COLOR;\n\n";
+
+    str += "vec2 uv = UV;\n\n";
+    str += "vec4 color = vec4(1);\n\n";
 
     // str += comment_line;
 
@@ -113,52 +113,48 @@ std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
     
     // for (auto &m : vbo.models) for (auto effector : m->effectors) effectors.insert(effector);
     // for (auto effector : effectors) str += effector->source() +"\n";
-    
-    str += "\n";
+
+    str += "void next() { COLOR = color; uv = UV; color = vec4(1); }\n\n";
 
     // main loop
     str += "void main() {\n\n";
-    str += "\tCOLOR = vec4(1);\n\n";
-
-    // tofix
 
     int model_id = 0;
 
     for (auto &model : models) {
 
-        for (int instance = 0; instance < model.quantity; instance++) {
+        for (int instance = 0; instance < model.quantity(); instance++) {
 
-    //         auto name = model->file->name+std::to_string(model_id)+"["+std::to_string(instance)+"]";
+            auto name = model.name();
+            // name += "_"+std::to_string(model_id);
+            if (model.quantity() > 1) name += "["+std::to_string(instance)+"]";
 
-    //         str += "\t// "+name+"\n"; // would love this to be a node name instead
-    //         str += "\tuv = UV;\n";
-    //         str += "\tcolor = vec4(1);\n";
+            str += "\t// "+name+"\n"; // would love this to be a node name instead
             
-    //         for (auto effector : model->effectors) { 
+            for (auto &effector : model.effectors) { 
                 
-    //             std::string arg_str;
+                std::string arg_str;
 
-    //             auto comp = Component::id(effector->file->name.c_str()); 
+                auto &s = Struct::id(effector.file->name()); 
 
-    //             if (comp->members.size()<2) arg_str += name+"."+effector->file->name;
+                if (s.members.size()<2) arg_str += name+"."+s.name();
 
-    //             else for (auto &m: comp->members) {
+                else for (auto &m: s.members) {
                     
-    //                 arg_str += name+"."+effector->file->name+"."+m.name;
+                    arg_str += name+"."+s.name()+"."+m->name();
 
-    //                 if (&m != &comp->members.back()) arg_str += ", ";
+                    if (m != s.members.back()) arg_str += ", ";
                     
-    //             }
+                }
 
-    //             str += "\t"+effector->file->name+"("+arg_str+");\n";
-    //         }
+                str += "\t"+s.name()+"("+arg_str+");\n";
+            }
 
-    //         str += "\tCOLOR += color;\n\n";
+            str += "\tnext();\n\n";
 
         }
 
-
-    //     str += "\n\n";
+        str += "\n";
 
         model_id++;
     }

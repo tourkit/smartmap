@@ -16,8 +16,6 @@ struct Model : Struct {
 
     File* file;
 
-    int quantity;
-
     Model(File* file, int quantity, Struct* vbo) : Struct(file->name(), quantity), vbo(vbo) { engine.dynamic_ubo.add(*this); }
 
     Effector& add(File* file);

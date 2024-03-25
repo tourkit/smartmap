@@ -24,7 +24,7 @@ int main() { logger.cout(true);
 
     model.addPtr<Effector>(&model.get()->add(new File("assets/effectors/argb.frag")))->get();
 
-    auto shader = engine.tree->addOwnr<ShaderProgram>()->select()->get();
+    auto shader = engine.tree->addOwnr<ShaderProgram>(vbo_n.get()->models)->select()->get();
     
     shader->use();
 
