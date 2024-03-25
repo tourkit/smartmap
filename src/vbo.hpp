@@ -15,9 +15,9 @@ struct VBO : Buffer {
     
     static inline Struct &indice = Struct::create("Indice").add<int>("vert1").add<int>( "vert2").add<int>("vert3");
     
-    // static inline Struct &models = Struct::create("Models").add<File*>("file").add<int>("quantity");
+    static inline uint32_t vao = 0;
 
-    uint32_t vao = 0, vbo = 0 , ibo = 0, enabled_attrs = 0;
+    uint32_t vbo = 0 , ibo = 0, enabled_attrs = 0;
 
     bool init = false;
     

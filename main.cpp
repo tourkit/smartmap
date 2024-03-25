@@ -32,6 +32,9 @@ int main() { logger.cout(true);
 
     engine.tree->addOwnr<Node>("boil")->active(true)->onrun([&](Node* node){ 
 
+        // quad2.draw();
+        // quad2.draw();
+
         shader.use();
 
         vbo_n.get()->draw();

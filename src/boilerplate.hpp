@@ -75,7 +75,9 @@ struct Boilerplate {
 
     struct Quad {
 
-        GLuint vao,vbo,ibo;
+        static inline GLuint vao = 0;
+
+        GLuint vbo,ibo;
         
         static inline std::vector<std::array<float, 4>> vertices = { {-1, -1, 0, 1}, {1, -1, 1, 1}, {-1, 1, 0, 0}, {1, 1, 1, 0} };
 
@@ -83,20 +85,23 @@ struct Boilerplate {
 
         Quad() {
 
-            glGenVertexArrays(1, &vao);
             glGenBuffers(1, &vbo);
-            glGenBuffers(1, &ibo);
-            
-            glBindVertexArray(vao);
-
             glBindBuffer(GL_ARRAY_BUFFER, vbo);
             glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(std::array<float, 4>), vertices.data(), GL_STATIC_DRAW);
+            
 
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
-            glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-            glEnableVertexAttribArray(1);
+            if (!vao) {
 
+                glGenVertexArrays(1, &vao);
+                glBindVertexArray(vao);
+                glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+                glEnableVertexAttribArray(0);
+                glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+                glEnableVertexAttribArray(1);
+                
+            }
+
+            glGenBuffers(1, &ibo);
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(std::array<int, 3>), indices.data(), GL_STATIC_DRAW);
 
@@ -104,7 +109,6 @@ struct Boilerplate {
 
         void draw() {
 
-            glBindVertexArray(vao);
             
             glDrawElementsInstanced(GL_TRIANGLES, indices.size()*3, GL_UNSIGNED_INT, 0, 1);
 

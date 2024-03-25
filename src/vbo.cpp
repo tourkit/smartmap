@@ -44,7 +44,7 @@ void VBO::create() {
 
     destroy();
 
-    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); 
 
     init = true;
 
@@ -72,30 +72,35 @@ void VBO::upload() {
 
     auto i_size = members[1]->footprint_all();
 
-    glBindVertexArray(vao);
-
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
     glBufferData(GL_ARRAY_BUFFER,  v_size, data.data(), GL_STATIC_DRAW );
 
-    int offset = 0;
-    enabled_attrs = 0;
-    for (auto & m : members[0]->members[0]->members) {
+    if (!vao) {
+    
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
 
-        auto type = GL_FLOAT;
-        if (m->type() == typeid(float)) type = GL_FLOAT;
+        int offset = 0;
+        enabled_attrs = 0;
+        for (auto & m : members[0]->members[0]->members) {
 
-        auto count = 1; // m->count(); does it
-        if (m->type() == typeid(glm::vec2)) count = 2;
-        else if (m->type() == typeid(glm::vec3)) count = 3;
-        else if (m->type() == typeid(glm::vec4)) count = 4;
+            auto type = GL_FLOAT;
+            if (m->type() == typeid(float)) type = GL_FLOAT;
 
-        glVertexAttribPointer(enabled_attrs, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
+            auto count = 1; // m->count(); does it
+            if (m->type() == typeid(glm::vec2)) count = 2;
+            else if (m->type() == typeid(glm::vec3)) count = 3;
+            else if (m->type() == typeid(glm::vec4)) count = 4;
 
-        glEnableVertexAttribArray(enabled_attrs++);
+            glVertexAttribPointer(enabled_attrs, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
 
-        offset+= m->footprint();
+            glEnableVertexAttribArray(enabled_attrs++);
 
+            offset+= m->footprint();
+
+        }
+    
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
