@@ -12,13 +12,13 @@ struct Effector;
 
 struct Model : Struct {
 
-    Struct* vbo;
-
     File* file;
 
-    Model(File* file, int quantity, Struct* vbo) : Struct(file->name(), quantity), vbo(vbo) { engine.dynamic_ubo.add(*this); }
+    Model(File* file, int quantity) : Struct(file->name(), quantity) { engine.dynamic_ubo.add(*this); }
 
     Effector& add(File* file);
+
+    bool remove(Effector* effector);
 
     std::vector<Effector> effectors;
 

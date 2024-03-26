@@ -20,20 +20,22 @@
 #include "json.hpp"
 
 #include <cstring>
-
+#include <format>
 static int hovered_offset = -1;
 static int hovered_size = -1;
 static bool is_hovered = false;
 namespace ImGui {
 
-    static void TextX(std::string label, int offset, int size, int depth) {
+    static void TextX(std::string label, int offset, int size, int depth, std::vector<float> range = { 0,1 } ) {
 
         for (int i = 0; i < depth; i++) label = "    "+label;
-        label += "[" +std::to_string(size)+"]";
-        while (strlen(label.c_str()) < 30) label += " ";
-        label += " " +  std::to_string(offset);
 
-        // ImGui::SetCursorPosX(ImGui::GetCursorPosX()+depth*20);
+        if (range.size()==2) label += " ( " +std::format("{}",range[0])+", "+std::format("{}", range[1])+" )";
+
+        while (strlen(label.c_str()) < 31) label += " ";
+        label += std::to_string(offset);
+        while (strlen(label.c_str()) < 34) label += " ";
+        label += std::to_string(size);
 
         ImGui::Text(label.c_str());
 
@@ -45,14 +47,20 @@ namespace ImGui {
 
         }
         
-
     };
 
 };
 
 static void draw_definition(Member *s, int offset = 0, int depth = 0) {
 
-    ImGui::TextX(std::string(!s->typed() ? "struct" : s->type_name()) + " " + s->name(), offset, s->footprint(), depth);
+
+    std::vector<float> range;
+    if (s->range_from_ptr && s->range_to_ptr) {
+        range.resize(2);
+        memcpy(&range[0], s->range_from_ptr, sizeof(float));
+        memcpy(&range[1], s->range_to_ptr, sizeof(float));
+    }
+    ImGui::TextX(std::string(!s->typed() ? "struct" : s->type_name()) + " " + s->name(), offset, s->footprint(), depth,range);
 
     for (auto m : s->members) {
 

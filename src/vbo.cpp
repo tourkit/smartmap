@@ -1,11 +1,11 @@
-#include "vbo.hpp"  
-#include "ubo.hpp"  
+#include "vbo.hpp"
+#include "ubo.hpp"
 
-#include "model.hpp"  
-#include "file.hpp"  
-#include "instance.hpp"  
-#include "engine.hpp"  
-#include "log.hpp"  
+#include "model.hpp"
+#include "file.hpp"
+#include "instance.hpp"
+#include "engine.hpp"
+#include "log.hpp"
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -21,7 +21,7 @@ VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
 
     indices.add(indice);
     Buffer::add(indices);
-    
+
     create();
 
 }
@@ -30,8 +30,8 @@ void VBO::destroy() {
 
     init = false;
 
-    for (int i = 0 ; i < enabled_attrs; i++) glDisableVertexAttribArray(i); 
-        
+    for (int i = 0 ; i < enabled_attrs; i++) glDisableVertexAttribArray(i);
+
     glDeleteBuffers(1, &vbo);
 
     glDeleteBuffers(1, &ibo);
@@ -44,7 +44,7 @@ void VBO::create() {
 
     destroy();
 
-    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo); 
+    glGenBuffers(1, &vbo); glGenBuffers(1, &ibo);
 
     init = true;
 
@@ -52,18 +52,18 @@ void VBO::create() {
 
 VBO::~VBO()  { destroy(); }
 
-void VBO::update() { 
-    
-    Buffer::update(); 
+void VBO::update() {
+
+    Buffer::update();
 
     // for (auto m : models) {
 
     //     PLOGD << m.file->name();
-        
-    // } 
-    
-    if (init) upload(); 
-     
+
+    // }
+
+    if (init) upload();
+
 }
 
 void VBO::upload() {
@@ -77,7 +77,7 @@ void VBO::upload() {
     glBufferData(GL_ARRAY_BUFFER,  v_size, data.data(), GL_STATIC_DRAW );
 
     if (!vao) {
-    
+
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
 
@@ -100,7 +100,7 @@ void VBO::upload() {
             offset+= m->footprint();
 
         }
-    
+
     }
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
@@ -124,13 +124,13 @@ void VBO::draw(int count) {
     glDrawElementsInstanced(GL_TRIANGLES, members[1]->footprint_all()/sizeof(int), GL_UNSIGNED_INT, 0, count);
 
 }
-	
 
-Model& VBO::add(File* file, int quantity) {   
+
+Model& VBO::add(File* file, int quantity) {
 
     Assimp::Importer importer;
 
-    const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       | 
+    const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       |
         aiProcess_Triangulate            |
         aiProcess_JoinIdenticalVertices  |
         aiProcess_SortByPType);
@@ -144,7 +144,7 @@ Model& VBO::add(File* file, int quantity) {
     for (int i = 0; i < mesh->mNumVertices; i++) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
-        
+
         auto v = (*this)[0].push();
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
@@ -154,7 +154,7 @@ Model& VBO::add(File* file, int quantity) {
     }
 
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
-      
+
         const aiFace& face = mesh->mFaces[i];
         auto indice = (*this)[1].push();
 
@@ -164,10 +164,10 @@ Model& VBO::add(File* file, int quantity) {
 
     }
 
-    models.emplace_back(file,quantity,this);
+    models.emplace_back(file,quantity);
 
     update();
 
     return  models.back();
-    
+
 }
