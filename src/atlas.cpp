@@ -23,7 +23,7 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)
 
     texture->mipmaps = 10;
 
-    if(path.length()) fromDir(path);
+    if (path.length()) fromDir(path);
 
 }
 

@@ -49,8 +49,8 @@ ShaderProgram::Builder::Builder(VBO* vbo) : vbo(vbo) {
 
     stride_count = 0;
 
-    header_fragment += layout(&engine.dynamic_ubo);
     header_fragment += layout(&engine.static_ubo);
+    header_fragment += layout(&engine.dynamic_ubo);
 
 }
 
@@ -60,8 +60,8 @@ std::string ShaderProgram::Builder::frag() {
 
     str += comment_line;
 
-    // str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
-    // str += "uniform sampler2D medias;\n\n";
+    str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
+    str += "uniform sampler2D medias;\n\n";
 
     str += "in vec2 UV;\n\n";
     str += "out vec4 COLOR;\n\n";
@@ -198,6 +198,14 @@ void ShaderProgram::destroy() {
 
     loaded = false;
     if (id > -1) glDeleteProgram(id); 
+
+}
+
+void  ShaderProgram::create(VBO* vbo) {
+    
+    Builder builder(vbo);
+
+    create(builder.frag(),builder.vert());
 
 }
 

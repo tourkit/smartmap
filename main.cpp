@@ -14,7 +14,9 @@ int main() { logger.cout(true);
     
     engine.init(); 
     
-    auto &dc = *engine.tree->addOwnr<DrawCall>()->active(true);
+    auto &dc = *engine.stack->addOwnr<DrawCall>();
+
+    dc.add((*engine.models)[0])->add((*engine.effectors)[1]);
 
     engine.gui->editors.push_back(new EditorWidget());
 

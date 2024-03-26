@@ -71,7 +71,6 @@ void Callbacks::init() {
     ////////// UBO.HPP 
 
     NODE<UBO>::onrun([](Node* node, UBO *ubo){ ubo->upload(); });
-
     
     NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name(); });
 
@@ -105,7 +104,7 @@ void Callbacks::init() {
 
     ////////// DRAWCALL.HPP 
 
-    NODE<Layer>::onrun([](Node* node, Layer *layer){  if (layer->shader.loaded) layer->draw(); });
+    NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
     
     NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
 
@@ -113,7 +112,7 @@ void Callbacks::init() {
     
     NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){ dc->draw(); });
     
-    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); PLOGD << "lalallalalla"; });
+    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
 
@@ -163,46 +162,13 @@ void Callbacks::init() {
         auto model = _this->is_a<Model>();
         auto file = node->is_a<File>();
 
-        // auto dc = _this->parent()->is_a<Layer>();
-
-        // if (dc) {
-
-            _this->addPtr<Effector>(&model->add(file));
-
-        //     dc->update();
-
-        // }
-
-        return nullptr;
+        return _this->addPtr<Effector>(&model->add(file))->node();
 
     });
 
     ////////// Effector.HPP 
     
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name(); });
-
-    // TOFIX
-    // NODE<Model>::onchange([](Node* node, Model *model) { 
-
-    //     model->obj->s->size_v = 0;
-    //     for (auto f : model->effectors) model->obj->s->size_v += f->comp->size;
-    
-    //     engine.dynamic_ubo.remap(&Buffer::bkps[engine.dynamic_ubo]);
-    //     engine.dynamic_ubo.update();
-    //     engine.static_ubo.remap(&Buffer::bkps[engine.static_ubo]);
-    //     engine.static_ubo.update();
-
-    // });
-
-    NODE<Effector>::onchange([](Node* node, Effector *effector) { 
-
-
-        //doafterhere
-        // auto comps = engine.tree->child("Debug::Components");
-        // comps->childrens.resize(0);
-        // for (auto c : Component::pool) comps->addPtr<Component>(c);
-    
-     });
 
     ////////// Atlas.HPP 
 
@@ -225,10 +191,6 @@ void Callbacks::init() {
     NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ sender->init(); });
     NODE<NDI::Sender>::onrun([](Node* node, NDI::Sender *sender){ sender->tick(); });
 
-
-    ////////// Component.HPP 
-
-    // NODE<Component>::oncreate([](Node* node, Component *comp){ node->name = comp->name; });
 
     ////////// JSON.HPP 
 

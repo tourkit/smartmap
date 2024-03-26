@@ -135,7 +135,7 @@ struct Member {
 
         for (auto m : members) {
 
-            while (m->members.size() == 1 && m->members[0]->typed()) m = m->members[0];
+            // while (m->members.size() == 1 && m->members[0]->typed()) m = m->members[0];
 
             str += " ";
 

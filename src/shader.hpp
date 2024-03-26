@@ -52,6 +52,7 @@ struct ShaderProgram {
 
   void destroy();
   void create(std::string frag, std::string vert);
+  void create(VBO* vbo);
 
   int getLoc(const std::string& name);
   void sendUniform(const std::string& name, int i1);

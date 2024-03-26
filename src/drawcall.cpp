@@ -25,28 +25,27 @@ void Layer::draw() {
 
 DrawCall::DrawCall() {
 
-    // tofix 
-    engine.dynamic_ubo.bind(&shader);
-    engine.static_ubo.bind(&shader);
-
-    // engine.atlas->link(&shader);
-
 }
 
 void DrawCall::draw() {
- 
-    shader.sendUniform("medias", 1);
-    engine.atlas->texture->bind();
-    vbo.draw();
 
+    // engine.atlas->texture->bind();
+    
     shader.use(); 
+
+    vbo.draw();
 
 }
 
 void DrawCall::update() {
 
-    ShaderProgram::Builder shader_builder(&vbo);
+    // unbind old ahder ?
 
-    shader.create(shader_builder.frag(),shader_builder.vert());
+    shader.create(&vbo);
+
+    engine.dynamic_ubo.bind(&shader);
+    engine.static_ubo.bind(&shader);
+
+    engine.atlas->link(&shader);
 
 }

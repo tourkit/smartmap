@@ -39,15 +39,16 @@ void Engine::init() {
     Callbacks::init(); 
     
     Editors::init();
+    
+    atlas = new Atlas(4096, 4096, "assets/medias/");
 
     tree = new Node("tree");
 
-    debug = tree->addOwnr<Debug>()->close()->node();
+    debug = tree->addOwnr<Debug>()->node();//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); });
     debug->addPtr<UBO>(&dynamic_ubo);
     debug->addPtr<Atlas>(atlas);   
 
-    atlas = new Atlas(4096, 4096, "assets/medias/");
 
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
