@@ -5,7 +5,7 @@
 #include <chrono>
 
 struct UBO;
-struct Model;
+struct VBO;
 
 struct Shader {
   
@@ -44,7 +44,7 @@ struct ShaderProgram {
 
   ShaderProgram(std::string frag, std::string vert);
 
-  ShaderProgram(std::vector<Model> &models);
+  ShaderProgram(VBO* vbo);
 
   void use();
 
@@ -72,10 +72,13 @@ struct ShaderProgram {
 
     std::string header_common, header_fragment , header_vertex , footer_common;
 
-    std::string frag(std::vector<Model> &models);
-    std::string vert(std::vector<Model> &models);
+    std::string frag();
+    std::string vert();
+    
+    VBO* vbo;
 
     Builder();
+    Builder(VBO* vbo);
 
     std::string layout(UBO *ubo);
 

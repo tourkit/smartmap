@@ -52,11 +52,11 @@ void Engine::init() {
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
-    models = tree->addOwnr<Node>("Models")->node();
-    // models = tree->addFolder<Model>("Models", "assets/models/")->node();
+    // models = tree->addOwnr<Node>("Models")->node();
+    models = tree->addFolder<Model>("Models", "assets/models/")->node();
 
-    effectors = tree->addOwnr<Node>("Effectors")->node();
-    // effectors = tree->addFolder<Effector>("Effectors", "assets/effectors/")->node();
+    // effectors = tree->addOwnr<Node>("Effectors")->node();
+    effectors = tree->addFolder<Effector>("Effectors", "assets/effectors/")->node();
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 

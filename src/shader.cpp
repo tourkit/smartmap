@@ -2,6 +2,7 @@
 #include "shader.hpp"
 #include "log.hpp"
 #include "ubo.hpp"
+#include "vbo.hpp"
 #include "model.hpp"
 
 #include <GL/gl3w.h>
@@ -20,11 +21,11 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     std::set<Effector*> effectors;
 
-    for (auto m : ubo->members) for (auto m_ : m->members) effectors.insert((Effector*)m_);
+    for (auto m : ubo->members) for (auto m_ : m->members) if (!m_->typed()) effectors.insert((Effector*)m_);
 
-    for (auto x : effectors)  if (!x->typed()) str += x->print()+";\n\n";
+    for (auto x : effectors)  str += x->print()+";\n\n";
 
-    for (auto x : effectors) if (!x->typed()) str += x->source() + "\n\n";
+    for (auto x : effectors) str += x->source() + "\n\n";
 
     if (effectors.size()) str += comment_line;
 
@@ -40,7 +41,9 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
 }
 
-ShaderProgram::Builder::Builder() {
+ShaderProgram::Builder::Builder() : vbo(nullptr) { }
+
+ShaderProgram::Builder::Builder(VBO* vbo) : vbo(vbo) {
 
     header_common = "#version 430 core\n\n";
 
@@ -51,7 +54,7 @@ ShaderProgram::Builder::Builder() {
 
 }
 
-std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
+std::string ShaderProgram::Builder::frag() {
 
     std::string str = header_common;
 
@@ -77,7 +80,7 @@ std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
 
     int model_id = 0;
 
-    for (auto &model : models) {
+    if (vbo) for (auto &model : vbo->models) {
 
         for (int instance = 0; instance < model.quantity(); instance++) {
 
@@ -117,7 +120,7 @@ std::string ShaderProgram::Builder::frag(std::vector<Model> &models) {
 
 }
 
-std::string ShaderProgram::Builder::vert(std::vector<Model> &models) {
+std::string ShaderProgram::Builder::vert() {
 
     std::string str = header_common;
 
@@ -185,9 +188,9 @@ Shader::operator GLuint() { return id; }
 
 ShaderProgram::~ShaderProgram() { destroy(); }
 
-ShaderProgram::ShaderProgram() { std::vector<Model> none; Builder builder; create(builder.frag(none),builder.vert(none)); }
+ShaderProgram::ShaderProgram() { Builder builder; create(builder.frag(),builder.vert()); }
 
-ShaderProgram::ShaderProgram(std::vector<Model> &models) { Builder builder; create(builder.frag(models),builder.vert(models)); }
+ShaderProgram::ShaderProgram(VBO* vbo) { Builder builder(vbo); create(builder.frag(),builder.vert()); }
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 

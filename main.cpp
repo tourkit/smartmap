@@ -8,31 +8,16 @@
 #include "engine.hpp"
 #include "boilerplate.hpp"
 
-#include "ubo.hpp"
-#include "vbo.hpp"
-#include "shader.hpp"
-#include "model.hpp"
+#include "drawcall.hpp"
 
 int main() { logger.cout(true); 
     
-    engine.init(); engine.gui->editors.push_back(new EditorWidget());
-
-    auto &vbo_n = *engine.tree->addOwnr<VBO>();
-    vbo_n.active(true);
+    engine.init(); 
     
-    auto &model = *vbo_n.addPtr<Model>(&vbo_n.get()->add(new File("assets/models/quad.obj")));
+    auto &dc = *engine.tree->addOwnr<DrawCall>()->active(true);
 
-    model.addPtr<Effector>(&model.get()->add(new File("assets/effectors/argb.frag")))->get();
-
-    auto shader = engine.tree->addOwnr<ShaderProgram>(vbo_n.get()->models)->select()->get();
-    
-    shader->use();
-
-    engine.dynamic_ubo.bind(shader);
+    engine.gui->editors.push_back(new EditorWidget());
 
     engine.run();
     
 }
-
-
-//update shader

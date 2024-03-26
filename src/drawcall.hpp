@@ -20,18 +20,18 @@ struct DrawCall {
 
     void update();
 
-    virtual void run();
-
-    std::string layout(UBO* ubo);
+    virtual void draw();
     
 };
 
 
 struct Layer : DrawCall {
 
+    static inline File *quad = new File("assets/models/quad.obj");
+
     FrameBuffer fb;
 
-    void run() override;
+    void draw() override;
     
     Layer(uint16_t width, uint16_t height);
 

@@ -102,9 +102,11 @@
 
         n->parent(node());
 
+        update();
+
         return n;
 
-                             }
+    }
 
     std::string UntypedNode::namesdf(){ if (parent()) { return parent()->name + "::" + name; } return name; }
 

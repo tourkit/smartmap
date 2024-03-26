@@ -105,11 +105,27 @@ void Callbacks::init() {
 
     ////////// DRAWCALL.HPP 
 
-    NODE<Layer>::onrun([](Node* node, Layer *layer){  if (layer->shader.loaded) layer->run(); });
+    NODE<Layer>::onrun([](Node* node, Layer *layer){  if (layer->shader.loaded) layer->draw(); });
     
     NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
 
     NODE<VBO>::onrun([](Node* node, VBO *vbo){ vbo->draw(); });
+    
+    NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){ dc->draw(); });
+    
+    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); PLOGD << "lalallalalla"; });
+
+    NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ 
+
+        auto &dc = *_this->is_a<DrawCall>();
+
+        auto &model = dc.vbo.add(node->is_a<File>());
+    
+        node = _this->addPtr<Model>(&model)->node();
+        
+        return node;
+        
+    });
     
     NODE<VBO>::onadd<File>([](Node*_this,Node*node){
 
