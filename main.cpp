@@ -19,13 +19,17 @@ int main() {
 
     auto &dc = *engine.stack->addOwnr<DrawCall>();
 
-    dc.add((*engine.models)[0])->add((*engine.effectors)[1]);
+    auto m_node = dc.add((*engine.models)[0]);
+
+    m_node->add((*engine.effectors)[0]);
+    m_node->add((*engine.effectors)[1]);
+
+    // auto &m = *m_node->is_a<Model>();
+    // m.add((*engine.effectors)[0]->is_a<File>());
+    // m.add((*engine.effectors)[1]->is_a<File>());
 
     engine.gui->editors.push_back(new EditorWidget());
 
     engine.run();
 
 }
-
-
-// check if update happen on delete ?

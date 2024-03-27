@@ -91,7 +91,7 @@
 
         auto n = (Node*)node_v;
 
-        PLOGV << name << " add " << n->name;
+        PLOGV << type_name() << "::" << name << " add " << n->type_name() << "::" << n->name;
 
         if (n->parent() == node()) return nullptr;
 
@@ -187,7 +187,7 @@
 
     void UntypedNode::remove(Node *child) {
 
-        PLOGV << name << " remove " << child->name;
+        PLOGV << type_name() << "::" << name << " remove " << child->type_name() << "::" << child->name;
 
         auto it = std::find(childrens.begin(), childrens.end(), child);
 

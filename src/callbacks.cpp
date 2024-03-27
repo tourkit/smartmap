@@ -164,7 +164,9 @@ void Callbacks::init() {
 
         auto &z = model->add(file);
 
-        return _this->addPtr<Effector>(&z)->node();
+        _this->addPtr<Effector>(&z)->node();
+
+        return _this;
 
     });
 

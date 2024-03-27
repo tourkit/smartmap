@@ -19,15 +19,7 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     std::string str;
 
-    std::set<Effector*> effectors;
 
-    for (auto m : ubo->members) for (auto m_ : m->members) if (!m_->typed()) effectors.insert((Effector*)m_);
-
-    for (auto x : effectors)  str += x->s->print()+";\n\n";
-
-    for (auto x : effectors) str += x->source() + "\n\n";
-
-    if (effectors.size()) str += comment_line;
 
     str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
 
@@ -58,6 +50,12 @@ std::string ShaderProgram::Builder::frag() {
 
     std::string str = header_common;
 
+    std::set<Effector*> effectors;
+
+    if (vbo) for (auto &model : vbo->models) for (auto &effector : model.effectors) effectors.insert(&effector);
+
+    for (auto x : effectors)  str += x->s->print()+";\n\n";
+
     str += comment_line;
 
     str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ?
@@ -71,14 +69,22 @@ std::string ShaderProgram::Builder::frag() {
 
     str += comment_line;
 
+    if (effectors.size()) str += comment_line;
+
     str += header_fragment;
+
+
+    int model_id = 0;
+
+
+    for (auto x : effectors) str += x->source() + "\n\n";
 
     str += "void next() { COLOR = color; uv = UV; color = vec4(1); }\n\n";
 
+    str += comment_line;
+
     // main loop
     str += "void main() {\n\n";
-
-    int model_id = 0;
 
     if (vbo) for (auto &model : vbo->models) {
 
