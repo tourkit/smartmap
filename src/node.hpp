@@ -73,6 +73,8 @@ struct UntypedNode {
 
     virtual std::type_index type() { return typeid(*this); }
 
+    virtual std::string type_name() { return "Node"; }
+
     virtual void* ptr_untyped() { return this; }
 
     void onchange(std::function<void(Node*)> cb = nullptr);
@@ -177,7 +179,7 @@ struct TypedNode : UntypedNode {
 
     TypedNode(void* ptr, bool owned = false) :
 
-        UntypedNode((isNode()? ((UntypedNode*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())),
+        UntypedNode((isNode()? ((UntypedNode*)ptr)->name : type_name())),
         ptr((T*)ptr), owned(owned), stored_type(typeid(*this->ptr)) {
 
     // TypedNode(void* ptr, bool owned = false, std::type_index stored_type = typeid(Passing)) :
@@ -203,6 +205,8 @@ struct TypedNode : UntypedNode {
 
     }
 
+    std::string type_name() override { return boost::typeindex::type_id<T>().pretty_name(); }
+
     Node* add(void *node_v) override {
 
         auto n = (TypedNode<Any>*)node_v;
@@ -213,6 +217,10 @@ struct TypedNode : UntypedNode {
 
             if (onaddtyped_cb[type()].find(n->type()) != onaddtyped_cb[type()].end()) {
 
+                std::string  sss = type().name();
+                std::string  xxx = name;
+                std::string  sss2 = n->type().name();
+                std::string  xxx2 = n->name;
                 n = onaddtyped_cb[type()][n->type()](node(),n->node());
 
                 if (n != node_v) return n->node();

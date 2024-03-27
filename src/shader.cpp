@@ -23,20 +23,20 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     for (auto m : ubo->members) for (auto m_ : m->members) if (!m_->typed()) effectors.insert((Effector*)m_);
 
-    for (auto x : effectors)  str += x->print()+";\n\n";
+    for (auto x : effectors)  str += x->s->print()+";\n\n";
 
     for (auto x : effectors) str += x->source() + "\n\n";
 
     if (effectors.size()) str += comment_line;
 
     str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
-    
+
     auto s = ubo->print(1);
 
     str += s.c_str()+s.find("{");
-    
+
     str += ";\n\n";
-    
+
     return str;
 
 }
@@ -60,7 +60,7 @@ std::string ShaderProgram::Builder::frag() {
 
     str += comment_line;
 
-    str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ? 
+    str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ?
     str += "uniform sampler2D medias;\n\n";
 
     str += "in vec2 UV;\n\n";
@@ -89,20 +89,20 @@ std::string ShaderProgram::Builder::frag() {
             if (model.quantity() > 1) name += "["+std::to_string(instance)+"]";
 
             str += "\t// "+name+"\n"; // would love this to be a node name instead
-            
-            for (auto &effector : model.effectors) { 
-                
+
+            for (auto &effector : model.effectors) {
+
                 std::string arg_str;
 
                 for (auto &arg : effector.args) {
-                    
-                    arg_str += name+"."+effector.name()+"."+arg.second+", ";
-                    
+
+                    arg_str += name+"."+effector.file->name()+"."+arg.second+", ";
+
                 }
 
                 arg_str.resize(arg_str.size()-2);
 
-                str += "\t"+effector.name()+"("+arg_str+");\n";
+                str += "\t"+effector.file->name()+"("+arg_str+");\n";
             }
 
             str += "\tnext();\n\n";
@@ -113,7 +113,7 @@ std::string ShaderProgram::Builder::frag() {
 
         model_id++;
     }
-    
+
     str += "} ";
 
     return str;
@@ -151,16 +151,16 @@ Shader::~Shader() { if (id > -1) glDeleteShader(id);  }
 Shader::Shader(std::string src, uint8_t type)  { create(src,type); }
 
 void Shader::create(std::string src, uint8_t type)  {
-    
+
     this->src = src;
-    
+
     auto gl_type = GL_FRAGMENT_SHADER;
 
     if (type == 1) gl_type = GL_VERTEX_SHADER;
     if (type == 2) gl_type = GL_COMPUTE_SHADER;
 
     id = glCreateShader(gl_type);
- 
+
     const GLchar *source = src.c_str();
     glShaderSource(id, 1, &source, nullptr);
 
@@ -176,10 +176,10 @@ void Shader::create(std::string src, uint8_t type)  {
     if (!success) {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
-        std::memset(std::strchr(infoLog, '\n'), 0, 1); 
+        std::memset(std::strchr(infoLog, '\n'), 0, 1);
         PLOGW << (type==1?"vertex: ":"fragment: ") << &infoLog[7];
         PLOGV <<source;
-        
+
     }
 
 }
@@ -194,32 +194,32 @@ ShaderProgram::ShaderProgram(VBO* vbo) { Builder builder(vbo); create(builder.fr
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 
-void ShaderProgram::destroy() {  
+void ShaderProgram::destroy() {
 
     loaded = false;
-    if (id > -1) glDeleteProgram(id); 
+    if (id > -1) glDeleteProgram(id);
 
 }
 
 void  ShaderProgram::create(VBO* vbo) {
-    
+
     Builder builder(vbo);
 
     create(builder.frag(),builder.vert());
 
 }
 
-void  ShaderProgram::create(std::string frag_src, std::string vert_src) { 
+void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     destroy();
 
     id = glCreateProgram();
 
     frag.create(frag_src,0);
-    glAttachShader(id, frag.id); 
+    glAttachShader(id, frag.id);
 
-    vert.create(vert_src,1); 
-    glAttachShader(id, vert.id); 
+    vert.create(vert_src,1);
+    glAttachShader(id, vert.id);
 
     glLinkProgram( id );
 
@@ -250,5 +250,3 @@ void ShaderProgram::sendUniform(const std::string& name, float f1, float f2, flo
 void ShaderProgram::sendUniform(const std::string& name, float f1, float f2, float f3, float f4) { glProgramUniform4f(id, getLoc(name), f1, f2, f3, f4); }
 
 //void Shader::sendUniform(std::string name, glm::mat4 mat) { glProgramUniformMatrix4fv(program, getLoc(name), 1, GL_FALSE, &mat[0][0]); }
-
-

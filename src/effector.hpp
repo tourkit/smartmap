@@ -5,21 +5,22 @@
 #include <string>
 
 struct File;
+struct Struct;
 
-#include "struct.hpp"
-
-struct Effector : Struct  {
+struct Effector  {
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
     File * file;
 
+    Struct* s;
+
     std::string source();
 
     Effector(File *file = nullptr);
-    
+
     std::vector<std::pair<std::string,std::string>> args;
 
     std::map<std::string, float[3]> ranges;
-    
+
 };

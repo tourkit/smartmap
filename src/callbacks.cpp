@@ -162,7 +162,9 @@ void Callbacks::init() {
         auto model = _this->is_a<Model>();
         auto file = node->is_a<File>();
 
-        return _this->addPtr<Effector>(&model->add(file))->node();
+        auto &z = model->add(file);
+
+        return _this->addPtr<Effector>(&z)->node();
 
     });
 

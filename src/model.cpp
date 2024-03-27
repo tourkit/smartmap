@@ -6,7 +6,7 @@ bool Model::remove(Effector* effector) {
 
         if (&*it == effector) {
 
-            Struct::remove(*effector);
+            Struct::remove(*effector->s);
 
             effectors.erase(it);
 
@@ -22,9 +22,9 @@ bool Model::remove(Effector* effector) {
 
 Effector& Model::add(File* file) {
 
-    auto &x = effectors.emplace_back(file);
+    auto &x = *effectors.emplace(effectors.end(), file);
 
-    Struct::add(x);
+    Struct::add(*x.s);
 
     return x;
 

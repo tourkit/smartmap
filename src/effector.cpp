@@ -3,10 +3,23 @@
 #include "log.hpp"
 #include "engine.hpp"
 #include "node.hpp"
+#include "struct.hpp"
 #include <regex>
 
 
-Effector::Effector(File *file) : Struct(file->name()), file(file) {
+Effector::Effector(File *file) : file(file) {
+
+    s = Struct::exist(file->name());
+
+    if (s) {
+
+        // should check better like arg comparisons
+
+        return;
+
+    }
+
+    s = &Struct::create(file->name());
 
     const char* data = (&file->data[0]);
 
@@ -32,11 +45,11 @@ Effector::Effector(File *file) : Struct(file->name()), file(file) {
 
     }
 
-    
+
     if (std::regex_search(source, match, std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))"))) {
 
         std::string argsStr = match[2].str();
-        
+
         std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
         std::sregex_iterator iter(argsStr.begin(), argsStr.end(), regex);
         std::sregex_iterator end;
@@ -48,22 +61,22 @@ Effector::Effector(File *file) : Struct(file->name()), file(file) {
 
     for (auto arg : args) {
 
-        if (arg.first == "vec2") add<glm::vec2>(arg.second.c_str()); 
-        else if (arg.first == "vec3") add<glm::vec3>(arg.second.c_str()); 
-        else if (arg.first == "vec4") add<glm::vec4>(arg.second.c_str()); 
+        if (arg.first == "vec2") s->add<glm::vec2>(arg.second.c_str());
+        else if (arg.first == "vec3") s->add<glm::vec3>(arg.second.c_str());
+        else if (arg.first == "vec4") s->add<glm::vec4>(arg.second.c_str());
 
-        else if (arg.first == "int") add<int>(arg.second.c_str()); 
-        
-        else add<float>(arg.second.c_str()); 
+        else if (arg.first == "int") s->add<int>(arg.second.c_str());
 
-        if (ranges.find(arg.second) != ranges.end()) range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
-        
+        else s->add<float>(arg.second.c_str());
+
+        if (ranges.find(arg.second) != ranges.end()) s->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+
     }
 
 
 }
 
-std::string Effector::source() { 
+std::string Effector::source() {
     std::string out_code = &file->data[0];
 
     size_t pos = 0;
@@ -78,6 +91,6 @@ std::string Effector::source() {
     out_code.resize(out_code.find("}")+1);
 
     return out_code.c_str()+out_code.find("void");
-    
-    
+
+
 }

@@ -4,6 +4,7 @@
 #include "buffer.hpp"
 #include "ubo.hpp"
 
+
     UntypedNode::UntypedNode(std::string name, ImVec4 color) : name(name), color(color) {
 
         uid = uid++;
@@ -174,7 +175,7 @@
 
     void UntypedNode::update() {
 
-        PLOGV << name;
+        PLOGV << type_name() << "::" << name;
 
         if (onchange_cb) onchange_cb(node());
 
