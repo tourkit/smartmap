@@ -11,9 +11,9 @@ struct Effector  {
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
-    File * file;
+    File * file = nullptr;
 
-    Struct* s;
+    Struct* s = nullptr;
 
     std::string source();
 

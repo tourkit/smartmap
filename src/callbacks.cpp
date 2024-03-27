@@ -170,6 +170,16 @@ void Callbacks::init() {
 
     });
 
+    NODE<Model>::ondelete([](Node* node, Model *model) {
+
+        auto dc = node->parent()->is_a<DrawCall>();
+
+        if (!dc) return;
+
+        dc->vbo.remove(model);
+
+     });
+
     ////////// Effector.HPP
 
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name(); });

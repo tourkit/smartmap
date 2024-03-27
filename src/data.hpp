@@ -19,14 +19,14 @@ struct Data : Member {
         default_val_ptr = &default_val;
 
         if (std::is_arithmetic<T>::value) {
-            
+
             memset(&default_val,0,sizeof(T));
             memset(&range_from,0,sizeof(T));
             memset(&range_to,0,sizeof(T));
 
             if ( typeid(T) == typeid(float) || typeid(T) == typeid(glm::vec2) || typeid(T) == typeid(glm::vec3) || typeid(T) == typeid(glm::vec4) ) *(float*)range_to_ptr = 1.0f;
-            // if (typeid(T) == typeid(int)) *(int*)range_to_ptr = 65535;
-            // if (typeid(T) == typeid(uint32_t)) *(uint32_t*)range_to_ptr = 65535;
+            if (typeid(T) == typeid(int)) *(int*)range_to_ptr = 10;
+            if (typeid(T) == typeid(uint32_t)) *(uint32_t*)range_to_ptr = 10;
 
         }
 
@@ -46,21 +46,21 @@ struct Data : Member {
     uint32_t size() override { return sizeof(T); }
 
     uint32_t footprint() override { return size(); }
-    
+
     bool typed() override { return true; }
 
-    Member* copy(Member* x = nullptr) override { 
-        
-        if (!x) x = new Data<T>(name_v); 
-        
+    Member* copy(Member* x = nullptr) override {
+
+        if (!x) x = new Data<T>(name_v);
+
         Member::copy(x);
 
         ((Data<T>*)x)->range_from = *(T*)range_from_ptr;
         ((Data<T>*)x)->range_to = *(T*)range_to_ptr;
         ((Data<T>*)x)->default_val = *(T*)default_val_ptr;
 
-        return x; 
-        
+        return x;
+
     }
 
 

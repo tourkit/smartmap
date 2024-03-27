@@ -3,7 +3,7 @@
 struct File;
 struct Effector;
 
-#include <vector>
+#include <list>
 #include <string>
 
 #include "struct.hpp"
@@ -20,6 +20,6 @@ struct Model : Struct {
 
     bool remove(Effector* effector);
 
-    std::vector<Effector> effectors;
+    std::list<Effector> effectors;
 
 };

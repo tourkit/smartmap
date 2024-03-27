@@ -39,14 +39,14 @@ namespace ImGui {
 
         ImGui::Text(label.c_str());
 
-        if (ImGui::IsItemHovered()) { 
+        if (ImGui::IsItemHovered()) {
 
             hovered_offset = offset;
             hovered_size = size;
             is_hovered=true;
 
         }
-        
+
     };
 
 };
@@ -80,7 +80,7 @@ static void draw_raw(void *data, size_t size) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(2,2));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
-    
+
     ImGui::SetWindowFontScale(.8);
 
     auto window_width = ImGui::GetWindowWidth()-15;
@@ -109,16 +109,16 @@ static void draw_raw(void *data, size_t size) {
         }
 
         if (!(member_count%cells_per_line)) ImGui::NewLine();
-        ImGui::SameLine(((member_count%cells_per_line)*(cell_width+cell_margin))); 
+        ImGui::SameLine(((member_count%cells_per_line)*(cell_width+cell_margin)));
 
         ImGuiDataType_ datatype = ImGuiDataType_U8;
         ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, ((*(((uint8_t*)data)+member_count))/255.0f)*26);
 
-        if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &ndata,  &cell_min,   &cell_max,   "")) { 
-                    
-            
+        if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &ndata,  &cell_min,   &cell_max,   "")) {
+
+
         }
-        
+
         ImGui::PopStyleVar(1);
 
         ImGui::SameLine(0);
@@ -145,7 +145,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
     int &elem_current = elem_currents[member].val;
 
     if (member->quantity() > 1 ) {
-        
+
         if (ImGui::SliderInt(("instance##current"+member->name()).c_str(), &elem_current, 0, member->quantity()-1)) { }
 
         offset += member->footprint()*elem_current;
@@ -164,7 +164,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                 static float t_range_f = 1.0f;
                 static int f_range_i = 0;
                 static float f_range_f = 0;
-                
+
                 void* range_from;
                 if (m->range_from_ptr) range_from = m->range_from_ptr;
                 else range_from = &f_range_f;
@@ -181,7 +181,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                 if (m->type() == typeid(uint8_t)) type = ImGuiDataType_U8;
                 if (m->type() == typeid(uint16_t)) type = ImGuiDataType_U16;
                 if (m->type() == typeid(uint32_t)) { type = ImGuiDataType_U16; range_to = &t_range_i; range_from = &f_range_i; }
-                
+
                 int q = 1;
                 if (m->type() == typeid(glm::vec2)) q = 2;
                 if (m->type() == typeid(glm::vec3)) q = 3;
@@ -192,7 +192,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                 if (ImGui::SliderScalarN(name.c_str(), type, buff->data.data()+offset, q, range_from, range_to)) has_changed = true;
 
         }else{
-                
+
             ImGui::SeparatorText(m->name().c_str());
 
             if (draw_guis(buff, m, offset)) has_changed = true;
@@ -202,27 +202,27 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
             //     // s->remove(m->name()); // TOdoFIX
             //     has_changed = true;
             // }
-        
+
         }
-        
+
         offset+=m->footprint_all();
-        
+
     }
 
     return has_changed;
-            
+
  }
 
 
 void Editors::init() {
 
-    // ////////// xxx.HPP 
+    // ////////// xxx.HPP
 
     // Editor<xxx>([](Node* node, xxx *x){ });
 
-    ////////// Artnet.HPP 
-    
-    Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){ 
+    ////////// Artnet.HPP
+
+    Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){
 
         // TOFIX
 
@@ -231,15 +231,15 @@ void Editors::init() {
             // static std::vector<Model*> models_ptr;
 
             // if (!models.size()) {
-            
-            //     engine.stack->each<Layer>([&](Node* n, Layer* l) { 
 
-            //         n->each<Model>([&](Node* n, Model* m) { 
+            //     engine.stack->each<Layer>([&](Node* n, Layer* l) {
+
+            //         n->each<Model>([&](Node* n, Model* m) {
 
             //             for (auto c : n->name) models.push_back(c);
             //             models.push_back(0);
             //             models_ptr.push_back(m);
-          
+
             //         });
 
             //         models.push_back(0);
@@ -252,47 +252,47 @@ void Editors::init() {
             // static int model_id=0;
             // if (ImGui::Combo("Model##dddddddd", &model_id, &models[0], models.size())) remap->import(models_ptr[model_id]->obj->s);
 
-            // std::string sss; 
+            // std::string sss;
             // ImGui::InputText("char *src##remap_name", sss.data(), sss.length());
 
             // int member_id = 0;
 
             // for (auto c:remap->fixture->s->comps) {
-                        
+
             //     ImGui::SeparatorText(c->name.c_str());
-                
+
             //     for (auto m:c->members) {
 
             //         ImGui::Text(m.name.c_str());
 
             //         static int e = 0;
             //         std::string strbypa = "bypass##rbt"+std::to_string(member_id);
-            //         ImGui::SameLine(); 
+            //         ImGui::SameLine();
             //         ImGui::RadioButton(strbypa.c_str(), &remap->fixture->attributes[member_id].combining , 0);
             //         std::string strcoar = "coarse##rbt"+std::to_string(member_id);
-            //         ImGui::SameLine(); 
+            //         ImGui::SameLine();
             //         ImGui::RadioButton(strcoar.c_str(), &remap->fixture->attributes[member_id].combining , 1);
             //         std::string strfine = "fine##rbt"+std::to_string(member_id);
-            //         ImGui::SameLine(); 
+            //         ImGui::SameLine();
             //         ImGui::RadioButton(strfine.c_str(), &remap->fixture->attributes[member_id].combining , 2);
             //         std::string strultr = "ultra##rbt"+std::to_string(member_id);
-            //         ImGui::SameLine(); 
+            //         ImGui::SameLine();
             //         ImGui::RadioButton(strultr.c_str(), &remap->fixture->attributes[member_id].combining , 3);
 
             //         member_id++;
 
             //     }
-                
+
             // }
 
     });
 
-    Editor<Artnet>([](Node*node,Artnet* an){ 
+    Editor<Artnet>([](Node*node,Artnet* an){
 
         for (auto &u : an->universes) {
 
             std::string str = "universe "+std::to_string(u.first);
-            ImGui::Text(str.c_str()); 
+            ImGui::Text(str.c_str());
 
             draw_raw(&u.second->data[0], u.second->data.size());
 
@@ -300,12 +300,12 @@ void Editors::init() {
 
     });
 
-    ////////// STRUCT.HPP 
+    ////////// STRUCT.HPP
 
     // TOFIX
 
-    // Editor<Struct>([](Node* node, Struct *s){ 
-        
+    // Editor<Struct>([](Node* node, Struct *s){
+
     //     std::string str = s->name+" " +std::to_string(s->size());
     //     ImGui::Text(str.c_str());
 
@@ -316,17 +316,17 @@ void Editors::init() {
 
     //         for (auto& m : c->members) {
     //             std::string str = "  -- "+m.name+" "+std::to_string(m.size);
-    //             ImGui::Text(str.c_str());                
+    //             ImGui::Text(str.c_str());
     //         }
 
 
     //     }
-    
+
     // });
 
-    ////////// SHADER.HPP 
+    ////////// SHADER.HPP
 
-    Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){ 
+    Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){
 
          ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
@@ -341,15 +341,15 @@ void Editors::init() {
 
                     frageditor.SetShowWhitespaces(false);
                     frageditor.SetReadOnly(false);
-                    frageditor.SetText(shader->frag.src); 
+                    frageditor.SetText(shader->frag.src);
 
                     init = true;
                 }
 
                 static std::chrono::_V2::system_clock::time_point frag_last_change;
-                if (frag_last_change != shader->last_change) { 
+                if (frag_last_change != shader->last_change) {
 
-                    frageditor.SetText(shader->frag.src); 
+                    frageditor.SetText(shader->frag.src);
 
                     frag_last_change = shader->last_change;
 
@@ -366,7 +366,7 @@ void Editors::init() {
                     shader->create(x,shader->vert.src);
 
                 }
-                
+
                 ImGui::EndTabItem();
 
             }
@@ -380,19 +380,19 @@ void Editors::init() {
 
                     verteditor.SetShowWhitespaces(false);
                     verteditor.SetReadOnly(false);
-                    verteditor.SetText(shader->vert.src); 
+                    verteditor.SetText(shader->vert.src);
 
                     init = true;
                 }
 
                 static std::chrono::_V2::system_clock::time_point vert_last_change;
-                if (vert_last_change != shader->last_change) { 
+                if (vert_last_change != shader->last_change) {
 
-                    verteditor.SetText(shader->vert.src); 
+                    verteditor.SetText(shader->vert.src);
                     vert_last_change = shader->last_change;
-                    
+
                 }
-                
+
                 verteditor.Render("frageditor");
 
                 if (verteditor.IsTextChanged()) {
@@ -412,12 +412,12 @@ void Editors::init() {
             ImGui::EndTabBar();
 
         }
-   
+
     });
 
-    ////////// Log.HPP 
-    
-    Editor<Log>([](Node* node, Log *log_n){ 
+    ////////// Log.HPP
+
+    Editor<Log>([](Node* node, Log *log_n){
 
 
         static bool is_verbose = false;
@@ -451,43 +451,43 @@ void Editors::init() {
             if (m.severity == plog::Severity::warning) color = warning;
             if (m.severity == plog::Severity::verbose) {color = verbose;
 
-                
 
-                
+
+
             if (!is_verbose) continue;}
 
             ImGui::PushStyleColor(ImGuiCol_Text, color);
             std::string str = " "+m.msg;
-            ImGui::Text(str.c_str()); 
+            ImGui::Text(str.c_str());
             ImGui::PopStyleColor();
 
 
         }
     });
 
-    ////////// File.HPP 
+    ////////// File.HPP
 
-    Editor<File>([](Node* node, File *file){ 
+    Editor<File>([](Node* node, File *file){
 
 
-        char path[512]; 
+        char path[512];
         memset(path,0,512);
         memcpy(path,file->path.c_str(),file->path.size());
 
         if (ImGui::InputText("path", path, 512)) {
-    
+
             if (strcmp(path, file->path.c_str())) {
-                
+
                 file->read(path);
 
                 if (!file->loaded) node->name = "File";
                 else node->name = node->name = file->name()+"."+file->extension+"";
-                
+
             }
-        
+
         }
-        
-        char data[512000]; 
+
+        char data[512000];
         memset(data,0,512000);
         memcpy(data,&file->data[0],file->data.size());
 
@@ -497,26 +497,26 @@ void Editors::init() {
 
             codeeditor.SetShowWhitespaces(false);
             codeeditor.SetReadOnly(false);
-            codeeditor.SetText(file->data.data()); 
+            codeeditor.SetText(file->data.data());
             curr = file;
         }
-        
+
         codeeditor.Render("codeeditor");
 
         if (codeeditor.IsTextChanged()) {
 
-            if (file->path.length()) file->write(codeeditor.GetText().c_str()); 
+            if (file->path.length()) file->write(codeeditor.GetText().c_str());
 
             else file->loadString(codeeditor.GetText().c_str());
 
-            node->bkpupdate(); 
+            node->bkpupdate();
 
         }
 
     });
 
 
-    ////////// Texture.HPP 
+    ////////// Texture.HPP
 
     Editor<Texture>([](Node* node, Texture *texture){
 
@@ -529,7 +529,7 @@ void Editors::init() {
 
     });
 
-    ////////// BUFFER.HPP 
+    ////////// BUFFER.HPP
 
     Editor<Buffer>([](Node* node, Buffer *buffer){
 
@@ -557,121 +557,133 @@ void Editors::init() {
 
         // auto inst = (*buffer)[obj_current];
 
-        // if (obj_current <= buffer->members.size()-1) 
+        // if (obj_current <= buffer->members.size()-1)
         if (draw_guis(buffer)) node->update();
 
     });
 
     // tofix
 
-    // Editor<Layer>([](Node* node, Layer *layer){ 
-        
-    //     Editor<Texture>::cb(node, layer->fb.texture); 
+    // Editor<Layer>([](Node* node, Layer *layer){
 
-    //     Editor<ShaderProgram>::cb(node, &layer->shader); 
+    //     Editor<Texture>::cb(node, layer->fb.texture);
+
+    //     Editor<ShaderProgram>::cb(node, &layer->shader);
 
     //     ImGui::Separator();
-    //     Editor<Object>::cb(node, layer->vbo.vertices); 
+    //     Editor<Object>::cb(node, layer->vbo.vertices);
     //     ImGui::Separator();
-    //     Editor<Object>::cb(node, layer->vbo.indices); 
+    //     Editor<Object>::cb(node, layer->vbo.indices);
     //     ImGui::Separator();
-    //     Editor<VBO>::cb(node, &layer->vbo); 
-        
+    //     Editor<VBO>::cb(node, &layer->vbo);
+
     // });
 
-    ////////// UBO.HPP 
+    ////////// UBO.HPP
 
-    Editor<UBO>([](Node* node, UBO *ubo){ 
+    Editor<UBO>([](Node* node, UBO *ubo){
 
         // std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s):";
         // for (auto s: ubo->subscribers) subs_str += " #"+std::to_string(s->id);
         // ImGui::Text(subs_str.c_str());
 
-        Editor<Buffer>::cb(node, ubo); 
-        
+        Editor<Buffer>::cb(node, ubo);
+
     });
 
-    ////////// MODEL.HPP 
+    ////////// MODEL.HPP
 
-    Editor<Model>([](Node* node, Model *model){ 
-        
+    Editor<Model>([](Node* node, Model *model){
+
+        ImGui::Text((node->name + " " + std::to_string(model->effectors.size())).c_str());
+
+        Editor<Buffer>::cb(node, &engine.dynamic_ubo);
+
+        for (auto x : model->effectors) {
+
+        }
+
         // if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj);  // tofix
-        
+
         // else if (model->file) Editor<File>::cb(node, model->file);
-        
+
     });
 
-    ////////// Artnet.HPP 
-    
-    Editor<DMX>([](Node*node,DMX* dmx){ 
-        
-        for (auto &r : dmx->remaps) Editor<DMX::Remap>::cb(node, &r); 
-        
+    ////////// Artnet.HPP
+
+    Editor<DMX>([](Node*node,DMX* dmx){
+
+        for (auto &r : dmx->remaps) Editor<DMX::Remap>::cb(node, &r);
+
     });
 
-    ////////// VBO.HPP 
-    
-    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
+    ////////// VBO.HPP
 
-    ////////// Effector.HPP 
+    Editor<VBO>([](Node*node,VBO*vbo){
 
-    Editor<Effector>([](Node* node, Effector *effector){ 
-  
-        if (effector->file) Editor<File>::cb(node, effector->file); 
-        
-        for (auto x : effector->args)  { 
-            
+        ImGui::Text((node->name + " " + std::to_string(vbo->models.size())).c_str());
+
+        Editor<Buffer>::cb(node, vbo); });
+
+    ////////// Effector.HPP
+
+    Editor<Effector>([](Node* node, Effector *effector){
+
+        if (effector->file) Editor<File>::cb(node, effector->file);
+
+        for (auto x : effector->args)  {
+
             std::string out_str = x.first+ " "+x.second;
-            
+
             if (effector->ranges.find(x.second) != effector->ranges.end()) for (auto x : effector->ranges[x.second])  out_str += " " + std::to_string(x).substr(0,3) + ",";
 
             ImGui::Text(out_str.c_str());
         }
-                
+
     });
 
-    ////////// Engine.HPP 
-    
+    ////////// Engine.HPP
+
     Editor<Stack>([](Node* node, Stack *stack){ Editor<Log>::cb(node, &logger); });
-    
+
     Editor<Debug>([](Node* node, Debug *debug){ Editor<Log>::cb(node, &logger); });
 
-    ////////// DRAWCALL.HPP 
-    
-    Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); });
+    ////////// DRAWCALL.HPP
 
-    ////////// Atlas.HPP 
-    
-    Editor<Atlas>([](Node* node, Atlas *atlas){ 
-        
-        Editor<Texture>::cb(node, atlas->texture); 
-        
+    Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); Editor<VBO>::cb(node, &dc->vbo); });
+
+    ////////// Atlas.HPP
+
+    Editor<Atlas>([](Node* node, Atlas *atlas){
+
+        Editor<Texture>::cb(node, atlas->texture);
+
         // Editor<Object>::cb(node, atlas->buffer);  // tofix
-        
-        
+
+
     });
 
-    ////////// Component.HPP 
-    
-    // Editor<Component>([](Node* node, Component *comp){ 
-        
+    ////////// Component.HPP
+
+    // Editor<Component>([](Node* node, Component *comp){
+
     //     for (auto &m : comp->members) {
 
     //         std::string str = std::string(m.type_name()) + " " + m.name+ "; ";
     //         ImGui::Text(str.c_str());
     //     }
-        
-        
+
+
     // });
-    ////////// JSON.HPP 
-    
-    Editor<JSON>([](Node* node, JSON *json){ 
+    ////////// JSON.HPP
+
+    Editor<JSON>([](Node* node, JSON *json){
 
         for (auto &m : (*json)["models"]) {ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString());}
 
         for (auto &m : (*json)["effectors"]) {ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString());}
-            
-        
+
+
     });
 
 }
@@ -682,7 +694,7 @@ void Editors::init() {
 
 EditorWidget::EditorWidget() : GUI::Window("Editor")  {  }
 
-void EditorWidget::draw() { 
+void EditorWidget::draw() {
 
     if (!selected || !locked) selected = engine.selected;
 
@@ -692,17 +704,17 @@ void EditorWidget::draw() {
     if (selected->parent()) { name = selected->parent()->name + "::" + name;  }
 
     ImGui::PushStyleColor(ImGuiCol_Text, selected->color);
-    ImGui::Text("%s", name.c_str()); 
+    ImGui::Text("%s", name.c_str());
     ImGui::PopStyleColor(1);
 
     if (ImGui::IsItemClicked()) ImGui::OpenPopup("nodecolorpicker");
     if (ImGui::BeginPopup("nodecolorpicker")) { ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color.x); ImGui::EndPopup(); }
-    
+
     ImGui::SameLine(); ImGui::Checkbox("lock##locked", &locked);
 
     std::string referings;
     for (auto r : selected->referings) referings += " "+(r->name)+",";
-    if (referings.length()) { 
+    if (referings.length()) {
         std::string str = "("+referings.substr(0,referings.length()-2)+")";
         ImGui::SameLine(); ImGui::Text(str.c_str()); }
 
