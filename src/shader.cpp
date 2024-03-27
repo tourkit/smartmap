@@ -73,13 +73,11 @@ std::string ShaderProgram::Builder::frag() {
 
     str += header_fragment;
 
-
     int model_id = 0;
-
 
     for (auto x : effectors) str += x->source() + "\n\n";
 
-    str += "void next() { COLOR = color; uv = UV; color = vec4(1); }\n\n";
+    str += "void next() { COLOR = color; color = vec4(1); }\n\n";
 
     str += comment_line;
 

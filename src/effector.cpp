@@ -20,6 +20,7 @@ Effector::Effector(File *file) : file(file) {
     }
 
     s = &Struct::create(file->name());
+    s->striding(true);
 
     const char* data = (&file->data[0]);
 

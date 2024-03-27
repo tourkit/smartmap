@@ -32,9 +32,9 @@ namespace ImGui {
 
         if (range.size()==2) label += " ( " +std::format("{}",range[0])+", "+std::format("{}", range[1])+" )";
 
-        while (strlen(label.c_str()) < 31) label += " ";
+        while (strlen(label.c_str()) < 35) label += " ";
         label += std::to_string(offset);
-        while (strlen(label.c_str()) < 34) label += " ";
+        while (strlen(label.c_str()) < 40) label += " ";
         label += std::to_string(size);
 
         ImGui::Text(label.c_str());
@@ -69,7 +69,7 @@ static void draw_definition(Member *s, int offset = 0, int depth = 0) {
         offset += m->footprint_all();
     }
 
-    if (s->striding()) ImGui::TextX("float stride", offset, s->stride(), depth+1);
+    if (s->stride()) ImGui::TextX("float stride", offset, s->stride(), depth+1);
 
 }
 

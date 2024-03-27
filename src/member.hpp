@@ -12,14 +12,14 @@ struct Member {
 
     static inline std::unordered_set<Member*> pool; // has a ptr to all axisting Members;
 
-    Member(std::string name_v = "") { 
-        
-        name(name_v); 
-    
-        PLOGV << "#" << name(); 
-        
+    Member(std::string name_v = "") {
+
+        name(name_v);
+
+        PLOGV << "#" << name();
+
         pool.insert(this);
-        
+
     }
 
     virtual ~Member();
@@ -28,61 +28,61 @@ struct Member {
 
     virtual bool owns(Member& m) { return false; }
 
-    virtual void update() { 
-        PLOGV<<name(); 
+    virtual void update() {
+        PLOGV<<name();
         for (auto a : pool) {
             if (a->owns(*this)) {
                 a->update();
-            } 
+            }
         }
     }
 
     virtual uint32_t size() { return 0; }
 
-    virtual uint32_t footprint() { return 0; } 
+    virtual uint32_t footprint() { return 0; }
 
     void quantity(uint32_t quantity_v) { this->quantity_v = quantity_v; update(); }
 
     uint32_t quantity() { return quantity_v; }
-    
-    uint32_t eq(int i) { return i*footprint(); } 
+
+    uint32_t eq(int i) { return i*footprint(); }
 
     virtual uint32_t footprint_all() { return footprint() * quantity_v; }
 
     virtual std::type_index type() { return typeid(*this); }
 
     const char* type_name() {
-        
+
         if (type() == typeid(glm::vec2)) return "vec2";
-            
+
         if (type() == typeid(glm::vec3)) return "vec3";
-            
+
         if (type() == typeid(glm::vec4)) return "vec4";
-            
+
         if (type() == typeid(float)) return "float";
-            
+
         if (type() == typeid(int32_t)) return "int";
-            
+
         if (type() == typeid(uint32_t)) return "uint";
-        
+
             // return "Sampler2D";
-            
+
         return "unknown";
 
     }
 
-    uint8_t count() { 
-        
+    uint8_t count() {
+
         // if (type() == typeid(Struct)) { int x = 0; each([](Member* m){ x += m.count()}; ); return x; }
 
         if (type() == typeid(glm::vec2)) return 2;
-            
+
         if (type() == typeid(glm::vec3)) return 3;
-            
+
         if (type() == typeid(glm::vec4)) return 4;
-        
-        return 1; 
-        
+
+        return 1;
+
     }
 
     void name(std::string name_v) { this->name_v = name_v; }
@@ -105,23 +105,23 @@ struct Member {
 
     bool striding() { return is_striding; }
 
-    virtual Member* copy(Member* x = nullptr) { 
+    virtual Member* copy(Member* x = nullptr) {
 
-        if(!x) x = new Member(name_v); 
+        if(!x) x = new Member(name_v);
 
         x->striding(striding());
 
-        x->quantity_v = quantity_v;    
+        x->quantity_v = quantity_v;
 
         x->members = members;
 
         for (auto &m : x->members) m = m->copy();
-        
+
         x->size_v = size_v;
-        return x; 
-        
+        return x;
+
     }
-    
+
     virtual bool typed() { return false; if (members.size() == 1 && members[0]->name_v.length()) return true; return false; }
 
     std::vector<Member*> members;
@@ -142,13 +142,13 @@ struct Member {
             if (!m->typed()) if (recurse) { str += m->print(recurse-1);} else {str += camel(m->name()); }
 
             else str += m->type_name();
-        
+
             str += " " + lower(m->name());
 
             if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
-            
+
             str += ";";
-    
+
         }
 
         if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
@@ -158,12 +158,12 @@ struct Member {
         return str;
 
     }
-        
 
-    void hard_delete() { 
+
+    void hard_delete() {
 
         for (auto &m : members) {
-            
+
             m->hard_delete();
 
             if (!m->typed()) {
@@ -171,9 +171,9 @@ struct Member {
                 auto to_delete =  m;
 
                 delete m;
-                
+
                 members.erase(std::remove(members.begin(), members.end(), to_delete), members.end());
-                
+
             }
 
         }
@@ -185,20 +185,20 @@ protected:
     std::string name_v;
 
     Member& add(Member* s);
-    
+
     Member& remove(Member* s) {
 
         if (std::find(members.begin(), members.end(), s) != members.end()) {
 
             PLOGV << "remove " << s->name() << " from " << name();
-            
-            members.erase(std::remove(members.begin(), members.end(), s), members.end()); 
+
+            members.erase(std::remove(members.begin(), members.end(), s), members.end());
 
         }
 
         return *this;
 
-    } 
+    }
 
 
 private:
