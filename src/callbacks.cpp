@@ -112,9 +112,8 @@ void Callbacks::init() {
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){
 
-        _this->addPtr<Model>(&_this->is_a<DrawCall>()->vbo.add(node->is_a<File>()))->node();
+        return _this->addPtr<Model>(&_this->is_a<DrawCall>()->vbo.add(node->is_a<File>()))->node();
 
-        return _this;
 
     });
 
@@ -151,15 +150,7 @@ void Callbacks::init() {
 
     NODE<Model>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Effector>( &_this->is_a<Model>()->add( node->is_a<File>() ) )->node(); });
 
-    NODE<Model>::ondelete([](Node* node, Model *model) {
-
-        VBO& vbo = node->parent()->is_a<DrawCall>()->vbo;
-
-        vbo.remove(model);
-
-        PLOGD<<"DCEXLETE;";
-
-         });
+    NODE<Model>::ondelete([](Node* node, Model *model) { node->parent()->is_a<DrawCall>()->vbo.remove(model); });
 
     ////////// Effector.HPP
 

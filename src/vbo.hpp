@@ -44,6 +44,4 @@ struct VBO : Buffer {
 
     std::vector<Model> models ;
 
-    std::filesystem::file_time_type last_modified = std::chrono::file_clock::now();
-
 };

@@ -39,7 +39,6 @@ void DrawCall::draw() {
 
 void DrawCall::update() {
 
-
     vbo.update();
 
     shader.create(&vbo);
