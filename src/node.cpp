@@ -22,12 +22,21 @@
         t_childrens = hidden_childrens;
         for (auto c : t_childrens) delete c;
 
-        if (parent_node) parent_node->remove(node());
+        if (parent_node)
+            parent_node->remove(node());
 
         if (ondelete_cb) ondelete_cb(this->node());
 
         pool.erase(this);
-        for (auto x : pool) for (auto r : x->referings) if ( r == this) { x->referings.erase(r); x->update(); }
+
+        for (auto x : pool) {
+
+            auto bkp =  x->referings;
+            for (auto r : bkp) if ( r == this) x->referings.erase(r);
+
+            // for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
+
+        }
 
         PLOGV << "~" << name;
 
@@ -186,7 +195,7 @@
 
         if (parent_node) parent_node->update();
 
-        for (auto x : referings) x->update();
+        if (referings.size() && *referings.begin()) for (auto x : referings) if (x) x->update();
 
     }
 

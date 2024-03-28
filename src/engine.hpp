@@ -27,13 +27,13 @@ struct Engine {
     Node* selected;
 
     Window window;
-    
+
     GUI* gui;
-    
+
     UBO dynamic_ubo, static_ubo;
-    
+
     Atlas *atlas;
-    
+
     JSON json;
 
     void init();

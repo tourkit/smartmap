@@ -38,6 +38,8 @@ struct VBO : Buffer {
 
     bool pushFile(File *file, int id);
 
+    void reloadFiles();
+
     Model& add(File *file, int quantity = 1);
 
     bool remove(Model* m);

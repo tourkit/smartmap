@@ -713,7 +713,7 @@ void EditorWidget::draw() {
     ImGui::SameLine(); ImGui::Checkbox("lock##locked", &locked);
 
     std::string referings;
-    for (auto r : selected->referings) referings += " "+(r->name)+",";
+    for (auto r : selected->referings) if (r) referings += (r->name)+", ";
     if (referings.length()) {
         std::string str = "("+referings.substr(0,referings.length()-2)+")";
         ImGui::SameLine(); ImGui::Text(str.c_str()); }

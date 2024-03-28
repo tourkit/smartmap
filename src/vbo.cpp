@@ -52,36 +52,23 @@ void VBO::create() {
 
 VBO::~VBO()  { destroy(); }
 
+void VBO::reloadFiles() {
+
+    vertices.quantity(0);
+
+    indices.quantity(0);
+
+    int i = 0;
+
+    for (auto &x : models) pushFile(x.file, i++) ;
+
+    if (models.size()) upload();
+
+}
+
 void VBO::update() {
 
     Buffer::update();
-
-    static std::filesystem::file_time_type last_modified = std::chrono::file_clock::now();
-
-    static bool has_changed = false;
-
-    for (auto &x : models) {
-
-        auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::REPO_DIR) / x.file->path);
-
-        if (last_modified  < last_) { last_modified = last_; has_changed = true; }
-
-    }
-
-    if (has_changed) {
-
-        has_changed = false;
-
-        vertices.quantity(0);
-
-        indices.quantity(0);
-
-        int i = 0;
-        for (auto &x : models) pushFile(x.file, i++) ;
-
-        upload();
-
-    }
 
 }
 

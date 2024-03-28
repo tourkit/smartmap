@@ -211,6 +211,10 @@ void  ShaderProgram::create(VBO* vbo) {
 
     create(builder.frag(),builder.vert());
 
+    engine.dynamic_ubo.bind(this);
+
+    engine.static_ubo.bind(this);
+
 }
 
 void  ShaderProgram::create(std::string frag_src, std::string vert_src) {

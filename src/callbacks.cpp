@@ -106,6 +106,8 @@ void Callbacks::init() {
 
     });
 
+    NODE<DrawCall>::oncreate([](Node* node, DrawCall *dc){ node->referings.insert(nullptr); });
+
     NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){ dc->draw(); });
 
     NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
@@ -150,7 +152,14 @@ void Callbacks::init() {
 
     NODE<Model>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Effector>( &_this->is_a<Model>()->add( node->is_a<File>() ) )->node(); });
 
-    NODE<Model>::ondelete([](Node* node, Model *model) { node->parent()->is_a<DrawCall>()->vbo.remove(model); });
+    NODE<Model>::ondelete([](Node* node, Model *model) {
+
+        auto dc = node->parent()->is_a<DrawCall>();
+        auto &vbo = dc->vbo;
+
+        vbo.remove(model);
+
+    });
 
     ////////// Effector.HPP
 
