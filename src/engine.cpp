@@ -23,23 +23,23 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0), dyna
 
     window.max_fps = 59;
 
-    gui = new GUI(window.id); 
+    gui = new GUI(window.id);
 
     window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
 
     window.keypress_cbs[GLFW_KEY_S] = [](int key) { engine.save("project2.json"); };
-    
+
     window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
-    
+
 }
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
 void Engine::init() {
 
-    Callbacks::init(); 
-    
+    Callbacks::init();
+
     Editors::init();
-    
+
     atlas = new Atlas(4096, 4096, "assets/medias/");
 
     tree = new Node("tree");
@@ -47,17 +47,17 @@ void Engine::init() {
     debug = tree->addOwnr<Debug>()->node();//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); });
     debug->addPtr<UBO>(&dynamic_ubo);
-    debug->addPtr<Atlas>(atlas);   
+    debug->addPtr<Atlas>(atlas);
 
 
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
     // models = tree->addOwnr<Node>("Models")->node();
-    models = tree->addFolder<Model>("Models", "assets/models/")->node();
+    models = tree->addFolder<File>("Models", "assets/models/")->node();
 
     // effectors = tree->addOwnr<Node>("Effectors")->node();
-    effectors = tree->addFolder<Effector>("Effectors", "assets/effectors/")->node();
+    effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
@@ -65,7 +65,7 @@ void Engine::init() {
 
     outputs = tree->addOwnr<Node>("Outputs")->node();
 
-    stack = tree->addOwnr<Stack>()->node()->active(1); 
+    stack = tree->addOwnr<Stack>()->node()->active(1);
 
     debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
 
@@ -78,15 +78,15 @@ void Engine::run() {
     auto &window = getInstance().window;
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
-        
+
         engine.dynamic_ubo.upload();
 
         engine.tree->run();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        engine.gui->draw(); 
-        
+        engine.gui->draw();
+
     });
 
 }
@@ -98,26 +98,26 @@ void Engine::open(const char* file) {
 
     // for (auto e :engine.gui->editors) delete e; // editor widget deletion is fucked
 
-    if (!json.loaded) { 
+    if (!json.loaded) {
 
         if (!project_filepath.length()) {
 
             project_filepath = file;
-            
-            engine.gui->editors.push_back(new EditorWidget()); 
 
-            engine.gui->editors.push_back(new EditorWidget()); 
+            engine.gui->editors.push_back(new EditorWidget());
+
+            engine.gui->editors.push_back(new EditorWidget());
             engine.gui->editors.back()->selected = debug;
             engine.gui->editors.back()->locked = true;
 
             auto f = debug->addOwnr<File>(project_filepath);
             f->onchange([](Node* n) { engine.open(engine.project_filepath.c_str()); });
             f->select();
-        
+
         }
 
-        return; 
-        
+        return;
+
     }
 
     project_name = file;
@@ -147,7 +147,7 @@ void Engine::open(const char* file) {
     for (auto &m : json["inputs"]) if (m.name.IsString() && m.value.IsArray()) if (!strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>(((m.value.GetArray().Size() && m.value.GetArray()[0].IsString()) ? m.value.GetString() : nullptr ))->active(1);
 
     if (true) for (auto &l : json["layers"]) {
-        
+
         auto layer = stack->addOwnr<Layer>();
 
         if (l.name.IsString()) layer->name = l.name.GetString();
@@ -168,7 +168,7 @@ void Engine::open(const char* file) {
             // auto model = layer->addPtr<Struct>(&layer->get()->vbo.models.back());
 
             // if (m.name.IsString()) model->name = m.name.GetString();
-            
+
             // if (m.value.GetArray().Size() != 2) continue;
             // if (!m.value[1].IsArray()) continue;
 
@@ -186,7 +186,7 @@ void Engine::open(const char* file) {
         }
 
         layer->update();
-        
+
     }
 
     if (json.document.HasMember("editors") && json.document["editors"].IsArray()) for (auto &e : json.document["editors"].GetArray()) {
@@ -219,19 +219,19 @@ void Engine::save(const char* file) {
     json.document["editors"].Clear();
 
     for (auto e : gui->editors) {
-        
+
         auto v = rapidjson::Value(rapidjson::kArrayType);
 
         v.PushBack(0, json.document.GetAllocator());
         v.PushBack(0, json.document.GetAllocator());
         v.PushBack(0, json.document.GetAllocator());
         v.PushBack(0, json.document.GetAllocator());
-        
+
         if (e->selected) v.PushBack(rapidjson::Value(e->selected->namesdf().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
         if (e->locked) v.PushBack(rapidjson::Value(true), json.document.GetAllocator());
 
         auto &x = json.document["editors"].PushBack(v, json.document.GetAllocator());
-        
+
     }
 
     rapidjson::StringBuffer buffer;
@@ -239,7 +239,7 @@ void Engine::save(const char* file) {
     writer.SetIndent(' ', 2); // Set indent to 2 spaces
     json.document.Accept(writer);
 
-    // inline from depth 
+    // inline from depth
     std::string result = std::regex_replace(buffer.GetString(), std::regex(R"(\s{5}(([\]\}])|\s{2,}))"), " $2");
     // result = std::regex_replace(result, std::regex(R"(\n)"), " \n\n");
 

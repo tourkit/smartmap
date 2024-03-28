@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <vector>
+#include <set>
 #include <unordered_map>
 #include <unordered_set>
 #include <typeindex>
@@ -32,6 +33,8 @@ struct UntypedNode {
 
     bool locked = false, loaded = false, hidden = false, open = true, is_active = false;
 
+    static inline std::set<UntypedNode*> pool;
+
     UntypedNode(std::string name = "node", ImVec4 color = {1,1,1,1});
 
     virtual ~UntypedNode();
@@ -56,8 +59,6 @@ struct UntypedNode {
     Node* child(std::vector<std::string> names);
 
     uint32_t index();
-
-    void updateRefs();
 
     void addList(NodeList *nodes);
 
@@ -103,7 +104,7 @@ struct UntypedNode {
 
     std::string namesdf();
 
-    std::vector<Node*> referings;
+    std::set<Node*> referings;
 
 
     auto begin() { return childrens.begin(); }
@@ -217,19 +218,20 @@ struct TypedNode : UntypedNode {
 
             if (onaddtyped_cb[type()].find(n->type()) != onaddtyped_cb[type()].end()) {
 
-                std::string  sss = type().name();
-                std::string  xxx = name;
-                std::string  sss2 = n->type().name();
-                std::string  xxx2 = n->name;
                 n = onaddtyped_cb[type()][n->type()](node(),n->node());
 
-                if (n != node_v) return n->node();
+                if (!n) return nullptr;
+
 
             }
 
         }
 
-        return UntypedNode::add(n);
+        if (n == node_v) {return UntypedNode::add(n);}
+        else {
+            ((TypedNode<Any>*)node_v)->referings.insert(n->node());
+            return n->node();
+        }
 
     }
 
@@ -283,7 +285,7 @@ struct TypedNode : UntypedNode {
 
         for (auto f : dir->get()->list)  dir->node()->TypedNode::addOwnr<File>(f);
 
-        // for (auto f : dir->childrens) folder->TypedNode::addOwnr<U>(f->TypedNode::is_a<File>());//->referings.push_back3(f); this shjouldnt hpn here
+        // for (auto f : dir->childrens) folder->TypedNode::addOwnr<U>(f->TypedNode::is_a<File>());//->referings.insert(f); this shjouldnt hpn here
 
         return dir->node();
         // return folder;

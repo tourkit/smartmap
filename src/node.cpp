@@ -9,12 +9,12 @@
 
         uid = uid++;
 
+        pool.insert(this);
+
     }
 
 
     UntypedNode::~UntypedNode() {
-
-        updateRefs();
 
         auto t_childrens = childrens;
         for (auto c : t_childrens) delete c;
@@ -25,6 +25,9 @@
         if (parent_node) parent_node->remove(node());
 
         if (ondelete_cb) ondelete_cb(this->node());
+
+        pool.erase(this);
+        for (auto x : pool) for (auto r : x->referings) if ( r == this) { x->referings.erase(r); x->update(); }
 
         PLOGV << "~" << name;
 
@@ -99,11 +102,13 @@
 
             n = onadd_cb[n->type()](this->node(),n->node());
 
-            if (n->node() == this->node()) return nullptr;
+            if (!n) return nullptr;
 
         }
 
-        n->parent(node());
+        if (n == node_v) n->parent(node());
+
+        else n->referings.insert(this->node());
 
         update();
 
@@ -181,7 +186,7 @@
 
         if (parent_node) parent_node->update();
 
-        updateRefs();
+        for (auto x : referings) x->update();
 
     }
 
@@ -203,8 +208,6 @@
         update();
 
     }
-
-    void UntypedNode::updateRefs() { engine.tree->runCB([this](Node* curr){ for (auto r : curr->referings) if (r == this) curr->update(); }); }
 
     uint32_t UntypedNode::index() {
 

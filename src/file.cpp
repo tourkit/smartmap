@@ -1,6 +1,5 @@
 #include "file.hpp"
 #include "log.hpp"
-#include <filesystem>
 #include <fstream>
 
 static std::vector<std::string> explodefilename(std::string const & s, char delim) {
@@ -37,7 +36,7 @@ void File::update() { read(path); }
 
 void File::reload() { read(path); }
 
-bool File::hasChanged() { 
+bool File::hasChanged() {
 
     if (loaded && last_modified != getTimeModified()) {
 
@@ -61,7 +60,7 @@ void File::read(std::string path, bool binary){
     data.resize(0);
 
     loaded = false;
-    
+
     auto flags = std::ifstream::in;
     if (binary) flags |= std::ifstream::binary;
 
@@ -71,7 +70,7 @@ void File::read(std::string path, bool binary){
 
         name_v = std::filesystem::path(path).stem().filename().string();
 
-        extension = std::filesystem::path(path).extension().string().substr(1);   
+        extension = std::filesystem::path(path).extension().string().substr(1);
 
         location = std::filesystem::path(path).parent_path().string();
 
@@ -89,11 +88,11 @@ void File::read(std::string path, bool binary){
         last_modified = getTimeModified();
 
         PLOGD << path << " " << size << "kb";
-        
+
         loaded = true;
 
         return;
-    
+
 
     }
 
@@ -107,7 +106,7 @@ void File::loadString(std::string data) {
     this->data.resize(data.length());
 
     memcpy(&this->data[0],&data[0],data.length());
-    
+
     loaded = true;
 
     last_modified = std::chrono::time_point_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();

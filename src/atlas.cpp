@@ -1,8 +1,8 @@
-#include "atlas.hpp"  
+#include "atlas.hpp"
 
-#include "directory.hpp"  
-#include "engine.hpp"  
-#include "shader.hpp"  
+#include "directory.hpp"
+#include "engine.hpp"
+#include "shader.hpp"
 #include "texture.hpp"
 #include "ubo.hpp"
 #include "buffer.hpp"
@@ -48,30 +48,30 @@ void Atlas::fromDir(std::string path) {
     Directory dir(path);
 
     for (auto &file:dir.list) {
-        
+
         Image img(file);
 
         if (!img.loaded) continue;
-        
+
         auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
-        if (!r.width) {PLOGW << img.name << " can't fit, need more space."; continue;} 
+        if (!r.width) {PLOGW << img.name << " can't fit, need more space."; continue;}
 
         float x[4] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
-        
+
         engine.static_ubo["Media"].push(&x[0]);
 
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 
     }
 
+    engine.static_ubo.update();
+
 }
 
 void Atlas::link(ShaderProgram* shader) {
 
-    engine.static_ubo.update();
-    
     shader->sendUniform("medias", 1);
+
     texture->bind();
 
 }
- 

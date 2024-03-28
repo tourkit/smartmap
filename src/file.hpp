@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdint>
 #include <functional>
+#include <filesystem>
 
 
 struct File {
@@ -16,13 +17,13 @@ struct File {
     bool loaded = false;
 
     void update();
-    
+
     std::string name();
 
     std::function<void(File*)> callback = [](File* f){};
 
     File();
-    
+
     File(std::string source, bool binary = false);
 
     int64_t getTimeModified();
@@ -41,5 +42,5 @@ struct File {
     #else
     static inline std::string REPO_DIR = "./";
     #endif
-    
+
 };

@@ -56,14 +56,6 @@ void VBO::update() {
 
     Buffer::update();
 
-    // for (auto m : models) {
-
-    //     PLOGD << m.file->name();
-
-    // }
-
-    if (init) upload();
-
 }
 
 void VBO::upload() {
@@ -125,10 +117,27 @@ void VBO::draw(int count) {
 
 }
 
+bool VBO::remove(Model* m) {
 
-Model& VBO::add(File* file, int quantity) {
+    auto it = std::find_if(models.begin(), models.end(), [m](Model& m_) { return &m_ == m; });
 
-    Assimp::Importer importer;
+    if (it == models.end()) return false;
+
+    models.erase(it);
+
+    vertices.quantity(0);
+
+    indices.quantity(0);
+
+    for (int i = 0 ; i < models.size(); i++) pushFile( models[i].file, i);
+
+    return true;
+}
+
+bool VBO::pushFile(File* file, int id) {
+
+
+ Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       |
         aiProcess_Triangulate            |
@@ -149,7 +158,7 @@ Model& VBO::add(File* file, int quantity) {
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["ID"].set<uint32_t>(models.size());
+        v["ID"].set<uint32_t>(id);
 
     }
 
@@ -164,9 +173,21 @@ Model& VBO::add(File* file, int quantity) {
 
     }
 
+    return true;
+
+}
+
+Model& VBO::add(File* file, int quantity) {
+
+    pushFile(file, models.size());
+
     models.emplace_back(file,quantity);
 
-    update();
+    upload();
+
+    auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::REPO_DIR) / file->path);
+
+    if (last_modified  < last_) last_modified = last_;
 
     return  models.back();
 

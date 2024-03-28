@@ -21,10 +21,13 @@ int main() {
 
     auto m_node = dc.add((*engine.models)[0]);
 
-    m_node->add((*engine.effectors)[0]);
-    m_node->add((*engine.effectors)[1]);
+    // m_node->add((*engine.effectors)[2]);
+    // m_node->add((*engine.effectors)[0]);
+    // m_node->add((*engine.effectors)[1]);
 
     engine.gui->editors.push_back(new EditorWidget());
+
+    // engine.
 
     engine.run();
 

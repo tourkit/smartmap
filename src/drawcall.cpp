@@ -30,8 +30,8 @@ DrawCall::DrawCall() {
 void DrawCall::draw() {
 
     // engine.atlas->texture->bind();
-    
-    shader.use(); 
+
+    shader.use();
 
     vbo.draw();
 
@@ -39,7 +39,8 @@ void DrawCall::draw() {
 
 void DrawCall::update() {
 
-    // unbind old ahder ?
+
+    vbo.update();
 
     shader.create(&vbo);
 

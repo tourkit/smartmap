@@ -14,7 +14,11 @@ struct Model : Struct {
 
     File* file;
 
-    Model(File* file, int quantity = 1) : Struct(file->name(), quantity) { engine.dynamic_ubo.add(*this); }
+    Model();
+
+    Model(File* file, int quantity = 1);
+
+    ~Model();
 
     Effector& add(File* file);
 

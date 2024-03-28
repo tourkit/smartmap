@@ -41,7 +41,7 @@ void Callbacks::init() {
 
     ////////// FILE.HPP
 
-    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name(); });
+    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name() + " . " + file->extension; });
 
     ////////// Artnet.HPP
 
@@ -90,13 +90,7 @@ void Callbacks::init() {
 
     });
 
-    NODE<Stack>::onadd<Layer>([](Node*_this,Node*node){
-
-        node->is_a<Layer>()->update();
-
-        return node;
-
-    });
+    NODE<Stack>::onadd<Layer>([](Node*_this,Node*node){ node->is_a<Layer>()->update(); return node; });
 
     NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ return node; });
 
@@ -104,11 +98,13 @@ void Callbacks::init() {
 
     ////////// DRAWCALL.HPP
 
-    NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
-
-    NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
-
     NODE<VBO>::onrun([](Node* node, VBO *vbo){ vbo->draw(); });
+
+    NODE<VBO>::onadd<File>([](Node*_this,Node*node){
+
+        return _this->addPtr<Model>( &_this->is_a<VBO>()->add( node->is_a<File>() ) )->node();
+
+    });
 
     NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){ dc->draw(); });
 
@@ -116,13 +112,9 @@ void Callbacks::init() {
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){
 
-        auto &dc = *_this->is_a<DrawCall>();
+        _this->addPtr<Model>(&_this->is_a<DrawCall>()->vbo.add(node->is_a<File>()))->node();
 
-        auto &model = dc.vbo.add(node->is_a<File>());
-
-        node = _this->addPtr<Model>(&model)->node();
-
-        return node;
+        return _this;
 
     });
 
@@ -157,53 +149,31 @@ void Callbacks::init() {
 
     NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->name(); });
 
-    NODE<Model>::onadd<File>([](Node*_this,Node*node){
-
-        auto model = _this->is_a<Model>();
-        auto file = node->is_a<File>();
-
-        auto &z = model->add(file);
-
-        _this->addPtr<Effector>(&z)->node();
-
-        return _this;
-
-    });
+    NODE<Model>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Effector>( &_this->is_a<Model>()->add( node->is_a<File>() ) )->node(); });
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
-        auto dc = node->parent()->is_a<DrawCall>();
+        VBO& vbo = node->parent()->is_a<DrawCall>()->vbo;
 
-        if (!dc) return;
+        vbo.remove(model);
 
-        dc->vbo.remove(model);
+        PLOGD<<"DCEXLETE;";
 
-     });
+         });
 
     ////////// Effector.HPP
 
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name(); });
-    NODE<Effector>::ondelete([](Node* node, Effector *effector) {
 
-        auto model = node->parent()->is_a<Model>();
-
-        if (!model) return;
-
-        model->remove(effector);
-
-     });
+    NODE<Effector>::ondelete([](Node* node, Effector *effector) { node->parent()->is_a<Model>()->remove(effector); });
 
     ////////// Atlas.HPP
 
-    // NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { atlas->update(); });
+    NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { atlas->fromDir(atlas->path); });
 
     //////// Buffer.HPP
 
     NODE<Buffer>::onchange([](Node* node, Buffer *buffer) { PLOGD<<"ooo"; });
-
-    ////////// ShaderProgram.HPP
-
-    // NODE<ShaderProgram>::onchange([](Node* node, ShaderProgram *shader) { });
 
     ////////// Directory.HPP
 
@@ -212,8 +182,8 @@ void Callbacks::init() {
     ////////// NDI.HPP
 
     NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ sender->init(); });
-    NODE<NDI::Sender>::onrun([](Node* node, NDI::Sender *sender){ sender->tick(); });
 
+    NODE<NDI::Sender>::onrun([](Node* node, NDI::Sender *sender){ sender->tick(); });
 
     ////////// JSON.HPP
 
