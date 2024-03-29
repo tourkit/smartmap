@@ -39,7 +39,11 @@
 
         static bool destroy(std::string name) {
 
-            for (auto &s : owned) if (s->name() == name) { owned.erase(s); delete &s; return true; }
+            Struct* found = nullptr;
+
+            for (auto &s : owned) if (s->name() == name) { found = s; break; }
+
+            if (found) { owned.erase(found); delete found; return true; }
 
             return false;
 

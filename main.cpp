@@ -17,23 +17,34 @@ int main() {
 
 
     PLOGD << Struct::pool.size();
+
     Struct& test = Struct::create("Test").add<float>("x").add<float>("y");
 
-    Buffer buf;
+    Buffer* x;
 
-    Struct tests("Tests",2);
+    {
 
-    buf.add(tests);
+        Buffer buf;
 
-    auto &x = buf.copy();
-    PLOGD << "-";
-    PLOGD << x.print(10);
-    PLOGD << "+";
-    PLOGD << buf.print(10);
-    delete &x;
-    PLOGD << "ooooooo";
+        Struct tests("Tests",2);
+
+        buf.add(tests);
+
+        x = &buf.copy();
+
+    }
+
+    x->hard_delete();
+
+    delete x;
+
+
+    Struct::destroy("Test");
 
     PLOGD << Struct::pool.size();
+    for (auto x : Struct::pool)PLOGD << x->name();
+
+    PLOGD << "ooooooo";
 
     exit(0);
 
