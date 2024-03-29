@@ -110,12 +110,6 @@
 
         }
 
-        void each(std::function<void(Member&, int, int)> cb, std::function<void(Member&)> after_cb = nullptr) { each([cb](Member& m, int offset, int depth){ cb(m,offset,depth); }, 0, 0, after_cb); }
-
-        void each(std::function<void(Member&, int)> cb, std::function<void(Member&)> after_cb = nullptr)  { each([cb](Member& m, int offset, int depth){ cb(m,offset); }, 0, 0, after_cb); }
-
-        void each(std::function<void(Member&)> cb, std::function<void(Member&)> after_cb = nullptr)  { each([cb](Member& m, int offset, int depth){ cb(m); }, 0, 0, after_cb); }
-
         void update() override {
 
             size_v = 0;
