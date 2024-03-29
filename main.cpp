@@ -24,17 +24,25 @@ int main() {
     m_node->is_a<Model>()->quantity(2);
 
     m_node->add((*engine.effectors)[3]);
-    m_node->add((*engine.effectors)[1]);
-    // m_node->add((*engine.effectors)[0]);
+    m_node->add((*engine.effectors)[0]);
     // m_node->add((*engine.effectors)[1]);
 
     engine.gui->editors.push_back(new EditorWidget());
 
-    // engine.
+    // // engine.
+    // for (int i = 0 ; i < 100; i++) {
 
+    // auto &bkp = engine.dynamic_ubo.copy();
+    // delete &bkp;
+    // }
+    // PLOGD
     engine.run();
 
 }
 
 
-// do range // do default // on push
+// redo copy ?
+
+// finish remap
+// then
+// on Buffer:: add (member) { set defeualt } // do range // do default // on push

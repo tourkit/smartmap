@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include "node.hpp"
 #include "ubo.hpp"
+#include "log.hpp"
 
 struct Stack {  };
 
@@ -15,6 +16,8 @@ struct DrawCall;
 struct Atlas;
 
 struct Engine {
+
+    bool logger = Log::getInstance().cout(true);
 
     Node* tree;
     Node* stack;

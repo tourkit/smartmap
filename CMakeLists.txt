@@ -13,17 +13,17 @@ find_package(Freetype REQUIRED)
 
 add_executable(smartmap
 
+    src/log.cpp
+
     main.cpp
 
-    src/log.cpp
-    
     src/test.cpp
 
     src/directory.cpp
     src/file.cpp
     src/json.cpp
     src/image.cpp
-    
+
     src/dmx.cpp
     src/artnet.cpp
     src/ndi.cpp
@@ -34,24 +34,24 @@ add_executable(smartmap
     src/member.cpp
     src/struct.cpp
     src/instance.cpp
-    
+
     src/node.cpp
     src/callbacks.cpp
-    
+
     src/window.cpp
     src/fps.cpp
-    src/vbo.cpp  
+    src/vbo.cpp
     src/ubo.cpp
     src/framebuffer.cpp
     src/texture.cpp
     src/shader.cpp
-    
+
     src/engine.cpp
     src/model.cpp
     src/effector.cpp
     src/drawcall.cpp
     src/atlas.cpp
-    
+
     src/gui.cpp
     src/tree.cpp
     src/editor.cpp

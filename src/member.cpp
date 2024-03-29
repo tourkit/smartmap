@@ -127,7 +127,7 @@ Member* Member::copy(Member* x) {
 
     if(!x) x = new Member(name_v);
 
-    x->striding(striding());
+    this->is_striding = is_striding;
 
     x->quantity_v = quantity_v;
 

@@ -39,8 +39,8 @@ struct Log {
 
     Appender appender;
 
-    void cout(bool is_verbose = false) { appender.cmd = true; appender.is_verbose = is_verbose; }
-    
+    bool cout(bool is_verbose = false) { appender.cmd = true; appender.is_verbose = is_verbose; return is_verbose;}
+
     static Log& getInstance() { static Log instance;  return instance; }
 
 private:
