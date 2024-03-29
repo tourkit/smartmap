@@ -148,8 +148,6 @@ std::string Member::print(int recurse) {
 
     for (auto m : members) {
 
-        // while (m->members.size() == 1 && m->members[0]->typed()) m = m->members[0];
-
         str += " ";
 
         if (!m->typed()) if (recurse) { str += m->print(recurse-1);} else {str += camel(m->name()); }

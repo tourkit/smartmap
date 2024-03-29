@@ -26,7 +26,7 @@ static int hovered_size = -1;
 static bool is_hovered = false;
 namespace ImGui {
 
-    static void TextX(std::string label, int offset, int size, int depth, std::vector<float> range = { 0,1 } ) {
+    static void TextX(std::string label, int offset, int size, int depth, std::vector<float> range = {}) {
 
         for (int i = 0; i < depth; i++) label = "    "+label;
 
@@ -51,25 +51,43 @@ namespace ImGui {
 
 };
 
-static void draw_definition(Member *s, int offset = 0, int depth = 0) {
+static void draw_definition(Member *member, int offset = 0, int depth = 0) {
 
 
     std::vector<float> range;
-    if (s->range_from_ptr && s->range_to_ptr) {
-        range.resize(2);
-        memcpy(&range[0], s->range_from_ptr, sizeof(float));
-        memcpy(&range[1], s->range_to_ptr, sizeof(float));
-    }
-    ImGui::TextX(std::string(!s->typed() ? "struct" : s->type_name()) + " " + s->name(), offset, s->footprint(), depth,range);
 
-    for (auto m : s->members) {
+    if (member->range_from_ptr && member->range_to_ptr) {
+
+        range.resize(2);
+
+        float from = *(float*)member->range_from_ptr ;
+        float to = *(float*)member->range_to_ptr ;
+        size_t size = sizeof(float);
+
+        if (member->typed() && member->type() == typeid(int)) {
+
+            from = *(int*)member->range_from_ptr;
+            to = *(int*)member->range_to_ptr;
+            size = sizeof(int);
+
+        }
+
+        memcpy(&range[0], &from, size);
+
+        memcpy(&range[1], &to, size);
+
+    }
+
+    ImGui::TextX(std::string(!member->typed() ? "struct" : member->type_name()) + " " + member->name(), offset, member->footprint(), depth,range);
+
+    for (auto m : member->members) {
 
         draw_definition(m, offset, depth+1);
 
         offset += m->footprint_all();
     }
 
-    if (s->stride()) ImGui::TextX("float stride", offset, s->stride(), depth+1);
+    if (member->stride()) ImGui::TextX("float stride", offset, member->stride(), depth+1);
 
 }
 

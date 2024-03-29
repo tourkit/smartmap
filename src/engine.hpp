@@ -5,7 +5,8 @@
 #include "node.hpp"
 #include "ubo.hpp"
 
-struct Stack {};
+struct Stack {  };
+
 struct Debug {};
 
 struct GUI;

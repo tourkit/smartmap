@@ -13,15 +13,18 @@
 
 int main() {
 
-    // logger.cout(true);
+    logger.cout(true);
 
     engine.init();
 
     auto &dc = *engine.stack->addOwnr<DrawCall>();
 
     auto m_node = dc.add((*engine.models)[0]);
+
     m_node->is_a<Model>()->quantity(2);
-    // m_node->add((*engine.effectors)[2]);
+
+    m_node->add((*engine.effectors)[3]);
+    m_node->add((*engine.effectors)[1]);
     // m_node->add((*engine.effectors)[0]);
     // m_node->add((*engine.effectors)[1]);
 
@@ -34,4 +37,4 @@ int main() {
 }
 
 
-// create a gui::delete pool;
+// do range // do default // on push

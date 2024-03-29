@@ -9,3 +9,21 @@ Instance Buffer::operator[](int id) { return Instance{this,0,this}[id]; }
     //   void Buffer::remapEach(Buffer& from, Member* from_m, Member* to_m) {
 
     //     }
+void Buffer::update() {
+
+        // auto bkp = copy();
+
+        Struct::update();
+
+        // no remap here ?
+
+        data.resize( footprint_all() );
+
+        // remap( bkp );
+
+        // delete &bkp ;
+
+
+        //
+
+    }
