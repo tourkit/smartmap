@@ -154,8 +154,7 @@ void Callbacks::init() {
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
-        auto dc = node->parent()->is_a<DrawCall>();
-        auto &vbo = dc->vbo;
+        auto &vbo = node->parent()->is_a<DrawCall>()->vbo;
 
         vbo.remove(model);
 

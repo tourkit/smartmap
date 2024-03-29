@@ -16,27 +16,19 @@
 
     UntypedNode::~UntypedNode() {
 
-        auto t_childrens = childrens;
-        for (auto c : t_childrens) delete c;
-
-        t_childrens = hidden_childrens;
-        for (auto c : t_childrens) delete c;
-
-        if (parent_node)
-            parent_node->remove(node());
+        if (parent_node) parent_node->remove(node());
 
         if (ondelete_cb) ondelete_cb(this->node());
 
         pool.erase(this);
 
-        for (auto x : pool) {
+        for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
 
-            auto bkp =  x->referings;
-            for (auto r : bkp) if ( r == this) x->referings.erase(r);
+        auto t_childrens = childrens;
+        for (auto c : t_childrens) delete c;
 
-            // for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
-
-        }
+        t_childrens = hidden_childrens;
+        for (auto c : t_childrens) delete c;
 
         PLOGV << "~" << name;
 
@@ -199,7 +191,7 @@
 
     }
 
-    void UntypedNode::remove(Node *child) {
+    bool UntypedNode::remove(Node *child) {
 
         PLOGV << type_name() << "::" << name << " remove " << child->type_name() << "::" << child->name;
 
@@ -208,13 +200,15 @@
         if ( std::distance(childrens.begin(), it) < 0 ) {
 
             PLOGI << "could not delete, didnt found";
-            return;
+            return false;
 
         }
 
         childrens.erase(it);
 
         update();
+
+        return true;
 
     }
 

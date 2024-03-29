@@ -5,9 +5,9 @@
 
 TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected) {  }
 
-void TreeWidget::draw()  { 
+void TreeWidget::draw()  {
 
-    
+
   ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
 
     if (!selected) selected = engine.tree;
@@ -18,23 +18,28 @@ void TreeWidget::draw()  {
     ImGui::PopItemWidth();
 
     // Create the table
-   
+
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
-        
-        drawChildrens(selected); 
+
+        drawChildrens(selected);
+
+        for (auto x : delete_list) delete x;
+        delete_list.clear();
 
         ImGui::EndTable();
     }
+
     ImGui::PopStyleVar(1);
 }
 
-void TreeWidget::drawChildrens(Node* node) { 
+void TreeWidget::drawChildrens(Node* node) {
 
-    for (auto child : node->childrens) drawNode(child);
-
+    for (auto child : node->childrens){
+        drawNode(child);
+}
 }
 
- 
+
 
 bool TreeWidget::TreeViewNode(Node* node) {
 using namespace ImGui;
@@ -63,12 +68,12 @@ using namespace ImGui;
     auto hovered = IsItemHovered();
 
     ImVec4 node_color = *(ImVec4*)&node->color;
-    
+
     if(engine.selected != node) {
 
         if (hovered) node_color = ImVec4(1, .4, 0, 1);
 
-        else if (engine.selected) node_color.w = .65; 
+        else if (engine.selected) node_color.w = .65;
 
     }
 
@@ -77,7 +82,7 @@ using namespace ImGui;
     SameLine();
     SetCursorPosX(GetCursorPosX()-text_size.x);
     bool x = false;
-    
+
     if (is_renaming != node) {x = TreeNodeEx(node->name.c_str(), flags);}
     else {
 
@@ -85,9 +90,9 @@ using namespace ImGui;
         // name.resize(512);
         // memset(&name[0],0,512);
         // memcpy(&name[0], node->name.c_str(), node->name.size());
-        
+
         ImGui::InputText("##jksdhfjksdfjk", &node->name[0], node->name.size());
-        
+
     }
 
            if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
@@ -99,20 +104,20 @@ using namespace ImGui;
         }
         bool will_exit = false;
         if (!is_deleting) {
-        
+
             ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
             if(ImGui::MenuItem("delete")){ is_deleting = true; }
             ImGui::PopItemFlag();
-        
+
         }else {
 
             if(ImGui::MenuItem("Sure ?")){
-                
+
                 is_deleting = false;
                 auto parent = node->parent();
-                delete node;
+                delete_list.push_back(node);
                 if (parent) parent->update();
-                
+
             }
 
         }
@@ -122,12 +127,12 @@ using namespace ImGui;
         if(ImGui::MenuItem("rename")) is_renaming = node;
 
         if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
-      
+
         if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));
 
         ImGui::EndPopup();
     }
-    
+
     PopStyleColor();
 
         if (ImGui::BeginDragDropSource()) {
@@ -136,7 +141,7 @@ using namespace ImGui;
             ImGui::SetDragDropPayload("_TREENONODE", &(ptr), sizeof(uint64_t));
             ImGui::Text(node->name.c_str());
             ImGui::EndDragDropSource();
-            
+
         }else {
 
             static bool mouse_down = false;
@@ -146,23 +151,23 @@ using namespace ImGui;
             if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
 
             if (mouse_down) if (ImGui::IsMouseReleased(0)) Engine::getInstance().selected = s;
-            
+
             if (ImGui::IsMouseReleased(0)) mouse_down = false;
 
         }
 
-        if (ImGui::BeginDragDropTarget()) {     
+        if (ImGui::BeginDragDropTarget()) {
 
             if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) node->add((Node*)(*(uint64_t*)payload->Data));
 
             ImGui::EndDragDropTarget();
-            
+
         }
 
     SameLine();
-    
-    SetCursorPosX(GetWindowWidth()-30); 
-     
+
+    SetCursorPosX(GetWindowWidth()-30);
+
     std::string str = "##active"+std::to_string(node->uid);
     Checkbox(str.c_str(), &node->is_active);
 
@@ -171,10 +176,10 @@ using namespace ImGui;
 }
 
 
-void TreeWidget::drawNode(Node* node) { 
+void TreeWidget::drawNode(Node* node) {
 
     if (node->hidden) return;
-    
+
     ImGui::TableNextRow();
 
     if (ImGui::TableNextColumn()) {
@@ -187,7 +192,7 @@ void TreeWidget::drawNode(Node* node) {
     // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
 
         const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
-        
+
         if (recurse) {
 
 
@@ -195,7 +200,7 @@ void TreeWidget::drawNode(Node* node) {
             verticalLineStart.x+=7;
             verticalLineStart.y+=-7;
             ImVec2 verticalLineEnd = verticalLineStart;
-            
+
             verticalLineEnd.y+=14;
             ImVec2 verticalLineEnd2 = verticalLineEnd;
             verticalLineEnd2.x+=10;//Engine::getInstance().blank[8];
@@ -203,7 +208,7 @@ void TreeWidget::drawNode(Node* node) {
             drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
 
             if (ImGui::IsDragDropActive()) {
-                                
+
                 ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
                 ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
 
@@ -223,7 +228,7 @@ void TreeWidget::drawNode(Node* node) {
                 ImGui::EndGroup();
                 ImGui::PopID();
 
-                if (ImGui::BeginDragDropTarget()) {     
+                if (ImGui::BeginDragDropTarget()) {
 
                     if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGI << "TODO MOVE NODE";
 
@@ -231,7 +236,7 @@ void TreeWidget::drawNode(Node* node) {
                 }
 
                 ImGui::PopStyleVar(2);
-                    
+
             }
 
             drawChildrens(node);
@@ -240,9 +245,9 @@ void TreeWidget::drawNode(Node* node) {
 
         }
 
-        
-        
-    
+
+
+
     }
 
 }

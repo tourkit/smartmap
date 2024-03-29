@@ -70,7 +70,7 @@ struct UntypedNode {
 
     Node* select();
 
-    void remove(Node *child);
+    bool remove(Node *child);
 
     virtual std::type_index type() { return typeid(*this); }
 
@@ -85,7 +85,7 @@ struct UntypedNode {
     void onrun(std::function<void(Node*)> cb = nullptr);
 
     template <typename U>
-    U* is_a() { if (type() == typeid(U)) { return (U*)ptr_untyped(); }else { return nullptr; } }
+    U* is_a() { if (type() == typeid(U)) { return (U*)ptr_untyped(); }else { PLOGW << "NOT A << " << boost::typeindex::type_id_with_cvr<U>().pretty_name();return nullptr; } }
 
     template <typename V>
     void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { auto isa = ((UntypedNode*)c)->is_a<V>(); if (isa) cb(c,isa); } }

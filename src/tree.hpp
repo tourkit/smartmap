@@ -3,6 +3,8 @@
 #include "node.hpp"
 #include "engine.hpp"
 
+#include <vector>
+
 struct TreeWidget : GUI::Window {
 
     Node* selected;
@@ -11,8 +13,8 @@ struct TreeWidget : GUI::Window {
 
     void draw() override;
 
-    void drawNode(Node* node);   
-    void drawChildrens(Node* node);   
+    void drawNode(Node* node);
+    void drawChildrens(Node* node);
 
     bool TreeViewNode(Node* node);
 
@@ -21,5 +23,7 @@ private:
 bool is_deleting = false;
 
 Node* is_renaming = nullptr;
+
+std::vector<Node*> delete_list;
 
 };

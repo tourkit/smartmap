@@ -13,13 +13,19 @@
 
 int main() {
 
-    logger.cout(true);
+    // logger.cout(true);
 
     engine.init();
 
     auto &dc = *engine.stack->addOwnr<DrawCall>();
 
-    auto m_node = dc.add((*engine.models)[0]);
+    for (int i = 0 ; i < 100; i++) {
+
+        auto m_node = dc.add((*engine.models)[0]);
+
+        delete m_node;
+
+    }
 
     // m_node->add((*engine.effectors)[2]);
     // m_node->add((*engine.effectors)[0]);
@@ -32,3 +38,6 @@ int main() {
     engine.run();
 
 }
+
+
+// create a gui::delete pool;
