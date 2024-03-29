@@ -12,7 +12,7 @@ Instance Buffer::operator[](int id) { return Instance{this,0,this}[id]; }
     //     }
 void Buffer::update() {
 
-        auto bkp = &copy();
+        // auto bkp = &copy();
 
         Struct::update();
 
@@ -27,7 +27,7 @@ void Buffer::update() {
         // remap( bkp );
 
 
-        delete &bkp ;
+        // delete &bkp ;
 
         //
 

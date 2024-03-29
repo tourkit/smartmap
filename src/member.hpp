@@ -84,7 +84,7 @@ protected:
 
     Member& add(Member* s);
 
-    Member& remove(Member* s);
+    Member& remove(Member* m);
 
 
 private:
