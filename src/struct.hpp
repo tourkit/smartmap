@@ -55,13 +55,7 @@
 
         }
 
-        Struct& remove(Struct& s) {
-
-            for (auto &m : members) if (m == &s) return remove(&s);
-
-            PLOGW << " noadd" << s.name(); return *this;
-
-        };
+        Struct& remove(Struct& s) { Member::remove(&s); return *this; }
 
         template <typename T>
         Struct& add(std::string name = "") { return (Struct&)Member::add(new Data<T>(name)); }
@@ -128,17 +122,6 @@
 
         }
 
-        virtual Struct& remove(Member*  m) {
-
-            size_v -= members.back()->footprint_all();
-
-            members.erase(std::remove(members.begin(),members.end(),m),members.end());
-
-            update();
-
-            return *this;
-
-        }
 
          void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb) override {
 

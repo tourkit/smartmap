@@ -10,7 +10,7 @@
 Member::~Member() {
 
             // remove from any Members in the pool
-            for (auto m : pool) m->each([this](Member& m_) { m_.remove(this);  });
+            for (auto m : pool) m->each([this](Member& m_) { if (std::find(m_.members.begin(), m_.members.end(), this) != m_.members.end()) m_.remove(this); });
 
             // remove from pool
             pool.erase(this);
@@ -198,15 +198,19 @@ void Member::hard_delete() {
 
 }
 
-Member& Member::remove(Member* s) {
+Member& Member::remove(Member* m) {
 
-    if (std::find(members.begin(), members.end(), s) != members.end()) {
+    for (auto &m_ : members) m_->remove(m);
 
-        PLOGV << "remove " << s->name() << " from " << name();
+    auto it = std::find( members.begin(), members.end(), m );
 
-        members.erase(std::remove(members.begin(), members.end(), s), members.end());
+    if (it == members.end()) { PLOGV << "no find "<< m->name(); return *this; }
 
-    }
+    size_v -= members.back()->footprint_all();
+
+    members.erase(it);
+
+    update();
 
     return *this;
 

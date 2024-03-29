@@ -15,6 +15,31 @@ int main() {
 
     logger.cout(true);
 
+
+    PLOGD << Struct::pool.size();
+    Struct& test = Struct::create("Test").add<float>("x").add<float>("y");
+
+    Buffer buf;
+
+    Struct tests("Tests",2);
+
+    buf.add(tests);
+
+    auto &x = buf.copy();
+    PLOGD << "-";
+    PLOGD << x.print(10);
+    PLOGD << "+";
+    PLOGD << buf.print(10);
+    delete &x;
+    PLOGD << "ooooooo";
+
+    PLOGD << Struct::pool.size();
+
+    exit(0);
+
+
+
+
     engine.init();
 
     auto &dc = *engine.stack->addOwnr<DrawCall>();
