@@ -19,14 +19,8 @@ int main() {
 
     auto &dc = *engine.stack->addOwnr<DrawCall>();
 
-    for (int i = 0 ; i < 100; i++) {
-
-        auto m_node = dc.add((*engine.models)[0]);
-
-        delete m_node;
-
-    }
-
+    auto m_node = dc.add((*engine.models)[0]);
+    m_node->is_a<Model>()->quantity(2);
     // m_node->add((*engine.effectors)[2]);
     // m_node->add((*engine.effectors)[0]);
     // m_node->add((*engine.effectors)[1]);

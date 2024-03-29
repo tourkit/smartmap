@@ -82,7 +82,7 @@ const char* Member::type_name() {
 
     if (type() == typeid(float)) return "float";
 
-    if (type() == typeid(int32_t)) return "int";
+    if (type() == typeid(int)) return "int";
 
     if (type() == typeid(uint32_t)) return "uint";
 
@@ -164,7 +164,14 @@ std::string Member::print(int recurse) {
 
     }
 
-    if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) str += " float stride" + std::to_string(i) + ";";
+    if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) {
+
+        str += " ";
+        str += (members[0]->type() == typeid(int) ? "int" : "float");
+        str += " stride";
+        str += std::to_string(i) + ";";
+
+    }
 
     str += " }";
 

@@ -79,12 +79,13 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
 
-        engine.gui->draw();
-
         engine.dynamic_ubo.upload();
 
         engine.tree->run();
 
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        engine.gui->draw();
 
     });
 
