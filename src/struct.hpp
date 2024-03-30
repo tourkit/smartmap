@@ -49,11 +49,11 @@
 
         }
 
-        Struct& add(Struct& s) { return (Struct&)Member::add(&s); }
+        Struct& add(Struct& s) { Member::add(&s); return *this; }
 
         Struct& add(const char* name) {
 
-            for (auto s : owned) if (!strcmp(name,s->name().c_str())) return add((*s));
+            for (auto s : owned) if (!strcmp(name,s->name().c_str())) { add(*s); return *this; }
 
             PLOGW << " noadd" << name; return *this;
 
@@ -62,7 +62,7 @@
         Struct& remove(Struct& s) { Member::remove(&s); return *this; }
 
         template <typename T>
-        Struct& add(std::string name = "") { return (Struct&)Member::add(new Data<T>(name)); }
+        Struct& add(std::string name = "") { return *(Struct*)Member::add(new Data<T>(name)); }
 
         Struct& range(float from, float to, float def) {
 
@@ -82,41 +82,8 @@
             return *this;
 
         }
-
-        uint32_t size() override {
-
-            if (members.size() == 1 && members[0]->typed()) { return members[0]->size(); }
-
-            return size_v;
-
-        }
-
-        uint32_t footprint() override {
-
-            if (striding()) return nextFactor2(size_v,16);
-
-            return size_v;
-
-        }
         std::type_index type() override { if (typed()) { return members[0]->type(); } return typeid(Struct); }
 
-        bool owns(Member& m) override {
-
-            for (auto &s : members) if (s == &m) return true;
-
-            return false;
-
-        }
-
-        void update() override {
-
-            size_v = 0;
-
-            for (auto &m : members) size_v += m->footprint_all();
-
-            Member::update();
-
-         }
 
         Member* copy(Member* x = nullptr) override {
 
@@ -126,33 +93,5 @@
 
         }
 
-
-         void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb) override {
-
-            for (int i = 0 ; i < quantity(); i++) {
-
-                cb(*this, offset,depth);
-
-                int size = 0;
-
-                if ((members.size() > 1 && members[0]->name().length()) ||  striding()) {
-
-                    for (auto &m :members) {
-
-                        m->each(cb, offset+size, depth+1, after_cb);
-
-                        size+=m->footprint_all();
-
-                    }
-
-                    if (i!=quantity()-1) offset+=footprint();
-
-                }
-
-                if (after_cb) after_cb(*this);
-
-            }
-
-        }
 
     };

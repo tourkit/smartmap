@@ -24,8 +24,6 @@ struct Member {
 
     uint32_t quantity_v = 1;
 
-    virtual bool owns(Member& m) ;
-
     virtual void update() ;
 
     virtual uint32_t size();
@@ -51,10 +49,6 @@ struct Member {
     virtual std::string name();
 
     Member* any() ;
-
-    virtual void each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb = nullptr) ;
-
-    void each(std::function<void(Member&)> cb) ;
 
     void* range_from_ptr = nullptr;
     void* range_to_ptr = nullptr;
@@ -82,9 +76,9 @@ protected:
 
     std::string name_v;
 
-    Member& add(Member* s);
+    Member* add(Member* m);
 
-    Member& remove(Member* m);
+    Member* remove(Member* m);
 
 
 private:

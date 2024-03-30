@@ -16,37 +16,37 @@ int main() {
     logger.cout(true);
 
 
-    PLOGD << Struct::pool.size();
+    // PLOGD << Struct::pool.size();
 
-    Struct& test = Struct::create("Test").add<float>("x").add<float>("y");
+    // Struct& test = Struct::create("Test").add<float>("x").add<float>("y");
 
-    Buffer* x;
+    // Buffer* x;
 
-    {
+    // {
 
-        Buffer buf;
+    //     Buffer buf;
 
-        Struct tests("Tests",2);
+    //     Struct tests("Tests",2);
 
-        buf.add(tests);
+    //     buf.add(tests);
 
-        x = &buf.copy();
+    //     x = &buf.copy();
 
-    }
+    // }
 
-    x->hard_delete();
+    // x->hard_delete();
 
-    delete x;
+    // delete x;
 
 
-    Struct::destroy("Test");
+    // Struct::destroy("Test");
 
-    PLOGD << Struct::pool.size();
-    for (auto x : Struct::pool)PLOGD << x->name();
+    // PLOGD << Struct::pool.size();
+    // for (auto x : Struct::pool)PLOGD << x->name();
 
-    PLOGD << "ooooooo";
+    // PLOGD << "ooooooo";
 
-    exit(0);
+    // exit(0);
 
 
 

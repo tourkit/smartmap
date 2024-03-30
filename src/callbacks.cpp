@@ -164,8 +164,6 @@ void Callbacks::init() {
 
     NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name(); });
 
-    NODE<Effector>::ondelete([](Node* node, Effector *effector) { node->parent()->is_a<Model>()->remove(effector); });
-
     ////////// Atlas.HPP
 
     NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { atlas->fromDir(atlas->path); });

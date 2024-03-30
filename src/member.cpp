@@ -2,6 +2,7 @@
 
 
 #include "log.hpp"
+#include "struct.hpp"
 #include <cstdint>
 #include <unordered_set>
 #include <typeindex>
@@ -9,33 +10,32 @@
 
 Member::~Member() {
 
-            // remove from any Members in the pool
-            for (auto m : pool) m->each([this](Member& m_) { if (std::find(m_.members.begin(), m_.members.end(), this) != m_.members.end()) m_.remove(this); });
+    // remove from any Members in the pool
+    for (auto m : pool) if (std::find(m->members.begin(), m->members.end(), this) != m->members.end()) m->remove(this);
 
-            // remove from pool
-            pool.erase(this);
+    // remove from pool
+    pool.erase(this);
 
-            // delete typed() a.k.a Data members
-            for (auto x : members) if (x->typed()) delete x;
+    // delete typed() a.k.a Data members
+    for (auto x : members) if (x->typed()) delete x;
 
-            PLOGV << "~" << name();
+    PLOGV << "~" << name();
 
-    }
+}
 
+Member* Member::add(Member* m) {
 
-    Member& Member::add(Member* s) {
+    PLOGV << "add " << m->name() << " to " << name();
 
-        PLOGV << "add " << s->name() << " to " << name();
+    members.push_back(m);
 
-        members.push_back(s);
+    size_v += members.back()->footprint_all();
 
-        size_v += members.back()->footprint_all();
+    update();
 
-        update();
+    return this;
 
-        return *this;
-
-    }
+}
 
 Member::Member(std::string name_v) {
 
@@ -47,20 +47,38 @@ Member::Member(std::string name_v) {
 
 }
 
-bool Member::owns(Member& m) { return false; }
 
 void Member::update() {
-    PLOGV<<name();
+
+    size_v = 0;
+
+    for (auto &m : members) size_v += m->footprint_all();
+
+    PLOGV << name();
+
     for (auto a : pool) {
-        if (a->owns(*this)) {
-            a->update();
-        }
+
+        for (auto &m : a->members) if (m == this) a->update();
+
     }
+
 }
 
-uint32_t Member::size() { return 0; }
+uint32_t Member::size() {
 
-uint32_t Member::footprint() { return 0; }
+        if (members.size() == 1 && members[0]->typed()) { return members[0]->size(); }
+
+        return size_v;
+
+}
+
+uint32_t Member::footprint() {
+
+    if (striding()) return nextFactor2(size_v,16);
+
+    return size_v;
+
+}
 
 void Member::quantity(uint32_t quantity_v) { this->quantity_v = quantity_v; update(); }
 
@@ -94,7 +112,7 @@ const char* Member::type_name() {
 
 uint8_t Member::count() {
 
-    // if (type() == typeid(Struct)) { int x = 0; each([](Member* m){ x += m.count()}; ); return x; }
+    // if (type() == typeid(Struct)) { int x = 0; for (auto m : members) { x += m.count()}; ); return x; }
 
     if (type() == typeid(glm::vec2)) return 2;
 
@@ -111,11 +129,6 @@ void Member::name(std::string name_v) { this->name_v = name_v; }
 std::string Member::name() { return name_v; }
 
 Member* Member::any() { return this; }
-
-void Member::each(std::function<void(Member& m, int offset, int depth)> cb, int offset, int depth, std::function<void(Member&)> after_cb) { cb(*this, offset,depth); }
-
-void Member:: each(std::function<void(Member&)> cb)  { each([cb](Member& m, int offset, int depth){ cb(m); }, 0, 0, nullptr); }
-
 
 uint32_t Member::stride() { return (footprint()-size()); }
 
@@ -198,13 +211,13 @@ void Member::hard_delete() {
 
 }
 
-Member& Member::remove(Member* m) {
+Member* Member::remove(Member* m) {
 
     for (auto &m_ : members) m_->remove(m);
 
     auto it = std::find( members.begin(), members.end(), m );
 
-    if (it == members.end()) { PLOGV << "no find "<< m->name(); return *this; }
+    if (it == members.end()) { PLOGV << "no find "<< m->name(); return this; }
 
     size_v -= members.back()->footprint_all();
 
@@ -212,6 +225,6 @@ Member& Member::remove(Member* m) {
 
     update();
 
-    return *this;
+    return this;
 
 }

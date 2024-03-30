@@ -16,9 +16,9 @@
 
     UntypedNode::~UntypedNode() {
 
-        if (parent_node) parent_node->remove(node());
-
         if (ondelete_cb) ondelete_cb(this->node());
+
+        if (parent_node) parent_node->remove(node());
 
         pool.erase(this);
 
