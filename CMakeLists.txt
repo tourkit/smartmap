@@ -1,4 +1,9 @@
 cmake_minimum_required(VERSION 3.12)
+
+
+set(CMAKE_C_COMPILER "gcc")
+set(CMAKE_CXX_COMPILER "gcc")
+
 project(smartmap VERSION 0.1.0)
 
 
