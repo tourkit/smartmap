@@ -264,7 +264,7 @@ struct TypedNode : UntypedNode {
 
     ~TypedNode() override {
 
-        ondelete_cb(node(), ptr);
+        if (ondelete_cb) ondelete_cb(node(), ptr);
 
         if (owned) delete ptr;
 

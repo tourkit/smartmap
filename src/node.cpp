@@ -222,7 +222,7 @@
 
     void UntypedNode::run() {
 
-        if (!is_active && this != engine.tree) return;
+        if (!is_active && this != engine.tree) return; // PAas fan  sde  && this != engine.tree
 
         if (onrun_cb) onrun_cb(node());
 
