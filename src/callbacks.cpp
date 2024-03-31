@@ -168,6 +168,8 @@ void Callbacks::init() {
 
         auto model = node->parent()->is_a<Model>();
 
+        if (!model) PLOGW << node->parent()->name << " " << node->parent()->type_name();
+
         model->remove(effector);
 
     });

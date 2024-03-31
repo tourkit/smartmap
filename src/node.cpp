@@ -16,20 +16,20 @@
 
     UntypedNode::~UntypedNode() {
 
+        auto t_childrens = childrens;
+        for (auto c : childrens) delete c;
+
+        t_childrens = hidden_childrens;
+        for (auto c : t_childrens) delete c;
+
+        for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
+
+
         if (ondelete_cb) ondelete_cb(this->node());
 
         if (parent_node) parent_node->remove(node());
 
         pool.erase(this);
-
-        for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
-
-        auto t_childrens = childrens;
-        for (auto c : t_childrens) delete c;
-
-        t_childrens = hidden_childrens;
-        for (auto c : t_childrens) delete c;
-
         PLOGV << "~" << name;
 
     }

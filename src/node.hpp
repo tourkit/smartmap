@@ -264,6 +264,12 @@ struct TypedNode : UntypedNode {
 
     ~TypedNode() override {
 
+        auto t_childrens = childrens;
+        for (auto c : t_childrens) delete c;
+
+        t_childrens = hidden_childrens;
+        for (auto c : t_childrens) delete c;
+
         if (ondelete_cb) ondelete_cb(node(), ptr);
 
         if (owned) delete ptr;

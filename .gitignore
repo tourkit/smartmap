@@ -1,5 +1,6 @@
 .vscode/*
 .cache/*
-build/*
+build*
 imgui.ini
+compile_commands.json
 assets/logs/*
