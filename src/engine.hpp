@@ -17,7 +17,7 @@ struct Atlas;
 
 struct Engine {
 
-    bool logger = Log::getInstance().cout(true);
+    // bool logger = Log::getInstance().cout(false);
 
     Node* tree;
     Node* stack;

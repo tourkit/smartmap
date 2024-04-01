@@ -9,8 +9,11 @@
 #include "boilerplate.hpp"
 #include "drawcall.hpp"
 
+struct Protu {};
 
 int main() {
+
+    auto zxx = new Protu;
 
     logger.cout(true);
 
@@ -18,34 +21,25 @@ int main() {
 
     auto &dc = *engine.stack->addOwnr<DrawCall>();
 
-    auto m_node = dc.add((*engine.models)[0]);
+    Node* m_node = dc.add((*engine.models)[0]);
 
-    PLOGD << m_node->type_name();
+    for (int i = 0 ; i < 2; i++) {
 
-    m_node->is_a<Model>()->quantity(2);
+        auto x = m_node->add((*engine.effectors)[3]);
+        // auto x = m_node->addOwnr<Protu>();
+        delete x;
 
-    m_node->add((*engine.effectors)[3]);
-    m_node->add((*engine.effectors)[0]);
-    m_node->add((*engine.effectors)[1]);
-    delete m_node;
+    }
 
     engine.gui->editors.push_back(new EditorWidget());
 
-    // // engine.
-    // for (int i = 0 ; i < 100; i++) {
-
-    // auto &bkp = engine.dynamic_ubo.copy();
-    // delete &bkp;
-    // }
-    // PLOGD
     engine.run();
 
 }
 
-// why on delete Model w/ fxs get NOT A MODEL
+// text x100 jsut eporu voir;
 
-
-// redo copy ?
+// redo copy !
 
 // finish remap
 // then
