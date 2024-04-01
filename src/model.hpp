@@ -8,7 +8,6 @@ struct Effector;
 
 #include "struct.hpp"
 #include "effector.hpp"
-#include "engine.hpp"
 
 struct Model : Struct {
 

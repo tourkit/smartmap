@@ -9,26 +9,41 @@ find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 # find_package(Freetype REQUIRED)
 
-add_executable(
-  smartmap
+add_executable( smartmap
+
   src/log.cpp
+
   main.cpp
+
   src/test.cpp
+
   src/directory.cpp
   src/file.cpp
   src/json.cpp
   src/image.cpp
+
+  src/thread.cpp
+  src/messagequeue.cpp
+
   src/dmx.cpp
   src/artnet.cpp
   src/ndi.cpp
+
   src/buffer.cpp
   src/remap.cpp
   src/data.cpp
   src/member.cpp
   src/struct.cpp
   src/instance.cpp
+
   src/node.cpp
   src/callbacks.cpp
+  src/editor.cpp
+
+  src/effector.cpp
+  src/model.cpp
+
+  src/engine.cpp
   src/window.cpp
   src/fps.cpp
   src/vbo.cpp
@@ -36,16 +51,12 @@ add_executable(
   src/framebuffer.cpp
   src/texture.cpp
   src/shader.cpp
-  src/engine.cpp
-  src/model.cpp
-  src/effector.cpp
   src/drawcall.cpp
   src/atlas.cpp
   src/gui.cpp
   src/tree.cpp
-  src/editor.cpp
-  src/messagequeue.cpp
-  src/thread.cpp
+
+
   vendors/imgui/imgui.cpp
   vendors/imgui/imgui_tables.cpp
   vendors/imgui/imgui_widgets.cpp

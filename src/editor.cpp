@@ -613,7 +613,7 @@ void Editors::init() {
 
     Editor<Model>([](Node* node, Model *model){
 
-        ImGui::Text((node->name + " " + std::to_string(model->effectors.size())).c_str());
+        ImGui::Text(("effectorz " + std::to_string(model->effectors.size())).c_str());
 
         Editor<Buffer>::cb(node, &engine.dynamic_ubo);
 

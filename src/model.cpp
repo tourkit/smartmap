@@ -1,4 +1,5 @@
 #include "model.hpp"
+#include "engine.hpp"
 
 Model::Model(File* file, int quantity) : Struct(file->name(), quantity), file(file) { engine.dynamic_ubo.add(*this); }
 
