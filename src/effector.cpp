@@ -9,23 +9,12 @@
 
 Effector::Effector(File *file) : file(file) {
 
-    s = Struct::exist(file->name());
 
-    if (s) {
-
-        // should check better like arg comparisons
-
-        return;
-
-    }
-
-    s = &Struct::create(file->name());
-    s->striding(true);
 
     const char* data = (&file->data[0]);
 
-    // ranges.clear();
-    // args.resize(0);
+    ranges.clear();
+    args.resize(0);
 
     std::smatch match;
 
@@ -60,20 +49,31 @@ Effector::Effector(File *file) : file(file) {
         }
     }
 
-    for (auto arg : args) {
+    s = Struct::exist(file->name());
 
-        if (arg.first == "vec2") s->add<glm::vec2>(arg.second.c_str());
-        else if (arg.first == "vec3") s->add<glm::vec3>(arg.second.c_str());
-        else if (arg.first == "vec4") s->add<glm::vec4>(arg.second.c_str());
+    if (!s) {
 
-        else if (arg.first == "int") s->add<int>(arg.second.c_str());
+        // should check better like arg comparisons and strideness
 
-        else s->add<float>(arg.second.c_str());
+        s = &Struct::create(file->name());
 
-        if (ranges.find(arg.second) != ranges.end()) s->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+        s->striding(true);
+
+        for (auto arg : args) {
+
+            if (arg.first == "vec2") s->add<glm::vec2>(arg.second.c_str());
+            else if (arg.first == "vec3") s->add<glm::vec3>(arg.second.c_str());
+            else if (arg.first == "vec4") s->add<glm::vec4>(arg.second.c_str());
+
+            else if (arg.first == "int") s->add<int>(arg.second.c_str());
+
+            else s->add<float>(arg.second.c_str());
+
+            if (ranges.find(arg.second) != ranges.end()) s->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+
+        }
 
     }
-
 
 }
 

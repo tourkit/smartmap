@@ -7,13 +7,10 @@
 #include "engine.hpp"
 #include "log.hpp"
 #include "boilerplate.hpp"
+#include "callbacks.hpp"
 #include "drawcall.hpp"
 
-struct Protu {};
-
 int main() {
-
-    auto zxx = new Protu;
 
     logger.cout(true);
 
@@ -23,13 +20,6 @@ int main() {
 
     Node* m_node = dc.add((*engine.models)[0]);
 
-    for (int i = 0 ; i < 2; i++) {
-
-        auto x = m_node->add((*engine.effectors)[3]);
-        // auto x = m_node->addOwnr<Protu>();
-        delete x;
-
-    }
 
     engine.gui->editors.push_back(new EditorWidget());
 

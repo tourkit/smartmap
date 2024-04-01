@@ -31,6 +31,8 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0), dyna
 
     window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
 
+    tree = new Node("tree");
+
 }
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
@@ -40,13 +42,11 @@ void Engine::init() {
 
     Editors::init();
 
-    atlas = new Atlas(4096, 4096, "assets/medias/");
-
-    tree = new Node("tree");
-
     debug = tree->addOwnr<Debug>()->node();//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); });
     debug->addPtr<UBO>(&dynamic_ubo);
+
+    atlas = new Atlas(4096, 4096, "assets/medias/");
     debug->addPtr<Atlas>(atlas);
 
 

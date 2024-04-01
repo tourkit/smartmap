@@ -98,14 +98,6 @@ void Callbacks::init() {
 
     ////////// DRAWCALL.HPP
 
-    NODE<VBO>::onrun([](Node* node, VBO *vbo){ vbo->draw(); });
-
-    NODE<VBO>::onadd<File>([](Node*_this,Node*node){
-
-        return _this->addPtr<Model>( &_this->is_a<VBO>()->add( node->is_a<File>() ) )->node();
-
-    });
-
     NODE<DrawCall>::oncreate([](Node* node, DrawCall *dc){ node->referings.insert(nullptr); });
 
     NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){ dc->draw(); });
@@ -119,38 +111,17 @@ void Callbacks::init() {
 
     });
 
-    NODE<VBO>::onadd<File>([](Node*_this,Node*node){
-
-        auto vbo = _this->is_a<VBO>();
-        auto file = node->is_a<File>();
-
-        return _this->addPtr<Model>(&vbo->add(file))->node();
-
-    });
-
-    NODE<Layer>::onadd<File>([](Node*_this,Node*node){
-
-        return _this; // tofix;
-
-        // auto layer = _this->is_a<Layer>();
-
-        // auto file = node->is_a<File>();
-
-        // // Two following lines very similar to Engine::open()
-
-        // layer->vbo.import(file);
-
-        // auto x = _this->addPtr<Struct>(&layer->vbo.models.back());
-
-        // return x->node();
-
-    });
-
     ////////// MODEL.HPP
 
     NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->name(); });
 
-    NODE<Model>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Effector>( &_this->is_a<Model>()->add( node->is_a<File>() ) )->node(); });
+    NODE<Model>::onadd<File>([](Node*_this,Node*node){
+
+        return _this->addPtr<Effector>(
+            &_this->is_a<Model>()->add( node->is_a<File>() )
+        )->node();
+
+    });
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
