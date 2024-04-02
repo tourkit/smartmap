@@ -43,6 +43,23 @@ struct Buffer : Struct {
 
     }
 
+    template <typename T>
+    Struct& add(std::string name = "") {
+
+        auto &bkp = copy();
+
+        auto &s = Struct::add<T>(name);
+
+        remap( bkp );
+
+        bkp.hard_delete();
+
+        delete &bkp ;
+
+        return s;
+
+    }
+
 
     void printData(int max = 0) {
 

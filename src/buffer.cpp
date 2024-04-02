@@ -12,23 +12,12 @@ Instance Buffer::operator[](int id) { return Instance{this,0,this}[id]; }
     //     }
 void Buffer::update() {
 
-        // auto bkp = &copy();
-
         Struct::update();
-
-        // no remap here ?
 
         if (data.size() != footprint_all() ) {
 
             data.resize( footprint_all() );
 
         }
-
-        // remap( bkp );
-
-
-        // delete &bkp ;
-
-        //
 
     }
