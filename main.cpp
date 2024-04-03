@@ -20,12 +20,12 @@ int main() {
 
     Node* m_node = dc.add((*engine.models)[0]);
 
-
     engine.gui->editors.push_back(new EditorWidget());
 
     engine.run();
 
 }
+
 
 // text x100 jsut eporu voir;
 

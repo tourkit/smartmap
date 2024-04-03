@@ -62,7 +62,9 @@
         Struct& remove(Struct& s) { Member::remove(&s); return *this; }
 
         template <typename T>
-        Struct& add(std::string name = "") { return *(Struct*)Member::add(new Data<T>(name)); }
+        Struct& add(std::string name = "") { Member::add(new Data<T>(name)); return *this; }
+
+        Struct& add(Member* m) { Member::add(m); return *this; }
 
         Struct& range(float from, float to, float def) {
 

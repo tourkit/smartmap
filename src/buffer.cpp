@@ -6,18 +6,3 @@
 
 Instance Buffer::operator[](std::string name) { return Instance{this,0,this}[name]; }
 Instance Buffer::operator[](int id) { return Instance{this,0,this}[id]; }
-
-    //   void Buffer::remapEach(Buffer& from, Member* from_m, Member* to_m) {
-
-    //     }
-void Buffer::update() {
-
-        Struct::update();
-
-        if (data.size() != footprint_all() ) {
-
-            data.resize( footprint_all() );
-
-        }
-
-    }

@@ -211,7 +211,11 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
         }else{
 
-            ImGui::SeparatorText(m->name().c_str());
+            std::string septxt  = m->name();
+
+            septxt+= "(" + std::to_string(m->quantity()) + ")";
+
+            ImGui::SeparatorText(septxt.c_str());
 
             if (draw_guis(buff, m, offset)) has_changed = true;
 
@@ -601,9 +605,10 @@ void Editors::init() {
 
     Editor<UBO>([](Node* node, UBO *ubo){
 
+        std::string subs_str = "data[" + std::to_string(ubo->data.size())+"]";
         // std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s):";
         // for (auto s: ubo->subscribers) subs_str += " #"+std::to_string(s->id);
-        // ImGui::Text(subs_str.c_str());
+        ImGui::Text(subs_str.c_str());
 
         Editor<Buffer>::cb(node, ubo);
 

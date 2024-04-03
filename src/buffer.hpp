@@ -26,8 +26,6 @@ struct Buffer : Struct {
 
     void set(Member& m, void* data) { }
 
-    void update() override;
-
     Instance operator[](std::string name);
     Instance operator[](int id);
 
@@ -43,23 +41,40 @@ struct Buffer : Struct {
 
     }
 
-    template <typename T>
-    Struct& add(std::string name = "") {
+    Member* add(Member* m) {
 
-        auto &bkp = copy();
+        auto x = Member::add(m);
 
-        auto &s = Struct::add<T>(name);
-
-        remap( bkp );
-
-        bkp.hard_delete();
-
-        delete &bkp ;
-
-        return s;
+        return x;
 
     }
 
+    void update() override {
+
+        Struct::update();
+
+        data.resize(footprint_all());
+
+    }
+
+    Struct& add(Struct& s) { add(&s); return *this; }
+
+    template <typename T>
+    Struct& add(std::string name = "") {
+
+        // auto &bkp = copy();
+
+        add(new Data<T>(name));
+
+        // remap( bkp );
+
+        // bkp.hard_delete();
+
+        // delete &bkp ;
+
+        return *this;
+
+    }
 
     void printData(int max = 0) {
 
