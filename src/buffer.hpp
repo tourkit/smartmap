@@ -14,9 +14,11 @@ struct Buffer : Struct {
 
     std::vector<char> data;
 
+    static inline int MAX_SIZE = 10000;
+
     Buffer(std::string name = "buffer_definition") : Struct(name) {
 
-        data.reserve(10000);
+        data.reserve(MAX_SIZE);
 
         memset(data.data(),0,data.size());
 
@@ -53,18 +55,17 @@ struct Buffer : Struct {
 
         Struct::update();
 
+        if (data.size() > MAX_SIZE) { PLOGW << "data.size() > MAX_SIZE"; }
+
         data.resize(footprint_all());
 
     }
 
-    Struct& add(Struct& s) { add(&s); return *this; }
-
-    template <typename T>
-    Struct& add(std::string name = "") {
+    Struct& add(Struct& s) {
 
         // auto &bkp = copy();
 
-        add(new Data<T>(name));
+        add(&s);
 
         // remap( bkp );
 
@@ -75,6 +76,10 @@ struct Buffer : Struct {
         return *this;
 
     }
+
+
+    template <typename T>
+    Struct& add(std::string name = "") { return add(new Data<T>(name)); }
 
     void printData(int max = 0) {
 

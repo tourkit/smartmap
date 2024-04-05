@@ -10,11 +10,11 @@
 
 Member::~Member() {
 
-    // remove from any Members in the pool
-    for (auto m : pool) if (std::find(m->members.begin(), m->members.end(), this) != m->members.end()) m->remove(this);
-
     // remove from pool
     pool.erase(this);
+
+    // // remove from any Members in the pool
+    for (auto m : pool) if (std::find(m->members.begin(), m->members.end(), this) != m->members.end()) m->remove(this);
 
     // delete typed() a.k.a Data members
     for (auto x : members) if (x->typed()) delete x;
@@ -212,8 +212,6 @@ void Member::hard_delete() {
 }
 
 Member* Member::remove(Member* m) {
-
-    for (auto &m_ : members) m_->remove(m);
 
     auto it = std::find( members.begin(), members.end(), m );
 
