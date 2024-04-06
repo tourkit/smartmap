@@ -2,6 +2,7 @@
 
 
 #include "log.hpp"
+#include "buffer.hpp"
 #include "struct.hpp"
 #include <cstdint>
 #include <unordered_set>
@@ -10,16 +11,31 @@
 
 Member::~Member() {
 
+    static Buffer* bkp = nullptr;
+
     // remove from pool
     pool.erase(this);
 
     // // remove from any Members in the pool
-    for (auto m : pool) if (std::find(m->members.begin(), m->members.end(), this) != m->members.end()) m->remove(this);
+    for (auto m : pool) {
+
+        if (std::find(m->members.begin(), m->members.end(), this) != m->members.end()) {
+
+            m->remove(this);
+
+        }
+
+    }
 
     // delete typed() a.k.a Data members
     for (auto x : members) if (x->typed()) delete x;
 
     PLOGV << "~" << name();
+
+}
+
+void Member::destroy() {
+
 
 }
 

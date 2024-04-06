@@ -79,7 +79,7 @@ struct Buffer : Struct {
 
 
     template <typename T>
-    Struct& add(std::string name = "") { return add(new Data<T>(name)); }
+    Struct& add(std::string name = "") { add(new Data<T>(name)); return *this; }
 
     void printData(int max = 0) {
 

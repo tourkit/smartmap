@@ -26,6 +26,8 @@ struct Member {
 
     virtual void update() ;
 
+    virtual void destroy() ;
+
     virtual uint32_t size();
 
     virtual uint32_t footprint();

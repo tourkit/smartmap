@@ -4,65 +4,88 @@
 
                         */
 
-#include "engine.hpp"
 #include "log.hpp"
 #include "boilerplate.hpp"
-#include "callbacks.hpp"
-#include "drawcall.hpp"
+#include "buffer.hpp"
+#include "instance.hpp"
+
+namespace Zob {
+
+
+    struct AnyMember {
+
+
+    };
+
+    template <typename T>
+    struct Member : AnyMember {
+
+
+    };
+
+    struct Struct : AnyMember {
+
+
+    };
+
+    struct Buffer : Struct {
+
+
+    };
+
+    struct Instance {
+
+
+    };
+
+
+    struct Test {
+
+        Test() {
+
+
+
+        }
+
+
+    };
+
+};
 
 int main() {
 
-
     logger.cout(true);
 
-    // Struct x("x");
+    {
 
-    // {
-    //     Struct a("a");
-    //     Struct b("b");
-    //     a.add(b);
-    //     b.add<float>("c").add<glm::vec3>("d");
-    //     b.add(x);
-    //     PLOGD << "----------------";
+        Struct a("x");
 
-    // }
-    // exit(0);
+        Struct test1("test1");
 
-    engine.init();
+        Struct test2("test2");
 
-    auto &dc = *engine.stack->addOwnr<DrawCall>();
+        Buffer buff;
+        buff.add<float>("a").add<float>("b");
 
-    Node* m_node;
-    m_node = dc.add((*engine.models)[0]);
-    m_node->add((*engine.effectors)[3]);
-    m_node->add((*engine.effectors)[0]);
+        buff[0].set<float>(1.0f);
 
-    // auto &bkp = engine.dynamic_ubo.copy();
-    // bkp["quad"]["rectangle"]["pos"].set<glm::vec2>(glm::vec2(0.5,0.5));
-    // PLOGD<< bkp.print(2);
-    // bkp.printData();
-    // engine.dynamic_ubo.remap( bkp );
-    // PLOGD<< engine.dynamic_ubo.print(2);
-    // engine.dynamic_ubo.printData();
+        buff.printData();
 
-    // bkp.hard_delete();
-    // PLOGD <<"-";
-    // delete &bkp;
-    // PLOGD <<"-";
-    // exit(0);
+        delete buff.members[0];
 
-    engine.gui->editors.push_back(new EditorWidget());
-    engine.gui->editors.back()->locked = true;
-    engine.gui->editors.push_back(new EditorWidget());
+        buff.printData();
 
-    engine.run();
+        PLOGD << "----------------";
+
+    }
+    PLOGD << "----------------2";
 
 }
 
+// maker update list first || do a modif(add,remove,move,resize) pool at new frame ...
 
-// text x100 jsut eporu voir;
 
-// redo copy ! // gota do bkp member/Struct/Buffer on Node remove (thus on delete)
+// redo copy ! // gota do bkp Buffer on Node Model and Effector and DrawCall remove (thus on delete)
 
 // finish remap
 // then
