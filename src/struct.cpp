@@ -53,6 +53,8 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
 Struct& Struct::remove(Member& m) {
 
+    PLOGV << name() << " remove " << m.name();
+
     pre_change();
 
     auto it = std::find( members.begin(), members.end(), &m );
@@ -76,6 +78,7 @@ Struct& Struct::remove(Member& m) {
 
 Struct& Struct::add(Member& m) {
 
+    PLOGV << name() << " add " << m.name();
 
     pre_change();
 
