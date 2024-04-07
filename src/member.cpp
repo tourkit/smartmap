@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <unordered_set>
 #include <typeindex>
+#include <cstdint>
 
 
 Member::~Member() {

@@ -14,6 +14,7 @@ namespace Zob {
 
     struct AnyMember {
 
+        static inline std::set<AnyMember*> pool;
 
     };
 
@@ -25,6 +26,7 @@ namespace Zob {
 
     struct Struct : AnyMember {
 
+        std::vector<AnyMember*> members;
 
     };
 

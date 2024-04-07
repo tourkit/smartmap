@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cstdint>
-#include <unordered_set>
+#include <set>
 #include <typeindex>
 #include <functional>
 #include <string>
@@ -16,7 +16,7 @@ static std::string lower(std::string str) { str[0] = std::tolower(str[0]); retur
 
 struct Member {
 
-    static inline std::unordered_set<Member*> pool; // has a ptr to all axisting Members;
+    static inline std::set<Member*> pool;
 
     Member(std::string name_v = "") ;
 
