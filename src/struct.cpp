@@ -53,11 +53,17 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
 Struct& Struct::add(Member& m) {
 
+    // BKP = THIS
+
     members.push_back(&m);
 
     size_v += members.back()->footprint_all();
 
     update();
+
+    // REMAP
+
+    // RM BKP
 
     return *this;
 
@@ -92,6 +98,8 @@ Struct& Struct::range(float from, float to, float def) {
 
 Struct& Struct::remove(Member& m) {
 
+    // BKP = THIS
+
     auto it = std::find( members.begin(), members.end(), &m );
 
     if (it == members.end()) { PLOGV << "no find "<< m.name(); return *this; }
@@ -101,6 +109,10 @@ Struct& Struct::remove(Member& m) {
     members.erase(it);
 
     update();
+
+    // REMAP
+
+    // RM BKP
 
     return *this;
 

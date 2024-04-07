@@ -102,6 +102,8 @@ Member* Member::copy(Member* x) {
 
     if(!x) x = new Member(name_v);
 
+    // no need hard_delete() if set x.owned==true ?
+
     this->is_striding = is_striding;
 
     x->quantity_v = quantity_v;

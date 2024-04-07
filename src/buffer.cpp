@@ -16,17 +16,17 @@ Buffer::Buffer(std::string name) : Struct(name) {
 
 }
 
-void upload() { }
+void Buffer::upload() { }
 
-Member* Buffer::copy(Member* x) {
+Buffer* Buffer::copy() {
 
-    if (!x) {x = new Buffer();}
+    auto buff = new Buffer();
 
-    Struct::copy(x);
+    Struct::copy(buff);
 
-    ((Buffer*)x)->data = data;
+    buff->data = data;
 
-    return x;
+    return buff;
 
 }
 
