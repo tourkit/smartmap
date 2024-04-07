@@ -42,8 +42,6 @@ struct Struct : Member {
 
     std::string print(int recurse = 0) override;
 
-    Struct* copy() ;
-
     Member* copy(Member* x) override ;
 
     void hard_delete();

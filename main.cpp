@@ -93,23 +93,16 @@ int main() {
 
         Buffer buff;
 
-        buff.add(a);
-
-        auto aa = a.getTop();
-
-        for (auto x : aa) PLOGD << x->name();
-
-        buff.add<float>("a").add<float>("b");
-
-        buff[0].set<float>(1.0f);
+        buff.add(test1).add(a);
 
         buff.printData();
+        auto bkp = buff.copy();
+        PLOGD << bkp->print(2);
+        bkp->printData();
 
-        delete buff.members[0];
+        // auto aa = a.getTop();
 
-        buff.printData();
-
-        PLOGD << "----------------";
+        // for (auto x : aa) PLOGD << x->name();
 
     }
     PLOGD << "----------------2";

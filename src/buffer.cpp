@@ -19,21 +19,21 @@ void Buffer::upload() { }
 
 void  Buffer::pre_change() {
 
-    PLOGD << "find owner, do bkp";
+    // PLOGD << "find owner, do bkp";
 
-    bkp = copy();
+    // bkp = copy();
 
 }
 
 void  Buffer::post_change() {
 
-    remap(*bkp);
+    // PLOGD << "remap, rm bkp";
 
-    bkp->hard_delete();
+    // remap(*bkp);
 
-    delete bkp;
+    // bkp->hard_delete();
 
-    PLOGD << "remap, rm bkp";
+    // delete bkp;
 
 }
 
@@ -41,7 +41,11 @@ Buffer* Buffer::copy() {
 
     auto buff = new Buffer();
 
-    Struct::copy(buff);
+    buff->members = members;
+
+    for (auto &m : buff->members) m = m->Member::copy(m);
+
+    buff->size_v = size_v;
 
     buff->data = data;
 

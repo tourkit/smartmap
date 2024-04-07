@@ -76,6 +76,7 @@ Struct& Struct::remove(Member& m) {
 
 Struct& Struct::add(Member& m) {
 
+
     pre_change();
 
     members.push_back(&m);
@@ -147,23 +148,21 @@ uint32_t Struct::size() {
 std::type_index Struct::type()  { if (typed()) { return members[0]->type(); } return typeid(Struct); }
 
 
-Struct* Struct::copy()  {
-
-    auto s = new Struct(name_v);
-
-    s->members = members;
-
-    for (auto &m : s->members) m = m->Member::copy();
-
-    s->size_v = size_v;
-
-    return s;
-
-}
-
 Member* Struct::copy(Member* x)  {
 
-    if (!x) { x = copy(); }
+    if (!x) {
+
+        auto s = new Struct(name_v);
+
+        s->members = members;
+
+        for (auto &m : s->members) m = m->Member::copy(m);
+
+        s->size_v = size_v;
+
+        x = s;
+
+    }
 
     return Member::copy(x);
 
