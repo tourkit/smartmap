@@ -51,9 +51,37 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 }
 
 
+Struct& Struct::remove(Member& m) {
+
+    pre_change();
+
+    auto it = std::find( members.begin(), members.end(), &m );
+
+    if (it == members.end()) { PLOGV << "no find "<< m.name(); return *this; }
+
+    size_v -= members.back()->footprint_all();
+
+    members.erase(it);
+
+    update();
+
+    post_change();
+
+    return *this;
+
+}
+
+
+
+
 Struct& Struct::add(Member& m) {
 
-    // BKP = THIS
+    pre_change();
+
+    for (auto s : structs) if (std::find( s->members.begin(), s->members.end(), &m ) != s->members.end()) {
+
+
+    }
 
     members.push_back(&m);
 
@@ -61,9 +89,7 @@ Struct& Struct::add(Member& m) {
 
     update();
 
-    // REMAP
-
-    // RM BKP
+    post_change();
 
     return *this;
 
@@ -91,28 +117,6 @@ Struct& Struct::range(float from, float to, float def) {
         ((Data<uint32_t>*)members.back())->range_to = (uint32_t) to;
         // PLOGD << " ----- is : uint32_t";
     }
-
-    return *this;
-
-}
-
-Struct& Struct::remove(Member& m) {
-
-    // BKP = THIS
-
-    auto it = std::find( members.begin(), members.end(), &m );
-
-    if (it == members.end()) { PLOGV << "no find "<< m.name(); return *this; }
-
-    size_v -= members.back()->footprint_all();
-
-    members.erase(it);
-
-    update();
-
-    // REMAP
-
-    // RM BKP
 
     return *this;
 
@@ -148,21 +152,23 @@ uint32_t Struct::size() {
 std::type_index Struct::type()  { if (typed()) { return members[0]->type(); } return typeid(Struct); }
 
 
+Struct* Struct::copy()  {
+
+    auto s = new Struct(name_v);
+
+    s->members = members;
+
+    for (auto &m : s->members) m = m->Member::copy();
+
+    s->size_v = size_v;
+
+    return s;
+
+}
+
 Member* Struct::copy(Member* x)  {
 
-    if (!x) {
-
-        auto s = new Struct(name_v);
-
-        s->members = members;
-
-        for (auto &m : s->members) m = m->copy();
-
-        s->size_v = size_v;
-
-        x= s;
-
-    }
+    if (!x) { x = copy(); }
 
     return Member::copy(x);
 

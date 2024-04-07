@@ -68,6 +68,8 @@ struct Member {
     void* range_to_ptr = nullptr;
     void* default_val_ptr = nullptr;
 
+    std::set<Member*> getTop(std::set<Member*> out = {});
+
 protected:
 
     std::string name_v;

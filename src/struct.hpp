@@ -20,6 +20,9 @@ struct Struct : Member {
 
     ~Struct();
 
+    virtual void pre_change() {}
+    virtual void post_change() {}
+
     Struct& add(Member& m);
 
     template <typename T>
@@ -39,7 +42,9 @@ struct Struct : Member {
 
     std::string print(int recurse = 0) override;
 
-    Member* copy(Member* x = nullptr) override ;
+    Struct* copy() ;
+
+    Member* copy(Member* x) override ;
 
     void hard_delete();
 

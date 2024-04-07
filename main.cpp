@@ -12,33 +12,48 @@
 namespace Zob {
 
 
-    struct AnyMember {
 
-        static inline std::set<AnyMember*> pool;
+// write me a method for the following struct to get a list of all top member of the hierarchys "this" is part of
 
-    };
+struct Member {
 
-    template <typename T>
-    struct Member : AnyMember {
+    static inline std::set<Member*> pool;
+
+    std::vector<Member*> members;
+
+    Member() {pool.insert(this);}
+
+    virtual ~Member() { pool.erase(this); }
+
+    virtual void onupdate() { /* a place for derived to do some stuff */}
+
+    void update() {
+
+        onupdate();
+
+        for (auto& m : pool) if (std::find( members.begin(), members.end(), m ) != members.end()) m->update();
+
+    }
+
+    void add(Member* m) {
+
+        members.push_back(m);
+
+        update();
+
+    }
+
+    void remove(int i) {
+
+        members.erase( members.begin() + i );
+
+        update();
+
+    }
+
+};
 
 
-    };
-
-    struct Struct : AnyMember {
-
-        std::vector<AnyMember*> members;
-
-    };
-
-    struct Buffer : Struct {
-
-
-    };
-
-    struct Instance {
-
-
-    };
 
 
     struct Test {
@@ -54,19 +69,36 @@ namespace Zob {
 
 };
 
+
 int main() {
+
+
 
     logger.cout(true);
 
     {
+
+        // for (auto it = log().begin(); it != log().end();) { it++; }
 
         Struct a("x");
 
         Struct test1("test1");
 
         Struct test2("test2");
+        Struct test3("test3");
+
+        test1.add(a);
+        test2.add(test1);
+        test3.add(test2);
 
         Buffer buff;
+
+        buff.add(a);
+
+        auto aa = a.getTop();
+
+        for (auto x : aa) PLOGD << x->name();
+
         buff.add<float>("a").add<float>("b");
 
         buff[0].set<float>(1.0f);

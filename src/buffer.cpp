@@ -7,7 +7,6 @@
 Instance Buffer::operator[](std::string name) { return Instance{this,0,this}[name]; }
 Instance Buffer::operator[](int id) { return Instance{this,0,this}[id]; }
 
-
 Buffer::Buffer(std::string name) : Struct(name) {
 
     data.reserve(MAX_SIZE);
@@ -17,6 +16,18 @@ Buffer::Buffer(std::string name) : Struct(name) {
 }
 
 void Buffer::upload() { }
+
+void  Buffer::pre_change() {
+
+    PLOGD << "find owner, do bkp";
+
+}
+
+void  Buffer::post_change() {
+
+    PLOGD << "remap, rm bkp";
+
+}
 
 Buffer* Buffer::copy() {
 

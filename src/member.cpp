@@ -27,6 +27,25 @@ Member::~Member() {
 
 }
 
+std::set<Member*> Member::getTop(std::set<Member*> out) {
+
+    std::set<Member*> owners;
+
+    for (auto x : structs) if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end()) owners.insert( x );
+
+    if (!owners.size()) { out.insert(this); return out; }
+
+    for (auto owner : owners) {
+
+        auto top = owner->getTop();
+
+        out.insert(top.begin(), top.end());
+
+    }
+
+    return out;
+
+}
 
 Member::Member(std::string name_v) {
 
