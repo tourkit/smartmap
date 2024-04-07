@@ -20,18 +20,6 @@ struct Struct : Member {
 
     ~Struct();
 
-    static inline std::set<Struct*> owned;
-
-    static Struct& create(std::string name, uint32_t quantity = 1);
-
-    static Struct* exist(std::string name);
-
-    static Struct& id(std::string name);
-
-    static void clear();
-
-    static bool destroy(std::string name) ;
-
     Struct& add(Member& m);
 
     template <typename T>
@@ -49,16 +37,26 @@ struct Struct : Member {
 
     uint32_t size() override ;
 
-    Member* copy(Member* x = nullptr) override ;
-
     std::string print(int recurse = 0) override;
+
+    Member* copy(Member* x = nullptr) override ;
 
     void hard_delete();
 
+protected:
     uint32_t size_v = 0;
+public:
 
-    auto begin() { return members.begin(); }
 
-    auto end() { return members.end(); }
+    static inline std::set<Struct*> owned;
 
+    static Struct& create(std::string name, uint32_t quantity = 1);
+
+    static Struct* exist(std::string name);
+
+    static Struct& id(std::string name);
+
+    static void clear();
+
+    static bool destroy(std::string name) ;
 };
