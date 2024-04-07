@@ -56,7 +56,7 @@ static void draw_definition(Member *member, int offset = 0, int depth = 0) {
 
     std::vector<float> range;
 
-    if (member->range_from_ptr && member->range_to_ptr) {
+    if (member->typed()) {
 
         range.resize(2);
 
@@ -64,7 +64,7 @@ static void draw_definition(Member *member, int offset = 0, int depth = 0) {
         float to = *(float*)member->range_to_ptr ;
         size_t size = sizeof(float);
 
-        if (member->typed() && member->type() == typeid(int)) {
+        if (member->type() == typeid(int)) {
 
             from = *(int*)member->range_from_ptr;
             to = *(int*)member->range_to_ptr;

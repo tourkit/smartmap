@@ -45,8 +45,6 @@ struct Data : Member {
 
     uint32_t size() override { return sizeof(T); }
 
-    uint32_t footprint() override { return size(); }
-
     bool typed() override { return true; }
 
     Member* copy(Member* x = nullptr) override {

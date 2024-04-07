@@ -29,7 +29,7 @@ Effector& Model::add(File* file) {
 
     auto &x = *effectors.emplace(effectors.end(), file);
 
-    Struct::add(x.s);
+    Struct::add(*x.s);
 
     return x;
 

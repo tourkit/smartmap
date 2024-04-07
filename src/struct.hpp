@@ -14,38 +14,51 @@
 #include "log.hpp"
 
 
+struct Struct : Member {
 
-    struct Struct : Member {
+    Struct(std::string name = "", uint32_t quantity = 1);
 
-        Struct(std::string name = "", uint32_t quantity = 1);
+    ~Struct();
 
-        static inline std::set<Struct*> owned;
+    static inline std::set<Struct*> owned;
 
-        static Struct& create(std::string name, uint32_t quantity = 1);
+    static Struct& create(std::string name, uint32_t quantity = 1);
 
-        static Struct* exist(std::string name);
+    static Struct* exist(std::string name);
 
-        static Struct& id(std::string name);
+    static Struct& id(std::string name);
 
-        static void clear();
+    static void clear();
 
-        static bool destroy(std::string name) ;
+    static bool destroy(std::string name) ;
 
-        Struct& add(Struct& s);
+    Struct& add(Member& m);
 
-        Struct& add(const char* name) ;
+    template <typename T>
+    Struct& add(std::string name = "") { auto n = new Data<T>(name); add(*n); return *this; }
 
-        Struct& remove(Struct& s) ;
+    Struct& add(const char* name) ;
 
-        template <typename T>
-        Struct& add(std::string name = "") { Member::add(new Data<T>(name)); return *this; }
+    Struct& range(float from, float to, float def) ;
 
-        Struct& add(Member* m) ;
+    Struct& remove(Member& s) ;
 
-        Struct& range(float from, float to, float def) ;
+    void update() override;
 
-        std::type_index type() override ;
+    std::type_index type() override ;
 
-        Member* copy(Member* x = nullptr) override ;
+    uint32_t size() override ;
 
-    };
+    Member* copy(Member* x = nullptr) override ;
+
+    std::string print(int recurse = 0) override;
+
+    void hard_delete();
+
+    uint32_t size_v = 0;
+
+    auto begin() { return members.begin(); }
+
+    auto end() { return members.end(); }
+
+};

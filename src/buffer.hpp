@@ -45,7 +45,7 @@ struct Buffer : Struct {
 
     Member* add(Member* m) {
 
-        auto x = Member::add(m);
+        auto x = &Struct::add(*m);
 
         return x;
 

@@ -32,10 +32,36 @@ bool Struct::destroy(std::string name) {
 
 // NON STATIC
 
-Struct::Struct(std::string name, uint32_t quantity) : Member(name) { quantity_v = quantity; if (!name.length()) quantity_v = 0; }
+Struct::~Struct(){
+
+    structs.erase(this);
+
+    // delete typed() a.k.a Data members
+    for (auto x : members) if (x->typed()) delete x;
+
+}
 
 
-Struct& Struct::add(Struct& s) { Member::add(&s); return *this; }
+Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
+
+    structs.insert(this);
+
+    quantity_v = quantity;
+
+}
+
+
+Struct& Struct::add(Member& m) {
+
+    members.push_back(&m);
+
+    size_v += members.back()->footprint_all();
+
+    update();
+
+    return *this;
+
+}
 
 Struct& Struct::add(const char* name) {
 
@@ -44,11 +70,6 @@ Struct& Struct::add(const char* name) {
     PLOGW << " noadd" << name; return *this;
 
 }
-
-Struct& Struct::remove(Struct& s) { Member::remove(&s); return *this; }
-
-
-Struct& Struct::add(Member* m) { Member::add(m); return *this; }
 
 Struct& Struct::range(float from, float to, float def) {
 
@@ -68,13 +89,125 @@ Struct& Struct::range(float from, float to, float def) {
     return *this;
 
 }
+
+Struct& Struct::remove(Member& m) {
+
+    auto it = std::find( members.begin(), members.end(), &m );
+
+    if (it == members.end()) { PLOGV << "no find "<< m.name(); return *this; }
+
+    size_v -= members.back()->footprint_all();
+
+    members.erase(it);
+
+    update();
+
+    return *this;
+
+}
+
+void Struct::update() {
+
+    size_v = 0;
+
+    for (auto &m : members) size_v += m->footprint_all();
+
+    PLOGV << name();
+
+    Member::update();
+
+}
+
+uint32_t Struct::size() {
+
+    if (
+
+        members.size() == 1 &&
+        members[0]->typed()&&
+        !members[0]->name().length()
+
+    ) return members[0]->size();
+
+     return size_v;
+
+}
+
+
 std::type_index Struct::type()  { if (typed()) { return members[0]->type(); } return typeid(Struct); }
 
 
 Member* Struct::copy(Member* x)  {
 
-    if (!x) x = new Struct(name_v);
+    if (!x) {
+
+        auto s = new Struct(name_v);
+
+        s->members = members;
+
+        for (auto &m : s->members) m = m->copy();
+
+        s->size_v = size_v;
+
+        x= s;
+
+    }
 
     return Member::copy(x);
+
+}
+
+
+std::string Struct::print(int recurse) {
+
+    std::string str = "struct " + camel(name())  + " {";
+
+    for (auto m : members) {
+
+        str += " ";
+
+        if (!m->typed()) if (recurse) { str += m->print(recurse-1);} else {str += camel(m->name()); }
+
+        else str += m->type_name();
+
+        str += " " + lower(m->name());
+
+        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
+
+        str += ";";
+
+    }
+
+    if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) {
+
+        str += " ";
+        str += (members[0]->type() == typeid(int) ? "int" : "float");
+        str += " stride";
+        str += std::to_string(i) + ";";
+
+    }
+
+    str += " }";
+
+    return str;
+
+}
+
+void Struct::hard_delete() {
+
+    for (auto &m : members) {
+
+        m->hard_delete();
+
+        if (!m->typed()) {
+
+            auto to_delete =  m;
+
+            delete m;
+
+            members.erase(std::remove(members.begin(), members.end(), to_delete), members.end());
+
+        }
+
+    }
 
 }
