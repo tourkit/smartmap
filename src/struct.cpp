@@ -36,9 +36,6 @@ Struct::~Struct(){
 
     structs.erase(this);
 
-    // delete typed() a.k.a Data members
-    for (auto x : members) if (x->typed()) delete x;
-
 }
 
 
@@ -153,19 +150,7 @@ std::type_index Struct::type()  { if (typed()) { return members[0]->type(); } re
 
 Member* Struct::copy(Member* x)  {
 
-    if (!x) {
-
-        auto s = new Struct(name_v);
-
-        s->members = members;
-
-        for (auto &m : s->members) m = m->Member::copy(m);
-
-        s->size_v = size_v;
-
-        x = s;
-
-    }
+    if (!x) x = new Struct(name_v);
 
     return Member::copy(x);
 
@@ -211,15 +196,11 @@ void Struct::hard_delete() {
 
     for (auto &m : members) {
 
-        m->hard_delete();
-
         if (!m->typed()) {
 
-            auto to_delete =  m;
+            m->hard_delete();
 
             delete m;
-
-            members.erase(std::remove(members.begin(), members.end(), to_delete), members.end());
 
         }
 

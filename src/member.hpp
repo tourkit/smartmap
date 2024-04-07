@@ -78,5 +78,6 @@ protected:
 
     bool is_striding = false;
 
+    uint32_t size_v = 0;
 
 };

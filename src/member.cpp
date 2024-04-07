@@ -23,6 +23,9 @@ Member::~Member() {
 
     }
 
+    // delete typed() a.k.a Data members
+    for (auto x : members) if (x->typed()) delete x;
+
     PLOGV << "~" << name();
 
 }
@@ -126,6 +129,12 @@ Member* Member::copy(Member* x) {
     this->is_striding = is_striding;
 
     x->quantity_v = quantity_v;
+
+    x->members = members;
+
+    for (auto &m : x->members) m = m->copy();
+
+    x->size_v = size_v;
 
     return x;
 

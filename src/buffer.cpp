@@ -41,11 +41,7 @@ Buffer* Buffer::copy() {
 
     auto buff = new Buffer();
 
-    buff->members = members;
-
-    for (auto &m : buff->members) m = m->Member::copy(m);
-
-    buff->size_v = size_v;
+    Member::copy(buff);
 
     buff->data = data;
 

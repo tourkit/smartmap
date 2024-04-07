@@ -81,24 +81,32 @@ int main() {
         // for (auto it = log().begin(); it != log().end();) { it++; }
 
         Struct a("x");
+        a.add<float>("x").add<float>("y").add<float>("z");
+
 
         Struct test1("test1");
 
-        Struct test2("test2");
-        Struct test3("test3");
+        // Struct test2("test2");
+        // Struct test3("test3");
 
         test1.add(a);
-        test2.add(test1);
-        test3.add(test2);
+        // test2.add(test1);
+        // test3.add(test2);
 
         Buffer buff;
 
-        buff.add(test1).add(a);
+        buff.add(test1);
 
         buff.printData();
         auto bkp = buff.copy();
+        // m,issing hard copy of childrens wallah
+        bkp->name("buffer_bkp");
         PLOGD << bkp->print(2);
         bkp->printData();
+        bkp->hard_delete();
+        PLOGD << "----------------0";
+        delete bkp;
+        PLOGD << "----------------1";
 
         // auto aa = a.getTop();
 

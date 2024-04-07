@@ -46,10 +46,6 @@ struct Struct : Member {
 
     void hard_delete();
 
-protected:
-    uint32_t size_v = 0;
-public:
-
 
     static inline std::set<Struct*> owned;
 
