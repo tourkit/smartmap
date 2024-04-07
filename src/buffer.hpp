@@ -34,4 +34,8 @@ struct Buffer : Struct {
 
     void pre_change() override;
     void post_change() override;
+
+private:
+
+    Buffer* bkp = nullptr;
 };

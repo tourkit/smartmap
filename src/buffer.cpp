@@ -21,9 +21,17 @@ void  Buffer::pre_change() {
 
     PLOGD << "find owner, do bkp";
 
+    bkp = copy();
+
 }
 
 void  Buffer::post_change() {
+
+    remap(*bkp);
+
+    bkp->hard_delete();
+
+    delete bkp;
 
     PLOGD << "remap, rm bkp";
 

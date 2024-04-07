@@ -78,11 +78,6 @@ Struct& Struct::add(Member& m) {
 
     pre_change();
 
-    for (auto s : structs) if (std::find( s->members.begin(), s->members.end(), &m ) != s->members.end()) {
-
-
-    }
-
     members.push_back(&m);
 
     size_v += members.back()->footprint_all();
