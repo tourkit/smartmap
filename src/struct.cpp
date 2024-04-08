@@ -41,6 +41,10 @@ Struct::~Struct(){
 
 }
 
+Struct::Struct(const Member& other) : Member(other) {
+
+
+}
 
 Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
@@ -150,15 +154,7 @@ uint32_t Struct::size() {
 
 std::type_index Struct::type()  { if (typed()) { return members[0]->type(); } return typeid(Struct); }
 
-
-Member* Struct::copy(Member* x)  {
-
-    if (!x) x = new Struct(name_v+"bkp");
-
-    return Member::copy(x);
-
-}
-
+Member* Struct::copy()  { return new Struct(*this); }
 
 std::string Struct::print(int recurse) {
 

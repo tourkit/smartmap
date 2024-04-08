@@ -4,6 +4,7 @@
 #include <typeindex>
 #include <boost/type_index.hpp>
 #include "member.hpp"
+#include "log.hpp"
 
 template <typename T>
 struct Data : Member {
@@ -41,25 +42,16 @@ struct Data : Member {
 
     }
 
+    Data(const Data& other) : Member(other), range_from(other.range_from), range_to(other.range_to), default_val(other.default_val) {
+
+    }
+
     std::type_index type() override { return typeid(T); }
 
     uint32_t size() override { return sizeof(T); }
 
     bool typed() override { return true; }
 
-    Member* copy(Member* x = nullptr) override {
-
-        if (!x) x = new Data<T>(name_v+"bkp");
-
-        Member::copy(x);
-
-        ((Data<T>*)x)->range_from = *(T*)range_from_ptr;
-        ((Data<T>*)x)->range_to = *(T*)range_to_ptr;
-        ((Data<T>*)x)->default_val = *(T*)default_val_ptr;
-
-        return x;
-
-    }
-
+    Member* copy() override { return new Data<T>(*this); }
 
 };

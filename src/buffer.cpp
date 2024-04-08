@@ -15,6 +15,18 @@ Buffer::Buffer(std::string name) : Struct(name) {
 
 }
 
+Buffer::Buffer(const Buffer& other) :
+
+    Struct( other ) ,
+
+    data( other.data )
+
+{
+
+
+
+}
+
 void Buffer::upload() { }
 
 void  Buffer::pre_change() {
@@ -37,17 +49,7 @@ void  Buffer::post_change() {
 
 }
 
-Buffer* Buffer::copy() {
-
-    auto buff = new Buffer();
-
-    Member::copy(buff);
-
-    buff->data = data;
-
-    return buff;
-
-}
+Buffer* Buffer::copy() { return new Buffer(*this); }
 
 void Buffer::update() {
 

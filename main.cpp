@@ -28,17 +28,17 @@ int main() {
 
         PLOGD << "----------------";
 
-        auto bkp = b.copy();
+        Buffer bkp(b);
 
-        // PLOGD << bkp->print(2);
-        // bkp->printData();
+        PLOGD << bkp.print(2);
+        bkp.printData();
 
-        PLOGD << "----------------";
+        // PLOGD << "----------------";
 
-        bkp->hard_delete();
+        // bkp.hard_delete();
 
-        PLOGD << "----------------0";
-        delete bkp;
+        // PLOGD << "----------------0";
+        // delete bkp;
         PLOGD << "----------------1";
 
     }

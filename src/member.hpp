@@ -56,7 +56,7 @@ struct Member {
 
     std::string name();
 
-    virtual Member* copy(Member* x = nullptr) ;
+    virtual Member* copy();
 
     virtual bool typed();
 

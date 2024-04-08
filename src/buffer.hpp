@@ -18,13 +18,15 @@ struct Buffer : Struct {
 
     Buffer(std::string name = "buffer_definition");
 
+    Buffer(const Buffer& other);
+
     virtual void upload();
 
     Instance operator[](std::string name);
 
     Instance operator[](int id);
 
-    Buffer* copy();
+    Buffer* copy() override;
 
     void update() override;
 

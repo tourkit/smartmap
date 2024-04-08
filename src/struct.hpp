@@ -18,6 +18,8 @@ struct Struct : Member {
 
     Struct(std::string name = "", uint32_t quantity = 1);
 
+    Struct(const Member& other);
+
     ~Struct();
 
     virtual void pre_change() {}
@@ -42,7 +44,7 @@ struct Struct : Member {
 
     std::string print(int recurse = 0) override;
 
-    Member* copy(Member* x = nullptr) override ;
+    Member* copy() override ;
 
     void hard_delete();
 

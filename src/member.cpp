@@ -29,16 +29,25 @@ Member::~Member() {
 
 
 Member::Member(const Member& other)
-//  :
+ :
 
-//     is_striding(other.is_striding) ,
-//     quantity_v( other.quantity_v ) ,
-//     name_v(other.name_v) ,
-//     members(other.members) ,
-//     size_v( other.size_v )
+    is_striding(other.is_striding) ,
+    quantity_v( other.quantity_v ) ,
+    name_v(other.name_v+"bkp") ,
+    members(other.members) ,
+    size_v( other.size_v )
+
  {
+    // PLOGD << "bkp " << name();
 
-//     // for (auto &m : x->members) m = new
+    for (auto &m : members) {
+
+        // PLOGD<<
+
+        m = m->copy();
+
+    }
+
 
 }
 
@@ -133,25 +142,7 @@ uint8_t Member::count() {
 
 }
 
-Member* Member::copy(Member* x) {
-
-    if(!x) x = new Member(name_v+"bkp");
-
-    // no need hard_delete() if set x.owned==true ?
-
-    this->is_striding = is_striding;
-
-    x->quantity_v = quantity_v;
-
-    x->members = members;
-
-    for (auto &m : x->members) m = m->copy();
-
-    x->size_v = size_v;
-
-    return x;
-
-}
+Member* Member::copy() { return new Member(*this); }
 
 bool Member::typed() { return false; }
 
