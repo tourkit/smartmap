@@ -19,7 +19,7 @@ void Buffer::upload() { }
 
 void  Buffer::pre_change() {
 
-    // PLOGD << "find owner, do bkp";
+    PLOGD << " ------ find owner, do bkp";
 
     // bkp = copy();
 
@@ -27,7 +27,7 @@ void  Buffer::pre_change() {
 
 void  Buffer::post_change() {
 
-    // PLOGD << "remap, rm bkp";
+    PLOGD << " ------ remap, rm bkp";
 
     // remap(*bkp);
 

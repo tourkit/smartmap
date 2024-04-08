@@ -36,6 +36,9 @@ Struct::~Struct(){
 
     structs.erase(this);
 
+    // delete typed() a.k.a Data members
+    for (auto x : members) if (x->typed()) delete x;
+
 }
 
 
@@ -150,7 +153,7 @@ std::type_index Struct::type()  { if (typed()) { return members[0]->type(); } re
 
 Member* Struct::copy(Member* x)  {
 
-    if (!x) x = new Struct(name_v);
+    if (!x) x = new Struct(name_v+"bkp");
 
     return Member::copy(x);
 
@@ -194,15 +197,14 @@ std::string Struct::print(int recurse) {
 
 void Struct::hard_delete() {
 
-    for (auto &m : members) {
+    auto t_members = members;
 
-        if (!m->typed()) {
+    for (auto &m : t_members) {
 
-            m->hard_delete();
+        m->hard_delete();
 
-            delete m;
+        if (!m->typed()) delete m;
 
-        }
 
     }
 

@@ -22,6 +22,8 @@ struct Member {
 
     Member(std::string name_v = "") ;
 
+    Member(const Member& other) ;
+
     virtual ~Member();
 
     virtual void update() ;

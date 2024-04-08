@@ -42,7 +42,7 @@ struct Struct : Member {
 
     std::string print(int recurse = 0) override;
 
-    Member* copy(Member* x) override ;
+    Member* copy(Member* x = nullptr) override ;
 
     void hard_delete();
 

@@ -23,12 +23,25 @@ Member::~Member() {
 
     }
 
-    // delete typed() a.k.a Data members
-    for (auto x : members) if (x->typed()) delete x;
-
     PLOGV << "~" << name();
 
 }
+
+
+Member::Member(const Member& other)
+//  :
+
+//     is_striding(other.is_striding) ,
+//     quantity_v( other.quantity_v ) ,
+//     name_v(other.name_v) ,
+//     members(other.members) ,
+//     size_v( other.size_v )
+ {
+
+//     // for (auto &m : x->members) m = new
+
+}
+
 
 std::set<Member*> Member::getTop(std::set<Member*> out) {
 
@@ -122,7 +135,7 @@ uint8_t Member::count() {
 
 Member* Member::copy(Member* x) {
 
-    if(!x) x = new Member(name_v);
+    if(!x) x = new Member(name_v+"bkp");
 
     // no need hard_delete() if set x.owned==true ?
 

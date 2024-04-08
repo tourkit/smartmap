@@ -49,7 +49,7 @@ struct Data : Member {
 
     Member* copy(Member* x = nullptr) override {
 
-        if (!x) x = new Data<T>(name_v);
+        if (!x) x = new Data<T>(name_v+"bkp");
 
         Member::copy(x);
 
