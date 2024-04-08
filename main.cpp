@@ -13,37 +13,39 @@
 int main() {
 
     logger.cout(true);
-    {
 
-        Struct a("a");
+    engine.init();
 
-        a.add<float>("x").add<float>("y").add<float>("z");
+    auto &dc = *engine.stack->addOwnr<DrawCall>();
 
-        Struct t("t");
-        t.add(a);
+    auto m_node = dc.add((*engine.models)[0]);
 
-        Buffer b;
-        b.add(t);
+    PLOGD << m_node->type_name();
 
-        PLOGD << "----------------";
+    m_node->is_a<Model>()->quantity(2);
 
-        auto bkp(b);
+    m_node->add((*engine.effectors)[3]);
+    m_node->add((*engine.effectors)[0]);
 
-        bkp["t"]["a"]["z"].set<float>(1.0f);
-
-        delete a.members[0];
-
-        b.remap(bkp);
-
-        PLOGD << bkp.print(2);
-        bkp.printData();
-
-        PLOGD << b.print(2);
-        b.printData();
+    // auto bkp = engine.dynamic_ubo.copy();
+    // PLOGI<< bkp->print(10);
 
 
-    }
+    // m_node->add((*engine.effectors)[1]);
+    // delete m_node;
 
+    engine.gui->editors.push_back(new EditorWidget());
+    engine.gui->editors.back()->locked = true;
+    engine.gui->editors.push_back(new EditorWidget());
+
+    // // engine.
+    // for (int i = 0 ; i < 100; i++) {
+
+    // auto &bkp = engine.dynamic_ubo.copy();
+    // delete &bkp;
+    // }
+    // PLOGD
+    engine.run();
 }
 
 // maker update list first || do a modif(add,remove,move,resize) pool at new frame ...

@@ -107,7 +107,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             }
 
-            if (!found) { src_offset_ += src_member_->footprint(); PLOGW << "couldnt find " << src_member_->name(); continue; }
+            if (!found) { src_offset_ += src_member_->footprint(); PLOGV << "couldnt find " << src_member_->name(); continue; }
 
             remap(src_buffer, src_member_, found, src_offset_, this_offset+this_offset_);
 
