@@ -33,7 +33,7 @@ void  Buffer::pre_change() {
 
     PLOGD << " ------ find owner, do bkp";
 
-    // bkp = copy();
+    bkp = copy();
 
 }
 
@@ -41,11 +41,11 @@ void  Buffer::post_change() {
 
     PLOGD << " ------ remap, rm bkp";
 
-    // remap(*bkp);
+    remap(*bkp);
 
-    // bkp->hard_delete();
+    bkp->hard_delete();
 
-    // delete bkp;
+    delete bkp;
 
 }
 

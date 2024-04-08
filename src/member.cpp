@@ -33,23 +33,11 @@ Member::Member(const Member& other)
 
     is_striding(other.is_striding) ,
     quantity_v( other.quantity_v ) ,
-    name_v(other.name_v+"bkp") ,
+    name_v(other.name_v) ,
     members(other.members) ,
     size_v( other.size_v )
 
- {
-    // PLOGD << "bkp " << name();
-
-    for (auto &m : members) {
-
-        // PLOGD<<
-
-        m = m->copy();
-
-    }
-
-
-}
+ { for (auto &m : members) m = m->copy(); }
 
 
 std::set<Member*> Member::getTop(std::set<Member*> out) {
