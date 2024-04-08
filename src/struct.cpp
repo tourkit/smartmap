@@ -54,6 +54,17 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
 }
 
+void Struct::pre_change() {
+
+    for (auto x : getTop())  x->pre_change();
+
+}
+
+void Struct::post_change() {
+
+    for (auto x : getTop()) x->post_change();
+
+}
 
 Struct& Struct::remove(Member& m) {
 

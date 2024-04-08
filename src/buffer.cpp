@@ -31,7 +31,7 @@ void Buffer::upload() { }
 
 void  Buffer::pre_change() {
 
-    PLOGD << " ------ find owner, do bkp";
+    PLOGD << " ------ bkp " << name();
 
     bkp = copy();
 
@@ -39,13 +39,17 @@ void  Buffer::pre_change() {
 
 void  Buffer::post_change() {
 
-    PLOGD << " ------ remap, rm bkp";
+    PLOGD << " ------ remap " << name();
+
+    if (!bkp) return;
 
     remap(*bkp);
 
     bkp->hard_delete();
 
     delete bkp;
+
+    bkp = nullptr;
 
 }
 
@@ -103,7 +107,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             }
 
-            if (!found) { PLOGV << "couldnt find " << src_member_->name(); continue; }
+            if (!found) { PLOGW << "couldnt find " << src_member_->name(); continue; }
 
             remap(src_buffer, src_member_, found, src_offset_, this_offset+this_offset_);
 

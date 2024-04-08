@@ -22,8 +22,8 @@ struct Struct : Member {
 
     ~Struct();
 
-    virtual void pre_change() {}
-    virtual void post_change() {}
+    void pre_change() override;
+    void post_change() override;
 
     Struct& add(Member& m);
 

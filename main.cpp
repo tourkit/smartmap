@@ -4,15 +4,13 @@
 
                         */
 
-#include "log.hpp"
-#include "drawcall.hpp"
 #include "engine.hpp"
-
+#include "log.hpp"
+#include "boilerplate.hpp"
+#include "drawcall.hpp"
 
 
 int main() {
-
-
 
     logger.cout(true);
 
@@ -20,31 +18,29 @@ int main() {
 
     auto &dc = *engine.stack->addOwnr<DrawCall>();
 
-    Node* m_node;
-    m_node = dc.add((*engine.models)[0]);
+    auto m_node = dc.add((*engine.models)[0]);
+
+    PLOGD << m_node->type_name();
+
+    m_node->is_a<Model>()->quantity(2);
+
     m_node->add((*engine.effectors)[3]);
     m_node->add((*engine.effectors)[0]);
-
-    // auto &bkp = engine.dynamic_ubo.copy();
-    // bkp["quad"]["rectangle"]["pos"].set<glm::vec2>(glm::vec2(0.5,0.5));
-    // PLOGD<< bkp.print(2);
-    // bkp.printData();
-    // engine.dynamic_ubo.remap( bkp );
-    // PLOGD<< engine.dynamic_ubo.print(2);
-    // engine.dynamic_ubo.printData();
-
-    // bkp.hard_delete();
-    // PLOGD <<"-";
-    // delete &bkp;
-    // PLOGD <<"-";
-    // exit(0);
+    // m_node->add((*engine.effectors)[1]);
+    // delete m_node;
 
     engine.gui->editors.push_back(new EditorWidget());
     engine.gui->editors.back()->locked = true;
     engine.gui->editors.push_back(new EditorWidget());
 
-    engine.run();
+    // // engine.
+    // for (int i = 0 ; i < 100; i++) {
 
+    // auto &bkp = engine.dynamic_ubo.copy();
+    // delete &bkp;
+    // }
+    // PLOGD
+    engine.run();
 }
 
 // maker update list first || do a modif(add,remove,move,resize) pool at new frame ...

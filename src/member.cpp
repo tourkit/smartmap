@@ -40,17 +40,17 @@ Member::Member(const Member& other)
  { for (auto &m : members) m = m->copy(); }
 
 
-std::set<Member*> Member::getTop(std::set<Member*> out) {
+std::set<Member*> Member::getTop(bool z) {
 
-    std::set<Member*> owners;
+    std::set<Member*> owners, out;
 
     for (auto x : structs) if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end()) owners.insert( x );
 
-    if (!owners.size()) { out.insert(this); return out; }
+    if (!owners.size()) { if (!z) return {}; out.insert(this); return out; }
 
     for (auto owner : owners) {
 
-        auto top = owner->getTop();
+        auto top = owner->getTop(true);
 
         out.insert(top.begin(), top.end());
 

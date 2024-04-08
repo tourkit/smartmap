@@ -70,7 +70,10 @@ struct Member {
     void* range_to_ptr = nullptr;
     void* default_val_ptr = nullptr;
 
-    std::set<Member*> getTop(std::set<Member*> out = {});
+    std::set<Member*> getTop(bool z = false);
+
+    virtual void pre_change() {}
+    virtual void post_change() {}
 
 protected:
 
