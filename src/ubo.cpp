@@ -7,19 +7,19 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name) : Buffer(name) { 
+UBO::UBO(std::string name) : Buffer(name) {
 
     striding(true);
 
     binding = binding_count++;
-    
-    if (binding > 100) PLOGW << "MAX_UBO might soon be reached";// can do better ^^
+
+    if (binding > 100) PLOGE << "MAX_UBO might soon be reached";// can do better ^^
 
     create();
 
-} 
+}
 
-void UBO::destroy() { if (id<0) {glDeleteBuffers(1, &id); id = -1;} } 
+void UBO::destroy() { if (id<0) {glDeleteBuffers(1, &id); id = -1;} }
 
 void UBO::resize(uint32_t size) {
 
@@ -36,7 +36,7 @@ void UBO::create() {
 
 }
 
-void UBO:: bind(ShaderProgram* shader) {  
+void UBO:: bind(ShaderProgram* shader) {
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name().c_str()), binding);
@@ -63,8 +63,8 @@ void UBO::upload(void* data, size_t size, uint32_t offset){
     // std::string str;
     // for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
     // PLOGV << name() << " " << binding << ": " << size << " - " << str;
-    
+
     glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data); 
-    
+    glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+
 }

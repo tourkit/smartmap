@@ -25,17 +25,17 @@ bool JSON::load(const char* data) {
 
     document.Parse(data);
 
-    if (document.IsNull()) { 
-        
-        PLOGW << rapidjson::GetParseError_En(document.GetParseError()); 
-        PLOGV << data; 
-        
-        return false; 
-        
+    if (document.IsNull()) {
+
+        PLOGE << rapidjson::GetParseError_En(document.GetParseError());
+        PLOGV << data;
+
+        return false;
+
     }
 
     loaded = true;
-    
+
     return true;
 
 }
@@ -44,7 +44,7 @@ bool JSON::exists(rapidjson::Value& source, const char* name) {
 
     if (!source.HasMember(name)) {
 
-        PLOGW << "-----------------------------> undefined: " << name;
+        PLOGE << "-----------------------------> undefined: " << name;
 
         return false;
     }

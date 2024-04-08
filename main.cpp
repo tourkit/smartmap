@@ -13,34 +13,37 @@
 int main() {
 
     logger.cout(true);
+    {
 
-    engine.init();
+        Struct a("a");
 
-    auto &dc = *engine.stack->addOwnr<DrawCall>();
+        a.add<float>("x").add<float>("y").add<float>("z");
 
-    auto m_node = dc.add((*engine.models)[0]);
+        Struct t("t");
+        t.add(a);
 
-    PLOGD << m_node->type_name();
+        Buffer b;
+        b.add(t);
 
-    m_node->is_a<Model>()->quantity(2);
+        PLOGD << "----------------";
 
-    m_node->add((*engine.effectors)[3]);
-    m_node->add((*engine.effectors)[0]);
-    // m_node->add((*engine.effectors)[1]);
-    // delete m_node;
+        auto bkp(b);
 
-    engine.gui->editors.push_back(new EditorWidget());
-    engine.gui->editors.back()->locked = true;
-    engine.gui->editors.push_back(new EditorWidget());
+        bkp["t"]["a"]["z"].set<float>(1.0f);
 
-    // // engine.
-    // for (int i = 0 ; i < 100; i++) {
+        delete a.members[0];
 
-    // auto &bkp = engine.dynamic_ubo.copy();
-    // delete &bkp;
-    // }
-    // PLOGD
-    engine.run();
+        b.remap(bkp);
+
+        PLOGD << bkp.print(2);
+        bkp.printData();
+
+        PLOGD << b.print(2);
+        b.printData();
+
+
+    }
+
 }
 
 // maker update list first || do a modif(add,remove,move,resize) pool at new frame ...

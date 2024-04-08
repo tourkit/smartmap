@@ -22,7 +22,7 @@ struct JSON {
     JSON();
 
     JSON(File* file);
-    
+
     JSON(const char* data);
 
     ~JSON();
@@ -43,17 +43,17 @@ struct JSON {
 
     rapidjson::GenericObject<false, rapidjson::Value> obj(const char* name) {
 
-         if (!document.HasMember(name) || !document[name].IsObject()) { 
+         if (!document.HasMember(name) || !document[name].IsObject()) {
 
-            PLOGW << "UNDEFINED: " << name;
+            PLOGE << "UNDEFINED: " << name;
 
             rapidjson::Value models;
 
-            models.SetObject(); 
+            models.SetObject();
 
             document.AddMember("models", models, document.GetAllocator());
-            
-            
+
+
         }
 
         return document[name].GetObj();

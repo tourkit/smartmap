@@ -37,7 +37,7 @@ void Sender::init() {
     send_create.clock_video = true;
 
     pNDI_send = NDIlib_send_create(&send_create);
-    if (!pNDI_send) PLOGW << "NDI ERROR 1" ;
+    if (!pNDI_send) PLOGE << "NDI ERROR 1" ;
 
     setInQueueCallback(MessageType::NDI_FRAME_OUT, [this](std::shared_ptr<Message> const& m) {
         auto message = std::static_pointer_cast<FrameOutMessage>(m);

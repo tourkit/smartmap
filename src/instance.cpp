@@ -30,7 +30,7 @@ Instance Instance::operator[](std::string name) {
 
     }
 
-    if (!found) PLOGW << "\"" << name << "\" does not exist";
+    if (!found) PLOGE << "\"" << name << "\" does not exist";
 
     return Instance{buff,offset,found};
 
@@ -40,7 +40,7 @@ Instance Instance::operator[](int id) {
     auto offset = this->offset;
     auto member = this->member;
 
-    if (id >= member->members.size()) {PLOGW << id << "exceed"; exit(0);}
+    if (id >= member->members.size()) {PLOGE << id << "exceed"; exit(0);}
 
     for (int i = 0 ; i < id; i ++ ){
 

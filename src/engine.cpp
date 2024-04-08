@@ -158,7 +158,7 @@ void Engine::open(const char* file) {
 
             if (!m.value[0].IsString()) continue;
 
-            auto model_n = models->child(m.value[0].GetString()); if (!model_n)  { PLOGW << "no model : " << m.value[0].GetString(); continue; }
+            auto model_n = models->child(m.value[0].GetString()); if (!model_n)  { PLOGE << "no model : " << m.value[0].GetString(); continue; }
 
 
             // tofix
@@ -179,7 +179,7 @@ void Engine::open(const char* file) {
             //     auto effector = effectors->child(f.GetString())->get<Effector>();
 
             //     if (effector) model->add(effector);
-            //     else PLOGW << "no effector: " << f.GetString();
+            //     else PLOGE << "no effector: " << f.GetString();
 
             // }
 

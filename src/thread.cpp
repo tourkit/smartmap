@@ -23,15 +23,15 @@ Thread::~Thread() {
 void Thread::start() {
     _keepRunning = true;
     _thread = std::thread([this]() {
-        PLOGW << "init " << _name;
+        PLOGE << "init " << _name;
         init();
-        PLOGW << "init " << _name << " done";
+        PLOGE << "init " << _name << " done";
         while (_keepRunning) {
             _ios.run_one();
         }
-        PLOGW << "deinit " << _name;
+        PLOGE << "deinit " << _name;
         deinit();
-        PLOGW << "deinit " << _name << " done";
+        PLOGE << "deinit " << _name << " done";
     });
 }
 

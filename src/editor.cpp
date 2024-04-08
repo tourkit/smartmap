@@ -446,7 +446,8 @@ void Editors::init() {
 
         static ImVec4 info = ImVec4(0.6f, 0.6f, 0.6f, 1.0f);
         static ImVec4 debug = ImVec4(0.25f, 0.25f, 0.25f, 1.0f);
-        static ImVec4 warning = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
+        static ImVec4 warning = ImVec4(1.0f, 0.7f, 0.0f, 1.0f);
+        static ImVec4 error = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
         static ImVec4 verbose = ImVec4(0.4f, 0.4f, 1.0f, 1.0f);
 
         static float *curr = &info.x;
@@ -454,6 +455,7 @@ void Editors::init() {
         ImGui::SameLine();if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
         ImGui::SameLine();if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
         ImGui::SameLine();if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }
+        ImGui::SameLine();if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }
         ImGui::SameLine();if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }
         ImGui::SameLine();ImGui::Checkbox("verbose", &is_verbose);
 
@@ -471,12 +473,14 @@ void Editors::init() {
 
             if (m.severity == plog::Severity::debug) color = debug;
             if (m.severity == plog::Severity::warning) color = warning;
+            if (m.severity == plog::Severity::error) color = error;
             if (m.severity == plog::Severity::verbose) {color = verbose;
 
 
 
 
-            if (!is_verbose) continue;}
+            if (!is_verbose) continue;
+            }
 
             ImGui::PushStyleColor(ImGuiCol_Text, color);
             std::string str = " "+m.msg;

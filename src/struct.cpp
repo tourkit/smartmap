@@ -113,7 +113,7 @@ Struct& Struct::add(const char* name) {
 
     for (auto s : owned) if (!strcmp(name,s->name().c_str())) { add(*s); return *this; }
 
-    PLOGW << " noadd" << name; return *this;
+    PLOGE << " noadd" << name; return *this;
 
 }
 

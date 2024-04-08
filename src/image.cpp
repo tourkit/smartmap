@@ -10,7 +10,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb/stb_image_write.h"
 #endif
- 
+
 Image::Image(std::string path) { read(path); }
 
 void Image::read(std::string path) {
@@ -21,7 +21,7 @@ void Image::read(std::string path) {
 
         auto pixels = stbi_load_from_memory((const stbi_uc*)&data[0],data.size(), &width, &height, &comp, 0);
 
-        if (!pixels) { PLOGW << stbi_failure_reason(); loaded = false; return; }
+        if (!pixels) { PLOGE << stbi_failure_reason(); loaded = false; return; }
 
         auto count = width*height*comp;
 
@@ -109,4 +109,3 @@ void Image::write(const char* destination, int quality) {
     // File::write(destination, (const char*)&data[0], data.size());
 
 }
-

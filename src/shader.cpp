@@ -181,7 +181,7 @@ void Shader::create(std::string src, uint8_t type)  {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
         std::memset(std::strchr(infoLog, '\n'), 0, 1);
-        PLOGW << (type==1?"vertex: ":"fragment: ") << &infoLog[7];
+        PLOGE << (type==1?"vertex: ":"fragment: ") << &infoLog[7];
         PLOGV <<source;
 
     }
