@@ -31,7 +31,9 @@ void Buffer::upload() { }
 
 void  Buffer::pre_change() {
 
-    PLOGD << " ------ bkp " << name();
+    if (!data.size()) return;
+
+    PLOGV << "bkp " << name();
 
     bkp = copy();
 
@@ -39,9 +41,9 @@ void  Buffer::pre_change() {
 
 void  Buffer::post_change() {
 
-    PLOGD << " ------ remap " << name();
-
     if (!bkp) return;
+
+    PLOGV << "remap " << name();
 
     remap(*bkp);
 

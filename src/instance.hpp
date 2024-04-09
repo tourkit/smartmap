@@ -11,12 +11,11 @@
 struct Buffer;
 struct Member;
 
-struct Instance { 
+struct Instance {
 
     Buffer* buff;
     uint32_t offset;
     Member* member = nullptr;
-    uint32_t id = 0;
 
     Instance operator[](std::string name);
     Instance operator[](int id);
@@ -35,7 +34,7 @@ struct Instance {
     Instance& set(T val) {
 
         PLOGV << "set " << member->name() ;
-        
+
         memcpy(data(), &val, sizeof(T));
 
         return *this;
@@ -57,9 +56,9 @@ struct Instance {
         auto inst = eq(member->quantity()-1);
 
         if (ptr) {
-        
+
             if (!size) size = member->size();
-            
+
             inst.set(ptr,size);
 
         }
@@ -67,5 +66,10 @@ struct Instance {
         return inst;
 
     }
-    
+
+// private:
+
+
+    uint32_t eq_id = 0;
+
 };

@@ -30,7 +30,7 @@ Instance Instance::operator[](std::string name) {
 
     }
 
-    if (!found) PLOGE << "\"" << name << "\" does not exist";
+    if (!found) PLOGE << "\"" << name << "\" does not exist in " << member->name();
 
     return Instance{buff,offset,found};
 
@@ -58,8 +58,12 @@ Instance Instance::operator[](int id) {
 
 Instance Instance::eq(int id) {
 
-    if (!member || id >= member->quantity()) {PLOGD<<"WAWA";return *this;}
+    if (!member || id >= member->quantity()) {PLOGE<<"WAWA";return *this;}
 
-    return Instance{buff,offset + member->footprint() * (id-this->id) ,member->members[0]};
+    uint32_t new_offset = offset + member->footprint() * (id-eq_id);
+
+    eq_id = id;
+
+    return Instance{buff, new_offset ,member};
 
 }
