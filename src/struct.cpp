@@ -36,9 +36,18 @@ Struct::~Struct(){
 
     structs.erase(this);
 
+    for (auto s : structs) {
+
+        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
+
+            s->remove(*this);
+
+        }
+
+    }
+
     // delete typed() a.k.a Data members
     for (auto x : members) if (x->typed()) delete x;
-
 }
 
 Struct::Struct(const Member& other) : Member(other) {

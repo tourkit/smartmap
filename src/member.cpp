@@ -13,16 +13,6 @@
 
 Member::~Member() {
 
-    for (auto s : structs) {
-
-        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
-
-            s->remove(*this);
-
-        }
-
-    }
-
     PLOGV << "~" << name();
 
 }
@@ -74,7 +64,7 @@ void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m 
 
 void Member::name(std::string name_v) { this->name_v = name_v; }
 
-std::string Member::name() { return name_v; }
+std::string Member::name() { if (name_v.length()) return name_v; return "parentName" ; }
 
 uint32_t Member::size() { return 0; }
 

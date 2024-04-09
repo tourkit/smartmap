@@ -33,7 +33,7 @@ struct Instance {
     template <typename T>
     Instance& set(T val) {
 
-        PLOGV << "set " << member->name() ;
+        PLOGV << member->name() ;
 
         memcpy(data(), &val, sizeof(T));
 
@@ -50,6 +50,8 @@ struct Instance {
     }
 
     Instance push(void* ptr = nullptr, size_t size = 0) {
+
+        PLOGV << "new " << member->name() << " in " << buff->name() ;
 
         member->quantity(member->quantity()+1);
 
