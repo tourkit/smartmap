@@ -168,9 +168,7 @@ bool VBO::pushFile(File* file, int id) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
 
-        auto u = (*this)[0];
-
-        auto v = u.push()[0];
+        auto v = (*this)[0].push()[0];
 
         v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });

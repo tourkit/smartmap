@@ -33,9 +33,11 @@ void  Buffer::pre_change() {
 
     if (!data.size()) return;
 
-    PLOGV << "bkp " << name();
 
     bkp = copy();
+
+    PLOGV << "bkp " << name();
+    bkp->printData();
 
 }
 
@@ -44,8 +46,10 @@ void  Buffer::post_change() {
     if (!bkp) return;
 
     PLOGV << "remap " << name();
+    printData();
 
     remap(*bkp);
+    printData();
 
     bkp->hard_delete();
 
@@ -64,6 +68,9 @@ void Buffer::update() {
     if (data.size() > MAX_SIZE) { PLOGE << "data.size() > MAX_SIZE"; }
 
     data.resize(footprint_all());
+
+    memset( data.data(), 0, data.size() );
+
 
 }
 
@@ -93,7 +100,9 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             Member* found = nullptr;
 
-            int this_offset_ = this_offset + this_member->eq(i);
+            auto thiseq = this_member->eq(i);
+
+            int this_offset_ = this_offset + thiseq;
 
             for (auto this_member_ : this_member->members) {
 
@@ -115,7 +124,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             if (found->typed()) {
 
-                PLOGV  << src_offset_ << " -> "  << this_offset_ << " " << src_member->name() << "::" << src_member_->name() << "(" << src_member_->size() << ")";
+                PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << *(float*)&src_buffer.data[src_offset_] << " -> " << *(float*)&data[this_offset_];
 
                 memcpy(&data[this_offset_], &src_buffer.data[src_offset_],found->size());
 

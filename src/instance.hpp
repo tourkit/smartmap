@@ -41,6 +41,8 @@ struct Instance {
 
     }
 
+    void each(std::function<void(Instance)> cb) { for (int i = 0; i < member->quantity(); i++) cb((*this)[i]); }
+
     Instance& set(void* ptr, size_t size) {
 
         memcpy(data(), ptr, size);
