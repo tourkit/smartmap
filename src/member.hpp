@@ -8,6 +8,8 @@
 
 
 #include "glm/glm.hpp"
+#include "log.hpp"
+
 
 
 static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)factor)+1)*factor*!!x; }
@@ -72,8 +74,8 @@ struct Member {
 
     std::set<Member*> getTop(bool z = false);
 
-    virtual void pre_change() {}
-    virtual void post_change() {}
+    virtual void pre_change() {PLOGW<<"NONONON";}
+    virtual void post_change() {PLOGW<<"NONONON";}
 
 protected:
 

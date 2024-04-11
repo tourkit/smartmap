@@ -72,7 +72,7 @@ uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16);  r
 
 uint32_t Member::stride() { return (footprint()-size()); }
 
-void Member::quantity(uint32_t quantity_v) { this->quantity_v = quantity_v; update(); }
+void Member::quantity(uint32_t quantity_v) { pre_change(); this->quantity_v = quantity_v; update(); post_change(); }
 
 uint32_t Member::quantity() { return quantity_v; }
 
