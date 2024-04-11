@@ -45,11 +45,9 @@ void  Buffer::post_change() {
 
     if (!bkp) return;
 
-    PLOGV << "remap " << name();
-    printData();
+    PLOGV << "remap " << bkp->name();
 
     remap(*bkp);
-    printData();
 
     bkp->hard_delete();
 
@@ -114,7 +112,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
                 ) { found = this_member_; break; }
 
-                else this_offset_ += this_member_->size();
+                else this_offset_ += this_member_->footprint();
 
             }
 

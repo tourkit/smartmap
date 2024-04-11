@@ -58,7 +58,7 @@ Instance Instance::operator[](int id) {
 
 Instance Instance::eq(int id) {
 
-    if (!member || id >= member->quantity()) {PLOGE<<"WAWA";return *this;}
+    if (!member || id >= member->quantity()) {PLOGE<<"Not that many quantity exist";return *this;}
 
     uint32_t new_offset = offset + member->footprint() * (id-eq_id);
 
