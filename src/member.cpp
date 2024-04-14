@@ -13,10 +13,22 @@
 
 Member::~Member() {
 
-    PLOGV << "~" << name();
+    // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
+    PLOGV << "~" << name();// << " ( &" + ss.str() + " )";
 
 }
 
+Member::Member(std::string name_v) {
+
+    name(name_v);
+
+    if (!name_v.length()) quantity_v = 0; // ??????? if typed
+
+    // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
+
+    PLOGV << "#" << name();// << " ( &" + ss.str() + " )" ;
+
+}
 
 Member::Member(const Member& other)
  :
@@ -27,7 +39,15 @@ Member::Member(const Member& other)
     members(other.members) ,
     size_v( other.size_v )
 
- { for (auto &m : members) m = m->copy(); }
+ {
+
+    for (auto &m : members) m = m->copy();
+
+    // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
+
+    PLOGV << "BKP#" << name();// << " ( &" + ss.str() + " )" ;
+
+}
 
 
 std::set<Member*> Member::getTop(bool z) {
@@ -50,15 +70,6 @@ std::set<Member*> Member::getTop(bool z) {
 
 }
 
-Member::Member(std::string name_v) {
-
-    name(name_v);
-
-    if (!name_v.length()) quantity_v = 0; // ???????
-
-    PLOGV << "#" << name();
-
-}
 
 void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m == this) a->update(); }
 
@@ -72,7 +83,17 @@ uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16);  r
 
 uint32_t Member::stride() { return (footprint()-size()); }
 
-void Member::quantity(uint32_t quantity_v) { pre_change(); this->quantity_v = quantity_v; update(); post_change(); }
+void Member::quantity(uint32_t quantity_v) {
+
+    pre_change();
+
+    this->quantity_v = quantity_v;
+
+    update();
+
+    post_change();
+
+}
 
 uint32_t Member::quantity() { return quantity_v; }
 
@@ -99,6 +120,8 @@ std::string Member::type_name() {
     if (type() == typeid(int)) return "int";
 
     if (type() == typeid(uint32_t)) return "uint";
+
+    if (type() == typeid(char)) return "char";
 
         // return "Sampler2D";
 

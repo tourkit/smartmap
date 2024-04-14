@@ -47,7 +47,11 @@ Struct::~Struct(){
     }
 
     // delete typed() a.k.a Data members
-    for (auto x : members) if (x->typed()) delete x;
+    for (auto x : members) {
+        if (x->typed())
+            delete x;
+
+    }
 }
 
 Struct::Struct(const Member& other) : Member(other) {
@@ -184,14 +188,15 @@ std::string Struct::print(int recurse) {
 
         str += " ";
 
-        if (!m->typed()) if (recurse) { str += m->print(recurse-1);} else {str += camel(m->name()); }
+        if (!m->typed()) if (recurse) { str += m->print(recurse-1);} else {str += camel(m->name()) ; }
 
         else str += m->type_name();
 
         str += " " + lower(m->name());
 
         if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
-
+        // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(m);
+        // str  += " ( &" + ss.str() + " )";
         str += ";";
 
     }
@@ -221,7 +226,8 @@ void Struct::hard_delete() {
 
         if (!m->typed()) delete m;
 
-
     }
+
+    members.resize(0);
 
 }
