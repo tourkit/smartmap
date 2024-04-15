@@ -35,7 +35,8 @@ struct Buffer : Struct {
     void remap(Buffer& src_buffer, Member* src_member = nullptr, Member* this_member = nullptr, int src_offset = 0, int this_offset = 0);
 
     void pre_change() override;
-    void post_change() override;
+
+    void post_change(std::vector<Member*> added = {}) override;
 
 private:
 

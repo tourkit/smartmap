@@ -66,6 +66,8 @@ struct Member {
 
     virtual void hard_delete() {}
 
+    void each(std::function<void(Member*, uint32_t)> f, uint32_t = 0);
+
     std::vector<Member*> members;
 
     void* range_from_ptr = nullptr;
@@ -74,8 +76,8 @@ struct Member {
 
     std::set<Member*> getTop(bool z = false);
 
-    virtual void pre_change() {PLOGW<<"NONONON";}
-    virtual void post_change() {PLOGW<<"NONONON";}
+    virtual void pre_change();
+    virtual void post_change(std::vector<Member*> added = {});
 
 protected:
 

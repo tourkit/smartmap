@@ -63,21 +63,11 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
     structs.insert(this);
 
-    quantity_v = quantity;
+    this->quantity(quantity);
 
 }
 
-void Struct::pre_change() {
 
-    for (auto x : getTop())  x->pre_change();
-
-}
-
-void Struct::post_change() {
-
-    for (auto x : getTop()) x->post_change();
-
-}
 
 Struct& Struct::remove(Member& m) {
 
@@ -101,9 +91,6 @@ Struct& Struct::remove(Member& m) {
 
 }
 
-
-
-
 Struct& Struct::add(Member& m) {
 
     PLOGV << name() << " add " << m.name();
@@ -116,7 +103,9 @@ Struct& Struct::add(Member& m) {
 
     update();
 
-    post_change();
+    post_change({&m});
+
+    // lalalala doit yavoir setdefault
 
     return *this;
 

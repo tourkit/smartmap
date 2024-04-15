@@ -33,6 +33,9 @@ Member::Member(std::string name_v) {
 Member::Member(const Member& other)
  :
 
+    range_from_ptr(other.range_from_ptr),
+    range_to_ptr(other.range_to_ptr),
+    default_val_ptr(other.default_val_ptr),
     is_striding(other.is_striding) ,
     quantity_v( other.quantity_v ) ,
     name_v(other.name_v) ,
@@ -152,5 +155,35 @@ std::string Member::print(int recurse) {
     std::string str = type_name() + " " + camel(name())  + ";";
 
     return str;
+
+}
+
+void Member::each(std::function<void(Member*, uint32_t)> f, uint32_t offset) {
+
+
+    auto offset_ = offset;
+
+    for (auto m : members) {
+
+
+        m->each(f, offset_);
+
+        offset_ += footprint_all();
+
+    }
+
+    f(this, offset);
+
+}
+
+void Member::pre_change() {
+
+    for (auto x : getTop())  x->pre_change();
+
+}
+
+void Member::post_change(std::vector<Member*> added) {
+
+    for (auto x : getTop()) x->post_change(added);
 
 }

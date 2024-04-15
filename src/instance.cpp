@@ -80,9 +80,10 @@ void Instance::setDefault(Member* toset, int offset) {
 
     }
 
+        // PLOGD << "------------>set " << toset->name();
     if (toset->default_val_ptr) {
-
         // PLOGD << "------------>set " << toset->name() << " to default " << *(float*)toset->default_val_ptr << " @ " << offset;
+
 
         memcpy(data()+offset, toset->default_val_ptr, toset->size());
 

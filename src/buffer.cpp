@@ -39,13 +39,42 @@ void  Buffer::pre_change() {
 
 }
 
-void  Buffer::post_change() {
+void  Buffer::post_change(std::vector<Member*> added) {
+
+    for (auto x : added) {
+
+        each([&](Member* m, uint32_t offset) {
+
+            if (m == x) {
+
+                for (auto x : m->members) {
+
+                    if (x->default_val_ptr) {
+
+                        PLOGD  << "NID TOU SAITE : " << x->name() << " @ " << offset << " - val : " << *(float*) x->default_val_ptr ;
+
+                        memcpy(&data[offset], x->default_val_ptr, x->size());
+
+                    }
+
+                    offset += x->footprint_all();
+
+                }
+
+            }
+
+        });
+
+        // find instances, set default
+    }
+                    PLOGD << print(2);
 
     if (!bkp) return;
 
     PLOGV << "remap " << bkp->name();
 
     remap(*bkp);
+
 
     bkp->hard_delete();
 

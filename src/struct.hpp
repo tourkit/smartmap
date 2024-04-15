@@ -22,9 +22,6 @@ struct Struct : Member {
 
     ~Struct();
 
-    void pre_change() override;
-    void post_change() override;
-
     Struct& add(Member& m);
 
     template <typename T>
@@ -47,7 +44,6 @@ struct Struct : Member {
     Member* copy() override ;
 
     void hard_delete();
-
 
     static inline std::set<Struct*> owned;
 
