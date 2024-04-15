@@ -47,28 +47,26 @@ void  Buffer::post_change(std::vector<Member*> added) {
 
             if (m == x) {
 
-                for (auto x : m->members) {
+                for (auto x_ : m->members) {
 
-                    if (x->default_val_ptr) {
+                    if (x_->default_val_ptr) {
 
-                            if (x->type() == typeid(glm::vec2)) {
+                            // if (x_->type() == typeid(glm::vec2)) {
 
-                                PLOGD  << "NID TOU SAITE : " << x->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) x->default_val_ptr).x ;
-                            }
+                            //     PLOGD  << "NID TOU SAITE : " << x_->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) x_->default_val_ptr).x ;
+                            // }
 
-                            if (x->type() == typeid(float)) {
+                            // if (x_->type() == typeid(float)) {
 
-                                PLOGD  << "NID TOU SAITE : " << x->name() << " @ " << offset << " - val : " << *(float*) x->default_val_ptr ;
+                            //     PLOGD  << "NID TOU SAITE : " << x_->name() << " @ " << offset << " - val : " << *(float*) x_->default_val_ptr ;
 
-                            }
+                            // }
 
-
-
-                        memcpy(&data[offset], x->default_val_ptr, x->size());
+                        memcpy(&data[offset], x_->default_val_ptr, x_->size());
 
                     }
 
-                    offset += x->footprint_all();
+                    offset += x_->footprint_all();
 
                 }
 

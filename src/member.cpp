@@ -166,7 +166,7 @@ void Member::each(std::function<void(Member*, uint32_t)> f, uint32_t offset) {
 
         m->each(f, offset_);
 
-        offset_ += footprint_all();
+        offset_ += m->footprint_all();
 
     }
 
