@@ -102,7 +102,9 @@ void Callbacks::init() {
 
     NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){ dc->draw(); });
 
-    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
+    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){
+        dc->update();
+        });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){
 

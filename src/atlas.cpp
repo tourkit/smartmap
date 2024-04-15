@@ -60,12 +60,11 @@ void Atlas::fromDir(std::string path) {
 
         auto m = engine.static_ubo["Media"].push(&x[0]);
 
-        // m.set()
-
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 
     }
 
+    engine.static_ubo.upload();
 
 }
 
@@ -73,6 +72,6 @@ void Atlas::link(ShaderProgram* shader) {
 
     shader->sendUniform("medias", 1);
 
-    texture->bind(1);
+    texture->bind();
 
 }

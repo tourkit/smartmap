@@ -59,7 +59,7 @@ std::string ShaderProgram::Builder::frag() {
 
     str += comment_line;
 
-    str += "uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ?
+    str += "//uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ?
     str += "uniform sampler2D medias;\n\n";
 
     str += "in vec2 UV;\n\n";
@@ -216,8 +216,6 @@ void  ShaderProgram::create(VBO* vbo) {
 
     engine.static_ubo.bind(this);
 
-    engine.atlas->link(this);
-
 }
 
 void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
@@ -233,6 +231,8 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     glAttachShader(id, vert.id);
 
     glLinkProgram( id );
+
+    engine.atlas->link(this);
 
     loaded = true;
 

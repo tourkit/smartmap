@@ -8,11 +8,11 @@
 #include "log.hpp"
 #include "boilerplate.hpp"
 #include "drawcall.hpp"
+#include "texture.hpp"
 
 
 int main() {
 
-    logger.cout(true);
 
     // VBO vbo;
 
@@ -65,6 +65,10 @@ int main() {
 
     engine.init();
 
+    logger.cout(true);
+
+    engine.tree->addOwnr<Texture>("assets/medias/boy.jpg")->active(true)->onrun([](Node* n){ n->is_a<Texture>()->bind(); });
+
     auto &dc = *engine.stack->addOwnr<DrawCall>();
 
     auto m_node = dc.add((*engine.models)[0]);
@@ -73,7 +77,7 @@ int main() {
 
     // m_node->add((*engine.effectors)[3]);
     // m_node->add((*engine.effectors)[0]);
-    m_node->add((*engine.effectors)[1]);
+    // m_node->add((*engine.effectors)[1]);
 
     engine.gui->editors.push_back(new EditorWidget());
     engine.gui->editors.back()->locked = true;
