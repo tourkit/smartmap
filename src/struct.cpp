@@ -121,10 +121,6 @@ Struct& Struct::add(const char* name) {
 
 Struct& Struct::range(float from, float to, float def) {
 
-    if (def == 10) {
-        PLOGD << "Okdskujyfkyesdjkyfjksdfyhjkfhsdjk";
-        }
-
     auto a = members.back();
     if (a->type() == typeid(float)) {
         ((Data<float>*)members.back())->range_from = from;

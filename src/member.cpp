@@ -161,7 +161,7 @@ void Member::each(std::function<void(Member*, uint32_t)> f, uint32_t offset) {
 
     for (auto m : members) {
 
-        m->each(f, offset_);
+        for (int i = 0; i < m->quantity(); i++) m->each(f, offset_+i*m->footprint());
 
         offset_ += m->footprint_all();
 

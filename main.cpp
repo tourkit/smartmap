@@ -31,7 +31,3 @@ int main() {
 
     engine.run();
 }
-
-
-
-// debug output
