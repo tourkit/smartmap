@@ -226,8 +226,9 @@ void Struct::hard_delete() {
 
         if (!m->typed()) delete m;
 
-    }
+        // members erase m
+        members.erase(std::find(members.begin(), members.end(), m));
 
-    members.resize(0);
+    }
 
 }

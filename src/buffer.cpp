@@ -33,11 +33,9 @@ void  Buffer::pre_change() {
 
     if (!data.size()) return;
 
-
     bkp = copy();
 
-    PLOGV << "bkp " << name();
-    bkp->printData();
+    PLOGV << "bkp " << name() ;
 
 }
 
@@ -112,23 +110,23 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
                 ) { found = this_member_; break; }
 
-                else this_offset_ += this_member_->footprint();
+                else this_offset_ += this_member_->footprint_all();
 
             }
 
             if (!found) { src_offset_ += src_member_->footprint(); PLOGV << "couldnt find " << src_member_->name(); continue; }
 
-            remap(src_buffer, src_member_, found, src_offset_, this_offset+this_offset_);
+            remap(src_buffer, src_member_, found, src_offset_, this_offset_);
 
             if (found->typed()) {
 
-                PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << *(float*)&src_buffer.data[src_offset_] << " -> " << *(float*)&data[this_offset_];
+                PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer.data[src_offset_] << " -> " << *(float*)&data[this_offset_];
 
                 memcpy(&data[this_offset_], &src_buffer.data[src_offset_],found->size());
 
             }
 
-            src_offset_ += src_member_->footprint();
+            src_offset_ += src_member_->footprint_all();
 
         }
 
