@@ -134,11 +134,15 @@ using namespace ImGui;
     }
 
     PopStyleColor();
+            static bool holding = false;
 
         if (ImGui::BeginDragDropSource()) {
 
             auto ptr = (uint64_t)node;
             ImGui::SetDragDropPayload("_TREENONODE", &(ptr), sizeof(uint64_t));
+
+            holding = true;
+
             ImGui::Text(node->name.c_str());
             ImGui::EndDragDropSource();
 
@@ -150,7 +154,7 @@ using namespace ImGui;
 
             if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
 
-            if (mouse_down) if (ImGui::IsMouseReleased(0)) Engine::getInstance().selected = s;
+            if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) Engine::getInstance().selected = s;
 
             if (ImGui::IsMouseReleased(0)) mouse_down = false;
 
@@ -158,7 +162,13 @@ using namespace ImGui;
 
         if (ImGui::BeginDragDropTarget()) {
 
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) node->add((Node*)(*(uint64_t*)payload->Data));
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) {
+
+                node->add((Node*)(*(uint64_t*)payload->Data));
+
+                if (holding) holding = false;
+
+            }
 
             ImGui::EndDragDropTarget();
 

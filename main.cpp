@@ -34,14 +34,4 @@ int main() {
 }
 
 
-// Struct::OnAdd(q) { for(q) push() }
-
-// Struct::OnAdd need to trigger parent for push
-
-// set default value
-
-// push is not called onadd effector to model
-
- // onadd effector to model is like add struct (i think pb is :  inplyed q1 wich is not push though)
-
- // setDefault shopuld be in Struct::add(Member& m)
+// setdefault need to happen on bkp

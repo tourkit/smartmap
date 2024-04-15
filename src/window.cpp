@@ -12,7 +12,7 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
     : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) , fps("Window") {
 
     int8_t windows_border = 0;
-    int8_t window_on_top = 1; 
+    int8_t window_on_top = 1;
     int8_t cursor_visibility = 0;
     int8_t uid_callbacks = 1;
 
@@ -48,9 +48,9 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
     }
     else
     {
-        
+
         id = glfwCreateWindow(width, height, "OUTPUT", nullptr, nullptr);
-        
+
     }
 
 
@@ -66,8 +66,8 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
 
     glfwMakeContextCurrent(id);
 
-    glfwSwapInterval(0); // VSYNC 
-    
+    glfwSwapInterval(1); // VSYNC
+
     gl3wInit();
 
     if (!fullscreen)setPos(offset_x, offset_y);
@@ -77,24 +77,24 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
 
 static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { glViewport(0, 0, width, height); }
 
-void Window::updatePos() {  
+void Window::updatePos() {
 
-    glfwSetWindowPos(id, offset_x, offset_y); 
+    glfwSetWindowPos(id, offset_x, offset_y);
     glfwSetFramebufferSizeCallback(id, framebuffer_size_callback);
-    glfwSetWindowSize(id, width, height); 
-    
+    glfwSetWindowSize(id, width, height);
+
 }
-void Window::setPos(uint16_t offset_x, uint16_t offset_y) { 
+void Window::setPos(uint16_t offset_x, uint16_t offset_y) {
     this->offset_x = offset_x;
     this->offset_y = offset_y;
     updatePos();
 }
 
-void Window::updateSize() { 
+void Window::updateSize() {
     glfwSetWindowSize(id, width, height);
     glViewport(0, 0, width, height);
 }
-void Window::setSize(uint16_t width, uint16_t height) { 
+void Window::setSize(uint16_t width, uint16_t height) {
     this->width = width;
     this->height = height;
     updateSize();
@@ -111,7 +111,7 @@ void Window::keypress() {
         if (action == GLFW_PRESS) {
 
             if (_this->keypress_cbs.find(key) != _this->keypress_cbs.end()) return _this->keypress_cbs[key](key);
-        
+
             PLOGD << "key " << (int)key ;
 
         }
@@ -144,6 +144,6 @@ void Window::render(std::function<void()> callback) {
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
     callback();
-    
+
     glfwSwapBuffers(id);
 }

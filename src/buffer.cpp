@@ -91,6 +91,7 @@ void  Buffer::post_change(std::vector<Member*> added) {
 
     bkp = nullptr;
 
+
 }
 
 Buffer* Buffer::copy() { return new Buffer(*this); }
