@@ -25,8 +25,11 @@ int main() {
     m_node->add((*engine.effectors)[1]);
     m_node->add((*engine.effectors)[0]);
 
+    m_node->select();
+
     engine.gui->editors.push_back(new EditorWidget());
     engine.gui->editors.back()->locked = true;
+    engine.gui->editors.back()->selected = engine.debug;
     engine.gui->editors.push_back(new EditorWidget());
 
     engine.run();
