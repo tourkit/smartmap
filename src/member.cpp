@@ -33,9 +33,6 @@ Member::Member(std::string name_v) {
 Member::Member(const Member& other)
  :
 
-    range_from_ptr(other.range_from_ptr),
-    range_to_ptr(other.range_to_ptr),
-    default_val_ptr(other.default_val_ptr),
     is_striding(other.is_striding) ,
     quantity_v( other.quantity_v ) ,
     name_v(other.name_v) ,

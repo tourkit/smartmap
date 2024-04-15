@@ -193,12 +193,23 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                 else range_to = &t_range_f;
                 range_to = &t_range_f;
 
+                if (m->range_from_ptr) range_from = m->range_from_ptr;
+                if (m->range_to_ptr) range_to = m->range_to_ptr;
+
+
                 auto type = ImGuiDataType_Float;
 
-                if (m->type() == typeid(int)) {type = ImGuiDataType_S32; range_to = &t_range_i; range_from = &f_range_i; }
-                if (m->type() == typeid(uint8_t)) type = ImGuiDataType_U8;
-                if (m->type() == typeid(uint16_t)) type = ImGuiDataType_U16;
-                if (m->type() == typeid(uint32_t)) { type = ImGuiDataType_U16; range_to = &t_range_i; range_from = &f_range_i; }
+                if (m->type() == typeid(int)) {
+
+                    type = ImGuiDataType_U16;
+
+                    if (m->range_from_ptr) f_range_i = *(int*)m->range_from_ptr;
+                    if (m->range_to_ptr) t_range_i = *(int*)m->range_to_ptr;
+
+                    range_to = &t_range_i;
+                    range_from = &f_range_i;
+
+                }
 
                 int q = 1;
                 if (m->type() == typeid(glm::vec2)) q = 2;
@@ -462,25 +473,19 @@ void Editors::init() {
         if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
 
         int max_lines = 1000;
-        int to = log_n->appender.list.size()-max_lines;
-        if (to<0)to = 0;
-        for (int member_count = log_n->appender.list.size()-1; member_count>=to; member_count-- ) {
-        // for (auto &m : log_n->appender.list ){
+        int count = 0;
 
-            auto &m = log_n->appender.list[member_count];
+        for (auto &m : log_n->appender.list) {
 
             ImVec4 color = info;
 
             if (m.severity == plog::Severity::debug) color = debug;
             if (m.severity == plog::Severity::warning) color = warning;
             if (m.severity == plog::Severity::error) color = error;
-            if (m.severity == plog::Severity::verbose) {color = verbose;
+            if (m.severity == plog::Severity::verbose) {color = verbose; if (!is_verbose) { continue;} }
 
-
-
-
-            if (!is_verbose) continue;
-            }
+            count++;
+            if (count == max_lines) break;
 
             ImGui::PushStyleColor(ImGuiCol_Text, color);
             std::string str = " "+m.msg;

@@ -121,6 +121,10 @@ Struct& Struct::add(const char* name) {
 
 Struct& Struct::range(float from, float to, float def) {
 
+    if (def == 10) {
+        PLOGD << "Okdskujyfkyesdjkyfjksdfyhjkfhsdjk";
+        }
+
     auto a = members.back();
     if (a->type() == typeid(float)) {
         ((Data<float>*)members.back())->range_from = from;
@@ -132,6 +136,11 @@ Struct& Struct::range(float from, float to, float def) {
         ((Data<uint32_t>*)members.back())->range_from = (uint32_t) from;
         ((Data<uint32_t>*)members.back())->range_to = (uint32_t) to;
         ((Data<uint32_t>*)members.back())->default_val = (uint32_t) def;
+    }
+    if (a->type() == typeid(int)) {
+        ((Data<int>*)members.back())->range_from = (int) from;
+        ((Data<int>*)members.back())->range_to = (int) to;
+        ((Data<int>*)members.back())->default_val = (int) def;
     }
 
     if (a->type() == typeid(glm::vec2)) {
