@@ -81,6 +81,8 @@ void Engine::run() {
 
         engine.dynamic_ubo.upload();
 
+        engine.atlas->texture->bind(1);
+
         engine.tree->run();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

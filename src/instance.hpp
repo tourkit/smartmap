@@ -51,25 +51,9 @@ struct Instance {
 
     }
 
-    Instance push(void* ptr = nullptr, size_t size = 0) {
+    void setDefault(Member* toset = nullptr, int offset = 0);
 
-        PLOGV << "new " << member->name() << " in " << buff->name() ;
-
-        member->quantity(member->quantity()+1);
-
-        auto inst = eq(member->quantity()-1);
-
-        if (ptr) {
-
-            if (!size) size = member->size();
-
-            inst.set(ptr,size);
-
-        }
-
-        return inst;
-
-    }
+    Instance push(void* ptr = nullptr, size_t size = 0);
 
 // private:
 

@@ -4,6 +4,7 @@
 #include "ubo.hpp"
 #include "vbo.hpp"
 #include "model.hpp"
+#include "atlas.hpp"
 
 #include <GL/gl3w.h>
 #include <chrono>
@@ -214,6 +215,8 @@ void  ShaderProgram::create(VBO* vbo) {
     engine.dynamic_ubo.bind(this);
 
     engine.static_ubo.bind(this);
+
+    engine.atlas->link(this);
 
 }
 

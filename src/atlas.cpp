@@ -54,17 +54,18 @@ void Atlas::fromDir(std::string path) {
         if (!img.loaded) continue;
 
         auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
-        if (!r.width) {PLOGE << img.name << " can't fit, need more space."; continue;}
+        if (!r.width) {PLOGE << img.name() << " can't fit, need more space."; continue;}
 
         float x[4] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
 
-        engine.static_ubo["Media"].push(&x[0]);
+        auto m = engine.static_ubo["Media"].push(&x[0]);
+
+        // m.set()
 
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 
     }
 
-    engine.static_ubo.update();
 
 }
 
@@ -72,6 +73,6 @@ void Atlas::link(ShaderProgram* shader) {
 
     shader->sendUniform("medias", 1);
 
-    texture->bind();
+    texture->bind(1);
 
 }

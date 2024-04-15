@@ -60,6 +60,4 @@ void DrawCall::update() {
 
     shader.create(&vbo);
 
-    engine.atlas->link(&shader);
-
 }

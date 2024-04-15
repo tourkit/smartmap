@@ -67,3 +67,47 @@ Instance Instance::eq(int id) {
     return Instance{buff, new_offset ,member};
 
 }
+
+void Instance::setDefault(Member* toset, int offset) {
+
+    if (!toset) toset = member;
+
+    for (auto x : toset->members) {
+
+        setDefault(x, offset);
+
+        offset += x->footprint_all();
+
+    }
+
+    if (toset->default_val_ptr) {
+
+        // PLOGD << "------------>set " << toset->name() << " to default " << *(float*)toset->default_val_ptr << " @ " << offset;
+
+        memcpy(data()+offset, toset->default_val_ptr, toset->size());
+
+    }
+
+}
+
+Instance Instance::push(void* ptr, size_t size) {
+
+    PLOGV << "new " << member->name() << " in " << buff->name() ;
+
+    member->quantity(member->quantity()+1);
+
+    auto inst = eq(member->quantity()-1);
+
+    if (!ptr) { inst.setDefault(); }
+
+    else {
+
+        if (!size) size = member->size();
+
+        inst.set(ptr,size);
+
+    }
+
+    return inst;
+
+}

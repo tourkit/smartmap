@@ -136,12 +136,14 @@ Struct& Struct::range(float from, float to, float def) {
     if (typeid(*a) == typeid(Data<float>)) {
         ((Data<float>*)members.back())->range_from = from;
         ((Data<float>*)members.back())->range_to = to;
+        ((Data<float>*)members.back())->default_val = def;
         // PLOGD << " ----- is : float";
     }
 
     if (typeid(*a) == typeid(Data<uint32_t>)) {
         ((Data<uint32_t>*)members.back())->range_from = (uint32_t) from;
         ((Data<uint32_t>*)members.back())->range_to = (uint32_t) to;
+        ((Data<uint32_t>*)members.back())->default_val = (uint32_t) def;
         // PLOGD << " ----- is : uint32_t";
     }
 
