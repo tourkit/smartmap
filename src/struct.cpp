@@ -122,18 +122,24 @@ Struct& Struct::add(const char* name) {
 Struct& Struct::range(float from, float to, float def) {
 
     auto a = members.back();
-    if (typeid(*a) == typeid(Data<float>)) {
+    if (a->type() == typeid(float)) {
         ((Data<float>*)members.back())->range_from = from;
         ((Data<float>*)members.back())->range_to = to;
         ((Data<float>*)members.back())->default_val = def;
-        // PLOGD << " ----- is : float";
     }
 
-    if (typeid(*a) == typeid(Data<uint32_t>)) {
+    if (a->type() == typeid(uint32_t)) {
         ((Data<uint32_t>*)members.back())->range_from = (uint32_t) from;
         ((Data<uint32_t>*)members.back())->range_to = (uint32_t) to;
         ((Data<uint32_t>*)members.back())->default_val = (uint32_t) def;
-        // PLOGD << " ----- is : uint32_t";
+    }
+
+    if (a->type() == typeid(glm::vec2)) {
+
+        ((Data<glm::vec2>*)members.back())->range_from = glm::vec2({from,from});
+        ((Data<glm::vec2>*)members.back())->range_to = glm::vec2({to,to});
+        ((Data<glm::vec2>*)members.back())->default_val = glm::vec2({def,def});
+
     }
 
     return *this;

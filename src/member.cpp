@@ -160,11 +160,9 @@ std::string Member::print(int recurse) {
 
 void Member::each(std::function<void(Member*, uint32_t)> f, uint32_t offset) {
 
-
     auto offset_ = offset;
 
     for (auto m : members) {
-
 
         m->each(f, offset_);
 

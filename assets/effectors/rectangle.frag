@@ -1,5 +1,5 @@
-//size(1,0,1)
-//pos(0.5,1,1)
+//size(0,1,1)
+//pos(-1,1,.5)
 //angle(-1,1,0)
 
 void rectangle(vec2 pos, vec2 size, float angle) {
@@ -22,4 +22,6 @@ vec2 rotate(vec2 v, float a) {
 
     return v * mat2(c, -s, s, c);
 }
+
+
 

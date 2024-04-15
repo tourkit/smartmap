@@ -51,7 +51,18 @@ void  Buffer::post_change(std::vector<Member*> added) {
 
                     if (x->default_val_ptr) {
 
-                        PLOGD  << "NID TOU SAITE : " << x->name() << " @ " << offset << " - val : " << *(float*) x->default_val_ptr ;
+                            if (x->type() == typeid(glm::vec2)) {
+
+                                PLOGD  << "NID TOU SAITE : " << x->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) x->default_val_ptr).x ;
+                            }
+
+                            if (x->type() == typeid(float)) {
+
+                                PLOGD  << "NID TOU SAITE : " << x->name() << " @ " << offset << " - val : " << *(float*) x->default_val_ptr ;
+
+                            }
+
+
 
                         memcpy(&data[offset], x->default_val_ptr, x->size());
 
@@ -65,9 +76,7 @@ void  Buffer::post_change(std::vector<Member*> added) {
 
         });
 
-        // find instances, set default
     }
-                    PLOGD << print(2);
 
     if (!bkp) return;
 
