@@ -5,9 +5,6 @@
                         */
 
 #include "engine.hpp"
-#include "log.hpp"
-#include "boilerplate.hpp"
-#include "drawcall.hpp"
 
 int main() {
 
@@ -21,7 +18,6 @@ int main() {
 }
 
 
-
-// movement
-
-//remap
+// TODO next:
+// - remap
+// - Node movement
