@@ -189,28 +189,33 @@ std::string Struct::print(int recurse) {
     // std::string name = this->name();
     // std::replace(name.begin(), name.end(), ' ', '_');
 
-    // if (!members.size()) return "";
-
     std::string str;
 
     for (auto m : members) {
 
-        std::string m_str;
+        if (!m->typed()) {
 
-        // if (!m->members.size() && !m->quantity()) continue;
+            if (recurse) {
 
-        if (!m->typed()) if (recurse) { m_str += m->print(recurse-1); if (!m_str.length()) continue; } else {m_str += camel(m->name()) ; }
+                auto m_str = m->print(recurse-1);
 
-        else m_str += m->type_name();
+                if (!m_str.length()) continue;
 
-        m_str += " " + lower(m->name());
+                str += m_str;
 
-        if (m->quantity() > 1) m_str += "[" + std::to_string(m->quantity()) + "]";
+            } else { str += camel(m->name()); }
+
+        } else str += m->type_name();
+
+        str += " " + lower(m->name());
+
+        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
+
         // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(m);
         // str  += " ( &" + ss.str() + " )";
-        m_str += "; ";
 
-        str+= m_str;
+        str += "; ";
+
 
     }
 
