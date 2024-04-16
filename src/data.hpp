@@ -23,14 +23,11 @@ struct Data : Member {
         memset(&range_from,0,sizeof(T));
         memset(&range_to,0,sizeof(T));
 
-        if (std::is_arithmetic<T>::value) {
+        if (typeid(float) == typeid(T))   *(float*)range_to_ptr = 1.0f;
 
+        else if (typeid(uint32_t) == typeid(T))   *(uint32_t*)range_to_ptr = 65535;
 
-            // if (typeid(T) == typeid(float) || typeid(T) == typeid(glm::vec2) || typeid(T) == typeid(glm::vec3) || typeid(T) == typeid(glm::vec4) ) *(float*)range_to_ptr = 1.0f;
-            // if (typeid(T) == typeid(int)) *(int*)range_to_ptr = 10;
-            // if (typeid(T) == typeid(uint32_t)) *(uint32_t*)range_to_ptr = 10;
-
-        }
+        else  if (typeid(T) == typeid(float) || typeid(T) == typeid(glm::vec2) || typeid(T) == typeid(glm::vec3) || typeid(T) == typeid(glm::vec4) ) *(float*)range_to_ptr = 1.0f;
 
 
     }
