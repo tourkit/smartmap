@@ -5,7 +5,7 @@
 #include "model.hpp"
 
 #include <cstdint>
-#include <vector>
+#include <list>
 
 struct File;
 
@@ -44,6 +44,6 @@ struct VBO : Buffer {
 
     bool remove(Model* m);
 
-    std::vector<Model> models ;
+    std::list<Model> models ;
 
 };

@@ -475,7 +475,9 @@ void Editors::init() {
         int max_lines = 1000;
         int count = 0;
 
-        for (auto &m : log_n->appender.list) {
+        for (int member_count = log_n->appender.list.size()-1; member_count>=0; member_count-- ) {
+
+            auto &m = log_n->appender.list[member_count];
 
             ImVec4 color = info;
 
@@ -631,9 +633,9 @@ void Editors::init() {
 
         Editor<Buffer>::cb(node, &engine.dynamic_ubo);
 
-        for (auto x : model->effectors) {
+        // for (auto x : model->effectors) {
 
-        }
+        // }
 
         // if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj);  // tofix
 

@@ -95,7 +95,11 @@ Struct& Struct::add(Member& m) {
 
     PLOGV << name() << " add " << m.name();
 
+    for (auto x : members) if (!strcmp( x->name().c_str(), m.name().c_str() )) { m.name(m.name()+ " copy"); break ; }
+
     pre_change();
+
+
 
     members.push_back(&m);
 
@@ -104,8 +108,6 @@ Struct& Struct::add(Member& m) {
     update();
 
     post_change({&m});
-
-    // lalalala doit yavoir setdefault
 
     return *this;
 

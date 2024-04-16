@@ -143,7 +143,8 @@ bool VBO::remove(Model* m) {
 
     indices.quantity(0);
 
-    for (int i = 0 ; i < models.size(); i++) pushFile( models[i].file, i);
+    int i = 0;
+    for (auto it = models.begin(); it != models.end();) {  pushFile( it->file, i++);  it++; }
 
     return true;
 }
@@ -196,6 +197,8 @@ Model& VBO::add(File* file, int quantity) {
     pushFile(file, models.size());
 
     models.emplace_back(file,quantity);
+
+    PLOGD << models.size();
 
     upload();
 
