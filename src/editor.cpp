@@ -156,7 +156,14 @@ static void draw_raw(void *data, size_t size) {
 
 static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 0) {
 
-    if (!member) member = buff;
+    static int member_count = 0;
+
+    if (!member) {
+
+        member = buff;
+         member_count = 0;
+
+        }
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
@@ -172,7 +179,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
     bool has_changed = false;
 
-    int member_count = 0;
+
 
     for (auto& m : member->members) {
 
@@ -216,7 +223,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                 if (m->type() == typeid(glm::vec3)) q = 3;
                 if (m->type() == typeid(glm::vec4)) q = 4;
 
-                std::string name = (m->name()+"##SIE"+m->name()+std::to_string(member_count++));
+                std::string name = (m->name()+"##SIE"+member->name()+m->name()+std::to_string(member_count++));
 
                 if (ImGui::SliderScalarN(name.c_str(), type, buff->data.data()+offset, q, range_from, range_to)) has_changed = true;
 

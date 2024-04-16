@@ -38,10 +38,6 @@ int main() {
     engine.run();
 }
 
-
-
-// editor slider per model
-
 // multiple quad ( easy way is adding number on nome())
 
 // movement
