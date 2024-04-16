@@ -198,8 +198,6 @@ Model& VBO::add(File* file, int quantity) {
 
     models.emplace_back(file,quantity);
 
-    PLOGD << models.size();
-
     upload();
 
     return  models.back();

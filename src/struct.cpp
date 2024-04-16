@@ -95,11 +95,29 @@ Struct& Struct::add(Member& m) {
 
     PLOGV << name() << " add " << m.name();
 
-    for (auto x : members) if (!strcmp( x->name().c_str(), m.name().c_str() )) { m.name(m.name()+ "_copy"); break ; }
+    while (true) {
+
+        bool found = false;
+
+        for (auto x : members) {
+
+            if (!strcmp( x->name().c_str(), m.name().c_str() )) {
+
+                m.name(m.name()+ "_");
+
+                found = true;
+
+                break ;
+
+            }
+
+        }
+
+        if (!found) break;
+
+    }
 
     pre_change();
-
-
 
     members.push_back(&m);
 

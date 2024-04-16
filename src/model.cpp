@@ -3,14 +3,9 @@
 
 Model::Model(File* file, int quantity) : Struct(file->name(), quantity), file(file) {
 
-
-    PLOGD << engine.dynamic_ubo.print(2);
-
     engine.dynamic_ubo.add(*this);
 
-
-    PLOGD << engine.dynamic_ubo.print(2);
-     }
+}
 
 Model::~Model() { engine.dynamic_ubo.remove(*this);  }
 

@@ -38,7 +38,7 @@ int main() {
     engine.run();
 }
 
-// multiple quad ( easy way is adding number on nome())
+//
 
 // movement
 
