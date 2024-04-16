@@ -126,22 +126,19 @@ void Engine::open(const char* file) {
 
     if (true) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
 
+        if (engine.models->child(m.name.GetString())) continue;
         auto n = models->addOwnr<File>();
-        auto model = n->get();
-        model->loadString(m.value.GetString());
-        // model->name = m.name.GetString(); // tofix
-        // n->name = model->name;
+        n->get()->loadString(m.value.GetString());
+        n->name = m.name.GetString();
 
     }
 
     if (true) for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
 
+        if (engine.effectors->child(m.name.GetString())) continue;
         auto n = effectors->addOwnr<File>();
-        auto f = n->get();
-        // f->loadString(m.value.GetString()); // tofix
-        // f->name = m.name.GetString();
-        // effectors->addOwnr<Effector>(f);
-        // n->hide();
+        n->get()->loadString(m.value.GetString());
+        n->name = m.name.GetString();
 
     }
 
@@ -160,30 +157,25 @@ void Engine::open(const char* file) {
 
             if (!m.value[0].IsString()) continue;
 
-            auto model_n = models->child(m.value[0].GetString()); if (!model_n)  { PLOGE << "no model : " << m.value[0].GetString(); continue; }
+            auto model_f = models->child(m.value[0].GetString()); if (!model_f)  { PLOGE << "no model : " << m.value[0].GetString(); continue; }
 
+            auto model = layer->add(model_f);
 
-            // tofix
-            // // auto model = layer->add(model_n);
-            // // Two two following lines are from NODE<Layer>::onadd<File> to replace above line wich is not working IDK why
-            // layer->get()->vbo.import(model_n->is_a<File>());  // model_n might be fucked
-            // auto model = layer->addPtr<Struct>(&layer->get()->vbo.models.back());
+            if (m.name.IsString()) model->name = m.name.GetString();
 
-            // if (m.name.IsString()) model->name = m.name.GetString();
+            if (m.value.GetArray().Size() != 2) continue;
+            if (!m.value[1].IsArray()) continue;
 
-            // if (m.value.GetArray().Size() != 2) continue;
-            // if (!m.value[1].IsArray()) continue;
+            for (auto &f : m.value[1].GetArray()) {
 
-            // for (auto &f : m.value[1].GetArray()) {
+                if (!f.IsString()) continue;
 
-            //     if (!f.IsString()) continue;
+                auto effector = effectors->child(f.GetString())->get<Effector>();
 
-            //     auto effector = effectors->child(f.GetString())->get<Effector>();
+                if (effector) model->add(effector);
+                else PLOGE << "no effector: " << f.GetString();
 
-            //     if (effector) model->add(effector);
-            //     else PLOGE << "no effector: " << f.GetString();
-
-            // }
+            }
 
         }
 
@@ -203,9 +195,15 @@ void Engine::open(const char* file) {
 
         Node* n = nullptr;
         if (e[4].IsString()) n = tree->child(e[4].GetString());
-        if (n) engine.gui->editors.back()->selected = n;
+        if (n) {
 
-        if (e.Size() > 5 && e[5].IsBool() ) engine.gui->editors.back()->locked = e[5].GetBool();
+            engine.gui->editors.back()->selected = n;
+
+            engine.gui->editors.back()->locked = true;
+
+        }
+
+        // if (e.Size() > 5 && e[5].IsBool() ) engine.gui->editors.back()->locked = e[5].GetBool();
 
     }
 

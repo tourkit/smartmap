@@ -42,7 +42,7 @@
 
             if (!strcmp(names.back().c_str(), c->name.c_str())) {
 
-                if (names.size()== 1)return c;
+                if (names.size()== 1) return c;
 
                 auto parent = c;
 

@@ -41,7 +41,7 @@ void Callbacks::init() {
 
     ////////// FILE.HPP
 
-    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name() + " . " + file->extension; });
+    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name(); });
 
     ////////// Artnet.HPP
 
@@ -98,18 +98,25 @@ void Callbacks::init() {
 
     ////////// DRAWCALL.HPP
 
-    NODE<DrawCall>::oncreate([](Node* node, DrawCall *dc){ node->referings.insert(nullptr); });
+    NODE<DrawCall>::oncreate([](Node* node, DrawCall *dc){ node->referings.insert(nullptr); }); // for what ??????
 
     NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){ dc->draw(); });
 
-    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){
-        dc->update();
-        });
+    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
 
     NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){
 
         return _this->addPtr<Model>(&_this->is_a<DrawCall>()->vbo.add(node->is_a<File>()))->node();
 
+    });
+
+    NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
+
+    NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
+
+    NODE<Layer>::onadd<File>([](Node*_this,Node*node){
+
+        return _this->addPtr<Model>(&_this->is_a<Layer>()->vbo.add(node->is_a<File>()))->node();
 
     });
 

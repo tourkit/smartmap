@@ -11,7 +11,9 @@
 #include <unordered_set>
 #include <set>
 
-Layer::Layer(uint16_t width, uint16_t height) : fb(width, height) { vbo.add(quad); }
+Layer::Layer(uint16_t width, uint16_t height) : fb(width, height) {
+    // vbo.add(quad);
+     }
 
 Layer::Layer() : fb(engine.window.width,engine.window.height) {}
 
@@ -27,8 +29,6 @@ DrawCall::DrawCall() {
 }
 
 void DrawCall::draw() {
-
-    // engine.atlas->texture->bind();
 
     shader.use();
 

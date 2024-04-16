@@ -63,7 +63,7 @@ std::string ShaderProgram::Builder::frag() {
 
     str += comment_line;
 
-    str += "//uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ?
+    // str += "//uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ?
     str += "uniform sampler2D medias;\n\n";
 
     str += "in vec2 UV;\n\n";
@@ -94,10 +94,10 @@ std::string ShaderProgram::Builder::frag() {
         for (int instance = 0; instance < model.quantity(); instance++) {
 
             auto name = model.name();
-            // name += "_"+std::to_string(model_id);
+
             if (model.quantity() > 1) name += "["+std::to_string(instance)+"]";
 
-            str += "\t// "+name+"\n"; // would love this to be a node name instead
+            str += "\t// "+name+"\n"; // would love this to be a node name instead // still matters ?
 
             for (auto &effector : model.effectors) {
 

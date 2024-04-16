@@ -693,6 +693,8 @@ void Editors::init() {
 
     Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); Editor<VBO>::cb(node, &dc->vbo); });
 
+    Editor<Layer>([](Node* node, Layer *layer){ Editor<Texture>::cb(node, layer->fb.texture);Editor<DrawCall>::cb(node, layer); });
+
     ////////// Atlas.HPP
 
     Editor<Atlas>([](Node* node, Atlas *atlas){

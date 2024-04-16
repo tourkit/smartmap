@@ -21,7 +21,7 @@ struct DrawCall {
     void update();
 
     virtual void draw();
-    
+
 };
 
 
@@ -32,9 +32,9 @@ struct Layer : DrawCall {
     FrameBuffer fb;
 
     void draw() override;
-    
+
     Layer(uint16_t width, uint16_t height);
 
     Layer();
-    
+
 };
