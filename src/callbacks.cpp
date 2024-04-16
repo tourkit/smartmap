@@ -110,13 +110,18 @@ void Callbacks::init() {
 
     });
 
+    NODE<Layer>::oncreate([](Node* node, Layer *layer){ node->referings.insert(nullptr); }); // for what ??????
+
     NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
 
     NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
 
     NODE<Layer>::onadd<File>([](Node*_this,Node*node){
 
-        return _this->addPtr<Model>(&_this->is_a<Layer>()->vbo.add(node->is_a<File>()))->node();
+        auto z = node->is_a<File>();
+        auto y = &_this->is_a<Layer>()->vbo.add(z);
+        auto x = _this->addPtr<Model>(y);
+        return x->node();
 
     });
 
@@ -134,9 +139,11 @@ void Callbacks::init() {
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
-        auto &vbo = node->parent()->is_a<DrawCall>()->vbo;
+        auto dc = node->parent()->is_a<DrawCall>();
+        if (dc) dc->vbo.remove(model);
 
-        vbo.remove(model);
+        auto layer = node->parent()->is_a<Layer>();
+        if (layer) layer->vbo.remove(model);
 
     });
 

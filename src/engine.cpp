@@ -53,11 +53,11 @@ void Engine::init() {
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
-    // models = tree->addOwnr<Node>("Models")->node();
-    models = tree->addFolder<File>("Models", "assets/models/")->node();
+    models = tree->addOwnr<Node>("Models")->node();
+    // models = tree->addFolder<File>("Models", "assets/models/")->node();
 
-    // effectors = tree->addOwnr<Node>("Effectors")->node();
-    effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
+    effectors = tree->addOwnr<Node>("Effectors")->node();
+    // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
@@ -129,7 +129,10 @@ void Engine::open(const char* file) {
         if (engine.models->child(m.name.GetString())) continue;
         auto n = models->addOwnr<File>();
         n->get()->loadString(m.value.GetString());
-        n->name = m.name.GetString();
+        n->get()->name_v = m.name.GetString();
+        n->get()->extension = "frag";
+
+        n->name = n->get()->name_v;
 
     }
 
@@ -138,6 +141,7 @@ void Engine::open(const char* file) {
         if (engine.effectors->child(m.name.GetString())) continue;
         auto n = effectors->addOwnr<File>();
         n->get()->loadString(m.value.GetString());
+        n->get()->name_v = m.name.GetString();
         n->name = m.name.GetString();
 
     }

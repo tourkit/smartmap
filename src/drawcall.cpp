@@ -44,6 +44,8 @@ void DrawCall::update() {
 
     for (auto &x : vbo.models) {
 
+        if (!x.file->path.length()) continue;
+
         auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::REPO_DIR) / x.file->path);
 
         if (last_modified  < last_) { last_modified = last_; has_changed = true; }

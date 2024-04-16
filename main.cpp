@@ -20,10 +20,8 @@ int main() {
     engine.run();
 }
 
-//engine.open()
+
 
 // movement
-
-//artnet
 
 //remap
