@@ -191,17 +191,17 @@ std::string Struct::print(int recurse) {
 
     // if (!members.size()) return "";
 
-    std::string m_str;
+    std::string str;
 
     for (auto m : members) {
 
+        std::string m_str;
+
         // if (!m->members.size() && !m->quantity()) continue;
 
-        if (!m->typed()) if (recurse) { m_str += m->print(recurse-1);} else {m_str += camel(m->name()) ; }
+        if (!m->typed()) if (recurse) { m_str += m->print(recurse-1); if (!m_str.length()) continue; } else {m_str += camel(m->name()) ; }
 
         else m_str += m->type_name();
-
-        if (!m_str.length()) continue;
 
         m_str += " " + lower(m->name());
 
@@ -210,20 +210,22 @@ std::string Struct::print(int recurse) {
         // str  += " ( &" + ss.str() + " )";
         m_str += "; ";
 
+        str+= m_str;
+
     }
 
     if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) {
 
-        m_str += " ";
-        m_str += (members[0]->type() == typeid(int) ? "int" : "float");
-        m_str += " stride";
-        m_str += std::to_string(i) + ";";
+        str += " ";
+        str += (members[0]->type() == typeid(int) ? "int" : "float");
+        str += " stride";
+        str += std::to_string(i) + ";";
 
     }
 
-    if (!m_str.length()) return "";
+    if (!str.length()) return "";
 
-    return "struct " + camel(name())  + " { " + m_str + "}";
+    return "struct " + camel(name())  + " { " + str + "}";
 
 }
 

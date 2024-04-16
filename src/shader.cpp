@@ -53,7 +53,11 @@ std::string ShaderProgram::Builder::frag() {
 
     std::set<Effector*> effectors;
 
-    if (vbo) for (auto &model : vbo->models) for (auto &effector : model.effectors) effectors.insert(&effector);
+    if (vbo) for (auto &model : vbo->models) for (auto &effector : model.effectors){
+
+        for (auto x : effectors) if (x->file == effector.file) { break; continue; }
+
+        effectors.insert(&effector);}
 
     for (auto x : effectors)  str += x->s->print()+";\n\n";
 
