@@ -64,7 +64,7 @@ int main() {
 }
 
 
-// apparently new model delete old model in dynamicubo
+// editor slider per model
 
 // multiple quad ( easy way is adding number on nome())
 

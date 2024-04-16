@@ -95,7 +95,7 @@ Struct& Struct::add(Member& m) {
 
     PLOGV << name() << " add " << m.name();
 
-    for (auto x : members) if (!strcmp( x->name().c_str(), m.name().c_str() )) { m.name(m.name()+ " copy"); break ; }
+    for (auto x : members) if (!strcmp( x->name().c_str(), m.name().c_str() )) { m.name(m.name()+ "_copy"); break ; }
 
     pre_change();
 
@@ -186,37 +186,44 @@ Member* Struct::copy()  { return new Struct(*this); }
 
 std::string Struct::print(int recurse) {
 
-    std::string str = "struct " + camel(name())  + " {";
+    // std::string name = this->name();
+    // std::replace(name.begin(), name.end(), ' ', '_');
+
+    // if (!members.size()) return "";
+
+    std::string m_str;
 
     for (auto m : members) {
 
-        str += " ";
+        // if (!m->members.size() && !m->quantity()) continue;
 
-        if (!m->typed()) if (recurse) { str += m->print(recurse-1);} else {str += camel(m->name()) ; }
+        if (!m->typed()) if (recurse) { m_str += m->print(recurse-1);} else {m_str += camel(m->name()) ; }
 
-        else str += m->type_name();
+        else m_str += m->type_name();
 
-        str += " " + lower(m->name());
+        if (!m_str.length()) continue;
 
-        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
+        m_str += " " + lower(m->name());
+
+        if (m->quantity() > 1) m_str += "[" + std::to_string(m->quantity()) + "]";
         // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(m);
         // str  += " ( &" + ss.str() + " )";
-        str += ";";
+        m_str += "; ";
 
     }
 
     if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) {
 
-        str += " ";
-        str += (members[0]->type() == typeid(int) ? "int" : "float");
-        str += " stride";
-        str += std::to_string(i) + ";";
+        m_str += " ";
+        m_str += (members[0]->type() == typeid(int) ? "int" : "float");
+        m_str += " stride";
+        m_str += std::to_string(i) + ";";
 
     }
 
-    str += " }";
+    if (!m_str.length()) return "";
 
-    return str;
+    return "struct " + camel(name())  + " { " + m_str + "}";
 
 }
 
