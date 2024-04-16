@@ -9,37 +9,12 @@
 #include "boilerplate.hpp"
 #include "drawcall.hpp"
 
-
-    struct Foo { int x; Foo(int x) : x(x) { PLOGD << "#Foo "<<x; } ~Foo() { PLOGD << "~Foo "<<x; } };
-
-    std::vector<Foo> foos ;
-
 int main() {
 
-
-    // foos.emplace_back(1);
-
-    // foos.emplace_back(2);
-
-    // // foos.resize(1);
-
-    // exit(0);
 
     engine.init();
 
     logger.cout();
-
-    // VBO vbo;
-
-    // vbo.add(new File("assets/models/quad.obj"));
-
-
-    // vbo.add(new File("assets/models/quad1.obj"));
-
-
-    // PLOGD << engine.dynamic_ubo.print(2);
-
-
 
     auto &dc = *engine.stack->addOwnr<DrawCall>();
 
@@ -62,6 +37,7 @@ int main() {
 
     engine.run();
 }
+
 
 
 // editor slider per model

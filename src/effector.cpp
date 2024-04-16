@@ -6,10 +6,17 @@
 #include "struct.hpp"
 #include <regex>
 
+Effector* Effector::get(File * file) {
+
+    for (auto x : pool) if (x->file == file) return x;
+
+    return new Effector(file);
+
+}
 
 Effector::Effector(File *file) : file(file) {
 
-
+    pool.push_back(this);
 
     const char* data = (&file->data[0]);
 

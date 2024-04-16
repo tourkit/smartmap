@@ -9,6 +9,8 @@ struct Struct;
 
 struct Effector  {
 
+    static inline std::vector<Effector*> pool;
+
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
     File * file = nullptr;
@@ -22,5 +24,8 @@ struct Effector  {
     std::vector<std::pair<std::string,std::string>> args;
 
     std::map<std::string, float[3]> ranges;
+
+    static Effector* get(File * file);
+
 
 };

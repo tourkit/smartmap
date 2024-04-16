@@ -18,7 +18,7 @@ bool Model::remove(Effector* effector) {
 
     for (auto it = effectors.begin(); it != effectors.end(); ++it) {
 
-        if (&*it == effector) {
+        if (*it == effector) {
 
             Struct::remove(*effector->s);
 
@@ -36,7 +36,9 @@ bool Model::remove(Effector* effector) {
 
 Effector& Model::add(File* file) {
 
-    auto &x = *effectors.emplace(effectors.end(), file);
+    auto &x = *Effector::get(file);
+
+    effectors.push_back(&x);
 
     Struct::add(*x.s);
 

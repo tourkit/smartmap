@@ -55,9 +55,9 @@ std::string ShaderProgram::Builder::frag() {
 
     if (vbo) for (auto &model : vbo->models) for (auto &effector : model.effectors){
 
-        for (auto x : effectors) if (x->file == effector.file) { break; continue; }
+        for (auto x : effectors) if (x->file == effector->file) { break; continue; }
 
-        effectors.insert(&effector);}
+        effectors.insert(effector);}
 
     for (auto x : effectors)  str += x->s->print()+";\n\n";
 
@@ -103,15 +103,15 @@ std::string ShaderProgram::Builder::frag() {
 
                 std::string arg_str;
 
-                for (auto &arg : effector.args) {
+                for (auto &arg : effector->args) {
 
-                    arg_str += name+"."+effector.file->name()+"."+arg.second+", ";
+                    arg_str += name+"."+effector->file->name()+"."+arg.second+", ";
 
                 }
 
                 arg_str.resize(arg_str.size()-2);
 
-                str += "\t"+effector.file->name()+"("+arg_str+");\n";
+                str += "\t"+effector->file->name()+"("+arg_str+");\n";
             }
 
             str += "\tnext();\n\n";
