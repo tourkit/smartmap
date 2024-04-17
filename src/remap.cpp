@@ -62,7 +62,7 @@ void Remap::update() {
 
             // range remap
             if (c) (*(((float*)dest)+i+pos)) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
-            else c = 1;
+            // else c = 1;
 
             data += c;
 
