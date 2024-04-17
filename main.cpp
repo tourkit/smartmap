@@ -5,19 +5,23 @@
                         */
 
 #include "engine.hpp"
+#include "remap.hpp"
 
 int main() {
 
     engine.init();
 
-    logger.cout();
+    // logger.cout();
 
-    engine.open("project.json");
+    engine.open("project2.json");
+
+    engine.remaps->addOwnr<Remap>();
+
 
     engine.run();
 }
 
 
 // TODO next:
-// - remap
+// - remap // who create Remap in engine.remaps ?
 // - Node movement

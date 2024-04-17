@@ -49,7 +49,6 @@ void Engine::init() {
     atlas = new Atlas(4096, 4096, "assets/medias/");
     debug->addPtr<Atlas>(atlas);
 
-
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
@@ -96,7 +95,6 @@ void Engine::run() {
 void Engine::open(const char* file) {
 
     json.load(File(file).data.data());
-
 
     // for (auto e :engine.gui->editors) delete e; // editor widget deletion is fucked
 
@@ -248,5 +246,7 @@ void Engine::save(const char* file) {
     // result = std::regex_replace(result, std::regex(R"(\n)"), " \n\n");
 
     File::write(file,result);
+
+    PLOGD << "SAVED to " << file;
 
 }

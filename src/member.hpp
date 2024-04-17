@@ -79,6 +79,9 @@ struct Member {
     virtual void pre_change();
     virtual void post_change(std::vector<Member*> added = {});
 
+    template <typename U>
+    std::array<U,3> range() { return { *(U*)range_from_ptr, *(U*)range_to_ptr, *(U*)default_val_ptr}; }
+
 protected:
 
     std::string name_v;

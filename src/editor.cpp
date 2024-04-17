@@ -266,7 +266,7 @@ void Editors::init() {
 
         // TOFIX
 
-            // // string buffer for imgui::combo
+            // string buffer for imgui::combo
             // static std::vector<char> models;
             // static std::vector<Model*> models_ptr;
 
@@ -322,6 +322,20 @@ void Editors::init() {
             //         member_id++;
 
             //     }
+
+            // }
+
+
+            remap->s->each([](Member* m, uint32_t offset) {
+
+                if (m->typed()) ImGui::Text(m->name().c_str());
+
+            });
+
+
+            // for (auto x : remap->attributes) {
+
+            //         ImGui::Text(x.)
 
             // }
 
