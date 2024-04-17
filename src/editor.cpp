@@ -264,22 +264,33 @@ void Editors::init() {
 
     Editor<Remap>([](Node*node, Remap* remap){
 
+        int member_id = 0;
+            remap->s->each([&](Member* m, uint32_t offset) {
 
-            remap->s->each([](Member* m, uint32_t offset) {
+                 if (m->typed()) {
 
-                 if (m->typed()) ImGui::Text(m->name().c_str());
+
+                    ImGui::Text(m->name().c_str());
+
+                    static int e = 0;
+                    std::string strbypa = "bypass##rbt"+std::to_string(member_id);
+                    ImGui::SameLine();
+                    ImGui::RadioButton(strbypa.c_str(), &remap->attributes[member_id].combining , 0);
+                    std::string strcoar = "coarse##rbt"+std::to_string(member_id);
+                    ImGui::SameLine();
+                    ImGui::RadioButton(strcoar.c_str(), &remap->attributes[member_id].combining , 1);
+                    std::string strfine = "fine##rbt"+std::to_string(member_id);
+                    ImGui::SameLine();
+                    ImGui::RadioButton(strfine.c_str(), &remap->attributes[member_id].combining , 2);
+                    std::string strultr = "ultra##rbt"+std::to_string(member_id);
+                    ImGui::SameLine();
+                    ImGui::RadioButton(strultr.c_str(), &remap->attributes[member_id].combining , 3);
+
+                    member_id++;
+
+                }
 
             });
-
-                 ImGui::Text("----------------------------");
-
-
-            for (auto x : remap->attributes) {
-
-                 ImGui::Text((std::to_string(x.min) + ", " + std::to_string(x.max)).c_str());
-
-            }
-
 
     });
 
@@ -355,7 +366,7 @@ void Editors::init() {
         for (auto &u : an->universes) {
 
             std::string str = "universe "+std::to_string(u.first);
-            ImGui::Text(str.c_str());
+            ImGui::Text(str.c_str());ImGui::NewLine();
 
             draw_raw(&u.second->data[0], u.second->data.size());
 

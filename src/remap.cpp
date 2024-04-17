@@ -42,8 +42,6 @@ Remap::Remap(void *src, void *dst, Member *s, uint16_t q)
 
 void Remap::update() {
 
-    return;
-
     auto data = (uint8_t*)src;
 
     for (int offset = 0; offset < quantity; offset++) {
@@ -57,7 +55,7 @@ void Remap::update() {
 
             auto c = attributes[i].combining;
 
-            if (c==1) target      = get8(data);
+            if (c==1) target      = get8(data)/255.0f;
             else if (c==2) target = get16(data)/65535.0f;
             else if (c==3) target = get24(data)/16777215.0f;
             else if (c==4) target = get32(data)/4294967295.0f;
