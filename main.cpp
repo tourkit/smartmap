@@ -6,22 +6,28 @@
 
 #include "engine.hpp"
 #include "remap.hpp"
+#include "artnet.hpp"
 
 int main() {
 
     engine.init();
 
-    // logger.cout();
-
     engine.open("project2.json");
 
-    engine.remaps->addOwnr<Remap>();
+    logger.cout();
 
+    // PLOGD << engine.inputs->childrens[0]->type().name();
+engine.inputs->childrens[0]->is_a<Artnet>()->universes[0];//->data[0];
+    // engine.remaps->addOwnr<Remap>(
+    //     &engine.inputs->childrens[0]->is_a<Artnet>()->universes[0]->data[0],
+    //     &engine.dynamic_ubo.data[0],
+    //     &engine.dynamic_ubo
+    // )->select();
 
     engine.run();
 }
 
 
 // TODO next:
-// - remap // who create Remap in engine.remaps ?
+// - remap
 // - Node movement

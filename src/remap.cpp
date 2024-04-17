@@ -12,18 +12,15 @@ void Remap::extract(Member *s) {
 
     for (auto m : s->members) {
 
-
-
         if (m->typed()) {
 
             attributes.push_back({1,m->range<float>()[0],m->range<float>()[1]});
 
         }else{
 
-            extract(s);
+            extract(m);
 
         }
-
 
     }
 
@@ -37,12 +34,15 @@ Remap::Remap(void *src, void *dst, Member *s, uint16_t q)
 : src((char*)src), dest((char*)dst), s(s), quantity(q) {
 
     extract(s);
+
     update();
 
 }
 
 
 void Remap::update() {
+
+    return;
 
     auto data = (uint8_t*)src;
 

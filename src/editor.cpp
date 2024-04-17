@@ -126,7 +126,7 @@ static void draw_raw(void *data, size_t size) {
 
         }
 
-        if (!(member_count%cells_per_line)) ImGui::NewLine();
+        if (member_count && !(member_count%cells_per_line)) ImGui::NewLine();
         ImGui::SameLine(((member_count%cells_per_line)*(cell_width+cell_margin)));
 
         ImGuiDataType_ datatype = ImGuiDataType_U8;
@@ -262,6 +262,27 @@ void Editors::init() {
 
     ////////// Artnet.HPP
 
+    Editor<Remap>([](Node*node, Remap* remap){
+
+
+            remap->s->each([](Member* m, uint32_t offset) {
+
+                 if (m->typed()) ImGui::Text(m->name().c_str());
+
+            });
+
+                 ImGui::Text("----------------------------");
+
+
+            for (auto x : remap->attributes) {
+
+                 ImGui::Text((std::to_string(x.min) + ", " + std::to_string(x.max)).c_str());
+
+            }
+
+
+    });
+
     Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){
 
         // TOFIX
@@ -326,18 +347,6 @@ void Editors::init() {
             // }
 
 
-            remap->s->each([](Member* m, uint32_t offset) {
-
-                if (m->typed()) ImGui::Text(m->name().c_str());
-
-            });
-
-
-            // for (auto x : remap->attributes) {
-
-            //         ImGui::Text(x.)
-
-            // }
 
     });
 

@@ -26,6 +26,8 @@
   "editors": [
     [ 0, 0, 0, 0, "tree::Stack", true ],
     [ 0, 0, 0, 0, "Stack::layer1", true ],
-    [ 0, 0, 0, 0, "layer1::MyQuad", true ]
+    [ 0, 0, 0, 0, "Inputs::Artnet", true ],
+    [ 0, 0, 0, 0, "layer1::MyQuad", true ],
+    [ 0, 0, 0, 0, "Remaps::Remap", true ]
   ]
 }
