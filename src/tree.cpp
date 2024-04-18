@@ -229,7 +229,9 @@ void TreeWidget::drawNode(Node* node) {
         ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
 
         bool recurse = false;
-        if (!filtering || !strlen(search_str) || ( !strcmp(search_str, node->name.c_str()))) recurse = TreeViewNode(node);
+
+
+        if (!filtering || !strlen(search_str) || std::regex_search(node->name.c_str(), std::regex(search_str))) recurse = TreeViewNode(node);
 
     // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
 

@@ -31,7 +31,8 @@ void Remap::extract(Member *s) {
 Remap::Remap() {}
 
 Remap::Remap(void *src, void *dst, Member *s, uint16_t q)
-: src((char*)src), dest((char*)dst), s(s), quantity(q) {
+
+    : src((char*)src), dest((char*)dst), s(s), quantity(q) {
 
     extract(s);
 
@@ -45,6 +46,15 @@ void Remap::reset() {
     extract(s);
 
 }
+
+void Remap::attr(std::vector<Attribute> attributes) {
+
+    if (attributes.size()>this->attributes.size()) attributes.resize(this->attributes.size());
+
+    for (int i = 0 ; i <  attributes.size(); i++) this->attributes[i] = attributes[i];
+
+}
+
 
 void Remap::update() {
 

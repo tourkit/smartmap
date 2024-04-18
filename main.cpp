@@ -17,20 +17,22 @@ int main() {
     logger.cout();
 
     // PLOGD << engine.inputs->childrens[0]->type().name();
- engine.inputs->childrens[0]->is_a<Artnet>()->universes[0] = new DMX{0};
+   engine.inputs->childrens[0]->is_a<Artnet>()->universes[0] = new DMX{0};
 
- engine.window.keypress_cbs[GLFW_KEY_F] = [](int key) { PLOGD <<  engine.inputs->childrens[0]->is_a<Artnet>()->universes[0]->data[0]; };
-
-    engine.remaps->active(true)->addOwnr<Remap>(
+    auto r = engine.remaps->active(true)->addOwnr<Remap>(
         &engine.inputs->childrens[0]->is_a<Artnet>()->universes[0]->data[0],
         &engine.dynamic_ubo.data[0],
         &engine.dynamic_ubo
-    )->select()->active(true)->onrun([](Node* n) {
+    );
+
+    r->select()->active(true)->onrun([](Node* n) {
 
          n->is_a<Remap>()->update();
 
 
     })->onchange([](Node* n) { PLOGD <<"LLOOOOOOOOOO"; });
+
+    r->get()->attr({{0}, {1}, {0}});
 
     // engine.dynamic_ubo.referings.insert( engine.remaps->childrens[0] );
 
@@ -45,3 +47,7 @@ int main() {
 
 
 // Update Remap::attributes on Remap::s change without changing Member or Struct ....
+
+// this should happen on Node update otherwise if its code just bea good dev u dum fuk
+
+// figure out where I had similar issue and whart dumb solution I camup wiz . answer : pre_() post_() dumfuk. that bad ?
