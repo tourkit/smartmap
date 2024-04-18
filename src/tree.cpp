@@ -3,7 +3,13 @@
 #include "engine.hpp"
 #include "imgui_internal.h"
 
-TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected) {  }
+TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected) {
+
+        memset( &search_str[0], 0, sizeof(search_str) );
+
+    strncpy( &search_str[0], &filter_str[0], sizeof(filter_str) );
+
+ }
 
 void TreeWidget::draw()  {
 
@@ -12,9 +18,34 @@ void TreeWidget::draw()  {
 
     if (!selected) selected = engine.tree;
 
-    std::string search_str = "filter";
     ImGui::PushItemWidth(-1);
-    ImGui::InputText("###filtersearch", &search_str[0], search_str.size(), ImGuiInputTextFlags_EnterReturnsTrue);
+    ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str), ImGuiInputTextFlags_EnterReturnsTrue);
+
+    if (ImGui::IsItemHovered()) {
+
+        if (!strcmp(&search_str[0], &filter_str[0])) {
+
+            memset( &search_str[0], 0, sizeof(filter_str) );
+
+            filtering = true;
+
+        }
+
+    }else{
+
+        if (!strlen(search_str)) {
+
+             memset( &search_str[0], 0, sizeof(search_str) );
+
+            strncpy( &search_str[0], &filter_str[0], sizeof(filter_str) );
+
+            filtering = false;
+
+        }
+
+    }
+
+
     ImGui::PopItemWidth();
 
     // Create the table
@@ -134,45 +165,46 @@ using namespace ImGui;
     }
 
     PopStyleColor();
-            static bool holding = false;
 
-        if (ImGui::BeginDragDropSource()) {
+    static bool holding = false;
 
-            auto ptr = (uint64_t)node;
-            ImGui::SetDragDropPayload("_TREENONODE", &(ptr), sizeof(uint64_t));
+    if (ImGui::BeginDragDropSource()) {
 
-            holding = true;
+        auto ptr = (uint64_t)node;
+        ImGui::SetDragDropPayload("_TREENONODE", &(ptr), sizeof(uint64_t));
 
-            ImGui::Text(node->name.c_str());
-            ImGui::EndDragDropSource();
+        holding = true;
 
-        }else {
+        ImGui::Text(node->name.c_str());
+        ImGui::EndDragDropSource();
 
-            static bool mouse_down = false;
+    }else {
 
-            static Node* s = nullptr;
+        static bool mouse_down = false;
 
-            if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
+        static Node* s = nullptr;
 
-            if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) Engine::getInstance().selected = s;
+        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
 
-            if (ImGui::IsMouseReleased(0)) mouse_down = false;
+        if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) Engine::getInstance().selected = s;
 
-        }
+        if (ImGui::IsMouseReleased(0)) mouse_down = false;
 
-        if (ImGui::BeginDragDropTarget()) {
+    }
 
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) {
+    if (ImGui::BeginDragDropTarget()) {
 
-                node->add((Node*)(*(uint64_t*)payload->Data));
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) {
 
-                if (holding) holding = false;
+            node->add((Node*)(*(uint64_t*)payload->Data));
 
-            }
-
-            ImGui::EndDragDropTarget();
+            if (holding) holding = false;
 
         }
+
+        ImGui::EndDragDropTarget();
+
+    }
 
     SameLine();
 
@@ -196,8 +228,8 @@ void TreeWidget::drawNode(Node* node) {
 
         ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
 
-        const bool recurse = TreeViewNode(node);
-
+        bool recurse = false;
+        if (!filtering || !strlen(search_str) || ( !strcmp(search_str, node->name.c_str()))) recurse = TreeViewNode(node);
 
     // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
 
@@ -253,10 +285,7 @@ void TreeWidget::drawNode(Node* node) {
 
             ImGui::TreePop();
 
-        }
-
-
-
+        }else{ if (filtering && search_str) drawChildrens(node); }
 
     }
 

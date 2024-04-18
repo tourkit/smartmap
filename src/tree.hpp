@@ -18,6 +18,13 @@ struct TreeWidget : GUI::Window {
 
     bool TreeViewNode(Node* node);
 
+
+    std::string filter_str = "filter";
+
+    char search_str[100];
+
+    bool filtering = false;
+
 private:
 
 bool is_deleting = false;
