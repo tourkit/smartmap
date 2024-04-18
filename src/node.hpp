@@ -78,11 +78,11 @@ struct UntypedNode {
 
     virtual void* ptr_untyped() { return this; }
 
-    void onchange(std::function<void(Node*)> cb = nullptr);
+    Node* onchange(std::function<void(Node*)> cb = nullptr);
 
-    void ondelete(std::function<void(Node*)> cb = nullptr);
+    Node* ondelete(std::function<void(Node*)> cb = nullptr);
 
-    void onrun(std::function<void(Node*)> cb = nullptr);
+    Node* onrun(std::function<void(Node*)> cb = nullptr);
 
     template <typename U>
     U* is_a() { if (type() == typeid(U)) { return (U*)ptr_untyped(); }else { PLOGE << "NOT A << " << boost::typeindex::type_id_with_cvr<U>().pretty_name();return nullptr; } }

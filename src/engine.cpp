@@ -84,6 +84,15 @@ void Engine::run() {
 
         engine.tree->run();
 
+        for (auto x : engine.stack->childrens) {
+
+            auto l = x->is_a<Layer>();
+            if (!l) continue;
+
+            l->fb.texture->bind();
+            //use quad(engine dracall maybe) to draw
+        }
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         engine.gui->draw();

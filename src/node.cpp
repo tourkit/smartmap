@@ -139,9 +139,9 @@
 
     }
 
-    void UntypedNode::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; }
-    void UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; }
-    void UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; }
+    Node* UntypedNode::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; return node(); }
+    Node* UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; return node(); }
+    Node* UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; return node(); }
 
     void UntypedNode::runCB(std::function<void(Node*)> cb) {
 

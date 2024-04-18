@@ -29,4 +29,6 @@ struct Remap {
 
     void extract(Member* s);
 
+    void reset();
+
 };

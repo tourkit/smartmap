@@ -25,7 +25,15 @@ int main() {
         &engine.inputs->childrens[0]->is_a<Artnet>()->universes[0]->data[0],
         &engine.dynamic_ubo.data[0],
         &engine.dynamic_ubo
-    )->select()->active(true)->onrun([](Node* n) { n->is_a<Remap>()->update(); });
+    )->select()->active(true)->onrun([](Node* n) {
+
+         n->is_a<Remap>()->update();
+
+
+    })->onchange([](Node* n) { PLOGD <<"LLOOOOOOOOOO"; });
+
+    // engine.dynamic_ubo.referings.insert( engine.remaps->childrens[0] );
+
 
     engine.run();
 }
@@ -34,3 +42,6 @@ int main() {
 // TODO next:
 // - remap
 // - Node movement
+
+
+// Update Remap::attributes on Remap::s change without changing Member or Struct ....

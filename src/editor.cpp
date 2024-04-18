@@ -24,6 +24,8 @@
 static int hovered_offset = -1;
 static int hovered_size = -1;
 static bool is_hovered = false;
+static uint32_t is_hovered_winID = 0;
+
 namespace ImGui {
 
     static void TextX(std::string label, int offset, int size, int depth, std::vector<float> range = {}) {
@@ -44,6 +46,7 @@ namespace ImGui {
             hovered_offset = offset;
             hovered_size = size;
             is_hovered=true;
+            is_hovered_winID = ImGui::GetWindowDockID();
 
         }
 
@@ -118,7 +121,7 @@ static void draw_raw(void *data, size_t size) {
 
 
         ImGui::PushID(member_count);
-        if (is_hovered && member_count == hovered_offset) {
+        if (is_hovered_winID == ImGui::GetWindowDockID() && is_hovered && member_count == hovered_offset) {
 
             ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,0,0,1));
 

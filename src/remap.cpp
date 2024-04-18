@@ -35,10 +35,16 @@ Remap::Remap(void *src, void *dst, Member *s, uint16_t q)
 
     extract(s);
 
-    update();
-
 }
 
+
+void Remap::reset() {
+
+    attributes.resize(0);
+
+    extract(s);
+
+}
 
 void Remap::update() {
 
