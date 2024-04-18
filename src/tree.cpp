@@ -222,73 +222,74 @@ void TreeWidget::drawNode(Node* node) {
 
     if (node->hidden) return;
 
-    ImGui::TableNextRow();
+    if (!filtering || !strlen(search_str) || std::regex_search(node->name.c_str(), std::regex(search_str))) {
 
-    if (ImGui::TableNextColumn()) {
+        ImGui::TableNextRow();
 
-        ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
+        if (ImGui::TableNextColumn()) {
 
-        bool recurse = false;
+            ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
+
+            bool recurse = recurse = TreeViewNode(node);
+
+        // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
+
+            const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+
+            if (recurse) {
 
 
-        if (!filtering || !strlen(search_str) || std::regex_search(node->name.c_str(), std::regex(search_str))) recurse = TreeViewNode(node);
+                ImDrawList* drawList = ImGui::GetWindowDrawList();
+                verticalLineStart.x+=7;
+                verticalLineStart.y+=-7;
+                ImVec2 verticalLineEnd = verticalLineStart;
 
-    // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
+                verticalLineEnd.y+=14;
+                ImVec2 verticalLineEnd2 = verticalLineEnd;
+                verticalLineEnd2.x+=10;//Engine::getInstance().blank[8];
+                drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(122,122,122,122));
+                drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
 
-        const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+                if (ImGui::IsDragDropActive()) {
 
-        if (recurse) {
+                    ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
+                    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
 
+                    ImVec2 dropperline;
+                    dropperline.x = ImGui::GetWindowPos().x;
+                    dropperline.y = ImGui::GetCursorScreenPos().y;
+                    dropperline.y += 2;
 
-            ImDrawList* drawList = ImGui::GetWindowDrawList();
-            verticalLineStart.x+=7;
-            verticalLineStart.y+=-7;
-            ImVec2 verticalLineEnd = verticalLineStart;
+                    ImVec2 dropperline2 = dropperline;
+                    dropperline2.x += ImGui::GetWindowWidth();
+                    dropperline2.y -= 10;
 
-            verticalLineEnd.y+=14;
-            ImVec2 verticalLineEnd2 = verticalLineEnd;
-            verticalLineEnd2.x+=10;//Engine::getInstance().blank[8];
-            drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(122,122,122,122));
-            drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
+                    ImGui::SameLine();
+                    ImGui::PushID(6969);
+                    ImGui::BeginGroup();
+                    drawList->AddRectFilled(dropperline, dropperline2, IM_COL32(255,0,0,30));
+                    ImGui::EndGroup();
+                    ImGui::PopID();
 
-            if (ImGui::IsDragDropActive()) {
+                    if (ImGui::BeginDragDropTarget()) {
 
-                ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
-                ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGI << "TODO MOVE NODE";
 
-                ImVec2 dropperline;
-                dropperline.x = ImGui::GetWindowPos().x;
-                dropperline.y = ImGui::GetCursorScreenPos().y;
-                dropperline.y += 2;
+                        ImGui::EndDragDropTarget();
+                    }
 
-                ImVec2 dropperline2 = dropperline;
-                dropperline2.x += ImGui::GetWindowWidth();
-                dropperline2.y -= 10;
+                    ImGui::PopStyleVar(2);
 
-                ImGui::SameLine();
-                ImGui::PushID(6969);
-                ImGui::BeginGroup();
-                drawList->AddRectFilled(dropperline, dropperline2, IM_COL32(255,0,0,30));
-                ImGui::EndGroup();
-                ImGui::PopID();
-
-                if (ImGui::BeginDragDropTarget()) {
-
-                    if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGI << "TODO MOVE NODE";
-
-                    ImGui::EndDragDropTarget();
                 }
 
-                ImGui::PopStyleVar(2);
+                drawChildrens(node);
+
+                ImGui::TreePop();
 
             }
 
-            drawChildrens(node);
+        }
 
-            ImGui::TreePop();
-
-        }else{ if (filtering && search_str) drawChildrens(node); }
-
-    }
+    }else{ if (filtering && search_str) drawChildrens(node); }
 
 }

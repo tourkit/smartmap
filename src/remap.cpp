@@ -41,9 +41,13 @@ Remap::Remap(void *src, void *dst, Member *s, uint16_t q)
 
 void Remap::reset() {
 
+    auto bkp = attributes;
+
     attributes.resize(0);
 
     extract(s);
+
+    for (int i = 0 ; i < (bkp.size()>attributes.size()?attributes.size():bkp.size()); i++) attributes[i] = bkp[i];
 
 }
 

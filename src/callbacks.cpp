@@ -165,6 +165,13 @@ void Callbacks::init() {
 
     NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { atlas->fromDir(atlas->path); });
 
+    //////// Remap.HPP
+
+    NODE<Remap>::onrun([](Node* node, Remap *remap) { remap->update(); });
+    NODE<Remap>::onchange([](Node* node, Remap *remap) { remap->reset(); });
+    NODE<DMX::Remap>::onrun([](Node* node, DMX::Remap *remap) { remap->update(); });
+    NODE<DMX::Remap>::onchange([](Node* node, DMX::Remap *remap) { remap->reset(); });
+
     //////// Buffer.HPP
 
     NODE<Buffer>::onchange([](Node* node, Buffer *buffer) { PLOGD<<"ooo"; });

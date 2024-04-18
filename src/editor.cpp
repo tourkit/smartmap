@@ -265,7 +265,10 @@ void Editors::init() {
 
     ////////// Artnet.HPP
 
+
+
     Editor<Remap>([](Node*node, Remap* remap){
+
 
         int member_id = 0;
             remap->s->each([&](Member* m, uint32_t offset) {
@@ -273,21 +276,26 @@ void Editors::init() {
                  if (m->typed()) {
 
 
-                    ImGui::Text(m->name().c_str());
+                    ImGui::Text((m->name()+std::to_string(remap->attributes.size())).c_str());
 
                     static int e = 0;
-                    std::string strbypa = "bypass##rbt"+std::to_string(member_id);
-                    ImGui::SameLine();
-                    ImGui::RadioButton(strbypa.c_str(), &remap->attributes[member_id].combining , 0);
-                    std::string strcoar = "coarse##rbt"+std::to_string(member_id);
-                    ImGui::SameLine();
-                    ImGui::RadioButton(strcoar.c_str(), &remap->attributes[member_id].combining , 1);
-                    std::string strfine = "fine##rbt"+std::to_string(member_id);
-                    ImGui::SameLine();
-                    ImGui::RadioButton(strfine.c_str(), &remap->attributes[member_id].combining , 2);
-                    std::string strultr = "ultra##rbt"+std::to_string(member_id);
-                    ImGui::SameLine();
-                    ImGui::RadioButton(strultr.c_str(), &remap->attributes[member_id].combining , 3);
+
+                    if (member_id < remap->attributes.size()) {
+
+                        std::string strbypa = "bypass##rbt"+std::to_string(member_id);
+                        ImGui::SameLine();
+                        ImGui::RadioButton(strbypa.c_str(), &remap->attributes[member_id].combining , 0);
+                        std::string strcoar = "coarse##rbt"+std::to_string(member_id);
+                        ImGui::SameLine();
+                        ImGui::RadioButton(strcoar.c_str(), &remap->attributes[member_id].combining , 1);
+                        std::string strfine = "fine##rbt"+std::to_string(member_id);
+                        ImGui::SameLine();
+                        ImGui::RadioButton(strfine.c_str(), &remap->attributes[member_id].combining , 2);
+                        std::string strultr = "ultra##rbt"+std::to_string(member_id);
+                        ImGui::SameLine();
+                        ImGui::RadioButton(strultr.c_str(), &remap->attributes[member_id].combining , 3);
+
+                    }
 
                     member_id++;
 
@@ -295,71 +303,10 @@ void Editors::init() {
 
             });
 
-    });
+        const char *bufa = "0xbufabufa";
+        const char *bufb = "0xbufbbufb";
 
-    Editor<DMX::Remap>([](Node*node,DMX::Remap* remap){
-
-        // TOFIX
-
-            // string buffer for imgui::combo
-            // static std::vector<char> models;
-            // static std::vector<Model*> models_ptr;
-
-            // if (!models.size()) {
-
-            //     engine.stack->each<Layer>([&](Node* n, Layer* l) {
-
-            //         n->each<Model>([&](Node* n, Model* m) {
-
-            //             for (auto c : n->name) models.push_back(c);
-            //             models.push_back(0);
-            //             models_ptr.push_back(m);
-
-            //         });
-
-            //         models.push_back(0);
-
-            //     });
-
-            // }
-
-            // // imgui::combo
-            // static int model_id=0;
-            // if (ImGui::Combo("Model##dddddddd", &model_id, &models[0], models.size())) remap->import(models_ptr[model_id]->obj->s);
-
-            // std::string sss;
-            // ImGui::InputText("char *src##remap_name", sss.data(), sss.length());
-
-            // int member_id = 0;
-
-            // for (auto c:remap->fixture->s->comps) {
-
-            //     ImGui::SeparatorText(c->name.c_str());
-
-            //     for (auto m:c->members) {
-
-            //         ImGui::Text(m.name.c_str());
-
-            //         static int e = 0;
-            //         std::string strbypa = "bypass##rbt"+std::to_string(member_id);
-            //         ImGui::SameLine();
-            //         ImGui::RadioButton(strbypa.c_str(), &remap->fixture->attributes[member_id].combining , 0);
-            //         std::string strcoar = "coarse##rbt"+std::to_string(member_id);
-            //         ImGui::SameLine();
-            //         ImGui::RadioButton(strcoar.c_str(), &remap->fixture->attributes[member_id].combining , 1);
-            //         std::string strfine = "fine##rbt"+std::to_string(member_id);
-            //         ImGui::SameLine();
-            //         ImGui::RadioButton(strfine.c_str(), &remap->fixture->attributes[member_id].combining , 2);
-            //         std::string strultr = "ultra##rbt"+std::to_string(member_id);
-            //         ImGui::SameLine();
-            //         ImGui::RadioButton(strultr.c_str(), &remap->fixture->attributes[member_id].combining , 3);
-
-            //         member_id++;
-
-            //     }
-
-            // }
-
+        ImGui::NewLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppyaaa", (char*)bufa, 10, ImGuiInputTextFlags_ReadOnly); ImGui::SameLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppybbb", (char*)bufb, 10, ImGuiInputTextFlags_ReadOnly);
 
 
     });
@@ -719,6 +666,11 @@ void Editors::init() {
         }
 
     });
+
+
+    // REMAP.HPP
+
+    Editor<DMX::Remap>([](Node*node, DMX::Remap* remap){ Editor<Remap>::cb(node, remap); });
 
     ////////// Engine.HPP
 
