@@ -269,6 +269,7 @@ void Editors::init() {
 
     Editor<Remap>([](Node*node, Remap* remap){
 
+        ImGui::Text((std::to_string(remap->quantity)).c_str());
 
         int member_id = 0;
             remap->s->each([&](Member* m, uint32_t offset) {
@@ -276,7 +277,7 @@ void Editors::init() {
                  if (m->typed()) {
 
 
-                    ImGui::Text((m->name()+std::to_string(remap->attributes.size())).c_str());
+                    ImGui::Text((m->name()).c_str());
 
                     static int e = 0;
 

@@ -32,9 +32,12 @@ Remap::Remap() {}
 
 Remap::Remap(void *src, void *dst, Member *s, uint16_t q)
 
-    : src((char*)src), dest((char*)dst), s(s), quantity(q) {
+    : src((char*)src), dest((char*)dst), s(s) {
 
     extract(s);
+
+    quantity = s->quantity();
+
 
 }
 
@@ -46,6 +49,8 @@ void Remap::reset() {
     attributes.resize(0);
 
     extract(s);
+
+    quantity = s->quantity();
 
     for (int i = 0 ; i < (bkp.size()>attributes.size()?attributes.size():bkp.size()); i++) attributes[i] = bkp[i];
 
