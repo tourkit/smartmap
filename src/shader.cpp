@@ -143,6 +143,7 @@ std::string ShaderProgram::Builder::vert() {
     str += "\nvoid main() {\n\n";
 
     str += "\tUV = TEXCOORD;\n";
+    str += "\tUV.y = 1-UV.y;\n";
 
     str += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 
@@ -237,8 +238,9 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     glLinkProgram( id );
 
-    engine.atlas->link(this);
+    // engine.atlas->link(this);
 
+    sendUniform("medias", 1);
     sendUniform("feedback", 2);
 
     loaded = true;
