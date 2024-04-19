@@ -3,7 +3,7 @@
 #include "struct.hpp"
 #include "member.hpp"
 
-uint8_t Remap::get8(uint8_t* data) { return data[0]/255.0f; }
+float Remap::get8(uint8_t* data) { return data[0]/255.0f; }
 uint16_t Remap::get16(uint8_t* data) { return ((data[0] << 8) | data[1]);  }
 uint32_t Remap::get24(uint8_t* data) { return ((data[0] << 16) | (data[1] << 8) | data[2]);  }
 uint32_t Remap::get32(uint8_t* data) { return ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]);  }
@@ -14,7 +14,10 @@ void Remap::extract(Member *s) {
 
         if (m->typed()) {
 
-             for (int i = 0 ; i < m->count(); i++)
+
+            auto cc = m->count();
+
+            for (int i = 0 ; i < cc; i++)
             attributes.push_back({1,m->range<float>()[0],m->range<float>()[1]});
 
         }else{
@@ -72,8 +75,12 @@ void Remap::update() {
 
     for (int offset = 0; offset < quantity; offset++) {
 
+
         auto size = s->size();
+
         auto pos = (offset*size);
+        pos /=sizeof(float);
+
 
         for (int i = 0; i < attributes.size(); i++) {
 
@@ -87,7 +94,7 @@ void Remap::update() {
             else if (c==4) target = get32(data)/4294967295.0f;
 
             // range remap
-            if (c) (*(((float*)dest)+i+pos)) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
+            if (c) *((float*)dest+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
             // else c = 1;
 
             data += c;

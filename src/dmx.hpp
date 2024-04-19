@@ -42,7 +42,7 @@ struct DMX {
         Remap(void *src, void *dst, Member *s, uint16_t q = 1);
 
 
-        uint8_t get8(uint8_t* data) override;
+        float get8(uint8_t* data) override;
 
     };
 

@@ -319,7 +319,7 @@ void Editors::init() {
 
                     }
 
-                    member_id++;
+                    member_id+=m->count();
 
                     // if (ImGui::IsItemHovered()) ImGui::PopStyleColor();
 

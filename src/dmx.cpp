@@ -27,4 +27,4 @@ DMX::Remap::Remap(void *src, void *dst, Member *s, uint16_t q) {
 
 }
 
-uint8_t DMX::Remap::get8(uint8_t* data) { return GMAui2f[*data]; }
+float DMX::Remap::get8(uint8_t* data) { return GMAui2f[*data]; }

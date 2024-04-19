@@ -26,7 +26,7 @@ int main() {
     );
     r->select()->active(true);
 
-    r->get()->attr({{1}, {1}, {1}, {1}, {2}, {2}, {1}});
+    r->get()->attr({{1}, {1}, {1}, {1}, {2}, {2}, {2}, {2}, {1}});
     r->get()->quantity = 3;
 
     engine.stack->childrens[0]->childrens[0]->referings.insert(r->node());
