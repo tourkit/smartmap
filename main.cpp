@@ -46,3 +46,5 @@ int main() {
 // if (layer.source) glcopyfrom else gldraw
 
 // make artnet a Buffer and channel an instance
+
+// downscale layer

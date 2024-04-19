@@ -65,7 +65,7 @@ std::string ShaderProgram::Builder::frag() {
 
     // str += "//uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ?
     str += "uniform sampler2D medias;\n\n";
-    str += "uniform sampler2D feedback;\n\n";
+    str += "uniform sampler2D feedback_tex;\n\n";
 
     str += "in vec2 UV;\n\n";
     str += "out vec4 COLOR;\n\n";
@@ -241,7 +241,7 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     // engine.atlas->link(this);
 
     sendUniform("medias", 1);
-    sendUniform("feedback", 2);
+    sendUniform("feedback_tex", 2);
 
     loaded = true;
 
