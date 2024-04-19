@@ -82,11 +82,11 @@ struct Member {
     template <typename U>
     std::array<U,3> range() { return { *(U*)range_from_ptr, *(U*)range_to_ptr, *(U*)default_val_ptr}; }
 
+    uint32_t quantity_v = 1;
 protected:
 
     std::string name_v;
 
-    uint32_t quantity_v = 1;
 
     bool is_striding = false;
 

@@ -650,6 +650,8 @@ void Editors::init() {
 
         ImGui::Text(("effectorz " + std::to_string(model->effectors.size())).c_str());
 
+        if (ImGui::InputScalar("quantity##qqqqlalal", ImGuiDataType_U32 , &model->quantity_v)) { node->update(); }
+
         if (draw_guis(&engine.dynamic_ubo)) node->update();
 
         // for (auto x : model->effectors) {
