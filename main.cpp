@@ -44,3 +44,5 @@ int main() {
 //remap from instance  && model::editor instance not buffer
 
 // if (layer.source) glcopyfrom else gldraw
+
+// make artnet a Buffer and channel an instance

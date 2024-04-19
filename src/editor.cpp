@@ -487,6 +487,7 @@ void Editors::init() {
         ImGui::SameLine();if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }
         ImGui::SameLine();if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }
         ImGui::SameLine();ImGui::Checkbox("verbose", &is_verbose);
+        ImGui::SameLine(); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }
 
         if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
 

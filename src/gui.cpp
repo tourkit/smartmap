@@ -37,7 +37,7 @@ void GUI::Window::drawFull() { {
     ImGui::PushClipRect(clip_rect.Min, clip_rect.Max, false);
     ImGui::PopClipRect();
     ImGui::PopID();
-    ImGui::EndGroup(); 
+    ImGui::EndGroup();
       }
       draw();
 
@@ -56,8 +56,8 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::CreateContext();
 
   ImGuiIO& io = ImGui::GetIO(); (void)io;
-  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;  
-  io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;  
+  io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+  io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
   ImGui_ImplGlfw_InitForOpenGL(window, true);
 
@@ -98,7 +98,7 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Darker border color
   ImGui::PushStyleColor(ImGuiCol_HeaderHovered,ImVec4(0,0,0,0));
   ImGui::PushStyleColor(ImGuiCol_HeaderActive,ImVec4(0,0,0,0));
-    
+
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
 
@@ -110,13 +110,13 @@ trees.push_back(new TreeWidget());
 
 
 
-GUI::~GUI() {   
-  
+GUI::~GUI() {
+
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
 
-  ImGui::DestroyContext(); 
- 
+  ImGui::DestroyContext();
+
 }
 
 void GUI::newframe() {
@@ -127,16 +127,16 @@ void GUI::newframe() {
 
 }
 
-void GUI::draw() { 
+void GUI::draw() {
 
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
-  
-  newframe(); 
 
-      
+  newframe();
+
+
   if (ImGui::BeginMainMenuBar()) {
-      
-      if (ImGui::BeginMenu("new")) {  
+
+      if (ImGui::BeginMenu("new")) {
 
           if (ImGui::MenuItem("node")) {
 
@@ -163,14 +163,16 @@ void GUI::draw() {
 
     if (demo) ImGui::ShowDemoWindow();
 
-    for (auto window : Window::pool) { window->drawFull(); } 
-    
+    for (auto window : Window::pool) { window->drawFull(); }
 
-  } 
 
-  render(); 
+  }
+
+  render();
 }
 void GUI::render() {
+
+  if (ImGui::GetIO().Framerate < 59) PLOGW << "FPS drop @ " << ImGui::GetIO().Framerate << "hz";
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
