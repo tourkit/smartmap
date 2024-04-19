@@ -269,17 +269,16 @@ void Editors::init() {
 
     Editor<Remap>([](Node*node, Remap* remap){
 
-        ImGui::Text((std::to_string(remap->quantity)).c_str());
-
         ImGui::SetNextItemWidth(500);
-        if (ImGui::BeginTable("##remapswindow", 6, ImGuiTableFlags_Borders, ImVec2(500, 0))) {
+        if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(550, 0))) {
 
             ImGui::TableSetupColumn("name");
-            ImGui::TableSetupColumn("bypass", ImGuiTableColumnFlags_WidthFixed, 50);
+            ImGui::TableSetupColumn("skip", ImGuiTableColumnFlags_WidthFixed, 50);
             ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 50);
             ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 50);
             ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 50);
             ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 200);
+            ImGui::TableSetupColumn("active", ImGuiTableColumnFlags_WidthFixed, 50);
             ImGui::TableHeadersRow();
 
             int member_id = 0;
@@ -302,20 +301,18 @@ void Editors::init() {
                         static int e = 0;
 
                         ImGui::TableNextColumn();
-                        std::string strbypa = "##arbt"+std::to_string(member_id);
-                        ImGui::RadioButton(strbypa.c_str(), &remap->attributes[member_id].combining , 0);
+                        ImGui::RadioButton(("##arbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 0);
                         ImGui::TableNextColumn();
-                        std::string strcoar = "##vrbt"+std::to_string(member_id);
-                        ImGui::RadioButton(strcoar.c_str(), &remap->attributes[member_id].combining , 1);
+                        ImGui::RadioButton(("##vrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 1);
                         ImGui::TableNextColumn();
-                        std::string strfine = "##xrbt"+std::to_string(member_id);
-                        ImGui::RadioButton(strfine.c_str(), &remap->attributes[member_id].combining , 2);
+                        ImGui::RadioButton(("##xrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 2);
                         ImGui::TableNextColumn();
-                        std::string strultr = "##srbt"+std::to_string(member_id);
-                        ImGui::RadioButton(strultr.c_str(), &remap->attributes[member_id].combining , 3);
+                        ImGui::RadioButton(("##srbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 3);
                         ImGui::TableNextColumn();
                         ImGui::SetNextItemWidth(200);
-                        ImGui::InputFloat2("##minmax", &remap->attributes[member_id].min);
+                        ImGui::InputFloat2(("##minmax"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].min);
+                        ImGui::TableNextColumn();
+                        ImGui::Checkbox(("##arsbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].active);
 
                     }
 
@@ -333,8 +330,11 @@ void Editors::init() {
         const char *bufa = "0xbufabufa";
         const char *bufb = "0xbufbbufb";
 
-        ImGui::NewLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppyaaa", (char*)bufa, 10, ImGuiInputTextFlags_ReadOnly); ImGui::SameLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppybbb", (char*)bufb, 10, ImGuiInputTextFlags_ReadOnly);
+        ImGui::NewLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppyaaa", (char*)bufa, 10, ImGuiInputTextFlags_ReadOnly);
 
+        ImGui::SameLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppybbb", (char*)bufb, 10, ImGuiInputTextFlags_ReadOnly);
+
+        ImGui::SameLine();  ImGui::Text((remap->s->name() + " "  + std::to_string(remap->quantity)).c_str());
 
     });
 

@@ -7,7 +7,7 @@ struct Member;
 
 struct Remap {
 
-    struct Attribute { int combining = 0; float min=0, max=1; };// !combining is JUMP member
+    struct Attribute { int combining = 0; float min=0, max=1; bool active = true; };// !combining is JUMP member
 
     char *src;
     char *dest;

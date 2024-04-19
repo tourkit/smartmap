@@ -75,12 +75,10 @@ void Remap::update() {
 
     for (int offset = 0; offset < quantity; offset++) {
 
-
         auto size = s->size();
 
         auto pos = (offset*size);
         pos /=sizeof(float);
-
 
         for (int i = 0; i < attributes.size(); i++) {
 
@@ -94,8 +92,7 @@ void Remap::update() {
             else if (c==4) target = get32(data)/4294967295.0f;
 
             // range remap
-            if (c) *((float*)dest+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
-            // else c = 1;
+            if (attributes[i].active && c > 0) *((float*)dest+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
 
             data += c;
 
