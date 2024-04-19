@@ -14,7 +14,7 @@ void Remap::extract(Member *s) {
 
         if (m->typed()) {
 
-            // for (int i = 0 ; i < m->count(); i++)
+             for (int i = 0 ; i < m->count(); i++)
             attributes.push_back({1,m->range<float>()[0],m->range<float>()[1]});
 
         }else{

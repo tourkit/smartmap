@@ -302,16 +302,16 @@ void Editors::init() {
                         static int e = 0;
 
                         ImGui::TableNextColumn();
-                        std::string strbypa = "##rbt"+std::to_string(member_id);
+                        std::string strbypa = "##arbt"+std::to_string(member_id);
                         ImGui::RadioButton(strbypa.c_str(), &remap->attributes[member_id].combining , 0);
                         ImGui::TableNextColumn();
-                        std::string strcoar = "##rbt"+std::to_string(member_id);
+                        std::string strcoar = "##vrbt"+std::to_string(member_id);
                         ImGui::RadioButton(strcoar.c_str(), &remap->attributes[member_id].combining , 1);
                         ImGui::TableNextColumn();
-                        std::string strfine = "##rbt"+std::to_string(member_id);
+                        std::string strfine = "##xrbt"+std::to_string(member_id);
                         ImGui::RadioButton(strfine.c_str(), &remap->attributes[member_id].combining , 2);
                         ImGui::TableNextColumn();
-                        std::string strultr = "##rbt"+std::to_string(member_id);
+                        std::string strultr = "##srbt"+std::to_string(member_id);
                         ImGui::RadioButton(strultr.c_str(), &remap->attributes[member_id].combining , 3);
                         ImGui::TableNextColumn();
                         ImGui::SetNextItemWidth(200);
