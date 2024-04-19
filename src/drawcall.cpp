@@ -13,15 +13,22 @@
 
 Layer::Layer(uint16_t width, uint16_t height) : fb(width, height) {
     // vbo.add(quad);
+    feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
      }
 
-Layer::Layer() : fb(engine.window.width,engine.window.height) {}
+Layer::Layer() : fb(engine.window.width,engine.window.height) {
+    feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
+}
 
 void Layer::draw() {
+
+    if (feedback) { feedback->bind(); }
 
     fb.bind();
 
     DrawCall::draw();
+
+    if (feedback) { return feedback->read(fb.texture); }
 
 }
 
@@ -44,7 +51,7 @@ void DrawCall::update() {
 
     for (auto &x : vbo.models) {
 
-        if (!x.file->path.length()) continue;
+        if (x.file->path == engine.project_filepath) continue;
 
         auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::REPO_DIR) / x.file->path);
 

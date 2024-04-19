@@ -37,4 +37,6 @@ struct Layer : DrawCall {
 
     Layer();
 
+    Texture* feedback = nullptr;
+
 };

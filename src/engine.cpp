@@ -105,25 +105,22 @@ void Engine::open(const char* file) {
 
     json.load(File(file).data.data());
 
+    project_filepath = file;
+
     // for (auto e :engine.gui->editors) delete e; // editor widget deletion is fucked
 
     if (!json.loaded) {
 
-        if (!project_filepath.length()) {
+        engine.gui->editors.push_back(new EditorWidget());
 
-            project_filepath = file;
+        engine.gui->editors.push_back(new EditorWidget());
+        engine.gui->editors.back()->selected = debug;
+        engine.gui->editors.back()->locked = true;
 
-            engine.gui->editors.push_back(new EditorWidget());
+        auto f = debug->addOwnr<File>(project_filepath);
+        f->onchange([](Node* n) { engine.open(engine.project_filepath.c_str()); });
+        f->select();
 
-            engine.gui->editors.push_back(new EditorWidget());
-            engine.gui->editors.back()->selected = debug;
-            engine.gui->editors.back()->locked = true;
-
-            auto f = debug->addOwnr<File>(project_filepath);
-            f->onchange([](Node* n) { engine.open(engine.project_filepath.c_str()); });
-            f->select();
-
-        }
 
         return;
 
@@ -138,6 +135,7 @@ void Engine::open(const char* file) {
         n->get()->loadString(m.value.GetString());
         n->get()->name_v = m.name.GetString();
         n->get()->extension = "frag";
+        n->get()->path = engine.project_filepath;
 
         n->name = n->get()->name_v;
 
@@ -149,6 +147,7 @@ void Engine::open(const char* file) {
         auto n = effectors->addOwnr<File>();
         n->get()->loadString(m.value.GetString());
         n->get()->name_v = m.name.GetString();
+        n->get()->path = engine.project_filepath;
         n->name = m.name.GetString();
 
     }
@@ -228,6 +227,8 @@ void Engine::save() { save(project_filepath.c_str()); }
 void Engine::save(const char* file) {
 
     if (!json.document.HasMember("editors")) json.document.AddMember("editors", rapidjson::Value(rapidjson::kArrayType), json.document.GetAllocator());
+    if (!json.document.HasMember("models")) json.document.AddMember("models", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
+    if (!json.document.HasMember("effectors")) json.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
 
     json.document["editors"].Clear();
 
@@ -247,6 +248,15 @@ void Engine::save(const char* file) {
 
     }
 
+
+    json.document["models"].RemoveAllMembers();
+    for (auto m : models->childrens) json.document["models"].AddMember(rapidjson::Value(m->name.c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
+    json.document["effectors"].RemoveAllMembers();
+    for (auto m : effectors->childrens) json.document["effectors"].AddMember(rapidjson::Value(m->name.c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
+
+
+
+
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
     writer.SetIndent(' ', 2); // Set indent to 2 spaces
@@ -256,6 +266,7 @@ void Engine::save(const char* file) {
     std::string result = std::regex_replace(buffer.GetString(), std::regex(R"(\s{5}(([\]\}])|\s{2,}))"), " $2");
     // result = std::regex_replace(result, std::regex(R"(\n)"), " \n\n");
 
+    // PLOGD << result;
     File::write(file,result);
 
     PLOGD << "SAVED to " << file;

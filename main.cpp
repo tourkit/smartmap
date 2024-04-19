@@ -26,8 +26,8 @@ int main() {
     );
     r->select()->active(true);
 
-    r->get()->attr({{1}, {1}, {1}, {1}, {2}, {2}, {2}, {2}, {1}});
-    r->get()->quantity = 3;
+    r->get()->attr({{1}, {1}, {1}, {1}, {2}, {2}, {2}, {2}});
+    // r->get()->quantity = 3;
 
     engine.stack->childrens[0]->childrens[0]->referings.insert(r->node());
     // engine.dynamic_ubo.referings.insert( engine.remaps->childrens[0] );
@@ -39,3 +39,8 @@ int main() {
 
 // TODO next:
 // - Node movement
+
+
+//remap from instance  && model::editor instance not buffer
+
+// if (layer.source) glcopyfrom else gldraw

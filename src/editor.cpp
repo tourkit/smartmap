@@ -556,7 +556,7 @@ void Editors::init() {
 
         if (codeeditor.IsTextChanged()) {
 
-            if (file->path.length()) file->write(codeeditor.GetText().c_str());
+            if (file->path != engine.project_filepath) file->write(codeeditor.GetText().c_str());
 
             else file->loadString(codeeditor.GetText().c_str());
 
@@ -649,7 +649,7 @@ void Editors::init() {
 
         ImGui::Text(("effectorz " + std::to_string(model->effectors.size())).c_str());
 
-        Editor<Buffer>::cb(node, &engine.dynamic_ubo);
+        if (draw_guis(&engine.dynamic_ubo)) node->update();
 
         // for (auto x : model->effectors) {
 
