@@ -271,39 +271,65 @@ void Editors::init() {
 
         ImGui::Text((std::to_string(remap->quantity)).c_str());
 
-        int member_id = 0;
+        ImGui::SetNextItemWidth(500);
+        if (ImGui::BeginTable("##remapswindow", 6, ImGuiTableFlags_Borders, ImVec2(500, 0))) {
+
+            ImGui::TableSetupColumn("name");
+            ImGui::TableSetupColumn("bypass", ImGuiTableColumnFlags_WidthFixed, 50);
+            ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 50);
+            ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 50);
+            ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 50);
+            ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 200);
+            ImGui::TableHeadersRow();
+
+            int member_id = 0;
+
             remap->s->each([&](Member* m, uint32_t offset) {
 
                  if (m->typed()) {
 
+                    ImGui::TableNextRow();
 
+                    // if (ImGui::IsItemHovered()) ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,.5,.5,1));
+
+                    ImGui::TableNextColumn();
+                    // auto textWidth   = 100-ImGui::CalcTextSize(m->name().c_str()).x;
+                    // ImGui::SetCursorPosX((textWidth * 0.5f) );
                     ImGui::Text((m->name()).c_str());
-
-                    static int e = 0;
 
                     if (member_id < remap->attributes.size()) {
 
-                        std::string strbypa = "bypass##rbt"+std::to_string(member_id);
-                        ImGui::SameLine();
+                        static int e = 0;
+
+                        ImGui::TableNextColumn();
+                        std::string strbypa = "##rbt"+std::to_string(member_id);
                         ImGui::RadioButton(strbypa.c_str(), &remap->attributes[member_id].combining , 0);
-                        std::string strcoar = "coarse##rbt"+std::to_string(member_id);
-                        ImGui::SameLine();
+                        ImGui::TableNextColumn();
+                        std::string strcoar = "##rbt"+std::to_string(member_id);
                         ImGui::RadioButton(strcoar.c_str(), &remap->attributes[member_id].combining , 1);
-                        std::string strfine = "fine##rbt"+std::to_string(member_id);
-                        ImGui::SameLine();
+                        ImGui::TableNextColumn();
+                        std::string strfine = "##rbt"+std::to_string(member_id);
                         ImGui::RadioButton(strfine.c_str(), &remap->attributes[member_id].combining , 2);
-                        std::string strultr = "ultra##rbt"+std::to_string(member_id);
-                        ImGui::SameLine();
+                        ImGui::TableNextColumn();
+                        std::string strultr = "##rbt"+std::to_string(member_id);
                         ImGui::RadioButton(strultr.c_str(), &remap->attributes[member_id].combining , 3);
+                        ImGui::TableNextColumn();
+                        ImGui::SetNextItemWidth(200);
+                        ImGui::InputFloat2("##minmax", &remap->attributes[member_id].min);
 
                     }
 
                     member_id++;
 
+                    // if (ImGui::IsItemHovered()) ImGui::PopStyleColor();
+
+
                 }
 
             });
 
+                ImGui::EndTable();
+            }
         const char *bufa = "0xbufabufa";
         const char *bufb = "0xbufbbufb";
 
