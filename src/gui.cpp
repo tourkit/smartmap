@@ -172,7 +172,15 @@ void GUI::draw() {
 }
 void GUI::render() {
 
-  if (ImGui::GetIO().Framerate < 59) PLOGW << "FPS drop @ " << ImGui::GetIO().Framerate << "hz";
+  static int last_framerate = 60;
+
+  if (last_framerate != (int)std::floor(ImGui::GetIO().Framerate) && ImGui::GetIO().Framerate < 59) {
+
+    PLOGW << "FPS drop @ " << last_framerate+1 << "hz";
+
+    last_framerate = ImGui::GetIO().Framerate;
+
+  }
 
   ImGui::Render();
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

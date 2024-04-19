@@ -15,7 +15,7 @@ int main() {
 
     engine.open("project2.json");
 
-    logger.cout();
+    // logger.cout();
 
    engine.inputs->childrens[0]->is_a<Artnet>()->universes[0] = new DMX{0};
 
