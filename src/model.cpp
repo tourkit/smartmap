@@ -3,9 +3,11 @@
 
 Model::Model() : Struct() { }
 
-Model::Model(File* file, int quantity) : Struct(file->name(), quantity), file(file)
+Model::Model(File* file, int quantity) : Struct(file->name(), quantity), file(file) {
 
-{}
+    engine.dynamic_ubo.add(*this);
+
+}
 
 Model::~Model() { engine.dynamic_ubo.remove(*this);  }
 
