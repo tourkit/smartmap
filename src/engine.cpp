@@ -134,7 +134,7 @@ void Engine::open(const char* file) {
         auto n = models->addOwnr<File>();
         n->get()->loadString(m.value.GetString());
         n->get()->name_v = m.name.GetString();
-        n->get()->extension = "frag";
+        n->get()->extension = "obj";
         n->get()->path = engine.project_filepath;
 
         n->name = n->get()->name_v;
@@ -148,6 +148,7 @@ void Engine::open(const char* file) {
         n->get()->loadString(m.value.GetString());
         n->get()->name_v = m.name.GetString();
         n->get()->path = engine.project_filepath;
+        n->get()->extension = "glsl";
         n->name = m.name.GetString();
 
     }
@@ -159,35 +160,54 @@ void Engine::open(const char* file) {
 
         auto layer = stack->addOwnr<Layer>();
 
+
         if (l.name.IsString()) layer->name = l.name.GetString();
 
-        if (l.value.IsObject()) for (auto &m : l.value.GetObj()) {
+        if (l.value.IsArray() && l.value.GetArray().Size() && l.value.GetArray()[0].IsObject()) {
 
-            if (!m.value.IsArray()) continue;
+            for (auto &m : l.value.GetArray()[0].GetObj()) {
 
-            if (!m.value[0].IsString()) continue;
+                if (!m.value.IsArray()) continue;
 
-            auto model_f = models->child(m.value[0].GetString()); if (!model_f)  { PLOGE << "no model : " << m.value[0].GetString(); continue; }
+                if (!m.value[0].IsString()) continue;
 
-            auto model = layer->add(model_f);
+                auto model_f = models->child(m.value[0].GetString()); if (!model_f)  { PLOGE << "no model : " << m.value[0].GetString(); continue; }
 
-            if (m.name.IsString()) model->name = m.name.GetString();
+                auto model = layer->add(model_f);
 
-            if (m.value.GetArray().Size() < 2) continue;
-            if (!m.value[1].IsArray()) continue;
+                if (m.name.IsString()) model->name = m.name.GetString();
 
-            for (auto &f : m.value[1].GetArray()) {
+                if (m.value.GetArray().Size() < 2) continue;
+                if (!m.value[1].IsArray()) continue;
 
-                if (!f.IsString()) continue;
+                for (auto &f : m.value[1].GetArray()) {
 
-                auto effector = effectors->child(f.GetString())->get<Effector>();
+                    if (!f.IsString()) continue;
 
-                if (effector) model->add(effector);
-                else PLOGE << "no effector: " << f.GetString();
+                    auto effector = effectors->child(f.GetString())->get<Effector>();
+
+                    if (effector) model->add(effector);
+                    else PLOGE << "no effector: " << f.GetString();
+
+                }
+
+                if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->quantity( m.value[2].GetInt() );
 
             }
 
-            if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->quantity( m.value[2].GetInt() );
+            if (l.value.GetArray().Size() > 1 && l.value.GetArray()[1].IsArray()) for (auto &m : l.value.GetArray()[1].GetArray()) {
+
+                if (!m.IsString()) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
+
+                auto *f = effectors->child( m.GetString() );
+
+                if (!f) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
+
+                layer->add(f);
+                // PLOGD << "add " << m.GetString() << " to " << layer->name;
+
+            }
+
 
         }
 

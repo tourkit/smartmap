@@ -16,7 +16,9 @@
 
 struct Struct : Member {
 
-    Struct(std::string name = "", uint32_t quantity = 1);
+    Struct();
+
+    Struct(std::string name, uint32_t quantity = 1);
 
     Struct(const Member& other);
 

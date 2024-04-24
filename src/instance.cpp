@@ -10,6 +10,8 @@ bool Instance::exist(){
 
 }
 
+Instance::Instance(Buffer* buff, uint32_t offset, Member* member) : buff(buff), offset(offset), member(member) { if (!this->member) this->member = buff; }
+
 Instance Instance::operator[](std::string name) {
 
     auto offset = this->offset;

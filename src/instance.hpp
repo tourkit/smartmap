@@ -14,8 +14,11 @@ struct Member;
 struct Instance {
 
     Buffer* buff;
-    uint32_t offset;
+    uint32_t offset = 0;
     Member* member = nullptr;
+
+    Instance(Buffer* buff, uint32_t offset = 0, Member* member = nullptr);
+
 
     Instance operator[](std::string name);
     Instance operator[](int id);

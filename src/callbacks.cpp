@@ -119,9 +119,23 @@ void Callbacks::init() {
     NODE<Layer>::onadd<File>([](Node*_this,Node*node){
 
         auto z = node->is_a<File>();
-        auto y = &_this->is_a<Layer>()->vbo.add(z);
-        auto x = _this->addPtr<Model>(y);
-        return x->node();
+
+        if (z->extension == "glsl"){
+
+            // auto y = &_this->is_a<Layer>()->model.add(z);
+
+            return _this;
+
+        }else{
+
+            auto y = &_this->is_a<Layer>()->vbo.add(z);
+
+            auto x = _this->addPtr<Model>(y);
+
+            return x->node();
+
+        }
+
 
     });
 

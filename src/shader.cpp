@@ -53,11 +53,31 @@ std::string ShaderProgram::Builder::frag() {
 
     std::set<Effector*> effectors;
 
-    if (vbo) for (auto &model : vbo->models) for (auto &effector : model.effectors){
+    if (vbo) {
 
-        for (auto x : effectors) if (x->file == effector->file) { break; continue; }
+        for (auto &model : vbo->models) {
 
-        effectors.insert(effector);}
+            for (auto &effector : model.effectors) {
+
+                for (auto x : effectors) {
+
+                    if (x->file == effector->file) {
+
+                        break;
+
+                        continue;  // this for topmost forloop
+
+                    }
+
+                }
+
+                effectors.insert(effector);
+
+            }
+
+        }
+
+    }
 
     for (auto x : effectors)  str += x->s->print()+";\n\n";
 
@@ -83,7 +103,8 @@ std::string ShaderProgram::Builder::frag() {
 
     for (auto x : effectors) str += x->source() + "\n\n";
 
-    str += "void next() { COLOR += color; uv = UV; color = vec4(1); }\n\n";
+    str += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n\n";
+    str += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
 
     str += comment_line;
 
@@ -115,7 +136,8 @@ std::string ShaderProgram::Builder::frag() {
                 str += "\t"+effector->file->name()+"("+arg_str+");\n";
             }
 
-            str += "\tnext();\n\n";
+            if (instance < model.quantity()-1) str += "\ttic();\n\n";
+            else str += "\ttac();\n\n";
 
         }
 

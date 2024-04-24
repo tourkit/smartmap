@@ -41,10 +41,11 @@ int main() {
 // - Node movement
 
 
-//remap from instance  && model::editor instance not buffer
-
-// if (layer.source) glcopyfrom else gldraw
 
 // make artnet a Buffer and channel an instance
 
-// downscale layer
+//remap from instance  && model::editor instance not buffer
+
+// layer need to receive effectors too
+
+// downsample layer
