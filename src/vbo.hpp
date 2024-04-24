@@ -36,7 +36,7 @@ struct VBO : Buffer {
 
     void draw(int count = 1);
 
-    bool pushFile(File *file, int id);
+    bool pushFile(File *file, int id); // chelou push la, devrait etre ds inst ou inverse,
 
     void reloadFiles();
 
