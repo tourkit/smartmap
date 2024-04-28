@@ -41,7 +41,7 @@ void Callbacks::init() {
 
     ////////// FILE.HPP
 
-    NODE<File>::oncreate([](Node* node, File *file){ node->name = file->name(); });
+    NODE<File>::oncreate([](Node* node, File *file){ node->name(file->name()); });
 
     ////////// Artnet.HPP
 
@@ -62,7 +62,7 @@ void Callbacks::init() {
 
             uni.second->id = uni.first;
 
-            node->addPtr<DMX>(uni.second)->name = "universe "+std::to_string(uni.first);
+            node->addPtr<DMX>(uni.second)->name("universe "+std::to_string(uni.first));
 
         }
 
@@ -72,11 +72,11 @@ void Callbacks::init() {
 
     NODE<UBO>::onrun([](Node* node, UBO *ubo){ ubo->upload(); });
 
-    NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name = ubo->name(); });
+    NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name(ubo->name()); });
 
     ////////// STRUCT.HPP
 
-    NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name = s->name(); });
+    NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name(s->name()); });
 
     ////////// ENGINE.HPP (and Stack)
 
@@ -141,7 +141,7 @@ void Callbacks::init() {
 
     ////////// MODEL.HPP
 
-    NODE<Model>::oncreate([](Node* node, Model *model) { node->name = model->name(); });
+    NODE<Model>::oncreate([](Node* node, Model *model) { node->name(model->name()); });
 
     NODE<Model>::onadd<File>([](Node*_this,Node*node){
 
@@ -163,13 +163,13 @@ void Callbacks::init() {
 
     ////////// Effector.HPP
 
-    NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name = effector->file->name(); });
+    NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name(effector->file->name()); });
 
     NODE<Effector>::ondelete([](Node* node, Effector *effector) {
 
         auto model = node->parent()->is_a<Model>();
 
-        if (!model) PLOGE << node->parent()->name << " " << node->parent()->type_name();
+        if (!model) PLOGE << node->parent()->name() << " " << node->parent()->type_name();
 
         model->remove(effector);
 
@@ -192,7 +192,7 @@ void Callbacks::init() {
 
     ////////// Directory.HPP
 
-    NODE<Directory>::oncreate([](Node* node, Directory *dir){ node->name = dir->path; });
+    NODE<Directory>::oncreate([](Node* node, Directory *dir){ node->name(dir->path); });
 
     ////////// NDI.HPP
 
@@ -202,6 +202,6 @@ void Callbacks::init() {
 
     ////////// JSON.HPP
 
-    NODE<JSON>::oncreate([](Node* node, JSON *json){ if (json->file) node->name = json->file->name(); });
+    NODE<JSON>::oncreate([](Node* node, JSON *json){ if (json->file) node->name(json->file->name()); });
 
 }

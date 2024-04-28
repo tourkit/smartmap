@@ -114,7 +114,7 @@ using namespace ImGui;
     SetCursorPosX(GetCursorPosX()-text_size.x);
     bool x = false;
 
-    if (is_renaming != node) {x = TreeNodeEx(node->name.c_str(), flags);}
+    if (is_renaming != node) {x = TreeNodeEx(node->name().c_str(), flags);}
     else {
 
         // std::vector<char> name;
@@ -122,7 +122,7 @@ using namespace ImGui;
         // memset(&name[0],0,512);
         // memcpy(&name[0], node->name.c_str(), node->name.size());
 
-        ImGui::InputText("##jksdhfjksdfjk", &node->name[0], node->name.size());
+        ImGui::InputText("##jksdhfjksdfjk", &node->name_v[0], node->name_v.size());
 
     }
 
@@ -175,7 +175,7 @@ using namespace ImGui;
 
         holding = true;
 
-        ImGui::Text(node->name.c_str());
+        ImGui::Text(node->name().c_str());
         ImGui::EndDragDropSource();
 
     }else {
@@ -222,7 +222,7 @@ void TreeWidget::drawNode(Node* node) {
 
     if (node->hidden) return;
 
-    if (!filtering || !strlen(search_str) || std::regex_search(node->name.c_str(), std::regex(search_str))) {
+    if (!filtering || !strlen(search_str) || std::regex_search(node->name().c_str(), std::regex(search_str))) {
 
         ImGui::TableNextRow();
 

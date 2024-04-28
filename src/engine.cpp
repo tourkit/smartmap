@@ -137,7 +137,7 @@ void Engine::open(const char* file) {
         n->get()->extension = "obj";
         n->get()->path = engine.project_filepath;
 
-        n->name = n->get()->name_v;
+        n->name(n->get()->name_v);
 
     }
 
@@ -149,7 +149,7 @@ void Engine::open(const char* file) {
         n->get()->name_v = m.name.GetString();
         n->get()->path = engine.project_filepath;
         n->get()->extension = "glsl";
-        n->name = m.name.GetString();
+        n->name(m.name.GetString());
 
     }
 
@@ -161,7 +161,7 @@ void Engine::open(const char* file) {
         auto layer = stack->addOwnr<Layer>();
 
 
-        if (l.name.IsString()) layer->name = l.name.GetString();
+        if (l.name.IsString()) layer->name(l.name.GetString());
 
         if (l.value.IsArray() && l.value.GetArray().Size() && l.value.GetArray()[0].IsObject()) {
 
@@ -175,7 +175,7 @@ void Engine::open(const char* file) {
 
                 auto model = layer->add(model_f);
 
-                if (m.name.IsString()) model->name = m.name.GetString();
+                if (m.name.IsString()) model->name(m.name.GetString());
 
                 if (m.value.GetArray().Size() < 2) continue;
                 if (!m.value[1].IsArray()) continue;
@@ -270,9 +270,9 @@ void Engine::save(const char* file) {
 
 
     json.document["models"].RemoveAllMembers();
-    for (auto m : models->childrens) json.document["models"].AddMember(rapidjson::Value(m->name.c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
+    for (auto m : models->childrens) json.document["models"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
     json.document["effectors"].RemoveAllMembers();
-    for (auto m : effectors->childrens) json.document["effectors"].AddMember(rapidjson::Value(m->name.c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
+    for (auto m : effectors->childrens) json.document["effectors"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
 
 
 

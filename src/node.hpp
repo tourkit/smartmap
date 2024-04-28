@@ -23,7 +23,10 @@ using NodeList = std::vector<Node*>;
 
 struct UntypedNode {
 
-    std::string name;
+    std::string name_v;
+
+    std::string name();
+    void name(std::string value);
 
     ImVec4 color;
 
@@ -180,7 +183,7 @@ struct TypedNode : UntypedNode {
 
     TypedNode(void* ptr, bool owned = false) :
 
-        UntypedNode((isNode()? ((UntypedNode*)ptr)->name : type_name())),
+        UntypedNode((isNode()? ((UntypedNode*)ptr)->name_v : type_name())),
         ptr((T*)ptr), owned(owned), stored_type(typeid(*this->ptr)) {
 
     // TypedNode(void* ptr, bool owned = false, std::type_index stored_type = typeid(Passing)) :
@@ -318,7 +321,7 @@ struct Node : TypedNode<Any> {
 
     static inline Node* onchange_payload = nullptr;
 
-    Node(std::string name = "any") : TypedNode<Any>(this) { this->name = name; }
+    Node(std::string name = "any") : TypedNode<Any>(this) { this->name(name); }
 
     template <typename U>
     static void editor(std::function<void(Node*,U*)> cb) { Editor<U>::cb = cb; }

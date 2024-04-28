@@ -532,8 +532,8 @@ void Editors::init() {
 
                 file->read(path);
 
-                if (!file->loaded) node->name = "File";
-                else node->name = node->name = file->name()+"."+file->extension+"";
+                if (!file->loaded) node->name("File");
+                else node->name(file->name()+"."+file->extension+"");
 
             }
 
@@ -676,7 +676,7 @@ void Editors::init() {
 
     Editor<VBO>([](Node*node,VBO*vbo){
 
-        ImGui::Text((node->name + " " + std::to_string(vbo->models.size())).c_str());
+        ImGui::Text((node->name() + " " + std::to_string(vbo->models.size())).c_str());
 
         Editor<Buffer>::cb(node, vbo); });
 
@@ -760,10 +760,10 @@ void EditorWidget::draw() {
 
     if (!selected || !locked) selected = engine.selected;
 
-    std::string name = selected->name;
+    std::string name = selected->name();
     // this->name = name;
 
-    if (selected->parent()) { name = selected->parent()->name + "::" + name;  }
+    if (selected->parent()) { name = selected->parent()->name() + "::" + name;  }
 
     ImGui::PushStyleColor(ImGuiCol_Text, selected->color);
     ImGui::Text("%s", name.c_str());
@@ -775,7 +775,7 @@ void EditorWidget::draw() {
     ImGui::SameLine(); ImGui::Checkbox("lock##locked", &locked);
 
     std::string referings;
-    for (auto r : selected->referings) if (r) referings += (r->name)+", ";
+    for (auto r : selected->referings) if (r) referings += (r->name())+", ";
     if (referings.length()) {
         std::string str = "("+referings.substr(0,referings.length()-2)+")";
         ImGui::SameLine(); ImGui::Text(str.c_str()); }

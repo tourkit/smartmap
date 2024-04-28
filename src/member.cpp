@@ -9,6 +9,7 @@
 #include <unordered_set>
 #include <typeindex>
 #include <cstdint>
+#include <memory>
 
 
 Member::~Member() {
@@ -42,6 +43,7 @@ Member::Member(const Member& other)
  {
 
     for (auto &m : members) m = m->copy();
+    // for (auto &m : members) m = std::shared_ptr<Member>(m->copy());
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
 

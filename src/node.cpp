@@ -5,14 +5,20 @@
 #include "ubo.hpp"
 
 
-    UntypedNode::UntypedNode(std::string name, ImVec4 color) : name(name), color(color) {
+    UntypedNode::UntypedNode(std::string name, ImVec4 color) : name_v(name), color(color) {
 
         uid = uid++;
 
         pool.insert(this);
+        PLOGV << "#" << name;
 
     }
 
+    std::string UntypedNode::name() { return name_v; }
+
+    void UntypedNode::name(std::string value) { name_v = value;
+    // onchange_cb(node());
+     }
 
     UntypedNode::~UntypedNode() {
 
@@ -30,7 +36,7 @@
         if (parent_node) parent_node->remove(node());
 
         pool.erase(this);
-        PLOGV << "~" << name;
+        PLOGV << "~" << name();
 
     }
 
@@ -40,13 +46,13 @@
 
         for (auto c : childrens) {
 
-            if (!strcmp(names.back().c_str(), c->name.c_str())) {
+            if (!strcmp(names.back().c_str(), c->name().c_str())) {
 
                 if (names.size()== 1) return c;
 
                 auto parent = c;
 
-                for (int i = names.size()-2; i >= 0; i--) if (!strcmp(parent->parent()->name.c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
+                for (int i = names.size()-2; i >= 0; i--) if (!strcmp(parent->parent()->name().c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
 
                 if (c) return c;
 
@@ -95,7 +101,7 @@
 
         auto n = (Node*)node_v;
 
-        PLOGV << type_name() << "::" << name << " add " << n->type_name() << "::" << n->name;
+        PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
 
         if (n->parent() == node()) return nullptr;
 
@@ -117,7 +123,7 @@
 
     }
 
-    std::string UntypedNode::namesdf(){ if (parent()) { return parent()->name + "::" + name; } return name; }
+    std::string UntypedNode::namesdf(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
 
     Node *UntypedNode::parent() { return parent_node; }
 
@@ -181,7 +187,7 @@
 
     void UntypedNode::update() {
 
-        PLOGV << type_name() << "::" << name;
+        PLOGV << type_name() << "::" << name();
 
         if (onchange_cb) onchange_cb(node());
 
@@ -193,7 +199,7 @@
 
     bool UntypedNode::remove(Node *child) {
 
-        PLOGV << type_name() << "::" << name << " remove " << child->type_name() << "::" << child->name;
+        PLOGV << type_name() << "::" << name() << " remove " << child->type_name() << "::" << child->name();
 
         auto it = std::find(childrens.begin(), childrens.end(), child);
 

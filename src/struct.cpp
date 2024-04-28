@@ -59,8 +59,6 @@ Struct::Struct(const Member& other) : Member(other) {
 
 }
 
-Struct::Struct() { }
-
 Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
     structs.insert(this);
