@@ -31,6 +31,7 @@ Member::Member(std::string name_v) {
 
 }
 
+
 Member::Member(const Member& other)
  :
 
@@ -125,9 +126,9 @@ std::string Member::type_name() {
 
     if (type() == typeid(char)) return "char";
 
-        // return "Sampler2D";
+    if (type() == typeid(Struct) && typed()) return members[0]->name();
 
-    return "unknown";
+    return "unknown " + std::string(type().name());
 
 }
 
@@ -182,5 +183,78 @@ void Member::pre_change() {
 void Member::post_change(std::vector<Member*> added) {
 
     for (auto x : getTop()) x->post_change(added);
+
+}
+
+static void ADD_UNIQUE( std::vector<Member*>& list, Member* m ) {
+
+    for (auto x : list) if (x == m) return;
+
+    list.push_back(m);
+
+}
+
+std::vector<Member*> Member::extract_definitions(std::vector<Member*> list) {
+
+    for (auto x : members) {
+
+        for (auto x : x->extract_definitions()) ADD_UNIQUE( list, x );
+
+        if (x->type() == typeid(Struct) && !x->typed()) ADD_UNIQUE( list, x );
+
+    }
+
+    return list;
+
+}
+
+
+std::string Member::print_recurse(int recurse) {
+
+    std::string str;
+
+    auto& members_ = members;
+    // if (members.size() == 1 && !typed() && members[0]->members.size() && members[0]->members[0]->typed()) members_ = members[0]->members;
+
+    for (auto m : members_) {
+
+        if (!m->typed()) {
+
+            if (recurse) {
+
+                auto m_str = m->print(recurse-1);
+
+                if (!m_str.length()) continue;
+
+                str += m_str;
+
+            } else { str += camel(m->name()); }
+
+        } else str += m->type_name();
+
+        str += " " + lower(m->name());
+
+        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
+
+        // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(m);
+        // str  += " ( &" + ss.str() + " )";
+
+        str += "; ";
+
+
+    }
+
+    if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) {
+
+        str += " ";
+        str += (members[0]->type() == typeid(int) ? "int" : "float");
+        str += " stride";
+        str += std::to_string(i) + ";";
+
+    }
+
+    // if (!str.length()) return "";
+
+    return "struct " + camel(name())  + " { " + str + "}";
 
 }

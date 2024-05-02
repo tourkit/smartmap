@@ -22,11 +22,10 @@ struct Struct : Member {
 
     ~Struct();
 
-    Struct& add(Member& m, std::string name);
-    // Struct& add(Member& m);
+    Struct& add(Member& m, std::string name = "");
 
     template <typename T>
-    Struct& add(std::string name = "") { auto n = new Data<T>(); add(*n, name); return *this; }
+    Struct& add(std::string name = "") { auto n = new Data<T>(name); add(n); return *this; }
 
     Struct& add(const char* name) ;
 
@@ -57,4 +56,14 @@ struct Struct : Member {
     static void clear();
 
     static bool destroy(std::string name) ;
+
+
+private:
+
+    void add(Member* m);
+
+
 };
+
+
+struct Ref : Struct { Ref(std::string name, uint32_t quantity = 1) : Struct(name, quantity) { } bool typed() override { return true; }};

@@ -91,61 +91,108 @@ Struct& Struct::remove(Member& m) {
 
 }
 
+static bool same_name(Member* x, Member* b) {
+
+    auto name_ = x->name();
+
+    size_t pos = name_.find("_");
+
+    if (pos != std::string::npos) name_ = x->name().substr(0, pos);
+
+    return !strcmp(x->name().c_str(), b->name().c_str());
+
+}
+
+
 Struct& Struct::add(Member& m, std::string name) {
 
-    // auto s = new Struct(name);
+    if (!name.length()) name = m.name();
 
-    // s->add( m );
+    int count = 0;
+
+    for (auto x : members) {
+
+        auto name_ = x->name();
+
+        size_t pos = name_.find("_");
+
+        int i = 1;
+
+        if (pos != std::string::npos) {
+
+            name_ = x->name().substr(0, pos);
+
+            i = std::stoi(x->name().substr(pos+1));
+
+        }
+
+        if (!strcmp(name_.c_str(), name.c_str())) {
+
+            if ( i > count) count =  i;
+
+            else count++;
+
+        }
+
+    }
+
+    if (count) name += "_" + std::to_string(count) ;
+
+    auto s = new Ref( name );
+
+    s->add( &m );
+
+    add( s );
 
     return *this;
 
 }
 
-// Struct& Struct::add(Member& m) {
+void Struct::add(Member* m_) {
 
-//     PLOGV << name() << " add " << m.name();
+    Member &m = *m_;
 
-//     while (true) {
+    PLOGV << name() << " add " << m.name();
 
-//         bool found = false;
+    while (true) {
 
-//         for (auto x : members) {
+        bool found = false;
 
-//             if (!strcmp( x->name().c_str(), m.name().c_str() )) {
+        for (auto x : members) {
 
-//                 found = true;
+            if (!strcmp( x->name().c_str(), m.name().c_str() )) {
 
-//                 PLOGW << m.name() << " already exist";
+                found = true;
 
-//                 // m.name(m.name()+ "_");
+                PLOGW << m.name() << " already exist";
 
-//                 break ;
+                // m.name(m.name()+ "_");
 
-//             }
+                break ;
 
-//         }
+            }
 
-//         if (!found) break;
+        }
 
-//     }
+        if (!found) break;
 
-//     pre_change();
+    }
 
-//     members.push_back(&m);
+    pre_change();
 
-//     size_v += members.back()->footprint_all();
+    members.push_back(&m);
 
-//     update();
+    size_v += members.back()->footprint_all();
 
-//     post_change({&m});
+    update();
 
-//     return *this;
+    post_change({&m});
 
-// }
+}
 
 Struct& Struct::add(const char* name) {
 
-    // for (auto s : owned) if (!strcmp(name,s->name().c_str())) { add(*s); return *this; }
+    for (auto s : owned) if (!strcmp(name,s->name().c_str())) { add(*s); return *this; }
 
     PLOGE << " noadd" << name; return *this;
 
@@ -214,60 +261,20 @@ std::type_index Struct::type()  { if (typed()) { return members[0]->type(); } re
 
 Member* Struct::copy()  { return new Struct(*this); }
 
+
+
+
 std::string Struct::print(int recurse) {
 
-    // if (recurse < 0) recurse =
+    std::string out;
 
-    // std::string name = this->name();
-    // std::replace(name.begin(), name.end(), ' ', '_');
+    auto list = extract_definitions();
 
-    std::string str;
+    for (auto x : list) out += x->print_recurse() + "\n";
 
-    auto& members_ = members;
-    // if (members.size() == 1 && !typed() && members[0]->members.size() && members[0]->members[0]->typed()) members_ = members[0]->members;
+    return out + print_recurse(recurse);
 
-    for (auto m : members_) {
-
-        if (!m->typed()) {
-
-            if (recurse) {
-
-                auto m_str = m->print(recurse-1);
-
-                if (!m_str.length()) continue;
-
-                str += m_str;
-
-            } else { str += camel(m->name()); }
-
-        } else str += m->type_name();
-
-        str += " " + lower(m->name());
-
-        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
-
-        // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(m);
-        // str  += " ( &" + ss.str() + " )";
-
-        str += "; ";
-
-
-    }
-
-    if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) {
-
-        str += " ";
-        str += (members[0]->type() == typeid(int) ? "int" : "float");
-        str += " stride";
-        str += std::to_string(i) + ";";
-
-    }
-
-    if (!str.length()) return "";
-
-    return "struct " + camel(name())  + " { " + str + "}";
-
-}
+};
 
 void Struct::hard_delete() {
 

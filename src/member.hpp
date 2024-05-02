@@ -83,6 +83,12 @@ struct Member {
     std::array<U,3> range() { return { *(U*)range_from_ptr, *(U*)range_to_ptr, *(U*)default_val_ptr}; }
 
     int32_t quantity_v = 1;
+
+
+    std::vector<Member*> extract_definitions(std::vector<Member*> list = {});
+
+    std::string print_recurse(int recurse = -1);
+
 protected:
 
     std::string name_v;
