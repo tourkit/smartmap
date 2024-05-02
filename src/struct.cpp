@@ -91,49 +91,61 @@ Struct& Struct::remove(Member& m) {
 
 }
 
-Struct& Struct::add(Member& m) {
+Struct& Struct::add(Member& m, std::string name) {
 
-    PLOGV << name() << " add " << m.name();
+    // auto s = new Struct(name);
 
-    while (true) {
-
-        bool found = false;
-
-        for (auto x : members) {
-
-            if (!strcmp( x->name().c_str(), m.name().c_str() )) {
-
-                m.name(m.name()+ "_");
-
-                found = true;
-
-                break ;
-
-            }
-
-        }
-
-        if (!found) break;
-
-    }
-
-    pre_change();
-
-    members.push_back(&m);
-
-    size_v += members.back()->footprint_all();
-
-    update();
-
-    post_change({&m});
+    // s->add( m );
 
     return *this;
 
 }
 
+// Struct& Struct::add(Member& m) {
+
+//     PLOGV << name() << " add " << m.name();
+
+//     while (true) {
+
+//         bool found = false;
+
+//         for (auto x : members) {
+
+//             if (!strcmp( x->name().c_str(), m.name().c_str() )) {
+
+//                 found = true;
+
+//                 PLOGW << m.name() << " already exist";
+
+//                 // m.name(m.name()+ "_");
+
+//                 break ;
+
+//             }
+
+//         }
+
+//         if (!found) break;
+
+//     }
+
+//     pre_change();
+
+//     members.push_back(&m);
+
+//     size_v += members.back()->footprint_all();
+
+//     update();
+
+//     post_change({&m});
+
+//     return *this;
+
+// }
+
 Struct& Struct::add(const char* name) {
 
-    for (auto s : owned) if (!strcmp(name,s->name().c_str())) { add(*s); return *this; }
+    // for (auto s : owned) if (!strcmp(name,s->name().c_str())) { add(*s); return *this; }
 
     PLOGE << " noadd" << name; return *this;
 
@@ -204,12 +216,17 @@ Member* Struct::copy()  { return new Struct(*this); }
 
 std::string Struct::print(int recurse) {
 
+    // if (recurse < 0) recurse =
+
     // std::string name = this->name();
     // std::replace(name.begin(), name.end(), ' ', '_');
 
     std::string str;
 
-    for (auto m : members) {
+    auto& members_ = members;
+    // if (members.size() == 1 && !typed() && members[0]->members.size() && members[0]->members[0]->typed()) members_ = members[0]->members;
+
+    for (auto m : members_) {
 
         if (!m->typed()) {
 

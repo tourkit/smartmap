@@ -36,25 +36,25 @@ add_executable( smartmap
   src/struct.cpp
   src/instance.cpp
 
-  src/node.cpp
-  src/callbacks.cpp
-  src/editor.cpp
+  # src/node.cpp
+  # src/callbacks.cpp
+  # src/editor.cpp
 
-  src/effector.cpp
-  src/model.cpp
+  # src/effector.cpp
+  # src/model.cpp
 
-  src/engine.cpp
-  src/window.cpp
-  src/fps.cpp
-  src/vbo.cpp
-  src/ubo.cpp
-  src/framebuffer.cpp
-  src/texture.cpp
-  src/shader.cpp
-  src/drawcall.cpp
-  src/atlas.cpp
-  src/gui.cpp
-  src/tree.cpp
+  # src/engine.cpp
+  # src/window.cpp
+  # src/fps.cpp
+  # src/vbo.cpp
+  # src/ubo.cpp
+  # src/framebuffer.cpp
+  # src/texture.cpp
+  # src/shader.cpp
+  # src/drawcall.cpp
+  # src/atlas.cpp
+  # src/gui.cpp
+  # src/tree.cpp
 
 
   vendors/imgui/imgui.cpp

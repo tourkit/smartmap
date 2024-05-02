@@ -30,6 +30,7 @@ private:
 bool is_deleting = false;
 
 Node* is_renaming = nullptr;
+std::array<char,512> renaming_name;
 
 std::vector<Node*> delete_list;
 

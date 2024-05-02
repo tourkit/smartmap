@@ -114,16 +114,22 @@ using namespace ImGui;
     SetCursorPosX(GetCursorPosX()-text_size.x);
     bool x = false;
 
-    if (is_renaming != node) {x = TreeNodeEx(node->name().c_str(), flags);}
+    if (is_renaming != node) {x = TreeNodeEx(node->name().c_str(), flags);
+        if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0)) {is_renaming = node;
+        memset(&renaming_name[0],0,612);
+        memcpy(&renaming_name[0], node->name().c_str(), node->name().length());}
+    }
     else {
 
-        // std::vector<char> name;
-        // name.resize(512);
-        // memset(&name[0],0,512);
-        // memcpy(&name[0], node->name.c_str(), node->name.size());
 
-        ImGui::InputText("##jksdhfjksdfjk", &node->name_v[0], node->name_v.size());
+        if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
+            node->name(&renaming_name[0]);
+
+            node->update();
+            is_renaming = nullptr;
+
+        }
     }
 
            if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
@@ -155,7 +161,14 @@ using namespace ImGui;
 
         if (!ImGui::IsItemHovered()) is_deleting = false;
 
-        if(ImGui::MenuItem("rename")) is_renaming = node;
+        if(ImGui::MenuItem("rename")) {
+
+            is_renaming = node;
+
+        memset(&renaming_name[0],0,612);
+        memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
+
+        }
 
         if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
 

@@ -22,10 +22,11 @@ struct Struct : Member {
 
     ~Struct();
 
-    Struct& add(Member& m);
+    Struct& add(Member& m, std::string name);
+    // Struct& add(Member& m);
 
     template <typename T>
-    Struct& add(std::string name = "") { auto n = new Data<T>(name); add(*n); return *this; }
+    Struct& add(std::string name = "") { auto n = new Data<T>(); add(*n, name); return *this; }
 
     Struct& add(const char* name) ;
 
@@ -39,7 +40,7 @@ struct Struct : Member {
 
     uint32_t size() override ;
 
-    std::string print(int recurse = 0) override;
+    std::string print(int recurse = -1) override;
 
     Member* copy() override ;
 

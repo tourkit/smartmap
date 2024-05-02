@@ -6,135 +6,125 @@
 
 #include "member.hpp"
 #include "struct.hpp"
-#include "node.hpp"
-#include "callbacks.hpp"
+// #include "node.hpp"
+// #include "callbacks.hpp"
 
-#include "engine.hpp"
-#include "callbacks.hpp"
+// #include "engine.hpp"
+// #include "callbacks.hpp"
 
 #include <memory>
+#include <map>
 
 
-struct Effect {
 
-    File* f;
 
-    Struct s;
 
-};
+// //
+// struct Ref {
 
-struct Mod {  File* f; Mod(File* f) : f(f) {}; };
+//     File* f;
 
-struct EffectInst {
+//     Struct s;
 
-    Effect* e;
+//     Ref(File* f) : f(f), s(f->name()) {  };
 
-    Struct s;
+// };
 
-    EffectInst(Effect* e) : e(e), s("efinst") { s.add(e->s); }
+// template <typename T>
+// struct RefList {
 
-};
+//     Struct *owner;
 
-struct ModInst {
+//     std::vector<std::shared_ptr <Ref> > list;
 
-    Mod* m;
+//     RefList(Struct *s = nullptr) : owner(s) {  };
 
-    Struct s;
+//     virtual T& add(File *f) {
 
-    std::vector<std::shared_ptr <EffectInst> > efs;
+//         auto x = std::make_shared<T>(f);
 
-    ModInst(Mod* m, const char* name = "") : m(m), s(name) {}
+//         int count = 0;
+//         for (auto x : list) if (f == x.get()->f) count++;
 
-    void add(Effect *e) { efs.emplace_back(std::make_shared<EffectInst>(e)); s.add(efs.back()->s); }
+//         list.emplace_back(x);
 
-    void remove(EffectInst* i) { for (auto it = efs.begin(); it != efs.end();) if (it->get() == i) { it = efs.erase(it); break; } else ++it; } // le pb c pas kjekriv inline, el pb c la syntaxx du cpp pour suppr ds un vec
+//         auto y = list.back();
 
-};
+//         if (count) y.get()->s.name( y.get()->s.name() + "_" + std::to_string(count) );
 
-struct Lay {
+//         if (owner) owner->add(y.get()->s);
 
-    Struct s;
+//         return *x.get();
 
-    std::vector<std::shared_ptr <ModInst> > mods;
+//     }
 
-    ModInst* add(Mod *m) {
+// };
 
-        mods.emplace_back(std::make_shared<ModInst>(m));
+// struct Effect : Ref {
 
-        auto x =  mods.back().get();
+//     static inline std::map<File*, Struct> effects;
 
-        x->s.name(m->f->name()+"_"+std::to_string( mods.size() ));
+//     static void init(File* f) {
 
-        s.add(mods.back()->s);
+//         effects[f] = Struct(f->name_v.c_str());
 
-        return x;
+//         effects[f].add<float>("x");
+//         effects[f].add<float>("y");
 
-    }
+//     }
 
-    void remove(ModInst* i) { for (auto it = mods.begin(); it != mods.end();) if (it->get() == i) { it = mods.erase(it); break; } else ++it; } // le pb c pas kjekriv inline, el pb c la syntaxx du cpp pour suppr ds un vec
+//     static Struct& get(File* f) { if (effects.find(f) == effects.end()) init(f); return effects[f]; }
 
-};
+//     Effect(File* f) : Ref(f) { s.add(Effect::get(f)); };
 
+// };
+
+// struct Mod : Ref, RefList<Effect> { Mod(File* f) : Ref(f), RefList(&(Ref::s)) { }; };
+
+// struct Lay : RefList<Mod> { Struct s; Lay() : RefList(&s) { engine.dynamic_ubo.add(s); } };
+
+
+// struct.add(struct)
 int main() {
 
-
-File f;
-f.name_v = "f1";
-
-
-
-engine.init();
+// engine.init();
 
 logger.cout();
 
-auto &e1 = *engine.tree->addOwnr<Effect>()->get();
-e1.s.name("ef1");
-e1.s.add<float>("x");
-e1.s.add<float>("y");
+// auto e1 = engine.tree->addOwnr<File>("fx.glsl");
 
-auto *m1_ = engine.tree->addOwnr<Mod>(&f);
-auto &m1 = *m1_->get();
+// auto m1 = engine.tree->addOwnr<File>("quad.mod");
 
-auto *l1_ = engine.tree->addOwnr<Lay>();
-auto &l1 = *l1_->get();
+// auto l1 = engine.tree->addOwnr<Lay>();
 
+// NODE<Mod>::oncreate([](Node*node, Mod* mod){ node->name(mod->s.name()); });
 
+// NODE<Mod>::onchange([&](Node*node, Mod* mod){ mod->s.name(node->name()); });
 
-NODE<ModInst>::oncreate([](Node*node, ModInst* inst){
+// NODE<Lay>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Mod>(  &_this->is_a<Lay>()->add( node->is_a<File>() ))->node(); });
 
-    node->name(inst->s.name());
+// auto inst = l1->add(m1);
+// auto inst2 = l1->add(m1);
 
-});
-
-NODE<Lay>::onadd<Mod>([](Node*_this,Node*node){
-
-    _this->is_a<Lay>()->add( node->is_a<Mod>() );
-
-    return _this->addPtr<ModInst> (  _this->is_a<Lay>()->mods.back().get() )->node();
-
- });
+// PLOGD << "waga";
 
 
-l1_->add(m1_);
 
-l1.mods[0]->add(&e1);
+//current s.add(s) is shit it shjouldnt work like trhat
 
-PLOGD << l1.s.print(4);
-
-l1.mods[0].get()->remove(l1.mods[0].get()->efs[0].get());
-
-PLOGD << l1.s.print(4);
-PLOGD << "waga";
+Struct aaa("AAA");
+aaa.add<float> ("x");
+aaa.add<float> ("y");
 
 
-NODE<ModInst>::onchange([&](Node*node, ModInst* inst){
-
-    inst->s.name() = node->name();
-    PLOGD << l1.s.print(4);
-});
+Struct bbb("BBB");
 
 
-engine.run();
+// bbb.add(aaa);
+
+PLOGD << bbb.print();
+
+// engine.run();
 
 
 }

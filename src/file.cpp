@@ -52,6 +52,7 @@ bool File::hasChanged() {
 
 
 std::string File::name() { return name_v; }
+void File::name(std::string name) { name_v = name; }
 
 
 void File::read(std::string path, bool binary){
@@ -94,7 +95,7 @@ void File::read(std::string path, bool binary){
         return;
 
 
-    }
+    }else name(path);
 
     PLOGE << "couldn't find: " << path;
 

@@ -20,6 +20,8 @@ struct File {
 
     std::string name();
 
+    void name(std::string name);
+
     std::function<void(File*)> callback = [](File* f){};
 
     File();
