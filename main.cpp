@@ -23,8 +23,8 @@ struct Fx  {
 
         effects[f] = Struct(f->name_v.c_str());
 
-        effects[f].add<float>("x");
-        effects[f].add<float>("y");
+        effects[f].add<float>("x").range(0,1,0);
+        effects[f].add<float>("y").range(0,1,0);
 
     }
 
@@ -89,9 +89,9 @@ engine.init();
 
 logger.cout(true);
 
-auto fe1 = engine.tree->addOwnr<File>("fx.glsl");
+auto fe1 = engine.tree->addOwnr<File>("fxglsl");
 
-auto fm1 = engine.tree->addOwnr<File>("quad.mod");
+auto fm1 = engine.tree->addOwnr<File>("quadmod");
 
 auto l1 = engine.tree->addOwnr<Lay>("layer1");
 
@@ -108,11 +108,11 @@ NODE<Mod>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Fx>(_this-
 
 NODE<Lay>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Mod>(  _this->is_a<Lay>()->add( node->is_a<File>() ))->node(); });
 
-NODE<Lay>::onchange( [](Node*node, Lay*lay){
+NODE<Lay>::onchange( [](Node*node, Lay*lay){ PLOGD <<"-"<<lay->s.print_recurse() <<"-"; });
 
-PLOGD <<"-"<<lay->s.print_recurse() <<"-";
+auto m1 = l1->add(fm1);
 
- });
+// auto e1 = m1->add(fe1);
 
 engine.run();
 

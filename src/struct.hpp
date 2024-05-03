@@ -72,7 +72,5 @@ struct Ref : Struct {
 
     Ref(std::string name, uint32_t quantity = 1) : Struct(name, quantity) { }
 
-    bool typed() override { return true; }
-
 
 };

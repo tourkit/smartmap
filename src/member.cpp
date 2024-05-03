@@ -126,7 +126,7 @@ std::string Member::type_name() {
 
     if (type() == typeid(char)) return "char";
 
-    if (type() == typeid(Struct) && typed()) return members[0]->name();
+    if (typed() || type() == typeid(Ref)) return members[0]->name();
 
     return "unknown " + std::string(type().name());
 
@@ -208,7 +208,6 @@ std::vector<Member*> Member::extract_definitions(std::vector<Member*> list) {
 
 }
 
-
 std::string Member::print_recurse(int recurse) {
 
     std::string str;
@@ -218,7 +217,13 @@ std::string Member::print_recurse(int recurse) {
 
     for (auto m : members_) {
 
-        if (!m->typed()) {
+        if (m->typed() || (typeid(*m) == typeid(Ref)) ) {
+
+            if (typeid(*m) == typeid(Ref) && m->members.size()) str += camel(m->type_name());
+
+            else str += m->type_name();
+
+        } else {
 
             if (recurse) {
 
@@ -230,7 +235,7 @@ std::string Member::print_recurse(int recurse) {
 
             } else { str += camel(m->name()); }
 
-        } else str += m->type_name();
+        }
 
         str += " " + lower(m->name());
 
@@ -266,19 +271,21 @@ std::string Member::next_name( std::string name ) {
 
     for (auto x : members) {
 
-        size_t pos = name.find("_");
+        auto name_ = x->name();
+
+        size_t pos = name_.find("_");
 
         int i = 1;
 
         if (pos != std::string::npos) {
 
-            name = x->name().substr(0, pos);
+            name_ = x->name().substr(0, pos);
 
             i = std::stoi(x->name().substr(pos+1));
 
         }
 
-        if (!strcmp(name.c_str(), name.c_str())) {
+        if (!strcmp(name.c_str(), name_.c_str())) {
 
             if ( i > count) count =  i;
 

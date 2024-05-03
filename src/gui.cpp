@@ -176,7 +176,7 @@ void GUI::render() {
 
   if (last_framerate != (int)std::floor(ImGui::GetIO().Framerate) && ImGui::GetIO().Framerate < 59) {
 
-    PLOGV << "FPS drop @ " << last_framerate+1 << "hz";
+    // PLOGV << "FPS drop @ " << last_framerate+1 << "hz";
 
     last_framerate = ImGui::GetIO().Framerate;
 
