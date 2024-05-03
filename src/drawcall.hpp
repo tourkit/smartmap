@@ -32,17 +32,7 @@ struct DrawCall {
 
     bool remove(Model* model);
 
-    Model* add(File* f) {
-
-        // if (f->extension == "glsl"){
-
-        auto mod = models.insert(std::make_shared<Model>(f, s.next_name(f->name()))).first->get();
-
-        s.add(&mod->s);
-
-        return mod;
-
-    }
+    Model* add(File* f);
 
 };
 

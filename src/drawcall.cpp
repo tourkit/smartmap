@@ -16,6 +16,8 @@ Layer::Layer(uint16_t width, uint16_t height) : fb((width?width:engine.window.wi
     feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
      }
 
+
+
 void Layer::draw() {
 
     if (feedback) { feedback->bind(); }
@@ -36,6 +38,21 @@ void DrawCall::draw() {
     shader.use();
 
     vbo.draw();
+
+}
+
+
+Model* DrawCall::add(File* f) {
+
+    // if (f->extension == "glsl"){
+
+    auto mod = models.insert(std::make_shared<Model>(f, s.next_name(f->name()))).first->get();
+
+    s.add(&mod->s);
+
+    vbo.loadModels(models);
+
+    return mod;
 
 }
 
