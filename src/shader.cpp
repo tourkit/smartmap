@@ -24,7 +24,7 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
 
-    auto s = ubo->print(1);
+    auto s = ubo->print_recurse();
 
     str += s.c_str()+s.find("{");
 

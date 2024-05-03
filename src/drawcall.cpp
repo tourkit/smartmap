@@ -31,6 +31,7 @@ void Layer::draw() {
 }
 
 DrawCall::DrawCall() {
+    engine.dynamic_ubo.add(&s);
 }
 
 void DrawCall::draw() {

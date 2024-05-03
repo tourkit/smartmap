@@ -8,11 +8,12 @@
 
 Effector::Definition& Effector::get(File * file) { if (effects.find(file) == effects.end()) init(file); return effects[file]; }
 
-Effector::Effector(File* f, std::string name ) : ref(name), file(file) { ref.add( &get(f).s ); };
+Effector::Effector(File* file, std::string name ) : ref(name), file(file) { ref.add( &get(file).s ); };
 
 void Effector::init(File* file) {
 
-    auto &def = get(file);
+    auto &def = effects[file];
+
 
     const char* data = (&file->data[0]);
 
@@ -52,31 +53,25 @@ void Effector::init(File* file) {
         }
     }
 
-    Struct* s = Struct::exist(file->name());
+    def.s.name( file->name() );
 
-    if (!s) {
+    def.s.striding(true);
 
-        // should check better like arg comparisons and strideness
 
-        s = &Struct::create(file->name());
+    for (auto arg : def.args) {
 
-        s->striding(true);
+        if (arg.first == "vec2") def.s.add<glm::vec2>(arg.second.c_str());
+        else if (arg.first == "vec3") def.s.add<glm::vec3>(arg.second.c_str());
+        else if (arg.first == "vec4") def.s.add<glm::vec4>(arg.second.c_str());
 
-        for (auto arg : def.args) {
+        else if (arg.first == "int") def.s.add<int>(arg.second.c_str());
 
-            if (arg.first == "vec2") s->add<glm::vec2>(arg.second.c_str());
-            else if (arg.first == "vec3") s->add<glm::vec3>(arg.second.c_str());
-            else if (arg.first == "vec4") s->add<glm::vec4>(arg.second.c_str());
+        else def.s.add<float>(arg.second.c_str());
 
-            else if (arg.first == "int") s->add<int>(arg.second.c_str());
-
-            else s->add<float>(arg.second.c_str());
-
-            if (def.ranges.find(arg.second) != def.ranges.end()) s->range(def.ranges[arg.second][0],def.ranges[arg.second][1],def.ranges[arg.second][2]);
-
-        }
+        if (def.ranges.find(arg.second) != def.ranges.end()) def.s.range(def.ranges[arg.second][0],def.ranges[arg.second][1],def.ranges[arg.second][2]);
 
     }
+
 
 }
 

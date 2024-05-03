@@ -126,7 +126,13 @@ void Callbacks::init() {
 
     NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); });
 
-    NODE<Model>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Effector>( _this->is_a<Model>()->add( node->is_a<File>() ) )->node(); });
+    NODE<Model>::onadd<File>([](Node*_this,Node*node){
+
+        auto x =  _this->is_a<Model>()->add( node->is_a<File>() )  ;
+
+        return _this->addPtr<Effector>( x )->node();
+
+    });
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 

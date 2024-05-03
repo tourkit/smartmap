@@ -56,7 +56,9 @@ namespace ImGui {
 
 static void draw_definition(Member *member, int offset = 0, int depth = 0) {
 
-
+    if (typeid(*member) == typeid(Ref)) {
+        member = member->members[0];
+        }
     std::vector<float> range;
 
     if (member->typed()) {
