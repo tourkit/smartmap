@@ -24,12 +24,12 @@ struct Struct : Member {
 
     ~Struct();
 
-    Struct& add(Member& m, std::string name = "");
+    // Struct& add(Member& m, std::string name = "");
 
     template <typename T>
     Struct& add(std::string name = "") { auto n = new Data<T>(name); add(n); return *this; }
 
-    Ref* add(std::string name) ;
+    // Struct* add(std::string name) ;
 
     Struct& range(float from, float to, float def) ;
 
@@ -62,10 +62,17 @@ struct Struct : Member {
 
 // private:
 
-    void add(Member* m);
+    Member* add(Member* m);
 
 
 };
 
 
-struct Ref : Struct { Ref(std::string name, uint32_t quantity = 1) : Struct(name, quantity) { } bool typed() override { return true; }};
+struct Ref : Struct {
+
+    Ref(std::string name, uint32_t quantity = 1) : Struct(name, quantity) { }
+
+    bool typed() override { return true; }
+
+
+};

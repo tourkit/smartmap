@@ -15,15 +15,6 @@
 #include <memory>
 #include <map>
 
-// cant use STRUCT auto rename here ( or could reflect from ? struct auto rename works only when typed()aka.ownd .. expect next name ?)
-
-// naming  _1 _2 ... should be carreful only at node otrherwise de4v should know
-
-// then cant use Node renaming either
-
-// then should have its own renaming but then is one per Mod, per Fx, ... UGLY
-
-
 struct Fx  {
 
     static inline std::map<File*, Struct> effects;
@@ -39,9 +30,9 @@ struct Fx  {
 
     static Struct& get(File* f) { if (effects.find(f) == effects.end()) init(f); return effects[f]; }
 
-    Struct s;
+    Ref ref;
 
-    Fx(File* f, std::string name ) : s(name) { s.add( &get(f) ); };
+    Fx(File* f, std::string name ) : ref(name) { ref.add( &get(f) ); };
 
 
 };
@@ -54,13 +45,13 @@ struct Mod  {
 
     std::set<std::shared_ptr<Fx>> fxs;
 
-    Mod(std::string name, File* f) : s(name), f(f) {  };
+    Mod(File* f,std::string name) : s(name), f(f) {  };
 
     Fx* add(File* f) {
 
         auto fx = fxs.insert(std::make_shared<Fx>(f, s.next_name(f->name()))).first->get();
 
-        s.add(&fx->s);
+        s.add(&fx->ref);
 
         return fx;
 
@@ -69,26 +60,26 @@ struct Mod  {
 };
 
 
-// struct Lay  {
+struct Lay  {
 
-//     Struct s;
+    Struct s;
 
-//     Lay(std::string name) : s(name) { engine.dynamic_ubo.add(&s); }
+    Lay(std::string name) : s(name) { engine.dynamic_ubo.add(&s); }
 
-//     std::set<std::shared_ptr<Mod>> mods;
+    std::set<std::shared_ptr<Mod>> mods;
 
-//     void add(File* effect) {
+    Mod* add(File* f) {
 
-//         auto &mod = mods.insert(std::make_shared<Mod>(effect->name_v, effect)).first->get();
+        auto mod = mods.insert(std::make_shared<Mod>(f, s.next_name(f->name()))).first->get();
 
-//         Struct::add(mod.s);
+        s.add(&mod->s);
 
-//         return members.back();
+        return mod;
 
-//     }
+    }
 
 
-// };
+};
 
 
 // struct.add(struct)
@@ -96,69 +87,32 @@ int main() {
 
 engine.init();
 
-logger.cout();
+logger.cout(true);
 
 auto fe1 = engine.tree->addOwnr<File>("fx.glsl");
 
 auto fm1 = engine.tree->addOwnr<File>("quad.mod");
 
-// auto l1 = engine.tree->addOwnr<Lay>("layer1");
-auto m1 = engine.tree->addOwnr<Mod>("quad", fm1->get());
-
-
-
-// auto l1 = engine.tree->addOwnr<Lay>();
-
-// NODE<Mod>::oncreate([](Node*node, Mod* mod){ node->name(mod->s.name()); });
-// NODE<Mod>::onchange([&](Node*node, Mod* mod){ mod->s.name(node->name()); });
+auto l1 = engine.tree->addOwnr<Lay>("layer1");
 
 NODE<Struct>::oncreate([](Node*node, Struct* s){ node->name(s->name()); });
-
 NODE<Struct>::onchange([&](Node*node, Struct* s){ s->name(node->name()); });
 
-NODE<Fx>::oncreate([](Node*node, Fx* fx){ NODE<Struct>::oncreate_cb(node, &fx->s); });
+NODE<Fx>::oncreate([](Node*node, Fx* fx){ NODE<Struct>::oncreate_cb(node, &fx->ref); });
+NODE<Fx>::onchange([&](Node*node, Fx* fx){ NODE<Struct>::onchange_cb(node, &fx->ref); });
 
-NODE<Fx>::onchange([&](Node*node, Fx* fx){ NODE<Struct>::onchange_cb(node, &fx->s); });
+NODE<Mod>::oncreate([](Node*node, Mod* mod){ NODE<Struct>::oncreate_cb(node, &mod->s); });
+NODE<Mod>::onchange([&](Node*node, Mod* mod){ NODE<Struct>::onchange_cb(node, &mod->s); });
 
+NODE<Mod>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Fx>(_this->is_a<Mod>()->add( node->is_a<File>() ))->node();; });
 
-NODE<Mod>::onadd<File>([](Node*_this,Node*node){
+NODE<Lay>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Mod>(  _this->is_a<Lay>()->add( node->is_a<File>() ))->node(); });
 
+NODE<Lay>::onchange( [](Node*node, Lay*lay){
 
+PLOGD <<"-"<<lay->s.print_recurse() <<"-";
 
-    auto x =  _this->addPtr<Fx>(_this->is_a<Mod>()->add( node->is_a<File>() ))->node();
-
-
-
-    PLOGD <<"-"<<_this->is_a<Mod>()->s.print_recurse() <<"-";
-    PLOGD << " fioduoasdf sdfhj fsdhjksdf aghsdfag sdfagj asdhgfhj asdgfjhasd jfgasdhjgfjkh agfhjkdsag jhfgasd hjfgj asgfjhds gfhjsd afd";
-
-
-
-    return x; });
-
-// NODE<Lay>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Mod>(  _this->is_a<Lay>()->add( node->is_a<File>() ))->node(); });
-
-// NODE<Mod>::oncreate([](Node*node, Mod* mod){ NODE<Struct>::oncreate_cb(node, mod); });
-// NODE<Mod>::onchange([&](Node*node, Mod* mod){ NODE<Struct>::onchange_cb(node, mod); });
-
-// auto m1 = l1->add(fm1);
-// m1->add(fe1);
-// m1->add(fe1);
-// m1->add(fe1);
-// m1->add(fe1);
-// m1->add(fe1);
-// m1->add(fe1);
-// m1->add(fe1);
-
-// PLOGD << l1->get()->print();
-
-
-// auto inst2 = l1->add(m1);
-
-
-
-
-PLOGD << "waga";
+ });
 
 engine.run();
 

@@ -7,6 +7,7 @@
 #include "ubo.hpp"
 #include "buffer.hpp"
 #include "struct.hpp"
+#include "member.hpp"
 #include "instance.hpp"
 
 #include "image.hpp"
@@ -17,7 +18,9 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)
 
     static Struct& media_struct = Struct::create("Media",0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
-    buffer = &engine.static_ubo.add(media_struct);
+    engine.static_ubo.add(&media_struct);
+
+    buffer = &media_struct;
 
     texture = new Texture(width,height,1,1);
 

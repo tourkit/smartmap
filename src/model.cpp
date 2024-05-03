@@ -5,7 +5,7 @@ Model::Model() : Struct() { }
 
 Model::Model(File* file, int quantity) : Struct(file->name(), quantity), file(file) {
 
-    engine.dynamic_ubo.add(*this);
+    engine.dynamic_ubo.add(this);
 
 }
 
@@ -37,7 +37,7 @@ Effector& Model::add(File* file) {
 
     effectors.push_back(&x);
 
-    Struct::add(*x.s);
+    Struct::add(x.s);
 
     return x;
 

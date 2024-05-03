@@ -48,8 +48,16 @@ Struct::~Struct(){
 
     // delete typed() a.k.a Data members
     for (auto x : members) {
-        if (x->typed() && x->type() != typeid(Ref))
+
+        if (x->typed()){
+
+            PLOGD << typeid(x).name() <<"--"<< typeid(*x).name() <<"--"<< x->type().name() <<"--"<< x->type_name();
+
+            std::cout << "Ooooooooo";
+
             delete x;
+
+        }
 
     }
 }
@@ -105,23 +113,23 @@ static bool same_name(Member* x, Member* b) {
 
 
 
-Ref* Struct::add(std::string name) { return new Ref( next_name(name) ); }
+// Struct* Struct::add(std::string name) { return new Struct( next_name(name) ); }
 
-Struct& Struct::add(Member& m, std::string name) {
+// Struct& Struct::add(Member& m, std::string name) {
 
-    if (!name.length()) name = m.name();
+//     if (!name.length()) name = m.name();
 
-    auto s = add( name );
+//     auto s = add( name );
 
-    s->add( &m );
+//     s->add( &m );
 
-    add( s );
+//     add( s );
 
-    return *this;
+//     return *this;
 
-}
+// }
 
-void Struct::add(Member* m_) {
+Member* Struct::add(Member* m_) {
 
     Member &m = *m_;
 
@@ -160,6 +168,8 @@ void Struct::add(Member* m_) {
     update();
 
     post_change({&m});
+
+    return &m;
 
 }
 

@@ -222,7 +222,7 @@ std::string Member::print_recurse(int recurse) {
 
             if (recurse) {
 
-                auto m_str = m->print(recurse-1);
+                auto m_str = m->print_recurse(recurse-1);
 
                 if (!m_str.length()) continue;
 
@@ -253,7 +253,7 @@ std::string Member::print_recurse(int recurse) {
 
     }
 
-    // if (!str.length()) return "";
+    if (!str.length()) return "";
 
     return "struct " + camel(name())  + " { " + str + "}";
 
