@@ -29,8 +29,7 @@ logger.cout(true);
 
 // auto fm1 = engine.tree->addOwnr<File>("quadmod");
 
-auto l1 = engine.tree->addOwnr<Layer>(engine.window.width, engine.window.height);
-
+auto l1 = engine.stack->addOwnr<Layer>(engine.window.width, engine.window.height);
 
 // NODE<Lay>::onchange( [](Node*node, Lay*lay){ PLOGD <<"-"<<lay->s.print_recurse() <<"-"; });
 

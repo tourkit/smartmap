@@ -89,13 +89,14 @@ using namespace ImGui;
     // const ImVec2 curr_pos = ImVec2(0,GetCursorPos().y);
     const ImVec2 curr_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
 
+    auto t_pos = GetCursorPosX();
 
     SetCursorPosX(GetWindowWidth()-20);
 
     std::string str = "##active"+std::to_string(node->uid);
     Checkbox(str.c_str(), &node->is_active);
     SameLine();
-    SetCursorPosX(0);
+    SetCursorPosX(t_pos);
 
     const char *badbad = "mmmmmmmmmmmmmmmmmmmmmmmmmm";
     const ImVec2 text_size = CalcTextSize(badbad,badbad+15);
