@@ -24,7 +24,10 @@ using NodeList = std::vector<Node*>;
 struct UntypedNode {
 
     std::string name_v;
-
+#ifdef ROCH
+public:
+    std::string EASY_TYPE_DEBUG = "NODE";
+#endif
     std::string name();
     void name(std::string value);
 
@@ -135,13 +138,14 @@ private:
 
     void runCB(std::function<void(Node*)> cb = nullptr);
 
+
+
 };
 
 
 
 struct Any {};
 struct xxx { xxx(int x) {} };
-struct Passing {};
 
 template <typename T>
 struct Ownr;
@@ -159,6 +163,21 @@ struct TypedNode : UntypedNode {
     bool owned;
 
     std::type_index stored_type;
+
+
+    TypedNode(void* ptr, bool owned = false) :
+
+        UntypedNode((isNode()? ((UntypedNode*)ptr)->name_v : type_name())), ptr((T*)ptr), owned(owned), stored_type(typeid(T)) {
+
+            if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
+
+            #ifdef ROCH
+            EASY_TYPE_DEBUG = type().name();
+            EASY_TYPE_DEBUG += " " + type_name();
+            #endif
+
+    }
+
 
     T* get() { return ptr; }
 
@@ -181,21 +200,7 @@ struct TypedNode : UntypedNode {
 
     TypedNode<T>* select() { UntypedNode::select(); return this; }
 
-    TypedNode(void* ptr, bool owned = false) :
 
-        UntypedNode((isNode()? ((UntypedNode*)ptr)->name_v : type_name())),
-        ptr((T*)ptr), owned(owned), stored_type(typeid(*this->ptr)) {
-
-    // TypedNode(void* ptr, bool owned = false, std::type_index stored_type = typeid(Passing)) :
-
-    //     UntypedNode((isNode()? ((UntypedNode*)ptr)->name : boost::typeindex::type_id_with_cvr<T>().pretty_name())),
-    //     ptr((T*)ptr), owned(owned), stored_type(stored_type) {
-
-            if (stored_type == typeid(Passing)) stored_type = typeid(*this->ptr);
-
-            if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
-
-     }
 
     void trigchange() override {
         UntypedNode::trigchange();

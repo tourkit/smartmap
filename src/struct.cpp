@@ -48,7 +48,7 @@ Struct::~Struct(){
 
     // delete typed() a.k.a Data members
     for (auto x : members) {
-        if (x->typed())
+        if (x->typed() && x->type() != typeid(Ref))
             delete x;
 
     }
@@ -104,41 +104,14 @@ static bool same_name(Member* x, Member* b) {
 }
 
 
+
+Ref* Struct::add(std::string name) { return new Ref( next_name(name) ); }
+
 Struct& Struct::add(Member& m, std::string name) {
 
     if (!name.length()) name = m.name();
 
-    int count = 0;
-
-    for (auto x : members) {
-
-        auto name_ = x->name();
-
-        size_t pos = name_.find("_");
-
-        int i = 1;
-
-        if (pos != std::string::npos) {
-
-            name_ = x->name().substr(0, pos);
-
-            i = std::stoi(x->name().substr(pos+1));
-
-        }
-
-        if (!strcmp(name_.c_str(), name.c_str())) {
-
-            if ( i > count) count =  i;
-
-            else count++;
-
-        }
-
-    }
-
-    if (count) name += "_" + std::to_string(count) ;
-
-    auto s = new Ref( name );
+    auto s = add( name );
 
     s->add( &m );
 
@@ -190,13 +163,6 @@ void Struct::add(Member* m_) {
 
 }
 
-Struct& Struct::add(const char* name) {
-
-    for (auto s : owned) if (!strcmp(name,s->name().c_str())) { add(*s); return *this; }
-
-    PLOGE << " noadd" << name; return *this;
-
-}
 
 Struct& Struct::range(float from, float to, float def) {
 

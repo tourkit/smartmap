@@ -14,6 +14,8 @@
 #include "log.hpp"
 
 
+struct Ref;
+
 struct Struct : Member {
 
     Struct(std::string name = "", uint32_t quantity = 1);
@@ -27,7 +29,7 @@ struct Struct : Member {
     template <typename T>
     Struct& add(std::string name = "") { auto n = new Data<T>(name); add(n); return *this; }
 
-    Struct& add(const char* name) ;
+    Ref* add(std::string name) ;
 
     Struct& range(float from, float to, float def) ;
 
@@ -58,7 +60,7 @@ struct Struct : Member {
     static bool destroy(std::string name) ;
 
 
-private:
+// private:
 
     void add(Member* m);
 

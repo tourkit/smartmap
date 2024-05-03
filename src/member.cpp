@@ -258,3 +258,38 @@ std::string Member::print_recurse(int recurse) {
     return "struct " + camel(name())  + " { " + str + "}";
 
 }
+
+
+std::string Member::next_name( std::string name ) {
+
+    int count = 0;
+
+    for (auto x : members) {
+
+        size_t pos = name.find("_");
+
+        int i = 1;
+
+        if (pos != std::string::npos) {
+
+            name = x->name().substr(0, pos);
+
+            i = std::stoi(x->name().substr(pos+1));
+
+        }
+
+        if (!strcmp(name.c_str(), name.c_str())) {
+
+            if ( i > count) count =  i;
+
+            else count++;
+
+        }
+
+    }
+
+    if (count) name += "_" + std::to_string(count) ;
+
+    return name;
+
+}

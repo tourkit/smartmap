@@ -89,6 +89,8 @@ struct Member {
 
     std::string print_recurse(int recurse = -1);
 
+    std::string next_name(std::string name);
+
 protected:
 
     std::string name_v;
