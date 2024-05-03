@@ -11,14 +11,10 @@
 #include <unordered_set>
 #include <set>
 
-Layer::Layer(uint16_t width, uint16_t height) : fb(width, height) {
+Layer::Layer(uint16_t width, uint16_t height) : fb((width?width:engine.window.width), (height?height:engine.window.height)) {
     // vbo.add(quad);
     feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
      }
-
-Layer::Layer() : fb(engine.window.width,engine.window.height) {
-    feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
-}
 
 void Layer::draw() {
 

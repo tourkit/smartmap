@@ -18,18 +18,13 @@
 #include <map>
 
 
-// struct.add(struct)
 int main() {
 
 engine.init();
 
 logger.cout(true);
 
-// auto fe1 = engine.tree->addOwnr<File>("fxglsl");
-
-// auto fm1 = engine.tree->addOwnr<File>("quadmod");
-
-auto l1 = engine.stack->addOwnr<Layer>(engine.window.width, engine.window.height);
+auto l1 = engine.stack->addOwnr<Layer>();
 
 // NODE<Lay>::onchange( [](Node*node, Lay*lay){ PLOGD <<"-"<<lay->s.print_recurse() <<"-"; });
 

@@ -55,9 +55,7 @@ struct Layer : DrawCall {
 
     void draw() override;
 
-    Layer(uint16_t width, uint16_t height);
-
-    Layer();
+    Layer(uint16_t width = 0, uint16_t height = 0);
 
     Texture* feedback = nullptr;
 
