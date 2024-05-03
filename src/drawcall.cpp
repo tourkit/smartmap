@@ -43,17 +43,25 @@ void DrawCall::draw() {
 
 }
 
+bool DrawCall::remove(Model* model){
+
+    PLOGW << "TODO";
+
+    return 1;
+
+}
+
 void DrawCall::update() {
 
     static std::filesystem::file_time_type last_modified = std::chrono::file_clock::now();
 
     static bool has_changed = false;
 
-    for (auto &x : vbo.models) {
+    for (auto x : models) {
 
-        if (x.file->path == engine.project_filepath) continue;
+        if (x.get()->file->path == engine.project_filepath) continue;
 
-        auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::REPO_DIR) / x.file->path);
+        auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::REPO_DIR) / x.get()->file->path);
 
         if (last_modified  < last_) { last_modified = last_; has_changed = true; }
 
@@ -61,12 +69,12 @@ void DrawCall::update() {
 
     if (has_changed) {
 
-        vbo.reloadFiles();
+        vbo.loadModels(models);
 
         has_changed = false;
 
     }
 
-    shader.create(&vbo);
+    shader.create(this);
 
 }

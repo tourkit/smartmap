@@ -6,22 +6,18 @@
 #include "struct.hpp"
 #include <regex>
 
-Effector* Effector::get(File * file) {
+Effector::Definition& Effector::get(File * file) { if (effects.find(file) == effects.end()) init(file); return effects[file]; }
 
-    for (auto x : pool) if (x->file == file) return x;
+Effector::Effector(File* f, std::string name ) : ref(name), file(file) { ref.add( &get(f).s ); };
 
-    return new Effector(file);
+void Effector::init(File* file) {
 
-}
-
-Effector::Effector(File *file) : file(file) {
-
-    pool.push_back(this);
+    auto &def = get(file);
 
     const char* data = (&file->data[0]);
 
-    ranges.clear();
-    args.resize(0);
+    def.ranges.clear();
+    def.args.resize(0);
 
     std::smatch match;
 
@@ -37,7 +33,7 @@ Effector::Effector(File *file) : file(file) {
         std::string range;
         int i = 0;
         std::istringstream stream(match[2].str());
-        while (std::getline(stream, range, ',')) ranges[match[1]][i++] = std::stof(range);
+        while (std::getline(stream, range, ',')) def.ranges[match[1]][i++] = std::stof(range);
         range_count++;
 
     }
@@ -51,12 +47,12 @@ Effector::Effector(File *file) : file(file) {
         std::sregex_iterator iter(argsStr.begin(), argsStr.end(), regex);
         std::sregex_iterator end;
         while (iter != end) {
-            args.push_back({(*iter)[1].str(),(*iter)[2].str()});
+            def.args.push_back({(*iter)[1].str(),(*iter)[2].str()});
             ++iter;
         }
     }
 
-    s = Struct::exist(file->name());
+    Struct* s = Struct::exist(file->name());
 
     if (!s) {
 
@@ -66,7 +62,7 @@ Effector::Effector(File *file) : file(file) {
 
         s->striding(true);
 
-        for (auto arg : args) {
+        for (auto arg : def.args) {
 
             if (arg.first == "vec2") s->add<glm::vec2>(arg.second.c_str());
             else if (arg.first == "vec3") s->add<glm::vec3>(arg.second.c_str());
@@ -76,7 +72,7 @@ Effector::Effector(File *file) : file(file) {
 
             else s->add<float>(arg.second.c_str());
 
-            if (ranges.find(arg.second) != ranges.end()) s->range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+            if (def.ranges.find(arg.second) != def.ranges.end()) s->range(def.ranges[arg.second][0],def.ranges[arg.second][1],def.ranges[arg.second][2]);
 
         }
 
@@ -84,7 +80,8 @@ Effector::Effector(File *file) : file(file) {
 
 }
 
-std::string Effector::source() {
+std::string Effector::source(File* file) {
+
     std::string out_code = &file->data[0];
 
     size_t pos = 0;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "struct.hpp"
+
 #include <map>
 #include <vector>
 #include <string>
@@ -9,23 +11,38 @@ struct Struct;
 
 struct Effector  {
 
-    static inline std::vector<Effector*> pool;
+    struct Definition {
+
+        Struct s;
+
+        std::vector<std::pair<std::string,std::string>> args;
+
+        std::map<std::string, float[3]> ranges;
+
+    };
+
+    static std::string source(File* file);
+
+    static inline std::map<File*, Definition> effects;
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
-    File * file = nullptr;
+    static void init(File* f);
 
-    Struct* s = nullptr;
+    //     effects[f] = Struct(f->name_v.c_str());
 
-    std::string source();
+    //     effects[f].add<float>("x").range(0,1,0);
+    //     effects[f].add<float>("y").range(0,1,0);
 
-    Effector(File *file = nullptr);
+    // }
 
-    std::vector<std::pair<std::string,std::string>> args;
+    static Definition& get(File* f) ;
 
-    std::map<std::string, float[3]> ranges;
+    Ref ref;
 
-    static Effector* get(File * file);
+    File* file;
+
+    Effector(File* f, std::string name );
 
 
 };

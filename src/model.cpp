@@ -1,44 +1,25 @@
 #include "model.hpp"
 #include "engine.hpp"
 
-Model::Model() : Struct() { }
+Model::Model(File* f, std::string name) : s(name), file(f) {  };
 
-Model::Model(File* file, int quantity) : Struct(file->name(), quantity), file(file) {
-
-    engine.dynamic_ubo.add(this);
-
-}
-
-Model::~Model() { engine.dynamic_ubo.remove(*this);  }
+Model::~Model() { }
 
 bool Model::remove(Effector* effector) {
 
-    for (auto it = effectors.begin(); it != effectors.end(); ++it) {
-
-        if (*it == effector) {
-
-            Struct::remove(*effector->s);
-
-            effectors.erase(it);
-
-            break;
-
-        }
-
-    }
+    // effectors.erase(effector);
+    PLOGW << "TODO";
 
     return 1;
 
 }
 
-Effector& Model::add(File* file) {
+Effector* Model::add(File* file) {
 
-    auto &x = *Effector::get(file);
+    auto effector = effectors.insert(std::make_shared<Effector>(file, s.next_name(file->name()))).first->get();
 
-    effectors.push_back(&x);
+    s.add(&effector->ref);
 
-    Struct::add(x.s);
-
-    return x;
+    return effector;
 
 }

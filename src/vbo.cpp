@@ -52,7 +52,7 @@ void VBO::create() {
 
 VBO::~VBO()  { destroy(); }
 
-void VBO::reloadFiles() {
+void VBO::loadModels(std::set<std::shared_ptr<Model>> &models) {
 
     vertices.quantity(0);
 
@@ -60,11 +60,13 @@ void VBO::reloadFiles() {
 
     int i = 0;
 
-    for (auto &x : models) pushFile(x.file, i++) ;
+    for (auto &x : models) pushFile(x.get()->file, i++) ;
 
     if (models.size()) upload();
 
+
 }
+// void VBO::reloadFiles() { loadModels(models); }
 
 void VBO::update() {
 
@@ -99,7 +101,7 @@ void VBO::upload() {
             else if (m->type() == typeid(glm::vec3)) count = 3;
             else if (m->type() == typeid(glm::vec4)) count = 4;
 
-            glVertexAttribPointer(enabled_attrs, count, type, GL_TRUE, members[0]->footprint(), (const void*)offset); // chai pakwa legacy GL dmaikouyes
+            glVertexAttribPointer(enabled_attrs, count, type, GL_TRUE, members[0]->footprint(), (const void*)(size_t)offset);
 
             glEnableVertexAttribArray(enabled_attrs++);
 
@@ -131,23 +133,6 @@ void VBO::draw(int count) {
 
 }
 
-bool VBO::remove(Model* m) {
-
-    auto it = std::find_if(models.begin(), models.end(), [m](Model& m_) { return &m_ == m; });
-
-    if (it == models.end()) return false;
-
-    models.erase(it);
-
-    vertices.quantity(0);
-
-    indices.quantity(0);
-
-    int i = 0;
-    for (auto it = models.begin(); it != models.end();) {  pushFile( it->file, i++);  it++; }
-
-    return true;
-}
 
 bool VBO::pushFile(File* file, int id) {
 
@@ -189,17 +174,5 @@ bool VBO::pushFile(File* file, int id) {
     }
 
     return true;
-
-}
-
-Model& VBO::add(File* file, int quantity) {
-
-    pushFile(file, models.size());
-
-    models.emplace_back(file,quantity);
-
-    upload();
-
-    return  models.back();
 
 }

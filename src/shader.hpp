@@ -5,10 +5,10 @@
 #include <chrono>
 
 struct UBO;
-struct VBO;
+struct DrawCall;
 
 struct Shader {
-  
+
   uint32_t id = -1;
 
   enum Type { FRAGMENT, VERTEX, COMPUTE } type;
@@ -16,7 +16,7 @@ struct Shader {
   std::string src;
 
   Shader();
-  
+
   Shader(std::string src, uint8_t type = 0);
 
   void create(std::string src, uint8_t type);
@@ -24,7 +24,7 @@ struct Shader {
   ~Shader();
 
   void compile();
-  
+
   operator uint32_t();
 
 };
@@ -44,7 +44,7 @@ struct ShaderProgram {
 
   ShaderProgram(std::string frag, std::string vert);
 
-  ShaderProgram(VBO* vbo);
+  ShaderProgram(DrawCall* dc);
 
   void use();
 
@@ -52,7 +52,7 @@ struct ShaderProgram {
 
   void destroy();
   void create(std::string frag, std::string vert);
-  void create(VBO* vbo);
+  void create(DrawCall* dc);
 
   int getLoc(const std::string& name);
   void sendUniform(const std::string& name, int i1);
@@ -75,11 +75,11 @@ struct ShaderProgram {
 
     std::string frag();
     std::string vert();
-    
-    VBO* vbo;
+
+    DrawCall* dc;
 
     Builder();
-    Builder(VBO* vbo);
+    Builder(DrawCall* dc);
 
     std::string layout(UBO *ubo);
 

@@ -2,7 +2,7 @@
 #include "shader.hpp"
 #include "log.hpp"
 #include "ubo.hpp"
-#include "vbo.hpp"
+#include "drawcall.hpp"
 #include "model.hpp"
 #include "atlas.hpp"
 
@@ -34,9 +34,9 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
 }
 
-ShaderProgram::Builder::Builder() : vbo(nullptr) { }
+ShaderProgram::Builder::Builder() : dc(nullptr) { }
 
-ShaderProgram::Builder::Builder(VBO* vbo) : vbo(vbo) {
+ShaderProgram::Builder::Builder(DrawCall* dc) : dc(dc) {
 
     header_common = "#version 430 core\n\n";
 
@@ -53,11 +53,11 @@ std::string ShaderProgram::Builder::frag() {
 
     std::set<Effector*> effectors;
 
-    if (vbo) {
+    if (dc) {
 
-        for (auto &model : vbo->models) {
+        for (auto &model : dc->models) {
 
-            for (auto &effector : model.effectors) {
+            for (auto &effector : model.get()->effectors) {
 
                 for (auto x : effectors) {
 
@@ -71,7 +71,7 @@ std::string ShaderProgram::Builder::frag() {
 
                 }
 
-                effectors.insert(effector);
+                effectors.insert(effector.get());
 
             }
 
@@ -79,7 +79,7 @@ std::string ShaderProgram::Builder::frag() {
 
     }
 
-    for (auto x : effectors)  str += x->s->print()+";\n\n";
+    for (auto x : effectors)  str += x->ref.print()+";\n\n";
 
     str += comment_line;
 
@@ -101,7 +101,7 @@ std::string ShaderProgram::Builder::frag() {
 
     int model_id = 0;
 
-    for (auto x : effectors) str += x->source() + "\n\n";
+    for (auto x : effectors) str += x->source(x->file) + "\n\n";
 
     str += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n\n";
     str += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
@@ -111,21 +111,21 @@ std::string ShaderProgram::Builder::frag() {
     // main loop
     str += "void main() {\n\n";
 
-    if (vbo) for (auto &model : vbo->models) {
+    if (dc) for (auto &model : dc->models) {
 
-        for (int instance = 0; instance < model.quantity(); instance++) {
+        for (int instance = 0; instance < model.get()->s.quantity(); instance++) {
 
-            auto name = model.name();
+            auto name = model.get()->s.name();
 
-            if (model.quantity() > 1) name += "["+std::to_string(instance)+"]";
+            if (model.get()->s.quantity() > 1) name += "["+std::to_string(instance)+"]";
 
             str += "\t// "+name+"\n"; // would love this to be a node name instead // still matters ?
 
-            for (auto &effector : model.effectors) {
+            for (auto &effector : model.get()->effectors) {
 
                 std::string arg_str;
 
-                for (auto &arg : effector->args) {
+                for (auto &arg : Effector::get(effector.get()->file).args) {
 
                     arg_str += name+"."+effector->file->name()+"."+arg.second+", ";
 
@@ -136,7 +136,7 @@ std::string ShaderProgram::Builder::frag() {
                 str += "\t"+effector->file->name()+"("+arg_str+");\n";
             }
 
-            if (instance < model.quantity()-1) str += "\ttic();\n\n";
+            if (instance < model.get()->s.quantity()-1) str += "\ttic();\n\n";
             else str += "\ttac();\n\n";
 
         }
@@ -223,7 +223,7 @@ ShaderProgram::~ShaderProgram() { destroy(); }
 
 ShaderProgram::ShaderProgram() { Builder builder; create(builder.frag(),builder.vert()); }
 
-ShaderProgram::ShaderProgram(VBO* vbo) { Builder builder(vbo); create(builder.frag(),builder.vert()); }
+ShaderProgram::ShaderProgram(DrawCall* dc) { Builder builder(dc); create(builder.frag(),builder.vert()); }
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 
@@ -234,9 +234,9 @@ void ShaderProgram::destroy() {
 
 }
 
-void  ShaderProgram::create(VBO* vbo) {
+void  ShaderProgram::create(DrawCall* dc) {
 
-    Builder builder(vbo);
+    Builder builder(dc);
 
     create(builder.frag(),builder.vert());
 

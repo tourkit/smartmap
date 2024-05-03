@@ -38,12 +38,6 @@ struct VBO : Buffer {
 
     bool pushFile(File *file, int id); // chelou push la, devrait etre ds inst ou inverse,
 
-    void reloadFiles();
-
-    Model& add(File *file, int quantity = 1);
-
-    bool remove(Model* m);
-
-    std::list<Model> models ;
+    void loadModels(std::set<std::shared_ptr<Model>> &models);
 
 };

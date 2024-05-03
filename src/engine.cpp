@@ -52,11 +52,11 @@ void Engine::init() {
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
-    models = tree->addOwnr<Node>("Models")->node();
-    // models = tree->addFolder<File>("Models", "assets/models/")->node();
+    // models = tree->addOwnr<Node>("Models")->node();
+    models = tree->addFolder<File>("Models", "assets/models/")->node();
 
-    effectors = tree->addOwnr<Node>("Effectors")->node();
-    // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
+    // effectors = tree->addOwnr<Node>("Effectors")->node();
+    effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
@@ -193,7 +193,7 @@ void Engine::open(const char* file) {
 
                 }
 
-                if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->quantity( m.value[2].GetInt() );
+                if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->s.quantity( m.value[2].GetInt() );
 
             }
 

@@ -650,7 +650,7 @@ void Editors::init() {
 
         ImGui::Text(("effectorz " + std::to_string(model->effectors.size())).c_str());
 
-        if (ImGui::InputInt("quantity##qqqqlalal" , &model->quantity_v)) { node->update(); }
+        if (ImGui::InputInt("quantity##qqqqlalal" , &model->s.quantity_v)) { node->update(); }
 
         if (draw_guis(&engine.dynamic_ubo)) node->update();
 
@@ -674,11 +674,7 @@ void Editors::init() {
 
     ////////// VBO.HPP
 
-    Editor<VBO>([](Node*node,VBO*vbo){
-
-        ImGui::Text((node->name() + " " + std::to_string(vbo->models.size())).c_str());
-
-        Editor<Buffer>::cb(node, vbo); });
+    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
 
     ////////// Effector.HPP
 
@@ -686,11 +682,11 @@ void Editors::init() {
 
         if (effector->file) Editor<File>::cb(node, effector->file);
 
-        for (auto x : effector->args)  {
+        for (auto x : Effector::get(effector->file).args)  {
 
             std::string out_str = x.first+ " "+x.second;
 
-            if (effector->ranges.find(x.second) != effector->ranges.end()) for (auto x : effector->ranges[x.second])  out_str += " " + std::to_string(x).substr(0,3) + ",";
+            if ( Effector::get(effector->file).ranges.find(x.second) !=  Effector::get(effector->file).ranges.end()) for (auto x :  Effector::get(effector->file).ranges[x.second])  out_str += " " + std::to_string(x).substr(0,3) + ",";
 
             ImGui::Text(out_str.c_str());
         }

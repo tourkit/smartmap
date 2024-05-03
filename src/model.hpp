@@ -9,20 +9,20 @@ struct Effector;
 #include "struct.hpp"
 #include "effector.hpp"
 
-struct Model : Struct {
+struct Model {
 
     File* file;
 
-    Model();
+    Struct s;
 
-    Model(File* file, int quantity = 1);
+    Model(File* f, std::string name);
 
     ~Model();
 
-    Effector& add(File* file);
+    Effector* add(File* file);
 
     bool remove(Effector* effector);
 
-    std::vector<Effector*> effectors;
+    std::set<std::shared_ptr<Effector>> effectors;
 
 };

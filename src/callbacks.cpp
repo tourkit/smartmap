@@ -43,6 +43,12 @@ void Callbacks::init() {
 
     NODE<File>::oncreate([](Node* node, File *file){ node->name(file->name()); });
 
+    ////////// Struct.HPP
+
+    NODE<Struct>::oncreate([](Node*node, Struct* s){ node->name(s->name()); });
+
+    NODE<Struct>::onchange([&](Node*node, Struct* s){ s->name(node->name()); });
+
     ////////// Artnet.HPP
 
     NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run();
@@ -104,11 +110,7 @@ void Callbacks::init() {
 
     NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
 
-    NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){
-
-        return _this->addPtr<Model>(&_this->is_a<DrawCall>()->vbo.add(node->is_a<File>()))->node();
-
-    });
+    NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Model>(_this->is_a<DrawCall>()->add(node->is_a<File>()))->node(); });
 
     NODE<Layer>::oncreate([](Node* node, Layer *layer){ node->referings.insert(nullptr); }); // for what ??????
 
@@ -116,54 +118,31 @@ void Callbacks::init() {
 
     NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
 
-    NODE<Layer>::onadd<File>([](Node*_this,Node*node){
-
-        auto z = node->is_a<File>();
-
-        if (z->extension == "glsl"){
-
-            // auto y = &_this->is_a<Layer>()->model.add(z);
-
-            return _this;
-
-        }else{
-
-            auto y = &_this->is_a<Layer>()->vbo.add(z);
-
-            auto x = _this->addPtr<Model>(y);
-
-            return x->node();
-
-        }
-
-
-    });
+    NODE<Layer>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Model>(_this->is_a<Layer>()->add(node->is_a<File>()))->node(); });
 
     ////////// MODEL.HPP
 
-    NODE<Model>::oncreate([](Node* node, Model *model) { node->name(model->name()); });
+    NODE<Model>::oncreate([](Node*node, Model* mod){ NODE<Struct>::oncreate_cb(node, &mod->s); });
 
-    NODE<Model>::onadd<File>([](Node*_this,Node*node){
+    NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); });
 
-        return _this->addPtr<Effector>(
-            &_this->is_a<Model>()->add( node->is_a<File>() )
-        )->node();
-
-    });
+    NODE<Model>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Effector>( _this->is_a<Model>()->add( node->is_a<File>() ) )->node(); });
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
         auto dc = node->parent()->is_a<DrawCall>();
-        if (dc) dc->vbo.remove(model);
+        if (dc) dc->remove(model);
 
         auto layer = node->parent()->is_a<Layer>();
-        if (layer) layer->vbo.remove(model);
+        if (layer) layer->remove(model);
 
     });
 
     ////////// Effector.HPP
 
-    NODE<Effector>::oncreate([](Node* node, Effector *effector) { if (effector->file) node->name(effector->file->name()); });
+    NODE<Effector>::oncreate([](Node*node, Effector* fx){ NODE<Struct>::oncreate_cb(node, &fx->ref); });
+
+    NODE<Effector>::onchange([&](Node*node, Effector* fx){ NODE<Struct>::onchange_cb(node, &fx->ref); });
 
     NODE<Effector>::ondelete([](Node* node, Effector *effector) {
 

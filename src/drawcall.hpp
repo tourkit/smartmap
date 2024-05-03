@@ -18,9 +18,31 @@ struct DrawCall {
 
     ShaderProgram shader;
 
+    Struct s;
+
+    Struct fxs_s;
+
     void update();
 
     virtual void draw();
+
+    std::set<std::shared_ptr<Model>> models;
+
+    std::set<std::shared_ptr<Effector>> effectors;
+
+    bool remove(Model* model);
+
+    Model* add(File* f) {
+
+        // if (f->extension == "glsl"){
+
+        auto mod = models.insert(std::make_shared<Model>(f, s.next_name(f->name()))).first->get();
+
+        s.add(&mod->s);
+
+        return mod;
+
+    }
 
 };
 

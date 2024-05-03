@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstddef>
 #include "vendors/NDI/Include/Processing.NDI.Lib.h"
 #include "thread.hpp"
 
