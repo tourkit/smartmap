@@ -89,6 +89,14 @@ using namespace ImGui;
     // const ImVec2 curr_pos = ImVec2(0,GetCursorPos().y);
     const ImVec2 curr_pos(window->DC.CursorPos.x, window->DC.CursorPos.y + window->DC.CurrLineTextBaseOffset);
 
+
+    SetCursorPosX(GetWindowWidth()-20);
+
+    std::string str = "##active"+std::to_string(node->uid);
+    Checkbox(str.c_str(), &node->is_active);
+    SameLine();
+    SetCursorPosX(0);
+
     const char *badbad = "mmmmmmmmmmmmmmmmmmmmmmmmmm";
     const ImVec2 text_size = CalcTextSize(badbad,badbad+15);
     ImRect bb(curr_pos.x, curr_pos.y, curr_pos.x + text_size.x, curr_pos.y + text_size.y);
@@ -219,12 +227,7 @@ using namespace ImGui;
 
     }
 
-    SameLine();
 
-    SetCursorPosX(GetWindowWidth()-30);
-
-    std::string str = "##active"+std::to_string(node->uid);
-    Checkbox(str.c_str(), &node->is_active);
 
     return x;
 

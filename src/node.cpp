@@ -7,7 +7,7 @@
 
     UntypedNode::UntypedNode(std::string name, ImVec4 color) : name_v(name), color(color) {
 
-        uid = uid++;
+        uid = total_uid++;
 
         pool.insert(this);
         PLOGV << "#" << name;

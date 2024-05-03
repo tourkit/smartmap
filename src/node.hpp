@@ -96,6 +96,7 @@ public:
     template <typename V>
     void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { auto isa = ((UntypedNode*)c)->is_a<V>(); if (isa) cb(c,isa); } }
 
+    static inline uint32_t total_uid = 0;
     uint32_t uid = 0;
 
     bool is_typed = false;
