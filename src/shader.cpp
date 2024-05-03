@@ -51,35 +51,11 @@ std::string ShaderProgram::Builder::frag() {
 
     std::string str = header_common;
 
-    std::set<Effector*> effectors;
+    std::set<File*> effectors;
 
-    if (dc) {
+    if (dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) effectors.insert(effector->file);
 
-        for (auto &model : dc->models) {
-
-            for (auto &effector : model.get()->effectors) {
-
-                for (auto x : effectors) {
-
-                    if (x->file == effector->file) {
-
-                        break;
-
-                        continue;  // this for topmost forloop
-
-                    }
-
-                }
-
-                effectors.insert(effector.get());
-
-            }
-
-        }
-
-    }
-
-    for (auto x : effectors)  str += x->ref.print()+";\n\n";
+    for (auto file : effectors)  str += Effector::get(file).s.print_recurse()+";\n\n";
 
     str += comment_line;
 
@@ -101,7 +77,7 @@ std::string ShaderProgram::Builder::frag() {
 
     int model_id = 0;
 
-    for (auto x : effectors) str += x->source(x->file) + "\n\n";
+    for (auto file : effectors)  str += Effector::source(file)+";\n\n";
 
     str += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n\n";
     str += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
@@ -127,7 +103,7 @@ std::string ShaderProgram::Builder::frag() {
 
                 for (auto &arg : Effector::get(effector.get()->file).args) {
 
-                    arg_str += name+"."+effector->file->name()+"."+arg.second+", ";
+                    arg_str += dc->s.name()+"."+name+"."+effector->file->name()+"."+arg.second+", ";
 
                 }
 

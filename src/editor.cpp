@@ -770,7 +770,7 @@ void EditorWidget::draw() {
     if (ImGui::IsItemClicked()) ImGui::OpenPopup("nodecolorpicker");
     if (ImGui::BeginPopup("nodecolorpicker")) { ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color.x); ImGui::EndPopup(); }
 
-    ImGui::SameLine(); ImGui::Checkbox("lock##locked", &locked);
+    ImGui::SameLine(); ImGui::Checkbox(("lock##locked"+std::to_string((size_t)this)).c_str(), &locked);
 
     std::string referings;
     for (auto r : selected->referings) if (r) referings += (r->name())+", ";

@@ -91,7 +91,7 @@ using namespace ImGui;
 
     auto t_pos = GetCursorPosX();
 
-    SetCursorPosX(GetWindowWidth()-20);
+    SetCursorPosX(GetWindowWidth()-30);
 
     std::string str = "##active"+std::to_string(node->uid);
     Checkbox(str.c_str(), &node->is_active);

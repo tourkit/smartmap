@@ -43,6 +43,18 @@ void Callbacks::init() {
 
     NODE<File>::oncreate([](Node* node, File *file){ node->name(file->name()); });
 
+    NODE<File>::onrun([](Node* node, File *file){
+
+        // if (file->last_modified != file->getTimeModified()) file->reload();
+        if (file->hasChanged()) {
+            file->reload();
+            node->update();
+
+
+            }
+
+    });
+
     ////////// Struct.HPP
 
     NODE<Struct>::oncreate([](Node*node, Struct* s){ node->name(s->name()); });

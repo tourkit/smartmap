@@ -30,7 +30,7 @@ void Layer::draw() {
 
 }
 
-DrawCall::DrawCall() {
+DrawCall::DrawCall() : s("layer") {
     engine.dynamic_ubo.add(&s);
 }
 
