@@ -16,18 +16,10 @@ int main() {
 
     auto l1 = engine.stack->addOwnr<Layer>();
 
-    auto q1 = l1->add(engine.models->child("quad"));
+    // auto q1 = l1->add(engine.models->child("quad"));
 
-    q1->add( engine.effectors->child("argb") );
+    // q1->add( engine.effectors->child("argb") );
 
-
-    engine.window.keypress_cbs[GLFW_KEY_R] = [&](int key) { l1->update();};
-
-
-    // engine.dynamic_ubo.update();
-    // auto bkp = engine.dynamic_ubo.copy();
-
-    // PLOGD << bkp->print_recurse();
 
     engine.gui->editors.push_back(new EditorWidget());
     engine.gui->editors.back()->locked = true;
