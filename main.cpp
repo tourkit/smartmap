@@ -14,19 +14,20 @@ int main() {
 
     logger.cout();
 
-    auto l1 = engine.stack->addOwnr<Layer>();
+    // auto l1 = engine.stack->addOwnr<Layer>();
 
-    // auto q1 = l1->add(engine.models->child("quad"));
+    // // auto q1 = l1->add(engine.models->child("quad"));
 
-    // q1->add( engine.effectors->child("argb") );
+    // // q1->add( engine.effectors->child("argb") );
 
 
-    engine.gui->editors.push_back(new EditorWidget());
-    engine.gui->editors.back()->locked = true;
+    // engine.gui->editors.push_back(new EditorWidget());
+    // engine.gui->editors.back()->locked = true;
 
-    // engine.stack->select();
-    l1->select();
-    engine.gui->editors.push_back(new EditorWidget());
+    // // engine.stack->select();
+    // l1->select();
+    // engine.gui->editors.push_back(new EditorWidget());
+    engine.open("project2.json");
 
     engine.run();
 

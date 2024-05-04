@@ -1,6 +1,8 @@
 //id(0,10,0)
 /////////////
-void atlas(int id) {
+void atlas(float id_) {
+
+	int id = id_;
 
     uv *= media[id].size;
     uv += media[id].pos;
@@ -8,3 +10,4 @@ void atlas(int id) {
     color *= texture(medias, uv);
 
 }
+
