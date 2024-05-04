@@ -11,10 +11,13 @@
 #include <unordered_set>
 #include <set>
 
-Layer::Layer(uint16_t width, uint16_t height) : fb((width?width:engine.window.width), (height?height:engine.window.height)) {
-    // vbo.add(quad);
+Layer::Layer(uint16_t width, uint16_t height, std::string name)
+
+    : fb((width?width:engine.window.width), (height?height:engine.window.height)), DrawCall(name) {
+
     feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
-     }
+
+}
 
 
 
@@ -30,9 +33,7 @@ void Layer::draw() {
 
 }
 
-DrawCall::DrawCall() : s("layer") {
-    engine.dynamic_ubo.add(&s);
-}
+DrawCall::DrawCall(std::string name = "") : s(name.length()?name:"layer") { engine.dynamic_ubo.add(&s); }
 
 void DrawCall::draw() {
 
@@ -51,7 +52,9 @@ Model* DrawCall::add(File* f) {
 
     s.add(&mod->s);
 
-    vbo.loadModels(models);
+    vbo.pushFile(f, s.size()) ;
+
+    vbo.upload();
 
     return mod;
 
@@ -77,7 +80,13 @@ void DrawCall::update() {
 
     if (has_changed) {
 
-        vbo.loadModels(models);
+        int i = 0;
+
+        vbo.reset();
+
+        for (auto &x : models) vbo.pushFile(x.get()->file, i++) ;
+
+        vbo.upload();
 
         has_changed = false;
 

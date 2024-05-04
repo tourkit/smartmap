@@ -34,13 +34,6 @@ int main() {
 }
 
 
-// remap
 // default
-//range
-// etc
 
-
-// check for refs in remaping
-
-
-//q>1 is shit.
+// no instasnce at open

@@ -12,7 +12,7 @@ struct FrameBuffer;
 
 struct DrawCall {
 
-    DrawCall();
+    DrawCall(std::string name);
 
     VBO vbo;
 
@@ -45,7 +45,7 @@ struct Layer : DrawCall {
 
     void draw() override;
 
-    Layer(uint16_t width = 0, uint16_t height = 0);
+    Layer(uint16_t width = 0, uint16_t height = 0, std::string name = "");
 
     Texture* feedback = nullptr;
 

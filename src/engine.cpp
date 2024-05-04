@@ -52,11 +52,11 @@ void Engine::init() {
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
-    // models = tree->addOwnr<Node>("Models")->node();
-    models = tree->addFolder<File>("Models", "assets/models/")->node();
+    models = tree->addOwnr<Node>("Models")->node();
+    // models = tree->addFolder<File>("Models", "assets/models/")->node();
 
-    // effectors = tree->addOwnr<Node>("Effectors")->node();
-    effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
+    effectors = tree->addOwnr<Node>("Effectors")->node();
+    // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 
@@ -158,60 +158,79 @@ void Engine::open(const char* file) {
     // kassded la famille. pour toi public :) #inlineclub
     for (auto &m : json["inputs"]) if (m.name.IsString() && m.value.IsArray()) if (!strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>(((m.value.GetArray().Size() && m.value.GetArray()[0].IsString()) ? m.value.GetString() : nullptr ))->active(1);
 
-    if (true) for (auto &l : json["layers"]) {
+    for (auto &l : json["layers"]) {
 
-        auto layer = stack->addOwnr<Layer>();
+        if (!l.value.IsArray()) continue;
 
+        auto info = l.value.GetArray();
 
-        if (l.name.IsString()) layer->name(l.name.GetString());
+        int width = 0, height = 0;
 
-        if (l.value.IsArray() && l.value.GetArray().Size() && l.value.GetArray()[0].IsObject()) {
+        rapidjson::Value models(rapidjson::kObjectType);
 
-            for (auto &m : l.value.GetArray()[0].GetObj()) {
+        if (info.Size()) if (info.Size() > 2 && info[0].IsInt() && info[1].IsInt()) {
 
-                if (!m.value.IsArray()) continue;
+            width = info[0].GetInt(); height = info[1].GetInt();
 
-                if (!m.value[0].IsString()) continue;
+            if (info.Size() > 2 && info[2].IsObject()) models = info[2].GetObj();
 
-                auto model_f = models->child(m.value[0].GetString()); if (!model_f)  { PLOGE << "no model : " << m.value[0].GetString(); continue; }
+        }else{
 
-                auto model = layer->add(model_f);
-
-                if (m.name.IsString()) model->name(m.name.GetString());
-
-                if (m.value.GetArray().Size() < 2) continue;
-                if (!m.value[1].IsArray()) continue;
-
-                for (auto &f : m.value[1].GetArray()) {
-
-                    if (!f.IsString()) continue;
-
-                    auto effector = effectors->child(f.GetString())->get<Effector>();
-
-                    if (effector) model->add(effector);
-                    else PLOGE << "no effector: " << f.GetString();
-
-                }
-
-                if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->s.quantity( m.value[2].GetInt() );
-
-            }
-
-            if (l.value.GetArray().Size() > 1 && l.value.GetArray()[1].IsArray()) for (auto &m : l.value.GetArray()[1].GetArray()) {
-
-                if (!m.IsString()) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
-
-                auto *f = effectors->child( m.GetString() );
-
-                if (!f) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
-
-                layer->add(f);
-                // PLOGD << "add " << m.GetString() << " to " << layer->name;
-
-            }
-
+            if (info[0].IsObject()) models = info[0].GetObj();
 
         }
+
+
+        auto layer = stack->addOwnr<Layer>(width,height,l.name.IsString() ? l.name.GetString() : "");
+
+
+        for (auto it = models.MemberBegin(); it != models.MemberEnd(); ++it) {
+
+            auto &m = *it;
+
+            if (!m.value.IsArray()) continue;
+
+            if (!m.value[0].IsString()) continue;
+
+            auto model_f = engine.models->child(m.value[0].GetString()); if (!model_f)  { PLOGE << "no model : " << m.value[0].GetString(); continue; }
+
+            auto model = layer->add(model_f);
+
+            if (m.name.IsString()) model->name(m.name.GetString());
+
+            if (m.value.GetArray().Size() < 2) continue;
+            if (!m.value[1].IsArray()) continue;
+
+            for (auto &f : m.value[1].GetArray()) {
+
+                if (!f.IsString()) continue;
+
+                auto effector = effectors->child(f.GetString())->get<Effector>();
+
+                if (effector) model->add(effector);
+                else PLOGE << "no effector: " << f.GetString();
+
+            }
+
+            if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->s.quantity( m.value[2].GetInt() );
+
+        }
+
+        if (l.value.GetArray().Size() > 1 && l.value.GetArray()[1].IsArray()) for (auto &m : l.value.GetArray()[1].GetArray()) {
+
+        //     if (!m.IsString()) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
+
+        //     auto *f = effectors->child( m.GetString() );
+
+        //     if (!f) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
+
+        //     layer->add(f);
+        //     // PLOGD << "add " << m.GetString() << " to " << layer->name;
+
+        }
+
+
+
 
         layer->update();
 
@@ -227,20 +246,21 @@ void Engine::open(const char* file) {
 
         engine.gui->editors.push_back(new EditorWidget());
 
-        Node* n = nullptr;
-        if (e[4].IsString()) n = tree->child(e[4].GetString());
-        if (n) {
 
-            engine.gui->editors.back()->selected = n;
+            Node* n = nullptr;
+            if (e[4].IsString()) n = tree->child(e[4].GetString());
+            if (n) {
 
-            engine.gui->editors.back()->locked = true;
+                engine.gui->editors.back()->selected = n;
 
-        }
+                engine.gui->editors.back()->locked = true;
 
-        // if (e.Size() > 5 && e[5].IsBool() ) engine.gui->editors.back()->locked = e[5].GetBool();
+            }
+
+            // if (e.Size() > 5 && e[5].IsBool() ) engine.gui->editors.back()->locked = e[5].GetBool();
+
 
     }
-
 
 }
 

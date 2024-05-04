@@ -4,13 +4,14 @@
     "circle": "o circle\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4\n"
   },
   "effectors": {
-    "argb": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float blue) { \n\n\tcolor = color * vec4 (red, green, blue, alpha) * alpha; \n\n}",
-    "atlas": "//id(0,10,0)\n\nvoid atlas(int id) { \n\n\tuv *= media[id].size;\n\tuv += media[id].pos;\n\tcolor *= texture(medias, uv);\n\n}",
+    "argb": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float blue) { \n\n\tcolor = color * vec4 (red, green, blue, 1) ; \n\n}",
+    "atlas": "//id(0,10,0)\n\nvoid atlas(int id) {\n\n\tvec2 tuv = uv;\n\n\ttuv *= media[id].size;\n\ttuv += media[id].pos;\n\tcolor *= texture(medias, tuv);\n\n}",
     "feedback": "//smoothness(0,1,0)\n\nvoid feedback(float smoothness) { \n\n\ncolor += texture(feedback_tex, UV)-.002-(1-smoothness)*.98;\n\n}\n\n\n\n\n\n",
     "rectangle": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size) {\n\n\tfloat angle = 0;\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}\n"
   },
+
   "layers": {
-    "layer1": [{ "MyQuad": [ "quad", [ "argb", "rectangle", "atlas" ], 6 ] }, ["feedback"]]
+    "layer1": [{ "MyQuad": [ "quad", [ "argb", "rectangle", "atlas"], 6 ] }, ["feedback"]]
   },
   "inputs": {
     "artnet": []

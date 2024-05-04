@@ -52,29 +52,21 @@ void VBO::create() {
 
 VBO::~VBO()  { destroy(); }
 
-void VBO::loadModels(std::set<std::shared_ptr<Model>> &models) {
+void VBO::reset() {
 
     vertices.quantity(0);
 
     indices.quantity(0);
 
-    int i = 0;
-
-    for (auto &x : models) pushFile(x.get()->file, i++) ;
-
-    if (models.size()) upload();
-
+    upload();
 
 }
-// void VBO::reloadFiles() { loadModels(models); }
 
-void VBO::update() {
-
-    Buffer::update();
-
-}
+void VBO::update() { Buffer::update(); }
 
 void VBO::upload() {
+
+    if (!(*this)[0].size() || !(*this)[1].size()) return;
 
     auto v_size = members[0]->footprint_all();
 
@@ -135,7 +127,6 @@ void VBO::draw(int count) {
 
 
 bool VBO::pushFile(File* file, int id) {
-
 
  Assimp::Importer importer;
 

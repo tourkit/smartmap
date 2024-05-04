@@ -103,7 +103,7 @@ std::string ShaderProgram::Builder::frag() {
 
                 for (auto &arg : Effector::get(effector.get()->file).args) {
 
-                    arg_str += dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
+                    arg_str += dc->s.name()+"."+lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
 
                 }
 
