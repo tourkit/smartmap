@@ -20,7 +20,21 @@ int main() {
 
     q1->add( engine.effectors->child("argb") );
 
-    PLOGD << l1->get()->s.print_recurse();
+
+    engine.window.keypress_cbs[GLFW_KEY_R] = [&](int key) { l1->update();};
+
+
+    // engine.dynamic_ubo.update();
+    // auto bkp = engine.dynamic_ubo.copy();
+
+    // PLOGD << bkp->print_recurse();
+
+    engine.gui->editors.push_back(new EditorWidget());
+    engine.gui->editors.back()->locked = true;
+
+    // engine.stack->select();
+    l1->select();
+    engine.gui->editors.push_back(new EditorWidget());
 
     engine.run();
 
@@ -34,3 +48,6 @@ int main() {
 
 
 // check for refs in remaping
+
+
+//q>1 is shit.

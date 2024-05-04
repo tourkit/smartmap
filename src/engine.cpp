@@ -66,8 +66,6 @@ void Engine::init() {
 
     stack = tree->addOwnr<Stack>()->node()->active(1);
 
-    if (!engine.gui->editors.size()) engine.gui->editors.push_back(new EditorWidget());
-
     debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
 
     PLOGI << "Engine initialized";
@@ -75,6 +73,8 @@ void Engine::init() {
 }
 
 void Engine::run() {
+
+    if (!engine.gui->editors.size()) engine.gui->editors.push_back(new EditorWidget());
 
     auto &window = getInstance().window;
 

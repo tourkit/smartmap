@@ -98,37 +98,15 @@ void Callbacks::init() {
 
     ////////// ENGINE.HPP (and Stack)
 
-    NODE<Stack>::onadd<DrawCall>([](Node*_this,Node*node){
-
-        node->is_a<DrawCall>()->update();
-
-        return node; // missind add() use case (still ? maybe not untyped)
-
-        // maybe moved stored_type to UntypedNode and use if!=UntypedNode get name and so on
-
-    });
-
-    NODE<Stack>::onadd<Layer>([](Node*_this,Node*node){ node->is_a<Layer>()->update(); return node; });
-
-    NODE<Stack>::onadd<UBO>([](Node*_this,Node*node){ return node; });
-
-    NODE<Stack>::onadd<File>([](Node*_this,Node*node){ return node; });
+    NODE<Stack>::onadd<File>([](Node*_this,Node*node){ auto x = _this->addOwnr<Layer>(); x->get()->add(node->is_a<File>()); return x->node(); });
 
     ////////// DRAWCALL.HPP
 
-    NODE<DrawCall>::oncreate([](Node* node, DrawCall *dc){ node->referings.insert(nullptr); }); // for what ??????
-
-    NODE<DrawCall>::onrun([](Node* node, DrawCall *dc){ dc->draw(); });
-
-    NODE<DrawCall>::onchange([](Node* node, DrawCall *dc){ dc->update(); });
-
-    NODE<DrawCall>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Model>(_this->is_a<DrawCall>()->add(node->is_a<File>()))->node(); });
-
-    NODE<Layer>::oncreate([](Node* node, Layer *layer){ node->referings.insert(nullptr); }); // for what ??????
+    NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); node->referings.insert(nullptr); }); // for what ??????
 
     NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
 
-    NODE<Layer>::onchange([](Node* node, Layer *layer){ layer->update(); });
+    NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s);   layer->update(); });
 
     NODE<Layer>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Model>(_this->is_a<Layer>()->add(node->is_a<File>()))->node(); });
 
@@ -136,7 +114,7 @@ void Callbacks::init() {
 
     NODE<Model>::oncreate([](Node*node, Model* mod){ NODE<Struct>::oncreate_cb(node, &mod->s); });
 
-    NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); });
+    NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
 
     NODE<Model>::onadd<File>([](Node*_this,Node*node){
 

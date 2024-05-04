@@ -161,6 +161,9 @@ static void draw_raw(void *data, size_t size) {
 
 static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 0) {
 
+
+
+
     static int member_count = 0;
 
     if (!member) {
@@ -169,6 +172,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
          member_count = 0;
 
         }
+    else if (typeid(*member) == typeid(Ref)) member = member->members[0];
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
@@ -234,21 +238,17 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
         }else{
 
-            auto &m_= m;
+            std::string septxt  = m->name();
 
-            if (typeid(*m) == typeid(Ref)) m_ = m->members[0];
-
-            std::string septxt  = m_->name();
-
-            septxt+= "(" + std::to_string(m_->quantity()) + ")";
+            septxt+= "(" + std::to_string(m->quantity()) + ")";
 
             ImGui::SeparatorText(septxt.c_str());
 
-            if (draw_guis(buff, m_, offset)) has_changed = true;
+            if (draw_guis(buff, m, offset)) has_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
-            //     // s->remove(m_->name()); // TOdoFIX
+            //     // s->remove(m->name()); // TOdoFIX
             //     has_changed = true;
             // }
 
@@ -658,15 +658,7 @@ void Editors::init() {
 
         if (ImGui::InputInt("quantity##qqqqlalal" , &model->s.quantity_v)) { node->update(); }
 
-        if (draw_guis(&engine.dynamic_ubo)) engine.dynamic_ubo.upload();
-
-        // for (auto x : model->effectors) {
-
-        // }
-
-        // if (node->parent()->is_a<Layer>()) Editor<Object>::cb(node, model->obj);  // tofix
-
-        // else if (model->file) Editor<File>::cb(node, model->file);
+        if (draw_guis(&engine.dynamic_ubo))engine.dynamic_ubo.upload();
 
     });
 

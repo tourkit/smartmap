@@ -191,22 +191,10 @@ struct TypedNode : UntypedNode {
 
     operator T*() { return ptr; }
 
-    void update() override {
-
-        if(onchange_cb) { onchange_cb(node(),this->ptr); }
-
-        UntypedNode::update();
-
-    }
-
     TypedNode<T>* select() { UntypedNode::select(); return this; }
 
+    void trigchange() override { UntypedNode::trigchange(); if(onchange_cb) onchange_cb(node(),this->ptr); }
 
-
-    void trigchange() override {
-        UntypedNode::trigchange();
-        if(onchange_cb) onchange_cb(node(),this->ptr);
-    }
     void run() override {
 
         UntypedNode::run();

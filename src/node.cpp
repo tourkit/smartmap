@@ -189,7 +189,7 @@
 
         PLOGV << type_name() << "::" << name();
 
-        if (onchange_cb) onchange_cb(node());
+        trigchange();
 
         if (parent_node) parent_node->update();
 
