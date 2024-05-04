@@ -234,17 +234,21 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
         }else{
 
-            std::string septxt  = m->name();
+            auto &m_= m;
 
-            septxt+= "(" + std::to_string(m->quantity()) + ")";
+            if (typeid(*m) == typeid(Ref)) m_ = m->members[0];
+
+            std::string septxt  = m_->name();
+
+            septxt+= "(" + std::to_string(m_->quantity()) + ")";
 
             ImGui::SeparatorText(septxt.c_str());
 
-            if (draw_guis(buff, m, offset)) has_changed = true;
+            if (draw_guis(buff, m_, offset)) has_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
-            //     // s->remove(m->name()); // TOdoFIX
+            //     // s->remove(m_->name()); // TOdoFIX
             //     has_changed = true;
             // }
 

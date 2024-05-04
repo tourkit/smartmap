@@ -59,9 +59,8 @@ Model* DrawCall::add(File* f) {
 
 bool DrawCall::remove(Model* model){
 
-    PLOGW << "TODO";
+    return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; });
 
-    return 1;
 
 }
 
