@@ -20,6 +20,8 @@ int main() {
 
     q1->add( engine.effectors->child("argb") );
 
+    PLOGD << l1->get()->s.print_recurse();
+
     engine.run();
 
 }
@@ -29,3 +31,6 @@ int main() {
 // default
 //range
 // etc
+
+
+// check for refs in remaping

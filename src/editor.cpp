@@ -658,7 +658,7 @@ void Editors::init() {
 
         if (ImGui::InputInt("quantity##qqqqlalal" , &model->s.quantity_v)) { node->update(); }
 
-        if (draw_guis(&engine.dynamic_ubo)) node->update();
+        if (draw_guis(&engine.dynamic_ubo)) engine.dynamic_ubo.upload();
 
         // for (auto x : model->effectors) {
 

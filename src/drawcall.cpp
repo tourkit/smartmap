@@ -57,12 +57,7 @@ Model* DrawCall::add(File* f) {
 
 }
 
-bool DrawCall::remove(Model* model){
-
-    return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; });
-
-
-}
+bool DrawCall::remove(Model* model){ return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; }); }
 
 void DrawCall::update() {
 
