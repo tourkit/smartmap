@@ -126,7 +126,7 @@ std::string Member::type_name() {
 
     if (type() == typeid(char)) return "char";
 
-    if (typed() || type() == typeid(Ref)) return members[0]->name();
+    if (isData() ||isRef()) return members[0]->name();
 
     return "unknown " + std::string(type().name());
 
@@ -148,7 +148,8 @@ uint8_t Member::count() {
 
 Member* Member::copy() { return new Member(*this); }
 
-bool Member::typed() { return false; }
+bool Member::isData() { return false; }
+bool Member::isRef() { return false; }
 
 std::string Member::print(int recurse) {
 
@@ -200,7 +201,7 @@ std::vector<Member*> Member::extract_definitions(std::vector<Member*> list) {
 
         for (auto x : x->extract_definitions()) ADD_UNIQUE( list, x );
 
-        if (x->type() == typeid(Struct) && !x->typed()) ADD_UNIQUE( list, x );
+        if (x->type() == typeid(Struct) && !x->isData()) ADD_UNIQUE( list, x );
 
     }
 
@@ -213,13 +214,13 @@ std::string Member::print_recurse(int recurse) {
     std::string str;
 
     auto& members_ = members;
-    // if (members.size() == 1 && !typed() && members[0]->members.size() && members[0]->members[0]->typed()) members_ = members[0]->members;
+    // if (members.size() == 1 && !isData() && members[0]->members.size() && members[0]->members[0]->isData()) members_ = members[0]->members;
 
     for (auto m : members_) {
 
-        if (m->typed() || (typeid(*m) == typeid(Ref)) ) {
+        if ( m->isData() || m->isRef() ) {
 
-            if (typeid(*m) == typeid(Ref) && m->members.size()) str += camel(m->type_name());
+            if (m->isRef() && m->members.size()) str += camel(m->type_name());
 
             else str += m->type_name();
 

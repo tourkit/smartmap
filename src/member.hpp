@@ -60,7 +60,8 @@ struct Member {
 
     virtual Member* copy();
 
-    virtual bool typed();
+    virtual bool isData();
+    virtual bool isRef();
 
     virtual std::string print(int recurse = 0);
 

@@ -46,10 +46,10 @@ Struct::~Struct(){
 
     }
 
-    // delete typed() a.k.a Data members
+    // delete isData() a.k.a Data members
     for (auto x : members) {
 
-        if (x->typed()){
+        if (x->isData()){
 
             delete x;
 
@@ -219,7 +219,7 @@ uint32_t Struct::size() {
     if (
 
         members.size() == 1 &&
-        members[0]->typed()&&
+        members[0]->isData()&&
         !members[0]->name().length()
 
     ) return members[0]->size();
@@ -229,7 +229,7 @@ uint32_t Struct::size() {
 }
 
 
-std::type_index Struct::type()  { if (typed()) { return members[0]->type(); } return Member::type(); }
+std::type_index Struct::type()  { if (isData()) { return members[0]->type(); } return Member::type(); }
 
 Member* Struct::copy()  { return new Struct(*this); }
 
@@ -256,7 +256,7 @@ void Struct::hard_delete() {
 
         m->hard_delete();
 
-        if (!m->typed()) delete m;
+        if (!m->isData()) delete m;
 
         // members erase m
         members.erase(std::find(members.begin(), members.end(), m));

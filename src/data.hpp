@@ -48,7 +48,7 @@ struct Data : Member {
 
     uint32_t size() override { return sizeof(T); }
 
-    bool typed() override { return true; }
+    bool isData() override { return true; }
 
     Member* copy() override { return new Data<T>(*this); }
 

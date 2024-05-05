@@ -76,5 +76,6 @@ struct Ref : Struct {
 
     Member* copy() override { return new Ref(*this); }
 
+    bool isRef() override { return true; }
 
 };

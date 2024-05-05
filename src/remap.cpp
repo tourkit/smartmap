@@ -12,7 +12,7 @@ void Remap::extract(Member *s) {
 
     for (auto m : s->members) {
 
-        if (m->typed()) {
+        if (m->isData()) {
 
 
             auto cc = m->count();

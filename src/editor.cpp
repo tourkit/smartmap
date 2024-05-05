@@ -56,12 +56,12 @@ namespace ImGui {
 
 static void draw_definition(Member *member, int offset = 0, int depth = 0) {
 
-    if (typeid(*member) == typeid(Ref)) {
+    if (member->isRef()) {
         member = member->members[0];
         }
     std::vector<float> range;
 
-    if (member->typed()) {
+    if (member->isData()) {
 
         range.resize(2);
 
@@ -83,7 +83,7 @@ static void draw_definition(Member *member, int offset = 0, int depth = 0) {
 
     }
 
-    ImGui::TextX(std::string(!member->typed() ? "struct" : member->type_name()) + " " + member->name(), offset, member->footprint(), depth,range);
+    ImGui::TextX(std::string(!member->isData() ? "struct" : member->type_name()) + " " + member->name(), offset, member->footprint(), depth,range);
 
     for (auto m : member->members) {
 
@@ -172,7 +172,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
          member_count = 0;
 
         }
-    else if (typeid(*member) == typeid(Ref)) member = member->members[0];
+    else if (member->isRef()) member = member->members[0];
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
@@ -192,7 +192,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
     for (auto& m : member->members) {
 
-        if (m->typed()) {
+        if (m->isData()) {
 
                 static int t_range_i = 65535;
                 static float t_range_f = 1.0f;
@@ -291,7 +291,7 @@ void Editors::init() {
 
             remap->s->each([&](Member* m, uint32_t offset) {
 
-                 if (m->typed()) {
+                 if (m->isData()) {
 
                     ImGui::TableNextRow();
 

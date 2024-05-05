@@ -37,7 +37,7 @@ void  Buffer::post_change(std::vector<Member*> addeds) {
 
             if (m == added) {
 
-                if (typeid(*m) == typeid(Ref)) m = m->members[0];
+                if (m->isRef()) m = m->members[0];
 
                 for (auto m_ : m->members) {
 
@@ -147,7 +147,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             remap(src_buffer, src_member_, found, src_offset_, this_offset_);
 
-            if (found->typed()) {
+            if (found->isData()) {
 
                 PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer.data[src_offset_] << " -> " << *(float*)&data[this_offset_];
 
