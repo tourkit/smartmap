@@ -155,6 +155,7 @@ static void draw_raw(void *data, size_t size) {
     }
 
     ImGui::EndDisabled();
+
     ImGui::SetWindowFontScale(1);
 
     ImGui::PopStyleVar(5);
@@ -408,7 +409,9 @@ void Editors::init() {
                 static std::chrono::_V2::system_clock::time_point frag_last_change;
                 if (frag_last_change != shader->last_change) {
 
+                    auto oldPos = frageditor.GetCursorPosition();
                     frageditor.SetText(shader->frag.src);
+	                frageditor.SetCursorPosition(oldPos);
 
                     frag_last_change = shader->last_change;
 
