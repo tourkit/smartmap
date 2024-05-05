@@ -29,7 +29,11 @@ int main() {
     // engine.gui->editors.push_back(new EditorWidget());
     engine.open("project2.json");
 
-    engine.run();
+    auto &x = Effector::get(engine.effectors->child("argb")->is_a<File>());
+    PLOGD << x.s.name();
+
+
+    // engine.run();
 
 }
 

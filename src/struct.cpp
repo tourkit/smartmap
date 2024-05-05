@@ -51,10 +51,6 @@ Struct::~Struct(){
 
         if (x->typed()){
 
-            PLOGD << typeid(x).name() <<"--"<< typeid(*x).name() <<"--"<< x->type().name() <<"--"<< x->type_name();
-
-            std::cout << "Ooooooooo";
-
             delete x;
 
         }

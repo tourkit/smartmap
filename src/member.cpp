@@ -76,7 +76,7 @@ std::set<Member*> Member::getTop(bool z) {
 
 void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m == this) a->update(); }
 
-void Member::name(std::string name_v) { this->name_v = name_v; }
+void Member::name(std::string name_v) { this->name_v = next_name(name_v); }
 
 std::string Member::name() { if (name_v.length()) return name_v; return "parentName" ; }
 
