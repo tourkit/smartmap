@@ -158,19 +158,19 @@ std::string Member::print(int recurse) {
 
 }
 
-void Member::each(std::function<void(Member*, uint32_t)> f, uint32_t offset) {
+void Member::each(std::function<void(Member*, uint32_t)> cb, uint32_t offset) {
 
     auto offset_ = offset;
 
     for (auto m : members) {
 
-        for (int i = 0; i < m->quantity(); i++) m->each(f, offset_+i*m->footprint());
+        for (int i = 0; i < m->quantity(); i++) m->each(cb, offset_+i*m->footprint());
 
         offset_ += m->footprint_all();
 
     }
 
-    f(this, offset);
+    cb(this, offset);
 
 }
 

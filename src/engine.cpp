@@ -201,6 +201,8 @@ void Engine::open(const char* file) {
             if (m.value.GetArray().Size() < 2) continue;
             if (!m.value[1].IsArray()) continue;
 
+            if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->s.quantity( m.value[2].GetInt() );
+
             for (auto &f : m.value[1].GetArray()) {
 
                 if (!f.IsString()) continue;
@@ -211,8 +213,6 @@ void Engine::open(const char* file) {
                 else PLOGE << "no effector: " << f.GetString();
 
             }
-
-            if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->s.quantity( m.value[2].GetInt() );
 
         }
 
