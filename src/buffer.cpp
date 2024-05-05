@@ -15,17 +15,7 @@ Buffer::Buffer(std::string name) : Struct(name) {
 
 }
 
-Buffer::Buffer(const Buffer& other) :
-
-    Struct( other ) ,
-
-    data( other.data )
-
-{
-
-
-
-}
+Buffer::Buffer(const Buffer& other) : Struct( other ) , data( other.data ) { }
 
 void Buffer::upload() { }
 
@@ -39,34 +29,36 @@ void  Buffer::pre_change() {
 
 }
 
-void  Buffer::post_change(std::vector<Member*> added) {
+void  Buffer::post_change(std::vector<Member*> addeds) {
 
-    for (auto x : added) {
+    for (auto added : addeds) { // only to set default I guess
 
         each([&](Member* m, uint32_t offset) {
 
-            if (m == x) {
+            if (m == added) {
 
-                for (auto x_ : m->members) {
+                if (typeid(*m) == typeid(Ref)) m = m->members[0];
 
-                    if (x_->default_val_ptr) {
+                for (auto m_ : m->members) {
 
-                            // if (x_->type() == typeid(glm::vec2)) {
+                    if (m_->default_val_ptr) {
 
-                            //     PLOGD  << "NID TOU SAITE : " << x_->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) x_->default_val_ptr).x ;
+                            // if (m_->type() == typeid(glm::vec2)) {
+
+                            //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) m_->default_val_ptr).x ;
                             // }
 
-                            // if (x_->type() == typeid(float)) {
+                            // if (m_->type() == typeid(float)) {
 
-                            //     PLOGD  << "NID TOU SAITE : " << x_->name() << " @ " << offset << " - val : " << *(float*) x_->default_val_ptr ;
+                            //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val : " << *(float*) m_->default_val_ptr ;
 
                             // }
 
-                        memcpy(&data[offset], x_->default_val_ptr, x_->size());
+                        memcpy(&data[offset], m_->default_val_ptr, m_->size());
 
                     }
 
-                    offset += x_->footprint_all();
+                    offset += m_->footprint_all();
 
                 }
 
