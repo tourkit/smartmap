@@ -13,8 +13,39 @@ TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected)
 
 void TreeWidget::draw()  {
 
+  if (ImGui::BeginMenuBar()) {
+
+    if (ImGui::BeginMenu("new")) {
+
+        if (ImGui::MenuItem("node")) {
+
+            // Engine::getInstance().tree->add(new Node());
+
+        }
+
+
+        static bool demo = false;
+        if (demo) ImGui::ShowDemoWindow();
+        ImGui::Checkbox("demo", &demo);
+        if (ImGui::MenuItem("editor")) engine.gui->editors.push_back(new EditorWidget());
+
+        ImGui::EndMenu();
+    }
+
+    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*4);
+    std::string str = std::to_string((int)std::round(ImGui::GetIO().Framerate));
+    ImGui::TextUnformatted(str.c_str());
+
+    ImGui::EndMenuBar();
+
+  }
 
   ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
+
+
+
+
+
 
     if (!selected) selected = engine.tree;
 

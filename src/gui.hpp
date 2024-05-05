@@ -27,11 +27,11 @@ struct StringsBuffer {
 
   void create(std::vector<std::string> strings) {
 
-        destroy(); 
+        destroy();
 
-        size_t names_length = 0; 
-        
-        for (auto string:strings) names_length += string.size() + 1; 
+        size_t names_length = 0;
+
+        for (auto string:strings) names_length += string.size() + 1;
 
         if (!names_length) names_length+=1;
         buffer = new char[names_length+1];
@@ -49,7 +49,7 @@ struct StringsBuffer {
   }
 
   StringsBuffer() {}
-  
+
   StringsBuffer(std::vector<std::string> strings) { create(strings); }
 
 };
@@ -59,11 +59,9 @@ struct GLFWwindow;
 struct GUI {
 
   void *dragging = nullptr;
-  
+
   bool draw_gui = true;
 
-  bool demo = false;
-  
   GUI(GLFWwindow* window);
 
   ~GUI();
@@ -85,8 +83,10 @@ struct GUI {
     bool active = true;
 
     Window(std::string name) : name(name), uid(("window"+std::to_string(pool.size()))) { pool.push_back(this); }
-
+    virtual  ~Window() { std::erase_if(pool, [this](Window* w) { return w == this; }); }
     void drawFull();
+
+    virtual void close() { delete this; }
 
     virtual void draw() {}
     virtual void drawTree() { draw(); }

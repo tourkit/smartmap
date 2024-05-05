@@ -119,6 +119,7 @@ static void draw_raw(void *data, size_t size) {
 
     bool colorized = false;
 
+        ImGui::BeginDisabled();
     for (int member_count = 0; member_count < size; member_count++) {
 
 
@@ -136,7 +137,6 @@ static void draw_raw(void *data, size_t size) {
 
         ImGuiDataType_ datatype = ImGuiDataType_U8;
         ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, ((*(((uint8_t*)data)+member_count))/255.0f)*26);
-
         if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &ndata,  &cell_min,   &cell_max,   "")) {
 
 
@@ -153,6 +153,8 @@ static void draw_raw(void *data, size_t size) {
         if (colorized && (member_count == hovered_offset+hovered_size-1 || member_count == size-1)) { ImGui::PopStyleColor(); colorized= false; }
 
     }
+
+    ImGui::EndDisabled();
     ImGui::SetWindowFontScale(1);
 
     ImGui::PopStyleVar(5);
@@ -656,7 +658,7 @@ void Editors::init() {
 
         ImGui::Text(("effectorz " + std::to_string(model->effectors.size())).c_str());
 
-        if (ImGui::InputInt("quantity##qqqqlalal" , &model->s.quantity_v)) { node->update(); }
+        if (ImGui::InputInt("quantity##qqqqlalal" , &model->s.quantity_v)) { model->s.quantity(model->s.quantity_v); node->update(); }
 
         if (draw_guis(&engine.dynamic_ubo))engine.dynamic_ubo.upload();
 
@@ -749,6 +751,9 @@ void Editors::init() {
 /////// EditorWidget.hpp
 
 EditorWidget::EditorWidget() : GUI::Window("Editor")  {  }
+
+EditorWidget::~EditorWidget()  { std::erase_if(engine.gui->editors, [this](EditorWidget* e) { return e == this; }); }
+
 
 void EditorWidget::draw() {
 

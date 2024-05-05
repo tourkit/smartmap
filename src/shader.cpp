@@ -69,8 +69,6 @@ std::string ShaderProgram::Builder::frag() {
     str += "vec2 uv = UV;\n\n";
     str += "vec4 color = vec4(1);\n\n";
 
-    str += comment_line;
-
     if (effectors.size()) str += comment_line;
 
     str += header_fragment;

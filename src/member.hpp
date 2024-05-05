@@ -88,7 +88,7 @@ struct Member {
 
     std::vector<Member*> extract_definitions(std::vector<Member*> list = {});
 
-    std::string print_recurse(int recurse = -1);
+    std::string print_recurse(int recurse = -1, int depth = 0);
 
     std::string next_name(std::string name);
 

@@ -20,6 +20,7 @@ struct EditorWidget : GUI::Window {
     bool locked = false;
 
     EditorWidget();
+    ~EditorWidget();
 
     void draw() override;
 

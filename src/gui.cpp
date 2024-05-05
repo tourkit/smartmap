@@ -19,10 +19,13 @@ void GUI::Window::drawFull() { {
 
       bool p_open = true;
 
-      ImGuiWindowFlags  flag = 0;ImGuiWindowFlags_NoTitleBar;
+      ImGuiWindowFlags  flag = ImGuiWindowFlags_MenuBar;ImGuiWindowFlags_NoTitleBar;
 
       std::string str = name+"##"+uid;
+
       ImGui::Begin(str.c_str(), &p_open, flag);
+
+      if (!p_open) close();
 
 
 
@@ -133,35 +136,7 @@ void GUI::draw() {
 
   newframe();
 
-
-  if (ImGui::BeginMainMenuBar()) {
-
-      if (ImGui::BeginMenu("new")) {
-
-          if (ImGui::MenuItem("node")) {
-
-              // Engine::getInstance().tree->add(new Node());
-
-          }
-          ImGui::Checkbox("demo", &demo);
-          if (ImGui::MenuItem("editor")) editors.push_back(new EditorWidget());
-
-          ImGui::EndMenu();
-      }
-
-      ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*4);
-      std::string str = std::to_string((int)std::round(ImGui::GetIO().Framerate));
-      ImGui::TextUnformatted(str.c_str());
-
-      ImGui::EndMainMenuBar();
-
-  }
-
-
-
   if (draw_gui) {
-
-    if (demo) ImGui::ShowDemoWindow();
 
     for (auto window : Window::pool) { window->drawFull(); }
 

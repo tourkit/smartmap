@@ -21,3 +21,5 @@ int main() {
 // ~save
 
 // shader order
+
+// static Effector should  update on file update

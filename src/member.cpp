@@ -76,7 +76,7 @@ std::set<Member*> Member::getTop(bool z) {
 
 void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m == this) a->update(); }
 
-void Member::name(std::string name_v) { this->name_v = next_name(name_v); }
+void Member::name(std::string name_v) { this->name_v = name_v; }
 
 std::string Member::name() { if (name_v.length()) return name_v; return "parentName" ; }
 
@@ -209,14 +209,20 @@ std::vector<Member*> Member::extract_definitions(std::vector<Member*> list) {
 
 }
 
-std::string Member::print_recurse(int recurse) {
+std::string Member::print_recurse(int recurse, int depth) {
 
+    static const char* new_line = "\n";
+    static const char* tab = "\t";
+
+    if (false) { new_line = ""; tab = ""; }
+
+    std::string tab_str;
+    for (int i = 0 ; i < depth; i++) tab_str+=tab;
     std::string str;
 
-    auto& members_ = members;
-    // if (members.size() == 1 && !isData() && members[0]->members.size() && members[0]->members[0]->isData()) members_ = members[0]->members;
+    for (auto m : members) {
 
-    for (auto m : members_) {
+        if (m != members[0]) str += tab_str+tab;
 
         if ( m->isData() || m->isRef() ) {
 
@@ -228,7 +234,7 @@ std::string Member::print_recurse(int recurse) {
 
             if (recurse) {
 
-                auto m_str = m->print_recurse(recurse-1);
+                auto m_str = m->print_recurse(recurse-1, depth+1);
 
                 if (!m_str.length()) continue;
 
@@ -242,26 +248,26 @@ std::string Member::print_recurse(int recurse) {
 
         if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
 
-        // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(m);
-        // str  += " ( &" + ss.str() + " )";
-
         str += "; ";
+        str += new_line;
 
 
     }
 
     if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) {
 
-        str += " ";
+        str += tab_str+tab;
+        if (!new_line) str += " ";
         str += (members[0]->type() == typeid(int) ? "int" : "float");
         str += " stride";
-        str += std::to_string(i) + ";";
+        str += std::to_string(i) + "; " + new_line;
 
     }
 
     if (!str.length()) return "";
 
-    return "struct " + camel(name())  + " { " + str + "}";
+
+    return "struct " + camel(name())  + " { " + new_line+new_line + tab_str +tab+ str + new_line + tab_str + "}";
 
 }
 
