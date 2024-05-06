@@ -162,7 +162,7 @@ void Engine::open(const char* file) {
 
         auto info = l.value.GetArray();
 
-        int width = 0, height = 0;
+        int width = window.width, height = window.height;
 
         int models_id = 0;
 
@@ -175,6 +175,8 @@ void Engine::open(const char* file) {
         }
 
         auto layer = stack->addOwnr<Layer>(width,height,l.name.IsString() ? l.name.GetString() : "");
+
+        if (!info.Size()) continue;
 
         for (auto it = info[models_id].GetObj().MemberBegin(); it != info[models_id].GetObj().MemberEnd(); ++it) {
 

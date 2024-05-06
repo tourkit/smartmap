@@ -98,7 +98,7 @@ void Callbacks::init() {
 
     ////////// ENGINE.HPP (and Stack)
 
-    NODE<Stack>::onadd<File>([](Node*_this,Node*node){ auto x = _this->addOwnr<Layer>(); x->get()->add(node->is_a<File>()); return x->node(); });
+    NODE<Stack>::onadd<File>([](Node*_this,Node*node){ auto x = _this->addOwnr<Layer>(); x->add(node); return x->node(); });
 
     ////////// DRAWCALL.HPP
 
@@ -118,7 +118,10 @@ void Callbacks::init() {
 
     NODE<Model>::onadd<File>([](Node*_this,Node*node){
 
-        auto x =  _this->is_a<Model>()->add( node->is_a<File>() )  ;
+        auto file = node->is_a<File>();
+        if (file->extension == "obj") { PLOGW << " WARUUUM :cant add OBJ in a model !!"; return _this;}
+
+        auto x =  _this->is_a<Model>()->add( file )  ;
 
         return _this->addPtr<Effector>( x )->node();
 

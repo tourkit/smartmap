@@ -32,6 +32,8 @@ struct DrawCall {
 
     bool remove(Model* model);
 
+    Effector* add(Effector* effector);
+
     Model* add(File* f);
 
 };

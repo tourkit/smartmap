@@ -44,9 +44,18 @@ void DrawCall::draw() {
 }
 
 
+Effector* DrawCall::add(Effector* effector) {
+
+    effector = effectors.emplace_back(std::make_shared<Effector>(effector->file, s.next_name(effector->file->name()))).get();
+
+    s.add(&effector->ref);
+
+    return effector;
+
+}
+
 Model* DrawCall::add(File* f) {
 
-    // if (f->extension == "glsl"){
 
     auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
 

@@ -111,7 +111,7 @@ public:
 
     std::string namesdf();
 
-    std::set<Node*> referings;
+    std::unordered_set<Node*> referings;
 
 
     auto begin() { return childrens.begin(); }
