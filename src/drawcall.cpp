@@ -48,7 +48,7 @@ Model* DrawCall::add(File* f) {
 
     // if (f->extension == "glsl"){
 
-    auto mod = models.insert(models.end(), std::make_shared<Model>(f, s.next_name(f->name())))->get();
+    auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
 
     s.add(&mod->s);
 

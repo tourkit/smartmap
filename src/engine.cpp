@@ -109,8 +109,6 @@ void Engine::open(const char* file) {
 
     project_filepath = file;
 
-    // for (auto e :engine.gui->editors) delete e; // editor widget deletion is fucked
-
     if (!json.loaded) {
 
         engine.gui->editors.push_back(new EditorWidget());

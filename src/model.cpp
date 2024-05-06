@@ -9,7 +9,7 @@ bool Model::remove(Effector* effector) { return std::erase_if( effectors, [&](st
 
 Effector* Model::add(File* file) {
 
-    auto effector = effectors.insert(effectors.end(), std::make_shared<Effector>(file, s.next_name(file->name())))->get();
+    auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
 
     s.add(&effector->ref);
 

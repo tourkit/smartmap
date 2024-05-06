@@ -23,6 +23,6 @@ struct Model {
 
     bool remove(Effector* effector);
 
-    std::set<std::shared_ptr<Effector>> effectors;
+    std::vector<std::shared_ptr<Effector>> effectors;
 
 };

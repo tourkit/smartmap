@@ -1,6 +1,7 @@
 #include "tree.hpp"
 #include "node.hpp"
 #include "engine.hpp"
+#include "drawcall.hpp"
 #include "imgui_internal.h"
 
 TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected) {
@@ -23,6 +24,7 @@ void TreeWidget::draw()  {
 
         }
 
+        if (ImGui::MenuItem("layer")) engine.stack->addOwnr<Layer>();
 
         static bool demo = false;
         if (demo) ImGui::ShowDemoWindow();

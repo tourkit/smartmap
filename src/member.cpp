@@ -5,6 +5,7 @@
 #include "log.hpp"
 #include "buffer.hpp"
 #include "struct.hpp"
+#include "utils.hpp"
 #include <cstdint>
 #include <unordered_set>
 #include <typeindex>
@@ -187,21 +188,14 @@ void Member::post_change(std::vector<Member*> added) {
 
 }
 
-static void ADD_UNIQUE( std::vector<Member*>& list, Member* m ) {
-
-    for (auto x : list) if (x == m) return;
-
-    list.push_back(m);
-
-}
-
 std::vector<Member*> Member::extract_definitions(std::vector<Member*> list) {
+
 
     for (auto x : members) {
 
-        for (auto x : x->extract_definitions()) ADD_UNIQUE( list, x );
+        for (auto x : x->extract_definitions()) ADD_UNIQUE<Member*>( list, x );
 
-        if (x->type() == typeid(Struct) && !x->isData()) ADD_UNIQUE( list, x );
+        if (x->type() == typeid(Struct) && !x->isData()) ADD_UNIQUE<Member*>( list, x );
 
     }
 

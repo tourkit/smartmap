@@ -26,9 +26,9 @@ struct DrawCall {
 
     virtual void draw();
 
-    std::set<std::shared_ptr<Model>> models;
+    std::vector<std::shared_ptr<Model>> models;
 
-    std::set<std::shared_ptr<Effector>> effectors;
+    std::vector<std::shared_ptr<Effector>> effectors;
 
     bool remove(Model* model);
 

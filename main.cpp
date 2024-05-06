@@ -5,6 +5,7 @@
                         */
 
 #include "engine.hpp"
+#include "model.hpp"
 
 int main() {
 
@@ -20,6 +21,6 @@ int main() {
 
 // ~save
 
-// shader order
-
 // static Effector should  update on file update
+
+// RE QUANTITY not atlas work duh
