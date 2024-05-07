@@ -178,55 +178,80 @@ void Engine::open(const char* file) {
 
         if (!info.Size()) continue;
 
-        for (auto it = info[models_id].GetObj().MemberBegin(); it != info[models_id].GetObj().MemberEnd(); ++it) {
+        for (auto it = info[models_id].MemberBegin(); it != info[models_id].MemberEnd(); ++it) {
 
-            auto &m = *it;
+            if (it->value.IsArray() && it->value.GetArray().Size()) { // is object
 
-            if (!m.value.IsArray()) continue;
+                if (
 
-            if (!m.value[0].IsString()) continue;
+                    !it->value.GetArray()[0].IsObject()
+                    || it->value.GetArray()[0].GetObj().MemberCount() != 1
+                    || it->value.GetArray()[0].GetObj().MemberBegin()->name.IsString()
+                    || it->value.GetArray()[0].GetObj().MemberBegin()->value.IsString()
 
-            auto model_f = engine.models->child(m.value[0].GetString()); if (!model_f)  { PLOGE << "no model : " << m.value[0].GetString(); continue; }
+                ) continue;
 
-            auto model = layer->add(model_f);
+                PLOGD << it->value.GetArray()[0].GetObj().MemberBegin()->name.GetString();
 
-            if (m.name.IsString()) model->name(m.name.GetString());
 
-            if (m.value.GetArray().Size() < 2) continue;
-            if (!m.value[1].IsArray()) continue;
-
-            if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->s.quantity( m.value[2].GetInt() );
-
-            for (auto &f : m.value[1].GetArray()) {
-
-                if (!f.IsString()) continue;
-
-                auto effector = effectors->child(f.GetString())->get<Effector>();
-
-                if (effector) model->add(effector);
-                else PLOGE << "no effector: " << f.GetString();
+                if (it->value.GetArray().Size() < 2) continue;
 
             }
-
         }
+        //     auto &m = *it;
 
-        if (l.value.GetArray().Size() > 1 && l.value.GetArray()[1].IsArray()) for (auto &m : l.value.GetArray()[1].GetArray()) {
+            // if (!m.value.IsArray()) continue;
 
-        //     if (!m.IsString()) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
+            // if (
 
-        //     auto *f = effectors->child( m.GetString() );
+            //     !m.value[0].IsObject()
+            //     || m.value[0].GetObj().ObjectEmpty()
+            //     || !m.value[0].GetObj().MemberBegin()->value.IsString()
+            //     || !m.value[0].GetObj().MemberBegin()->name.IsString()
 
-        //     if (!f) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
+            //  ) continue;
 
-        //     layer->add(f);
-        //     // PLOGD << "add " << m.GetString() << " to " << layer->name;
+            // auto model_f = engine.models->child(m.value[0].GetObj().MemberBegin()->value.GetString()); if (!model_f)  { PLOGE << "no model : " << m.value[0].GetObj().MemberBegin()->value.GetString(); continue; }
 
-        }
+            // auto model = layer->add(model_f);
+
+            // if (m.value[0].GetObj().MemberBegin()->name.IsString()) model->name(m.value[0].GetObj().MemberBegin()->name.GetString());
+
+            // if (m.value.GetArray().Size() < 2) continue;
+            // if (!m.value[1].IsArray()) continue;
+
+            // if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->s.quantity( m.value[2].GetInt() );
+
+            // for (auto &f : m.value[1].GetArray()) {
+
+            //     if (!f.IsString()) continue;
+
+            //     auto effector = effectors->child(f.GetString())->get<Effector>();
+
+            //     if (effector) model->add(effector);
+            //     else PLOGE << "no effector: " << f.GetString();
+
+            // }
+
+        // }
+
+        // if (l.value.GetArray().Size() > 1 && l.value.GetArray()[1].IsArray()) for (auto &m : l.value.GetArray()[1].GetArray()) {
+
+        // //     if (!m.IsString()) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
+
+        // //     auto *f = effectors->child( m.GetString() );
+
+        // //     if (!f) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
+
+        // //     layer->add(f);
+        // //     // PLOGD << "add " << m.GetString() << " to " << layer->name;
+
+        // }
 
 
 
 
-        layer->update();
+        // layer->update();
 
     }
 
@@ -265,7 +290,7 @@ void Engine::save(const char* file) {
     if (!json.document.HasMember("editors")) json.document.AddMember("editors", rapidjson::Value(rapidjson::kArrayType), json.document.GetAllocator());
     if (!json.document.HasMember("models")) json.document.AddMember("models", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("effectors")) json.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-    // if (!json.document.HasMember("layers")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
+    if (!json.document.HasMember("layers")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
 
     json.document["editors"].Clear();
 
@@ -290,7 +315,40 @@ void Engine::save(const char* file) {
     for (auto m : models->childrens) { json.document["models"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator()); }
 
     json.document["effectors"].RemoveAllMembers();
-    for (auto m : effectors->childrens) json.document["effectors"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
+    for (auto m : effectors->childrens) {
+
+        json.document["effectors"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
+
+    }
+
+    json.document["layers"].RemoveAllMembers();
+    for (auto m : stack->childrens) {
+
+        json.document["layers"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(rapidjson::kArrayType), json.document.GetAllocator());
+
+        rapidjson::Value new_layer;
+        new_layer.SetObject();
+
+        auto layer = m->is_a<Layer>();
+
+        for (auto model : layer->models) {
+
+            // rapidjson::Value myQuad;
+            // myQuad.SetArray();
+
+            // myQuad.PushBack(rapidjson::Value().SetString(model.get()->file->name().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
+            // myQuad.PushBack(rapidjson::Value().SetArray(), json.document.GetAllocator());
+
+            // for(auto e : model.get()->effectors) {
+
+            //     myQuad[1].PushBack(rapidjson::Value().SetString(e.get()->ref->name().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
+            // }
+
+            // myQuad.PushBack(2, json.document.GetAllocator());
+
+        }
+
+    }
 
 
 

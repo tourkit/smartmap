@@ -108,7 +108,16 @@ void Callbacks::init() {
 
     NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s);   layer->update(); });
 
-    NODE<Layer>::onadd<File>([](Node*_this,Node*node){ return _this->addPtr<Model>(_this->is_a<Layer>()->add(node->is_a<File>()))->node(); });
+    NODE<Layer>::onadd<File>([](Node*_this,Node*node){
+
+
+        auto file = node->is_a<File>();
+
+        if (file->extension == "glsl") return _this;//->addPtr<Effector>( _this->is_a<Layer>()->add(&Effector::get(file)) )->node();
+
+        return _this->addPtr<Model>(_this->is_a<Layer>()->add( file ))->node();
+
+        });
 
     ////////// MODEL.HPP
 
@@ -119,7 +128,8 @@ void Callbacks::init() {
     NODE<Model>::onadd<File>([](Node*_this,Node*node){
 
         auto file = node->is_a<File>();
-        if (file->extension == "obj") { PLOGW << " WARUUUM :cant add OBJ in a model !!"; return _this;}
+
+        if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return _this;}
 
         auto x =  _this->is_a<Model>()->add( file )  ;
 
