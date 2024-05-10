@@ -23,7 +23,9 @@ bool JSON::load(const char* data) {
 
     loaded = false;
 
-    document.Parse(data);
+    rapidjson::ParseResult result = document.Parse(data);
+
+    if (!result) PLOGE << rapidjson::GetParseError_En(result.Code()) << " @ " <<  result.Offset();
 
     if (document.IsNull()) {
 
