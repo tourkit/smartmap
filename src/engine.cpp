@@ -153,8 +153,23 @@ void Engine::open(const char* file) {
 
     }
 
-    // kassded la famille. pour toi public :) #inlineclub
-    for (auto &m : json["inputs"]) if (m.name.IsString() && m.value.IsArray()) if (!strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>(((m.value.IsString()) ? m.value.GetString() : nullptr ))->active(1);
+    for (auto &m : json["inputs"]) {
+
+        if (m.name.IsString() && m.value.IsArray()) {
+
+            if (!strcmp(m.name.GetString(),"artnet")) {
+
+                engine.inputs->addOwnr<Artnet>( m.value.IsString() ? m.value.GetString() : nullptr )->active(1);
+
+                if (!m.value.IsString()) PLOGW << "no artnet ip";
+
+            }
+
+        }
+
+    }
+
+
 
     for (auto &l : json["layers"]) {
 
