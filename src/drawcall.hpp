@@ -32,7 +32,7 @@ struct DrawCall {
 
     bool remove(Model* model);
 
-    Effector* add(Effector* effector);
+    Effector* addEffector(File* f);
 
     Model* add(File* f);
 

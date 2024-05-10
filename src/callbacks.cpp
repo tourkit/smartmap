@@ -110,10 +110,9 @@ void Callbacks::init() {
 
     NODE<Layer>::onadd<File>([](Node*_this,Node*node){
 
-
         auto file = node->is_a<File>();
 
-        if (file->extension == "glsl") return _this;//->addPtr<Effector>( _this->is_a<Layer>()->add(&Effector::get(file)) )->node();
+        if (file->extension == "glsl") return _this->addPtr<Effector>( _this->is_a<Layer>()->addEffector(file) )->node();
 
         return _this->addPtr<Model>(_this->is_a<Layer>()->add( file ))->node();
 

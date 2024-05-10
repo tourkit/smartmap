@@ -44,9 +44,9 @@ void DrawCall::draw() {
 }
 
 
-Effector* DrawCall::add(Effector* effector) {
+Effector* DrawCall::addEffector(File* file) {
 
-    effector = effectors.emplace_back(std::make_shared<Effector>(effector->file, s.next_name(effector->file->name()))).get();
+    auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
 
     s.add(&effector->ref);
 
@@ -55,7 +55,6 @@ Effector* DrawCall::add(Effector* effector) {
 }
 
 Model* DrawCall::add(File* f) {
-
 
     auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
 

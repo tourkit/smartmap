@@ -53,7 +53,13 @@ std::string ShaderProgram::Builder::frag() {
 
     std::set<File*> effectors;
 
-    if (dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) effectors.insert(effector->file);
+    if (dc) {
+
+        for (auto &model : dc->models) for (auto &effector : model.get()->effectors) effectors.insert(effector->file);
+
+        for (auto &effector : dc->effectors) effectors.insert(effector->file);
+
+    }
 
     for (auto file : effectors)  str += Effector::get(file).s.print_recurse()+";\n\n";
 
@@ -120,6 +126,22 @@ std::string ShaderProgram::Builder::frag() {
 
         model_id++;
     }
+
+    if (dc) for (auto &effector : dc->effectors) {
+
+        std::string arg_str;
+
+        for (auto &arg : Effector::get(effector.get()->file).args) {
+
+            arg_str += dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
+
+        }
+
+        arg_str.resize(arg_str.size()-2);
+
+        str += "\t"+effector->file->name()+"("+arg_str+");\n";
+    }
+
 
     str += "} ";
 

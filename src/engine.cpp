@@ -103,6 +103,22 @@ void Engine::run() {
 
 }
 
+static void addEffectors(rapidjson::Value &v, Node* node) {
+
+    if (!v.IsObject()) return;
+
+    for (auto &e : v.GetObj()) {
+
+        if (!e.value.IsString()) continue;
+
+        auto effector = engine.effectors->child(e.value.GetString())->get<Effector>();
+
+        if (effector) node->add(effector)->name(e.value.GetString()); else PLOGE << "no effector: " << e.value.GetString();
+
+    }
+
+}
+
 void Engine::open(const char* file) {
 
     json.load(File(file).data.data());
@@ -191,82 +207,35 @@ void Engine::open(const char* file) {
 
         auto layer = stack->addOwnr<Layer>(width,height,l.name.IsString() ? l.name.GetString() : "");
 
-        if (!info.Size()) continue;
+        if (info.Size() <= models_id) continue;
 
-        for (auto it = info[models_id].MemberBegin(); it != info[models_id].MemberEnd(); ++it) {
+        while (info[models_id].IsArray()) {
 
-            if (it->value.IsArray() && it->value.GetArray().Size()) { // is object
+            if (models_id == info.Size()) break;
 
-                if (
+            auto nm = info[models_id++].GetArray();
 
-                    !it->value.GetArray()[0].IsObject()
-                    || it->value.GetArray()[0].GetObj().MemberCount() != 1
-                    || it->value.GetArray()[0].GetObj().MemberBegin()->name.IsString()
-                    || it->value.GetArray()[0].GetObj().MemberBegin()->value.IsString()
+            if (!nm.Size() || !nm[0].IsObject() || !nm[0].GetObj().MemberCount() || !nm[0].GetObj().MemberBegin()->value.IsString()) continue;
 
-                ) continue;
+            auto model_f = engine.models->child(nm[0].GetObj().MemberBegin()->value.GetString());
 
-                PLOGD << it->value.GetArray()[0].GetObj().MemberBegin()->name.GetString();
+            if (!model_f)  { PLOGE << "no model : " << nm[0].GetObj().MemberBegin()->value.GetString(); continue; }
 
+            auto model = layer->add(model_f);
 
-                if (it->value.GetArray().Size() < 2) continue;
+            if (nm[nm.Size()-1].IsInt()) model->is_a<Model>()->s.quantity(nm[nm.Size()-1].GetInt());
 
-            }
+            model->name( nm[0].GetObj().MemberBegin()->name.GetString() );
+
+            if (nm.Size() == 1 || !nm[1].IsObject() || !nm[1].GetObj().MemberCount()) continue;
+
+            addEffectors( nm[1], model );
+
         }
-        //     auto &m = *it;
 
-            // if (!m.value.IsArray()) continue;
+        addEffectors( info[info.Size()-1], layer->node());
 
-            // if (
-
-            //     !m.value[0].IsObject()
-            //     || m.value[0].GetObj().ObjectEmpty()
-            //     || !m.value[0].GetObj().MemberBegin()->value.IsString()
-            //     || !m.value[0].GetObj().MemberBegin()->name.IsString()
-
-            //  ) continue;
-
-            // auto model_f = engine.models->child(m.value[0].GetObj().MemberBegin()->value.GetString()); if (!model_f)  { PLOGE << "no model : " << m.value[0].GetObj().MemberBegin()->value.GetString(); continue; }
-
-            // auto model = layer->add(model_f);
-
-            // if (m.value[0].GetObj().MemberBegin()->name.IsString()) model->name(m.value[0].GetObj().MemberBegin()->name.GetString());
-
-            // if (m.value.GetArray().Size() < 2) continue;
-            // if (!m.value[1].IsArray()) continue;
-
-            // if (m.value.Size() > 2 && m.value[2].IsInt()) model->is_a<Model>()->s.quantity( m.value[2].GetInt() );
-
-            // for (auto &f : m.value[1].GetArray()) {
-
-            //     if (!f.IsString()) continue;
-
-            //     auto effector = effectors->child(f.GetString())->get<Effector>();
-
-            //     if (effector) model->add(effector);
-            //     else PLOGE << "no effector: " << f.GetString();
-
-            // }
-
-        // }
-
-        // if (l.value.GetArray().Size() > 1 && l.value.GetArray()[1].IsArray()) for (auto &m : l.value.GetArray()[1].GetArray()) {
-
-        // //     if (!m.IsString()) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
-
-        // //     auto *f = effectors->child( m.GetString() );
-
-        // //     if (!f) PLOGW << "WAAAAAAAAAAAAAAAAAAAA------";
-
-        // //     layer->add(f);
-        // //     // PLOGD << "add " << m.GetString() << " to " << layer->name;
-
-        // }
-
-
-
-
-        // layer->update();
+        layer->update();
 
     }
 
