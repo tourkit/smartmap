@@ -26,7 +26,6 @@ add_executable( smartmap
   src/messagequeue.cpp
 
   src/dmx.cpp
-  src/artnet.cpp
   src/ndi.cpp
 
   src/buffer.cpp
@@ -74,7 +73,9 @@ add_executable( smartmap
   vendors/ofxLibArtnet/artnet/receive.c
   vendors/ofxLibArtnet/artnet/tod.c
   vendors/ofxLibArtnet/artnet/transmit.c
-  vendors/ofxLibArtnet/ofxLibArtnet.cpp)
+  vendors/ofxLibArtnet/ofxLibArtnet.cpp
+  src/artnet.cpp
+  )
 
 target_compile_features(smartmap PUBLIC cxx_std_20)
 set_target_properties(smartmap PROPERTIES CXX_EXTENSIONS OFF)

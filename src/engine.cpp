@@ -171,7 +171,7 @@ void Engine::open(const char* file) {
 
     for (auto &m : json["inputs"]) {
 
-        if (m.name.IsString() && m.value.IsArray()) {
+        if (m.name.IsString() && m.value.IsString()) {
 
             if (!strcmp(m.name.GetString(),"artnet")) {
 

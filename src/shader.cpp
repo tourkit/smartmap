@@ -116,9 +116,9 @@ std::string ShaderProgram::Builder::frag() {
                 str += "\t"+effector->file->name()+"("+arg_str+");\n";
             }
 
-            str += "\ttic();\n\n";
-            // if (instance < model.get()->s.quantity()-1) str += "\ttic();\n\n";
-            // else str += "\ttac();\n\n";
+            // str += "\ttic();\n\n";
+            if (instance < model.get()->s.quantity()-1) str += "\ttic();\n\n";
+            else str += "\ttac();\n\n";
 
         }
 
@@ -140,6 +140,7 @@ std::string ShaderProgram::Builder::frag() {
         arg_str.resize(arg_str.size()-2);
 
         str += "\t"+effector->file->name()+"("+arg_str+");\n";
+        str += "\ttac();\n\n";
     }
 
 

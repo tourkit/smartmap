@@ -474,6 +474,23 @@ e_cleanup:
 e_return :
   return ret;
 }
+/*
+ * list interfaces.
+ */
+iface_t* artnet_list_ifaces() {
+
+  iface_t *ift_head = NULL;
+
+  get_ifaces(&ift_head);
+
+  return ift_head;
+
+}
+void artnet_free_ifaces(iface_t* ift_head) {
+
+  free_ifaces(ift_head);
+
+}
 
 
 /*
@@ -548,7 +565,7 @@ int artnet_net_start(node n) {
       return ARTNET_ENET;
     }
 #else
-// allow reusing 6454 port _ 
+// allow reusing 6454 port _
     if (setsockopt(sock,
                    SOL_SOCKET,
                    SO_REUSEPORT,
@@ -762,4 +779,3 @@ const char *artnet_net_last_error() {
   return strerror(errno);
 #endif
 }
-

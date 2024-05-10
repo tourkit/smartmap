@@ -711,7 +711,32 @@ void Editors::init() {
 
     Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); Editor<VBO>::cb(node, &dc->vbo); });
 
-    Editor<Layer>([](Node* node, Layer *layer){ Editor<Texture>::cb(node, layer->fb.texture);Editor<DrawCall>::cb(node, layer); });
+    Editor<Layer>([](Node* node, Layer *layer){
+
+        if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
+
+            if (ImGui::BeginTabItem("main")) {
+
+                Editor<Texture>::cb(node, layer->fb.texture);
+
+                ImGui::EndTabItem();
+
+            }
+            if (ImGui::BeginTabItem("1st pass")) {
+
+                Editor<Texture>::cb(node, layer->feedback);
+
+                ImGui::EndTabItem();
+
+            }
+
+
+            ImGui::EndTabBar();
+
+        }
+
+
+    Editor<DrawCall>::cb(node, layer);  });
 
     ////////// Atlas.HPP
 
