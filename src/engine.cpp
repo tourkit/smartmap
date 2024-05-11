@@ -201,7 +201,7 @@ void Engine::open(const char* file) {
 
             width = info[0].GetInt(); height = info[1].GetInt();
 
-            if (info[2].IsObject()) models_id = 2;
+            if (info[2].IsArray()) models_id = 2;
 
         }
 
@@ -306,36 +306,42 @@ void Engine::save(const char* file) {
     }
 
     json.document["layers"].RemoveAllMembers();
+    rapidjson::Document::AllocatorType& allocator = json.document.GetAllocator();
     for (auto m : stack->childrens) {
 
-        json.document["layers"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(rapidjson::kArrayType), json.document.GetAllocator());
+        auto &arr = json.document["layers"];
 
-        rapidjson::Value new_layer;
-        new_layer.SetObject();
+        auto  lay = rapidjson::Value(rapidjson::kArrayType);
 
         auto layer = m->is_a<Layer>();
+        lay.PushBack(layer->fb.width, allocator);
+        lay.PushBack(layer->fb.height, allocator);
 
         for (auto model : layer->models) {
 
-            // rapidjson::Value myQuad;
-            // myQuad.SetArray();
+            auto new_model = rapidjson::Value(rapidjson::kArrayType);
 
-            // myQuad.PushBack(rapidjson::Value().SetString(model.get()->file->name().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
-            // myQuad.PushBack(rapidjson::Value().SetArray(), json.document.GetAllocator());
+            auto name = rapidjson::Value(rapidjson::kObjectType);
+            name.AddMember( rapidjson::Value(model.get()->s.name().c_str(), allocator), rapidjson::Value(model.get()->file->name().c_str(), allocator), allocator );
+            new_model.PushBack( name, allocator );
 
-            // for(auto e : model.get()->effectors) {
+            auto effects = rapidjson::Value(rapidjson::kObjectType);
+            for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->name().c_str(), allocator), allocator );
+            new_model.PushBack( effects, allocator );
 
-            //     myQuad[1].PushBack(rapidjson::Value().SetString(e.get()->ref->name().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
-            // }
+            new_model.PushBack(model.get()->s.quantity(),allocator);
 
-            // myQuad.PushBack(2, json.document.GetAllocator());
+            lay.PushBack(new_model, allocator);
 
         }
 
+        auto effects = rapidjson::Value(rapidjson::kObjectType);
+        for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->name().c_str(), allocator), allocator );
+        lay.PushBack( effects, allocator );
+
+        arr.AddMember( rapidjson::Value(m->name().c_str(), allocator)  , lay, allocator );
+
     }
-
-
-
 
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);

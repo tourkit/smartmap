@@ -91,7 +91,18 @@ public:
     Node* onrun(std::function<void(Node*)> cb = nullptr);
 
     template <typename U>
-    U* is_a() { if (type() == typeid(U)) { return (U*)ptr_unisData(); }else { PLOGW << "not a " << boost::typeindex::type_id_with_cvr<U>().pretty_name();return nullptr; } }
+    U* is_a() {
+
+        auto x = is_a_nowarning<U>();
+
+        if (!x) PLOGW << "not a " << boost::typeindex::type_id_with_cvr<U>().pretty_name();
+
+        return x;
+
+    }
+
+    template <typename U>
+    U* is_a_nowarning() { if (type() == typeid(U)) return (U*)ptr_unisData(); else return nullptr;  }
 
     template <typename V>
     void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { auto isa = ((UntypedNode*)c)->is_a<V>(); if (isa) cb(c,isa); } }

@@ -127,20 +127,25 @@ std::string ShaderProgram::Builder::frag() {
         model_id++;
     }
 
-    if (dc) for (auto &effector : dc->effectors) {
+    if (dc) {
 
-        std::string arg_str;
+        for (auto &effector : dc->effectors) {
 
-        for (auto &arg : Effector::get(effector.get()->file).args) {
+            std::string arg_str;
 
-            arg_str += dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
+            for (auto &arg : Effector::get(effector.get()->file).args) {
 
+                arg_str += dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
+
+            }
+
+            arg_str.resize(arg_str.size()-2);
+
+            str += "\t"+effector->file->name()+"("+arg_str+");\n";
         }
 
-        arg_str.resize(arg_str.size()-2);
+        if (dc->effectors.size()) str += "\ttac();\n\n";
 
-        str += "\t"+effector->file->name()+"("+arg_str+");\n";
-        str += "\ttac();\n\n";
     }
 
 

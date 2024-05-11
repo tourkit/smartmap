@@ -154,9 +154,9 @@ void Callbacks::init() {
 
     NODE<Effector>::ondelete([](Node* node, Effector *effector) {
 
-        auto model = node->parent()->is_a<Model>();
+        auto model = node->parent()->is_a_nowarning<Model>();
 
-        if (!model) PLOGE << node->parent()->name() << " " << node->parent()->type_name();
+        if (!model) return node->parent()->is_a<Layer>()->removeEffector(effector);
 
         model->remove(effector);
 

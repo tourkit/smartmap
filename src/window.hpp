@@ -11,17 +11,21 @@
 
 
 #include "fps.hpp"
+#include "drawcall.hpp"
 
+
+struct FrameBuffer;
 
 struct Window {
 
     struct Display { uint16_t width, height, rate; };
+
     std::vector<Display> displays;
 
     GLFWwindow *id;
 
-    FPS fps; 
-    
+    FPS fps;
+
     bool fullscreen;
 
     bool stopped = false;
@@ -29,7 +33,7 @@ struct Window {
     uint16_t width, height, mouse_x, mouse_y, offset_x, offset_y, max_fps = 60;
 
     Window(uint16_t width, uint16_t height, uint16_t offset_x = 0, uint16_t offset_y = 0, bool fullscreen = false);
-    
+
     void setSize(uint16_t width = 0, uint16_t height = 0);
     void setPos(uint16_t offset_x = 0, uint16_t offset_y = 0);
     void updateSize();
@@ -39,8 +43,10 @@ struct Window {
 
     void render(std::function<void()> callback = [](){});
 
+    void draw(FrameBuffer *fb);
+
     void keypress();
-    
+
     std::function<void()> clickCallBack = []() { /*  PLOGD << "click"; */ };
 
     std::unordered_map<int, std::function<void(int)>> keypress_cbs;

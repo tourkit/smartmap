@@ -43,6 +43,12 @@ void DrawCall::draw() {
 
 }
 
+bool DrawCall::removeEffector(Effector* effector) {
+
+    return std::erase_if( effectors, [&](std::shared_ptr<Effector> e) { return e.get() == effector; });
+
+}
+
 
 Effector* DrawCall::addEffector(File* file) {
 
