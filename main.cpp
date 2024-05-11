@@ -8,6 +8,12 @@
 #include "model.hpp"
 #include "artnet.hpp"
 
+
+
+#include "ndi.hpp"
+
+
+
 int main() {
 
     engine.init();
@@ -28,7 +34,22 @@ int main() {
     engine.stack->childrens[0]->childrens[0]->referings.insert(r->node());
 
     r->get()->attr({{1}, {1}, {1}, {1}, {2}, {2}, {2}, {2}, {1}});
+
+auto layer = engine.stack->childrens[0]->is_a<Layer>();
+  // NDI::Sender ndi_sender(layer->fb.width, layer->fb.height);
+  //   engine.stack->childrens[0]->onrun([&](Node* n) {
+
+  //     auto layer = n->is_a<Layer>();
+  //     layer->fb.read();
+  //     ndi_sender.send(layer->fb.);
+
+  //   });
+
+
     engine.run();
+
+
+
 
 }
 

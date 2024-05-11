@@ -3,15 +3,41 @@
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
 
-Artnet::Artnet(const char* ip) {
+extern "C" {
 
-    artnet = artnet_new(ip, 0); // 1 for VERBOSE
+iface_t* artnet_list_ifaces();
+iface_t* artnet_list_ifaces_next(iface_t* ift);
+void artnet_free_ifaces(iface_t* ift);
+
+}
+
+Artnet::Artnet(std::string ip) {
+
+    std::string using_ip  = ip;
+
+    if (!ip.length()) {
+
+        auto y= artnet_list_ifaces();
+
+        for (auto ift = y; ift != NULL; ift = artnet_list_ifaces_next(ift)) {
+
+            ip = inet_ntoa(ift->ip_addr.sin_addr);
+
+            PLOGD << "available NIC : " << ip;
+
+            if ( ip[0] == 50 || ( ip[0] == 49 && ip[1] == 48 ) ) using_ip = ip;
+
+        }
+
+        if (!using_ip.length()) { PLOGW << "NO NETWORK INTERRFACE FOUND"; return; }
+
+         PLOGW << "using ip : " << using_ip;
+
+    }
+
+    artnet = artnet_new(using_ip.c_str(), 0); // 1 for VERBOSE
     if (!artnet) {
         PLOGE << "artnet_new ERROR: " << artnet_errstr;
-
-        // artnet_list_ifaces();
-
-artnet_new(ip, 1);
 
         return;
     }

@@ -53,6 +53,17 @@ typedef unsigned long in_addr_t;
 extern "C" {
 #endif
 
+enum { IFNAME_SIZE = 32 }; // 32 sounds a reasonable size
+
+typedef struct iface_s {
+  struct sockaddr_in ip_addr;
+  struct sockaddr_in bcast_addr;
+  int8_t hw_addr[ARTNET_MAC_SIZE];
+  char   if_name[IFNAME_SIZE];
+  struct iface_s *next;
+} iface_t;
+
+
 EXTERN int ARTNET_ADDRESS_NO_CHANGE;
 
 /**

@@ -169,23 +169,7 @@ void Engine::open(const char* file) {
 
     }
 
-    for (auto &m : json["inputs"]) {
-
-        if (m.name.IsString() && m.value.IsString()) {
-
-            if (!strcmp(m.name.GetString(),"artnet")) {
-
-                engine.inputs->addOwnr<Artnet>( m.value.IsString() ? m.value.GetString() : nullptr )->active(1);
-
-                if (!m.value.IsString()) PLOGW << "no artnet ip";
-
-            }
-
-        }
-
-    }
-
-
+    for (auto &m : json["inputs"]) if (m.name.IsString() && !strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>( m.value.IsString() ? m.value.GetString() : "" )->active(1);
 
     for (auto &l : json["layers"]) {
 

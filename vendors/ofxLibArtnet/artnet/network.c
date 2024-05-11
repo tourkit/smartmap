@@ -57,15 +57,7 @@ typedef SSIZE_T ssize_t;
 
 enum { INITIAL_IFACE_COUNT = 10 };
 enum { IFACE_COUNT_INC = 5 };
-enum { IFNAME_SIZE = 32 }; // 32 sounds a reasonable size
 
-typedef struct iface_s {
-  struct sockaddr_in ip_addr;
-  struct sockaddr_in bcast_addr;
-  int8_t hw_addr[ARTNET_MAC_SIZE];
-  char   if_name[IFNAME_SIZE];
-  struct iface_s *next;
-} iface_t;
 
 unsigned long LOOPBACK_IP = 0x7F000001;
 
@@ -484,6 +476,11 @@ iface_t* artnet_list_ifaces() {
   get_ifaces(&ift_head);
 
   return ift_head;
+
+}
+iface_t* artnet_list_ifaces_next(iface_t* ift) {
+
+  return ift->next;
 
 }
 void artnet_free_ifaces(iface_t* ift_head) {
