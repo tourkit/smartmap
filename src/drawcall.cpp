@@ -66,7 +66,7 @@ Model* DrawCall::add(File* f) {
 
     s.add(&mod->s);
 
-    vbo.pushFile(f, s.size()) ;
+    vbo.add(f, s.size()) ;
 
     vbo.upload();
 
@@ -98,7 +98,7 @@ void DrawCall::update() {
 
         vbo.reset();
 
-        for (auto &x : models) vbo.pushFile(x.get()->file, i++) ;
+        for (auto &x : models) vbo.add(x.get()->file, i++) ;
 
         vbo.upload();
 

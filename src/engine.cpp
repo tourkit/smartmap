@@ -45,6 +45,8 @@ void Engine::init() {
     debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); n->name("Debug - " + std::to_string( fps ) + " fps"); if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
+    debug->addPtr<Window>(&window);
+    debug->addOwnr<File>("project2.json");
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
     debug->addPtr<Atlas>(atlas);
@@ -156,7 +158,6 @@ void Engine::open(const char* file) {
         n->get()->path = engine.project_filepath;
 
         n->name(n->get()->name_v);
-
     }
 
     if (true) for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
@@ -187,35 +188,37 @@ void Engine::open(const char* file) {
 
             width = info[0].GetInt(); height = info[1].GetInt();
 
-            if (info[2].IsArray()) models_id = 2;
+            if (info[2].IsObject()) models_id = 2;
 
         }
 
         auto layer = stack->addOwnr<Layer>(width,height,l.name.IsString() ? l.name.GetString() : "");
 
-        if (info.Size() <= models_id) continue;
+        if (info.Size() <= models_id || !info[models_id].IsObject()) continue;
 
-        while (info[models_id].IsArray()) {
+        for (auto &model : info[models_id].GetObj()) {
 
-            if (models_id == info.Size()) break;
+            if (!model.name.IsString() || !model.value.IsArray()) continue;
 
-            auto nm = info[models_id++].GetArray();
+            auto info = model.value.GetArray();
 
-            if (!nm.Size() || !nm[0].IsObject() || !nm[0].GetObj().MemberCount() || !nm[0].GetObj().MemberBegin()->value.IsString()) continue;
+            if (!info.Size() || !info[0].IsString()) continue;
 
-            auto model_f = engine.models->child(nm[0].GetObj().MemberBegin()->value.GetString());
+            auto model_file = engine.models->child( info[0].GetString() );
 
-            if (!model_f)  { PLOGE << "no model : " << nm[0].GetObj().MemberBegin()->value.GetString(); continue; }
+            if (!model_file) { PLOGE << "no model : " << info[0].GetString(); continue; }
 
-            auto model = layer->add(model_f);
+            auto new_model = layer->add(model_file)->get<Model>();
 
-            if (nm[nm.Size()-1].IsInt()) model->is_a<Model>()->s.quantity(nm[nm.Size()-1].GetInt());
+            new_model->name(model.name.GetString());
 
-            model->name( nm[0].GetObj().MemberBegin()->name.GetString() );
+            if (info.Size() < 2 || !info[1].IsInt()) continue;
 
-            if (nm.Size() == 1 || !nm[1].IsObject() || !nm[1].GetObj().MemberCount()) continue;
+            new_model->get()->s.quantity(info[1].GetInt());
 
-            addEffectors( nm[1], model );
+            if (info.Size() < 3 || !info[2].IsObject()) continue;
+
+            addEffectors( info[2], new_model->node() );
 
         }
 
@@ -303,23 +306,25 @@ void Engine::save(const char* file) {
         lay.PushBack(layer->fb.width, allocator);
         lay.PushBack(layer->fb.height, allocator);
 
+        auto  models = rapidjson::Value(rapidjson::kObjectType);
+
         for (auto model : layer->models) {
 
             auto new_model = rapidjson::Value(rapidjson::kArrayType);
 
-            auto name = rapidjson::Value(rapidjson::kObjectType);
-            name.AddMember( rapidjson::Value(model.get()->s.name().c_str(), allocator), rapidjson::Value(model.get()->file->name().c_str(), allocator), allocator );
-            new_model.PushBack( name, allocator );
+            new_model.PushBack(rapidjson::Value(model.get()->file->name().c_str(), allocator), allocator);
+
+            new_model.PushBack(model.get()->s.quantity(),allocator);
 
             auto effects = rapidjson::Value(rapidjson::kObjectType);
             for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->name().c_str(), allocator), allocator );
             new_model.PushBack( effects, allocator );
 
-            new_model.PushBack(model.get()->s.quantity(),allocator);
-
-            lay.PushBack(new_model, allocator);
+            models.AddMember(rapidjson::Value(model.get()->s.name().c_str(), allocator), new_model, allocator);
 
         }
+
+        lay.PushBack(models, allocator);
 
         auto effects = rapidjson::Value(rapidjson::kObjectType);
         for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->name().c_str(), allocator), allocator );

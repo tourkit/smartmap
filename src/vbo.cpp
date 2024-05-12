@@ -126,7 +126,7 @@ void VBO::draw(int count) {
 }
 
 
-bool VBO::pushFile(File* file, int id) {
+bool VBO::add(File* file, int id) {
 
  Assimp::Importer importer;
 

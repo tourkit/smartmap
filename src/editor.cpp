@@ -396,6 +396,29 @@ void Editors::init() {
 
     // });
 
+    ////////// WINDOW.HPP
+
+    Editor<Window>([](Node* node, Window *window){
+
+
+        int x = 0;
+
+        ImGui::Combo("source", &x, "layer1");
+
+
+        if (ImGui::InputScalarN("position###winpos", ImGuiDataType_U16,  &window->offset_x, 2)) {
+
+            window->setPos( window->offset_x, window->offset_y );
+
+        }
+        if (ImGui::InputScalarN("size###winsize", ImGuiDataType_U16,  &window->width, 2)) {
+
+            window->setSize( window->width, window->height );
+
+        }
+
+    });
+
     ////////// SHADER.HPP
 
     Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){

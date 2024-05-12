@@ -4,13 +4,17 @@
 #include "log.hpp"
 #include "gui.hpp"
 
+#include "shader.hpp"
+#include "texture.hpp"
+#include "vbo.hpp"
+
 #include <chrono>
 #include <thread>
 
 
 Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offset_y, bool fullscreen)
 
-    : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) , fps("Window") {
+    : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) /*, fps("Window")*/ {
 
     int8_t windows_border = 0;
     int8_t window_on_top = 1;
@@ -74,6 +78,15 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
     if (!fullscreen)setPos(offset_x, offset_y);
 
     glEnable(GL_BLEND);
+
+    std::string frag;
+    std::string vert;
+    shader = new ShaderProgram(frag,vert);
+
+    // vbo = new VBO();
+    // vbo->add();
+
+
 }
 
 static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { glViewport(0, 0, width, height); }
@@ -145,6 +158,13 @@ void Window::render(std::function<void()> callback) {
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
     callback();
+
+    if (texture) {
+
+        texture->bind();
+        shader->use();
+        vbo->draw();
+    }
 
     glfwSwapBuffers(id);
 }

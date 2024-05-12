@@ -10,11 +10,11 @@
 #include <GLFW/glfw3.h>
 
 
-#include "fps.hpp"
-#include "drawcall.hpp"
+// #include "fps.hpp"
+// #include "drawcall.hpp"
 
 
-struct FrameBuffer;
+struct FrameBuffer; struct ShaderProgram; struct VBO; struct Texture;
 
 struct Window {
 
@@ -24,7 +24,7 @@ struct Window {
 
     GLFWwindow *id;
 
-    FPS fps;
+    // FPS fps;
 
     bool fullscreen;
 
@@ -50,6 +50,13 @@ struct Window {
     std::function<void()> clickCallBack = []() { /*  PLOGD << "click"; */ };
 
     std::unordered_map<int, std::function<void(int)>> keypress_cbs;
+
+
+private:
+
+    ShaderProgram* shader;
+    VBO* vbo;
+    Texture* texture = nullptr;
 
 };
 

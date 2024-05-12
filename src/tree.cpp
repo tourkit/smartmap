@@ -12,7 +12,14 @@ TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected)
 
  }
 
+
+
+
+static bool demodemo = false;
+
 void TreeWidget::draw()  {
+
+if (demodemo) ImGui::ShowDemoWindow();
 
 
 
@@ -24,8 +31,6 @@ void TreeWidget::draw()  {
 
     if (selected != engine.tree) name = selected->name();
     else name = "Tree";
-
-
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 24);
     ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str), ImGuiInputTextFlags_EnterReturnsTrue);
@@ -85,8 +90,6 @@ void TreeWidget::drawChildrens(Node* node) {
 bool TreeWidget::TreeViewNode(Node* node) {
 using namespace ImGui;
 
-static bool demo = false;
-if (demo) ImGui::ShowDemoWindow();
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick ;
 
@@ -198,7 +201,7 @@ if (demo) ImGui::ShowDemoWindow();
 
         if (ImGui::MenuItem("editor")) engine.gui->editors.push_back(new EditorWidget());
 
-        ImGui::Checkbox("demo", &demo);
+        ImGui::Checkbox("demo", &demodemo);
 
         ImGui::EndPopup();
     }
