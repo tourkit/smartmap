@@ -6,7 +6,7 @@
 
 TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected) {
 
-        memset( &search_str[0], 0, sizeof(search_str) );
+    memset( &search_str[0], 0, sizeof(search_str) );
 
     strncpy( &search_str[0], &filter_str[0], sizeof(filter_str) );
 
@@ -14,46 +14,23 @@ TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected)
 
 void TreeWidget::draw()  {
 
-  if (ImGui::BeginMenuBar()) {
 
-    if (ImGui::BeginMenu("new")) {
 
-        if (ImGui::MenuItem("node")) {
-
-            // Engine::getInstance().tree->add(new Node());
-
-        }
-
-        if (ImGui::MenuItem("layer")) engine.stack->addOwnr<Layer>();
-
-        static bool demo = false;
-        if (demo) ImGui::ShowDemoWindow();
-        ImGui::Checkbox("demo", &demo);
-        if (ImGui::MenuItem("editor")) engine.gui->editors.push_back(new EditorWidget());
-
-        ImGui::EndMenu();
-    }
-
-    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::GetStyle().ItemSpacing.x*4);
-    std::string str = std::to_string((int)std::round(ImGui::GetIO().Framerate));
-    ImGui::TextUnformatted(str.c_str());
-
-    ImGui::EndMenuBar();
-
-  }
 
   ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
 
 
-
-
-
-
     if (!selected) selected = engine.tree;
 
-    ImGui::PushItemWidth(-1);
-    ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str), ImGuiInputTextFlags_EnterReturnsTrue);
+    if (selected != engine.tree) name = selected->name();
+    else name = "Tree";
 
+
+
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 24);
+    ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str), ImGuiInputTextFlags_EnterReturnsTrue);
+    ImGui::SameLine();
+    if (ImGui::Button("+")) engine.gui->editors.push_back(new EditorWidget());
     if (ImGui::IsItemHovered()) {
 
         if (!strcmp(&search_str[0], &filter_str[0])) {
@@ -107,6 +84,9 @@ void TreeWidget::drawChildrens(Node* node) {
 
 bool TreeWidget::TreeViewNode(Node* node) {
 using namespace ImGui;
+
+static bool demo = false;
+if (demo) ImGui::ShowDemoWindow();
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_SpanFullWidth | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick ;
 
@@ -216,8 +196,13 @@ using namespace ImGui;
 
         if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));
 
+        if (ImGui::MenuItem("editor")) engine.gui->editors.push_back(new EditorWidget());
+
+        ImGui::Checkbox("demo", &demo);
+
         ImGui::EndPopup();
     }
+
 
     PopStyleColor();
 

@@ -19,9 +19,15 @@ struct Sender : public Thread {
     void deinit() override; // called from this thread
     void tick();
 
+    // void* data();
+    int size;
 
     // callable from another thread
-    void send(unsigned char* data, size_t size);
+    void send();
+
+
+    std::vector<unsigned char> data;
+
 };
 
 };

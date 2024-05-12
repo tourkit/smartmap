@@ -14,6 +14,7 @@ public:
 };
 
 Sender::Sender(uint16_t width, uint16_t height) : Thread("NDI::Sender") {
+
     frame.xres = width;
     frame.yres = height;
     frame.FourCC = NDIlib_FourCC_type_BGRA;
@@ -25,6 +26,11 @@ Sender::Sender(uint16_t width, uint16_t height) : Thread("NDI::Sender") {
     // frame.timecode = 0;
     // frame.line_stride_in_bytes = 1920*4;
     // frame.p_metadata = "<Hello/>";
+
+    size = width*height*4;
+
+    data.resize(size);
+
 }
 
 Sender::~Sender() {}
@@ -61,9 +67,11 @@ void Sender::tick() {
     }
 }
 
-void Sender::send(unsigned char* data, size_t size) {
+
+
+void Sender::send() {
     auto message = std::make_shared<FrameOutMessage>();
-    message->data.insert(message->data.begin(), data, data + size);
+    message->data.insert(message->data.begin(), &data[0], &data[0] + size);
     inQueue().pushMessage(message);
 }
 

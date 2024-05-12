@@ -1,6 +1,6 @@
 #ifndef FRAMEBUFFER_H
 #define FRAMEBUFFER_H
-	
+
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
@@ -8,7 +8,7 @@
 #include <string>
 
 struct Texture;
-	
+
 struct FrameBuffer {
 
     uint32_t id, width, height, attachments = 0;
@@ -19,7 +19,7 @@ struct FrameBuffer {
     ~FrameBuffer();
     void bind();
     void clear(GLfloat r = 0, GLfloat  g = 0, GLfloat b = 0, GLfloat a = 0);
-    unsigned char* read(GLuint width = 0, GLuint height = 0, GLuint x = 0, GLuint y = 0, GLenum format = GL_RGB, unsigned char *data = nullptr);
+    void read(unsigned char* data, GLenum format = GL_RGB, GLuint width = 0, GLuint height = 0, GLuint x = 0, GLuint y = 0);
 
 };
-#endif 
+#endif

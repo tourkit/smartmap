@@ -6,6 +6,7 @@
 #include "buffer.hpp"
 #include "directory.hpp"
 #include "struct.hpp"
+#include "ndi.hpp"
 #include "model.hpp"
 #include "file.hpp"
 #include "ubo.hpp"
@@ -120,6 +121,8 @@ static void draw_raw(void *data, size_t size) {
     bool colorized = false;
 
         ImGui::BeginDisabled();
+
+         if (size > 512) size = 512;
     for (int member_count = 0; member_count < size; member_count++) {
 
 
@@ -275,6 +278,15 @@ void Editors::init() {
     ////////// Artnet.HPP
 
 
+
+    Editor<NDI::Sender>([](Node*node, NDI::Sender* sender){
+
+            ImGui::NewLine();
+            ImGui::NewLine();
+        if (sender->size) draw_raw( &sender->data[0], sender->size );
+
+
+    });
 
     Editor<Remap>([](Node*node, Remap* remap){
 

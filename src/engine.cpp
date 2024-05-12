@@ -42,9 +42,9 @@ void Engine::init() {
 
     Editors::init();
 
-    debug = tree->addOwnr<Debug>()->node();//->close();
-    debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); });
-    debug->addPtr<UBO>(&dynamic_ubo);
+    debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); n->name("Debug - " + std::to_string( fps ) + " fps"); if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
+    debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
+    debug->addPtr<UBO>(&dynamic_ubo)->active(false);
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
     debug->addPtr<Atlas>(atlas);
@@ -57,6 +57,8 @@ void Engine::init() {
 
     effectors = tree->addOwnr<Node>("Effectors")->node();
     // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
+
+    timelines = tree->addOwnr<Node>("Timelines")->node();
 
     remaps = tree->addOwnr<Node>("Remaps")->node();
 

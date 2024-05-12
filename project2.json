@@ -10,7 +10,7 @@
     "rectangle": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size) {\n\n\tfloat angle = 0;\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}\n"
   },
   "layers": {
-    "layer1": [ 1920, 1080, [ { "MyQuad": "quad" }, { "argb": "argb", "rectangle": "rectangle" }, 5 ], { "feedback": "feedback" } ]
+    "layer1": [ 1920, 1080, [ { "MyQuad": "quad" }, { "argb": "argb", "rectangle": "rectangle" }, 3 ], { "feedback": "feedback" } ]
   },
   "inputs": {
     "artnet": []
@@ -25,10 +25,8 @@
     "DMX": [ [ 0, 0, "layer1::MyQuad" ], [ 1, 1, 1, 1, 2, 2, 1 ] ]
   },
   "editors": [
-    [ 0, 0, 0, 0, "tree::Stack", true ],
-    [ 0, 0, 0, 0, "Stack::layer1", true ],
-    [ 0, 0, 0, 0, "Inputs::Artnet", true ],
-    [ 0, 0, 0, 0, "layer1::MyQuad" ],
-    [ 0, 0, 0, 0, "layer1::quad", true ]
+    [ 0, 0, 0, 0, "layer1::MyQuad", true ],
+    [ 0, 0, 0, 0, "Remaps::DMX::Remap" ],
+    [ 0, 0, 0, 0, "Stack::layer1", true ]
   ]
 }

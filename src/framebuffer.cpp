@@ -1,16 +1,16 @@
-#include "framebuffer.hpp"  
-#include "texture.hpp"  
-#include "engine.hpp"  
+#include "framebuffer.hpp"
+#include "texture.hpp"
+#include "engine.hpp"
 
-FrameBuffer::~FrameBuffer() { 
-    
-    if (id) {glDeleteFramebuffers(1, &id);} 
+FrameBuffer::~FrameBuffer() {
 
-    if (texture) { delete texture; } 
-    
+    if (id) {glDeleteFramebuffers(1, &id);}
+
+    if (texture) { delete texture; }
+
 }
 
-FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) { 
+FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) {
 
     // auto n = Engine::getInstance().framebuffers->create();
     // n.set<uint32_t>(0,width);
@@ -18,7 +18,7 @@ FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name
 
 }
 
-FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(name) { 
+FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(name) {
 
     if (!width) width = Engine::getInstance().window.width;
     if (!height) height = Engine::getInstance().window.height;
@@ -31,15 +31,15 @@ FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(na
 
     texture = new Texture(width,height, 0,1,GL_RGB8 );
 
-    glGenFramebuffers(1, &id); 
+    glGenFramebuffers(1, &id);
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments++), GL_TEXTURE_2D, texture->id, 0); 
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments++), GL_TEXTURE_2D, texture->id, 0);
 
     std::vector<GLuint> drawBuffers;
     for (size_t i = 0; i < attachments+1; i++) drawBuffers.push_back( GL_COLOR_ATTACHMENT0+i);
-    glDrawBuffers(attachments+1, &drawBuffers[0]); 
- 
+    glDrawBuffers(attachments+1, &drawBuffers[0]);
+
 }
 
 
@@ -54,23 +54,14 @@ void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {
 
 }
 
-unsigned char* FrameBuffer::read(GLuint width, GLuint height, GLuint x, GLuint y, GLenum format, unsigned char *data) {
+void FrameBuffer::read(unsigned char* data, GLenum format, GLuint width, GLuint height, GLuint x, GLuint y) {
 
     if (!width) width = this->width;
+
     if (!height) height = this->height;
 
-    std::vector<unsigned char> local_data;
-
-    if (!data) {
-    
-        local_data.resize(width*height*3);
-        data = &data[0];
-
-    }
-
     glBindFramebuffer(GL_FRAMEBUFFER, id);
-    
-    
+
     glReadPixels(x, y, width, height, format, GL_UNSIGNED_BYTE, data);
 
     // need to FLIP image
@@ -83,7 +74,4 @@ unsigned char* FrameBuffer::read(GLuint width, GLuint height, GLuint x, GLuint y
     // }
 
 
-    
-    return data;
- 
 }

@@ -19,9 +19,9 @@ void GUI::Window::drawFull() { {
 
       bool p_open = true;
 
-      ImGuiWindowFlags  flag = ImGuiWindowFlags_MenuBar;ImGuiWindowFlags_NoTitleBar;
+      ImGuiWindowFlags  flag = 0;ImGuiWindowFlags_MenuBar;ImGuiWindowFlags_NoTitleBar;
 
-      std::string str = name+"##"+uid;
+      std::string str = name+"###"+uid;
 
       ImGui::Begin(str.c_str(), &p_open, flag);
 
