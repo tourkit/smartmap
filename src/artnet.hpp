@@ -14,7 +14,7 @@
 
 struct Artnet {
 
-  artnet_node artnet;
+  artnet_node artnet = NULL;
 
   std::map<uint16_t, DMX *> universes;
 
@@ -28,7 +28,12 @@ struct Artnet {
 
   void run();
 
-  // ArtnetWindow gui;
+  void connect(std::string ip);
+  void disconnect();
+
+  std::string ip;
+
+  int device_id = 0;
 
 } ;
 

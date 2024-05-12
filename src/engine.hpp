@@ -54,6 +54,9 @@ struct Engine {
     std::string project_filepath;
 
     void* debug_payload = nullptr;
+
+    std::vector<std::string> available_ips;
+
 private:
 
     std::string project_name;

@@ -19,7 +19,27 @@
 
 #include "callbacks.hpp"
 
+extern "C" {
+
+    iface_t* artnet_list_ifaces();
+    iface_t* artnet_list_ifaces_next(iface_t* ift);
+    void artnet_free_ifaces(iface_t* ift);
+
+}
+
 Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
+
+     auto y= artnet_list_ifaces();
+
+    for (auto ift = y; ift != NULL; ift = artnet_list_ifaces_next(ift)) {
+
+        available_ips.push_back(inet_ntoa(ift->ip_addr.sin_addr));
+
+        PLOGV << "found IP : " << available_ips.back();
+
+    }
+
+    artnet_free_ifaces(y);
 
     window.max_fps = 59;
 
@@ -125,7 +145,7 @@ static void addEffectors(rapidjson::Value &v, Node* node) {
 
     for (auto &e : v.GetObj()) {
 
-        if (!e.value.IsString()) continue;
+        if (!e.name.IsString() || !e.value.IsString()) continue;
 
         Node* effector = nullptr;
 
@@ -139,7 +159,7 @@ static void addEffectors(rapidjson::Value &v, Node* node) {
 
         }
 
-        if (effector) node->add(effector)->name(e.value.GetString()); else PLOGE << "no effector: " << e.value.GetString();
+        if (effector) node->add(effector)->name(e.name.GetString()); else PLOGE << "no effector: " << e.value.GetString();
 
     }
 
@@ -186,7 +206,14 @@ void Engine::open(const char* file) {
 
     }
 
-    for (auto &m : json["inputs"]) if (m.name.IsString() && !strcmp(m.name.GetString(),"artnet")) engine.inputs->addOwnr<Artnet>( m.value.IsString() ? m.value.GetString() : "" )->active(1);
+    for (auto &m : json["inputs"]) {
+
+        if (!m.name.IsString() || !m.value.IsObject()) continue;
+
+        if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) if (x.name.IsString())  engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() );
+
+
+    }
 
     for (auto &l : json["layers"]) {
 

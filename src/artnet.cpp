@@ -1,44 +1,45 @@
 #include "artnet.hpp"
 #include "log.hpp"
+#include "engine.hpp"
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
 
-extern "C" {
+Artnet::Artnet(std::string ip)  { connect(ip); }
 
-iface_t* artnet_list_ifaces();
-iface_t* artnet_list_ifaces_next(iface_t* ift);
-void artnet_free_ifaces(iface_t* ift);
+void Artnet::connect(std::string ip_) {
 
-}
+    disconnect();
 
-Artnet::Artnet(std::string ip) {
+    ip = ip_;
 
-    std::string using_ip  = ip;
+    std::string using_ip;
 
-    if (!ip.length()) {
+    if (!engine.available_ips.size()) { PLOGW << "NO NETWORK INTERRFACE FOUND"; return; }
 
-        auto y= artnet_list_ifaces();
+    for (int i = 0 ; i < engine.available_ips.size(); i++) if (!strcmp( engine.available_ips[i].c_str(), ip.c_str() )) { using_ip = engine.available_ips[i]; device_id = i; break; }
 
-        for (auto ift = y; ift != NULL; ift = artnet_list_ifaces_next(ift)) {
+    if (!using_ip.length()) {
 
-            ip = inet_ntoa(ift->ip_addr.sin_addr);
+        using_ip = engine.available_ips[0];
 
-            PLOGD << "available NIC : " << ip;
+        for (int i = 0 ; i < engine.available_ips.size(); i++){
 
-            if ( ip[0] == 50 || ( ip[0] == 49 && ip[1] == 48 ) ) using_ip = ip;
+            auto available_ip = engine.available_ips[i];
+
+            if ( available_ip[0] == 50 || ( available_ip[0] == 49 && available_ip[1] == 48 ) ) {using_ip = available_ip; break; } // ( find 10. or 2. ip preferably)
 
         }
 
-        if (!using_ip.length()) { PLOGW << "NO NETWORK INTERRFACE FOUND"; return; }
-
-         PLOGW << "using ip : " << using_ip;
+        PLOGW <<  using_ip << " ! ";
 
     }
 
+    if (ip == using_ip) PLOGI << using_ip;
+
     artnet = artnet_new(using_ip.c_str(), 0); // 1 for VERBOSE
+
     if (!artnet) {
         PLOGE << "artnet_new ERROR: " << artnet_errstr;
-
         return;
     }
 
@@ -69,10 +70,12 @@ Artnet::Artnet(std::string ip) {
 
 }
 
-Artnet::~Artnet() {
-    if (artnet) {
+Artnet::~Artnet() { disconnect(); }
+
+void Artnet::disconnect() {
+    if (artnet != NULL) {
         if (artnet_stop(artnet))
-            PLOGE << "artnet_stop ERROR: " << artnet_errstr;
+            PLOGE << "artnet_stop ERROR: " <<  artnet_errstr;
         artnet_destroy(artnet);
     }
 }

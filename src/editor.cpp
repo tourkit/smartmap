@@ -55,6 +55,8 @@ namespace ImGui {
 
 };
 
+using namespace ImGui;
+
 static void draw_definition(Member *member, int offset = 0, int depth = 0) {
 
     if (member->isRef()) {
@@ -360,6 +362,16 @@ void Editors::init() {
     });
 
     Editor<Artnet>([](Node*node,Artnet* an){
+
+        ImGuiTextBuffer tbuff;
+        for (auto x : engine.available_ips) tbuff.append(x.c_str(), x.c_str()+x.length()+1);
+
+        if (Combo("device##available_ips", &an->device_id, tbuff.begin())) {
+
+            node->active(false);
+            an->connect(engine.available_ips[an->device_id]);
+
+        }
 
         for (auto &u : an->universes) {
 
@@ -705,6 +717,8 @@ void Editors::init() {
     ////////// Artnet.HPP
 
     Editor<DMX>([](Node*node,DMX* dmx){
+
+
 
         for (auto &r : dmx->remaps) Editor<DMX::Remap>::cb(node, &r);
 
