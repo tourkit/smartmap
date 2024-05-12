@@ -14,8 +14,8 @@
 int main() {
 
     engine.init();
-    logger.cout(true);
 
+    logger.cout();
 
     engine.open("project2.json");
 

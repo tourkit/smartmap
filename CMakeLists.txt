@@ -17,7 +17,7 @@ add_executable( smartmap
 
   src/test.cpp
 
-  src/directory.cpp
+  src/folder.cpp
   src/file.cpp
   src/json.cpp
   src/image.cpp

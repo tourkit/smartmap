@@ -6,7 +6,7 @@
 #include "struct.hpp"
 #include "model.hpp"
 #include "effector.hpp"
-#include "directory.hpp"
+#include "folder.hpp"
 #include "drawcall.hpp"
 #include "engine.hpp"
 #include "artnet.hpp"
@@ -177,9 +177,9 @@ void Callbacks::init() {
 
     NODE<Buffer>::onchange([](Node* node, Buffer *buffer) { PLOGD<<"ooo"; });
 
-    ////////// Directory.HPP
+    ////////// Folder.HPP
 
-    NODE<Directory>::oncreate([](Node* node, Directory *dir){ node->name(dir->path); });
+    NODE<Folder>::oncreate([](Node* node, Folder *dir){ node->name(dir->path); });
 
     ////////// NDI.HPP
 

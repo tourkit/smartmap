@@ -11,7 +11,7 @@
 #include "log.hpp"
 #include "file.hpp"
 #include "editor.hpp"
-#include "directory.hpp"
+#include "folder.hpp"
 
 #include <boost/type_index.hpp>
 
@@ -292,8 +292,8 @@ struct TypedNode : UntypedNode {
         // auto folder = addOwnr<Any>();
         // folder->name = name;
 
-        // auto dir = folder->TypedNode::addOwnr<Directory>(path);
-        auto dir = TypedNode::addOwnr<Directory>(path);
+        // auto dir = folder->TypedNode::addOwnr<Folder>(path);
+        auto dir = TypedNode::addOwnr<Folder>(path);
 
         // dir->hide();
 

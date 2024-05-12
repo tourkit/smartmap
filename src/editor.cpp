@@ -4,7 +4,7 @@
 #include "node.hpp"
 #include "gui.hpp"
 #include "buffer.hpp"
-#include "directory.hpp"
+#include "folder.hpp"
 #include "struct.hpp"
 #include "ndi.hpp"
 #include "model.hpp"
@@ -603,7 +603,7 @@ void Editors::init() {
 
         if (codeeditor.IsTextChanged()) {
 
-            if (file->path != engine.project_filepath) file->write(codeeditor.GetText().c_str());
+            if (file->location != "~") file->write(codeeditor.GetText().c_str());
 
             else file->loadString(codeeditor.GetText().c_str());
 

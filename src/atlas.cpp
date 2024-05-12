@@ -1,6 +1,6 @@
 #include "atlas.hpp"
 
-#include "directory.hpp"
+#include "folder.hpp"
 #include "engine.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
@@ -42,17 +42,17 @@ void Atlas::fromDir(std::string path) {
 
     texture->clear();
 
-    if (!Directory::exist(path)) return;
+    if (!Folder::exist(path)) return;
 
     this->path = path;
 
     clear();
 
-    Directory dir(path);
+    Folder dir(path);
 
-    for (auto &file:dir.list) {
+    for (auto &file:dir.files) {
 
-        Image img(file);
+        Image img(file.path);
 
         if (!img.loaded) continue;
 

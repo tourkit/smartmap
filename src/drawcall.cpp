@@ -82,15 +82,15 @@ void DrawCall::update() {
 
     static bool has_changed = false;
 
-    for (auto x : models) {
+    for (auto x : models) { // rien a foutre la
 
-        if (x.get()->file->path == engine.project_filepath) continue;
+        if (x.get()->file->location == "~") continue;
 
-        auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::REPO_DIR) / x.get()->file->path);
+        auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::loc()) / x.get()->file->path);
 
         if (last_modified  < last_) { last_modified = last_; has_changed = true; }
 
-    }
+    } /// ???
 
     if (has_changed) {
 

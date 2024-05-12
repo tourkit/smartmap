@@ -8,12 +8,13 @@
 
 struct File {
 
-    std::string name_v, path, location, extension;
+    std::string name_v, path, location, extension, filename;
 
     std::string data;
 
     int64_t last_modified = 1;
 
+    bool hard = false;
     bool loaded = false;
 
     void update();
@@ -40,9 +41,11 @@ struct File {
     bool hasChanged();
 
     #ifdef ROCH
-    static inline std::string REPO_DIR = "C:/users/root/cpp/smartmap/";
+    static inline const char* REPO_DIR = "C:/users/root/cpp/smartmap/";
     #else
-    static inline std::string REPO_DIR = "./";
+    static inline const char* REPO_DIR = "./";
     #endif
+
+    static std::string loc() { return REPO_DIR; }
 
 };

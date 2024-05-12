@@ -58,9 +58,20 @@ void File::name(std::string name) { name_v = name; }
 void File::read(std::string path, bool binary){
 
     this->path = path;
+
     data.resize(0);
 
     loaded = false;
+
+    name_v = std::filesystem::path(path).stem().filename().string();
+
+    extension = std::filesystem::path(path).extension().string().substr(1);
+
+    filename = name_v + "." + extension;
+
+    location = std::filesystem::path(path).parent_path().string();
+
+    if (path[0] == 126) return;
 
     auto flags = std::ifstream::in;
     if (binary) flags |= std::ifstream::binary;
@@ -68,12 +79,6 @@ void File::read(std::string path, bool binary){
     std::ifstream file(std::filesystem::path(REPO_DIR) / path, flags);
 
     if (file) {
-
-        name_v = std::filesystem::path(path).stem().filename().string();
-
-        extension = std::filesystem::path(path).extension().string().substr(1);
-
-        location = std::filesystem::path(path).parent_path().string();
 
         file.seekg(0, std::ios::end);
         std::streamsize size = file.tellg();

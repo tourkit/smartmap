@@ -1,5 +1,5 @@
 #include "engine.hpp"
-#include "directory.hpp"
+#include "folder.hpp"
 #include "struct.hpp"
 #include "effector.hpp"
 #include "drawcall.hpp"
@@ -58,6 +58,18 @@ void Engine::init() {
     // models = tree->addFolder<File>("Models", "assets/models/")->node();
 
     effectors = tree->addOwnr<Node>("Effectors")->node();
+
+    auto rfx = tree->addOwnr<Node>("Real Effectors")->hide();
+
+    for (auto x : effectors->childrens) {
+
+        auto f = x->is_a<File>();
+
+        auto e = &Effector::get(f);
+
+        rfx->addPtr<Effector::Definition>(e);
+
+    }
     // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 
     timelines = tree->addOwnr<Node>("Timelines")->node();
@@ -115,7 +127,17 @@ static void addEffectors(rapidjson::Value &v, Node* node) {
 
         if (!e.value.IsString()) continue;
 
-        auto effector = engine.effectors->child(e.value.GetString())->get<Effector>();
+        Node* effector = nullptr;
+
+        for (auto x : engine.effectors->childrens) {
+
+            auto f = x->is_a<File>();
+
+            if (!f) continue;
+
+            if (f->filename == e.value.GetString()) effector = x;
+
+        }
 
         if (effector) node->add(effector)->name(e.value.GetString()); else PLOGE << "no effector: " << e.value.GetString();
 
@@ -151,24 +173,16 @@ void Engine::open(const char* file) {
     if (true) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
 
         if (engine.models->child(m.name.GetString())) continue;
-        auto n = models->addOwnr<File>();
+        auto n = models->addOwnr<File>(std::string("~/")+m.name.GetString());
         n->get()->loadString(m.value.GetString());
-        n->get()->name_v = m.name.GetString();
-        n->get()->extension = "obj";
-        n->get()->path = engine.project_filepath;
 
-        n->name(n->get()->name_v);
     }
 
     if (true) for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
 
         if (engine.effectors->child(m.name.GetString())) continue;
-        auto n = effectors->addOwnr<File>();
+        auto n = effectors->addOwnr<File>(std::string("~/")+m.name.GetString());
         n->get()->loadString(m.value.GetString());
-        n->get()->name_v = m.name.GetString();
-        n->get()->path = engine.project_filepath;
-        n->get()->extension = "glsl";
-        n->name(m.name.GetString());
 
     }
 
@@ -204,7 +218,17 @@ void Engine::open(const char* file) {
 
             if (!info.Size() || !info[0].IsString()) continue;
 
-            auto model_file = engine.models->child( info[0].GetString() );
+            Node* model_file = nullptr;
+
+            for (auto x : engine.models->childrens) {
+
+                auto f = x->is_a<File>();
+
+                if (!f) continue;
+
+                if (f->filename == info[0].GetString()) model_file = x;
+
+            }
 
             if (!model_file) { PLOGE << "no model : " << info[0].GetString(); continue; }
 
