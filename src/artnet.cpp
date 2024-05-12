@@ -14,7 +14,7 @@ void Artnet::connect(std::string ip_) {
 
     std::string using_ip;
 
-    if (!engine.available_ips.size()) { PLOGW << "NO NETWORK INTERRFACE FOUND"; return; }
+    if (!engine.available_ips.size()) { PLOGW << "NO NETWORK INTERRFACE FOUND ! "; return; }
 
     for (int i = 0 ; i < engine.available_ips.size(); i++) if (!strcmp( engine.available_ips[i].c_str(), ip.c_str() )) { using_ip = engine.available_ips[i]; device_id = i; break; }
 

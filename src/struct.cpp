@@ -141,7 +141,7 @@ Member* Struct::add(Member* m_) {
 
                 found = true;
 
-                PLOGW << m.name() << " already exist";
+                PLOGW << m.name() << " already exist !";
 
                 // m.name(m.name()+ "_");
 
