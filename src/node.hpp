@@ -120,7 +120,7 @@ public:
 
     void down();
 
-    std::string namesdf();
+    std::string nameSTL();
 
     std::unordered_set<Node*> referings;
 

@@ -123,7 +123,7 @@
 
     }
 
-    std::string UntypedNode::namesdf(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
+    std::string UntypedNode::nameSTL(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
 
     Node *UntypedNode::parent() { return parent_node; }
 
