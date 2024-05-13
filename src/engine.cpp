@@ -202,21 +202,13 @@ void Engine::open(const char* file) {
 
     project_name = file;
 
-    if (true) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
+    for (auto &m : json["models"])
+        if (m.name.IsString() && m.value.IsString())
+            auto n = models->addOwnr<File>(std::string("~/")+m.name.GetString(), m.value.GetString());
 
-        auto n = models->addOwnr<File>(std::string("~/")+m.name.GetString());
-
-        n->get()->loadString(m.value.GetString());
-
-    }
-
-    if (true) for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
-
-        auto n = effectors->addOwnr<File>(std::string("~/")+m.name.GetString());
-
-        n->get()->loadString(m.value.GetString());
-
-    }
+    for (auto &m : json["effectors"])
+        if (m.name.IsString() && m.value.IsString())
+            auto n = effectors->addOwnr<File>(std::string("~/")+m.name.GetString(), m.value.GetString());
 
     for (auto &m : json["inputs"]) {
 

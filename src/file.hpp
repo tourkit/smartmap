@@ -8,13 +8,13 @@
 
 struct File {
 
-    std::string name_v, path, location, extension, filename;
+    std::string name_v, path, location_v, extension, filename;
 
     std::string data;
 
     int64_t last_modified = 1;
 
-    bool hard = false;
+    bool owned = false;
     bool loaded = false;
 
     void update();
@@ -27,7 +27,9 @@ struct File {
 
     File();
 
-    File(std::string source, bool binary = false);
+    File(std::string source);
+
+    File(std::string source, std::string value);
 
     int64_t getTimeModified();
 
@@ -35,6 +37,10 @@ struct File {
     void read(std::string path, bool binary = false);
     void write(const char* data);
     static void write(std::string path, std::string data);
+
+    std::string location();
+
+    void location(std::string val);
 
     void reload();
 

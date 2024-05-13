@@ -636,7 +636,7 @@ void Editors::init() {
 
         if (codeeditor.IsTextChanged()) {
 
-            if (file->location != "~") file->write(codeeditor.GetText().c_str());
+            if (!file->owned) file->write(codeeditor.GetText().c_str());
 
             else file->loadString(codeeditor.GetText().c_str());
 

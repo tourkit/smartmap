@@ -86,7 +86,7 @@ void DrawCall::update() {
 
     for (auto x : models) { // rien a foutre la
 
-        if (x.get()->file->location == "~") continue;
+        if (x.get()->file->owned) continue;
 
         auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::loc()) / x.get()->file->path);
 

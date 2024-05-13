@@ -40,8 +40,10 @@ void Model::fbx(File* file) {
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         PLOGE << "Failed to load OBJ file: " << file->path << " . " << importer.GetErrorString(); return; }
 
+std::string finale = File::loc()+"/"+file->name()+".fbx";
 
-exporter.Export(scene, "fbx", file->location+"/"+file->name()+".fbx", aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+auto x = exporter.Export(scene, "fbx", finale, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+
 
 
 }

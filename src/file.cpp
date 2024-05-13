@@ -20,7 +20,8 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 
 File::File() { }
 
-File::File(std::string path, bool binary) { read(path, binary); }
+File::File(std::string path) { read(path, 0); }
+File::File(std::string path, std::string value) { read(path, 0); loadString(value); }
 
 int64_t File::getTimeModified() {
 
@@ -54,6 +55,9 @@ bool File::hasChanged() {
 std::string File::name() { return name_v; }
 void File::name(std::string name) { name_v = name; }
 
+std::string File::location() { if (owned) return  "~"; return REPO_DIR+location_v; }
+
+void File::location(std::string location) { location_v = location; }
 
 void File::read(std::string path, bool binary){
 
@@ -72,9 +76,9 @@ void File::read(std::string path, bool binary){
     if (extension.length()) extension = extension.substr(1);
     else PLOGW << "\"" << name_v << "\" has no extension";
 
-    location = std::filesystem::path(path).parent_path().string();
+    location_v = std::filesystem::path(path).parent_path().string();
 
-    if (path[0] == 126) return;
+    if (path[0] == 126) { owned = true; return; }
 
     auto flags = std::ifstream::in;
     if (binary) flags |= std::ifstream::binary;
