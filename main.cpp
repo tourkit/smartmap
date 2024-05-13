@@ -17,7 +17,7 @@ int main() {
 
     logger.cout();
 
-    engine.open("project2.json");
+    engine.open("project.json");
 
     // engine.inputs->childrens[0]->is_a<Artnet>()->universes[0] = new DMX{0};
     // auto r = engine.remaps->active(true)->addOwnr<DMX::Remap>(

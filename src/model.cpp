@@ -27,7 +27,7 @@ Effector* Model::addEffector(File* file) {
 }
 
 
-void Model::fbx(File* file) {
+void Model::convert(File* file, std::string type) {
 
  Assimp::Importer importer;
  Assimp::Exporter exporter;
@@ -40,10 +40,10 @@ void Model::fbx(File* file) {
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         PLOGE << "Failed to load OBJ file: " << file->path << " . " << importer.GetErrorString(); return; }
 
-std::string finale = File::loc()+"/"+file->name()+".fbx";
+std::string finale = File::loc()+"/"+file->name()+"."+type;
 
-auto x = exporter.Export(scene, "fbx", finale, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+auto x = exporter.Export(scene, type, finale, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 
-
+if (x) PLOGE << exporter.GetErrorString();
 
 }

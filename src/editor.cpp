@@ -600,6 +600,13 @@ void Editors::init() {
 
     Editor<File>([](Node* node, File *file){
 
+        if (file->extension == "obj") {
+
+            if (ImGui::Button("FBX")) Model::convert(file, "fbx"); ImGui::SameLine();
+            if (ImGui::Button("3DS")) Model::convert(file, "3ds"); ImGui::SameLine();
+            if (ImGui::Button("DXF")) Model::convert(file, "dxf"); ImGui::SameLine();
+
+        }
 
         char path[512];
         memset(path,0,512);
@@ -727,12 +734,6 @@ void Editors::init() {
 
     Editor<Model>([](Node* node, Model *model){
 
-        if (ImGui::Button("FBX")) {
-
-            Model::fbx(model->file);
-
-
-        }
 
         ImGui::Text(("effectorz " + std::to_string(model->effectors.size())).c_str());
 

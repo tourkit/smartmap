@@ -25,6 +25,6 @@ struct Model {
 
     std::vector<std::shared_ptr<Effector>> effectors;
 
-    static void fbx(File* model);
+    static void convert(File* model, std::string type);
 
 };
