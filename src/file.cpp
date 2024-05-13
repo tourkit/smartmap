@@ -65,9 +65,12 @@ void File::read(std::string path, bool binary){
 
     name_v = std::filesystem::path(path).stem().filename().string();
 
-    extension = std::filesystem::path(path).extension().string().substr(1);
+    extension = std::filesystem::path(path).extension().string();
 
-    filename = name_v + "." + extension;
+    filename = name_v + extension;
+
+    if (extension.length()) extension = extension.substr(1);
+    else PLOGW << "\"" << name_v << "\" has no extension";
 
     location = std::filesystem::path(path).parent_path().string();
 

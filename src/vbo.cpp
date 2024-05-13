@@ -135,7 +135,7 @@ bool VBO::add(File* file, int id) {
         aiProcess_JoinIdenticalVertices  |
         aiProcess_SortByPType);
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) PLOGE << "Failed to load OBJ file: " << file->path << " . " << importer.GetErrorString();
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) { PLOGE << "Failed to load OBJ file: " << file->path << " . " << importer.GetErrorString(); return false; }
 
     auto mesh = scene->mMeshes[0];
 

@@ -27,7 +27,7 @@ extern "C" {
 
 }
 
-Engine::Engine(uint16_t width, uint16_t height) : window(1920,1080,2560,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
+Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
 
      auto y= artnet_list_ifaces();
 
@@ -65,7 +65,6 @@ void Engine::init() {
     debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); n->name("Debug - " + std::to_string( fps ) + " fps"); if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
-    debug->addPtr<Window>(&window);
     debug->addOwnr<File>("project2.json");
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
@@ -165,6 +164,19 @@ static void addEffectors(rapidjson::Value &v, Node* node) {
 
 }
 
+
+bool isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>& x) {
+
+    if (!x.name.IsString() || !x.value.IsArray()) return false;
+
+    auto arr = x.value.GetArray();
+
+    if (arr.Size() < 5 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsInt() || !arr[3].IsInt() || !arr[4].IsString() ) return false;
+
+    return true;
+
+}
+
 void Engine::open(const char* file) {
 
     json.load(File(file).data.data());
@@ -192,16 +204,16 @@ void Engine::open(const char* file) {
 
     if (true) for (auto &m : json["models"]) if (m.name.IsString() && m.value.IsString()) {
 
-        if (engine.models->child(m.name.GetString())) continue;
         auto n = models->addOwnr<File>(std::string("~/")+m.name.GetString());
+
         n->get()->loadString(m.value.GetString());
 
     }
 
     if (true) for (auto &m : json["effectors"]) if (m.name.IsString() && m.value.IsString()) {
 
-        if (engine.effectors->child(m.name.GetString())) continue;
         auto n = effectors->addOwnr<File>(std::string("~/")+m.name.GetString());
+
         n->get()->loadString(m.value.GetString());
 
     }
@@ -211,6 +223,48 @@ void Engine::open(const char* file) {
         if (!m.name.IsString() || !m.value.IsObject()) continue;
 
         if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) if (x.name.IsString())  engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() );
+
+
+    }
+    for (auto &m : json["outputs"]) {
+
+        if (!m.name.IsString() || !m.value.IsObject()) continue;
+
+        if (!strcmp(m.name.GetString(),"ndi")) for (auto &x : m.value.GetObj()) {
+
+            // if (!isOutput(x))  continue;
+
+            // auto arr = x.value.GetArray();
+
+            // engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString() );
+
+        }
+        if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
+
+            // if (!isOutput(x))  continue;
+
+            // auto arr = x.value.GetArray();
+
+            // engine.outputs->addPtr<Window>( &engine.window )->name(x.name.GetString());
+
+            // engine.window.setSize( arr[0].GetInt() , arr[1].GetInt() );
+            // engine.window.setPos( arr[2].GetInt() , arr[3].GetInt() );
+
+            // break; // only one alloweed for nowe
+
+        }
+
+        // if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
+
+        //     if (!x.name.IsString() || !x.value.IsArray()) continue;
+
+        //     auto arr = x.value.GetArray();
+
+        //     if (arr.Size() < 5 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsInt() || !arr[3].IsInt() || !arr[4].IsString() ) continue;
+
+        //     engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString() );
+
+        // }
 
 
     }
@@ -251,11 +305,15 @@ void Engine::open(const char* file) {
 
                 auto f = x->is_a<File>();
 
-                if (!f) continue;
+                if (!x->is_a<File>()) continue;
 
-                if (f->filename == info[0].GetString()) model_file = x;
+                std::string y = info[0].GetString();
+
+                if (f->filename == y) model_file = x;
 
             }
+
+            // for (auto x : engine.models->childrens) if (x->is_a<File>() && x->is_a<File>()->filename == info[0].GetString()) model_file = x;
 
             if (!model_file) { PLOGE << "no model : " << info[0].GetString(); continue; }
 
@@ -315,6 +373,7 @@ void Engine::save(const char* file) {
     if (!json.document.HasMember("models")) json.document.AddMember("models", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("effectors")) json.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("layers")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
+    if (!json.document.HasMember("outputs")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
 
     json.document["editors"].Clear();
 
@@ -336,12 +395,12 @@ void Engine::save(const char* file) {
 
 
     json.document["models"].RemoveAllMembers();
-    for (auto m : models->childrens) { json.document["models"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator()); }
+    for (auto m : models->childrens) { json.document["models"].AddMember(rapidjson::Value(m->is_a<File>()->filename.c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator()); }
 
     json.document["effectors"].RemoveAllMembers();
     for (auto m : effectors->childrens) {
 
-        json.document["effectors"].AddMember(rapidjson::Value(m->name().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
+        json.document["effectors"].AddMember(rapidjson::Value(m->is_a<File>()->filename.c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
 
     }
 
@@ -363,12 +422,12 @@ void Engine::save(const char* file) {
 
             auto new_model = rapidjson::Value(rapidjson::kArrayType);
 
-            new_model.PushBack(rapidjson::Value(model.get()->file->name().c_str(), allocator), allocator);
+            new_model.PushBack(rapidjson::Value(model.get()->file->filename.c_str(), allocator), allocator);
 
             new_model.PushBack(model.get()->s.quantity(),allocator);
 
             auto effects = rapidjson::Value(rapidjson::kObjectType);
-            for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->name().c_str(), allocator), allocator );
+            for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->filename.c_str(), allocator), allocator );
             new_model.PushBack( effects, allocator );
 
             models.AddMember(rapidjson::Value(model.get()->s.name().c_str(), allocator), new_model, allocator);
@@ -378,7 +437,7 @@ void Engine::save(const char* file) {
         lay.PushBack(models, allocator);
 
         auto effects = rapidjson::Value(rapidjson::kObjectType);
-        for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->name().c_str(), allocator), allocator );
+        for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->filename.c_str(), allocator), allocator );
         lay.PushBack( effects, allocator );
 
         arr.AddMember( rapidjson::Value(m->name().c_str(), allocator)  , lay, allocator );

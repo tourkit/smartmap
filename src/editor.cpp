@@ -20,6 +20,7 @@
 #include "atlas.hpp"
 #include "json.hpp"
 
+
 #include <cstring>
 #include <format>
 static int hovered_offset = -1;
@@ -284,7 +285,27 @@ void Editors::init() {
     Editor<NDI::Sender>([](Node*node, NDI::Sender* sender){
 
             ImGui::NewLine();
+
+
+        ImGuiTextBuffer tbuff;
+
+        for (auto x : engine.stack->childrens) {
+
+            auto name = x->name();
+
+
+            tbuff.append(name.c_str(), name.c_str()+name.length()+1);
+
+
+        }
+
+        int x = 0;
+        if (Combo("source##ndisendersrc", &x, tbuff.begin())) {
+
+        }
             ImGui::NewLine();
+            ImGui::NewLine();
+
         if (sender->size) draw_raw( &sender->data[0], sender->size );
 
 
@@ -705,6 +726,13 @@ void Editors::init() {
     ////////// MODEL.HPP
 
     Editor<Model>([](Node* node, Model *model){
+
+        if (ImGui::Button("FBX")) {
+
+            Model::fbx(model->file);
+
+
+        }
 
         ImGui::Text(("effectorz " + std::to_string(model->effectors.size())).c_str());
 

@@ -128,9 +128,9 @@ void Callbacks::init() {
 
         auto file = node->is_a<File>();
 
-        if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return _this;}
+        auto x =  _this->is_a<Model>()->addEffector( file )  ;
 
-        auto x =  _this->is_a<Model>()->add( file )  ;
+        if (!x) return _this;
 
         return _this->addPtr<Effector>( x )->node();
 
@@ -183,7 +183,7 @@ void Callbacks::init() {
 
     ////////// NDI.HPP
 
-    NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ sender->start(); });
+    NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ node->name(sender->name); sender->start(); });
 
     ////////// JSON.HPP
 

@@ -52,6 +52,8 @@ bool DrawCall::removeEffector(Effector* effector) {
 
 Effector* DrawCall::addEffector(File* file) {
 
+    if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return nullptr;}
+
     auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
 
     s.add(&effector->ref);

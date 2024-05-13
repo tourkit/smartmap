@@ -19,10 +19,12 @@ struct Model {
 
     ~Model();
 
-    Effector* add(File* file);
+    Effector* addEffector(File* file);
 
     bool remove(Effector* effector);
 
     std::vector<std::shared_ptr<Effector>> effectors;
+
+    static void fbx(File* model);
 
 };
