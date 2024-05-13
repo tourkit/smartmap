@@ -224,40 +224,27 @@ void Engine::open(const char* file) {
 
         if (!strcmp(m.name.GetString(),"ndi")) for (auto &x : m.value.GetObj()) {
 
-            // if (!isOutput(x))  continue;
+            if (!isOutput(x))  continue;
 
-            // auto arr = x.value.GetArray();
+            auto arr = x.value.GetArray();
 
-            // engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString() );
+            engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString() );
 
         }
         if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
 
-            // if (!isOutput(x))  continue;
+            if (!isOutput(x))  continue;
 
-            // auto arr = x.value.GetArray();
+            auto arr = x.value.GetArray();
 
-            // engine.outputs->addPtr<Window>( &engine.window )->name(x.name.GetString());
+            engine.outputs->addPtr<Window>( &engine.window )->name(x.name.GetString());
 
-            // engine.window.setSize( arr[0].GetInt() , arr[1].GetInt() );
-            // engine.window.setPos( arr[2].GetInt() , arr[3].GetInt() );
+            engine.window.setSize( arr[0].GetInt() , arr[1].GetInt() );
+            engine.window.setPos( arr[2].GetInt() , arr[3].GetInt() );
 
-            // break; // only one alloweed for nowe
+            break; // only one alloweed for nowe
 
         }
-
-        // if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
-
-        //     if (!x.name.IsString() || !x.value.IsArray()) continue;
-
-        //     auto arr = x.value.GetArray();
-
-        //     if (arr.Size() < 5 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsInt() || !arr[3].IsInt() || !arr[4].IsString() ) continue;
-
-        //     engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString() );
-
-        // }
-
 
     }
 
@@ -378,7 +365,7 @@ void Engine::save(const char* file) {
         v.PushBack(0, json.document.GetAllocator());
         v.PushBack(0, json.document.GetAllocator());
 
-        if (e->selected) v.PushBack(rapidjson::Value(e->selected->namesdf().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
+        if (e->selected) v.PushBack(rapidjson::Value(e->selected->nameSTL().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
         if (e->locked) v.PushBack(rapidjson::Value(true), json.document.GetAllocator());
 
         auto &x = json.document["editors"].PushBack(v, json.document.GetAllocator());
@@ -396,8 +383,9 @@ void Engine::save(const char* file) {
 
     }
 
-    json.document["layers"].RemoveAllMembers();
     rapidjson::Document::AllocatorType& allocator = json.document.GetAllocator();
+
+    json.document["layers"].RemoveAllMembers();
     for (auto m : stack->childrens) {
 
         auto &arr = json.document["layers"];
@@ -433,6 +421,44 @@ void Engine::save(const char* file) {
         lay.PushBack( effects, allocator );
 
         arr.AddMember( rapidjson::Value(m->name().c_str(), allocator)  , lay, allocator );
+
+    }
+    json.document["outputs"].RemoveAllMembers();
+    for (auto m : outputs->childrens) {
+
+        // auto &arr = json.document["outputs"];
+
+        // auto  lay = rapidjson::Value(rapidjson::kArrayType);
+
+        // auto layer = m->is_a<Layer>();
+        // lay.PushBack(layer->fb.width, allocator);
+        // lay.PushBack(layer->fb.height, allocator);
+
+        // auto  models = rapidjson::Value(rapidjson::kObjectType);
+
+        // for (auto model : layer->models) {
+
+        //     auto new_model = rapidjson::Value(rapidjson::kArrayType);
+
+        //     new_model.PushBack(rapidjson::Value(model.get()->file->filename().c_str(), allocator), allocator);
+
+        //     new_model.PushBack(model.get()->s.quantity(),allocator);
+
+        //     auto effects = rapidjson::Value(rapidjson::kObjectType);
+        //     for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );
+        //     new_model.PushBack( effects, allocator );
+
+        //     models.AddMember(rapidjson::Value(model.get()->s.name().c_str(), allocator), new_model, allocator);
+
+        // }
+
+        // lay.PushBack(models, allocator);
+
+        // auto effects = rapidjson::Value(rapidjson::kObjectType);
+        // for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );
+        // lay.PushBack( effects, allocator );
+
+        // arr.AddMember( rapidjson::Value(m->name().c_str(), allocator)  , lay, allocator );
 
     }
 
