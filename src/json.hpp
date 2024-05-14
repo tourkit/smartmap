@@ -31,33 +31,5 @@ struct JSON {
 
     bool load(const char* data);
 
-    static bool exists(rapidjson::Value& source, const char* name);
-
-    static const char* getString(rapidjson::Value& source, const char* name, const char* defaultValue = "UNDEFINED");
-
-    static unsigned int getUint(rapidjson::Value& source, const char* name, unsigned int defaultValue = 0);
-
-    static int getInt(rapidjson::Value& source, const char* name, int defaultValue = 0);
-
-    rapidjson::GenericObject<false, rapidjson::Value> operator[](const char* name) { return obj(name); }
-
-    rapidjson::GenericObject<false, rapidjson::Value> obj(const char* name) {
-
-         if (!document.HasMember(name) || !document[name].IsObject()) {
-
-            PLOGE << "UNDEFINED: " << name;
-
-            rapidjson::Value models;
-
-            models.SetObject();
-
-            document.AddMember("models", models, document.GetAllocator());
-
-
-        }
-
-        return document[name].GetObj();
-
-     }
-
+    static void if_obj_in(std::string name, rapidjson::Value &in, std::function<void(rapidjson::Value::Member&)> cb);
 };

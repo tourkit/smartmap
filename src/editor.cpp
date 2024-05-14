@@ -438,13 +438,14 @@ void Editors::init() {
 
         ImGui::Combo("source", &x, "layer1");
 
+        static uint32_t min = 0;
 
-        if (ImGui::InputScalarN("position###winpos", ImGuiDataType_U16,  &window->offset_x, 2)) {
+        if (ImGui::DragScalarN("position###winpos", ImGuiDataType_U32,  &window->offset_x, 2, 1, &min)) {
 
             window->pos( window->offset_x, window->offset_y );
 
         }
-        if (ImGui::InputScalarN("size###winsize", ImGuiDataType_U16,  &window->width, 2)) {
+        if (ImGui::DragScalarN("size###winsize", ImGuiDataType_U32,  &window->width, 2, 1, &min)) {
 
             window->size( window->width, window->height );
 
@@ -843,10 +844,8 @@ void Editors::init() {
 
     Editor<JSON>([](Node* node, JSON *json){
 
-        for (auto &m : (*json)["models"]) {ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString());}
-
-        for (auto &m : (*json)["effectors"]) {ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString());}
-
+        JSON::if_obj_in("models",json->document, [&](auto &m) { ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString()); });
+        JSON::if_obj_in("effectors",json->document, [&](auto &m) { ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString()); });
 
     });
 

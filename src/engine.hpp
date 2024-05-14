@@ -43,6 +43,7 @@ struct Engine {
 
     void init();
 
+    void reset();
     void open(const char* filepath);
     void save(const char* filepath);
     void save();

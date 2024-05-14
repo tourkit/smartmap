@@ -4,7 +4,7 @@
 #include "log.hpp"
 #include "rapidjson/error/en.h"
 
-JSON::JSON() {}
+JSON::JSON() {  }
 
 JSON::JSON(File* file) { load(file); }
 
@@ -42,38 +42,11 @@ bool JSON::load(const char* data) {
 
 }
 
-bool JSON::exists(rapidjson::Value& source, const char* name) {
 
-    if (!source.HasMember(name)) {
+void JSON::if_obj_in(std::string name, rapidjson::Value &in, std::function<void(rapidjson::Value::Member&)> cb) {
 
-        PLOGE << "-----------------------------> undefined: " << name;
+    if (!in.HasMember(name.c_str()) || !in[name.c_str()].IsObject()) return;
 
-        return false;
-    }
+    for (auto &m : in[name.c_str()].GetObj()) cb(m);
 
-    return true;
-}
-
-const char* JSON::getString(rapidjson::Value& source, const char* name, const char* defaultValue) {
-
-    if (!exists(source, name))
-        return defaultValue;
-
-    return source[name].GetString();
-}
-
-unsigned int JSON::getUint(rapidjson::Value& source, const char* name, unsigned int defaultValue) {
-
-    if (!exists(source, name))
-        return defaultValue;
-
-    return source[name].GetUint();
-}
-
-int JSON::getInt(rapidjson::Value& source, const char* name, int defaultValue) {
-
-    if (!exists(source, name))
-        return defaultValue;
-
-    return source[name].GetInt();
 }

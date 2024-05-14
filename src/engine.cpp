@@ -65,7 +65,6 @@ void Engine::init() {
     debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); n->name("Debug - " + std::to_string( fps ) + " fps"); if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
-    debug->addOwnr<File>(engine.project_filepath);
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
     debug->addPtr<Atlas>(atlas);
@@ -177,22 +176,27 @@ bool isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::MemoryPoolA
 
 }
 
-void if_obj(std::string name_, std::function<void(rapidjson::Value::Member&)> cb) {
 
-    const char* name = name_.c_str();
-    auto &doc = engine.json.document;
+static void if_obj(std::string name, std::function<void(rapidjson::Value::Member&)> cb) { JSON::if_obj_in(name, engine.json.document,cb); }
 
-    if (!doc.HasMember(name) || !doc[name].IsObject()) return;
+void Engine::reset() {
 
-    for (auto &m : doc[name].GetObj()) cb(m);
+    for (auto x : gui->editors) delete x; gui->editors.resize(0);
+    for (auto x : stack->childrens) delete x;
+    for (auto x : outputs->childrens) delete x;
+    for (auto x : inputs->childrens) delete x;
 
 }
 
 void Engine::open(const char* file) {
 
+    reset();
+
     json.load(File(file).data.data());
 
     project_filepath = file;
+
+    // debug->addOwnr<File>(project_filepath);
 
     if (!json.loaded) {
 
@@ -215,15 +219,14 @@ void Engine::open(const char* file) {
 
     if_obj("models", [&](auto &m) {
 
-        if (m.name.IsString() && m.value.IsString())
-            auto n = models->addOwnr<File>(m.name.GetString(), m.value.GetString());
+        if (m.name.IsString() && m.value.IsString()) auto n = models->addOwnr<File>(m.name.GetString(), m.value.GetString());
 
     });
 
+    if_obj("effectors", [&](auto &m) {
 
-    for (auto &m : json["effectors"])
-        if (m.name.IsString() && m.value.IsString())
-            auto n = effectors->addOwnr<File>(m.name.GetString(), m.value.GetString());
+        if (m.name.IsString() && m.value.IsString()) auto n = effectors->addOwnr<File>(m.name.GetString(), m.value.GetString());
+    });
 
     if_obj("inputs", [&](auto &m) {
 
@@ -231,8 +234,8 @@ void Engine::open(const char* file) {
 
         if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) if (x.name.IsString())  engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() );
 
-
     });
+
     if_obj("outputs", [&](auto &m) {
 
         if (!m.name.IsString() || !m.value.IsObject()) return;
