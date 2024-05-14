@@ -1,5 +1,6 @@
 #include "ndi.hpp"
 #include "log.hpp"
+#include "drawcall.hpp"
 
 #include "messagetype.hpp"
 
@@ -21,6 +22,11 @@ Sender::Sender(uint32_t width, uint32_t height, std::string name, Layer* layer) 
 
 void Sender::draw(){
 
+    if (!layer) return;
+    int size = data.size();
+    layer->fb.read(&data[0], GL_BGRA);
+
+    send();
 
 
 }

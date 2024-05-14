@@ -90,14 +90,6 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
 
     glEnable(GL_BLEND);
 
-    std::string frag;
-    std::string vert;
-    shader = new ShaderProgram(frag,vert);
-
-    // vbo = new VBO();
-    // vbo->add();
-
-
 }
 
 static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { glViewport(0, 0, width, height); }
@@ -159,10 +151,11 @@ void Window::draw() {
     if (layer) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glViewport(0, 0, engine.window.width, engine.window.height);
 
         layer->fb.texture->bind();
-        shader->use();
-        vbo->draw();
+        engine.shader->use();
+        engine.vbo->draw();
 
     }
 

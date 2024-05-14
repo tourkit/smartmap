@@ -50,12 +50,6 @@ struct Window : Output {
 
     std::unordered_map<int, std::function<void(int)>> keypress_cbs;
 
-
-private:
-
-    ShaderProgram* shader;
-    VBO* vbo;
-
 };
 
 

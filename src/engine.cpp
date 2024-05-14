@@ -56,11 +56,20 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
 }
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
+
 void Engine::init() {
 
     Callbacks::init();
 
     Editors::init();
+
+    std::string frag = "#version 430 core\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); }";
+    std::string vert = "#version 430 core\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
+    shader = new ShaderProgram(frag,vert);
+
+    vbo = new VBO();
+    vbo->add(&VBO::quad);
+
 
     debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); n->name("Debug - " + std::to_string( fps ) + " fps"); if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
@@ -129,6 +138,8 @@ void Engine::run() {
             //use quad(engine dracall maybe) to draw
         }
 
+        for (auto x : engine.outputs->childrens) ((Output*)x->ptr_())->draw();
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         engine.gui->draw();
@@ -195,8 +206,6 @@ void Engine::open(const char* file) {
     json.load(File(file).data.data());
 
     project_filepath = file;
-
-    // debug->addOwnr<File>(project_filepath);
 
     if (!json.loaded) {
 
@@ -324,7 +333,7 @@ void Engine::open(const char* file) {
 
 
 
-            engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr));
+            engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr))->active(false);
 
         }
         if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
@@ -348,6 +357,52 @@ void Engine::open(const char* file) {
 
     });
 
+    if_obj("remaps", [&](auto &m) {
+
+        if (!m.name.IsString() || !m.value.IsObject()) return;
+
+        if (!strcmp(m.name.GetString(),"artnet")) {
+
+            std::set<Artnet*> artnets;
+            for (auto x : engine.inputs->childrens) {
+                Artnet* an = x->is_a_nowarning<Artnet>();
+                if (an) artnets.insert(an);
+            }
+
+            if (!artnets.size()) return;
+
+            for (auto &an_ : m.value.GetObj()) {
+
+                if (!an_.name.IsString() || !an_.value.IsArray()) continue;
+
+                auto info = an_.value.GetArray();
+
+                if (info.Size()<4 || !info[0].IsString() || !info[1].IsInt() || !info[2].IsInt() || !info[3].IsString()) return;
+
+                Node* input = engine.inputs->child(info[0].GetString());
+                if (!input) return;
+                Node* model = engine.stack->child(info[3].GetString());
+                if (!model) return;
+
+                auto remap = engine.remaps->active(true)->addOwnr<DMX::Remap>(
+                    &input->is_a<Artnet>()->uni(0)->data[0],
+                    &engine.dynamic_ubo.data[0],
+                    & model->is_a<Model>()->s
+                );
+
+                remap->name(an_.name.GetString());
+
+                model->referings.insert(remap->node());
+
+                if (info.Size()<5 || !info[4].IsArray()) continue;
+
+                std::vector<Remap::Attribute> attributes;
+                for (auto &x : info[4].GetArray()) if (x.IsInt()) attributes.push_back({x.GetInt()});
+                remap->get()->attr(attributes);
+
+            }
+        }
+    });
     if (json.document.HasMember("editors") && json.document["editors"].IsArray()) for (auto &e : json.document["editors"].GetArray()) {
 
         if (!e.IsArray()) continue;

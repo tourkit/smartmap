@@ -35,6 +35,8 @@ struct Artnet {
 
   int device_id = 0;
 
+  DMX * uni(int id);
+
 } ;
 
 #endif

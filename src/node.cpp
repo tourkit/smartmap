@@ -71,7 +71,7 @@
         return nullptr;
 
     }
-    Node* UntypedNode::child(const char* name) {
+    Node* UntypedNode::child(std::string  name) {
 
         std::string input = name;
         std::vector<std::string> names;

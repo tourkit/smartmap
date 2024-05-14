@@ -16,10 +16,10 @@
 
 VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
 
-    vertices.add(&vertice);
+    vertices.add(vertice);
     Buffer::add(&vertices);
 
-    indices.add(&indice);
+    indices.add(indice);
     Buffer::add(&indices);
 
     create();

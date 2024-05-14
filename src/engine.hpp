@@ -14,6 +14,8 @@ struct GUI;
 struct Node;
 struct DrawCall;
 struct Atlas;
+struct ShaderProgram;
+struct VBO;
 
 struct Engine {
 
@@ -57,6 +59,11 @@ struct Engine {
     void* debug_payload = nullptr;
 
     std::vector<std::string> available_ips;
+
+    VBO *vbo;
+    ShaderProgram *shader;
+
+    static void Draw2D(Texture* texture);
 
 private:
 

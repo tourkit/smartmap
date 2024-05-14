@@ -54,9 +54,7 @@ void Artnet::connect(std::string ip_) {
 
         auto *an = (Artnet*)_this;
 
-        if (an->universes.find(p->data.admx.universe) == an->universes.end()) an->universes[p->data.admx.universe] = new DMX{p->data.admx.universe};
-
-        auto u = an->universes[p->data.admx.universe];
+        auto u = an->uni(p->data.admx.universe);
 
         for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) u->data[i] = p->data.admx.data[i];
 
@@ -69,6 +67,8 @@ void Artnet::connect(std::string ip_) {
     }, this);
 
 }
+
+DMX * Artnet::uni(int id) { if (universes.find(id) == universes.end()) universes[id] = new DMX{id}; return universes[id]; }
 
 Artnet::~Artnet() { disconnect(); }
 
