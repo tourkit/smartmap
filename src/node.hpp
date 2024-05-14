@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <typeindex>
+#include <type_traits>
 #include <functional>
 
 #include "log.hpp"
@@ -82,7 +83,7 @@ public:
 
     virtual std::string type_name() { return "Node"; }
 
-    virtual void* ptr_unisData() { return this; }
+    virtual void* ptr_() { return this; }
 
     Node* onchange(std::function<void(Node*)> cb = nullptr);
 
@@ -95,14 +96,27 @@ public:
 
         auto x = is_a_nowarning<U>();
 
-        if (!x) PLOGW << "not a " << boost::typeindex::type_id_with_cvr<U>().pretty_name() << " ! ";
+        if (!x) PLOGW << "\"" << name() << "\" is not a " << boost::typeindex::type_id_with_cvr<U>().pretty_name() << " ! ";
 
         return x;
 
     }
 
     template <typename U>
-    U* is_a_nowarning() { if (type() == typeid(U)) return (U*)ptr_unisData(); else return nullptr;  }
+    U* is_a_nowarning() {
+
+        // if (static_assert(std::is_base_of_v<Base, Derived>);)
+
+        // if (ptr_()) return
+        if (std::is_base_of_v<std::decay_t<decltype(type())>, decltype(typeid(U))>) return (U*)ptr_(); else return nullptr;
+
+
+        // if (type() == typeid(U)) return (U*)ptr_(); else return nullptr;
+
+        // if (dynamic_cast<U>(*ptr_()) != nullptr) return (U*)ptr_(); else return nullptr;
+
+
+    }
 
     template <typename V>
     void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { auto isa = ((UntypedNode*)c)->is_a<V>(); if (isa) cb(c,isa); } }
@@ -198,7 +212,7 @@ struct TypedNode : UntypedNode {
 
     std::type_index type() override { return stored_type; }
 
-    void* ptr_unisData() override { return ptr; }
+    void* ptr_() override { return ptr; }
 
     operator T*() { return ptr; }
 
@@ -303,6 +317,13 @@ struct TypedNode : UntypedNode {
 
         return dir->node();
         // return folder;
+
+    }
+
+    template <typename U>
+    U* is_derived_nowarning() {
+
+        if (dynamic_cast<U*>(ptr) != nullptr) return (U*)ptr; else return nullptr;
 
     }
 
