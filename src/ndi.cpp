@@ -13,11 +13,42 @@ public:
     std::vector<uint8_t> data;
 };
 
-Sender::Sender(uint16_t width, uint16_t height, std::string name) : Thread("NDI::Sender"), name(name) {
+Sender::Sender(uint32_t width, uint32_t height, std::string name) : Thread("NDI::Sender"), Output(width,height), name(name) {
+
+    size(width, height);
+
+ }
+
+void Sender::draw(){
+
+
+
+}
+
+void Sender::size(uint32_t width, uint32_t height) {
+
+    if(_keepRunning) stop();
+
+    Output::size(width, height);
+
+    pixelcount = width*height*4;
 
     frame.xres = width;
     frame.yres = height;
+
     frame.FourCC = NDIlib_FourCC_type_BGRA;
+
+    data.resize(pixelcount);
+
+    start();
+
+}
+
+// void Sender::pos(uint32_t offset_x, uint32_t offset_y) { }
+
+Sender::~Sender() {}
+
+void Sender::init() {
 
     // frame.frame_rate_N = 30000;
     // frame.frame_rate_D = 1001;
@@ -27,15 +58,6 @@ Sender::Sender(uint16_t width, uint16_t height, std::string name) : Thread("NDI:
     // frame.line_stride_in_bytes = 1920*4;
     // frame.p_metadata = "<Hello/>";
 
-    size = width*height*4;
-
-    data.resize(size);
-
-}
-
-Sender::~Sender() {}
-
-void Sender::init() {
     NDIlib_send_create_t send_create;
 
     send_create.p_ndi_name = ("smartmap - "+ (name.length()?name:std::to_string(uid))).c_str();
@@ -71,7 +93,7 @@ void Sender::tick() {
 
 void Sender::send() {
     auto message = std::make_shared<FrameOutMessage>();
-    message->data.insert(message->data.begin(), &data[0], &data[0] + size);
+    message->data.insert(message->data.begin(), &data[0], &data[0] + pixelcount);
     inQueue().pushMessage(message);
 }
 

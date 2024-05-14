@@ -6,6 +6,7 @@
 #include "buffer.hpp"
 #include "folder.hpp"
 #include "struct.hpp"
+#include "output.hpp"
 #include "ndi.hpp"
 #include "model.hpp"
 #include "file.hpp"
@@ -284,29 +285,15 @@ void Editors::init() {
 
     Editor<NDI::Sender>([](Node*node, NDI::Sender* sender){
 
-            ImGui::NewLine();
 
 
-        ImGuiTextBuffer tbuff;
-
-        for (auto x : engine.stack->childrens) {
-
-            auto name = x->name();
+        Editor<Output>::cb(node, sender);
 
 
-            tbuff.append(name.c_str(), name.c_str()+name.length()+1);
-
-
-        }
-
-        int x = 0;
-        if (Combo("source##ndisendersrc", &x, tbuff.begin())) {
-
-        }
             ImGui::NewLine();
             ImGui::NewLine();
 
-        if (sender->size) draw_raw( &sender->data[0], sender->size );
+        if (sender->pixelcount) draw_raw( &sender->data[0], sender->pixelcount );
 
 
     });
@@ -433,6 +420,13 @@ void Editors::init() {
 
     Editor<Window>([](Node* node, Window *window){
 
+        Editor<Output>::cb(node, window);
+
+    });
+
+    ////////// OUTPUT.HPP
+
+    Editor<Output>([](Node* node, Output *output){
 
         int x = 0;
 
@@ -440,14 +434,15 @@ void Editors::init() {
 
         static uint32_t min = 0;
 
-        if (ImGui::DragScalarN("position###winpos", ImGuiDataType_U32,  &window->offset_x, 2, 1, &min)) {
+        if (ImGui::DragScalarN("position###winpos", ImGuiDataType_U32,  &output->offset_x, 2, 1, &min)) {
 
-            window->pos( window->offset_x, window->offset_y );
+            output->pos( output->offset_x, output->offset_y );
 
         }
-        if (ImGui::DragScalarN("size###winsize", ImGuiDataType_U32,  &window->width, 2, 1, &min)) {
 
-            window->size( window->width, window->height );
+        if (ImGui::DragScalarN("size###winsize", ImGuiDataType_U32,  &output->width, 2, 1, &min)) {
+
+            output->size( output->width, output->height );
 
         }
 

@@ -183,7 +183,7 @@ void Callbacks::init() {
 
     ////////// NDI.HPP
 
-    NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ node->name(sender->name); sender->start(); });
+    NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ node->name(sender->name);  });
 
     ////////// JSON.HPP
 
