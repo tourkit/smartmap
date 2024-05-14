@@ -47,7 +47,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
 
     window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
 
-    window.keypress_cbs[GLFW_KEY_S] = [](int key) { engine.save("project.json"); };
+    window.keypress_cbs[GLFW_KEY_S] = [](int key) { engine.save(); };
 
     window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
 
@@ -65,7 +65,7 @@ void Engine::init() {
     debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); n->name("Debug - " + std::to_string( fps ) + " fps"); if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
-    debug->addOwnr<File>("project.json");
+    debug->addOwnr<File>(engine.project_filepath);
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
     debug->addPtr<Atlas>(atlas);
@@ -177,6 +177,17 @@ bool isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::MemoryPoolA
 
 }
 
+void if_obj(std::string name_, std::function<void(rapidjson::Value::Member&)> cb) {
+
+    const char* name = name_.c_str();
+    auto &doc = engine.json.document;
+
+    if (!doc.HasMember(name) || !doc[name].IsObject()) return;
+
+    for (auto &m : doc[name].GetObj()) cb(m);
+
+}
+
 void Engine::open(const char* file) {
 
     json.load(File(file).data.data());
@@ -202,29 +213,33 @@ void Engine::open(const char* file) {
 
     project_name = file;
 
-    for (auto &m : json["models"])
+    if_obj("models", [&](auto &m) {
+
         if (m.name.IsString() && m.value.IsString())
             auto n = models->addOwnr<File>(m.name.GetString(), m.value.GetString());
+
+    });
+
 
     for (auto &m : json["effectors"])
         if (m.name.IsString() && m.value.IsString())
             auto n = effectors->addOwnr<File>(m.name.GetString(), m.value.GetString());
 
-    for (auto &m : json["inputs"]) {
+    if_obj("inputs", [&](auto &m) {
 
-        if (!m.name.IsString() || !m.value.IsObject()) continue;
+        if (!m.name.IsString() || !m.value.IsObject()) return;
 
         if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) if (x.name.IsString())  engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() );
 
 
-    }
-    for (auto &m : json["outputs"]) {
+    });
+    if_obj("outputs", [&](auto &m) {
 
-        if (!m.name.IsString() || !m.value.IsObject()) continue;
+        if (!m.name.IsString() || !m.value.IsObject()) return;
 
         if (!strcmp(m.name.GetString(),"ndi")) for (auto &x : m.value.GetObj()) {
 
-            if (!isOutput(x))  continue;
+            if (!isOutput(x))  return;
 
             auto arr = x.value.GetArray();
 
@@ -233,24 +248,24 @@ void Engine::open(const char* file) {
         }
         if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
 
-            if (!isOutput(x))  continue;
+            if (!isOutput(x))  return;
 
             auto arr = x.value.GetArray();
 
             engine.outputs->addPtr<Window>( &engine.window )->name(x.name.GetString());
 
-            engine.window.setSize( arr[0].GetInt() , arr[1].GetInt() );
-            engine.window.setPos( arr[2].GetInt() , arr[3].GetInt() );
+            engine.window.size( arr[0].GetInt() , arr[1].GetInt() );
+            engine.window.pos( arr[2].GetInt() , arr[3].GetInt() );
 
             break; // only one alloweed for nowe
 
         }
 
-    }
+    });
 
-    for (auto &l : json["layers"]) {
+    if_obj("layers", [&](auto &l) {
 
-        if (!l.value.IsArray()) continue;
+        if (!l.value.IsArray()) return;
 
         auto info = l.value.GetArray();
 
@@ -266,25 +281,25 @@ void Engine::open(const char* file) {
 
         }
 
-        auto layer = stack->addOwnr<Layer>(width,height,l.name.IsString() ? l.name.GetString() : "");
+        TypedNode<Layer>* layer = stack->addOwnr<Layer>(width,height,l.name.IsString() ? l.name.GetString() : "");
 
-        if (info.Size() <= models_id || !info[models_id].IsObject()) continue;
+        if (info.Size() <= models_id || !info[models_id].IsObject()) return;
 
         for (auto &model : info[models_id].GetObj()) {
 
-            if (!model.name.IsString() || !model.value.IsArray()) continue;
+            if (!model.name.IsString() || !model.value.IsArray()) return;
 
             auto info = model.value.GetArray();
 
-            if (!info.Size() || !info[0].IsString()) continue;
+            if (!info.Size() || !info[0].IsString()) return;
 
             Node* model_file = nullptr;
 
-            for (auto x : engine.models->childrens) {
+            for (Node* x : engine.models->childrens) {
 
                 auto f = x->is_a<File>();
 
-                if (!x->is_a<File>()) continue;
+                if (!f) return;
 
                 std::string y = info[0].GetString();
 
@@ -294,17 +309,17 @@ void Engine::open(const char* file) {
 
             // for (auto x : engine.models->childrens) if (x->is_a<File>() && x->is_a<File>()->filename == info[0].GetString()) model_file = x;
 
-            if (!model_file) { PLOGE << "no model : " << info[0].GetString(); continue; }
+            if (!model_file) { PLOGE << "no model : " << info[0].GetString(); return; }
 
             auto new_model = layer->add(model_file)->get<Model>();
 
             new_model->name(model.name.GetString());
 
-            if (info.Size() < 2 || !info[1].IsInt()) continue;
+            if (info.Size() < 2 || !info[1].IsInt()) return;
 
             new_model->get()->s.quantity(info[1].GetInt());
 
-            if (info.Size() < 3 || !info[2].IsObject()) continue;
+            if (info.Size() < 3 || !info[2].IsObject()) return;
 
             addEffectors( info[2], new_model->node() );
 
@@ -314,7 +329,8 @@ void Engine::open(const char* file) {
 
         layer->update();
 
-    }
+
+    });
 
     if (json.document.HasMember("editors") && json.document["editors"].IsArray()) for (auto &e : json.document["editors"].GetArray()) {
 
@@ -423,12 +439,19 @@ void Engine::save(const char* file) {
         arr.AddMember( rapidjson::Value(m->name().c_str(), allocator)  , lay, allocator );
 
     }
+
     json.document["outputs"].RemoveAllMembers();
-    for (auto m : outputs->childrens) {
 
-        // auto &arr = json.document["outputs"];
+    for (auto output : outputs->childrens) {
 
-        // auto  lay = rapidjson::Value(rapidjson::kArrayType);
+        auto &outputs_obj = json.document["outputs"];
+
+        auto  outputarr = rapidjson::Value(rapidjson::kArrayType);
+
+        if ( !output->is_a<Window>() && !output->is_a<NDI::Sender>() ) continue;
+
+        // Output*
+        if ( output->is_a<NDI::Sender>() ) { }
 
         // auto layer = m->is_a<Layer>();
         // lay.PushBack(layer->fb.width, allocator);

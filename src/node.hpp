@@ -103,20 +103,7 @@ public:
     }
 
     template <typename U>
-    U* is_a_nowarning() {
-
-        // if (static_assert(std::is_base_of_v<Base, Derived>);)
-
-        // if (ptr_()) return
-        if (std::is_base_of_v<std::decay_t<decltype(type())>, decltype(typeid(U))>) return (U*)ptr_(); else return nullptr;
-
-
-        // if (type() == typeid(U)) return (U*)ptr_(); else return nullptr;
-
-        // if (dynamic_cast<U>(*ptr_()) != nullptr) return (U*)ptr_(); else return nullptr;
-
-
-    }
+    U* is_a_nowarning() { if (type() == typeid(U)) return (U*)ptr_(); else return nullptr; }
 
     template <typename V>
     void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { auto isa = ((UntypedNode*)c)->is_a<V>(); if (isa) cb(c,isa); } }

@@ -10,15 +10,15 @@
 #include <GLFW/glfw3.h>
 
 
+#include "output.hpp"
 // #include "fps.hpp"
 // #include "drawcall.hpp"
 
+struct ShaderProgram; struct VBO; struct Texture;
 
-struct FrameBuffer; struct ShaderProgram; struct VBO; struct Texture;
+struct Window : Output {
 
-struct Window {
-
-    struct Display { uint16_t width, height, rate; };
+    struct Display { uint32_t width, height, rate; };
 
     std::vector<Display> displays;
 
@@ -30,20 +30,19 @@ struct Window {
 
     bool stopped = false;
 
-    uint16_t width, height, mouse_x, mouse_y, offset_x, offset_y, max_fps = 60;
+    uint32_t mouse_x, mouse_y, max_fps = 60;
 
-    Window(uint16_t width, uint16_t height, uint16_t offset_x = 0, uint16_t offset_y = 0, bool fullscreen = false);
+    Window(uint32_t width, uint32_t height, uint32_t offset_x = 0, uint32_t offset_y = 0, bool fullscreen = false);
 
-    void setSize(uint16_t width = 0, uint16_t height = 0);
-    void setPos(uint16_t offset_x = 0, uint16_t offset_y = 0);
-    void updateSize();
-    void updatePos();
+    void size(uint32_t width, uint32_t height) override;
+    void pos(uint32_t offset_x, uint32_t offset_y) override;
+
 
     ~Window();
 
     void render(std::function<void()> callback = [](){});
 
-    void draw(FrameBuffer *fb);
+    void draw() override;
 
     void keypress();
 

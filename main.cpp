@@ -11,16 +11,7 @@
 
 #include "ndi.hpp"
 
-struct Foo {};
-struct Bar : Foo {};
 int main() {
-
-    Bar bar;
-
-    // if (typeid(&bar) == typeid(Foo)) { std::cout << "true"; } else { std::cout << "false"; }exit(0);
-
-    if (dynamic_cast<Foo*>(&bar) != nullptr) { std::cout << "true"; } else { std::cout << "false"; }exit(0);
-
 
     engine.init();
 
@@ -52,6 +43,8 @@ int main() {
 }
 
 // ~save remap
+
+// how to save outputs / type <-- ?
 
 // timeline
 

@@ -12,9 +12,9 @@
 #include <thread>
 
 
-Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offset_y, bool fullscreen)
+Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offset_y, bool fullscreen)
 
-    : fullscreen(fullscreen) , width(width) , height(height) , offset_x(offset_x) , offset_y(offset_y) /*, fps("Window")*/ {
+    : fullscreen(fullscreen), Output(width, height) /*, fps("Window")*/ {
 
     int8_t windows_border = 0;
     int8_t window_on_top = 1;
@@ -34,7 +34,7 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
     int count;
     GLFWmonitor** monitors = glfwGetMonitors(&count);
     const GLFWvidmode* mode = glfwGetVideoMode(monitors[0]);
-    uint16_t refreshRate = glfwGetVideoMode(monitors[0])->refreshRate;
+    uint32_t refreshRate = glfwGetVideoMode(monitors[0])->refreshRate;
 
     displays.push_back(Display(mode->width, mode->height,refreshRate));
     PLOGI  << " Display @ " << refreshRate << "Hz " << mode->width << "x" << mode->height;
@@ -75,7 +75,9 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
 
     gl3wInit();
 
-    if (!fullscreen)setPos(offset_x, offset_y);
+    if (!fullscreen) pos( offset_x, offset_y );
+
+    size( width, height );
 
     glEnable(GL_BLEND);
 
@@ -91,27 +93,23 @@ Window::Window(uint16_t width, uint16_t height, uint16_t offset_x, uint16_t offs
 
 static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { glViewport(0, 0, width, height); }
 
-void Window::updatePos() {
+
+void Window::pos(uint32_t offset_x, uint32_t offset_y) {
+
+    Output::pos( offset_x, offset_y);
 
     glfwSetWindowPos(id, offset_x, offset_y);
     glfwSetFramebufferSizeCallback(id, framebuffer_size_callback);
     glfwSetWindowSize(id, width, height);
 
 }
-void Window::setPos(uint16_t offset_x, uint16_t offset_y) {
-    this->offset_x = offset_x;
-    this->offset_y = offset_y;
-    updatePos();
-}
 
-void Window::updateSize() {
+void Window::size(uint32_t width, uint32_t height) {
+
+    Output::size(width, height);
+
     glfwSetWindowSize(id, width, height);
     glViewport(0, 0, width, height);
-}
-void Window::setSize(uint16_t width, uint16_t height) {
-    this->width = width;
-    this->height = height;
-    updateSize();
 }
 
 
@@ -144,6 +142,21 @@ void Window::keypress() {
              _this->clickCallBack();
         }
     });
+}
+
+
+void Window::draw() {
+
+    if (texture) {
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        texture->bind();
+        shader->use();
+        vbo->draw();
+
+    }
+
 }
 
 

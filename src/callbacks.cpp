@@ -156,7 +156,7 @@ void Callbacks::init() {
 
         auto model = node->parent()->is_a_nowarning<Model>();
 
-        if (!model) return node->parent()->is_a<Layer>()->removeEffector(effector);
+        if (!model) { node->parent()->is_a<Layer>()->removeEffector(effector); return ;}
 
         model->remove(effector);
 
