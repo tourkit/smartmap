@@ -236,35 +236,6 @@ void Engine::open(const char* file) {
 
     });
 
-    if_obj("outputs", [&](auto &m) {
-
-        if (!m.name.IsString() || !m.value.IsObject()) return;
-
-        if (!strcmp(m.name.GetString(),"ndi")) for (auto &x : m.value.GetObj()) {
-
-            if (!isOutput(x))  return;
-
-            auto arr = x.value.GetArray();
-
-            engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString() );
-
-        }
-        if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
-
-            if (!isOutput(x))  return;
-
-            auto arr = x.value.GetArray();
-
-            engine.outputs->addPtr<Window>( &engine.window )->name(x.name.GetString());
-
-            engine.window.size( arr[0].GetInt() , arr[1].GetInt() );
-            engine.window.pos( arr[2].GetInt() , arr[3].GetInt() );
-
-            break; // only one alloweed for nowe
-
-        }
-
-    });
 
     if_obj("layers", [&](auto &l) {
 
@@ -332,6 +303,48 @@ void Engine::open(const char* file) {
 
         layer->update();
 
+
+    });
+
+    if_obj("outputs", [&](auto &m) {
+
+        if (!m.name.IsString() || !m.value.IsObject()) return;
+
+        if (!strcmp(m.name.GetString(),"ndi")) for (auto &x : m.value.GetObj()) {
+
+            if (!isOutput(x))  return;
+
+            auto arr = x.value.GetArray();
+            if (arr.Size() < 5) return;
+            // if (arr.Size() == 4) return;
+
+
+            Node* layer = engine.stack->child(arr[4].GetString());
+
+
+
+
+            engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr));
+
+        }
+        if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
+
+            if (!isOutput(x))  return;
+
+            auto arr = x.value.GetArray();
+
+            Node* layer = engine.stack->child(arr[4].GetString());
+            auto window = engine.outputs->addPtr<Window>( &engine.window );
+
+            window->name(x.name.GetString());
+            window->get()->layer = (layer?layer->is_a<Layer>():nullptr);
+
+            engine.window.size( arr[0].GetInt() , arr[1].GetInt() );
+            engine.window.pos( arr[2].GetInt() , arr[3].GetInt() );
+
+            break; // only one alloweed for nowe
+
+        }
 
     });
 
@@ -443,50 +456,49 @@ void Engine::save(const char* file) {
 
     }
 
+    json.document["outputs"].SetObject();
     json.document["outputs"].RemoveAllMembers();
 
     for (auto output : outputs->childrens) {
 
-        auto &outputs_obj = json.document["outputs"];
 
         auto  outputarr = rapidjson::Value(rapidjson::kArrayType);
 
-        if ( !output->is_a<Window>() && !output->is_a<NDI::Sender>() ) continue;
+        auto output_ = (Output*)output->ptr_(); // big leap
 
-        // Output*
-        if ( output->is_a<NDI::Sender>() ) { }
+        outputarr.PushBack( output_->width, allocator );
+        outputarr.PushBack( output_->height, allocator );
+        outputarr.PushBack( output_->offset_x, allocator );
+        outputarr.PushBack( output_->offset_y, allocator );
+        outputarr.PushBack( rapidjson::Value(output_->layer->s.name().c_str(), allocator ), allocator );
 
-        // auto layer = m->is_a<Layer>();
-        // lay.PushBack(layer->fb.width, allocator);
-        // lay.PushBack(layer->fb.height, allocator);
+        // if ( output->is_a<NDI::Sender>() ) { }
 
-        // auto  models = rapidjson::Value(rapidjson::kObjectType);
+        auto &outputs = json.document["outputs"];
 
-        // for (auto model : layer->models) {
+        if ( output->is_a_nowarning<Window>() ) {
 
-        //     auto new_model = rapidjson::Value(rapidjson::kArrayType);
+            if (!outputs.HasMember("monitor")) outputs.AddMember(rapidjson::Value("monitor", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
 
-        //     new_model.PushBack(rapidjson::Value(model.get()->file->filename().c_str(), allocator), allocator);
+            outputs["monitor"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
 
-        //     new_model.PushBack(model.get()->s.quantity(),allocator);
+        }
+        if ( output->is_a_nowarning<NDI::Sender>() ) {
 
-        //     auto effects = rapidjson::Value(rapidjson::kObjectType);
-        //     for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );
-        //     new_model.PushBack( effects, allocator );
+            if (!outputs.HasMember("ndi")) outputs.AddMember(rapidjson::Value("ndi", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
 
-        //     models.AddMember(rapidjson::Value(model.get()->s.name().c_str(), allocator), new_model, allocator);
+            outputs["ndi"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
 
-        // }
+        }
 
-        // lay.PushBack(models, allocator);
 
-        // auto effects = rapidjson::Value(rapidjson::kObjectType);
-        // for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );
-        // lay.PushBack( effects, allocator );
-
-        // arr.AddMember( rapidjson::Value(m->name().c_str(), allocator)  , lay, allocator );
 
     }
+
+
+
+
+
 
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);

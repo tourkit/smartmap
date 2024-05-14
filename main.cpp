@@ -44,8 +44,6 @@ int main() {
 
 // ~save remap
 
-// how to save outputs / type <-- ?
-
 // timeline
 
 // static Effector should  update on file update

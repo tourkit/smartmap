@@ -420,7 +420,26 @@ void Editors::init() {
 
     Editor<Window>([](Node* node, Window *window){
 
+        using namespace ImGui;
+
         Editor<Output>::cb(node, window);
+
+        NewLine();
+
+        int i = 0;
+
+        for (auto &display : engine.window.displays) {
+
+            if (Button( ("fit display "+std::to_string(i++)).c_str())) {
+
+                window->pos( display.x, display.y );
+                window->size( display.width, display.height );
+
+            }
+            SameLine();
+        }
+        NewLine();
+        NewLine();
 
     });
 

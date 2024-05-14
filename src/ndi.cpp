@@ -13,7 +13,7 @@ public:
     std::vector<uint8_t> data;
 };
 
-Sender::Sender(uint32_t width, uint32_t height, std::string name) : Thread("NDI::Sender"), Output(width,height), name(name) {
+Sender::Sender(uint32_t width, uint32_t height, std::string name, Layer* layer) : Thread("NDI::Sender"), Output(width,height,layer), name(name) {
 
     size(width, height);
 
@@ -60,7 +60,7 @@ void Sender::init() {
 
     NDIlib_send_create_t send_create;
 
-    send_create.p_ndi_name = ("smartmap - "+ (name.length()?name:std::to_string(uid))).c_str();
+    send_create.p_ndi_name = name.c_str();
     send_create.p_groups = NULL;
     send_create.clock_video = true;
 

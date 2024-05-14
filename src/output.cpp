@@ -1,8 +1,8 @@
 #include "output.hpp"
 
-Output::Output(uint32_t width, uint32_t height, Texture *texture, uint32_t offset_x, uint32_t offset_y)
+Output::Output(uint32_t width, uint32_t height, Layer *layer, uint32_t offset_x, uint32_t offset_y)
 
-    : texture(texture) {
+    : layer(layer) {
 
         size(width, height);
 

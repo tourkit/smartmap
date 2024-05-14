@@ -18,7 +18,7 @@ struct ShaderProgram; struct VBO; struct Texture;
 
 struct Window : Output {
 
-    struct Display { uint32_t width, height, rate; };
+    struct Display { uint32_t width, height, rate, x, y; };
 
     std::vector<Display> displays;
 
@@ -55,7 +55,6 @@ private:
 
     ShaderProgram* shader;
     VBO* vbo;
-    Texture* texture = nullptr;
 
 };
 

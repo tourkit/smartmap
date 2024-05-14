@@ -7,6 +7,7 @@
 #include "shader.hpp"
 #include "texture.hpp"
 #include "vbo.hpp"
+#include "drawcall.hpp"
 
 #include <chrono>
 #include <thread>
@@ -33,11 +34,19 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
 
     int count;
     GLFWmonitor** monitors = glfwGetMonitors(&count);
-    const GLFWvidmode* mode = glfwGetVideoMode(monitors[0]);
-    uint32_t refreshRate = glfwGetVideoMode(monitors[0])->refreshRate;
+    int t_offset_x = 0;
 
-    displays.push_back(Display(mode->width, mode->height,refreshRate));
-    PLOGI  << " Display @ " << refreshRate << "Hz " << mode->width << "x" << mode->height;
+    for (int i = 0 ; i < count; i++) {
+
+        const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);
+
+        displays.push_back(Display(mode->width, mode->height,mode->refreshRate, t_offset_x ));
+
+        t_offset_x += mode->width;
+
+
+    }
+    PLOGI  << " Display @ " << displays.back().rate << "Hz " << displays.back().width << "x" << displays.back().height;
 
     if (fullscreen)
     {
@@ -147,11 +156,11 @@ void Window::keypress() {
 
 void Window::draw() {
 
-    if (texture) {
+    if (layer) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        texture->bind();
+        layer->fb.texture->bind();
         shader->use();
         vbo->draw();
 
@@ -171,13 +180,6 @@ void Window::render(std::function<void()> callback) {
     glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
     callback();
-
-    if (texture) {
-
-        texture->bind();
-        shader->use();
-        vbo->draw();
-    }
 
     glfwSwapBuffers(id);
 }
