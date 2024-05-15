@@ -213,53 +213,53 @@ void TreeWidget::drawNode(Node* node) {
 
         // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
 
-            // const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+            const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 
             if (recurse) {
 
 
-                // ImDrawList* drawList = ImGui::GetWindowDrawList();
-                // verticalLineStart.x+=7;
-                // verticalLineStart.y+=-7;
-                // ImVec2 verticalLineEnd = verticalLineStart;
+                ImDrawList* drawList = ImGui::GetWindowDrawList();
+                verticalLineStart.x+=7;
+                verticalLineStart.y+=-7;
+                ImVec2 verticalLineEnd = verticalLineStart;
 
-                // verticalLineEnd.y+=14;
-                // ImVec2 verticalLineEnd2 = verticalLineEnd;
-                // verticalLineEnd2.x+=10;//Engine::getInstance().blank[8];
-                // drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(122,122,122,122));
-                // drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
+                verticalLineEnd.y+=14;
+                ImVec2 verticalLineEnd2 = verticalLineEnd;
+                verticalLineEnd2.x+=10;//Engine::getInstance().blank[8];
+                drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(122,122,122,122));
+                drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
 
-                // if (ImGui::IsDragDropActive()) {
+                if (ImGui::IsDragDropActive()) {
 
-                //     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
-                //     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
+                    ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
+                    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
 
-                //     ImVec2 dropperline;
-                //     dropperline.x = ImGui::GetWindowPos().x;
-                //     dropperline.y = ImGui::GetCursorScreenPos().y;
-                //     dropperline.y += 2;
+                    ImVec2 dropperline;
+                    dropperline.x = ImGui::GetWindowPos().x;
+                    dropperline.y = ImGui::GetCursorScreenPos().y;
+                    dropperline.y += 2;
 
-                //     ImVec2 dropperline2 = dropperline;
-                //     dropperline2.x += ImGui::GetWindowWidth();
-                //     dropperline2.y -= 10;
+                    ImVec2 dropperline2 = dropperline;
+                    dropperline2.x += ImGui::GetWindowWidth();
+                    dropperline2.y -= 3;
 
-                //     ImGui::SameLine();
-                //     ImGui::PushID(6969);
-                //     ImGui::BeginGroup();
-                //     drawList->AddRectFilled(dropperline, dropperline2, IM_COL32(255,0,0,30));
-                //     ImGui::EndGroup();
-                //     ImGui::PopID();
+                    if (ImGui::BeginDragDropTarget()) {
 
-                //     if (ImGui::BeginDragDropTarget()) {
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGI << "TODO MOVE NODE";
 
-                //         if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGI << "TODO MOVE NODE";
+                        ImGui::EndDragDropTarget();
+                    }
+                    ImGui::SameLine();
+                    ImGui::PushID(6969);
+                    ImGui::BeginGroup();
+                    drawList->AddRectFilled(dropperline, dropperline2, IM_COL32(255,255,0,40));
+                    ImGui::EndGroup();
+                    ImGui::PopID();
 
-                //         ImGui::EndDragDropTarget();
-                //     }
 
-                //     ImGui::PopStyleVar(2);
+                    ImGui::PopStyleVar(2);
 
-                // }
+                }
 
                 drawChildrens(node);
 
