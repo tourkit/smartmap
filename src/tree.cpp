@@ -145,7 +145,54 @@ using namespace ImGui;
 
         }
     }
+           if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+    {
+        if (ImGui::BeginMenu("add"))
+        {
+            if (ImGui::MenuItem("New")) {}
+            ImGui::EndMenu();
+        }
+        bool will_exit = false;
+        if (!is_deleting) {
 
+            ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
+            if(ImGui::MenuItem("delete")){ is_deleting = true; }
+            ImGui::PopItemFlag();
+
+        }else {
+
+            if(ImGui::MenuItem("Sure ?")){
+
+                is_deleting = false;
+                auto parent = node->parent();
+                delete_list.push_back(node);
+                if (parent) parent->update();
+
+            }
+
+        }
+
+        if (!ImGui::IsItemHovered()) is_deleting = false;
+
+        if(ImGui::MenuItem("rename")) {
+
+            is_renaming = node;
+
+        memset(&renaming_name[0],0,612);
+        memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
+
+        }
+
+        if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
+
+        if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));
+
+        if (ImGui::MenuItem("editor")) engine.gui->editors.push_back(new EditorWidget());
+
+        ImGui::Checkbox("demo", &demodemo);
+
+        ImGui::EndPopup();
+    }
     PopStyleColor();
 
     static bool holding = false;
@@ -237,11 +284,11 @@ void TreeWidget::drawNode(Node* node) {
                     ImVec2 dropperline;
                     dropperline.x = ImGui::GetWindowPos().x;
                     dropperline.y = ImGui::GetCursorScreenPos().y;
-                    dropperline.y += 2;
+                    dropperline.y += 3;
 
                     ImVec2 dropperline2 = dropperline;
                     dropperline2.x += ImGui::GetWindowWidth();
-                    dropperline2.y -= 3;
+                    dropperline2.y -= 4;
 
                     if (ImGui::BeginDragDropTarget()) {
 

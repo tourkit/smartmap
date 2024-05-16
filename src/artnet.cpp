@@ -6,6 +6,17 @@
 
 Artnet::Artnet(std::string ip)  { connect(ip); }
 
+  Artnet::UniStruct& Artnet::uni(int id) {
+
+    try { return universes.at(id); }
+
+    catch(const std::out_of_range& e) { return universes.emplace(id, Artnet::UniStruct(this, id)).first->second; }
+
+  }
+
+
+Artnet::UniStruct::UniStruct(Buffer* b, int id) : b(b), Struct("uni "+std::to_string(id), 3) { PLOGD << "new uni " << id; add(&universe); b->add(this); }
+
 void Artnet::connect(std::string ip_) {
 
     disconnect();
@@ -54,21 +65,28 @@ void Artnet::connect(std::string ip_) {
 
         auto *an = (Artnet*)_this;
 
-        auto u = an->uni(p->data.admx.universe);
+        int uni_id = p->data.admx.universe;
 
-        for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) u->data[i] = p->data.admx.data[i];
+        // an->uni(uni_id);
 
-        u->update();
+        // if (universes.find(uni) == universes.end()) universes[uni] = new Universe(uni);
 
-        if (an->listening.size()) if (p->data.admx.universe == an->listening.back()) an->callback(an);
+        // an->universes[id]
+
+
+        // auto u = an->universes[p->data.admx.universe];
+
+        // for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) u->data[i] = p->data.admx.data[i];
+
+        // u->update();
+
+        // if (an->listening.size()) if (p->data.admx.universe == an->listening.back()) an->callback(an);
 
         return 1;
 
     }, this);
 
 }
-
-DMX * Artnet::uni(int id) { if (universes.find(id) == universes.end()) universes[id] = new DMX{id}; return universes[id]; }
 
 Artnet::~Artnet() { disconnect(); }
 

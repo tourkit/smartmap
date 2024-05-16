@@ -369,6 +369,15 @@ void Editors::init() {
 
     });
 
+    Editor<Artnet::UniStruct>([](Node*node,Artnet::UniStruct* uni){
+
+
+        Editor<Buffer>::cb (node, uni->b);
+
+
+
+    });
+
     Editor<Artnet>([](Node*node,Artnet* an){
 
         ImGuiTextBuffer tbuff;
@@ -381,14 +390,18 @@ void Editors::init() {
 
         }
 
-        for (auto &u : an->universes) {
+        Editor<Buffer>::cb (node, an);
 
-            std::string str = "universe "+std::to_string(u.first);
-            ImGui::Text(str.c_str());ImGui::NewLine();
+        ImGui::Text( std::to_string(an->footprint_all()).c_str() );
 
-            draw_raw(&u.second->data[0], u.second->data.size());
+        // for (auto &u : an->universes) {
 
-        }
+        //     std::string str = "universe "+std::to_string(u.first);
+        //     ImGui::Text(str.c_str());ImGui::NewLine();
+
+        //     draw_raw(&u.second->data[0], u.second->data.size());
+
+        // }
 
     });
 
@@ -760,11 +773,11 @@ void Editors::init() {
 
     ////////// Artnet.HPP
 
-    Editor<DMX>([](Node*node,DMX* dmx){
+    Editor<Universe>([](Node*node,Universe* dmx){
 
 
 
-        for (auto &r : dmx->remaps) Editor<DMX::Remap>::cb(node, &r);
+        for (auto &r : dmx->remaps) Editor<Universe::Remap>::cb(node, &r);
 
     });
 
@@ -792,7 +805,7 @@ void Editors::init() {
 
     // REMAP.HPP
 
-    Editor<DMX::Remap>([](Node*node, DMX::Remap* remap){ Editor<Remap>::cb(node, remap); });
+    Editor<Universe::Remap>([](Node*node, Universe::Remap* remap){ Editor<Remap>::cb(node, remap); });
 
     ////////// Engine.HPP
 

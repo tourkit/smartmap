@@ -66,23 +66,23 @@ void Callbacks::init() {
     NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run();
     static int size = 0;
 
-    if (an->universes.size() != size) {
-        size = an->universes.size();
-        // node->get<Artnet>()->trigchange();
-    }
+    // if (an->universes.size() != size) {
+    //     size = an->universes.size();
+    //     // node->get<Artnet>()->trigchange();
+    // }
     });
 
     NODE<Artnet>::onchange([](Node* node, Artnet *an){
 
-        for (auto c :node->childrens) { delete c; };
+        // for (auto c :node->childrens) delete c;
 
-        for (auto &uni :an->universes) {
+        // // for (auto &uni :an->universes) {
 
-            uni.second->id = uni.first;
+        // //     uni.second->id = uni.first;
 
-            node->addPtr<DMX>(uni.second)->name("universe "+std::to_string(uni.first));
+        // //     node->addPtr<Universe>(uni.second)->name("universe "+std::to_string(uni.first));
 
-        }
+        // // }
 
     });
 
@@ -170,8 +170,8 @@ void Callbacks::init() {
 
     NODE<Remap>::onrun([](Node* node, Remap *remap) { remap->update(); });
     NODE<Remap>::onchange([](Node* node, Remap *remap) { remap->reset(); });
-    NODE<DMX::Remap>::onrun([](Node* node, DMX::Remap *remap) { remap->update(); });
-    NODE<DMX::Remap>::onchange([](Node* node, DMX::Remap *remap) { remap->reset(); });
+    NODE<Universe::Remap>::onrun([](Node* node, Universe::Remap *remap) { remap->update(); });
+    NODE<Universe::Remap>::onchange([](Node* node, Universe::Remap *remap) { remap->reset(); });
 
     //////// Buffer.HPP
 

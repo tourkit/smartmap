@@ -27,7 +27,7 @@ struct Struct : Member {
     // Struct& add(Member& m, std::string name = "");
 
     template <typename T>
-    Struct& add(std::string name = "") { auto n = new Data<T>(name); add(n); return *this; }
+    Struct& add(std::string name = "", uint32_t quantity = 1) { auto n = new Data<T>(name, quantity); add(n); return *this; }
 
     // Struct* add(std::string name) ;
 

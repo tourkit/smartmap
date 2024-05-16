@@ -105,8 +105,13 @@ public:
     template <typename U>
     U* is_a_nowarning() { if (type() == typeid(U)) return (U*)ptr_(); else return nullptr; }
 
+    // template <typename V>
+    // void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { Node* isa = c->is_a<V>(); if (isa) cb(c,isa); } }
+
     template <typename V>
-    void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { auto isa = ((UntypedNode*)c)->is_a<V>(); if (isa) cb(c,isa); } }
+    void each(std::function<void(Node*, V*)> cb) { each([&](Node* n) { auto isa = ((UntypedNode*)n)->is_a_nowarning<V>(); if (isa) cb(n,isa); }); }
+
+    void each(std::function<void(Node*)> cb) { for (auto c : childrens) { ((UntypedNode*)c)->each(cb); } cb(node());  }
 
     static inline uint32_t total_uid = 0;
     uint32_t uid = 0;

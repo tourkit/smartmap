@@ -13,18 +13,24 @@
     "layer1": [ 1920, 1080, { "MyQuad": [ "quad.obj", 5, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, { "feedback": "feedback.glsl" } ]
   },
   "inputs": {
+
     "artnet": { "ArtNet": "2.0.0.991" }
+
   },
   "outputs": {
     "monitor": { "Video 1": [ 891, 1044, 3548, 0, "layer1" ] },
     "ndi": { "NDI 1": [ 1920, 1080, 0, 0, "layer1" ] }
   },
-  "remaps": {
-    "artnet": { "Remap 1": [ "ArtNet", 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2, 1 ] ] }
-  },
   "editors": [
-    [ 0, 0, 0, 0, "tree::Effectors" ],
-    [ 0, 0, 0, 0, "Outputs::Video 1", true ],
-    [ 0, 0, 0, 0, "Stack::layer1", true ]
+    [ 0, 0, 0, 0, "Debug", true ],
+    [ 0, 0, 0, 0, "Inputs::ArtNet", true ]
+  ],
+
+  "links" : [
+    ["layer1::MyQuad::argb.red", "layer1::MyQuad::argb.blue"],
+    ["layer1::MyQuad::rectangle", "layer1::MyQuad::rectangle"],
+    ["ArtNet::0.0", "layer1::MyQuad",  [ 1, 1, 1, 1, 2, 2, 1 ], 10],
+    ["layer1::MyQuad::argb.green", "ArtNet::0.4" ]
   ]
+
 }

@@ -13,7 +13,9 @@ struct Data : Member {
     T range_to;
     T default_val;
 
-    Data(std::string name = "") : Member(name) {
+    Data(std::string name = "", uint32_t quantity = 1) : Member(name) {
+
+        this->quantity_v = (quantity);
 
         range_from_ptr = &range_from;
         range_to_ptr = &range_to;

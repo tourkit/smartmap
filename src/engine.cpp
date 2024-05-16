@@ -45,11 +45,11 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
 
     gui = new GUI(window.id);
 
-    window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
+    // window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
 
-    window.keypress_cbs[GLFW_KEY_S] = [](int key) { engine.save(); };
+    // window.keypress_cbs[GLFW_KEY_S] = [](int key) { engine.save(); };
 
-    window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
+    // window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
 
     tree = new Node("tree");
 
@@ -237,14 +237,6 @@ void Engine::open(const char* file) {
         if (m.name.IsString() && m.value.IsString()) auto n = effectors->addOwnr<File>(m.name.GetString(), m.value.GetString());
     });
 
-    if_obj("inputs", [&](auto &m) {
-
-        if (!m.name.IsString() || !m.value.IsObject()) return;
-
-        if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) if (x.name.IsString())  engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() );
-
-    });
-
 
     if_obj("layers", [&](auto &l) {
 
@@ -357,6 +349,45 @@ void Engine::open(const char* file) {
 
     });
 
+    if_obj("inputs", [&](auto &m) {
+
+        if (!m.name.IsString() || !m.value.IsObject()) return;
+
+        if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) {
+
+            if (!x.name.IsString()) continue;
+            engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() ); continue;
+
+
+            if (!x.name.IsString() || !x.value.IsArray()) continue;
+
+            auto arr = x.name.GetArray();
+
+            if (!arr.Size()) continue;
+
+            engine.inputs->addOwnr<Artnet>( arr[0].IsString() ? arr[0].GetString() : "" )->active(1)->name( x.name.GetString() );
+
+            if (arr.Size() < 2 || !arr[1].IsObject()) continue;
+
+            for (auto &remap : arr[1].GetObj()) {
+
+                if (!remap.name.IsString() || !remap.value.IsArray()) continue;
+
+                auto arr = x.name.GetArray();
+
+                if (arr.Size() < 3 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsString()) continue;
+
+                Node* taregt = engine.stack->child(arr[2].GetString());
+                if (!taregt) return;
+                // remaps
+
+            }
+
+        }
+
+    });
+
+
     if_obj("remaps", [&](auto &m) {
 
         if (!m.name.IsString() || !m.value.IsObject()) return;
@@ -379,26 +410,22 @@ void Engine::open(const char* file) {
 
                 if (info.Size()<4 || !info[0].IsString() || !info[1].IsInt() || !info[2].IsInt() || !info[3].IsString()) return;
 
-                Node* input = engine.inputs->child(info[0].GetString());
-                if (!input) return;
-                Node* model = engine.stack->child(info[3].GetString());
-                if (!model) return;
 
-                auto remap = engine.remaps->active(true)->addOwnr<DMX::Remap>(
-                    &input->is_a<Artnet>()->uni(0)->data[0],
-                    &engine.dynamic_ubo.data[0],
-                    & model->is_a<Model>()->s
-                );
+                // auto remap = engine.remaps->active(true)->addOwnr<Universe::Remap>(
+                //     &input->is_a<Artnet>()->uni(0)->data[0],
+                //     &engine.dynamic_ubo.data[0],
+                //     & model->is_a<Model>()->s
+                // );
 
-                remap->name(an_.name.GetString());
+                // remap->name(an_.name.GetString());
 
-                model->referings.insert(remap->node());
+                // model->referings.insert(remap->node());
 
-                if (info.Size()<5 || !info[4].IsArray()) continue;
+                // if (info.Size()<5 || !info[4].IsArray()) continue;
 
-                std::vector<Remap::Attribute> attributes;
-                for (auto &x : info[4].GetArray()) if (x.IsInt()) attributes.push_back({x.GetInt()});
-                remap->get()->attr(attributes);
+                // std::vector<Remap::Attribute> attributes;
+                // for (auto &x : info[4].GetArray()) if (x.IsInt()) attributes.push_back({x.GetInt()});
+                // remap->get()->attr(attributes);
 
             }
         }
@@ -440,6 +467,7 @@ void Engine::save(const char* file) {
     if (!json.document.HasMember("effectors")) json.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("layers")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("outputs")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
+    if (!json.document.HasMember("remaps")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
 
     json.document["editors"].Clear();
 
@@ -513,9 +541,7 @@ void Engine::save(const char* file) {
 
     json.document["outputs"].SetObject();
     json.document["outputs"].RemoveAllMembers();
-
     for (auto output : outputs->childrens) {
-
 
         auto  outputarr = rapidjson::Value(rapidjson::kArrayType);
 
@@ -545,6 +571,55 @@ void Engine::save(const char* file) {
             outputs["ndi"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
 
         }
+
+
+
+    }
+
+    json.document["remaps"].SetObject();
+    json.document["remaps"].RemoveAllMembers();
+    for (auto remap : remaps->childrens) {
+
+        auto  remaparr = rapidjson::Value(rapidjson::kArrayType);
+
+        auto remap_ = remap->is_a<Universe::Remap>();
+
+        if (!remap_) continue;
+
+        // Node* an_source = nullptr;
+        // for (auto input : inputs->childrens) {
+
+        //     auto an = input->is_a<Artnet>();
+        //     if (input->is_a<Artnet>() && input->name() == remap_->input->name()) an_source = input;
+
+
+        // }
+
+        // remaparr.PushBack( rapidjson::Value(remap_->layer->s.name().c_str(), allocator ), allocator );
+        // remaparr.PushBack( remap_->width, allocator );
+        // remaparr.PushBack( remap_->height, allocator );
+        // remaparr.PushBack( remap_->offset_x, allocator );
+        // remaparr.PushBack( remap_->offset_y, allocator );
+        // remaparr.PushBack( rapidjson::Value(remap_->layer->s.name().c_str(), allocator ), allocator );
+
+        // // if ( remap->is_a<NDI::Sender>() ) { }
+
+        // auto &remaps = json.document["remaps"];
+
+        // if ( remap->is_a_nowarning<Window>() ) {
+
+        //     if (!remaps.HasMember("monitor")) remaps.AddMember(rapidjson::Value("monitor", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
+
+        //     remaps["monitor"].AddMember( rapidjson::Value(remap->name().c_str(), allocator)  , remaparr, allocator );
+
+        // }
+        // if ( remap->is_a_nowarning<NDI::Sender>() ) {
+
+        //     if (!remaps.HasMember("ndi")) remaps.AddMember(rapidjson::Value("ndi", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
+
+        //     remaps["ndi"].AddMember( rapidjson::Value(remap->name().c_str(), allocator)  , remaparr, allocator );
+
+        // }
 
 
 

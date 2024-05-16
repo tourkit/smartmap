@@ -2,8 +2,28 @@
 
 #include <cstdint>
 #include <vector>
+#include <memory>
 
 struct Member;
+struct Instance;
+
+struct RemapAGG {
+
+    struct Attribute { float min=0, max=1; bool active = true, skip = false; };// !combining is JUMP member
+
+    Instance* src, * dst;
+
+    char *src_, *dst_;
+
+    std::vector<std::shared_ptr<Attribute>> attributes;
+
+    RemapAGG(Instance* src, Instance* dst);
+
+    virtual void update();
+
+    virtual void run();
+
+};
 
 struct Remap {
 

@@ -3,6 +3,48 @@
 #include "struct.hpp"
 #include "member.hpp"
 
+
+
+
+
+
+
+
+
+
+
+
+
+RemapAGG::RemapAGG(Instance* src, Instance* dst) {}
+void RemapAGG::update() {}
+void RemapAGG::run() {
+
+    // for i : src
+        // dst[i] = src[i];
+        // incase of artnet should do each chan
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 float Remap::get8(uint8_t* data) { return data[0]/255.0f; }
 uint16_t Remap::get16(uint8_t* data) { return ((data[0] << 8) | data[1]);  }
 uint32_t Remap::get24(uint8_t* data) { return ((data[0] << 16) | (data[1] << 8) | data[2]);  }
