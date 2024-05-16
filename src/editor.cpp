@@ -126,7 +126,7 @@ static void draw_raw(void *data, size_t size) {
 
         ImGui::BeginDisabled();
 
-         if (size > 512) size = 512;
+         if (size > 1025) size = 1025;
     for (int member_count = 0; member_count < size; member_count++) {
 
 
@@ -390,6 +390,13 @@ void Editors::init() {
 
         }
 
+        for (auto x : an->universes) {
+            std::string str;
+            str = "universe "+std::to_string(x.first) + " " + std::to_string(x.second.get()->offset) + " " + x.second.get()->name();
+            ImGui::Text(str.c_str());
+
+        }
+
         Editor<Buffer>::cb (node, an);
 
         ImGui::Text( std::to_string(an->footprint_all()).c_str() );
@@ -436,6 +443,7 @@ void Editors::init() {
         using namespace ImGui;
 
         Editor<Output>::cb(node, window);
+
 
         NewLine();
 

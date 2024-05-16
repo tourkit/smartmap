@@ -147,10 +147,23 @@ uint8_t Member::count() {
 
 }
 
+int Member::get_offset() {
+
+    for (auto owner : getTop()) {
+
+        if (owner->isBuff()) { /* find in owner and do it stuff*/ }
+
+    }
+
+}
+
+
+
 Member* Member::copy() { return new Member(*this); }
 
 bool Member::isData() { return false; }
 bool Member::isRef() { return false; }
+bool Member::isBuff() { return false; }
 
 std::string Member::print(int recurse) {
 

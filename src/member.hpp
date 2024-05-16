@@ -62,6 +62,7 @@ struct Member {
 
     virtual bool isData();
     virtual bool isRef();
+    virtual bool isBuff();
 
     virtual std::string print(int recurse = 0);
 
@@ -91,6 +92,8 @@ struct Member {
     std::string print_recurse(int recurse = -1, int depth = 0);
 
     std::string next_name(std::string name);
+
+    int get_offset();
 
 protected:
 

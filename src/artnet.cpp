@@ -8,14 +8,22 @@ Artnet::Artnet(std::string ip)  { connect(ip); }
 
   Artnet::UniStruct& Artnet::uni(int id) {
 
-    try { return universes.at(id); }
+    try { return *universes.at(id).get(); }
 
-    catch(const std::out_of_range& e) { return universes.emplace(id, Artnet::UniStruct(this, id)).first->second; }
+    catch(const std::out_of_range& e) {
+
+        auto x = universes.emplace(id, std::make_shared<Artnet::UniStruct>(this, id)).first->second.get();
+
+        // x->offset = universes.size() * 512;
+
+        return *x;
+
+    }
 
   }
 
 
-Artnet::UniStruct::UniStruct(Buffer* b, int id) : b(b), Struct("uni "+std::to_string(id), 3) { PLOGD << "new uni " << id; add(&universe); b->add(this); }
+Artnet::UniStruct::UniStruct(Buffer* b, int id) : b(b), Struct("uni "+std::to_string(id)) { PLOGD << "new uni " << id; add(&universe); offset = b->data.size(); b->add(this); }
 
 void Artnet::connect(std::string ip_) {
 
@@ -67,16 +75,15 @@ void Artnet::connect(std::string ip_) {
 
         int uni_id = p->data.admx.universe;
 
-        // an->uni(uni_id);
-
-        // if (universes.find(uni) == universes.end()) universes[uni] = new Universe(uni);
-
-        // an->universes[id]
+        auto &u = an->uni(uni_id);
 
 
-        // auto u = an->universes[p->data.admx.universe];
 
-        // for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) u->data[i] = p->data.admx.data[i];
+
+        // u.
+
+
+        for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) an->data[i+u.offset] = p->data.admx.data[i];
 
         // u->update();
 

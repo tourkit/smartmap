@@ -38,6 +38,8 @@ struct Buffer : Struct {
 
     void post_change(std::vector<Member*> added = {}) override;
 
+    bool isBuff() override { return true; }
+
 private:
 
     Buffer* bkp = nullptr;

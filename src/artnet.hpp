@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <map>
+#include <unordered_map>
 #include <set>
 #include <array>
 #include <functional>
@@ -45,9 +46,9 @@ struct Artnet : Buffer {
 
   artnet_node artnet = NULL;
 
-  struct UniStruct : Struct { Buffer* b; UniStruct(Buffer* b, int id); };
+  struct UniStruct : Struct { Buffer* b; int offset = 0; UniStruct(Buffer* b, int id); char* data() { return &b->data[0]+offset; } };
 
-  std::map<int, UniStruct> universes;
+  std::unordered_map<int, std::shared_ptr<UniStruct>> universes;
 
   std::vector<uint16_t> listening = {0};
 

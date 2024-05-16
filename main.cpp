@@ -19,25 +19,14 @@ int main() {
 
     engine.init();
 
-    // engine.open("project.json");
+    engine.open("project.json");
 
 
-    auto an_ = engine.tree->addOwnr<Artnet>();
-    auto &an = *an_->get();
-
-    // auto &uni0 = an.uni(0);
-
-    Artnet::UniStruct uni(&an,0);
 
 
     engine.run();
 
 }
-
-//keyboard listener for imgui
-
-
-// DO Buffer artnet and stop fucking arround !!!!!!!!!
 
 // then tree->findSTL("x::y.z"); // dot == isData()
 

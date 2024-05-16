@@ -21,65 +21,65 @@ void Buffer::upload() { }
 
 void  Buffer::pre_change() {
 
-    // if (!data.size()) return;
+    if (!data.size()) return;
 
-    // bkp = copy();
+    bkp = copy();
 
-    // PLOGV << "bkp " << name() ;
+    PLOGV << "bkp " << name() ;
 
 }
 
 void  Buffer::post_change(std::vector<Member*> addeds) {
 
-    // for (auto added : addeds) { // only to set default I guess
+    for (auto added : addeds) { // only to set default I guess
 
-    //     each([&](Member* m, uint32_t offset) {
+        each([&](Member* m, uint32_t offset) {
 
-    //         if (m == added) {
+            if (m == added) {
 
-    //             if (m->isRef()) m = m->members[0];
+                if (m->isRef()) m = m->members[0];
 
-    //             for (auto m_ : m->members) {
+                for (auto m_ : m->members) {
 
-    //                 if (m_->default_val_ptr) {
+                    if (m_->default_val_ptr) {
 
-    //                         // if (m_->type() == typeid(glm::vec2)) {
+                            // if (m_->type() == typeid(glm::vec2)) {
 
-    //                         //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) m_->default_val_ptr).x ;
-    //                         // }
+                            //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) m_->default_val_ptr).x ;
+                            // }
 
-    //                         // if (m_->type() == typeid(float)) {
+                            // if (m_->type() == typeid(float)) {
 
-    //                         //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val : " << *(float*) m_->default_val_ptr ;
+                            //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val : " << *(float*) m_->default_val_ptr ;
 
-    //                         // }
+                            // }
 
-    //                     memcpy(&data[offset], m_->default_val_ptr, m_->size());
+                        memcpy(&data[offset], m_->default_val_ptr, m_->size());
 
-    //                 }
+                    }
 
-    //                 offset += m_->footprint_all();
+                    offset += m_->footprint_all();
 
-    //             }
+                }
 
-    //         }
+            }
 
-    //     });
+        });
 
-    // }
+    }
 
-    // if (!bkp) return;
+    if (!bkp) return;
 
-    // PLOGV << "remap " << bkp->name();
+    PLOGV << "remap " << bkp->name();
 
-    // remap(*bkp);
+    remap(*bkp);
 
 
-    // bkp->hard_delete();
+    bkp->hard_delete();
 
-    // delete bkp;
+    delete bkp;
 
-    // bkp = nullptr;
+    bkp = nullptr;
 
 
 }
