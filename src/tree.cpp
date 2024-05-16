@@ -140,7 +140,6 @@ using namespace ImGui;
 
             node->name(&renaming_name[0]);
 
-            node->update();
             is_renaming = nullptr;
 
         }

@@ -81,6 +81,13 @@ static void draw_definition(Member *member, int offset = 0, int depth = 0) {
             size = sizeof(int);
 
         }
+        if (member->type() == typeid(char)) {
+
+            from = *(char*)member->range_from_ptr;
+            to = *(char*)member->range_to_ptr;
+            size = sizeof(char);
+
+        }
 
         memcpy(&range[0], &from, size);
 
@@ -369,16 +376,9 @@ void Editors::init() {
 
     });
 
-    Editor<Artnet::UniStruct>([](Node*node,Artnet::UniStruct* uni){
-
-
-        Editor<Buffer>::cb (node, uni->b);
-
-
-
-    });
-
     Editor<Artnet>([](Node*node,Artnet* an){
+
+        ImGui::Text(an->name().c_str());
 
         ImGuiTextBuffer tbuff;
         for (auto x : engine.available_ips) tbuff.append(x.c_str(), x.c_str()+x.length()+1);
@@ -392,21 +392,16 @@ void Editors::init() {
 
         for (auto x : an->universes) {
             std::string str;
-            str = "universe "+std::to_string(x.first) + " " + std::to_string(x.second.get()->offset) + " " + x.second.get()->name();
+            str = "universe "+std::to_string(x.first) + " " + std::to_string(x.second.get()->offset) + " " + x.second.get()->s.name();
             ImGui::Text(str.c_str());
 
-        }
+        };
 
-        Editor<Buffer>::cb (node, an);
+        // Editor<Buffer>::cb(node, an);
 
         ImGui::Text( std::to_string(an->footprint_all()).c_str() );
 
-        // for (auto &u : an->universes) {
-
-        //     std::string str = "universe "+std::to_string(u.first);
-        //     ImGui::Text(str.c_str());ImGui::NewLine();
-
-        //     draw_raw(&u.second->data[0], u.second->data.size());
+        // for (auto x : an.) {
 
         // }
 

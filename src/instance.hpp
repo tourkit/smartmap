@@ -58,6 +58,10 @@ struct Instance {
 
     Instance push(void* ptr = nullptr, size_t size = 0);
 
+    struct Attribute { int combining; float min=0, max=1; bool active = true;};// !combining is JUMP member
+    void remap(Instance* src);
+    void remap(void* src, std::vector<Attribute> attrs, int quantity);
+
 // private:
 
 

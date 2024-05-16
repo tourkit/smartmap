@@ -74,6 +74,9 @@ void Callbacks::init() {
 
     NODE<Artnet>::onchange([](Node* node, Artnet *an){
 
+        NODE<Struct>::onchange_cb(node, an);
+
+
         // for (auto c :node->childrens) delete c;
 
         // // for (auto &uni :an->universes) {

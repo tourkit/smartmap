@@ -731,10 +731,11 @@ int artnet_net_set_fdset(node n, fd_set *fdset) {
  */
 int artnet_net_close(artnet_socket_t sock) {
 #ifdef WIN32
-  shutdown(sock, SD_BOTH);
-  closesocket(sock);
+  int s = shutdown(sock, SD_BOTH);
+  int c = closesocket(sock);
   //WSACancelBlockingCall();
-  WSACleanup();
+  int w = WSACleanup();
+
 #else
   if (close(sock)) {
     artnet_error(artnet_net_last_error());

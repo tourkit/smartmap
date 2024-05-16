@@ -30,7 +30,7 @@ public:
     std::string EASY_TYPE_DEBUG = "NODE";
 #endif
     std::string name();
-    void name(std::string value);
+    Node* name(std::string value);
 
     ImVec4 color;
 

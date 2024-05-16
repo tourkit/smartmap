@@ -21,12 +21,12 @@ int main() {
 
     engine.open("project.json");
 
-
-
-
     engine.run();
 
 }
+
+// update all remaps in arnet update from bufferupdaet
+// Buffer::instances<vec<Member,offset>>
 
 // then tree->findSTL("x::y.z"); // dot == isData()
 

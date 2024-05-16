@@ -11,7 +11,6 @@ bool Instance::exist(){
 }
 
 Instance::Instance(Buffer* buff, uint32_t offset, Member* member) : buff(buff), offset(offset), member(member) { if (!this->member) this->member = buff; }
-
 Instance Instance::operator[](std::string name) {
 
     auto offset = this->offset;
@@ -90,6 +89,65 @@ void Instance::setDefault(Member* toset, int offset) {
         memcpy(data()+offset, toset->default_val_ptr, toset->size());
 
     }
+
+}
+
+void Instance::remap(void* src,  std::vector<Attribute> attributes, int quantity) {
+
+  auto data = (uint8_t*)src;
+
+    for (int offset = 0; offset < quantity; offset++) {
+
+        auto size = member->size();
+
+        auto pos = (offset*size);
+        pos /=sizeof(float);
+
+        for (int i = 0; i < attributes.size(); i++) {
+
+            float target = 0;
+
+            auto c = attributes[i].combining;
+
+            if (c==1) target      = data[0]/255.0;
+            else if (c==2) target = ((data[0] << 8) | data[1])/65535.0f;
+            else if (c==3) target = ((data[0] << 16) | (data[1] << 8) | data[2])/16777215.0f;
+            else if (c==4) target = ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3])/4294967295.0f;
+
+            // range remap
+            if (attributes[i].active && c > 0) *((float*)this->data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
+
+            data += c;
+
+        };
+
+    }
+
+
+
+}
+
+void Instance::remap(Instance* src) {
+
+    std::vector<std::pair<Member*,int>> list;
+    src->member->each( [&](Member* m, int offset) { list.push_back({m,offset}); } );
+
+    int count = 0;
+    member->each( [&](Member* m, int offset) {
+
+        if (!(count<list.size())) return;
+
+        if (m->type() == list[count].first->type()) {
+
+            memcpy(data()+offset, src->data()+list[count].second, m->size());
+
+        }
+
+        count++;
+
+    });
+
+
 
 }
 

@@ -14,7 +14,7 @@ Artnet::Artnet(std::string ip)  { connect(ip); }
 
         auto x = universes.emplace(id, std::make_shared<Artnet::UniStruct>(this, id)).first->second.get();
 
-        // x->offset = universes.size() * 512;
+        int count = 0; for (auto uni : universes)  uni.second.get()->offset = count++*512;
 
         return *x;
 
@@ -23,7 +23,25 @@ Artnet::Artnet(std::string ip)  { connect(ip); }
   }
 
 
-Artnet::UniStruct::UniStruct(Buffer* b, int id) : b(b), Struct("uni "+std::to_string(id)) { PLOGD << "new uni " << id; add(&universe); offset = b->data.size(); b->add(this); }
+Artnet::UniStruct::UniStruct(Artnet* an, int id) : Instance(an), s("uni "+std::to_string(id)) {
+
+    PLOGD << an->name() << "::"<<s.name();
+    member = &s;
+    s.add(&universe);
+    an->add(&s);
+
+}
+
+// Artnet::UniStruct::UniStruct(Artnet* an, int id) : an(an), Struct("uni "+std::to_string(id)) {
+
+//     PLOGD << "new uni " << id;
+
+//     add(&universe);
+
+//     an->add(this);
+
+
+// }
 
 void Artnet::connect(std::string ip_) {
 
@@ -77,15 +95,10 @@ void Artnet::connect(std::string ip_) {
 
         auto &u = an->uni(uni_id);
 
-
-
-
-        // u.
-
-
-        for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) an->data[i+u.offset] = p->data.admx.data[i];
+        for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) *(u.data()+i) = p->data.admx.data[i];
 
         // u->update();
+    //    u.remap(p->data.admx.data[0])
 
         // if (an->listening.size()) if (p->data.admx.universe == an->listening.back()) an->callback(an);
 
@@ -98,11 +111,14 @@ void Artnet::connect(std::string ip_) {
 Artnet::~Artnet() { disconnect(); }
 
 void Artnet::disconnect() {
+
     if (artnet != NULL) {
         if (artnet_stop(artnet))
             PLOGE << "artnet_stop ERROR: " <<  artnet_errstr;
         artnet_destroy(artnet);
     }
+
+    universes.clear();
 }
 
 void Artnet::run() {

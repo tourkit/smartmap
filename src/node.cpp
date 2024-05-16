@@ -16,9 +16,7 @@
 
     std::string UntypedNode::name() { return name_v; }
 
-    void UntypedNode::name(std::string value) { name_v = value;
-    // onchange_cb(node());
-     }
+    Node* UntypedNode::name(std::string value) { name_v = value; update();  return node();}
 
     UntypedNode::~UntypedNode() {
 

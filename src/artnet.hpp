@@ -13,6 +13,7 @@
 #include "dmx.hpp"
 #include "buffer.hpp"
 #include "struct.hpp"
+#include "instance.hpp"
 
 
 struct GMARemap : Remap {
@@ -25,7 +26,7 @@ struct GMARemap : Remap {
   void set(int uni, int addr) {
 
     this->uni = uni; this->addr = addr;
-    // src =
+
 
   }
 
@@ -46,9 +47,13 @@ struct Artnet : Buffer {
 
   artnet_node artnet = NULL;
 
-  struct UniStruct : Struct { Buffer* b; int offset = 0; UniStruct(Buffer* b, int id); char* data() { return &b->data[0]+offset; } };
+  // struct UniStruct : Struct { Artnet* an; int offset = 0; UniStruct(Artnet* an, int id); char* data() { return &an->data[0]+offset; } };
 
-  std::unordered_map<int, std::shared_ptr<UniStruct>> universes;
+  struct UniStruct : Instance { Struct s; UniStruct(Artnet* an, int id); struct Remap {} ; std::vector<Remap> remaps; };
+
+  // struct UniStruct : Struct { Instance inst; UniStruct(int id); };
+
+  std::map<int, std::shared_ptr<UniStruct>> universes;
 
   std::vector<uint16_t> listening = {0};
 
@@ -61,7 +66,6 @@ struct Artnet : Buffer {
   void connect(std::string ip);
 
   UniStruct& uni(int id);
-
 
   void disconnect();
 
