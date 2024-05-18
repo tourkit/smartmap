@@ -171,10 +171,10 @@ void Callbacks::init() {
 
     //////// Remap.HPP
 
-    NODE<Remap>::onrun([](Node* node, Remap *remap) { remap->update(); });
-    NODE<Remap>::onchange([](Node* node, Remap *remap) { remap->reset(); });
-    NODE<Universe::Remap>::onrun([](Node* node, Universe::Remap *remap) { remap->update(); });
-    NODE<Universe::Remap>::onchange([](Node* node, Universe::Remap *remap) { remap->reset(); });
+    // NODE<Remap>::onrun([](Node* node, Remap *remap) { remap->update(); });
+    // NODE<Remap>::onchange([](Node* node, Remap *remap) { remap->reset(); });
+    // NODE<Universe::Remap>::onrun([](Node* node, Universe::Remap *remap) { remap->update(); });
+    // NODE<Universe::Remap>::onchange([](Node* node, Universe::Remap *remap) { remap->reset(); });
 
     //////// Buffer.HPP
 

@@ -5,6 +5,7 @@
 #include <typeindex>
 #include <functional>
 #include <string>
+#include <vector>
 
 
 #include "glm/glm.hpp"
@@ -17,6 +18,10 @@ static std::string camel(std::string str) { str[0] = std::toupper(str[0]); retur
 static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
 
 struct Struct;
+struct Instance;
+struct Buffer;
+struct Member;
+
 
 struct Member {
 
@@ -62,15 +67,17 @@ struct Member {
 
     virtual bool isData();
     virtual bool isRef();
-    virtual bool isBuff();
+    virtual Buffer* isBuff();
 
     virtual std::string print(int recurse = 0);
 
     virtual void hard_delete() {}
 
-    void each(std::function<void(Member*, uint32_t)> f, uint32_t = 0);
+    void each(std::function<void(Instance&)> f, Buffer* buff = nullptr,  uint32_t offset= 0, std::vector<Member*> stl = {});
 
     std::vector<Member*> members;
+
+    std::vector<Instance> instances;
 
     void* range_from_ptr = nullptr;
     void* range_to_ptr = nullptr;

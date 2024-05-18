@@ -10,23 +10,55 @@
 
 struct Buffer;
 struct Member;
+struct Instance;
+
+
+struct Remap {
+
+    Instance *src, *dst;
+
+    virtual void update();
+
+    int quantity;
+
+    Remap(Instance* src ,Instance* dst, int quantity = 1);
+
+
+};
+
 
 struct Instance {
 
     Buffer* buff;
+
+    std::vector<Member*> stl;
+    std::vector<Remap*> remaps;
+
     uint32_t offset = 0;
-    Member* member = nullptr;
 
-    Instance(Buffer* buff, uint32_t offset = 0, Member* member = nullptr);
+    std::string stl_name();
 
+    Member* def() { if(stl.size()) return stl.back(); return buff; }
+
+    Instance(Buffer* buff = nullptr, uint32_t offset = 0, std::vector<Member*> stl = {});
 
     Instance operator[](std::string name);
+
     Instance operator[](int id);
 
     bool exist();
 
+    Instance& track() {
+
+        def()->instances.emplace_back(buff, offset, stl);
+
+        return def()->instances.back();
+
+    }
+
     char* data() { return buff->data.data()+offset; }
-    uint32_t size() { return member->footprint_all(); }
+
+    uint32_t size() { return def()->footprint_all(); }
 
     Instance eq(int id);
 
@@ -36,19 +68,17 @@ struct Instance {
     template <typename T>
     Instance& set(T val) {
 
-        PLOGV << member->name() ;
+        PLOGV << def()->name() ;
 
-        memcpy(data(), &val, sizeof(T));
-
-        return *this;
+        return set(&val, sizeof(T));
 
     }
-
-    void each(std::function<void(Instance)> cb) { for (int i = 0; i < member->quantity(); i++) cb((*this)[i]); }
 
     Instance& set(void* ptr, size_t size) {
 
         memcpy(data(), ptr, size);
+
+        for (auto &inst : def()->instances) for (auto r : inst.remaps) r->update();
 
         return *this;
 
@@ -57,10 +87,6 @@ struct Instance {
     void setDefault(Member* toset = nullptr, int offset = 0);
 
     Instance push(void* ptr = nullptr, size_t size = 0);
-
-    struct Attribute { int combining; float min=0, max=1; bool active = true;};// !combining is JUMP member
-    void remap(Instance* src);
-    void remap(void* src, std::vector<Attribute> attrs, int quantity);
 
 // private:
 

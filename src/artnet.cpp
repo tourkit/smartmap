@@ -26,7 +26,7 @@ Artnet::Artnet(std::string ip)  { connect(ip); }
 Artnet::UniStruct::UniStruct(Artnet* an, int id) : Instance(an), s("uni "+std::to_string(id)) {
 
     PLOGD << an->name() << "::"<<s.name();
-    member = &s;
+    stl = {&s};
     s.add(&universe);
     an->add(&s);
 
@@ -97,8 +97,8 @@ void Artnet::connect(std::string ip_) {
 
         for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) *(u.data()+i) = p->data.admx.data[i];
 
-        // u->update();
-    //    u.remap(p->data.admx.data[0])
+        u.s.update();
+
 
         // if (an->listening.size()) if (p->data.admx.universe == an->listening.back()) an->callback(an);
 

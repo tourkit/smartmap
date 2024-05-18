@@ -580,11 +580,11 @@ void Engine::save(const char* file) {
     json.document["remaps"].RemoveAllMembers();
     for (auto remap : remaps->childrens) {
 
-        auto  remaparr = rapidjson::Value(rapidjson::kArrayType);
+        // auto  remaparr = rapidjson::Value(rapidjson::kArrayType);
 
-        auto remap_ = remap->is_a<Universe::Remap>();
+        // auto remap_ = remap->is_a<Universe::Remap>();
 
-        if (!remap_) continue;
+        // if (!remap_) continue;
 
         // Node* an_source = nullptr;
         // for (auto input : inputs->childrens) {

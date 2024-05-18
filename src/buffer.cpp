@@ -4,8 +4,8 @@
 // #include "engine.hpp"
 
 
-Instance Buffer::operator[](std::string name) { return Instance{this,0,this}[name]; }
-Instance Buffer::operator[](int id) { return Instance{this,0,this}[id]; }
+Instance Buffer::operator[](std::string name) { return Instance{this}[name]; }
+Instance Buffer::operator[](int id) { return Instance{this}[id]; }
 
 Buffer::Buffer(std::string name) : Struct(name) {
 
@@ -33,7 +33,11 @@ void  Buffer::post_change(std::vector<Member*> addeds) {
 
     for (auto added : addeds) { // only to set default I guess
 
-        each([&](Member* m, uint32_t offset) {
+        each([&](Instance& inst) {
+
+            auto *m = inst.def();
+
+            int offset = inst.offset;
 
             if (m == added) {
 
@@ -96,6 +100,7 @@ void Buffer::update() {
 
     memset( data.data(), 0, data.size() );
 
+    each([&](Instance& inst) { for (auto &x : inst.def()->instances) if (x.buff == inst.buff && x.stl == inst.stl) x.offset = inst.offset; });
 
 }
 

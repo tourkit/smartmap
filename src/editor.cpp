@@ -305,76 +305,76 @@ void Editors::init() {
 
     });
 
-    Editor<Remap>([](Node*node, Remap* remap){
+    // Editor<Remap>([](Node*node, Remap* remap){
 
-        ImGui::SetNextItemWidth(500);
-        if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(550, 0))) {
+    //     ImGui::SetNextItemWidth(500);
+    //     if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(550, 0))) {
 
-            ImGui::TableSetupColumn("name");
-            ImGui::TableSetupColumn("skip", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 200);
-            ImGui::TableSetupColumn("active", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableHeadersRow();
+    //         ImGui::TableSetupColumn("name");
+    //         ImGui::TableSetupColumn("skip", ImGuiTableColumnFlags_WidthFixed, 50);
+    //         ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 50);
+    //         ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 50);
+    //         ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 50);
+    //         ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 200);
+    //         ImGui::TableSetupColumn("active", ImGuiTableColumnFlags_WidthFixed, 50);
+    //         ImGui::TableHeadersRow();
 
-            int member_id = 0;
+    //         int member_id = 0;
 
-            remap->s->each([&](Member* m, uint32_t offset) {
+    //         remap->s->each([&](Member* m, uint32_t offset) {
 
-                 if (m->isData()) {
+    //              if (m->isData()) {
 
-                    ImGui::TableNextRow();
+    //                 ImGui::TableNextRow();
 
-                    // if (ImGui::IsItemHovered()) ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,.5,.5,1));
+    //                 // if (ImGui::IsItemHovered()) ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,.5,.5,1));
 
-                    ImGui::TableNextColumn();
-                    // auto textWidth   = 100-ImGui::CalcTextSize(m->name().c_str()).x;
-                    // ImGui::SetCursorPosX((textWidth * 0.5f) );
-                    ImGui::Text((m->name()).c_str());
+    //                 ImGui::TableNextColumn();
+    //                 // auto textWidth   = 100-ImGui::CalcTextSize(m->name().c_str()).x;
+    //                 // ImGui::SetCursorPosX((textWidth * 0.5f) );
+    //                 ImGui::Text((m->name()).c_str());
 
-                    if (member_id < remap->attributes.size()) {
+    //                 if (member_id < remap->attributes.size()) {
 
-                        static int e = 0;
+    //                     static int e = 0;
 
-                        ImGui::TableNextColumn();
-                        ImGui::RadioButton(("##arbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 0);
-                        ImGui::TableNextColumn();
-                        ImGui::RadioButton(("##vrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 1);
-                        ImGui::TableNextColumn();
-                        ImGui::RadioButton(("##xrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 2);
-                        ImGui::TableNextColumn();
-                        ImGui::RadioButton(("##srbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 3);
-                        ImGui::TableNextColumn();
-                        ImGui::SetNextItemWidth(200);
-                        ImGui::InputFloat2(("##minmax"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].min);
-                        ImGui::TableNextColumn();
-                        ImGui::Checkbox(("##arsbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].active);
+    //                     ImGui::TableNextColumn();
+    //                     ImGui::RadioButton(("##arbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 0);
+    //                     ImGui::TableNextColumn();
+    //                     ImGui::RadioButton(("##vrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 1);
+    //                     ImGui::TableNextColumn();
+    //                     ImGui::RadioButton(("##xrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 2);
+    //                     ImGui::TableNextColumn();
+    //                     ImGui::RadioButton(("##srbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 3);
+    //                     ImGui::TableNextColumn();
+    //                     ImGui::SetNextItemWidth(200);
+    //                     ImGui::InputFloat2(("##minmax"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].min);
+    //                     ImGui::TableNextColumn();
+    //                     ImGui::Checkbox(("##arsbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].active);
 
-                    }
+    //                 }
 
-                    member_id+=m->count();
+    //                 member_id+=m->count();
 
-                    // if (ImGui::IsItemHovered()) ImGui::PopStyleColor();
+    //                 // if (ImGui::IsItemHovered()) ImGui::PopStyleColor();
 
 
-                }
+    //             }
 
-            });
+    //         });
 
-                ImGui::EndTable();
-            }
-        const char *bufa = "0xbufabufa";
-        const char *bufb = "0xbufbbufb";
+    //             ImGui::EndTable();
+    //         }
+    //     const char *bufa = "0xbufabufa";
+    //     const char *bufb = "0xbufbbufb";
 
-        ImGui::NewLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppyaaa", (char*)bufa, 10, ImGuiInputTextFlags_ReadOnly);
+    //     ImGui::NewLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppyaaa", (char*)bufa, 10, ImGuiInputTextFlags_ReadOnly);
 
-        ImGui::SameLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppybbb", (char*)bufb, 10, ImGuiInputTextFlags_ReadOnly);
+    //     ImGui::SameLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppybbb", (char*)bufb, 10, ImGuiInputTextFlags_ReadOnly);
 
-        ImGui::SameLine();  ImGui::Text((remap->s->name() + " "  + std::to_string(remap->quantity)).c_str());
+    //     ImGui::SameLine();  ImGui::Text((remap->s->name() + " "  + std::to_string(remap->quantity)).c_str());
 
-    });
+    // });
 
     Editor<Artnet>([](Node*node,Artnet* an){
 
@@ -776,13 +776,13 @@ void Editors::init() {
 
     ////////// Artnet.HPP
 
-    Editor<Universe>([](Node*node,Universe* dmx){
+    // Editor<Universe>([](Node*node,Universe* dmx){
 
 
 
-        for (auto &r : dmx->remaps) Editor<Universe::Remap>::cb(node, &r);
+    //     for (auto &r : dmx->remaps) Editor<Universe::Remap>::cb(node, &r);
 
-    });
+    // });
 
     ////////// VBO.HPP
 
@@ -808,7 +808,7 @@ void Editors::init() {
 
     // REMAP.HPP
 
-    Editor<Universe::Remap>([](Node*node, Universe::Remap* remap){ Editor<Remap>::cb(node, remap); });
+    // Editor<Universe::Remap>([](Node*node, Universe::Remap* remap){ Editor<Remap>::cb(node, remap); });
 
     ////////// Engine.HPP
 

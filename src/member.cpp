@@ -1,16 +1,17 @@
 #include "member.hpp"
 #include "struct.hpp"
+#include "instance.hpp"
 
 
 #include "log.hpp"
 #include "buffer.hpp"
-#include "struct.hpp"
 #include "utils.hpp"
 #include <cstdint>
 #include <unordered_set>
 #include <typeindex>
 #include <cstdint>
 #include <memory>
+
 
 
 Member::~Member() {
@@ -75,7 +76,9 @@ std::set<Member*> Member::getTop(bool z) {
 }
 
 
-void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m == this) a->update(); }
+void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m == this) a->update();
+
+ }
 
 void Member::name(std::string name_v) { this->name_v = name_v; }
 
@@ -149,12 +152,13 @@ uint8_t Member::count() {
 
 int Member::get_offset() {
 
-    for (auto owner : getTop()) {
+    // for (auto owner : getTop()) {
 
-        if (owner->isBuff()) { /* find in owner and do it stuff*/ }
+    //     if (owner->isBuff()) { /* find in owner and do it stuff*/ }
 
-    }
+    // }
 
+    return 0;
 }
 
 
@@ -163,7 +167,7 @@ Member* Member::copy() { return new Member(*this); }
 
 bool Member::isData() { return false; }
 bool Member::isRef() { return false; }
-bool Member::isBuff() { return false; }
+Buffer* Member::isBuff() { return nullptr; }
 
 std::string Member::print(int recurse) {
 
@@ -173,21 +177,34 @@ std::string Member::print(int recurse) {
 
 }
 
-void Member::each(std::function<void(Member*, uint32_t)> cb, uint32_t offset) {
+void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offset, std::vector<Member*> stl) {
+
+    Instance inst;
+
+    if (isBuff()) buff = isBuff();
+
+    else stl.push_back(this);
+
+    inst.buff = buff;
 
     auto offset_ = offset;
 
     for (auto m : members) {
 
-        for (int i = 0; i < m->quantity(); i++) m->each(cb, offset_+i*m->footprint());
+        for (int i = 0; i < m->quantity(); i++) m->each(cb, buff, offset_+i*m->footprint(), stl);
 
         offset_ += m->footprint_all();
 
     }
 
-    cb(this, offset);
+    inst.offset = offset;
+
+    inst.stl = stl;
+
+    cb(inst);
 
 }
+
 
 void Member::pre_change() {
 

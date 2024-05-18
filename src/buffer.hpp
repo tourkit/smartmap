@@ -38,7 +38,7 @@ struct Buffer : Struct {
 
     void post_change(std::vector<Member*> added = {}) override;
 
-    bool isBuff() override { return true; }
+    Buffer* isBuff() override { return this; }
 
 private:
 
