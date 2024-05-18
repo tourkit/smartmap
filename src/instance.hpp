@@ -26,7 +26,6 @@ struct Remap {
 
 };
 
-
 struct Instance {
 
     Buffer* buff;
@@ -66,14 +65,16 @@ struct Instance {
     T get() { return *((T*)(data())); }
 
     template <typename T>
-    Instance& set(T val) {
+    Instance& set(T val) { return set<T>(&val); }
+
+    template <typename T>
+    Instance& set(void* val) {
 
         PLOGV << def()->name() ;
 
-        return set(&val, sizeof(T));
+        return set(val, sizeof(T));
 
     }
-
     Instance& set(void* ptr, size_t size) {
 
         memcpy(data(), ptr, size);

@@ -15,6 +15,17 @@
 #include "struct.hpp"
 #include "instance.hpp"
 
+struct DMXRemap : Remap {
+
+    int chan;
+
+    struct Attribute { int combining; float min=0, max=1; bool active = true;};// !combining is JUMP member
+    std::vector<Attribute> attributes;
+    void update() override;
+    // using Remap::Remap;
+    DMXRemap(Instance*src, Instance*dst, int chan = 0, std::vector<Attribute> attributes = {});
+};
+
 
 // struct GMARemap : Remap {
 
@@ -47,13 +58,9 @@ struct Artnet : Buffer {
 
   artnet_node artnet = NULL;
 
-  // struct UniStruct : Struct { Artnet* an; int offset = 0; UniStruct(Artnet* an, int id); char* data() { return &an->data[0]+offset; } };
+  struct Universo : Struct { Artnet* an; int id;  Universo(Artnet* an, int id); };
 
-  struct UniStruct : Instance { Struct s; UniStruct(Artnet* an, int id); };
-
-  // struct UniStruct : Struct { Instance inst; UniStruct(int id); };
-
-  std::map<int, std::shared_ptr<UniStruct>> universes;
+  std::map<int, std::shared_ptr<Universo>> universes;
 
   std::vector<uint16_t> listening = {0};
 
@@ -65,7 +72,7 @@ struct Artnet : Buffer {
 
   void connect(std::string ip);
 
-  UniStruct& uni(int id);
+  Universo& uni(int id);
 
   void disconnect();
 

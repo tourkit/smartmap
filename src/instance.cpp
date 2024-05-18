@@ -16,40 +16,6 @@ void Remap::update() {
 }
 
 
-// void DMXRemap::update() {
-
-//   auto data = (uint8_t*)src;
-
-//     for (int offset = 0; offset < quantity; offset++) {
-
-//         auto size = def()->size();
-
-//         auto pos = (offset*size);
-//         pos /=sizeof(float);
-
-//         for (int i = 0; i < attributes.size(); i++) {
-
-//             float target = 0;
-
-//             auto c = attributes[i].combining;
-
-//             if (c==1) target      = data[0]/255.0;
-//             else if (c==2) target = ((data[0] << 8) | data[1])/65535.0f;
-//             else if (c==3) target = ((data[0] << 16) | (data[1] << 8) | data[2])/16777215.0f;
-//             else if (c==4) target = ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3])/4294967295.0f;
-
-//             // range remap
-//             if (attributes[i].active && c > 0) *((float*)this->data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
-
-//             data += c;
-
-//         };
-
-//     }
-
-// }
-
-
 bool Instance::exist(){
 
     if (offset == -1) return false;

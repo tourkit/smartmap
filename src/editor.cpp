@@ -392,18 +392,22 @@ void Editors::init() {
 
         for (auto x : an->universes) {
             std::string str;
-            str = "universe "+std::to_string(x.first) + " " + std::to_string(x.second.get()->offset) + " " + x.second.get()->s.name();
+
+            if (!x.second.get()->instances.size()) continue;
+
+            auto &inst = x.second.get()->instances[0];
+
+            str = "universe "+std::to_string(x.first) + " " + std::to_string(inst.offset) + " " + x.second.get()->name();
             ImGui::Text(str.c_str());
+
+            ImGui::NewLine();
+            draw_raw(x.second.get()->instances[0].data(), 512);
+            ImGui::NewLine();
 
         };
 
+        // ImGui::Text( std::to_string(an->footprint_all()).c_str() );
         // Editor<Buffer>::cb(node, an);
-
-        ImGui::Text( std::to_string(an->footprint_all()).c_str() );
-
-        // for (auto x : an.) {
-
-        // }
 
     });
 

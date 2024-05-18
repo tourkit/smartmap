@@ -4,17 +4,55 @@
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
 
+void DMXRemap::update() {
+
+  auto data = (uint8_t*)src->data();
+
+    for (int offset = 0; offset < quantity; offset++) {
+
+        auto size = src->def()->size();
+
+        auto pos = (offset*size);
+        pos /=sizeof(float);
+
+        for (int i = 0; i < attributes.size(); i++) {
+
+            float target = 0;
+
+            auto c = attributes[i].combining;
+
+            if (c==1) target      = data[0]/255.0;
+            else if (c==2) target = ((data[0] << 8) | data[1])/65535.0f;
+            else if (c==3) target = ((data[0] << 16) | (data[1] << 8) | data[2])/16777215.0f;
+            else if (c==4) target = ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3])/4294967295.0f;
+
+            // range remap
+            if (attributes[i].active && c > 0) *((float*)dst->data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
+
+            data += c;
+
+        };
+
+    }
+
+}
+
+
 Artnet::Artnet(std::string ip)  { connect(ip); }
 
-  Artnet::UniStruct& Artnet::uni(int id) {
+  Artnet::Universo& Artnet::uni(int id) {
 
     try { return *universes.at(id).get(); }
 
     catch(const std::out_of_range& e) {
 
-        auto x = universes.emplace(id, std::make_shared<Artnet::UniStruct>(this, id)).first->second.get();
+        uint32_t offset = universes.size()*512;
 
-        int count = 0; for (auto uni : universes)  uni.second.get()->offset = count++*512;
+        auto x = universes.emplace(id, std::make_shared<Artnet::Universo>(this, id)).first->second.get();
+
+        add(x);
+
+        Instance{this,offset,{x}}.track();
 
         return *x;
 
@@ -23,25 +61,19 @@ Artnet::Artnet(std::string ip)  { connect(ip); }
   }
 
 
-Artnet::UniStruct::UniStruct(Artnet* an, int id) : Instance(an), s("uni "+std::to_string(id)) {
+Artnet::Universo::Universo(Artnet* an, int id) : Struct("uni "+std::to_string(id)), an(an), id(id) {
 
-    PLOGD << an->name() << "::"<<s.name();
-    stl = {&s};
-    s.add(&universe);
-    an->add(&s);
+    add(&universe);
 
 }
 
-// Artnet::UniStruct::UniStruct(Artnet* an, int id) : an(an), Struct("uni "+std::to_string(id)) {
+DMXRemap::DMXRemap(Instance*src, Instance*dst, int chan, std::vector<DMXRemap::Attribute> attributes)
 
-//     PLOGD << "new uni " << id;
-
-//     add(&universe);
-
-//     an->add(this);
+    : Remap(src, dst), chan(chan), attributes(attributes) {
 
 
-// }
+}
+
 
 void Artnet::connect(std::string ip_) {
 
@@ -93,14 +125,9 @@ void Artnet::connect(std::string ip_) {
 
         int uni_id = p->data.admx.universe;
 
-        auto &u = an->uni(uni_id);
+        auto &u = an->uni(uni_id).instances[0];
 
-        for(int i = 0; i < __builtin_bswap16((uint16_t&)p->data.admx.lengthHi); ++i) *(u.data()+i) = p->data.admx.data[i];
-
-        u.s.update();
-
-
-        // if (an->listening.size()) if (p->data.admx.universe == an->listening.back()) an->callback(an);
+        u.set<std::array<char,512>>(p->data.admx.data);
 
         return 1;
 
