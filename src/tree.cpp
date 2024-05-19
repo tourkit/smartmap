@@ -247,7 +247,7 @@ void TreeWidget::drawNode(Node* node) {
 
     if (node->hidden) return;
 
-    if (!filtering || !strlen(search_str) || std::regex_search(node->name().c_str(), std::regex(search_str))) {
+    if (!filtering || !strlen(search_str) || std::regex_search(node->name().c_str(), std::regex(search_str, std::regex_constants::icase))) {
 
         ImGui::TableNextRow();
 
