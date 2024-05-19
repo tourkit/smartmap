@@ -20,8 +20,6 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     std::string str;
 
-
-
     str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
 
     auto s = ubo->print_recurse();
@@ -51,9 +49,11 @@ std::string ShaderProgram::Builder::frag() {
 
     std::string str = header_common;
 
-    std::set<File*> effectors;
+    std::set<File*> effectors; // must be filled by UBO not current solution
 
-    if (dc) {
+    for (auto dc_ : engine.stack->childrens) {
+
+        auto dc = dc_->is_a<Layer>();
 
         for (auto &model : dc->models) for (auto &effector : model.get()->effectors) effectors.insert(effector->file);
 

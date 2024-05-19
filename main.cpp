@@ -18,28 +18,7 @@ int main() {
 
     engine.init();
 
-    // logger.cout();
-
-    // Struct test("test");
-    // test.add<float>("x");
-    // test.add<float>("y");
-    // auto *test2 = new Struct("test2");
-    // test2->add<float>("x");
-    // test2->add<float>("y");
-
-    // Buffer buff;
-    // buff.add(test2);
-    // buff.add(&test);
-
-    // auto &i = buff[1].track();
-    // PLOGD << i.offset;
-    // delete test2;
-    // PLOGD << i.offset;
-    // PLOGD << test.quantity();
-    // test.quantity(2);
-    // PLOGD << i.offset;
-    // test.quantity(1);
-    // PLOGD << i.offset;
+    logger.cout();
 
     engine.open("project.json");
 
@@ -47,11 +26,10 @@ int main() {
 
 }
 
-// big fuck on  q change
 
-// ~save remap
 
 // multi layer
+// ~save remap
 
 // linuxify
 

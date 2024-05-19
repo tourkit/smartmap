@@ -481,9 +481,19 @@ void Editors::init() {
 
     Editor<Output>([](Node* node, Output *output){
 
-        int x = 0;
+        static std::map<Output*,int> output_currents;
 
-        ImGui::Combo("source", &x, "layer1");
+
+        ImGuiTextBuffer tbuff;
+
+        for (auto x : engine.stack->childrens) tbuff.append(x->name().c_str(), x->name().c_str()+x->name().length()+1);
+
+        if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) {
+
+            Window* win = node->is_a_nowarning<Window>();
+            if (win) win->layer = engine.stack->childrens[output_currents[output]]->is_a<Layer>();
+
+        }
 
         static uint32_t min = 0;
 

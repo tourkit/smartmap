@@ -15,7 +15,7 @@ UntypedNode::UntypedNode(std::string name, ImVec4 color) : name_v(name), color(c
 
 }
 
-std::string UntypedNode::name() { return name_v; }
+const std::string& UntypedNode::name() { return name_v; }
 
 Node* UntypedNode::name(std::string value) { name_v = value; update();  return node();}
 

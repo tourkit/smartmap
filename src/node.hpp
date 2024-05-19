@@ -29,7 +29,7 @@ struct UntypedNode {
 public:
     std::string EASY_TYPE_DEBUG = "NODE";
 #endif
-    std::string name();
+    const std::string& name();
     Node* name(std::string value);
 
     ImVec4 color;
