@@ -70,7 +70,7 @@ struct Instance {
     template <typename T>
     Instance& set(void* val) {
 
-        PLOGV << def()->name() ;
+        // PLOGV << def()->name() ;
 
         return set(val, sizeof(T));
 

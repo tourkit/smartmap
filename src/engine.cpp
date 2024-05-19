@@ -199,6 +199,8 @@ void Engine::reset() {
 
 }
 
+struct Prout {};
+
 void Engine::open(const char* file) {
 
     reset();
@@ -356,16 +358,20 @@ void Engine::open(const char* file) {
         if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) {
 
             if (!x.name.IsString()) continue;
-            engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() ); continue;
 
+            if (x.value.IsString()) engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() );
 
-            if (!x.name.IsString() || !x.value.IsArray()) continue;
+            if (!x.value.IsArray()) continue;
 
-            auto arr = x.name.GetArray();
+            auto arr = x.value.GetArray();
 
             if (!arr.Size()) continue;
 
-            engine.inputs->addOwnr<Artnet>( arr[0].IsString() ? arr[0].GetString() : "" )->active(1)->name( x.name.GetString() );
+            TypedNode<Artnet>* an_ = engine.inputs->addOwnr<Artnet>( arr[0].IsString() ? arr[0].GetString() : "" );
+
+            an_->active(1)->name( x.name.GetString() );
+
+            auto &an = *an_->get();
 
             if (arr.Size() < 2 || !arr[1].IsObject()) continue;
 
@@ -373,13 +379,24 @@ void Engine::open(const char* file) {
 
                 if (!remap.name.IsString() || !remap.value.IsArray()) continue;
 
-                auto arr = x.name.GetArray();
+                auto arr = remap.value.GetArray();
+                int x = arr.Size();
 
                 if (arr.Size() < 3 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsString()) continue;
 
                 Node* taregt = engine.stack->child(arr[2].GetString());
                 if (!taregt) return;
                 // remaps
+
+
+                auto &uni = an.universe(arr[0].GetInt()).instances[0];
+
+                DMXRemap* dmxremap = new DMXRemap(&uni, &engine.dynamic_ubo["layer1"]["MyQuad"]["argb"].track(), 0, {{1},{1},{1},{1}});
+
+                uni.remaps.push_back( dmxremap );
+
+                an_->addPtr<DMXRemap>(dmxremap);
+
 
             }
 
@@ -412,7 +429,7 @@ void Engine::open(const char* file) {
 
 
                 // auto remap = engine.remaps->active(true)->addOwnr<Universe::Remap>(
-                //     &input->is_a<Artnet>()->uni(0)->data[0],
+                //     &input->is_a<Artnet>()->universe(0)->data[0],
                 //     &engine.dynamic_ubo.data[0],
                 //     & model->is_a<Model>()->s
                 // );

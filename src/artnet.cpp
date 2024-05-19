@@ -40,7 +40,7 @@ void DMXRemap::update() {
 
 Artnet::Artnet(std::string ip)  { connect(ip); }
 
-  Artnet::Universo& Artnet::uni(int id) {
+  Artnet::Universe& Artnet::universe(int id) {
 
     try { return *universes.at(id).get(); }
 
@@ -48,11 +48,13 @@ Artnet::Artnet(std::string ip)  { connect(ip); }
 
         uint32_t offset = universes.size()*512;
 
-        auto x = universes.emplace(id, std::make_shared<Artnet::Universo>(this, id)).first->second.get();
+        auto x = universes.emplace(id, std::make_shared<Artnet::Universe>(this, id)).first->second.get();
 
         add(x);
 
         Instance{this,offset,{x}}.track();
+
+        PLOGD << id;
 
         return *x;
 
@@ -61,9 +63,9 @@ Artnet::Artnet(std::string ip)  { connect(ip); }
   }
 
 
-Artnet::Universo::Universo(Artnet* an, int id) : Struct("uni "+std::to_string(id)), an(an), id(id) {
+Artnet::Universe::Universe(Artnet* an, int id) : Struct(""+std::to_string(id)), an(an), id(id) {
 
-    add(&universe);
+    add(&uni_s);
 
 }
 
@@ -125,7 +127,7 @@ void Artnet::connect(std::string ip_) {
 
         int uni_id = p->data.admx.universe;
 
-        auto &u = an->uni(uni_id).instances[0];
+        auto &u = an->universe(uni_id).instances[0];
 
         u.set<std::array<char,512>>(p->data.admx.data);
 

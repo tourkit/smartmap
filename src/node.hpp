@@ -252,14 +252,6 @@ struct TypedNode : UntypedNode {
 
     TypedNode(TypedNode<Any>* other) : TypedNode<Any>(other->ptr) { stored_type = other->type(); }
 
-    Node* addPtr(void* node_v) {
-
-        auto node = (TypedNode<Any>*) node_v;
-
-        return add(node);
-
-    }
-
     template <typename U>
     TypedNode<U>* addPtr(void* ptr) { return (TypedNode<U>*)TypedNode<T>::add(new TypedNode<U>((U*)ptr)); }
 
