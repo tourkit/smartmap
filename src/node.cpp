@@ -3,6 +3,7 @@
 #include "engine.hpp"
 #include "buffer.hpp"
 #include "ubo.hpp"
+#include "utils.hpp"
 
 
 UntypedNode::UntypedNode(std::string name, ImVec4 color) : name_v(name), color(color) {
@@ -70,23 +71,6 @@ Node* UntypedNode::child(std::vector<std::string> names) {
 
 }
 
-static std::vector<std::string> split(std::string s) {
-
-    std::vector<std::string> names;
-
-    std::string delimiter = "::";
-    size_t pos = 0;
-    std::string token;
-    while ((pos = s.find(delimiter)) != std::string::npos) {
-        token = s.substr(0, pos);
-        names.push_back(token);
-        s.erase(0, pos + delimiter.length());
-    }
-    names.push_back(s);
-
-    return names;
-
-}
 
 Node* UntypedNode::child(std::string  name) {
 

@@ -16,6 +16,7 @@
 #include "texture.hpp"
 #include "json.hpp"
 #include "model.hpp"
+#include "utils.hpp"
 
 #include "callbacks.hpp"
 
@@ -384,12 +385,26 @@ void Engine::open(const char* file) {
 
                 if (arr.Size() < 3 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsString()) continue;
 
-                Node* taregt = engine.stack->child(arr[2].GetString());
-                if (!taregt) return;
+                Instance inst(&engine.dynamic_ubo);
+
+                for (auto name : split(arr[2].GetString())) {
+
+                        inst = inst[name];
+
+                        if (!inst.def()) break;
+                }
+
+                if (inst.def() == inst.buff) return;
 
                 auto &uni = an.universe(arr[0].GetInt()).instances[0];
 
-                DMXRemap* dmxremap = new DMXRemap(&uni, &engine.dynamic_ubo["layer1"]["MyQuad"]["argb"].track(), 0, {{1},{1},{1},{1}});
+                std::vector<DMXRemap::Attribute> attrs;
+                if ( arr.Size() > 3 && arr[3].IsArray() ) for (auto &x : arr[3].GetArray()) if (x.IsInt()) attrs.push_back({x.GetInt()});
+
+                int q = 1;
+                if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
+
+                DMXRemap* dmxremap = new DMXRemap(&uni, &inst.track(), arr[1].GetInt(), attrs, q);
 
                 uni.remaps.push_back( dmxremap );
 
@@ -402,49 +417,6 @@ void Engine::open(const char* file) {
 
     });
 
-
-    if_obj("remaps", [&](auto &m) {
-
-        if (!m.name.IsString() || !m.value.IsObject()) return;
-
-        if (!strcmp(m.name.GetString(),"artnet")) {
-
-            std::set<Artnet*> artnets;
-            for (auto x : engine.inputs->childrens) {
-                Artnet* an = x->is_a_nowarning<Artnet>();
-                if (an) artnets.insert(an);
-            }
-
-            if (!artnets.size()) return;
-
-            for (auto &an_ : m.value.GetObj()) {
-
-                if (!an_.name.IsString() || !an_.value.IsArray()) continue;
-
-                auto info = an_.value.GetArray();
-
-                if (info.Size()<4 || !info[0].IsString() || !info[1].IsInt() || !info[2].IsInt() || !info[3].IsString()) return;
-
-
-                // auto remap = engine.remaps->active(true)->addOwnr<Universe::Remap>(
-                //     &input->is_a<Artnet>()->universe(0)->data[0],
-                //     &engine.dynamic_ubo.data[0],
-                //     & model->is_a<Model>()->s
-                // );
-
-                // remap->name(an_.name.GetString());
-
-                // model->referings.insert(remap->node());
-
-                // if (info.Size()<5 || !info[4].IsArray()) continue;
-
-                // std::vector<Remap::Attribute> attributes;
-                // for (auto &x : info[4].GetArray()) if (x.IsInt()) attributes.push_back({x.GetInt()});
-                // remap->get()->attr(attributes);
-
-            }
-        }
-    });
     if (json.document.HasMember("editors") && json.document["editors"].IsArray()) for (auto &e : json.document["editors"].GetArray()) {
 
         if (!e.IsArray()) continue;
@@ -554,6 +526,12 @@ void Engine::save(const char* file) {
 
     }
 
+    // json.document["inputs"].SetObject();
+    // json.document["inputs"].RemoveAllMembers();
+    // for (auto input : inputs->childrens) {
+
+    // }
+
     json.document["outputs"].SetObject();
     json.document["outputs"].RemoveAllMembers();
     for (auto output : outputs->childrens) {
@@ -590,60 +568,6 @@ void Engine::save(const char* file) {
 
 
     }
-
-    json.document["remaps"].SetObject();
-    json.document["remaps"].RemoveAllMembers();
-    for (auto remap : remaps->childrens) {
-
-        // auto  remaparr = rapidjson::Value(rapidjson::kArrayType);
-
-        // auto remap_ = remap->is_a<Universe::Remap>();
-
-        // if (!remap_) continue;
-
-        // Node* an_source = nullptr;
-        // for (auto input : inputs->childrens) {
-
-        //     auto an = input->is_a<Artnet>();
-        //     if (input->is_a<Artnet>() && input->name() == remap_->input->name()) an_source = input;
-
-
-        // }
-
-        // remaparr.PushBack( rapidjson::Value(remap_->layer->s.name().c_str(), allocator ), allocator );
-        // remaparr.PushBack( remap_->width, allocator );
-        // remaparr.PushBack( remap_->height, allocator );
-        // remaparr.PushBack( remap_->offset_x, allocator );
-        // remaparr.PushBack( remap_->offset_y, allocator );
-        // remaparr.PushBack( rapidjson::Value(remap_->layer->s.name().c_str(), allocator ), allocator );
-
-        // // if ( remap->is_a<NDI::Sender>() ) { }
-
-        // auto &remaps = json.document["remaps"];
-
-        // if ( remap->is_a_nowarning<Window>() ) {
-
-        //     if (!remaps.HasMember("monitor")) remaps.AddMember(rapidjson::Value("monitor", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
-
-        //     remaps["monitor"].AddMember( rapidjson::Value(remap->name().c_str(), allocator)  , remaparr, allocator );
-
-        // }
-        // if ( remap->is_a_nowarning<NDI::Sender>() ) {
-
-        //     if (!remaps.HasMember("ndi")) remaps.AddMember(rapidjson::Value("ndi", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
-
-        //     remaps["ndi"].AddMember( rapidjson::Value(remap->name().c_str(), allocator)  , remaparr, allocator );
-
-        // }
-
-
-
-    }
-
-
-
-
-
 
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);

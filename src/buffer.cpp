@@ -100,7 +100,19 @@ void Buffer::update() {
 
     memset( data.data(), 0, data.size() );
 
-    each([&](Instance& inst) { for (auto &x : inst.def()->instances) if (x.buff == inst.buff && x.stl == inst.stl) x.offset = inst.offset; });
+    each([&](Instance& inst) {
+
+        for (auto &x : inst.def()->instances) {
+
+            if (x.buff == inst.buff && x.stl == inst.stl) {
+                // int y = inst.eq_id;
+                x.offset = inst.offset;
+
+            }
+
+        }
+
+    });
 
 }
 

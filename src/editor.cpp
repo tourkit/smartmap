@@ -368,18 +368,26 @@ void Editors::init() {
                 ImGui::EndTable();
             }
 
+        std::stringstream deststart;
+        deststart  <<  (void*)remap->dst->data();
+        deststart  << " - " << (void*)remap->dst->buff->data.data();
+        deststart  << " - " << remap->dst->offset;
+        ImGui::Text(deststart.str().c_str()) ;
 
         std::stringstream buffa;
         buffa << remap->src->def()->name() << " - " << remap->src;
         std::stringstream buffb;
         buffb << remap->dst->def()->name() << " - " << remap->dst;
 
-        ImGui::NewLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppyaaa", (char*)buffa.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
+        ImGui::NewLine(); ImGui::SetNextItemWidth( ImGui::CalcTextSize( (char*)buffa.str().c_str() ).x); ImGui::InputText("##puppyaaa", (char*)buffa.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
 
         ImGui::SameLine(); ImGui::Text(" -> ");
 
-        ImGui::SameLine(); ImGui::SetNextItemWidth(100); ImGui::InputText("##puppybbb", (char*)buffb.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
+        ImGui::SameLine(); ImGui::SetNextItemWidth( ImGui::CalcTextSize( (char*)buffb.str().c_str() ).x); ImGui::InputText("##puppybbb", (char*)buffb.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
 
+        ImGui::SameLine(); ImGui::Text(("* "+std::to_string(remap->dst->def()->quantity())).c_str());
+
+        // engine.
     });
 
     Editor<Artnet>([](Node*node,Artnet* an){

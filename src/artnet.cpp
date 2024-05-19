@@ -8,9 +8,9 @@ void DMXRemap::update() {
 
   auto data = (uint8_t*)src->data();
 
-    for (int offset = 0; offset < quantity; offset++) {
+    for (int offset = 0; offset < dst->def()->quantity(); offset++) {
 
-        auto size = src->def()->size();
+        auto size = dst->def()->size();
 
         auto pos = (offset*size);
         pos /=sizeof(float);
@@ -34,6 +34,36 @@ void DMXRemap::update() {
         };
 
     }
+
+}
+
+void DMXRemap::extract(Member *s) {
+
+    for (auto m : s->members) {
+
+        if (m->isData()) {
+
+            auto cc = m->count();
+
+            for (int i = 0 ; i < cc; i++)
+
+            attributes.push_back({1,m->range<float>()[0],m->range<float>()[1]});
+
+        }else{
+
+            extract(m);
+
+        }
+
+    }
+
+}
+
+DMXRemap::DMXRemap(Instance*src, Instance*dst, int chan, std::vector<DMXRemap::Attribute> attrs, int quantity)
+
+    : Remap(src, dst), chan(chan), attributes(attrs),quantity(quantity) {
+
+    if (!attributes.size()) extract(dst->def());
 
 }
 
@@ -66,13 +96,6 @@ Artnet::Artnet(std::string ip)  { connect(ip); }
 Artnet::Universe::Universe(Artnet* an, int id) : Struct(""+std::to_string(id)), an(an), id(id) {
 
     add(&uni_s);
-
-}
-
-DMXRemap::DMXRemap(Instance*src, Instance*dst, int chan, std::vector<DMXRemap::Attribute> attributes)
-
-    : Remap(src, dst), chan(chan), attributes(attributes) {
-
 
 }
 

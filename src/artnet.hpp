@@ -23,9 +23,13 @@ struct DMXRemap : Remap {
 
     std::vector<Attribute> attributes;
 
-    DMXRemap(Instance*src, Instance*dst, int chan = 0, std::vector<Attribute> attributes = {}); // Maybe chan could be in inst already thoo
+    int quantity;
+
+    DMXRemap(Instance*src, Instance*dst, int chan = 0, std::vector<Attribute> attributes = {}, int quantity = 1); // Maybe chan could be in inst already thoo
 
     void update() override;
+
+    void extract(Member *s);
 
 };
 

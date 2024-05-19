@@ -73,7 +73,7 @@ std::string ShaderProgram::Builder::frag() {
     str += "out vec4 COLOR;\n\n";
 
     str += "vec2 uv = UV;\n\n";
-    str += "vec4 color = vec4(1);\n\n";
+    str += "vec4 color = vec4(0);\n\n";
 
     if (effectors.size()) str += comment_line;
 
@@ -100,6 +100,7 @@ std::string ShaderProgram::Builder::frag() {
             if (model.get()->s.quantity() > 1) name += "["+std::to_string(instance)+"]";
 
             str += "\t// "+name+"\n"; // would love this to be a node name instead // still matters ?
+            str += "\ttic();\n"; // would love this to be a node name instead // still matters ?
 
             for (auto &effector : model.get()->effectors) {
 
@@ -116,11 +117,9 @@ std::string ShaderProgram::Builder::frag() {
                 str += "\t"+effector->file->name()+"("+arg_str+");\n";
             }
 
-            // str += "\ttic();\n\n";
-            if (instance < model.get()->s.quantity()-1) str += "\ttic();\n\n";
-            else str += "\ttac();\n\n";
-
         }
+
+        str += "\ttac();\n\n";
 
         str += "\n";
 

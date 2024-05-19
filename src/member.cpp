@@ -191,7 +191,7 @@ void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offs
 
     for (auto m : members) {
 
-        for (int i = 0; i < m->quantity(); i++) m->each(cb, buff, offset_+i*m->footprint(), stl);
+        m->each(cb, buff, offset_, stl);
 
         offset_ += m->footprint_all();
 
