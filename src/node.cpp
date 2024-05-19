@@ -5,261 +5,268 @@
 #include "ubo.hpp"
 
 
-    UntypedNode::UntypedNode(std::string name, ImVec4 color) : name_v(name), color(color) {
+UntypedNode::UntypedNode(std::string name, ImVec4 color) : name_v(name), color(color) {
 
-        uid = total_uid++;
+    uid = total_uid++;
 
-        pool.insert(this);
-        PLOGV << "#" << name;
+    pool.insert(this);
+    PLOGV << "#" << name;
 
-    }
+}
 
-    std::string UntypedNode::name() { return name_v; }
+std::string UntypedNode::name() { return name_v; }
 
-    Node* UntypedNode::name(std::string value) { name_v = value; update();  return node();}
+Node* UntypedNode::name(std::string value) { name_v = value; update();  return node();}
 
-    UntypedNode::~UntypedNode() {
+UntypedNode::~UntypedNode() {
 
-        auto t_childrens = childrens;
-        for (auto c : childrens) delete c;
+    auto t_childrens = childrens;
+    for (auto c : childrens) delete c;
 
-        t_childrens = hidden_childrens;
-        for (auto c : t_childrens) delete c;
+    t_childrens = hidden_childrens;
+    for (auto c : t_childrens) delete c;
 
-        for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
+    for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
 
 
-        if (ondelete_cb) ondelete_cb(this->node());
+    if (ondelete_cb) ondelete_cb(this->node());
 
-        if (parent_node) parent_node->remove(node());
+    if (parent_node) parent_node->remove(node());
 
-        pool.erase(this);
-        PLOGV << "~" << name();
+    pool.erase(this);
+    PLOGV << "~" << name();
 
-    }
+}
 
-    Node* UntypedNode::child(std::vector<std::string> names) {
+Node* UntypedNode::child(std::vector<std::string> names) {
 
-        auto traget = names.back();
+    auto traget = names.back();
 
-        for (auto c : childrens) {
+    for (auto c : childrens) {
 
-            if (!strcmp(names.back().c_str(), c->name().c_str())) {
+        if (!strcmp(names.back().c_str(), c->name().c_str())) {
 
-                if (names.size()== 1) return c;
+            if (names.size()== 1) return c;
 
-                auto parent = c;
+            auto parent = c;
 
-                for (int i = names.size()-2; i >= 0; i--) if (!strcmp(parent->parent()->name().c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
+            for (int i = names.size()-2; i >= 0; i--) if (!strcmp(parent->parent()->name().c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
 
-                if (c) return c;
-
-            }
+            if (c) return c;
 
         }
 
-        if (names.size()> 1) for (auto c : childrens) {
-
-            auto x = c->child(names);
-
-            if (x) return x;
-
-        }
-
-        return nullptr;
-
     }
-    Node* UntypedNode::child(std::string  name) {
 
-        std::string input = name;
-        std::vector<std::string> names;
-        std::string delimiter = "::";
-        size_t pos = 0;
-        std::string token;
-        while ((pos = input.find(delimiter)) != std::string::npos) {
-            token = input.substr(0, pos);
-            names.push_back(token);
-            input.erase(0, pos + delimiter.length());
-        }
-        names.push_back(input);
+    if (names.size()> 1) for (auto c : childrens) {
 
-        return child(names);
+        auto x = c->child(names);
+
+        if (x) return x;
 
     }
 
-    Node* UntypedNode::active(bool value) { is_active = value; return node(); }
+    return nullptr;
 
-    Node* UntypedNode::node() { return (Node*)this; }
+}
 
-    Node* UntypedNode::top() { auto top = node(); while(top->parent()) { top = top->parent(); } return top; }
+static std::vector<std::string> split(std::string s) {
 
-    void UntypedNode::addList(NodeList *nodes) { for (auto n : *nodes) add(n); }
+    std::vector<std::string> names;
 
-    Node* UntypedNode::add(void* node_v)  {
+    std::string delimiter = "::";
+    size_t pos = 0;
+    std::string token;
+    while ((pos = s.find(delimiter)) != std::string::npos) {
+        token = s.substr(0, pos);
+        names.push_back(token);
+        s.erase(0, pos + delimiter.length());
+    }
+    names.push_back(s);
 
-        auto n = (Node*)node_v;
+    return names;
 
-        PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
+}
 
-        if (n->parent() == node()) return nullptr;
+Node* UntypedNode::child(std::string  name) {
 
-        if (onadd_cb.find(n->type()) != onadd_cb.end()) {
+    return child(split(name));
 
-            n = onadd_cb[n->type()](this->node(),n->node());
+}
 
-            if (!n) return nullptr;
+Node* UntypedNode::active(bool value) { is_active = value; return node(); }
 
-        }
+Node* UntypedNode::node() { return (Node*)this; }
 
-        if (n == node_v) n->parent(node());
+Node* UntypedNode::top() { auto top = node(); while(top->parent()) { top = top->parent(); } return top; }
 
-        else n->referings.insert(this->node());
+void UntypedNode::addList(NodeList *nodes) { for (auto n : *nodes) add(n); }
 
-        update();
+Node* UntypedNode::add(void* node_v)  {
 
-        return n;
+    auto n = (Node*)node_v;
+
+    PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
+
+    if (n->parent() == node()) return nullptr;
+
+    if (onadd_cb.find(n->type()) != onadd_cb.end()) {
+
+        n = onadd_cb[n->type()](this->node(),n->node());
+
+        if (!n) return nullptr;
 
     }
 
-    std::string UntypedNode::nameSTL(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
+    if (n == node_v) n->parent(node());
 
-    Node *UntypedNode::parent() { return parent_node; }
+    else n->referings.insert(this->node());
 
-    Node* UntypedNode::select(){ engine.selected = node(); return node();  }
+    update();
 
-    void UntypedNode::parent(Node* parent_node) {
+    return n;
 
-        if (this->parent_node == parent_node) return;
+}
 
-        if (this->parent_node) this->parent_node->remove(node());
+std::string UntypedNode::nameSTL(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
 
-        this->parent_node = parent_node;
+Node *UntypedNode::parent() { return parent_node; }
 
-        if (!parent_node) return;
+Node* UntypedNode::select(){ engine.selected = node(); return node();  }
 
-        is_active = parent_node->is_active;
+void UntypedNode::parent(Node* parent_node) {
 
-        parent_node->childrens.push_back(node());
+    if (this->parent_node == parent_node) return;
 
-    }
+    if (this->parent_node) this->parent_node->remove(node());
 
-    Node* UntypedNode::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; return node(); }
-    Node* UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; return node(); }
-    Node* UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; return node(); }
+    this->parent_node = parent_node;
 
-    void UntypedNode::runCB(std::function<void(Node*)> cb) {
+    if (!parent_node) return;
 
-        for (auto c:childrens) c->runCB(cb);
+    is_active = parent_node->is_active;
 
-        if(cb) cb(node());
+    parent_node->childrens.push_back(node());
 
-    }
+}
 
-    Node* UntypedNode::close() {
+Node* UntypedNode::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; return node(); }
+Node* UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; return node(); }
+Node* UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; return node(); }
 
-        open = false;
-        return node();
-    }
+void UntypedNode::runCB(std::function<void(Node*)> cb) {
 
-    Node* UntypedNode::hide() {
+    for (auto c:childrens) c->runCB(cb);
 
-        parent_node->remove(node());
+    if(cb) cb(node());
 
-        parent()->hidden_childrens.push_back(node());
+}
 
-        return node();
+Node* UntypedNode::close() {
 
-    }
+    open = false;
+    return node();
+}
 
-    void UntypedNode::bkpupdate() {
+Node* UntypedNode::hide() {
 
-        //TOFIX
-        // engine.static_ubo.bkp();
-        // engine.dynamic_ubo.bkp();
+    parent_node->remove(node());
 
-        update();
+    parent()->hidden_childrens.push_back(node());
 
-    }
+    return node();
 
-    Node* UntypedNode::operator[](int id) { return childrens[id]->node(); }
+}
 
-    void UntypedNode::update() {
+void UntypedNode::bkpupdate() {
 
-        PLOGV << type_name() << "::" << name();
+    //TOFIX
+    // engine.static_ubo.bkp();
+    // engine.dynamic_ubo.bkp();
 
-        trigchange();
+    update();
 
-        if (parent_node) parent_node->update();
+}
 
-        if (referings.size() && *referings.begin()) for (auto x : referings) if (x) x->update();
+Node* UntypedNode::operator[](int id) { return childrens[id]->node(); }
 
-    }
+void UntypedNode::update() {
 
-    bool UntypedNode::remove(Node *child) {
+    PLOGV << type_name() << "::" << name();
 
-        PLOGV << type_name() << "::" << name() << " remove " << child->type_name() << "::" << child->name();
+    trigchange();
 
-        auto it = std::find(childrens.begin(), childrens.end(), child);
+    if (parent_node) parent_node->update();
 
-        if ( std::distance(childrens.begin(), it) < 0 ) {
+    if (referings.size() && *referings.begin()) for (auto x : referings) if (x) x->update();
 
-            PLOGI << "could not delete, didnt found";
-            return false;
+}
 
-        }
+bool UntypedNode::remove(Node *child) {
 
-        childrens.erase(it);
+    PLOGV << type_name() << "::" << name() << " remove " << child->type_name() << "::" << child->name();
 
-        update();
+    auto it = std::find(childrens.begin(), childrens.end(), child);
 
-        return true;
+    if ( std::distance(childrens.begin(), it) < 0 ) {
 
-    }
-
-    uint32_t UntypedNode::index() {
-
-        auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
-
-        return std::distance(parent_node->childrens.begin(), it);
+        PLOGI << "could not delete, didnt found";
+        return false;
 
     }
 
-    void UntypedNode::run() {
+    childrens.erase(it);
 
-        if (!is_active && this != engine.tree) return; // PAas fan  sde  && this != engine.tree
+    update();
 
-        if (onrun_cb) onrun_cb(node());
+    return true;
 
-        for (auto c : childrens) c->run();
+}
 
-    }
+uint32_t UntypedNode::index() {
 
-    void UntypedNode::trigchange() { if (onchange_cb) onchange_cb(node()); }
+    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
 
-    void UntypedNode::up() {
+    return std::distance(parent_node->childrens.begin(), it);
 
-        if (!parent_node) return;
+}
 
-        auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), node());
-        int index = std::distance(parent_node->childrens.begin(), it);
+void UntypedNode::run() {
 
-        if(index<1) return;
+    if (!is_active && this != engine.tree) return; // PAas fan  sde  && this != engine.tree
 
-        parent_node->childrens.erase(it);
-        parent_node->childrens.insert(parent_node->childrens.begin() + index - 1, node());
+    if (onrun_cb) onrun_cb(node());
 
-    }
+    for (auto c : childrens) c->run();
 
-    void UntypedNode::down() {
+}
 
-        if (!parent_node) return;
+void UntypedNode::trigchange() { if (onchange_cb) onchange_cb(node()); }
 
-        auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), node());
-        int index = std::distance(parent_node->childrens.begin(), it);
+void UntypedNode::up() {
 
-        if(index > parent_node->childrens.size()-2) return;
+    if (!parent_node) return;
 
-        parent_node->childrens.erase(it);
-        parent_node->childrens.insert(parent_node->childrens.begin() + index + 1, node());
+    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), node());
+    int index = std::distance(parent_node->childrens.begin(), it);
 
-    }
+    if(index<1) return;
+
+    parent_node->childrens.erase(it);
+    parent_node->childrens.insert(parent_node->childrens.begin() + index - 1, node());
+
+}
+
+void UntypedNode::down() {
+
+    if (!parent_node) return;
+
+    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), node());
+    int index = std::distance(parent_node->childrens.begin(), it);
+
+    if(index > parent_node->childrens.size()-2) return;
+
+    parent_node->childrens.erase(it);
+    parent_node->childrens.insert(parent_node->childrens.begin() + index + 1, node());
+
+}

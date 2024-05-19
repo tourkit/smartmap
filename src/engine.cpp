@@ -386,8 +386,6 @@ void Engine::open(const char* file) {
 
                 Node* taregt = engine.stack->child(arr[2].GetString());
                 if (!taregt) return;
-                // remaps
-
 
                 auto &uni = an.universe(arr[0].GetInt()).instances[0];
 
