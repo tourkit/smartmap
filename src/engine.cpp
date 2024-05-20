@@ -88,17 +88,6 @@ void Engine::init() {
 
     effectors = tree->addOwnr<Node>("Effectors")->node();
 
-    auto rfx = tree->addOwnr<Node>("Real Effectors")->hide();
-
-    for (auto x : effectors->childrens) {
-
-        auto f = x->is_a<File>();
-
-        auto e = &Effector::get(f);
-
-        rfx->addPtr<Effector::Definition>(e);
-
-    }
     // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 
     timelines = tree->addOwnr<Node>("Timelines")->node();
@@ -107,9 +96,9 @@ void Engine::init() {
 
     inputs = tree->addOwnr<Node>("Inputs")->node()->active(1);
 
-    outputs = tree->addOwnr<Node>("Outputs")->node();
-
     stack = tree->addOwnr<Stack>()->node()->active(1);
+
+    outputs = tree->addOwnr<Node>("Outputs")->node()->active(true);
 
     debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
 
@@ -130,17 +119,6 @@ void Engine::run() {
         engine.atlas->texture->bind();
 
         engine.tree->run();
-
-        for (auto x : engine.stack->childrens) {
-
-            auto l = x->is_a<Layer>();
-            if (!l) continue;
-
-            l->fb.texture->bind();
-            //use quad(engine dracall maybe) to draw
-        }
-
-        for (auto x : engine.outputs->childrens) ((Output*)x->ptr_())->draw();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -330,7 +308,6 @@ void Engine::open(const char* file) {
 
             Node* n = engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr))->active(false);
 
-            // n->referings.insert( layer );
             layer->referings.insert( n );
 
         }

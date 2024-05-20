@@ -104,7 +104,7 @@ void Callbacks::init() {
 
     ////////// DRAWCALL.HPP
 
-    NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); node->referings.insert(nullptr); }); // for what ??????
+    NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); }); // for what ??????
 
     NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
 
@@ -187,7 +187,17 @@ void Callbacks::init() {
 
     NODE<Folder>::oncreate([](Node* node, Folder *dir){ node->name(dir->path); });
 
+    ////////// Output.HPP
+
+    NODE<Output>::onrun([](Node* node, Output *output){ output->draw(); });
+
+    ////////// Window.HPP
+
+    NODE<Window>::onrun([](Node* node, Window *window){ NODE<Output>::onrun_cb(node, window); });
+
     ////////// NDI.HPP
+
+    NODE<NDI::Sender>::onrun([](Node* node, NDI::Sender *sender){ NODE<Output>::onrun_cb(node, sender); });
 
     NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ node->name(sender->name);  });
 

@@ -182,7 +182,10 @@ void UntypedNode::update() {
 
     if (parent_node) parent_node->update();
 
-    if (referings.size() && *referings.begin()) for (auto x : referings) if (x) x->update();
+    if (referings.size() && *referings.begin())
+        for (auto x : referings)
+            if (x)
+                x->update();
 
 }
 
