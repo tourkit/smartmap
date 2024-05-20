@@ -11,18 +11,21 @@
   },
   "layers": {
     "layer1": [ 1920, 1080, { "MyQuad": [ "quad.obj", 1, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, {} ],
-    "layer2": [ 1920, 1080, { "MyQuad": [ "quad.obj", 1, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, {} ]
+    "layer2": [ 1920, 1080, { "MyQuad": [ "quad.obj", 1, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, {} ],
+    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl" } ] }, {} ]
   },
   "inputs": {
-    "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ], "remap2": [ 0, 12, "layer2::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ] } ] }
+    "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ], "remap2": [ 0, 48, "layer2::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ] } ] }
   },
   "outputs": {
     "monitor": { "Video 1": [ 1920, 1080, 2560, 0, "layer1" ] },
-    "ndi": { "NDI 1": [ 1920, 1080, 0, 0, "layer1" ] }
+    "ndi": { "NDI 1": [ 1920, 1080, 0, 0, "layer2" ] }
   },
   "editors": [
-    [ 0, 0, 0, 0, "Stack::layer2" ],
-    [ 0, 0, 0, 0, "Inputs::ArtNet", true ]
+    [ 0, 0, 0, 0, "layer2::MyQuad", true ],
+    [ 0, 0, 0, 0, "Stack::layer", true ],
+    [ 0, 0, 0, 0, "layer::quad", true ],
+    [ 0, 0, 0, 0, "tree::Debug - 56 fps" ]
   ],
   "remaps": {
     "remap1": [ "layer1::MyQuad::argb.red", "layer1::MyQuad::argb.blue" ],

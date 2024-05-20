@@ -308,6 +308,10 @@ void Editors::init() {
 
     Editor<DMXRemap>([](Node*node, DMXRemap* remap){
 
+
+        ImGui::SetNextItemWidth(50);
+        ImGui::InputInt("channel##chjdshjkers", &remap->chan);
+
         ImGui::SetNextItemWidth(500);
         if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(550, 0))) {
 
@@ -634,13 +638,11 @@ void Editors::init() {
             tm t;
             plog::util::localtime_s(&t, &m.time.time);
             plog::util::nostringstream ss;
-            ss << t.tm_hour << ":" << t.tm_min << ":"<<t.tm_sec<<":"<< std::setfill('0') << std::setw(3) << static_cast<int> (m.time.millitm);
+            ss <<std::setfill('0') << std::setw(4) << static_cast<int> (m.id) << ":"<< std::setfill('0') << std::setw(2)<<t.tm_sec<<"."<< std::setfill('0') << std::setw(3) << static_cast<int> (m.time.millitm);
 
-
-            str+=m.id;
-            str+=" - ";
+            str+="[";
             str+=ss.str();
-            str+=" - ";
+            str+="] ";
 
             str += m.msg;
             ImGui::Text(str.c_str());

@@ -204,6 +204,8 @@ struct Prout {};
 
 void Engine::open(const char* file) {
 
+    static std::string json_error = "JSON error";
+
     reset();
 
     json.load(File(file).data.data());
@@ -243,7 +245,7 @@ void Engine::open(const char* file) {
 
     if_obj("layers", [&](auto &l) {
 
-        if (!l.value.IsArray()) return;
+        if (!l.value.IsArray()) { PLOGW << json_error; return; }
 
         auto info = l.value.GetArray();
 
@@ -261,15 +263,15 @@ void Engine::open(const char* file) {
 
         TypedNode<Layer>* layer = stack->addOwnr<Layer>(width,height,l.name.IsString() ? l.name.GetString() : "");
 
-        if (info.Size() <= models_id || !info[models_id].IsObject()) return;
+        if (info.Size() <= models_id || !info[models_id].IsObject()) { PLOGW << json_error; return; }
 
         for (auto &model : info[models_id].GetObj()) {
 
-            if (!model.name.IsString() || !model.value.IsArray()) return;
+            if (!model.name.IsString() || !model.value.IsArray()) { PLOGW << json_error; return; }
 
             auto info = model.value.GetArray();
 
-            if (!info.Size() || !info[0].IsString()) return;
+            if (!info.Size() || !info[0].IsString()) { PLOGW << json_error; return; }
 
             Node* model_file = nullptr;
 
@@ -277,7 +279,7 @@ void Engine::open(const char* file) {
 
                 auto f = x->is_a<File>();
 
-                if (!f) return;
+                if (!f) { PLOGW << json_error; return; }
 
                 std::string y = info[0].GetString();
 
@@ -287,17 +289,17 @@ void Engine::open(const char* file) {
 
             // for (auto x : engine.models->childrens) if (x->is_a<File>() && x->is_a<File>()->filename == info[0].GetString()) model_file = x;
 
-            if (!model_file) { PLOGE << "no model : " << info[0].GetString(); return; }
+            if (!model_file) { PLOGE << "no model : " << info[0].GetString(); { PLOGW << json_error; return; } }
 
             auto new_model = layer->add(model_file)->get<Model>();
 
             new_model->name(model.name.GetString());
 
-            if (info.Size() < 2 || !info[1].IsInt()) return;
+            if (info.Size() < 2 || !info[1].IsInt()) { PLOGW << json_error; return; }
 
             new_model->get()->s.quantity(info[1].GetInt());
 
-            if (info.Size() < 3 || !info[2].IsObject()) return;
+            if (info.Size() < 3 || !info[2].IsObject()) { PLOGW << json_error; return; }
 
             addEffectors( info[2], new_model->node() );
 
@@ -312,15 +314,15 @@ void Engine::open(const char* file) {
 
     if_obj("outputs", [&](auto &m) {
 
-        if (!m.name.IsString() || !m.value.IsObject()) return;
+        if (!m.name.IsString() || !m.value.IsObject()) { PLOGW << json_error; return; }
 
         if (!strcmp(m.name.GetString(),"ndi")) for (auto &x : m.value.GetObj()) {
 
-            if (!isOutput(x))  return;
+            if (!isOutput(x))  { PLOGW << json_error; return; }
 
             auto arr = x.value.GetArray();
-            if (arr.Size() < 5) return;
-            // if (arr.Size() == 4) return;
+            if (arr.Size() < 5) { PLOGW << json_error; return; }
+            // if (arr.Size() == 4) { PLOGW << json_error; return; }
 
 
             Node* layer = engine.stack->child(arr[4].GetString());
@@ -333,7 +335,7 @@ void Engine::open(const char* file) {
         }
         if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
 
-            if (!isOutput(x))  return;
+            if (!isOutput(x))  { PLOGW << json_error; return; }
 
             auto arr = x.value.GetArray();
 
@@ -354,19 +356,19 @@ void Engine::open(const char* file) {
 
     if_obj("inputs", [&](auto &m) {
 
-        if (!m.name.IsString() || !m.value.IsObject()) return;
+        if (!m.name.IsString() || !m.value.IsObject()) { PLOGW << json_error; return; }
 
         if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) {
 
-            if (!x.name.IsString()) continue;
+            if (!x.name.IsString()) { PLOGW << json_error; continue; }
 
             if (x.value.IsString()) engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() );
 
-            if (!x.value.IsArray()) continue;
+            if (!x.value.IsArray()) { PLOGW << json_error; continue; }
 
             auto arr = x.value.GetArray();
 
-            if (!arr.Size()) continue;
+            if (!arr.Size()) { PLOGW << json_error; continue; }
 
             TypedNode<Artnet>* an_ = engine.inputs->addOwnr<Artnet>( arr[0].IsString() ? arr[0].GetString() : "" );
 
@@ -374,16 +376,16 @@ void Engine::open(const char* file) {
 
             auto &an = *an_->get();
 
-            if (arr.Size() < 2 || !arr[1].IsObject()) continue;
+            if (arr.Size() < 2 || !arr[1].IsObject()) { PLOGW << json_error; continue; }
 
             for (auto &remap : arr[1].GetObj()) {
 
-                if (!remap.name.IsString() || !remap.value.IsArray()) continue;
+                if (!remap.name.IsString() || !remap.value.IsArray()) { PLOGW << json_error; continue; }
 
                 auto arr = remap.value.GetArray();
                 int x = arr.Size();
 
-                if (arr.Size() < 3 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsString()) continue;
+                if (arr.Size() < 3 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsString()) { PLOGW << json_error; continue; }
 
                 Instance inst(&engine.dynamic_ubo);
 
@@ -391,10 +393,10 @@ void Engine::open(const char* file) {
 
                         inst = inst[name];
 
-                        if (!inst.def()) break;
+                        if (!inst.def()) { PLOGW << json_error; return; }
                 }
 
-                if (inst.def() == inst.buff) return;
+                if (inst.def() == inst.buff) { PLOGW << json_error; return; }
 
                 auto &uni = an.universe(arr[0].GetInt()).instances[0];
 
@@ -420,11 +422,11 @@ void Engine::open(const char* file) {
 
     if (json.document.HasMember("editors") && json.document["editors"].IsArray()) for (auto &e : json.document["editors"].GetArray()) {
 
-        if (!e.IsArray()) continue;
+        if (!e.IsArray()) { PLOGW << json_error; continue; }
 
         auto x = e.GetArray();
 
-        if (e.Size()<5) continue;
+        if (e.Size()<5) { PLOGW << json_error; continue; }
 
         engine.gui->editors.push_back(new EditorWidget());
 

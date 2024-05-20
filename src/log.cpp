@@ -15,7 +15,7 @@ void Log::Appender::write(const plog::Record& record) {
 
     if (record.getSeverity() < plog::Severity::error) cmd = true;
 
-    list.push_back(Message{plog::FuncMessageFormatter::format(record), record.getSeverity(), record.getTime(), record.getInstanceId() });
+    list.push_back(Message{plog::FuncMessageFormatter::format(record), record.getSeverity(), record.getTime(), list.size() });
 
     // post first line
     std::ifstream ifile(File::loc()+"assets/logs/logs.txt");
