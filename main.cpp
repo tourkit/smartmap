@@ -15,6 +15,8 @@ int main() {
 
     engine.init();
 
+    engine.render_passes.emplace_back(std::make_shared<FrameBuffer>(1920*5,1080*5));
+
     engine.open("project.json");
 
     engine.run();

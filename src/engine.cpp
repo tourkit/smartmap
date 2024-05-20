@@ -30,7 +30,9 @@ extern "C" {
 
 Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
 
-     auto y= artnet_list_ifaces();
+    dynamic_ubo.add(&glsl_data);
+
+    auto y= artnet_list_ifaces();
 
     for (auto ift = y; ift != NULL; ift = artnet_list_ifaces_next(ift)) {
 
@@ -113,6 +115,10 @@ void Engine::run() {
     auto &window = getInstance().window;
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
+
+        static int frame = 0;
+        memcpy(engine.dynamic_ubo.data.data(), &(frame), sizeof(int));
+        frame = (frame+1) % 1000;
 
         engine.dynamic_ubo.upload();
 

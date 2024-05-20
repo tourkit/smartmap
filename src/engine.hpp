@@ -70,6 +70,8 @@ struct Engine {
 
     static void Draw2D(Texture* texture);
 
+    static inline Struct& glsl_data = Struct::create("ENGINE").add<int>("frame").add<int>("fps").add<int>("xxx").add<int>("yyy");
+
 private:
 
     std::string project_name;
