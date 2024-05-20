@@ -14,6 +14,8 @@
 #include "atlas.hpp"
 #include "json.hpp"
 #include "buffer.hpp"
+#include "framebuffer.hpp"
+#include "texture.hpp"
 
 void Callbacks::init() {
 
@@ -173,6 +175,10 @@ void Callbacks::init() {
     // NODE<Universe::Remap>::onrun([](Node* node, Universe::Remap *remap) { remap->update(); });
     // NODE<Universe::Remap>::onchange([](Node* node, Universe::Remap *remap) { remap->reset(); });
 
+    //////// FrameBuffer.HPP
+
+    NODE<FrameBuffer>::onchange([](Node* node, FrameBuffer *fb) { if (fb->width != fb->texture->width || fb->height != fb->texture->height) { fb->create(fb->width, fb->height); } });
+
     //////// Buffer.HPP
 
     NODE<Buffer>::onchange([](Node* node, Buffer *buffer) { PLOGD<<"ooo"; });
@@ -184,6 +190,14 @@ void Callbacks::init() {
     ////////// NDI.HPP
 
     NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ node->name(sender->name);  });
+
+    NODE<NDI::Sender>::onchange([](Node* node, NDI::Sender *sender){
+
+        if (!sender->layer) return;
+
+        if (sender->layer->fb.width != sender->width || sender->layer->fb.height != sender->height) { sender->size(sender->layer->fb.width, sender->layer->fb.height); }
+
+      });
 
     ////////// JSON.HPP
 

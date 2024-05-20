@@ -77,6 +77,7 @@ void Engine::init() {
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
 
     atlas = new Atlas(4096, 4096, "assets/medias/");
+
     debug->addPtr<Atlas>(atlas);
 
     // auto comps = debug->addOwnr<Node>("Components")->close();
@@ -327,12 +328,13 @@ void Engine::open(const char* file) {
 
             Node* layer = engine.stack->child(arr[4].GetString());
 
+            Node* n = engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr))->active(false);
 
-
-
-            engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr))->active(false);
+            // n->referings.insert( layer );
+            layer->referings.insert( n );
 
         }
+
         if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
 
             if (!isOutput(x))  { PLOGW << json_error; return; }
@@ -410,7 +412,8 @@ void Engine::open(const char* file) {
 
                 uni.remaps.push_back( dmxremap );
 
-                an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
+                auto n = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
+
 
 
 

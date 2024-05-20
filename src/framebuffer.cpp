@@ -4,9 +4,7 @@
 
 FrameBuffer::~FrameBuffer() {
 
-    if (id) {glDeleteFramebuffers(1, &id);}
-
-    if (texture) { delete texture; }
+    destroy();
 
 }
 
@@ -17,24 +15,19 @@ FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name
     // n.set<uint32_t>(1,height);
 
 }
+void FrameBuffer::create(GLuint width, GLuint height){
 
-FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(name) {
+    if (!destroy()) attachments++;
 
-    if (!width) width = Engine::getInstance().window.width;
-    if (!height) height = Engine::getInstance().window.height;
     this->width = width;
     this->height = height;
-
-    // auto n = Engine::getInstance().framebuffers->create();
-    // n.set<uint32_t>(0,width);
-    // n.set<uint32_t>(1,height);
 
     texture = new Texture(width,height, 0,1,GL_RGB8 );
 
     glGenFramebuffers(1, &id);
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments++), GL_TEXTURE_2D, texture->id, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments), GL_TEXTURE_2D, texture->id, 0);
 
     std::vector<GLuint> drawBuffers;
     for (size_t i = 0; i < attachments+1; i++) drawBuffers.push_back( GL_COLOR_ATTACHMENT0+i);
@@ -42,6 +35,27 @@ FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(na
 
 }
 
+FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(name) {
+
+    if (!width) width = Engine::getInstance().window.width;
+    if (!height) height = Engine::getInstance().window.height;
+
+    create(width, height);
+
+}
+
+
+bool FrameBuffer::destroy() {
+
+    bool verif = false;
+
+    if (id) { glDeleteFramebuffers(1, &id); verif = true; }
+
+    if (texture) { delete texture; }
+
+    return verif;
+
+ }
 
 void FrameBuffer::bind() {  glBindFramebuffer(GL_FRAMEBUFFER, id); glViewport(0,0,width,height); }
 

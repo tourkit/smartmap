@@ -6,6 +6,8 @@
 #include "ubo.hpp"
 #include "log.hpp"
 
+#include <memory>
+
 struct Stack {  };
 
 struct Debug {};
@@ -16,6 +18,7 @@ struct DrawCall;
 struct Atlas;
 struct ShaderProgram;
 struct VBO;
+struct FrameBuffer;
 
 struct Engine {
 
@@ -51,6 +54,8 @@ struct Engine {
     void save();
 
     static Engine& getInstance() { static Engine instance;  return instance; }
+
+    std::vector<std::shared_ptr<FrameBuffer>> render_passes;
 
     void run();
 

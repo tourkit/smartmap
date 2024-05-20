@@ -39,6 +39,10 @@ struct VBO : Buffer {
 
     void draw(int count = 1);
 
-    bool add(File *file = &quad, int id = 0); // chelou push la, devrait etre ds inst ou inverse,
+    bool add(File *file = &quad, int id = 0);
+    bool add_noupload(File *file = &quad, int id = 0);
+
+
+
 
 };

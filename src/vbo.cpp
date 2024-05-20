@@ -126,9 +126,11 @@ void VBO::draw(int count) {
 }
 
 
-bool VBO::add(File* file, int id) {
+bool VBO::add(File* file, int id) { if (add_noupload(file,id)) { upload(); return true; } return false; }
 
- Assimp::Importer importer;
+bool VBO::add_noupload(File* file, int id) {
+
+    Assimp::Importer importer;
 
     const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       |
         aiProcess_Triangulate            |

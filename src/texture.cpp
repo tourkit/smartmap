@@ -11,13 +11,18 @@ Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum i
 }
 
 void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
-
     this->unit = unit;
-    this->width = width;
-    this->height = height;
     this->informat = informat;
     this->outformat = outformat;
     this->mipmaps = mipmaps;
+    create( width, height);
+};
+void Texture::create(GLuint width, GLuint height) {
+
+    destroy();
+
+    this->width = width;
+    this->height = height;
 
     glGenTextures(1, &id);
 

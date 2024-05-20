@@ -309,7 +309,7 @@ void Editors::init() {
     Editor<DMXRemap>([](Node*node, DMXRemap* remap){
 
 
-        ImGui::SetNextItemWidth(50);
+        ImGui::SetNextItemWidth(100);
         ImGui::InputInt("channel##chjdshjkers", &remap->chan);
 
         ImGui::SetNextItemWidth(500);
@@ -714,7 +714,10 @@ void Editors::init() {
 
     Editor<Texture>([](Node* node, Texture *texture){
 
-        ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2);
+        // if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) ) { texture->create( texture->width, texture->height, texture->unit, texture->mipmaps, texture->informat, texture->outformat ); }
+        Layer* layer = node->is_a_nowarning<Layer>();
+        if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) && layer) { layer->fb.create( texture->width, texture->height); layer->feedback->create(texture->width, texture->height); node->update(); }
+
 
         float ratio = texture->height/(float)texture->width;
         auto nw = std::min(texture->width,(GLuint)512);

@@ -5,6 +5,11 @@
                         */
 
 #include "engine.hpp"
+#include "framebuffer.hpp"
+#include "vbo.hpp"
+#include "shader.hpp"
+#include "drawcall.hpp"
+#include "texture.hpp"
 
 int main() {
 
@@ -16,9 +21,11 @@ int main() {
 
 }
 
-// same name is fucked
+// file read t wice
 
-// multi layer again
+//FrameBuffer resize in editor
+
+// matrice pass
 
 // linuxify a.k.a gl1.1 is the pb
 
