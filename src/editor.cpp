@@ -482,33 +482,15 @@ void Editors::init() {
 
     Editor<Output>([](Node* node, Output *output){
 
-        static std::map<Output*,int> output_currents;
-
-
-        ImGuiTextBuffer tbuff;
+        static std::map<Output*,int> output_currents; static uint32_t min = 0; ImGuiTextBuffer tbuff;
 
         for (auto x : engine.stack->childrens) tbuff.append(x->name().c_str(), x->name().c_str()+x->name().length()+1);
 
-        if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) {
+        if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) output->layer = engine.stack->childrens[output_currents[output]]->is_a<Layer>();
 
-            Window* win = node->is_a_nowarning<Window>();
-            if (win) win->layer = engine.stack->childrens[output_currents[output]]->is_a<Layer>();
+        if (ImGui::DragScalarN("position###winpos", ImGuiDataType_U32,  &output->offset_x, 2, 1, &min)) output->pos( output->offset_x, output->offset_y );
 
-        }
-
-        static uint32_t min = 0;
-
-        if (ImGui::DragScalarN("position###winpos", ImGuiDataType_U32,  &output->offset_x, 2, 1, &min)) {
-
-            output->pos( output->offset_x, output->offset_y );
-
-        }
-
-        if (ImGui::DragScalarN("size###winsize", ImGuiDataType_U32,  &output->width, 2, 1, &min)) {
-
-            output->size( output->width, output->height );
-
-        }
+        if (ImGui::DragScalarN("size###winsize", ImGuiDataType_U32,  &output->width, 2, 1, &min)) output->size( output->width, output->height );
 
     });
 
@@ -772,22 +754,6 @@ void Editors::init() {
 
     });
 
-    // tofix
-
-    // Editor<Layer>([](Node* node, Layer *layer){
-
-    //     Editor<Texture>::cb(node, layer->fb.texture);
-
-    //     Editor<ShaderProgram>::cb(node, &layer->shader);
-
-    //     ImGui::Separator();
-    //     Editor<Object>::cb(node, layer->vbo.vertices);
-    //     ImGui::Separator();
-    //     Editor<Object>::cb(node, layer->vbo.indices);
-    //     ImGui::Separator();
-    //     Editor<VBO>::cb(node, &layer->vbo);
-
-    // });
 
     ////////// UBO.HPP
 

@@ -16,7 +16,11 @@ int main() {
 
 }
 
-//multi models ?
+
+
+// same name is fucked
+
+// multi layer again
 
 // linuxify a.k.a gl1.1 is the pb
 
@@ -32,6 +36,10 @@ int main() {
 
 // RE QUANTITY not atlas work duh
 
+// sort && thus add fx & models accordingly
+
 // timelines (thus player) maybeee
 
 // model editor about instance :) c ( engine.selected should be instance? inst is only members.)
+
+// drop remap

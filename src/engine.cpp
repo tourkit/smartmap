@@ -408,7 +408,8 @@ void Engine::open(const char* file) {
 
                 uni.remaps.push_back( dmxremap );
 
-                an_->addPtr<DMXRemap>(dmxremap);
+                an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
+
 
 
             }

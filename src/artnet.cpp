@@ -6,7 +6,7 @@
 
 void DMXRemap::update() {
 
-  auto data = (uint8_t*)src->data();
+  auto data = (uint8_t*)src->data()+chan;
 
     for (int offset = 0; offset < dst->def()->quantity(); offset++) {
 
