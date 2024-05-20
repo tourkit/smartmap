@@ -6,12 +6,12 @@
   "effectors": {
     "argb.glsl": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float  blue) { \n\n\tcolor = color * vec4 (red, green, blue, 1) ; \n\n}",
     "atlas.glsl": "//id(0,10,0)\n\nvoid atlas(int id) {\n\n\tvec2 tuv = uv;\n\n\ttuv *= media[id].size;\n\ttuv += media[id].pos;\n\tcolor *= texture(medias, tuv);\n\n}\n",
-    "feedback.glsl": "//intensity(0,1,0)\n\nvoid feedback(float intensity) { \n\ncolor += ( texture( render_pass, UV) - .002 ) * intensity;\n\n}\n\n\n\n\n\n",
+    "feedback.glsl": "//intensity(0,1,0)\n\nvoid feedback(float intensity) { \n\ncolor += ( texture( render_pass, UV) - .002 ) * pow(abs(intensity),.1);\n\n}\n\n\n\n\n\n\n",
     "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size) {\n\n\tfloat angle = 0;\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}\n"
   },
   "layers": {
     "layer1": [ 1920, 1080, { "MyQuad": [ "quad.obj", 5, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, { "feedback": "feedback.glsl" } ],
-    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl" } ] }, {} ]
+    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl", "rectangle": "rectangle.glsl", "atlas": "atlas.glsl" } ], "quad_1": [ "quad.obj", 1, { "rectangle": "rectangle.glsl" } ] }, {} ]
   },
   "inputs": {
     "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ] } ] }
@@ -21,10 +21,10 @@
     "ndi": { "NDI 1": [ 1920, 1080, 0, 0, "layer1" ] }
   },
   "editors": [
+    [ 0, 0, 0, 0, "layer1::feedback" ],
     [ 0, 0, 0, 0, "Stack::layer", true ],
-    [ 0, 0, 0, 0, "ArtNet::DMXRemap", true ],
-    [ 0, 0, 0, 0, "layer1::MyQuad", true ],
-    [ 0, 0, 0, 0, "Inputs::ArtNet", true ]
+    [ 0, 0, 0, 0, "Inputs::ArtNet", true ],
+    [ 0, 0, 0, 0, "ArtNet::DMXRemap", true ]
   ],
   "remaps": {
     "remap1": [ "layer1::MyQuad::argb.red", "layer1::MyQuad::argb.blue" ],

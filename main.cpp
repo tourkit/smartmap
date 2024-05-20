@@ -5,15 +5,6 @@
                         */
 
 #include "engine.hpp"
-#include "model.hpp"
-#include "artnet.hpp"
-#include "drawcall.hpp"
-
-#include "ndi.hpp"
-
-#include "drawcall.hpp"
-#include "buffer.hpp"
-#include "struct.hpp"
 
 int main() {
 
@@ -25,9 +16,13 @@ int main() {
 
 }
 
+//multi models ?
 
-// linuxify
+// linuxify a.k.a gl1.1 is the pb
 
+// artnet output
+
+// fine feedback
 
 // later gater :
 
@@ -38,3 +33,5 @@ int main() {
 // RE QUANTITY not atlas work duh
 
 // timelines (thus player) maybeee
+
+// model editor about instance :) c ( engine.selected should be instance? inst is only members.)
