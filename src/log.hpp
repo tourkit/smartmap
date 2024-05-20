@@ -5,6 +5,8 @@
 #include "file.hpp"
 #include "vendors/plog/Log.h"
 #include "vendors/plog/Init.h"
+#include "vendors/plog/Util.h"
+
 #include "vendors/plog/Formatters/TxtFormatter.h"
 #include "vendors/plog/Formatters/FuncMessageFormatter.h"
 #include "vendors/plog/Appenders/ColorConsoleAppender.h"
@@ -27,6 +29,7 @@ struct Log {
             std::string msg;
             plog::Severity severity;
             plog::util::Time time;
+            int id = 0;
 
         };
 

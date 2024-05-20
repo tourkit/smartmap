@@ -57,7 +57,7 @@ void Callbacks::init() {
 
     ////////// Struct.HPP
 
-    NODE<Struct>::oncreate([](Node*node, Struct* s){ node->name(s->name()); });
+    NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name(s->name()); });
 
     NODE<Struct>::onchange([&](Node*node, Struct* s){ s->name(node->name()); });
 
@@ -95,9 +95,6 @@ void Callbacks::init() {
 
     NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name(ubo->name()); });
 
-    ////////// STRUCT.HPP
-
-    NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name(s->name()); });
 
     ////////// ENGINE.HPP (and Stack)
 

@@ -11,14 +11,13 @@
 
 #include "ndi.hpp"
 
+#include "drawcall.hpp"
 #include "buffer.hpp"
 #include "struct.hpp"
 
 int main() {
 
     engine.init();
-
-    logger.cout();
 
     engine.open("project.json");
 
@@ -27,19 +26,15 @@ int main() {
 }
 
 
-
-// multi layer
-// ~save remap
-
 // linuxify
 
-// fine
+
+// later gater :
+
+// ~save remap
 
 // static Effector should  update on file update
 
 // RE QUANTITY not atlas work duh
 
 // timelines (thus player) maybeee
-
-
-// node::each<T>

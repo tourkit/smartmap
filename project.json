@@ -10,19 +10,21 @@
     "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size) {\n\n\tfloat angle = 0;\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}\n"
   },
   "layers": {
-    "layer1": [ 1920, 1080, { "MyQuad": [ "quad.obj", 1, {} ] }, {} ],
-    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, {} ] }, {} ]
+    "layer1": [ 1920, 1080, { "MyQuad": [ "quad.obj", 5, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, { "feedback": "feedback.glsl" } ],
+    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl" } ] }, {} ]
   },
   "inputs": {
     "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ] } ] }
   },
   "outputs": {
-    "monitor": { "Video 1": [ 1920, 1080, 2560, 0, "layer" ] },
+    "monitor": { "Video 1": [ 1920, 1080, 2560, 0, "layer1" ] },
     "ndi": { "NDI 1": [ 1920, 1080, 0, 0, "layer1" ] }
   },
   "editors": [
-    [ 0, 0, 0, 0, "tree::Stack", true ],
-    [ 0, 0, 0, 0, "Outputs::Video 1" ]
+    [ 0, 0, 0, 0, "Stack::layer", true ],
+    [ 0, 0, 0, 0, "ArtNet::DMXRemap", true ],
+    [ 0, 0, 0, 0, "layer1::MyQuad", true ],
+    [ 0, 0, 0, 0, "Inputs::ArtNet", true ]
   ],
   "remaps": {
     "remap1": [ "layer1::MyQuad::argb.red", "layer1::MyQuad::argb.blue" ],

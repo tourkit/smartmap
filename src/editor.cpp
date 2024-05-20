@@ -22,6 +22,7 @@
 #include "json.hpp"
 
 
+#include <ctime>
 #include <cstring>
 #include <format>
 static int hovered_offset = -1;
@@ -647,7 +648,19 @@ void Editors::init() {
             if (count == max_lines) break;
 
             ImGui::PushStyleColor(ImGuiCol_Text, color);
-            std::string str = " "+m.msg;
+            std::string str;
+            tm t;
+            plog::util::localtime_s(&t, &m.time.time);
+            plog::util::nostringstream ss;
+            ss << t.tm_hour << ":" << t.tm_min << ":"<<t.tm_sec<<":"<< std::setfill('0') << std::setw(3) << static_cast<int> (m.time.millitm);
+
+
+            str+=m.id;
+            str+=" - ";
+            str+=ss.str();
+            str+=" - ";
+
+            str += m.msg;
             ImGui::Text(str.c_str());
             ImGui::PopStyleColor();
 
