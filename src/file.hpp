@@ -28,9 +28,9 @@ struct File {
 
     File();
 
-    File(std::string source);
+    File(std::string source, bool load = true);
 
-    File(std::string source, std::string value);
+    File(std::string source, const char* value);
 
     int64_t getTimeModified();
 

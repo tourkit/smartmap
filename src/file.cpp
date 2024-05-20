@@ -20,8 +20,9 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 
 File::File() { }
 
-File::File(std::string path) { read(path, 0); }
-File::File(std::string path, std::string value) { owned = true; read(path, 0); loadString(value); }
+File::File(std::string path, bool load) : path(path) { if (load) read(path, 0); }
+
+File::File(std::string path, const char* value) { owned = true; read(path, 0); loadString(value); }
 
 int64_t File::getTimeModified() {
 

@@ -5,11 +5,11 @@
 
 Folder::~Folder()  { }
 
-Folder::Folder(std::string path) { import(path); }
+Folder::Folder(std::string path, bool load) { import(path, load); }
 
 bool Folder::exist(std::string path) { return std::filesystem::is_directory(File::loc()+path); }
 
-bool Folder::import(std::string path)  {
+bool Folder::import(std::string path, bool load)  {
 
     if (!exist(path)) return false;
 
@@ -27,7 +27,7 @@ bool Folder::import(std::string path)  {
             std::string instanceName(ent->d_name);
             if (instanceName == ".." || instanceName == ".") continue;
 
-            files.emplace_back(path+ent->d_name);
+            files.emplace_back(path+ent->d_name, load);
 
         }
 

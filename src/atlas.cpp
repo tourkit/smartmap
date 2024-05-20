@@ -48,7 +48,7 @@ void Atlas::fromDir(std::string path) {
 
     clear();
 
-    Folder dir(path);
+    Folder dir(path, false);
 
     for (auto &file:dir.files) {
 

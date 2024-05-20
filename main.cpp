@@ -21,8 +21,6 @@ int main() {
 
 }
 
-// file read t wice
-
 // matrice pass
 
 // linuxify a.k.a gl1.1 is the pb

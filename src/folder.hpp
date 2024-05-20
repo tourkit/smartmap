@@ -12,11 +12,11 @@ struct Folder {
 
     std::vector<File> files;
 
-    Folder(std::string path);
+    Folder(std::string path, bool load = true);
 
     ~Folder();
 
-    bool import(std::string path);
+    bool import(std::string path, bool load = true);
 
     static bool exist(std::string path);
 
