@@ -42,6 +42,10 @@ struct VBO : Buffer {
     bool add(File *file = &quad, int id = 0);
     bool add_noupload(File *file = &quad, int id = 0);
 
+    void add_tile(int width, int height, int x, int y, int id = 0);
+
+
+
 
 
 

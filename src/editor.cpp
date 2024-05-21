@@ -19,6 +19,7 @@
 #include "artnet.hpp"
 #include "texture.hpp"
 #include "atlas.hpp"
+#include "framebuffer.hpp"
 #include "json.hpp"
 
 
@@ -828,6 +829,14 @@ void Editors::init() {
 
     Editor<Debug>([](Node* node, Debug *debug){ Editor<Log>::cb(node, &logger); });
 
+    ////////// FRAMEBUFFER.HPP
+
+    Editor<FrameBuffer>([](Node* node, FrameBuffer *fb ){
+
+        Editor<Texture>::cb(node, fb->texture);
+
+    });
+
     ////////// DRAWCALL.HPP
 
     Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); Editor<VBO>::cb(node, &dc->vbo); });
@@ -838,7 +847,7 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("main")) {
 
-                Editor<Texture>::cb(node, layer->fb.texture);
+                Editor<FrameBuffer>::cb(node, &layer->fb);
 
                 ImGui::EndTabItem();
 

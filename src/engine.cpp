@@ -28,7 +28,13 @@ extern "C" {
 
 }
 
-Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
+Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"),layers_s("Layers") {
+
+    render_passes.reserve(10);
+    // layers_s.add(&rect);
+    // layers_s.quantity(0);
+    // static_ubo.add(&layers_s);
+
 
     dynamic_ubo.add(&glsl_data);
 
@@ -117,11 +123,10 @@ void Engine::run() {
     while (!glfwWindowShouldClose(window.id)) window.render([](){
 
         static int frame = 0;
-        memcpy(engine.dynamic_ubo.data.data(), &(frame), sizeof(int));
+        memcpy(engine.dynamic_ubo.data.data(), &(frame), sizeof(int)); // aka engine.dynamic_ubo["ENGINE"]["fps"]
         frame = (frame+1) % 1000;
 
         engine.dynamic_ubo.upload();
-
         engine.atlas->texture->bind();
 
         engine.tree->run();

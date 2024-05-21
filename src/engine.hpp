@@ -55,7 +55,7 @@ struct Engine {
 
     static Engine& getInstance() { static Engine instance;  return instance; }
 
-    std::vector<std::shared_ptr<FrameBuffer>> render_passes;
+    std::vector<FrameBuffer> render_passes;
 
     void run();
 
@@ -71,6 +71,8 @@ struct Engine {
     static void Draw2D(Texture* texture);
 
     static inline Struct& glsl_data = Struct::create("ENGINE").add<int>("frame").add<int>("fps").add<int>("xxx").add<int>("yyy");
+    static inline Struct& rect = Struct::create("Rect").add<float>("width").add<float>("height").add<float>("x").add<float>("y");
+    Struct layers_s;
 
 private:
 

@@ -17,7 +17,7 @@
 Member::~Member() {
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
-    PLOGV << "~" << name();// << " ( &" + ss.str() + " )";
+    if (!is_copy) PLOGV << "~" << name();// << " ( &" + ss.str() + " )";
 
 }
 
@@ -41,7 +41,8 @@ Member::Member(const Member& other)
     quantity_v( other.quantity_v ) ,
     name_v(other.name_v) ,
     members(other.members) ,
-    size_v( other.size_v )
+    size_v( other.size_v ) ,
+    is_copy(true)
 
  {
 
@@ -50,7 +51,7 @@ Member::Member(const Member& other)
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
 
-    PLOGV << "BKP#" << name();// << " ( &" + ss.str() + " )" ;
+    // PLOGV << "BKP#" << name();// << " ( &" + ss.str() + " )" ;
 
 }
 

@@ -22,10 +22,8 @@
     "ndi": { "NDI 1": [ 1920, 1080, 0, 0, "layer2" ] }
   },
   "editors": [
-    [ 0, 0, 0, 0, "layer1::MyQuad", true ],
-    [ 0, 0, 0, 0, "Stack::layer", true ],
-    [ 0, 0, 0, 0, "layer::quad", true ],
-    [ 0, 0, 0, 0, "tree::Debug - 60 fps", true ]
+    [ 0, 0, 0, 0, "Debug - 60 fps::static_ubo", true ],
+    [ 0, 0, 0, 0, "tree::Stack", true ]
   ],
   "remaps": {
     "remap1": [ "layer1::MyQuad::argb.red", "layer1::MyQuad::argb.blue" ],

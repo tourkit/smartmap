@@ -125,6 +125,11 @@ void VBO::draw(int count) {
 
 }
 
+void VBO::add_tile(int width, int height, int x, int y, int id) {
+
+
+
+}
 
 bool VBO::add(File* file, int id) { if (add_noupload(file,id)) { upload(); return true; } return false; }
 

@@ -24,7 +24,7 @@ bool Instance::exist(){
 
 }
 
-Instance::Instance(Buffer* buff, uint32_t offset, std::vector<Member*> stl) : buff(buff), offset(offset), stl(stl) { }
+Instance::Instance(Buffer* buff, uint32_t offset, std::vector<Member*> stl, int eq_id) : buff(buff), offset(offset), stl(stl), eq_id(eq_id) { }
 
 Instance Instance::operator[](std::string name) {
 
@@ -78,13 +78,11 @@ Instance Instance::operator[](int id) {
 
 Instance Instance::eq(int id) {
 
-    if (!stl.size() || id >= def()->quantity()) {PLOGE<<"Not that many quantity exist";return *this;}
+    if (!stl.size() || id >= def()->quantity()) {PLOGE<<"Not that many quantity exist (" << id << " < " << def()->quantity() << ")" ;return *this;}
 
     uint32_t new_offset = offset + def()->footprint() * (id-eq_id);
 
-    eq_id = id;
-
-    return Instance{buff, new_offset ,stl};
+    return Instance{buff, new_offset ,stl, id};
 
 }
 
