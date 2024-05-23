@@ -67,23 +67,6 @@ DMXRemap::DMXRemap(Instance*src, Instance*dst, int chan, std::vector<DMXRemap::A
 
 }
 
-
-
-  void Artnet::pre_change() {
-
-    Buffer::pre_change();
-
-  }
-  void Artnet::post_change(std::vector<Member*> added) {
-
-    Buffer::post_change(added);
-
-  }
-
-Artnet::Artnet(const Artnet& other) : Buffer( other ) { }
-
-    Artnet* Artnet::copy() { return new Artnet(*this); }
-
 Artnet::Artnet(std::string ip)  { connect(ip); }
 
   Artnet::Universe& Artnet::universe(int id) {

@@ -53,14 +53,6 @@ struct Artnet : Buffer {
 
   void connect(std::string ip);
 
-  void pre_change() override;
-
-  void post_change(std::vector<Member*> added = {}) override;
-
-  Artnet(const Artnet& other);
-
-  Artnet* copy() override;
-
   Universe& universe(int id);
 
   void disconnect();

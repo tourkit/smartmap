@@ -152,7 +152,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
                     !strcmp(src_member_->name().c_str(), this_member_->name().c_str())
 
-                    //&& src_member_->type() == this_member_->type()
+                    //&& src_member_->type() == this_member_->type() // dont think thats relevent, fuxks
 
                 ) { found = this_member_; break; }
 
