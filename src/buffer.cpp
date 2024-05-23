@@ -148,8 +148,6 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             for (auto this_member_ : this_member->members) {
 
-                std::string x1 = src_member_->type().name();
-                std::string x2 = this_member_->type().name();
                 if (
 
                     !strcmp(src_member_->name().c_str(), this_member_->name().c_str())
