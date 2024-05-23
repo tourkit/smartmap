@@ -12,7 +12,7 @@
   "layers": {
     "layer1": [ 1920, 1080, { "MyQuad": [ "quad.obj", 1, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, {} ],
     "layer2": [ 1920, 1080, { "MyQuad": [ "quad.obj", 1, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, {} ],
-    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl" } ] }, {} ]
+    "layer3": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl", "atlas": "atlas.glsl" } ] }, {} ]
   },
   "inputs": {
     "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ], "remap2": [ 0, 48, "layer2::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ] } ] }
@@ -22,8 +22,9 @@
     "ndi": { "NDI 1": [ 1920, 1080, 0, 0, "layer2" ] }
   },
   "editors": [
-    [ 0, 0, 0, 0, "Debug - 60 fps::static_ubo", true ],
-    [ 0, 0, 0, 0, "tree::Stack", true ]
+    [ 0, 0, 0, 0, "tree::Stack", true ],
+    [ 0, 0, 0, 0, "Stack::layer3", true ],
+    [ 0, 0, 0, 0, "Debug::static_ubo", true ]
   ],
   "remaps": {
     "remap1": [ "layer1::MyQuad::argb.red", "layer1::MyQuad::argb.blue" ],

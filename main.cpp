@@ -11,6 +11,7 @@
 #include "drawcall.hpp"
 #include "instance.hpp"
 #include "texture.hpp"
+#include "vbo.hpp"
 
 
 #include <GL/gl3w.h>
@@ -19,7 +20,7 @@
 
 #include "RectangleBinPack/MaxRectsBinPack.h"
 
-struct ChoumMatrice {
+struct UberLayer {
 
     Struct layers_def;
 
@@ -40,21 +41,22 @@ struct ChoumMatrice {
 
     GLint max_tex_size;
 
-    ChoumMatrice() : layers_def("layers_def") {
+    UberLayer() : layers_def("Layers") {
 
-        layers_def.add( &Engine::rect );
-
+        layers_def.add<glm::vec2>("size");
+        layers_def.add<glm::vec2>("pos");
+        layers_def.quantity(0);
         engine.static_ubo.add(&layers_def);
 
-        glsl_struct = &engine.static_ubo[layers_def.name()].track();
+        // glsl_struct = &engine.static_ubo[layers_def.name()].track();
 
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+        // glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
 
-        PLOGD << "max tex size : " << max_tex_size;
+        // PLOGD << "max tex size : " << max_tex_size;
 
     }
 
-    void calc() {
+    void calc(VBO* vbo) {
 
         auto layers = this->layers;
 
@@ -68,7 +70,7 @@ struct ChoumMatrice {
 
         std::vector<std::vector<std::array<int,5>>> matrice = {{}};
 
-        for (auto it = layers.begin(); it != layers.end();) {
+        for (auto it = layers.begin(); it != layers.end(); it++ ) {
 
             if (it->h > max_line_h) max_line_h = it->h;
 
@@ -83,12 +85,14 @@ struct ChoumMatrice {
 
                 matrice.back().emplace_back( std::array<int,5>{it->w, it->h, last_x, last_y, it->id} );
                 last_x += it->w;
-                it++;
 
             }
 
 
+
         }
+
+        if (!matrice.size() || !matrice.back().size()) return;
 
         float matrice_height = matrice.back()[0][1]+matrice.back()[0][3];
         float matrice_width = matrice[0].back()[0]+matrice[0].back()[2];
@@ -96,35 +100,16 @@ struct ChoumMatrice {
         std::vector<std::array<float,4>> normalized;
 
         normalized.resize(layers.size());
+
         glsl_struct->def()->quantity(layers.size());
 
-        for (auto &x : matrice) {
-
-            for (auto &y : x) {
-
-                glsl_struct->eq(y[4]).set<glm::vec4>(glm::vec4(y[0] / matrice_width,y[1] / matrice_height,y[2] / matrice_width,y[3] / matrice_height));
-
-
-                normalized[y[4]][0] = y[0] / matrice_width;
-                normalized[y[4]][1] = y[1] / matrice_height;
-                normalized[y[4]][2] = y[2] / matrice_width;
-                normalized[y[4]][3] = y[3] / matrice_height;
-
-            }
-
-        }
-
+        for (auto &x : matrice) for (auto &y : x) glsl_struct->eq(y[4]).set<glm::vec4>(glm::vec4(y[0] / matrice_width,y[1] / matrice_height,y[2] / matrice_width,y[3] / matrice_height));
 
     }
 
     void add(int w , int h) { // kinda ctor for VLaye
 
         layers.emplace_back(w,h,layers.size());
-
-
-
-
-        calc();
 
      }
 
@@ -138,42 +123,31 @@ int main() {
     engine.render_passes.emplace_back(1920*5,1080*5);
     engine.debug->addPtr<FrameBuffer>(&engine.render_passes.back());
 
+    UberLayer ubl;
+
+    // Struct test("test");
+    // test.add<glm::vec2>("size");
+    // test.add<glm::vec2>("pos");
+    // test.quantity(0);
+    // engine.static_ubo.add(&test);
+    // engine.static_ubo.upload();
+
+    // ubl.add(192,108);
+    // ubl.add(192,108);
+    // ubl.add(192,108);
+
+
+    // ubl.calc(nullptr);
+
+
     engine.open("project.json");
 
-    // ChoumMatrice chm;
-
-    // chm.add(1920,1080);
-    // chm.add(1920,1081);
-    // chm.add(1920,1060);
-    // chm.add(1920,1080);
-    // chm.add(1920,1080);
-    // chm.add(1920,1080);
-    // chm.add(1920,1080);
-    // chm.add(1920,1080);
-    // chm.add(1920,1080);
-    // chm.add(1920,1080);
-    // chm.add(1920,1080);
-    // chm.add(1920,1080);
-
-    // // chm.calc();
-
-
-    // auto &vbo = engine.stack->childrens[2]->is_a<Layer>()->vbo;
-
-    // PLOGD << vbo[0].eq(2)[0][1].get<glm::vec2>().y;
-
-    // for (int i = 0 ; i < 4; i++) {
-
-    //     auto inst = vbo[0].eq(i)[0][0];
-
-    //    inst.set<glm::vec2>( inst.get<glm::vec2>() * glm::vec2(.1) );
-
-    // }
-    // vbo.upload();
 
     engine.run();
 
 }
+
+// RE QUANTITY not atlas work duh
 
 // matrice pass
 
@@ -188,8 +162,6 @@ int main() {
 // ~save remap
 
 // static Effector should  update on file update
-
-// RE QUANTITY not atlas work duh
 
 // sort && thus add fx & models accordingly
 

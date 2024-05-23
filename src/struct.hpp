@@ -64,6 +64,10 @@ struct Struct : Member {
 
     Member* add(Member* m);
 
+#ifdef ROCH
+    std::string DEBUG_TYPE;
+#endif
+
 
 };
 

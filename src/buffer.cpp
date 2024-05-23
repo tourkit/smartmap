@@ -148,11 +148,13 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             for (auto this_member_ : this_member->members) {
 
+                std::string x1 = src_member_->type().name();
+                std::string x2 = this_member_->type().name();
                 if (
 
                     !strcmp(src_member_->name().c_str(), this_member_->name().c_str())
 
-                    && src_member_->type() == this_member_->type()
+                    //&& src_member_->type() == this_member_->type()
 
                 ) { found = this_member_; break; }
 
@@ -160,7 +162,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             }
 
-            if (!found) { src_offset_ += src_member_->footprint(); PLOGV << "couldnt find " << src_member_->name(); continue; }
+            if (!found) { src_offset_ += src_member_->footprint(); PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer.name(); continue; }
 
             remap(src_buffer, src_member_, found, src_offset_, this_offset_);
 
