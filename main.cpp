@@ -48,11 +48,11 @@ struct UberLayer {
         layers_def.quantity(0);
         engine.static_ubo.add(&layers_def);
 
-        // glsl_struct = &engine.static_ubo[layers_def.name()].track();
+        glsl_struct = &engine.static_ubo[layers_def.name()].track();
 
-        // glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
 
-        // PLOGD << "max tex size : " << max_tex_size;
+        PLOGD << "max tex size : " << max_tex_size;
 
     }
 
@@ -125,21 +125,6 @@ int main() {
 
     UberLayer ubl;
 
-    // Struct test("test");
-    // test.add<glm::vec2>("size");
-    // test.add<glm::vec2>("pos");
-    // test.quantity(0);
-    // engine.static_ubo.add(&test);
-    // engine.static_ubo.upload();
-
-    // ubl.add(192,108);
-    // ubl.add(192,108);
-    // ubl.add(192,108);
-
-
-    // ubl.calc(nullptr);
-
-
     engine.open("project.json");
 
 
@@ -147,7 +132,6 @@ int main() {
 
 }
 
-// RE QUANTITY not atlas work duh
 
 // matrice pass
 

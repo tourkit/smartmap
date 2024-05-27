@@ -44,7 +44,7 @@ void UBO:: bind(ShaderProgram* shader) {
 
 }
 
-void UBO::update() { Buffer::update(); resize(footprint_all()); upload();  }
+void UBO::update() { Buffer::update(); resize(footprint_all()); } // acho q melhor nao ter upload() la. obrigado
 
 void UBO::reset() {
 

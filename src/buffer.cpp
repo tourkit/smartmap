@@ -78,13 +78,13 @@ void  Buffer::post_change(std::vector<Member*> addeds) {
 
     remap(*bkp);
 
-
     bkp->hard_delete();
 
     delete bkp;
 
     bkp = nullptr;
 
+    upload();
 
 }
 
