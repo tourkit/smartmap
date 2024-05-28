@@ -2,14 +2,14 @@
 #include "layer.hpp"
 
 
-    UberLayer::UberLayer() : layers_def("Layers"), quad(&VBO::quad), fb(1920,1080) {
+    UberLayer::UberLayer() : layers_def("Layer"), quad(&VBO::quad) {
 
         layers_def.add<glm::vec2>("size");
         layers_def.add<glm::vec2>("pos");
         layers_def.quantity(0);
         engine.static_ubo.add(&layers_def);
 
-        glsl_struct = &engine.static_ubo[layers_def.name()].track();
+        glsl_layers = &engine.static_ubo[layers_def.name()].track();
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
 
@@ -60,9 +60,19 @@
 
         fb.create( matrice_width, matrice_height );
 
-        glsl_struct->def()->quantity(layers.size());
+        glsl_layers->def()->quantity(layers.size());
 
-        for (auto &x : matrice) for (auto &y : x) glsl_struct->eq(y[4]).set<glm::vec4>(glm::vec4(y[0] / matrice_width,y[1] / matrice_height,y[2] / matrice_width,y[3] / matrice_height));
+        for (auto &x : matrice) for (auto &y : x) {
+
+            auto w = y[0] / matrice_width;
+            auto h = y[1] / matrice_height;
+            glsl_layers->eq(y[4]).set<glm::vec4>(glm::vec4(w, h, y[2] / matrice_width *2-1+w, y[3] / matrice_height *2-1+h));
+
+        }
+
+        shader.create(nullptr); // to update shader
+
+        engine.static_ubo.upload();
 
     }
 
@@ -80,6 +90,6 @@
 
         fb.bind();
 
-        quad.draw();
+        quad.draw(glsl_layers->def()->quantity());
 
      }

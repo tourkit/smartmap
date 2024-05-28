@@ -1,6 +1,8 @@
 {
   "editors": [
-    [ 0, 0, 0, 0, "tree::UberLayer", true ]
+    [ 0, 0, 0, 0, "tree::UberLayer", true ],
+    [ 0, 0, 0, 0, "Debug - 56 fps::static_ubo" ],
+    [ 0, 0, 0, 0, "tree::Debug - 56 fps", true ]
   ],
   "models": {},
   "effectors": {},

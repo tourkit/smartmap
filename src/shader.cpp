@@ -104,11 +104,15 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
 }
 
-ShaderProgram::Builder::Builder() : dc(nullptr) { }
+ShaderProgram::Builder::Builder() : Builder(nullptr) { }
 
-ShaderProgram::Builder::Builder(DrawCall* dc) : dc(dc) {
+ShaderProgram::Builder::Builder(DrawCall* dc) : dc(dc) { build(); }
+
+void ShaderProgram::Builder::build() {
 
     stride_count = 0;
+
+    effectors.clear();
 
     for (auto dc_ : engine.stack->childrens) { // filling bad here
 
@@ -127,6 +131,7 @@ ShaderProgram::Builder::Builder(DrawCall* dc) : dc(dc) {
 
 }
 
+
 std::string ShaderProgram::Builder::frag() {
 
     std::string str = header_common;
@@ -139,6 +144,7 @@ std::string ShaderProgram::Builder::frag() {
 
     str += "in vec2 UV;\n\n";
     str += "out vec4 COLOR;\n\n";
+    str += "in flat int ID;\n\n";
 
     str += "vec2 uv = UV;\n\n";
     str += "vec4 color = vec4(0);\n\n";
@@ -233,11 +239,14 @@ std::string ShaderProgram::Builder::vert() {
     str += layouts;
 
     str += "out vec2 UV;\n\n";
+    str += "out int ID;\n\n";
 
     str += "\nvoid main() {\n\n";
 
     str += "\tUV = TEXCOORD;\n";
-    str += "\tUV.y = 1-UV.y;\n";
+    str += "\tUV.y = 1-UV.y;\n\n";
+    str += "\tID = gl_InstanceID;\n\n";
+    str += "\t// vec2 pos = POSITION*layer[ID].size+layer[ID].pos;\n\n";
 
     str += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 

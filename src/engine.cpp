@@ -28,7 +28,7 @@ extern "C" {
 
 }
 
-Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"),layers_s("Layers") {
+Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"),layers_s("Layer") {
 
     render_passes.reserve(10);
     // layers_s.add(&rect);

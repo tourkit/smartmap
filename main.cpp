@@ -14,11 +14,11 @@ int main() {
 
     UberLayer ubl;
 
-    // ubl.add(192,108);
-    // ubl.add(192,108);
-    // ubl.add(192,108);
+    ubl.add(192,108);
+    ubl.add(192,108);
+    ubl.add(192,108);
 
-    // ubl.calc(nullptr);
+    ubl.calc(nullptr);
 
     engine.tree->addPtr<UberLayer>(&ubl)->active(true);
 

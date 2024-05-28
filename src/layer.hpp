@@ -6,11 +6,11 @@
 #include "shader.hpp"
 #include "engine.hpp"
 
-struct UberLayer {
+struct UberLayer : Layer {
 
     Struct layers_def;
 
-    Instance* glsl_struct;
+    Instance* glsl_layers;
 
     FrameBuffer fb;
 

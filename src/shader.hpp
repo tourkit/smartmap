@@ -76,6 +76,7 @@ struct ShaderProgram {
 
     std::set<File*> effectors; // must be filled by UBO which is not current solution // agreed twice
 
+    void build();
     std::string frag();
     std::string vert();
 
