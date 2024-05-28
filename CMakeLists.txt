@@ -43,6 +43,7 @@ add_executable( smartmap
   src/model.cpp
 
   src/engine.cpp
+  src/layer.cpp
   src/output.cpp
   src/window.cpp
   src/fps.cpp

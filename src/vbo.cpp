@@ -14,6 +14,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+VBO::VBO(File* file) : VBO() { add(file); }
+
 VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
 
     vertices.add(vertice);

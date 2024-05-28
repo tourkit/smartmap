@@ -172,7 +172,9 @@ bool isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::MemoryPoolA
 
     auto arr = x.value.GetArray();
 
-    if (arr.Size() < 5 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsInt() || !arr[3].IsInt() || !arr[4].IsString() ) return false;
+    if (arr.Size() < 4 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsInt() || !arr[3].IsInt() ) return false;
+
+    if (arr.Size() > 4 && !arr[4].IsString() ) return false;
 
     return true;
 
@@ -315,7 +317,8 @@ void Engine::open(const char* file) {
             // if (arr.Size() == 4) { PLOGW << json_error; return; }
 
 
-            Node* layer = engine.stack->child(arr[4].GetString());
+            Node* layer = nullptr;
+            if (arr.Size()>4) layer = engine.stack->child(arr[4].GetString());
 
             Node* n = engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr))->active(false);
 
@@ -329,7 +332,8 @@ void Engine::open(const char* file) {
 
             auto arr = x.value.GetArray();
 
-            Node* layer = engine.stack->child(arr[4].GetString());
+            Node* layer = nullptr;
+            if (arr.Size()>4) layer = engine.stack->child(arr[4].GetString());
             auto window = engine.outputs->addPtr<Window>( &engine.window );
 
             window->name(x.name.GetString());
@@ -343,6 +347,14 @@ void Engine::open(const char* file) {
         }
 
     });
+
+    if (!engine.outputs->childrens.size()) {
+
+        auto win = engine.outputs->addPtr<Window>( &engine.window );
+        if (engine.stack->childrens.size()) win->get()->layer = engine.stack->childrens[0]->is_a<Layer>();
+
+    }
+
 
     if_obj("inputs", [&](auto &m) {
 
@@ -447,8 +459,8 @@ void Engine::save(const char* file) {
     if (!json.document.HasMember("models")) json.document.AddMember("models", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("effectors")) json.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("layers")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-    if (!json.document.HasMember("outputs")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-    if (!json.document.HasMember("remaps")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
+    if (!json.document.HasMember("outputs")) json.document.AddMember("outputs", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
+    if (!json.document.HasMember("remaps")) json.document.AddMember("remaps", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
 
     json.document["editors"].Clear();
 
@@ -538,7 +550,7 @@ void Engine::save(const char* file) {
         outputarr.PushBack( output_->height, allocator );
         outputarr.PushBack( output_->offset_x, allocator );
         outputarr.PushBack( output_->offset_y, allocator );
-        outputarr.PushBack( rapidjson::Value(output_->layer->s.name().c_str(), allocator ), allocator );
+        if (output_->layer) outputarr.PushBack( rapidjson::Value(output_->layer->s.name().c_str(), allocator ), allocator );
 
         // if ( output->is_a<NDI::Sender>() ) { }
 

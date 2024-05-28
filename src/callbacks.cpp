@@ -15,6 +15,7 @@
 #include "json.hpp"
 #include "buffer.hpp"
 #include "framebuffer.hpp"
+#include "layer.hpp"
 #include "texture.hpp"
 
 void Callbacks::init() {
@@ -102,9 +103,13 @@ void Callbacks::init() {
 
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){ auto x = _this->addOwnr<Layer>(); x->add(node); return x->node(); });
 
+    ////////// LAYER.HPP
+
+    NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
+
     ////////// DRAWCALL.HPP
 
-    NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); }); // for what ??????
+    NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
 
     NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
 

@@ -243,7 +243,7 @@ struct TypedNode : UntypedNode {
 
         if (n == node_v) {return UntypedNode::add(n);}
         else {
-            ((TypedNode<Any>*)node_v)->referings.insert(n->node());
+            ((TypedNode<Any>*)node_v)->referings.insert(n->node()); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback
             return n->node();
         }
 

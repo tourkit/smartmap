@@ -21,6 +21,7 @@
 #include "atlas.hpp"
 #include "framebuffer.hpp"
 #include "json.hpp"
+#include "layer.hpp"
 
 
 #include <ctime>
@@ -756,7 +757,7 @@ void Editors::init() {
         // auto inst = (*buffer)[obj_current];
 
         // if (obj_current <= buffer->members.size()-1)
-        if (draw_guis(buffer)) node->update();
+        if (draw_guis(buffer)) buffer->upload();
 
     });
 
@@ -839,7 +840,22 @@ void Editors::init() {
 
     ////////// DRAWCALL.HPP
 
-    Editor<DrawCall>([](Node* node, DrawCall *dc){ Editor<ShaderProgram>::cb(node, &dc->shader); Editor<VBO>::cb(node, &dc->vbo); });
+    Editor<DrawCall>([](Node* node, DrawCall *dc){
+
+        Editor<ShaderProgram>::cb(node, &dc->shader);
+
+        Editor<VBO>::cb(node, &dc->vbo);
+
+    });
+
+
+    Editor<UberLayer>([](Node* node, UberLayer *ubl){
+
+        Editor<FrameBuffer>::cb(node, &ubl->fb);
+
+        Editor<ShaderProgram>::cb(node, &ubl->shader);
+
+    });
 
     Editor<Layer>([](Node* node, Layer *layer){
 
@@ -929,11 +945,14 @@ void EditorWidget::draw() {
 
     ImGui::SameLine(); ImGui::Checkbox(("lock##locked"+std::to_string((size_t)this)).c_str(), &locked);
 
+
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
     std::string referings;
     for (auto r : selected->referings) if (r) referings += (r->name())+", ";
     if (referings.length()) {
-        std::string str = "("+referings.substr(0,referings.length()-2)+")";
+        std::string str = "(refering"+std::string(referings.length()>1?"s":"")+": "+referings.substr(0,referings.length()-2)+")";
         ImGui::SameLine(); ImGui::Text(str.c_str()); }
+    ImGui::PopStyleColor(1);
 
     selected->editor();
 

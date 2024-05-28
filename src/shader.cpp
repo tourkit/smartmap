@@ -112,18 +112,7 @@ ShaderProgram::Builder::Builder(DrawCall* dc) : dc(dc) {
 
     stride_count = 0;
 
-    header_fragment += layout(&engine.static_ubo);
-    header_fragment += layout(&engine.dynamic_ubo);
-
-}
-
-std::string ShaderProgram::Builder::frag() {
-
-    std::string str = header_common;
-
-    std::set<File*> effectors; // must be filled by UBO not current solution
-
-    for (auto dc_ : engine.stack->childrens) {
+    for (auto dc_ : engine.stack->childrens) { // filling bad here
 
         auto dc = dc_->is_a<Layer>();
 
@@ -133,7 +122,16 @@ std::string ShaderProgram::Builder::frag() {
 
     }
 
-    for (auto file : effectors)  str += Effector::get(file).s.print_recurse()+";\n\n";
+    for (auto file : effectors)  layouts += Effector::get(file).s.print_recurse()+";\n\n";
+
+    layouts += layout(&engine.static_ubo);
+    layouts += layout(&engine.dynamic_ubo);
+
+}
+
+std::string ShaderProgram::Builder::frag() {
+
+    std::string str = header_common;
 
     str += comment_line;
 
@@ -149,7 +147,7 @@ std::string ShaderProgram::Builder::frag() {
 
     if (effectors.size()) str += comment_line;
 
-    str += header_fragment;
+    str += layouts;
 
     int model_id = 0;
 
@@ -233,6 +231,8 @@ std::string ShaderProgram::Builder::vert() {
     str += "layout (location = 0) in vec2 POSITION;\n";
     str += "layout (location = 1) in vec2 TEXCOORD;\n";
     str += "layout (location = 3) in int OBJ;\n\n";
+
+    str += layouts;
 
     str += "out vec2 UV;\n\n";
 

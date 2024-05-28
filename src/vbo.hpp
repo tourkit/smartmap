@@ -28,6 +28,8 @@ struct VBO : Buffer {
 
     VBO();
 
+    VBO(File* file);
+
     ~VBO();
 
     void upload() override;
