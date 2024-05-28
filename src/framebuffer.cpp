@@ -8,7 +8,7 @@ FrameBuffer::~FrameBuffer() {
 
 }
 
-FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name) : id(id), width(width), height(height), name(name) {
+FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height) : id(id), width(width), height(height) {
 
     // auto n = Engine::getInstance().framebuffers->create();
     // n.set<uint32_t>(0,width);
@@ -35,7 +35,7 @@ void FrameBuffer::create(GLuint width, GLuint height){
 
 }
 
-FrameBuffer::FrameBuffer(GLuint width, GLuint height,std::string name) : name(name) {
+FrameBuffer::FrameBuffer(GLuint width, GLuint height) {
 
     if (!width) width = Engine::getInstance().window.width;
     if (!height) height = Engine::getInstance().window.height;

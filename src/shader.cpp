@@ -108,8 +108,6 @@ ShaderProgram::Builder::Builder() : dc(nullptr) { }
 
 ShaderProgram::Builder::Builder(DrawCall* dc) : dc(dc) {
 
-    header_common = "#version 430 core\n\n";
-
     stride_count = 0;
 
     for (auto dc_ : engine.stack->childrens) { // filling bad here
@@ -218,7 +216,7 @@ std::string ShaderProgram::Builder::frag() {
     }
 
 
-    str += "} ";
+    str += "COLOR=vec4(1,1,1,1);} ";
 
     return str;
 

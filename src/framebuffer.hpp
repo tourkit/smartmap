@@ -12,10 +12,9 @@ struct Texture;
 struct FrameBuffer {
 
     uint32_t id, width, height, attachments = 0;
-    std::string name;
     Texture *texture = nullptr;
-    FrameBuffer(GLuint id, GLuint width, GLuint height,std::string name="FrameBuffer");
-    FrameBuffer(GLuint width = 0, GLuint height = 0,std::string name="FrameBuffer");
+    FrameBuffer(GLuint id, GLuint width, GLuint height);
+    FrameBuffer(GLuint width = 0, GLuint height = 0);
     void create(GLuint width, GLuint height);
     ~FrameBuffer();
     bool destroy();

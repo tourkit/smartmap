@@ -29,11 +29,6 @@ int main() {
 }
 
 
-// qui s update quand j 'edite un model ? son parent ?
-
-
-// add shaderprog as refering UBO instead of model or shit
-
 // matrice pass
 
 // linuxify a.k.a gl1.1 is the pb

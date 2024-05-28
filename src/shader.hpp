@@ -71,7 +71,8 @@ struct ShaderProgram {
     static inline std::string struct_spacer = " ";//\n\n";
     static inline std::string comment_line  = "///////////////////////////////////////////\n\n";
 
-    std::string header_common, layouts, header_fragment , header_vertex , footer_common;
+    std::string header_common = "#version 430 core\n\n";
+    std::string layouts, header_fragment , header_vertex , footer_common;
 
     std::set<File*> effectors; // must be filled by UBO which is not current solution // agreed twice
 
