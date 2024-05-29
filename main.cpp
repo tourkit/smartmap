@@ -43,10 +43,12 @@ int main() {
 
     ubl.shader.create();
 
-    VBO vbo;
+    auto &vbo =engine.stack->childrens[0]->is_a<Layer>()->vbo;
+
+    // VBO vbo;
+    // vbo.add(&VBO::quad);
     vbo.addQuad(.5,.5,0,0);
     engine.tree->addPtr<VBO>(&vbo);
-    // vbo.add(&VBO::quad);
 
     engine.run();
 
