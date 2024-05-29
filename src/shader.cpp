@@ -125,10 +125,11 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     std::string str;
 
+    str += ubo->print_uniques();
+
     str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
 
     auto s = print_recurse(ubo);
-    // auto s = ubo->print_recurse();
 
     str += s.c_str()+s.find("{");
 

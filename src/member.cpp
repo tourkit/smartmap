@@ -170,14 +170,6 @@ bool Member::isData() { return false; }
 bool Member::isRef() { return false; }
 Buffer* Member::isBuff() { return nullptr; }
 
-std::string Member::print(int recurse) {
-
-    std::string str = type_name() + " " + camel(name())  + ";";
-
-    return str;
-
-}
-
 void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offset, std::vector<Member*> stl) {
 
     Instance inst;
@@ -219,25 +211,33 @@ void Member::post_change(std::vector<Member*> added) {
 
 }
 
-std::vector<Member*> Member::extract_definitions(std::vector<Member*> list) {
 
 
-    for (auto x : members) {
+static const char* new_line = "\n";
+static const char* tab = "\t";
 
-        for (auto x : x->extract_definitions()) ADD_UNIQUE<Member*>( list, x );
+std::string Member::print() {
 
-        if (x->type() == typeid(Struct) && !x->isData()) ADD_UNIQUE<Member*>( list, x );
-
-    }
-
-    return list;
+    return print_uniques() + new_line + print_recurse(-1);
 
 }
 
+std::string Member::print_uniques() {
+
+    std::set<Member*> lst;
+
+    each([&](Instance& inst){ if (inst.def()->isRef()) lst.insert(inst.def()->members[0]); });
+
+    std::string out;
+
+    for (auto x : lst) out += x->print_recurse(-1,0)+";"+new_line;
+
+    return out;
+
+ }
+
 std::string Member::print_recurse(int recurse, int depth) {
 
-    static const char* new_line = "\n";
-    static const char* tab = "\t";
 
     if (false) { new_line = ""; tab = ""; }
 

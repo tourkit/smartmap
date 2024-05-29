@@ -161,6 +161,7 @@ void Layer::ShaderProgramBuilder::vert() {
     header_vertex += "out int ID;\n\n";
 
     body_vertex.clear();
+    body_vertex += "\tUV = TEXCOORD;\n\n";
     body_vertex += "\tUV.y = 1-UV.y;\n\n";
     body_vertex += "\tID = gl_InstanceID;\n\n";
     body_vertex += "\t// vec2 pos = POSITION*layer[ID].size+layer[ID].pos;\n\n";
@@ -173,7 +174,7 @@ void Layer::ShaderProgramBuilder::vert() {
 
 ///////// DRAWCALL ////
 
-DrawCall::DrawCall(std::string name = "") : s(name.length()?name:"layer") { engine.dynamic_ubo.add(&s); }
+DrawCall::DrawCall(std::string name = "") : s(name.length()?name:"layernonono") { engine.dynamic_ubo.add(&s); }
 
 void DrawCall::draw() {
 

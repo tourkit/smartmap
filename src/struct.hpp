@@ -41,8 +41,6 @@ struct Struct : Member {
 
     uint32_t size() override ;
 
-    std::string print(int recurse = -1) override;
-
     Member* copy() override ;
 
     void hard_delete();

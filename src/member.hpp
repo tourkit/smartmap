@@ -69,8 +69,6 @@ struct Member {
     virtual bool isRef();
     virtual Buffer* isBuff();
 
-    virtual std::string print(int recurse = 0);
-
     virtual void hard_delete() {}
 
     void each(std::function<void(Instance&)> f, Buffer* buff = nullptr,  uint32_t offset= 0, std::vector<Member*> stl = {});
@@ -93,8 +91,9 @@ struct Member {
 
     int32_t quantity_v = 1;
 
+    std::string print();
 
-    std::vector<Member*> extract_definitions(std::vector<Member*> list = {});
+    std::string print_uniques();
 
     std::string print_recurse(int recurse = -1, int depth = 0);
 

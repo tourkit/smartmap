@@ -6,6 +6,7 @@
 
 #include "engine.hpp"
 #include "layer.hpp"
+#include "utils.hpp"
 
 
 int main() {
@@ -24,7 +25,13 @@ int main() {
 
     engine.open("project.json");
 
-    PLOGI << Layer::ShaderProgramBuilder::layout(&engine.dynamic_ubo);
+    // PLOGI << Layer::ShaderProgramBuilder::layout(&engine.dynamic_ubo);
+
+    auto &u = engine.dynamic_ubo;
+
+    PLOGD << u.print();
+
+    ubl.shader.create();
 
     engine.run();
 

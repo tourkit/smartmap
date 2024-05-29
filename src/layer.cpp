@@ -2,7 +2,7 @@
 #include "layer.hpp"
 
 
-    UberLayer::UberLayer() : layers_def("Layer"), quad(&VBO::quad) {
+    UberLayer::UberLayer() : Layer(1,1,"imuber"), layers_def("Layer"), quad(&VBO::quad) {
 
         layers_def.add<glm::vec2>("size");
         layers_def.add<glm::vec2>("pos");

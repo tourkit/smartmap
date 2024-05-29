@@ -1,11 +1,13 @@
 #pragma once
 
 template <typename T>
-static void ADD_UNIQUE( std::vector<T>& list, T n) {
+static bool ADD_UNIQUE( std::vector<T>& list, T n) {
 
-    for (auto x : list) if (x == n) return;
+    for (auto x : list) if (x == n) return false;
 
     list.push_back(n);
+
+    return true;
 
 }
 

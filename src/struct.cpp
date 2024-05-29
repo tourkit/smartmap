@@ -235,19 +235,6 @@ Member* Struct::copy()  { return new Struct(*this); }
 
 
 
-
-std::string Struct::print(int recurse) {
-
-    std::string out;
-
-    auto list = extract_definitions();
-
-    for (auto x : list) out += x->print_recurse() + "\n";
-
-    return out + print_recurse(recurse);
-
-};
-
 void Struct::hard_delete() {
 
     auto t_members = members;
