@@ -13,7 +13,7 @@
     "layer2": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "atlas": "atlas.glsl" } ] }, {} ]
   },
   "editors": [
-    [ 0, 0, 0, 0, "Stack::layer2", true ],
+    [ 0, 0, 0, 0, "tree::UberLayer" ],
     [ 0, 0, 0, 0, "tree::UberLayer", true ],
     [ 0, 0, 0, 0, "tree::Debug", true ]
   ],

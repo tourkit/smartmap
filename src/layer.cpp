@@ -223,25 +223,26 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
     glsl_layers->def()->quantity(layers.size());
 
-    // vbo[0].def()->quantity(0);
-    // vbo[1].def()->quantity(0);
+    auto x = vbo[0].def();
+    vbo[0].def()->quantity(0);
+    vbo[1].def()->quantity(0);
 
     for (auto &x : matrice) for (auto &y : x) {
 
         auto w = y[0] / matrice_width;
         auto h = y[1] / matrice_height;
+        auto x_ = y[2] / matrice_width *2-1+w;
+        auto y_ = y[3] / matrice_height *2-1+h;
 
-        glsl_layers->eq(y[4]).set<glm::vec4>(glm::vec4(w, h, y[2] / matrice_width *2-1+w, y[3] / matrice_height *2-1+h));
+        glsl_layers->eq(y[4]).set<glm::vec4>(glm::vec4(w, h, x_, y_));
 
-        // vbo.addQuad(w, h, y[2] / matrice_width *2-1+w, y[3] / matrice_height *2-1+h);
+        vbo.addQuad(w, h, x_, y_);
 
     }
 
-    shader.create(); // to update shade
+    UberLayer::ShaderProgramBuilder builder;
 
-    // vbo->clear();
-
-    // foreach layers/
+    shader.create(&builder);
 
     engine.static_ubo.upload();
 
@@ -250,7 +251,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 void UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
 
     layers.emplace_back(w,h,layers.size());
-    calc_matrice(nullptr);
+    // calc_matrice(nullptr);
     // PLOGI << glsl_layers->eq(layers.size() - 1).get<std::array<float,4>>();
 
 }

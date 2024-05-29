@@ -18,7 +18,7 @@ int main() {
 
     ubl.addLayer(192,108);
     ubl.addLayer(192,108);
-    ubl.addLayer(192,108);
+    // ubl.addLayer(192,108);
 
     ubl.calc_matrice(nullptr);
 
@@ -26,9 +26,9 @@ int main() {
 
     engine.open("project.json");
 
-    UberLayer::ShaderProgramBuilder builder;
+    // UberLayer::ShaderProgramBuilder builder;
 
-    ubl.shader.create(&builder);
+    // ubl.shader.create(&builder);
 
     engine.run();
 
