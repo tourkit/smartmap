@@ -48,6 +48,7 @@ int main() {
     // VBO vbo;
     // vbo.add(&VBO::quad);
     vbo.addQuad(.5,.5,0,0);
+    vbo.upload();
     engine.tree->addPtr<VBO>(&vbo);
 
     engine.run();
