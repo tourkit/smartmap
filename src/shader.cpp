@@ -200,7 +200,7 @@ void ShaderProgram::destroy() {
 
 void  ShaderProgram::create() { Builder builder; builder.build(); create(builder.fragment, builder.vertex); }
 
-void  ShaderProgram::create(Builder* builder) { create(builder->fragment, builder->vertex); }
+void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->fragment, builder->vertex); }
 
 void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 

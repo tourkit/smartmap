@@ -9,23 +9,10 @@
 #include "layer.hpp"
 #include "utils.hpp"
 
-struct TBuilder : Layer::ShaderProgramBuilder {
-
-    void frag() override {
-
-        Layer::ShaderProgramBuilder::frag();
-
-        body_fragment += "\tCOLOR = vec4(1);\n";
-
-    }
-
-};
 
 int main() {
 
     engine.init();
-
-    // logger.cout();
 
     UberLayer ubl;
 
@@ -39,12 +26,9 @@ int main() {
 
     engine.open("project.json");
 
-    ubl.shader.create();
+    UberLayer::ShaderProgramBuilder builder;
 
-    auto &vbo =engine.stack->childrens[0]->is_a<Layer>()->vbo;
-    vbo.addQuad(.5,.5,0,0);
-    vbo.upload();
-    engine.tree->addPtr<VBO>(&vbo);
+    ubl.shader.create(&builder);
 
     engine.run();
 

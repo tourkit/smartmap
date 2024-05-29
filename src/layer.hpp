@@ -11,7 +11,7 @@ struct Layer : DrawCall {
 
     struct ShaderProgramBuilder : ShaderProgram::Builder {
 
-        std::set<File*> effectors; // must be filled by UBO which is not current solution // agreed twice
+        std::set<File*> effectors;
 
         void build() override;
         void frag() override;
@@ -39,7 +39,7 @@ struct Layer : DrawCall {
 
 
 
-struct UberLayer : Layer {
+struct UberLayer : DrawCall {
 
     static inline Struct &layer_def = Struct::create("Layer", 0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
@@ -51,6 +51,10 @@ struct UberLayer : Layer {
         int h;
         int id = 0;
     };
+
+    FrameBuffer fb;
+
+    void draw() override;
 
     std::vector<VLayer> layers;
 
@@ -64,21 +68,15 @@ struct UberLayer : Layer {
 
     void addLayer(int w , int h) ;
 
-    struct ShaderProgramBuilder : ShaderProgram::Builder {
+    struct ShaderProgramBuilder : Layer::ShaderProgramBuilder {
 
-        std::set<File*> effectors; // must be filled by UBO which is not current solution // agreed twice
+        std::set<File*> effectors;
 
         void build() override;
         void frag() override;
         void vert() override;
 
-        DrawCall* dc;
-
         ShaderProgramBuilder();
-
-        ShaderProgramBuilder(DrawCall* dc);
-
-        int stride_count = 0;
 
     };
 

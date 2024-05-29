@@ -166,9 +166,7 @@ void Layer::ShaderProgramBuilder::vert() {
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : Layer(0,0,"imuber") {
-
-    vbo.add(&VBO::quad);
+UberLayer::UberLayer() : DrawCall("imuber") {
 
     engine.static_ubo.add(&layer_def);
 
@@ -180,7 +178,7 @@ UberLayer::UberLayer() : Layer(0,0,"imuber") {
 
 }
 
-void UberLayer::calc_matrice(VBO* vbo) {
+void UberLayer::calc_matrice(VBO* vbo_) {
 
     auto layers = this->layers;
 
@@ -225,18 +223,25 @@ void UberLayer::calc_matrice(VBO* vbo) {
 
     glsl_layers->def()->quantity(layers.size());
 
+    // vbo[0].def()->quantity(0);
+    // vbo[1].def()->quantity(0);
+
     for (auto &x : matrice) for (auto &y : x) {
 
         auto w = y[0] / matrice_width;
         auto h = y[1] / matrice_height;
+
         glsl_layers->eq(y[4]).set<glm::vec4>(glm::vec4(w, h, y[2] / matrice_width *2-1+w, y[3] / matrice_height *2-1+h));
+
+        // vbo.addQuad(w, h, y[2] / matrice_width *2-1+w, y[3] / matrice_height *2-1+h);
 
     }
 
     shader.create(); // to update shade
 
     // vbo->clear();
-    // vbo->addQuad(1,1,0,0);
+
+    // foreach layers/
 
     engine.static_ubo.upload();
 
@@ -249,3 +254,27 @@ void UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
     // PLOGI << glsl_layers->eq(layers.size() - 1).get<std::array<float,4>>();
 
 }
+
+void UberLayer::draw() {
+
+    fb.bind();
+
+    DrawCall::draw();
+
+}
+
+
+UberLayer::ShaderProgramBuilder::ShaderProgramBuilder()  {  }
+
+void UberLayer::ShaderProgramBuilder::build() {
+
+    ShaderProgram::Builder::build();
+
+}
+
+void UberLayer::ShaderProgramBuilder::frag() { ShaderProgram::Builder::frag();
+
+
+        body_fragment += "\tCOLOR = vec4(UV.x);\n";
+        }
+void UberLayer::ShaderProgramBuilder::vert() { ShaderProgram::Builder::vert();}
