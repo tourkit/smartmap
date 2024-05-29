@@ -13,7 +13,7 @@ struct VBO : Buffer {
 
     static inline struct Quad : File { Quad() { data = "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"; } } quad;
 
-    static inline Struct *vertice = &Struct::create("Vertice").add<glm::vec2>("Position").range(-1,1,0).add<glm::vec2>("UV").add<int>("ID");
+    static inline Struct *vertice = &Struct::create("Vertice").add<glm::vec2>("Position").range(-1,1,0).add<glm::vec2>("UV").add<float>("ID");
 
     static inline Struct *indice = &Struct::create("Indice").add<int>("vert1").add<int>( "vert2").add<int>("vert3");
 
@@ -41,12 +41,11 @@ struct VBO : Buffer {
 
     void draw(int count = 1);
 
-    void addQuad(float w, float h, float x, float y, int id = 0);
+    void addQuad(float w, float h, float x, float y, float id = 0);
 
     bool add(File *file = &quad, int id = 0);
     bool add_noupload(File *file = &quad, int id = 0);
 
-    void add_tile(int width, int height, int x, int y, int id = 0);
 
 
 

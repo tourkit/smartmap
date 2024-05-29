@@ -382,7 +382,7 @@ void Engine::open(const char* file) {
 
             auto &an = *an_->get();
 
-            if (arr.Size() < 2 || !arr[1].IsObject()) { PLOGW << json_error; continue; }
+            if (arr.Size() < 2 || !arr[1].IsObject()) continue;
 
             for (auto &remap : arr[1].GetObj()) {
 

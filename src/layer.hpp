@@ -39,17 +39,22 @@ struct Layer : DrawCall {
 
 
 
+
+
 struct UberLayer : DrawCall {
 
     static inline Struct &layer_def = Struct::create("Layer", 0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
     Instance* glsl_layers;
 
-    struct VLayer {
+    struct VLayer : Renderable {
+
+        VLayer(int w, int h, int id = 0) : w(w), h(h), id(id) {}
 
         int w ;
         int h;
-        int id = 0;
+        int id;
+
     };
 
     FrameBuffer fb;
@@ -66,7 +71,7 @@ struct UberLayer : DrawCall {
 
     void calc_matrice(VBO* vbo) ;
 
-    void addLayer(int w , int h) ;
+    VLayer& addLayer(int w , int h) ; // kinda ctor for VLaye
 
     struct ShaderProgramBuilder : Layer::ShaderProgramBuilder {
 

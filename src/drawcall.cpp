@@ -4,6 +4,40 @@
 #include "layer.hpp"
 
 
+
+
+bool Renderable::removeEffector(Effector* effector) {
+
+    return std::erase_if( effectors, [&](std::shared_ptr<Effector> e) { return e.get() == effector; });
+
+}
+
+
+Effector* Renderable::addEffector(File* file) {
+
+    if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return nullptr;}
+
+    auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
+
+    s.add(&effector->ref);
+
+    return effector;
+
+}
+
+Model* Renderable::addModel(File* f) {
+
+    auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
+
+    s.add(&mod->s);
+
+    return mod;
+
+}
+
+bool Renderable::removeModel(Model* model){ return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; }); }
+
+
 DrawCall::DrawCall(std::string name = "") : s(name.length()?name:"layernonono") { engine.dynamic_ubo.add(&s); }
 
 void DrawCall::draw() {

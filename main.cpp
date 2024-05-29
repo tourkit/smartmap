@@ -16,9 +16,13 @@ int main() {
 
     UberLayer ubl;
 
-    ubl.addLayer(192,108);
-    ubl.addLayer(192,108);
-    // ubl.addLayer(192,108);
+    ubl.addLayer(1920,1080);
+    ubl.addLayer(1920,1080);
+    ubl.addLayer(1920,1080);
+    ubl.addLayer(1920,1080);
+    ubl.addLayer(1920,1080);
+    ubl.addLayer(1920,1080);
+
 
     ubl.calc_matrice(nullptr);
 
@@ -26,21 +30,21 @@ int main() {
 
     engine.open("project.json");
 
-    // UberLayer::ShaderProgramBuilder builder;
+    auto &l1 = *ubl.layers.begin();
 
-    // ubl.shader.create(&builder);
+    l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
+
+    UberLayer::ShaderProgramBuilder builder;
+
+    ubl.shader.create(&builder);
 
     engine.run();
 
 }
 
 
+// UberLayer
 
-// UberShaderProgramBuilder
-
-
-
-// matrice pass
 
 // linuxify a.k.a gl1.1 is the pb
 

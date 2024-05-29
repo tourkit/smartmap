@@ -4,7 +4,6 @@
 
 
 
-
 ///////// Layer ////
 
 Layer::Layer(uint16_t width, uint16_t height, std::string name)
@@ -68,6 +67,7 @@ void Layer::ShaderProgramBuilder::frag() {
     header_fragment += "in vec2 UV;\n\n";
     header_fragment += "out vec4 COLOR;\n\n";
     header_fragment += "in flat int ID;\n\n";
+    header_fragment += "in flat int OBJ;\n\n";
 
     header_fragment += "vec2 uv = UV;\n\n";
     header_fragment += "vec4 color = vec4(0);\n\n";
@@ -146,15 +146,17 @@ void Layer::ShaderProgramBuilder::vert() {
     header_vertex.clear();
 
     header_vertex += "layout (location = 0) in vec2 POSITION;\n";
-    header_vertex += "layout (location = 1) in vec2 TEXCOORD;\n";
-    header_vertex += "layout (location = 3) in int OBJ;\n\n";
+    header_vertex += "layout (location = 1) in vec2 UV_;\n";
+    header_vertex += "layout (location = 2) in float OBJ_;\n\n";
 
     header_vertex += "out vec2 UV;\n\n";
     header_vertex += "out int ID;\n\n";
+    header_vertex += "out int OBJ;\n\n";
 
     body_vertex.clear();
-    body_vertex += "\tUV = TEXCOORD;\n\n";
+    body_vertex += "\tUV = UV_;\n\n";
     body_vertex += "\tUV.y = 1-UV.y;\n\n";
+    body_vertex += "\tOBJ = int(OBJ_);\n\n";
     body_vertex += "\tID = gl_InstanceID;\n\n";
     body_vertex += "\t// vec2 pos = POSITION*layer[ID].size+layer[ID].pos;\n\n";
 
@@ -248,17 +250,19 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
 }
 
-void UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
+UberLayer::VLayer& UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
 
     layers.emplace_back(w,h,layers.size());
     // calc_matrice(nullptr);
     // PLOGI << glsl_layers->eq(layers.size() - 1).get<std::array<float,4>>();
 
+    return layers.back();
+
 }
 
 void UberLayer::draw() {
 
-    fb.bind();
+    fb.clear();
 
     DrawCall::draw();
 
@@ -275,7 +279,9 @@ void UberLayer::ShaderProgramBuilder::build() {
 
 void UberLayer::ShaderProgramBuilder::frag() { ShaderProgram::Builder::frag();
 
-
-        body_fragment += "\tCOLOR = vec4(UV.x);\n";
+	body_fragment += "\ttic();\n";
+	body_fragment += "\targb(layer1.myQuad[OBJ].argb.alpha, layer1.myQuad[OBJ].argb.red, layer1.myQuad[OBJ].argb.green, layer1.myQuad[OBJ].argb.blue);\n";
+	body_fragment += "\trectangle(layer1.myQuad[OBJ].rectangle.pos, layer1.myQuad[OBJ].rectangle.size);\n";
+	body_fragment += "\ttac();\n";
         }
 void UberLayer::ShaderProgramBuilder::vert() { ShaderProgram::Builder::vert();}
