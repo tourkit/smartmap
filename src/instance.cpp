@@ -57,7 +57,7 @@ Instance Instance::operator[](int id) {
     auto offset = this->offset;
     auto member = this->def();
 
-    if (id >= def()->members.size()) {PLOGE << id << "exceed"; exit(0);}
+    if (id >= def()->members.size()) PLOGE << id << " > " << def()->members.size() << " in " << def()->name();
 
     for (int i = 0 ; i < id; i ++ ){
 

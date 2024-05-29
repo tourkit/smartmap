@@ -9,15 +9,9 @@
 
 struct UberLayer : Layer {
 
-    Struct layers_def;
+    static inline Struct &layer_def = Struct::create("Layer", 0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
     Instance* glsl_layers;
-
-    FrameBuffer fb;
-
-    ShaderProgram shader;
-
-    VBO quad;
 
     struct VLayer {
 
@@ -34,10 +28,26 @@ struct UberLayer : Layer {
 
     UberLayer() ;
 
-    void calc(VBO* vbo) ;
+    void calc_matrice(VBO* vbo) ;
 
-    void add(int w , int h) ;
+    void addLayer(int w , int h) ;
 
-     void draw() ;
+    struct ShaderProgramBuilder : ShaderProgram::Builder {
+
+        std::set<File*> effectors; // must be filled by UBO which is not current solution // agreed twice
+
+        void build() override;
+        void frag() override;
+        void vert() override;
+
+        DrawCall* dc;
+
+        ShaderProgramBuilder();
+
+        ShaderProgramBuilder(DrawCall* dc);
+
+        int stride_count = 0;
+
+    };
 
 };

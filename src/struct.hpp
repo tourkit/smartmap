@@ -35,6 +35,8 @@ struct Struct : Member {
 
     Struct& remove(Member& s) ;
 
+    Struct& clear();
+
     void update() override;
 
     std::type_index type() override ;
@@ -52,8 +54,6 @@ struct Struct : Member {
     static Struct* exist(std::string name);
 
     static Struct& id(std::string name);
-
-    static void clear();
 
     static bool destroy(std::string name) ;
 

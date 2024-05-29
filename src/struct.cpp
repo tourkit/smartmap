@@ -15,7 +15,6 @@ Struct& Struct::id(std::string name) {
 
 }
 
-void Struct::clear() { for ( auto s : owned ) delete s;  }
 
 bool Struct::destroy(std::string name) {
 
@@ -71,6 +70,25 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
 }
 
+
+
+Struct& Struct::clear() {
+
+    // PLOGV << name() << " clear " ;
+
+    // pre_change();
+
+    // size_v = 0;
+
+    // members.resize(0);
+
+    // update();
+
+    // post_change();
+
+    return *this;
+
+}
 
 
 Struct& Struct::remove(Member& m) {

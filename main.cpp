@@ -4,6 +4,7 @@
 
                         */
 
+#include "log.hpp"
 #include "engine.hpp"
 #include "layer.hpp"
 #include "utils.hpp"

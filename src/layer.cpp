@@ -2,14 +2,13 @@
 #include "layer.hpp"
 
 
-    UberLayer::UberLayer() : Layer(1,1,"imuber"), layers_def("Layer"), quad(&VBO::quad) {
+    UberLayer::UberLayer() : Layer(0,0,"imuber") {
 
-        layers_def.add<glm::vec2>("size");
-        layers_def.add<glm::vec2>("pos");
-        layers_def.quantity(0);
-        engine.static_ubo.add(&layers_def);
+        vbo.add(&VBO::quad);
 
-        glsl_layers = &engine.static_ubo[layers_def.name()].track();
+        engine.static_ubo.add(&layer_def);
+
+        glsl_layers = &engine.static_ubo[layer_def.name()].track();
 
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
 
@@ -17,7 +16,7 @@
 
     }
 
-    void UberLayer::calc(VBO* vbo) {
+    void UberLayer::calc_matrice(VBO* vbo) {
 
         auto layers = this->layers;
 
@@ -72,24 +71,17 @@
 
         shader.create(); // to update shade
 
+        // vbo->clear();
+        // vbo->addQuad(1,1,0,0);
+
         engine.static_ubo.upload();
 
     }
 
-    void UberLayer::add(int w , int h) { // kinda ctor for VLaye
+    void UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
 
         layers.emplace_back(w,h,layers.size());
+        calc_matrice(nullptr);
+        // PLOGI << glsl_layers->eq(layers.size() - 1).get<std::array<float,4>>();
 
-        // shader.
-
-     }
-
-     void UberLayer::draw() {
-
-        shader.use();
-
-        fb.bind();
-
-        quad.draw(glsl_layers->def()->quantity());
-
-     }
+    }

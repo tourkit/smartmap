@@ -84,6 +84,8 @@ private:
 
     ~Engine();
 
+    Log &log = Log::getInstance();
+
 };
 
 static inline Engine &engine = Engine::getInstance();
