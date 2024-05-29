@@ -139,13 +139,13 @@ void VBO::addQuad(float w, float h, float x, float y, int id) {
 
     struct Vert { float x, y, u, v; int id; };
 
-    (*this)[0].push()[0].set<Vert>({ x    , y+w , 0, 1,  id});
-    (*this)[0].push()[0].set<Vert>({ x+w  , y+w , 1, 1,  id});
-    (*this)[0].push()[0].set<Vert>({ x    , y   , 0, 0,  id});
-    (*this)[0].push()[0].set<Vert>({ x+w  , y   , 1, 0,  id});
+    (*this)[0].push()[0].set<Vert>({ x    , y   , 0, 1,  id});
+    (*this)[0].push()[0].set<Vert>({ x+w  , y   , 1, 1,  id});
+    (*this)[0].push()[0].set<Vert>({ x    , y+w , 0, 0,  id});
+    (*this)[0].push()[0].set<Vert>({ x+w  , y+w , 1, 0,  id});
 
     (*this)[1].push()[0].set<std::array<int,3>>({o+0,o+1,o+2});
-    (*this)[1].push()[0].set<std::array<int,3>>({o+1,o+3,o+2});
+    (*this)[1].push()[0].set<std::array<int,3>>({o+1,o+2,o+3});
 
     upload();
 

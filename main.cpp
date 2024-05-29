@@ -39,14 +39,9 @@ int main() {
 
     engine.open("project.json");
 
-    PLOGI << Layer::ShaderProgramBuilder::layout(&engine.dynamic_ubo);
-
     ubl.shader.create();
 
     auto &vbo =engine.stack->childrens[0]->is_a<Layer>()->vbo;
-
-    // VBO vbo;
-    // vbo.add(&VBO::quad);
     vbo.addQuad(.5,.5,0,0);
     vbo.upload();
     engine.tree->addPtr<VBO>(&vbo);
@@ -56,16 +51,8 @@ int main() {
 }
 
 
-// vbo not binded or some shit
-
-// VBO::addquad()
-
-// UberLayer: Drawcall
-
-// UberLayer::Vlayer
 
 // UberShaderProgramBuilder
-
 
 
 
