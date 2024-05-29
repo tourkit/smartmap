@@ -70,7 +70,7 @@
 
         }
 
-        shader.create(nullptr); // to update shader
+        shader.create(); // to update shade
 
         engine.static_ubo.upload();
 

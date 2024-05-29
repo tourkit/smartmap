@@ -85,6 +85,40 @@ static std::string print_recurse(Member* _this, int recurse=-1, int depth=0) {
     return "struct " + struct_name  + " { " + new_line+new_line + tab_str +tab+ str + new_line + tab_str + "}";
 
 }
+
+
+void ShaderProgram::Builder::build() {
+
+    header_common.clear();
+    header_common += version;
+    header_common += layout(&engine.static_ubo);
+    header_common += layout(&engine.dynamic_ubo);
+
+    frag();
+
+    vert();
+
+    vertex.clear();
+    vertex += header_common;
+    vertex += header_vertex;
+    vertex += "\nvoid main() {\n\n";
+    vertex += body_vertex;
+    vertex += "}";
+
+    fragment.clear();
+    fragment += header_common;
+    fragment += comment_line;
+    fragment += header_fragment;
+    fragment += "\nvoid main() {\n\n";
+    fragment += body_fragment;
+    fragment += "}";
+
+}
+
+void ShaderProgram::Builder::frag() { }
+
+void ShaderProgram::Builder::vert() { }
+
 std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     if (!ubo->members.size() || !ubo->data.size()) return "";
@@ -104,157 +138,6 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
 }
 
-ShaderProgram::Builder::Builder() : Builder(nullptr) { }
-
-ShaderProgram::Builder::Builder(DrawCall* dc) : dc(dc) { build(); }
-
-void ShaderProgram::Builder::build() {
-
-    stride_count = 0;
-
-    effectors.clear();
-
-    for (auto dc_ : engine.stack->childrens) { // filling bad here
-
-        auto dc = dc_->is_a<Layer>();
-
-        for (auto &model : dc->models) for (auto &effector : model.get()->effectors) effectors.insert(effector->file);
-
-        for (auto &effector : dc->effectors) effectors.insert(effector->file);
-
-    }
-
-    for (auto file : effectors)  layouts += Effector::get(file).s.print_recurse()+";\n\n";
-
-    layouts += layout(&engine.static_ubo);
-    layouts += layout(&engine.dynamic_ubo);
-
-}
-
-
-std::string ShaderProgram::Builder::frag() {
-
-    std::string str = header_common;
-
-    str += comment_line;
-
-    // str += "//uniform sampler2D texture0;\n\n"; // foreach declared Texture::units maybe ?
-    str += "uniform sampler2D medias;\n\n";
-    str += "uniform sampler2D render_pass;\n\n";
-
-    str += "in vec2 UV;\n\n";
-    str += "out vec4 COLOR;\n\n";
-    str += "in flat int ID;\n\n";
-
-    str += "vec2 uv = UV;\n\n";
-    str += "vec4 color = vec4(0);\n\n";
-
-    if (effectors.size()) str += comment_line;
-
-    str += layouts;
-
-    int model_id = 0;
-
-    for (auto file : effectors)  str += Effector::source(file)+";\n\n";
-
-    str += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n\n";
-    str += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
-
-    str += comment_line;
-
-    // main loop
-    str += "void main() {\n\n";
-
-    if (dc) for (auto &model : dc->models) {
-
-        for (int instance = 0; instance < model.get()->s.quantity(); instance++) {
-
-            auto name = model.get()->s.name();
-
-            if (model.get()->s.quantity() > 1) name += "["+std::to_string(instance)+"]";
-
-            str += "\t// "+name+"\n"; // would love this to be a node name instead // still matters ?
-            str += "\ttic();\n"; // would love this to be a node name instead // still matters ?
-
-            for (auto &effector : model.get()->effectors) {
-
-                std::string arg_str;
-
-                for (auto &arg : Effector::get(effector.get()->file).args) {
-
-                    arg_str += dc->s.name()+"."+lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
-
-                }
-
-                arg_str.resize(arg_str.size()-2);
-
-                str += "\t"+effector->file->name()+"("+arg_str+");\n";
-            }
-
-        }
-
-        str += "\ttac();\n\n";
-
-        str += "\n";
-
-        model_id++;
-    }
-
-    if (dc) {
-
-        for (auto &effector : dc->effectors) {
-
-            std::string arg_str;
-
-            for (auto &arg : Effector::get(effector.get()->file).args) {
-
-                arg_str += dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
-
-            }
-
-            arg_str.resize(arg_str.size()-2);
-
-            str += "\t"+effector->file->name()+"("+arg_str+");\n";
-        }
-
-        if (dc->effectors.size()) str += "\ttac();\n\n";
-
-    }
-
-
-    str += "COLOR=vec4(1,1,1,1);} ";
-
-    return str;
-
-}
-
-std::string ShaderProgram::Builder::vert() {
-
-    std::string str = header_common;
-
-    str += "layout (location = 0) in vec2 POSITION;\n";
-    str += "layout (location = 1) in vec2 TEXCOORD;\n";
-    str += "layout (location = 3) in int OBJ;\n\n";
-
-    str += layouts;
-
-    str += "out vec2 UV;\n\n";
-    str += "out int ID;\n\n";
-
-    str += "\nvoid main() {\n\n";
-
-    str += "\tUV = TEXCOORD;\n";
-    str += "\tUV.y = 1-UV.y;\n\n";
-    str += "\tID = gl_InstanceID;\n\n";
-    str += "\t// vec2 pos = POSITION*layer[ID].size+layer[ID].pos;\n\n";
-
-    str += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
-
-    str += "}";
-
-    return str;
-
-}
 
 //// SHADER
 
@@ -302,9 +185,7 @@ Shader::operator GLuint() { return id; }
 
 ShaderProgram::~ShaderProgram() { destroy(); }
 
-ShaderProgram::ShaderProgram() { Builder builder; create(builder.frag(),builder.vert()); }
-
-ShaderProgram::ShaderProgram(DrawCall* dc) { Builder builder(dc); create(builder.frag(),builder.vert()); }
+ShaderProgram::ShaderProgram() { Builder builder; create(builder.fragment,builder.vertex); }
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 
@@ -315,17 +196,10 @@ void ShaderProgram::destroy() {
 
 }
 
-void  ShaderProgram::create(DrawCall* dc) {
 
-    Builder builder(dc);
+void  ShaderProgram::create() { Builder builder; builder.build(); create(builder.fragment, builder.vertex); }
 
-    create(builder.frag(),builder.vert());
-
-    engine.dynamic_ubo.bind(this);
-
-    engine.static_ubo.bind(this);
-
-}
+void  ShaderProgram::create(Builder* builder) { create(builder->fragment, builder->vertex); }
 
 void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
@@ -342,6 +216,10 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     glLinkProgram( id );
 
     // engine.atlas->link(this);
+
+    engine.dynamic_ubo.bind(this);
+
+    engine.static_ubo.bind(this);
 
     sendUniform("medias", 1);
     sendUniform("render_pass", 2);

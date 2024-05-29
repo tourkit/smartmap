@@ -322,7 +322,7 @@ void Engine::open(const char* file) {
 
             Node* n = engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr))->active(false);
 
-            layer->referings.insert( n );
+            if (layer) layer->referings.insert( n );
 
         }
 

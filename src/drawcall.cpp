@@ -11,6 +11,9 @@
 #include <unordered_set>
 #include <set>
 
+
+///////// Layer ////
+
 Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
     : fb((width?width:engine.window.width), (height?height:engine.window.height)), DrawCall(name) {
@@ -32,6 +35,143 @@ void Layer::draw() {
     if (feedback) { return feedback->read(fb.texture); }
 
 }
+
+
+
+
+///////// LayerBuilder ////
+
+Layer::ShaderProgramBuilder::ShaderProgramBuilder() : ShaderProgramBuilder(nullptr) { }
+
+Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) { build(); }
+
+void Layer::ShaderProgramBuilder::build() {
+
+    stride_count = 0;
+
+    effectors.clear();
+
+    for (auto dc_ : engine.stack->childrens) {
+
+        auto dc = dc_->is_a<Layer>();
+
+        for (auto &model : dc->models) for (auto &effector : model.get()->effectors) effectors.insert(effector->file);
+
+        for (auto &effector : dc->effectors) effectors.insert(effector->file);
+
+    }
+
+    ShaderProgram::Builder::build();
+
+}
+
+
+void Layer::ShaderProgramBuilder::frag() {
+
+    header_fragment.clear();
+
+    header_fragment += "uniform sampler2D medias;\n\n";
+    header_fragment += "uniform sampler2D render_pass;\n\n";
+
+    header_fragment += "in vec2 UV;\n\n";
+    header_fragment += "out vec4 COLOR;\n\n";
+    header_fragment += "in flat int ID;\n\n";
+
+    header_fragment += "vec2 uv = UV;\n\n";
+    header_fragment += "vec4 color = vec4(0);\n\n";
+
+    int model_id = 0;
+
+    for (auto file : effectors)  header_fragment += Effector::source(file)+";\n\n";
+
+    header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n\n";
+    header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
+
+    header_fragment += comment_line;
+
+    body_fragment.clear();
+
+    if (dc) for (auto &model : dc->models) {
+
+        for (int instance = 0; instance < model.get()->s.quantity(); instance++) {
+
+            auto name = model.get()->s.name();
+
+            if (model.get()->s.quantity() > 1) name += "["+std::to_string(instance)+"]";
+
+            body_fragment += "\t// "+name+"\n"; // would love this to be a node name instead // still matters ?
+            body_fragment += "\ttic();\n"; // would love this to be a node name instead // still matters ?
+
+            for (auto &effector : model.get()->effectors) {
+
+                std::string arg_str;
+
+                for (auto &arg : Effector::get(effector.get()->file).args) {
+
+                    arg_str += dc->s.name()+"."+lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
+
+                }
+
+                arg_str.resize(arg_str.size()-2);
+
+                body_fragment += "\t"+effector->file->name()+"("+arg_str+");\n";
+            }
+
+        }
+
+        body_fragment += "\ttac();\n\n";
+
+        body_fragment += "\n";
+
+        model_id++;
+    }
+
+    if (dc) {
+
+        for (auto &effector : dc->effectors) {
+
+            std::string arg_str;
+
+            for (auto &arg : Effector::get(effector.get()->file).args) {
+
+                arg_str += dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
+
+            }
+
+            arg_str.resize(arg_str.size()-2);
+
+            body_fragment += "\t"+effector->file->name()+"("+arg_str+");\n";
+        }
+
+        if (dc->effectors.size()) body_fragment += "\ttac();\n\n";
+
+    }
+
+}
+
+void Layer::ShaderProgramBuilder::vert() {
+
+    header_vertex.clear();
+
+    header_vertex += "layout (location = 0) in vec2 POSITION;\n";
+    header_vertex += "layout (location = 1) in vec2 TEXCOORD;\n";
+    header_vertex += "layout (location = 3) in int OBJ;\n\n";
+
+    header_vertex += "out vec2 UV;\n\n";
+    header_vertex += "out int ID;\n\n";
+
+    body_vertex.clear();
+    body_vertex += "\tUV.y = 1-UV.y;\n\n";
+    body_vertex += "\tID = gl_InstanceID;\n\n";
+    body_vertex += "\t// vec2 pos = POSITION*layer[ID].size+layer[ID].pos;\n\n";
+
+    body_vertex += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
+
+}
+
+
+
+///////// DRAWCALL ////
 
 DrawCall::DrawCall(std::string name = "") : s(name.length()?name:"layer") { engine.dynamic_ubo.add(&s); }
 
@@ -106,6 +246,8 @@ void DrawCall::update() {
 
     }
 
-    shader.create(this);
+    Layer::ShaderProgramBuilder builder(this);
+
+    shader.create(builder.fragment, builder.vertex);
 
 }

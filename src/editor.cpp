@@ -137,7 +137,7 @@ static void draw_raw(void *data, size_t size) {
         ImGui::BeginDisabled();
 
          if (size > 1025) size = 1025;
-    for (int member_count = 0; member_count < size; member_count++) {
+    if (cells_per_line) for (int member_count = 0; member_count < size; member_count++) {
 
 
         ImGui::PushID(member_count);

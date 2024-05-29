@@ -43,7 +43,23 @@ struct DrawCall {
 
 struct Layer : DrawCall {
 
-    static inline File *quad = new File("assets/models/quad.obj");
+    struct ShaderProgramBuilder : ShaderProgram::Builder {
+
+        std::set<File*> effectors; // must be filled by UBO which is not current solution // agreed twice
+
+        void build() override;
+        void frag() override;
+        void vert() override;
+
+        DrawCall* dc;
+
+        ShaderProgramBuilder();
+
+        ShaderProgramBuilder(DrawCall* dc);
+
+        int stride_count = 0;
+
+    };
 
     FrameBuffer fb;
 

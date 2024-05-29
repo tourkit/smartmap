@@ -44,15 +44,12 @@ struct ShaderProgram {
 
   ShaderProgram(std::string frag, std::string vert);
 
-  ShaderProgram(DrawCall* dc);
-
   void use();
 
   void use(uint32_t x, uint32_t y = 1, uint32_t z = 1);
 
   void destroy();
   void create(std::string frag, std::string vert);
-  void create(DrawCall* dc);
 
   int getLoc(const std::string& name);
   void sendUniform(const std::string& name, int i1);
@@ -68,28 +65,27 @@ struct ShaderProgram {
   struct Builder {
 
     static inline std::string struct_taber = "";//\t";
+
     static inline std::string struct_spacer = " ";//\n\n";
+
     static inline std::string comment_line  = "///////////////////////////////////////////\n\n";
 
-    std::string header_common = "#version 430 core\n\n";
-    std::string layouts, header_fragment , header_vertex , footer_common;
+    static inline std::string version = "#version 430 core\n\n";
 
-    std::set<File*> effectors; // must be filled by UBO which is not current solution // agreed twice
+    std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, fragment, vertex  ;
 
-    void build();
-    std::string frag();
-    std::string vert();
+    virtual void build();
 
-    DrawCall* dc;
+    virtual void frag();
 
-    Builder();
-    Builder(DrawCall* dc);
+    virtual void vert();
 
-    std::string layout(UBO *ubo);
-
-  private:
-    int stride_count = 0;
+    static std::string layout(UBO* ubo);
 
   };
+
+  void create();
+
+  void create(Builder* builder);
 
 };

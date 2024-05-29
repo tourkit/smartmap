@@ -24,9 +24,25 @@ int main() {
 
     engine.open("project.json");
 
+    PLOGI << Layer::ShaderProgramBuilder::layout(&engine.dynamic_ubo);
+
     engine.run();
 
 }
+
+
+
+// layout from UBO directly not layer effector list
+
+// VBO::addquad()
+
+// UberLayer: Drawcall
+
+// UberLayer::Vlayer
+
+// UberShaderProgramBuilder
+
+
 
 
 // matrice pass
