@@ -135,6 +135,28 @@ void VBO::add_tile(int width, int height, int x, int y, int id) {
 
 bool VBO::add(File* file, int id) { if (add_noupload(file,id)) { upload(); return true; } return false; }
 
+void VBO::addQuad(float w, float h, float x, float y, int id) {
+
+    struct Vert { float x, y, u, v; int id; } vert[4] = {
+
+        { x    , y+w , 0, 1,  id},
+        { x+w  , y+w , 1, 1,  id},
+        { x    , y   , 0, 0,  id},
+        { x+w  , y   , 1, 0,  id}
+
+    };
+
+    (*this)[0].push(&vert,sizeof(Vert)*4);
+
+    int ind[6] = {0,1,2,1,3,2};
+
+    (*this)[1].push(&ind,24);
+
+    upload();
+
+}
+
+
 bool VBO::add_noupload(File* file, int id) {
 
     Assimp::Importer importer;

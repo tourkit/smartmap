@@ -12,6 +12,8 @@
 #include <set>
 
 
+
+
 ///////// Layer ////
 
 Layer::Layer(uint16_t width, uint16_t height, std::string name)
@@ -28,7 +30,6 @@ void Layer::draw() {
 
     fb.bind();
     // engine.render_passes[0].bind();
-
 
     DrawCall::draw();
 
@@ -180,7 +181,7 @@ void DrawCall::draw() {
 
     shader.use();
 
-    vbo.draw();
+    vbo.draw(s.quantity());
 
 }
 

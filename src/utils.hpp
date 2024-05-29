@@ -1,5 +1,8 @@
 #pragma once
 
+#include <vector>
+#include "log.hpp"
+
 template <typename T>
 static bool ADD_UNIQUE( std::vector<T>& list, T n) {
 
@@ -11,6 +14,19 @@ static bool ADD_UNIQUE( std::vector<T>& list, T n) {
 
 }
 
+template <typename T>
+struct Pool {
+
+    std::vector<T*> list;
+
+    Pool(int size = 0) { list.reserve(size); }
+
+    void add(T* x) { ADD_UNIQUE<T*>(list, x); if (list.size()>20) PLOGW << "viens on en parle"; }
+
+    void remove(T* x) { for (int i = 0; i < list.size(); ) if (list[i] == x) list.erase(list.begin() + i); else i++;} // nbot sure
+
+
+};
 
 static std::vector<std::string> split(std::string s, std::string delimiter = "::") {
 

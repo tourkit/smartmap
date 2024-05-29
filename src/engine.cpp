@@ -30,6 +30,8 @@ extern "C" {
 
 Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"),layers_s("Layer") {
 
+    glsl_data.striding(true);
+
     render_passes.reserve(10);
     // layers_s.add(&rect);
     // layers_s.quantity(0);
@@ -80,7 +82,7 @@ void Engine::init() {
     vbo->add(&VBO::quad);
 
 
-    debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); n->name_v = ("Debug - " + std::to_string( fps ) + " fps"); if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
+    debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
 
@@ -123,7 +125,9 @@ void Engine::run() {
     while (!glfwWindowShouldClose(window.id)) window.render([](){
 
         static int frame = 0;
-        memcpy(engine.dynamic_ubo.data.data(), &(frame), sizeof(int)); // aka engine.dynamic_ubo["ENGINE"]["fps"]
+        memcpy(engine.dynamic_ubo.data.data(), &(frame), sizeof(int)); // aka engine.dynamic_ubo["ENGINE"]["frame"]
+        int fps = std::round(ImGui::GetIO().Framerate);
+        memcpy(engine.dynamic_ubo.data.data()+4, &fps, sizeof(float)); // aka engine.dynamic_ubo["ENGINE"]["fps"]
         frame = (frame+1) % 1000;
 
         engine.dynamic_ubo.upload();

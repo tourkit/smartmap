@@ -92,6 +92,7 @@ void Callbacks::init() {
 
     });
 
+
     ////////// UBO.HPP
 
     NODE<UBO>::onrun([](Node* node, UBO *ubo){ ubo->upload(); });
@@ -104,6 +105,12 @@ void Callbacks::init() {
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){ auto x = _this->addOwnr<Layer>(); x->add(node); return x->node(); });
 
     ////////// LAYER.HPP
+
+    ////////// UberLayer.HPP
+
+    NODE<UberLayer>::oncreate([](Node* node, UberLayer *ubl){ for (auto &x : ubl->layers) { node->addPtr<UberLayer::VLayer>(&x); } });
+
+
 
     NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
 

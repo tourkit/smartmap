@@ -41,6 +41,8 @@ struct VBO : Buffer {
 
     void draw(int count = 1);
 
+    void addQuad(float w, float h, float x, float y, int id = 0);
+
     bool add(File *file = &quad, int id = 0);
     bool add_noupload(File *file = &quad, int id = 0);
 

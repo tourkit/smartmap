@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 
+#include "log.hpp"
 #include "imgui/imgui.h"
 #include "vendors/ImGuiColorTextEdit/TextEditor.h"
 
@@ -82,7 +83,7 @@ struct GUI {
     std::string uid;
     bool active = true;
 
-    Window(std::string name) : name(name), uid(("window"+std::to_string(pool.size()))) { pool.push_back(this); }
+    Window(std::string name) : name(name), uid(("window"+std::to_string(pool.size()))) { if(!pool.size()) pool.reserve(20); else if (pool.size()>20) PLOGW << "viens on en parle"; pool.push_back(this); }
     virtual  ~Window() { std::erase_if(pool, [this](Window* w) { return w == this; }); }
     void drawFull();
 

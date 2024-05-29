@@ -15,31 +15,32 @@ int main() {
 
     UberLayer ubl;
 
-    ubl.add(192,108);
-    ubl.add(192,108);
-    ubl.add(192,108);
+    ubl.addLayer(192,108);
+    ubl.addLayer(192,108);
+    ubl.addLayer(192,108);
 
-    ubl.calc(nullptr);
+    ubl.calc_matrice(nullptr);
 
     engine.tree->addPtr<UberLayer>(&ubl)->active(true);
 
     engine.open("project.json");
 
-    // PLOGI << Layer::ShaderProgramBuilder::layout(&engine.dynamic_ubo);
-
-    auto &u = engine.dynamic_ubo;
-
-    PLOGD << u.print();
+    PLOGI << Layer::ShaderProgramBuilder::layout(&engine.dynamic_ubo);
 
     ubl.shader.create();
+
+    // VBO vbo;
+    // vbo.add(&VBO::quad);
+
+    // PLOGD << vbo.members[0]->quantity();
+    // vbo[0].def()->quantity(0);
+    // vbo[1].def()->quantity(0);
 
     engine.run();
 
 }
 
 
-
-// layout from UBO directly not layer effector list
 
 // VBO::addquad()
 

@@ -780,7 +780,7 @@ void Editors::init() {
     Editor<Model>([](Node* node, Model *model){
 
 
-        ImGui::Text(("effectorz " + std::to_string(model->effectors.size())).c_str());
+        ImGui::Text(("effectorz : " + std::to_string(model->effectors.size())+ " .").c_str());
 
         if (ImGui::InputInt("quantity##qqqqlalal" , &model->s.quantity_v)) { model->s.quantity(model->s.quantity_v); node->update(); }
 
@@ -851,9 +851,7 @@ void Editors::init() {
 
     Editor<UberLayer>([](Node* node, UberLayer *ubl){
 
-        Editor<FrameBuffer>::cb(node, &ubl->fb);
-
-        Editor<ShaderProgram>::cb(node, &ubl->shader);
+        Editor<Layer>::cb(node, ubl);
 
     });
 
