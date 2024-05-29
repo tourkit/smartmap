@@ -800,7 +800,9 @@ void Editors::init() {
 
     ////////// VBO.HPP
 
-    Editor<VBO>([](Node*node,VBO*vbo){ Editor<Buffer>::cb(node, vbo); });
+    Editor<VBO>([](Node*node,VBO*vbo){
+        ImGui::Text(("ID " + std::to_string(vbo->vbo)).c_str());
+         Editor<Buffer>::cb(node, vbo); });
 
     ////////// Effector.HPP
 

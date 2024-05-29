@@ -109,19 +109,17 @@ void VBO::upload() {
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_size, data.data() + v_size , GL_STATIC_DRAW );
 
-    // std::string str;
-    // str += std::to_string(v_size) + " : ";
-    // for (int i = 0 ; i < v_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i)) + " "; }
-    // str += "\n";
-    // str += std::to_string(i_size) + " : ";
-    // for (int i = 0 ; i < i_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i+ v_size)) + " "; }
-    // PLOGV << str;
+    std::string str;
+    str += "ID " + std::to_string(vbo) + " - ";
+    str += std::to_string(v_size) + " : ";
+    for (int i = 0 ; i < v_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i)) + " "; }
+    PLOGV << str;
 
 }
 
 void VBO::draw(int count) {
 
-    // glBindVertexArray(vao); // VAO is curently static wich I like GL being what it is with its fucking legacys
+    glBindVertexArray(vao);
 
     glDrawElementsInstanced(GL_TRIANGLES, members[1]->footprint_all()/sizeof(int), GL_UNSIGNED_INT, 0, count);
 
@@ -137,20 +135,15 @@ bool VBO::add(File* file, int id) { if (add_noupload(file,id)) { upload(); retur
 
 void VBO::addQuad(float w, float h, float x, float y, int id) {
 
-    struct Vert { float x, y, u, v; int id; } vert[4] = {
+    struct Vert { float x, y, u, v; int id; };
 
-        { x    , y+w , 0, 1,  id},
-        { x+w  , y+w , 1, 1,  id},
-        { x    , y   , 0, 0,  id},
-        { x+w  , y   , 1, 0,  id}
+    (*this)[0].push()[0].set<Vert>({ x    , y+w , 0, 1,  id});
+    (*this)[0].push()[0].set<Vert>({ x+w  , y+w , 1, 1,  id});
+    (*this)[0].push()[0].set<Vert>({ x    , y   , 0, 0,  id});
+    (*this)[0].push()[0].set<Vert>({ x+w  , y   , 1, 0,  id});
 
-    };
-
-    (*this)[0].push(&vert,sizeof(Vert)*4);
-
-    int ind[6] = {0,1,2,1,3,2};
-
-    (*this)[1].push(&ind,24);
+    (*this)[1].push()[0].set<std::array<int,3>>({0,1,2});
+    (*this)[1].push()[0].set<std::array<int,3>>({1,3,2});
 
     upload();
 
