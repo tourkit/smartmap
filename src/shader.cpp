@@ -115,9 +115,9 @@ void ShaderProgram::Builder::build() {
 
 }
 
-void ShaderProgram::Builder::frag() { }
+void ShaderProgram::Builder::frag() { body_fragment.clear(); }
 
-void ShaderProgram::Builder::vert() { }
+void ShaderProgram::Builder::vert() { body_vertex.clear(); }
 
 std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
@@ -198,7 +198,7 @@ void ShaderProgram::destroy() {
 }
 
 
-void  ShaderProgram::create() { Builder builder; builder.build(); create(builder.fragment, builder.vertex); }
+void  ShaderProgram::create() { create(builder); }
 
 void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->fragment, builder->vertex); }
 

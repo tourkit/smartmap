@@ -9,24 +9,6 @@
 
 struct Layer : DrawCall {
 
-    struct ShaderProgramBuilder : ShaderProgram::Builder {
-
-        std::set<File*> effectors;
-
-        void build() override;
-        void frag() override;
-        void vert() override;
-
-        DrawCall* dc;
-
-        ShaderProgramBuilder();
-
-        ShaderProgramBuilder(DrawCall* dc);
-
-        int stride_count = 0;
-
-    };
-
     FrameBuffer fb;
 
     void draw() override;
@@ -36,10 +18,6 @@ struct Layer : DrawCall {
     Texture* feedback = nullptr;
 
 };
-
-
-
-
 
 struct UberLayer : DrawCall {
 
@@ -73,7 +51,7 @@ struct UberLayer : DrawCall {
 
     VLayer& addLayer(int w , int h) ; // kinda ctor for VLaye
 
-    struct ShaderProgramBuilder : Layer::ShaderProgramBuilder {
+    struct ShaderProgramBuilder : DrawCall::ShaderProgramBuilder {
 
         std::set<File*> effectors;
 
@@ -84,5 +62,6 @@ struct UberLayer : DrawCall {
         ShaderProgramBuilder();
 
     };
+
 
 };

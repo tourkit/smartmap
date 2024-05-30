@@ -10,7 +10,7 @@ struct Renderable {
 
     Struct s;
 
-    Renderable() : s("sdfklg") {}
+    Renderable(std::string name = "sdfklg" ) : s(name) {}
 
     std::vector<std::shared_ptr<Model>> models;
 
@@ -51,5 +51,25 @@ struct DrawCall {
     bool removeEffector(Effector* effector);
 
     Model* add(File* f);
+
+    struct ShaderProgramBuilder : ShaderProgram::Builder {
+
+        std::set<File*> effectors;
+
+        void build() override;
+        void frag() override;
+        void vert() override;
+
+        DrawCall* dc;
+
+        ShaderProgramBuilder();
+
+        ShaderProgramBuilder(DrawCall* dc);
+
+        int stride_count = 0;
+
+    };
+
+    ShaderProgramBuilder builder;
 
 };

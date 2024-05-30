@@ -84,6 +84,10 @@ struct ShaderProgram {
 
   };
 
+  static inline Builder default_builder;
+
+  Builder* builder = &default_builder;
+
   void create();
 
   void create(Builder* builder);

@@ -393,6 +393,8 @@ void Engine::open(const char* file) {
 
                 if (arr.Size() < 3 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsString()) { PLOGW << json_error; continue; }
 
+                // should find (Layer/Model/Effector aka Renderable) node(aka "w" down there) (then get Member path)
+
                 Instance inst(&engine.dynamic_ubo);
 
                 for (auto name : split(arr[2].GetString())) {
@@ -418,8 +420,9 @@ void Engine::open(const char* file) {
 
                 auto n = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
 
-
-
+                auto w = engine.tree->child(arr[2].GetString());
+                if (!w) { PLOGE << "hmmm"; return; }
+                w->referings.insert( n );
 
             }
 
