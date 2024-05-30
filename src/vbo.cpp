@@ -89,10 +89,8 @@ void VBO::upload() {
 
             auto type = GL_FLOAT;
             if (m->type() == typeid(float)) type = GL_FLOAT;
-            if (m->type() == typeid(int))
-                type = GL_INT;
-            if (m->type() == typeid(uint32_t))
-                type = GL_UNSIGNED_INT;
+            if (m->type() == typeid(int)) type = GL_INT;
+            if (m->type() == typeid(uint32_t)) type = GL_UNSIGNED_INT;
 
             auto count = 1; // m->count(); does it
             if (m->type() == typeid(glm::vec2)) count = 2;

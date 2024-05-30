@@ -70,6 +70,8 @@ struct DrawCall {
 
     };
 
+    // Builder* builder() { }
+
     ShaderProgramBuilder builder;
 
 };

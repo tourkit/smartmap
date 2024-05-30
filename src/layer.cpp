@@ -74,16 +74,17 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
         }else{
 
-            matrice.back().emplace_back( std::array<int,5>{it->w, it->h, last_x, last_y, it->id} );
             last_x += it->w;
 
         }
 
+        matrice.back().emplace_back( std::array<int,5>{it->w, it->h, (last_x?last_x-it->w:0), last_y, it->id} );
 
 
     }
 
-    if (!matrice.size() || !matrice.back().size()) return;
+    if (!matrice.size()) return;
+    if (!matrice.back().size()) matrice.resize(matrice.size()-1);
 
     float matrice_height = matrice.back()[0][1]+matrice.back()[0][3];
     float matrice_width = matrice[0].back()[0]+matrice[0].back()[2];
@@ -136,17 +137,14 @@ void UberLayer::draw() {
 
 UberLayer::ShaderProgramBuilder::ShaderProgramBuilder()  {  }
 
-void UberLayer::ShaderProgramBuilder::build() {
+void UberLayer::ShaderProgramBuilder::build() { DrawCall::ShaderProgramBuilder::build(); }
 
-    ShaderProgram::Builder::build();
+void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::frag();
 
-}
-
-void UberLayer::ShaderProgramBuilder::frag() { ShaderProgram::Builder::frag();
-
+	// body_fragment += "\tCOLOR = vec4(1);\n";
 	body_fragment += "\ttic();\n";
 	body_fragment += "\targb(layer1.myQuad[OBJ].argb.alpha, layer1.myQuad[OBJ].argb.red, layer1.myQuad[OBJ].argb.green, layer1.myQuad[OBJ].argb.blue);\n";
 	body_fragment += "\trectangle(layer1.myQuad[OBJ].rectangle.pos, layer1.myQuad[OBJ].rectangle.size);\n";
 	body_fragment += "\ttac();\n";
         }
-void UberLayer::ShaderProgramBuilder::vert() { ShaderProgram::Builder::vert();}
+void UberLayer::ShaderProgramBuilder::vert() { DrawCall::ShaderProgramBuilder::vert();}

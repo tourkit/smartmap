@@ -318,12 +318,12 @@ void Editors::init() {
         if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(550, 0))) {
 
             ImGui::TableSetupColumn("name");
-            ImGui::TableSetupColumn("skip", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 50);
-            ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 200);
-            ImGui::TableSetupColumn("active", ImGuiTableColumnFlags_WidthFixed, 50);
+            ImGui::TableSetupColumn("skip", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 120);
+            ImGui::TableSetupColumn("active", ImGuiTableColumnFlags_WidthFixed, 40);
             ImGui::TableHeadersRow();
 
             int member_id = 0;
@@ -341,7 +341,11 @@ void Editors::init() {
                     ImGui::TableNextColumn();
                     // auto textWidth   = 100-ImGui::CalcTextSize(m->name().c_str()).x;
                     // ImGui::SetCursorPosX((textWidth * 0.5f) );
-                    ImGui::Text((m->name()).c_str());
+
+                    std::string name = inst.stl.back()->name();
+                    if (inst.stl.size()>1) name = inst.stl[inst.stl.size()-2]->name()+"."+name;
+
+                    ImGui::Text(name.c_str());
 
                     if (member_id < remap->attributes.size()) {
 
@@ -356,7 +360,7 @@ void Editors::init() {
                         ImGui::TableNextColumn();
                         ImGui::RadioButton(("##srbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 3);
                         ImGui::TableNextColumn();
-                        ImGui::SetNextItemWidth(200);
+                        ImGui::SetNextItemWidth(120);
                         ImGui::InputFloat2(("##minmax"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].min);
                         ImGui::TableNextColumn();
                         ImGui::Checkbox(("##arsbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].active);

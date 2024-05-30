@@ -16,13 +16,12 @@ int main() {
 
     UberLayer ubl;
 
-    ubl.addLayer(1920,1080);
-    ubl.addLayer(1920,1080);
-    ubl.addLayer(1920,1080);
-    ubl.addLayer(1920,1080);
-    ubl.addLayer(1920,1080);
-    ubl.addLayer(1920,1080);
+    ubl.addLayer(1921,1083);
+    ubl.addLayer(1921,1083);
+    ubl.addLayer(1921,1083);
+    ubl.addLayer(1921,1083);
 
+    ubl.addLayer(1921,1083);
 
     ubl.calc_matrice(nullptr);
 
@@ -30,25 +29,27 @@ int main() {
 
     engine.open("project.json");
 
-    auto &l1 = *ubl.layers.begin();
+    // auto &l1 = *ubl.layers.begin();
 
-    l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
+    // l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
 
     UberLayer::ShaderProgramBuilder builder;
     ubl.shader.builder = &builder;
     ubl.shader.create();
 
-    // engine.stack->childrens[0]->is_a<Layer>()->shader.create();
+    // engine.stack->onchange([](Node* n){ // UBO onchange
 
-    // engine.tree->each([](Node* n) {
+    //     engine.tree->each([](Node* n) {
 
-    //     ShaderProgram* shader = nullptr;
-    //     if (n->is_a_nowarning<Layer>()) shader = &n->is_a<Layer>()->shader;
-    //     else if (n->is_a_nowarning<UberLayer>()) shader = &n->is_a<UberLayer>()->shader;
-    //     else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
-    //     else return;
+    //         ShaderProgram* shader = nullptr;
+    //         if (n->is_a_nowarning<Layer>()) shader = &n->is_a<Layer>()->shader;
+    //         else if (n->is_a_nowarning<UberLayer>()) shader = &n->is_a<UberLayer>()->shader;
+    //         else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
+    //         else return;
 
-    //     if (shader) shader->create();
+    //         if (shader) shader->create();
+
+    //     });
 
     // });
 
