@@ -33,32 +33,14 @@ int main() {
 
     // l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
 
-    UberLayer::ShaderProgramBuilder builder;
-    ubl.shader.builder = &builder;
-    ubl.shader.create();
 
-    // engine.stack->onchange([](Node* n){ // UBO onchange
-
-    //     engine.tree->each([](Node* n) {
-
-    //         ShaderProgram* shader = nullptr;
-    //         if (n->is_a_nowarning<Layer>()) shader = &n->is_a<Layer>()->shader;
-    //         else if (n->is_a_nowarning<UberLayer>()) shader = &n->is_a<UberLayer>()->shader;
-    //         else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
-    //         else return;
-
-    //         if (shader) shader->create();
-
-    //     });
-
-    // });
 
     engine.run();
 
 }
 
 
-// qui declenche layer::shader::update() on layer hierarchy change ?
+// engine.tree->addOwnr<Node>("dsjkhf")->onchange([](Node* n){ PLOGD << "NONOO"; }); // Uberlayer not working with this ... maybe ptr loss somewhere ?
 
 
 // UberLayer

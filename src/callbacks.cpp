@@ -104,6 +104,22 @@ void Callbacks::init() {
 
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){ auto x = _this->addOwnr<Layer>(); x->add(node); return x->node(); });
 
+    NODE<Stack>::onchange([](Node*node,Stack*stack){
+
+        engine.tree->each([](Node* n) {
+
+            ShaderProgram* shader = nullptr;
+            if (n->is_a_nowarning<Layer>()) shader = &n->is_a<Layer>()->shader;
+            else if (n->is_a_nowarning<UberLayer>()) shader = &n->is_a<UberLayer>()->shader;
+            else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
+            else return;
+
+            if (shader) shader->create();
+
+        });
+
+     });
+
     ////////// LAYER.HPP
 
     ////////// UberLayer.HPP
