@@ -91,7 +91,7 @@ uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16);  r
 
 uint32_t Member::stride() { return (footprint()-size()); }
 
-void Member::quantity(uint32_t quantity_v) {
+Member* Member::quantity(uint32_t quantity_v) {
 
     pre_change();
 
@@ -100,6 +100,8 @@ void Member::quantity(uint32_t quantity_v) {
     update();
 
     post_change();
+
+    return this;
 
 }
 

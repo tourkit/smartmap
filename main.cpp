@@ -8,6 +8,7 @@
 #include "engine.hpp"
 #include "layer.hpp"
 #include "utils.hpp"
+#include "artnet.hpp"
 
 
 int main() {
@@ -22,21 +23,25 @@ int main() {
 
     engine.tree->addPtr<UberLayer>(&ubl)->active(true);
 
-    engine.open("project.json");
-
     auto &l1 = *ubl.layers.begin();
-
-    l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
-
     engine.dynamic_ubo.add(&l1.s);
 
+    engine.open("project.json");
+
+    l1 = *ubl.layers.begin();
+
+    l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
+    l1.addEffector(engine.effectors->childrens[3]->is_a<File>());
+    l1.addEffector(engine.effectors->childrens[2]->is_a<File>());
     engine.stack->trigchange();
+
 
     engine.run();
 
 }
 
 // engine.tree->addOwnr<Node>("dsjkhf")->onchange([](Node* n){ PLOGD << "NONOO"; }); // Uberlayer not working with this ... maybe ptr loss somewhere ?
+// auto n = engine.inputs->childrens[0]->addPtr<DMXRemap>(dmxremap)->name("booyaremap"); // same with this
 
 // UberLayer
 

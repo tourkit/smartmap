@@ -19,7 +19,7 @@ struct Layer : DrawCall {
 
 };
 
-struct UberLayer : DrawCall {
+struct UberLayer : Layer {
 
     static inline Struct &layer_def = Struct::create("Layer", 0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
@@ -35,9 +35,6 @@ struct UberLayer : DrawCall {
 
     };
 
-    FrameBuffer fb;
-
-    void draw() override;
 
     std::vector<VLayer> layers;
 

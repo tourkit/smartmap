@@ -857,9 +857,7 @@ void Editors::init() {
 
     Editor<UberLayer>([](Node* node, UberLayer *ubl){
 
-        Editor<FrameBuffer>::cb(node, &ubl->fb);
-
-        Editor<DrawCall>::cb(node, ubl);
+        Editor<Layer>::cb(node, ubl);
 
     });
 

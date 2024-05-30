@@ -31,7 +31,7 @@ void Layer::draw() {
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : DrawCall("imuber"), builder(this) {
+UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
 
     engine.static_ubo.add(&layer_def);
 
@@ -91,6 +91,8 @@ void UberLayer::calc_matrice(VBO* vbo_) {
     float matrice_width = matrice[0].back()[0]+matrice[0].back()[2];
 
     fb.create( matrice_width, matrice_height );
+    feedback->create( matrice_width, matrice_height );
+
 
     glsl_layers->def()->quantity(layers.size());
 
@@ -125,13 +127,6 @@ UberLayer::VLayer& UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
 
 }
 
-void UberLayer::draw() {
-
-    fb.clear();
-
-    DrawCall::draw();
-
-}
 
 UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : ubl(ubl) {  }
 
@@ -190,9 +185,11 @@ void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::f
 
         }
 
-        body_fragment += "\n}\n\n";
+        body_fragment += "\n}\n";
 
     }
+
+    body_fragment += "\n";
 
 }
 void UberLayer::ShaderProgramBuilder::vert() { DrawCall::ShaderProgramBuilder::vert();}

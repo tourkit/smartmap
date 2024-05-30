@@ -13,11 +13,13 @@
     "layer1": [ 1920, 1080, { "MyQuad": [ "quad.obj", 5, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, {} ]
   },
   "inputs": {
-    "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ] } ] }
+    "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ], "remap2": [ 0, 0, "layer0", [ 1, 1, 1, 1, 2, 2, 2, 2, 1 ] ] } ] }
   },
   "editors": [
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
-    [ 0, 0, 0, 0, "tree::UberLayer", true ]
+    [ 0, 0, 0, 0, "tree::UberLayer", true ],
+    [ 0, 0, 0, 0, "tree::Debug", true ],
+    [ 0, 0, 0, 0, "Stack::layer1", true ]
   ],
   "outputs": {
     "monitor": { "Window": [ 1, 1, 0, 0 ] }

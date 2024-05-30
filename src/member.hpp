@@ -41,7 +41,7 @@ struct Member {
 
     uint32_t footprint_all();
 
-    void quantity(uint32_t quantity_v) ;
+    Member* quantity(uint32_t quantity_v) ;
 
     uint32_t quantity();
 

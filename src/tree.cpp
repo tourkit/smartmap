@@ -111,7 +111,10 @@ using namespace ImGui;
     SameLine();
     SetCursorPosX(t_pos);
 
-    auto hovered = IsItemHovered();
+    bool hovered = false;
+
+    if (ImGui::GetMousePos().y > curr_pos.y+ImGui::GetWindowPos().y && ImGui::GetMousePos().y < curr_pos.y+ImGui::GetWindowPos().y+ImGui::GetTextLineHeight()) hovered = true;
+
 
     ImVec4 node_color = *(ImVec4*)&node->color;
 

@@ -198,13 +198,13 @@ void Callbacks::init() {
 
     //////// Remap.HPP
 
-    NODE<DMXRemap>::onrun([](Node* node, DMXRemap *remap) {
+    // NODE<DMXRemap>::onrun([](Node* node, DMXRemap *remap) {
 
-        int count = 0;
-        remap->dst->def()->each([&](Instance &inst){count++;});
-        if (count != remap->attributes.size()) remap->attributes.resize(count);
+    //     int count = 0;
+    //     remap->dst->def()->each([&](Instance &inst){count++;});
+    //     if (count != remap->attributes.size()) remap->attributes.resize(count);
 
-    });
+    // });
 
 
     // NODE<Remap>::onrun([](Node* node, Remap *remap) { remap->update(); });
