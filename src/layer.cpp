@@ -136,7 +136,8 @@ static std::string print_layer(UberLayer::VLayer &layer) {
 
     std::set<Effector*> unique;
 
-    for (auto x : layer.effectors) unique.insert(x.get());
+    for (auto x : layer.effectors)
+        unique.insert(x.get());
 
     std::string body_fragment;
 

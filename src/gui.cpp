@@ -144,6 +144,8 @@ void GUI::draw() {
 
     for (auto window : Window::pool) { window->drawFull(); }
 
+    for (auto x : eraselist) delete x;
+    eraselist.resize(0);
 
   }
 

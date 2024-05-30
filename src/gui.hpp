@@ -83,16 +83,18 @@ struct GUI {
     std::string uid;
     bool active = true;
 
+
     Window(std::string name) : name(name), uid(("window"+std::to_string(pool.size()))) { if(!pool.size()) pool.reserve(20); else if (pool.size()>20) PLOGW << "viens on en parle"; pool.push_back(this); }
     virtual  ~Window() { std::erase_if(pool, [this](Window* w) { return w == this; }); }
     void drawFull();
 
-    virtual void close() { delete this; }
+    virtual void close() { eraselist.push_back(this); }
 
     virtual void draw() {}
     virtual void drawTree() { draw(); }
     virtual void drawEditor() {}
-
   };
 
+private:
+    static inline std::vector<Window*> eraselist;
 };
