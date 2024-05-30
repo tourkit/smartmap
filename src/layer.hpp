@@ -50,15 +50,13 @@ struct UberLayer : Layer {
 
     struct ShaderProgramBuilder : DrawCall::ShaderProgramBuilder {
 
-        std::set<File*> effectors;
-
         void build() override;
         void frag() override;
         void vert() override;
 
         UberLayer* ubl;
 
-        ShaderProgramBuilder(UberLayer* ubl = nullptr);
+        ShaderProgramBuilder(UberLayer* ubl);
 
     } builder;
 

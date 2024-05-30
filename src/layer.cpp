@@ -130,7 +130,17 @@ UberLayer::VLayer& UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
 
 UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : ubl(ubl) {  }
 
-void UberLayer::ShaderProgramBuilder::build() { DrawCall::ShaderProgramBuilder::build(); }
+void UberLayer::ShaderProgramBuilder::build() {
+
+    effectors.clear();
+
+    for (auto &layer : ubl->layers)
+        for (auto effector : layer.effectors)
+            effectors.insert(effector.get()->file);
+
+    ShaderProgram::Builder::build();
+
+}
 
 static std::string print_layer(UberLayer::VLayer &layer) {
 
