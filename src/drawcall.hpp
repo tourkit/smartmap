@@ -10,19 +10,19 @@ struct Renderable {
 
     Struct s;
 
-    Renderable(std::string name = "sdfklg" ) : s(name) {}
-
-    std::vector<std::shared_ptr<Model>> models;
+    Renderable(std::string name = "sdfklg" ) : s(name) { }
 
     std::vector<std::shared_ptr<Effector>> effectors;
+    Effector* addEffector(File* f); // kinda ctor for effectors
+    bool removeEffector(Effector* effector);
 
-    bool removeModel(Model* model); // kinda ctor for Model
+};
 
-    Effector* addEffector(File* f);
+struct SuperRenderable : Renderable {
 
-    bool removeEffector(Effector* effector); // kinda ctor for Effector
-
-    Model* addModel(File* f);
+    std::vector<std::shared_ptr<Model>> models;
+    Model* addModel(File* f); // kinda ctor for Model
+    bool removeModel(Model* model);
 
 };
 

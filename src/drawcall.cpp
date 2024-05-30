@@ -25,7 +25,7 @@ Effector* Renderable::addEffector(File* file) {
 
 }
 
-Model* Renderable::addModel(File* f) {
+Model* SuperRenderable::addModel(File* f) {
 
     auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
 
@@ -35,7 +35,7 @@ Model* Renderable::addModel(File* f) {
 
 }
 
-bool Renderable::removeModel(Model* model){ return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; }); }
+bool SuperRenderable::removeModel(Model* model){ return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; }); }
 
 
 ///////// LayerBuilder ////

@@ -16,9 +16,8 @@
     "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 0, "layer1::MyQuad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ] } ] }
   },
   "editors": [
-    [ 0, 0, 0, 0, "Stack::layer1", true ],
-    [ 0, 0, 0, 0, "tree::UberLayer", true ],
-    [ 0, 0, 0, 0, "tree::Debug", true ]
+    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
+    [ 0, 0, 0, 0, "tree::UberLayer", true ]
   ],
   "outputs": {
     "monitor": { "Window": [ 1, 1, 0, 0 ] }

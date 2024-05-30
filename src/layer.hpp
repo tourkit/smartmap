@@ -27,7 +27,7 @@ struct UberLayer : DrawCall {
 
     struct VLayer : Renderable {
 
-        VLayer(int w, int h, int id = 0) : w(w), h(h), id(id) {}
+        VLayer(int w, int h, int id = 0) : w(w), h(h), id(id) { s.name("layer"+std::to_string(id)); }
 
         int w ;
         int h;
@@ -59,9 +59,10 @@ struct UberLayer : DrawCall {
         void frag() override;
         void vert() override;
 
-        ShaderProgramBuilder();
+        UberLayer* ubl;
 
-    };
+        ShaderProgramBuilder(UberLayer* ubl = nullptr);
 
+    } builder;
 
 };

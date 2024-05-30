@@ -16,12 +16,7 @@ int main() {
 
     UberLayer ubl;
 
-    ubl.addLayer(1921,1083);
-    ubl.addLayer(1921,1083);
-    ubl.addLayer(1921,1083);
-    ubl.addLayer(1921,1083);
-
-    ubl.addLayer(1921,1083);
+    ubl.addLayer(1920,1080).s.quantity(5);
 
     ubl.calc_matrice(nullptr);
 
@@ -29,22 +24,21 @@ int main() {
 
     engine.open("project.json");
 
-    // auto &l1 = *ubl.layers.begin();
+    auto &l1 = *ubl.layers.begin();
 
-    // l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
+    l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
 
+    engine.dynamic_ubo.add(&l1.s);
 
+    engine.stack->trigchange();
 
     engine.run();
 
 }
 
-
 // engine.tree->addOwnr<Node>("dsjkhf")->onchange([](Node* n){ PLOGD << "NONOO"; }); // Uberlayer not working with this ... maybe ptr loss somewhere ?
 
-
 // UberLayer
-
 
 // linuxify a.k.a gl1.1 is the pb
 

@@ -31,7 +31,7 @@ void Layer::draw() {
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : DrawCall("imuber") {
+UberLayer::UberLayer() : DrawCall("imuber"), builder(this) {
 
     engine.static_ubo.add(&layer_def);
 
@@ -40,8 +40,6 @@ UberLayer::UberLayer() : DrawCall("imuber") {
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
 
     PLOGD << "max tex size : " << max_tex_size;
-
-    static UberLayer::ShaderProgramBuilder builder;
 
     shader.builder = &builder;
 
@@ -63,24 +61,27 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
     for (auto it = layers.begin(); it != layers.end(); it++ ) {
 
-        if (it->h > max_line_h) max_line_h = it->h;
+        for (int i = 0 ; i < it->s.quantity(); i++) {
 
-        if (last_x+it->w > max_tex_size/2) { // beware /2 just for me
 
-            matrice.resize( matrice.size()+1 );
-            last_y += max_line_h;
-            max_line_h = 0;
-            last_x = 0;
+            if (it->h > max_line_h) max_line_h = it->h;
 
-        }else{
+            if (last_x+it->w > max_tex_size/2) { // beware /2 just for me
 
-            last_x += it->w;
+                matrice.resize( matrice.size()+1 );
+                last_y += max_line_h;
+                max_line_h = 0;
+                last_x = 0;
+
+            }else{
+
+                last_x += it->w;
+
+            }
+
+            matrice.back().emplace_back( std::array<int,5>{it->w, it->h, (last_x?last_x-it->w:0), last_y, it->id} );
 
         }
-
-        matrice.back().emplace_back( std::array<int,5>{it->w, it->h, (last_x?last_x-it->w:0), last_y, it->id} );
-
-
     }
 
     if (!matrice.size()) return;
@@ -119,8 +120,6 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 UberLayer::VLayer& UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
 
     layers.emplace_back(w,h,layers.size());
-    // calc_matrice(nullptr);
-    // PLOGI << glsl_layers->eq(layers.size() - 1).get<std::array<float,4>>();
 
     return layers.back();
 
@@ -134,17 +133,66 @@ void UberLayer::draw() {
 
 }
 
-
-UberLayer::ShaderProgramBuilder::ShaderProgramBuilder()  {  }
+UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : ubl(ubl) {  }
 
 void UberLayer::ShaderProgramBuilder::build() { DrawCall::ShaderProgramBuilder::build(); }
 
+static std::string print_layer(UberLayer::VLayer &layer) {
+
+    std::set<Effector*> unique;
+
+    for (auto x : layer.effectors) unique.insert(x.get());
+
+    std::string body_fragment;
+
+	body_fragment += "\ttic();\n";
+
+    for (auto effector : unique) {
+
+        std::string arg_str;
+
+            auto name = layer.s.name();
+
+            if (layer.s.quantity() > 1) name += "[OBJ]";
+
+        for (auto &arg : Effector::get(effector->file).args) {
+
+            arg_str += lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
+
+        }
+
+        arg_str.resize(arg_str.size()-2);
+
+        body_fragment += "\t"+effector->file->name()+"("+arg_str+");\n";
+    }
+
+
+	body_fragment += "\ttac();\n";
+    return body_fragment;
+
+}
+
 void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::frag();
 
-	// body_fragment += "\tCOLOR = vec4(1);\n";
-	body_fragment += "\ttic();\n";
-	body_fragment += "\targb(layer1.myQuad[OBJ].argb.alpha, layer1.myQuad[OBJ].argb.red, layer1.myQuad[OBJ].argb.green, layer1.myQuad[OBJ].argb.blue);\n";
-	body_fragment += "\trectangle(layer1.myQuad[OBJ].rectangle.pos, layer1.myQuad[OBJ].rectangle.size);\n";
-	body_fragment += "\ttac();\n";
+    if (ubl->layers.size() == 1) body_fragment += print_layer(ubl->layers[0]);
+
+    else {
+
+        int last_id = 0;
+
+        for (auto &x : ubl->layers) {
+
+            if (last_id) body_fragment += "\n} else ";
+
+            last_id += x.s.quantity();
+
+            body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer(x); ;
+
         }
+
+        body_fragment += "\n}\n\n";
+
+    }
+
+}
 void UberLayer::ShaderProgramBuilder::vert() { DrawCall::ShaderProgramBuilder::vert();}
