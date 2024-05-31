@@ -31,7 +31,7 @@ int main() {
 
     engine.open("project.json");
 
-    ub_->referings.insert(engine.inputs->childrens[0]->childrens[1]);
+    // ub_->referings.insert(engine.inputs->childrens[0]->childrens[1]);
 
     l1 = *ubl.layers.begin();
 

@@ -103,7 +103,7 @@ void ShaderProgram::Builder::build() {
     vertex += header_vertex;
     vertex += "\nvoid main() {\n\n";
     vertex += body_vertex;
-    vertex += "}";
+    vertex += "}\n////////////";
 
     fragment.clear();
     fragment += header_common;
@@ -112,7 +112,7 @@ void ShaderProgram::Builder::build() {
     fragment += "\nvoid main() {\n\n";
     fragment += body_fragment;
     fragment += "\n\tif (eNGINE.fps<60)COLOR+=vec4(mod(eNGINE.frame,10)*.05,0,0,1);\n\n";
-    fragment += "}";
+    fragment += "}\n////////////";
 
 }
 

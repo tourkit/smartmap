@@ -834,7 +834,25 @@ void Editors::init() {
 
     Editor<Stack>([](Node* node, Stack *stack){ Editor<Log>::cb(node, &logger); });
 
-    Editor<Debug>([](Node* node, Debug *debug){ Editor<Log>::cb(node, &logger); });
+    Editor<Debug>([](Node* node, Debug *debug){
+
+        Editor<Log>::cb(node, &logger);
+
+
+       static int maj = -1, min;
+
+       if (maj<0) {
+
+            glGetIntegerv(GL_MAJOR_VERSION,  &maj);
+
+            glGetIntegerv(GL_MINOR_VERSION,  &min);
+        }
+
+    ImGui::Text(("openGL version "+std::to_string(maj)+"."+std::to_string(min)).c_str());
+
+        ImGui::Separator();
+
+    });
 
     ////////// FRAMEBUFFER.HPP
 
