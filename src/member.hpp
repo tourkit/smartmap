@@ -91,12 +91,6 @@ struct Member {
 
     int32_t quantity_v = 1;
 
-    std::string print();
-
-    std::string print_uniques();
-
-    std::string print_recurse(int recurse = -1, int depth = 0);
-
     std::string next_name(std::string name);
 
     int get_offset();

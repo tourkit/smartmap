@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <string>
 #include <chrono>
+#include <map>
+#include <string>
 
 struct UBO;
 struct DrawCall;
@@ -80,7 +82,11 @@ struct ShaderProgram {
 
     virtual void vert();
 
-    static std::string layout(UBO* ubo);
+    std::string layout(UBO* ubo);
+
+    std::string define(Member* member);
+
+    std::map<Member*,std::string> list;
 
   };
 

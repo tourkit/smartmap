@@ -119,6 +119,10 @@ std::type_index Member::type() { return typeid( *this ); }
 
 std::string Member::type_name() {
 
+    if (type() == typeid(Struct)) return camel(name());
+
+    if (isRef()) return members[0]->type_name();
+
     if (type() == typeid(glm::vec2)) return "vec2";
 
     if (type() == typeid(glm::vec3)) return "vec3";
@@ -133,9 +137,11 @@ std::string Member::type_name() {
 
     if (type() == typeid(char)) return "char";
 
-    if (isData() ||isRef()) return members[0]->name();
+    std::string type_ = type().name();
 
-    return "unknown " + std::string(type().name());
+    if (isData()) return "datatype" + type_;
+
+    return "unknown" + type_;
 
 }
 
@@ -212,92 +218,6 @@ void Member::post_change(std::vector<Member*> added) {
     for (auto x : getTop()) x->post_change(added);
 
 }
-
-
-
-static const char* new_line = "\n";
-static const char* tab = "\t";
-
-std::string Member::print() {
-
-    return print_uniques() + new_line + print_recurse(-1);
-
-}
-
-std::string Member::print_uniques() {
-
-    std::set<Member*> lst;
-
-    each([&](Instance& inst){ if (inst.def()->isRef()) lst.insert(inst.def()->members[0]); });
-
-    std::string out;
-
-    for (auto x : lst) out += x->print_recurse(-1,0)+";"+new_line;
-
-    return out;
-
- }
-
-std::string Member::print_recurse(int recurse, int depth) {
-
-
-    if (false) { new_line = ""; tab = ""; }
-
-    std::string tab_str;
-    for (int i = 0 ; i < depth; i++) tab_str+=tab;
-    std::string str;
-
-    for (auto m : members) {
-
-        if (m != members[0]) str += tab_str+tab;
-
-        if ( m->isData() || m->isRef() ) {
-
-            if (m->isRef() && m->members.size()) str += camel(m->type_name());
-
-            else str += m->type_name();
-
-        } else {
-
-            if (recurse) {
-
-                auto m_str = m->print_recurse(recurse-1, depth+1);
-
-                if (!m_str.length()) continue;
-
-                str += m_str;
-
-            } else { str += camel(m->name()); }
-
-        }
-
-        str += " " + lower(m->name());
-
-        if (m->quantity() > 1) str += "[" + std::to_string(m->quantity()) + "]";
-
-        str += "; ";
-        str += new_line;
-
-
-    }
-
-    if (stride()) for (int i = 0; i < stride()/sizeof(float); i++) {
-
-        str += tab_str+tab;
-        if (!new_line) str += " ";
-        str += (members[0]->type() == typeid(int) ? "int" : "float");
-        str += " stride";
-        str += std::to_string(i) + "; " + new_line;
-
-    }
-
-    if (!str.length()) return "";
-
-
-    return "struct " + camel(name())  + " { " + new_line+new_line + tab_str +tab+ str + new_line + tab_str + "}";
-
-}
-
 
 std::string Member::next_name( std::string name ) {
 

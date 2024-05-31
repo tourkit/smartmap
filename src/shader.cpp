@@ -120,23 +120,75 @@ void ShaderProgram::Builder::frag() { body_fragment.clear(); }
 
 void ShaderProgram::Builder::vert() { body_vertex.clear(); }
 
+
+std::string ShaderProgram::Builder::define(Member* member) {
+
+    std::string out;
+
+    out+="struct "+list[member]+" {\n";
+    for (auto x : member->members) {
+
+        out+="\t"+(list.find(x)!=list.end()?list[x]:x->type_name())+" "+lower(x->name());
+        if (x->quantity()>1) out += "["+std::to_string(x->quantity())+"]";
+
+        out += ";\n";
+
+    }
+
+
+    if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
+
+        out += "\t";
+        out += (member->members.back()->type() == typeid(int) ? "int" : "float");
+        out += " stride";
+        out += std::to_string(i) + ";\n" ;
+
+    }
+
+    out+="}";
+    return out;
+
+}
+
 std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     if (!ubo->members.size() || !ubo->data.size()) return "";
 
-    std::string str;
+    std::string output;
 
-    str += ubo->print_uniques();
+    list.clear();
 
-    str += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
+    std::vector<Member*> order;
 
-    auto s = print_recurse(ubo);
+    ubo->each([&](Instance& inst) {
 
-    str += s.c_str()+s.find("{");
+        auto m = inst.def();
 
-    str += ";\n\n";
+        if (m->type() == typeid(Struct) && !m->isRef()) {
 
-    return str;
+            for (auto &x : list) if (x.first == m) return;
+
+            auto name = camel(m->name());
+
+            for (auto &x : list) if (x.second == name) name += "_";
+
+            list[m] = name;
+            order.push_back(m);
+        }
+
+    });
+
+    for (auto x : order) output += define(x)+";\n";
+
+    output += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
+
+    auto s = define(ubo);
+
+    output += s.c_str()+s.find("{");
+
+    output += ";\n\n";
+
+    return output;
 
 }
 

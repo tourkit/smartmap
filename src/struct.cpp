@@ -71,7 +71,6 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 }
 
 
-
 Struct& Struct::clear() {
 
     // PLOGV << name() << " clear " ;
