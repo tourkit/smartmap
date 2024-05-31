@@ -6,6 +6,7 @@
 #include "instance.hpp"
 #include "engine.hpp"
 #include "log.hpp"
+#include "utils.hpp"
 
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>

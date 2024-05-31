@@ -17,16 +17,21 @@ int main() {
 
     UberLayer ubl;
 
-    ubl.addLayer(1920,1080).s.quantity(5);
+    ubl.addLayer(1920,1080).s.quantity(7);
 
     ubl.calc_matrice(nullptr);
 
-    engine.tree->addPtr<UberLayer>(&ubl)->active(true);
+    auto ub_ = engine.tree->addPtr<UberLayer>(&ubl);
+
+    ub_->active(true);
 
     auto &l1 = *ubl.layers.begin();
+
     engine.dynamic_ubo.add(&l1.s);
 
     engine.open("project.json");
+
+    ub_->referings.insert(engine.inputs->childrens[0]->childrens[1]);
 
     l1 = *ubl.layers.begin();
 
@@ -35,13 +40,11 @@ int main() {
     l1.addEffector(engine.effectors->childrens[2]->is_a<File>());
     engine.stack->trigchange();
 
-
     engine.run();
 
 }
 
-// engine.tree->addOwnr<Node>("dsjkhf")->onchange([](Node* n){ PLOGD << "NONOO"; }); // Uberlayer not working with this ... maybe ptr loss somewhere ?
-// auto n = engine.inputs->childrens[0]->addPtr<DMXRemap>(dmxremap)->name("booyaremap"); // same with this
+// remap1 did not update accordingly its src data; is int inst not updated ?
 
 // UberLayer
 

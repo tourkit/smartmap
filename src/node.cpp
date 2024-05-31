@@ -59,7 +59,7 @@ Node* UntypedNode::child(std::vector<std::string> names) {
 
     }
 
-    if (names.size()> 1) for (auto c : childrens) {
+    if (names.size()) for (auto c : childrens) {
 
         auto x = c->child(names);
 

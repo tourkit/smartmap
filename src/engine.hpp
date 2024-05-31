@@ -73,6 +73,8 @@ struct Engine {
     static inline Struct& glsl_data = Struct::create("ENGINE").add<int>("frame").add<int>("fps");
     Struct layers_s;
 
+    bool COND = false;
+
 private:
 
     std::string project_name;

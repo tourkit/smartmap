@@ -1,6 +1,7 @@
 #include "drawcall.hpp"
 #include "effector.hpp"
 #include "engine.hpp"
+#include "utils.hpp"
 #include "layer.hpp"
 
 
@@ -54,9 +55,9 @@ void Layer::ShaderProgramBuilder::build() {
 
         auto dc = dc_->is_a<Layer>();
 
-        for (auto &model : dc->models) for (auto &effector : model.get()->effectors) effectors.insert(effector->file);
+        for (auto &model : dc->models) for (auto &effector : model.get()->effectors) ADD_UNIQUE<File*>(effectors, effector->file);
 
-        for (auto &effector : dc->effectors) effectors.insert(effector->file);
+        for (auto &effector : dc->effectors) ADD_UNIQUE<File*>(effectors, effector->file);
 
     }
 

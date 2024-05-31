@@ -129,6 +129,7 @@ void Callbacks::init() {
 
 
     NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
+    NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ node->name(layer->s.name()); });
 
     ////////// DRAWCALL.HPP
 

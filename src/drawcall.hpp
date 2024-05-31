@@ -54,7 +54,7 @@ struct DrawCall {
 
     struct ShaderProgramBuilder : ShaderProgram::Builder {
 
-        std::set<File*> effectors;
+        std::vector<File*> effectors;
 
         void build() override;
         void frag() override;

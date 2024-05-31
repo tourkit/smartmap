@@ -1,6 +1,7 @@
 
 #include "layer.hpp"
 #include "texture.hpp"
+#include "utils.hpp"
 
 
 
@@ -16,14 +17,14 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
 void Layer::draw() {
 
-    if (feedback) { feedback->bind(); }
+    // if (feedback) { feedback->bind(); }
 
     fb.bind();
     // engine.render_passes[0].bind();
 
     DrawCall::draw();
 
-    if (feedback) { return feedback->read(fb.texture); }
+    // if (feedback) { return feedback->read(fb.texture); }
 
 }
 
@@ -63,6 +64,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
         for (int i = 0 ; i < it->s.quantity(); i++) {
 
+     matrice.back().emplace_back( std::array<int,5>{it->w, it->h, last_x, last_y, it->id} );
 
             if (it->h > max_line_h) max_line_h = it->h;
 
@@ -79,10 +81,10 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
             }
 
-            matrice.back().emplace_back( std::array<int,5>{it->w, it->h, (last_x?last_x-it->w:0), last_y, it->id} );
 
         }
     }
+
 
     if (!matrice.size()) return;
     if (!matrice.back().size()) matrice.resize(matrice.size()-1);
@@ -100,6 +102,8 @@ void UberLayer::calc_matrice(VBO* vbo_) {
     vbo[0].def()->quantity(0);
     vbo[1].def()->quantity(0);
 
+    int z = 0;
+
     for (auto &x : matrice) for (auto &y : x) {
 
         auto w = y[0] / matrice_width;
@@ -110,6 +114,9 @@ void UberLayer::calc_matrice(VBO* vbo_) {
         glsl_layers->eq(y[4]).set<glm::vec4>(glm::vec4(w, h, x_, y_));
 
         vbo.addQuad(w, h, x_, y_);
+
+        PLOGD << z++ << " - " << y[0] << " " << y[1] << " " << y[2] << " " << y[3];
+        // PLOGD << z++ << " - "  << w << " " << h << " " << x_ << " " << y_;
 
     }
 
@@ -136,7 +143,7 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     for (auto &layer : ubl->layers)
         for (auto effector : layer.effectors)
-            effectors.insert(effector.get()->file);
+            ADD_UNIQUE<File*>(effectors, effector.get()->file);
 
     ShaderProgram::Builder::build();
 
@@ -144,10 +151,10 @@ void UberLayer::ShaderProgramBuilder::build() {
 
 static std::string print_layer(UberLayer::VLayer &layer) {
 
-    std::set<Effector*> unique;
+    std::vector<Effector*> unique;
 
     for (auto x : layer.effectors)
-        unique.insert(x.get());
+        ADD_UNIQUE<Effector*>(unique, x.get());
 
     std::string body_fragment;
 

@@ -414,14 +414,15 @@ void Engine::open(const char* file) {
                 int q = 1;
                 if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
 
-                DMXRemap* dmxremap = new DMXRemap(&uni, &inst.track(), arr[1].GetInt(), attrs, q);
+                DMXRemap* dmxremap = new DMXRemap(&uni, &inst.track(), arr[1].GetInt()-1, attrs, q);
 
                 uni.remaps.push_back( dmxremap );
 
                 auto n = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
 
-                auto w = engine.tree->child(arr[2].GetString());
-                if (!w) { PLOGE << "hmmm"; return; }
+                std::string sss =arr[2].GetString() ;
+                auto w = engine.tree->child(sss);
+                if (!w) { PLOGE <<arr[2].GetString()<< " not found"; return; }
                 w->referings.insert( n );
 
             }

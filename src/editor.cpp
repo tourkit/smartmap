@@ -857,6 +857,16 @@ void Editors::init() {
 
     Editor<UberLayer>([](Node* node, UberLayer *ubl){
 
+        if (ImGui::SliderInt("quantitay##dsf",&ubl->layers[0].s.quantity_v, 1, 10)) {
+
+            ubl->layers[0].s.quantity(ubl->layers[0].s.quantity_v); // for some callback (updates dynUBO)
+
+            ubl->calc_matrice(nullptr);
+
+            engine.stack->trigchange(); // update all shaders
+
+        }
+
         Editor<Layer>::cb(node, ubl);
 
     });
