@@ -88,7 +88,7 @@ std::string Effector::source(File* file) {
 
     }
 
-    out_code.resize(out_code.find("}")+1);
+    out_code.resize(out_code.find_last_of("}")+1);
 
     return out_code.c_str()+out_code.find("void");
 

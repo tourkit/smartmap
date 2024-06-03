@@ -34,15 +34,24 @@ void Layer::draw() {
 
 UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
 
+    static bool init = false;
+
+    if (!init){
+
+        layer_def.striding(true);
+
+    }
+
     engine.static_ubo.add(&layer_def);
 
     glsl_layers = &engine.static_ubo[layer_def.name()].track();
 
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
 
-    PLOGD << "max tex size : " << max_tex_size;
+    PLOGI << "max tex size : " << max_tex_size;
 
     shader.builder = &builder;
+
 
 }
 
@@ -57,6 +66,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
     int max_line_h = 0;
     int last_x = 0;
     int last_y = 0;
+    int count = 0;
 
     std::vector<std::vector<std::array<int,5>>> matrice = {{}};
 
@@ -64,7 +74,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
         for (int i = 0 ; i < it->s.quantity(); i++) {
 
-     matrice.back().emplace_back( std::array<int,5>{it->w, it->h, last_x, last_y, it->id} );
+     matrice.back().emplace_back( std::array<int,5>{it->w, it->h, last_x, last_y, count} );
 
             if (it->h > max_line_h) max_line_h = it->h;
 
@@ -81,10 +91,10 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
             }
 
+            count++;
 
         }
     }
-
 
     if (!matrice.size()) return;
     if (!matrice.back().size()) matrice.resize(matrice.size()-1);
@@ -95,8 +105,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
     fb.create( matrice_width, matrice_height );
     feedback->create( matrice_width, matrice_height );
 
-
-    glsl_layers->def()->quantity(layers.size());
+    glsl_layers->def()->quantity(count);
 
     auto x = vbo[0].def();
     vbo[0].def()->quantity(0);
@@ -111,13 +120,13 @@ void UberLayer::calc_matrice(VBO* vbo_) {
         auto x_ = y[2] / matrice_width;
         auto y_ = y[3] / matrice_height;
 
-        glsl_layers->eq(y[4]).set<glm::vec4>(glm::vec4(w, h, x_, y_));
+        glsl_layers->eq(z).set<glm::vec4>(glm::vec4(w, h, x_, y_));
 
         vbo.addQuad(w, h, x_, y_);
 
         // PLOGD << z++ << " - " << y[0] << " " << y[1] << " " << y[2] << " " << y[3];
         // PLOGD << z++ << " - "  << w << " " << h << " " << x_ << " " << y_;
-
+        z++;
     }
 
     shader.create();

@@ -111,7 +111,7 @@ void ShaderProgram::Builder::build() {
     fragment += header_fragment;
     fragment += "\nvoid main() {\n\n";
     fragment += body_fragment;
-    fragment += "\n\tif (eNGINE.fps<60)COLOR+=vec4(mod(eNGINE.frame,10)*.05,0,0,1);\n\n";
+    // fragment += "\n\tif (eNGINE.fps<60)COLOR+=vec4(mod(eNGINE.frame,10)*.05,0,0,1);\n\n";
     fragment += "}\n////////////";
 
 }

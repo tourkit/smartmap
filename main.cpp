@@ -17,16 +17,14 @@ int main() {
 
     UberLayer ubl;
 
-    ubl.fb.texture->destroy();
-    ubl.fb.texture->create(ubl.fb.texture->width,ubl.fb.texture->height,1,ubl.fb.texture->mipmaps,ubl.fb.texture->informat,ubl.fb.texture->outformat);
-
-    ubl.addLayer(1920,1080).s.quantity(7);
+    ubl.addLayer(1920,1080).s.quantity(10);
 
     ubl.calc_matrice(nullptr);
+    ubl.fb.texture->bind(3);
 
-    auto ub_ = engine.tree->addPtr<UberLayer>(&ubl);
+    auto ubl_ = engine.tree->addPtr<UberLayer>(&ubl);
 
-    ub_->active(true);
+    ubl_->active(true);
 
     auto &l1 = *ubl.layers.begin();
 
@@ -34,22 +32,17 @@ int main() {
 
     engine.open("project.json");
 
-    ub_->referings.insert(engine.inputs->childrens[0]->childrens[1]);
-
+    // ubl_->referings.insert(engine.inputs->childrens[0]->childrens[1]);
 
     l1 = *ubl.layers.begin();
     l1.addEffector(engine.effectors->child("argb")->is_a<File>());
     l1.addEffector(engine.effectors->child("rectangle")->is_a<File>());
     l1.addEffector(engine.effectors->child("feedback")->is_a<File>());
     engine.stack->trigchange();
-
+    engine.static_ubo.upload();
     engine.run();
 
 }
-
-// fix static layer count
-
-// merge uber layers
 
 // fine feedback
 

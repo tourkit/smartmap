@@ -21,7 +21,7 @@ struct Layer : DrawCall {
 
 struct UberLayer : Layer {
 
-    static inline Struct &layer_def = Struct::create("Layer", 0).add<glm::vec2>("size").add<glm::vec2>("pos").add<glm::vec2>("pos_morm");
+    static inline Struct &layer_def = Struct::create("Layer", 0).add<glm::vec2>("size").add<glm::vec2>("pos").add<glm::vec2>("pos_norm");
 
     Instance* glsl_layers;
 

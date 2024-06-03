@@ -382,7 +382,7 @@ void Engine::open(const char* file) {
 
             auto &an = *an_->get();
 
-            if (arr.Size() < 2 || !arr[1].IsObject()) continue;
+            if (arr.Size() < 2 || !arr[1].IsObject()) { PLOGW << json_error; continue; }
 
             for (auto &remap : arr[1].GetObj()) {
 
@@ -397,14 +397,22 @@ void Engine::open(const char* file) {
 
                 Instance inst(&engine.dynamic_ubo);
 
+                bool continue_ = false;
                 for (auto name : split(arr[2].GetString())) {
 
                         inst = inst[name];
 
-                        if (!inst.def()) { PLOGW << json_error; return; }
-                }
+                        if (!inst.def()) {
 
-                if (inst.def() == inst.buff) { PLOGW << json_error; return; }
+                            PLOGW << json_error;
+                             continue_ = true;
+                             break;
+
+                        }
+                }
+                if (continue_) continue;
+
+                if (inst.def() == inst.buff) { PLOGW << json_error; continue; }
 
                 auto &uni = an.universe(arr[0].GetInt()).instances[0];
 
