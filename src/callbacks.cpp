@@ -157,7 +157,7 @@ void Callbacks::init() {
 
         if (file->extension == "glsl") return _this->addPtr<Effector>( _this->is_a<Layer>()->addEffector(file) )->node();
 
-        return _this->addPtr<Model>(_this->is_a<Layer>()->add( file ))->node();
+        return _this->addPtr<Model>(_this->is_a<Layer>()->addModel( file ))->node();
 
         });
 
@@ -183,10 +183,10 @@ void Callbacks::init() {
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
         auto dc = node->parent()->is_a<DrawCall>();
-        if (dc) dc->remove(model);
+        if (dc) dc->removeModel(model);
 
         auto layer = node->parent()->is_a<Layer>();
-        if (layer) layer->remove(model);
+        if (layer) layer->removeModel(model);
 
     });
 

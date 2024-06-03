@@ -461,7 +461,7 @@ void Engine::open(const char* file) {
 
                 if (arr.Size() < 3 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsString()) { PLOGW << json_error; continue; }
 
-                // should find (Layer/Model/Effector aka Renderable) node(aka "w" down there) (then get Member path)
+                // should find (Layer/Model/Effector aka Effectable) node(aka "w" down there) (then get Member path)
 
                 Instance inst(&engine.dynamic_ubo);
 

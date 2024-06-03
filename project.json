@@ -14,7 +14,7 @@
     "artnet": { "ArtNet": [ "2.0.0.991", {  } ] }
   },
   "layers": {
-    "layernonono": [ 1920, 1080, { "quad": [ "quad.obj", 1] }, { "argb": "argb.glsl"} ]
+    "layernonono": [ 1920, 1080, { "quad": [ "quad.obj", 1] }, { "argb(1,0,1,0)": "argb.glsl"} ]
   },
   "uberlayers": {
 

@@ -27,7 +27,7 @@ struct UberLayer : Layer {
 
     Instance* glsl_layers;
 
-    struct VLayer : Renderable {
+    struct VLayer : Effectable {
 
         VLayer(int w, int h, int id = 0) : w(w), h(h), id(id) { s.name("layer"+std::to_string(id)); }
 

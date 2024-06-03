@@ -7,14 +7,14 @@
 
 
 
-bool Renderable::removeEffector(Effector* effector) {
+bool Effectable::removeEffector(Effector* effector) {
 
     return std::erase_if( effectors, [&](std::shared_ptr<Effector> e) { return e.get() == effector; });
 
 }
 
 
-Effector* Renderable::addEffector(File* file) {
+Effector* Effectable::addEffector(File* file) {
 
     if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return nullptr;}
 
@@ -26,17 +26,19 @@ Effector* Renderable::addEffector(File* file) {
 
 }
 
-Model* SuperRenderable::addModel(File* f) {
+Model* Modelable::addModel(File* f) {
 
     auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
 
     s.add(&mod->s);
 
+    vbo.add(f, s.size()) ;
+
     return mod;
 
 }
 
-bool SuperRenderable::removeModel(Model* model){ return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; }); }
+bool Modelable::removeModel(Model* model){ return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; }); }
 
 
 ///////// LayerBuilder ////
@@ -192,38 +194,6 @@ void DrawCall::draw() {
 
 }
 
-bool DrawCall::removeEffector(Effector* effector) {
-
-    return std::erase_if( effectors, [&](std::shared_ptr<Effector> e) { return e.get() == effector; });
-
-}
-
-
-Effector* DrawCall::addEffector(File* file) {
-
-    if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return nullptr;}
-
-    auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
-
-    s.add(&effector->ref);
-
-    return effector;
-
-}
-
-Model* DrawCall::add(File* f) {
-
-    auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
-
-    s.add(&mod->s);
-
-    vbo.add(f, s.size()) ;
-
-    return mod;
-
-}
-
-bool DrawCall::remove(Model* model){ return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; }); }
 
 void DrawCall::update() {
 
