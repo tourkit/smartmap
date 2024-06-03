@@ -281,6 +281,7 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     sendUniform("medias", 1);
     sendUniform("render_pass", 2);
+    sendUniform("uberlayer", 3);
 
     loaded = true;
 

@@ -11,15 +11,16 @@ Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum i
 }
 
 void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+    destroy();
     this->unit = unit;
     this->informat = informat;
     this->outformat = outformat;
     this->mipmaps = mipmaps;
     create( width, height);
 };
-void Texture::create(GLuint width, GLuint height) {
 
-    destroy();
+void Texture::reset() { destroy();create( width, height); }
+void Texture::create(GLuint width, GLuint height) {
 
     this->width = width;
     this->height = height;
@@ -59,7 +60,9 @@ Texture::Texture(std::string path)   {
 
     create(img.width, img.height,0,1,GL_RGB8,GL_RGB);
 
-    write(&img.data[0], img.width, img.height,0, 0,0,1,GL_RGB8,GL_RGB);
+    write(&img.
+
+    data[0], img.width, img.height,0, 0,0,1,GL_RGB8,GL_RGB);
 
  }
 
@@ -82,6 +85,8 @@ void Texture::addImage(std::string path, GLuint offset_x, GLuint offset_y) {
 Texture::~Texture() { destroy(); }
 
 void Texture::destroy() {
+
+    glActiveTexture(GL_TEXTURE0+unit);
 
     if (id) glDeleteTextures(1, &id);
 

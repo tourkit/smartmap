@@ -654,7 +654,13 @@ void Editors::init() {
             ImGui::Text(str.c_str());
             ImGui::PopStyleColor();
 
+            if (ImGui::BeginPopupContextItem(("##dsfgsdf"+std::to_string(count)).c_str())) {
 
+                if (ImGui::Button("copy" )) { ImGui::SetClipboardText(str.c_str()); ImGui::CloseCurrentPopup(); }
+
+                ImGui::EndPopup();
+
+            }
         }
     });
 

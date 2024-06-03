@@ -72,6 +72,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
     header_fragment += "uniform sampler2D medias;\n\n";
     header_fragment += "uniform sampler2D render_pass;\n\n";
+    header_fragment += "uniform sampler2D uberlayer;\n\n";
 
     header_fragment += "in vec2 NORMALIZED;\n\n";
     header_fragment += "in vec2 UV;\n\n";
@@ -168,7 +169,7 @@ void Layer::ShaderProgramBuilder::vert() {
     body_vertex.clear();
     body_vertex += "\tNORMALIZED = NORMALIZED_;\n\n";
     body_vertex += "\tUV = UV_;\n\n";
-    body_vertex += "\tUV.y = 1-UV.y;\n\n";
+    //body_vertex += "\tUV.y = 1-UV.y;\n\n";
     body_vertex += "\tOBJ = int(OBJ_);\n\n";
     body_vertex += "\tID = gl_InstanceID;\n\n";
     body_vertex += "\t// vec2 pos = POSITION*layer[ID].size+layer[ID].pos;\n\n";

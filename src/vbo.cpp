@@ -177,7 +177,7 @@ bool VBO::add_noupload(File* file, int id) {
 
         v["POSITION"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["NORMALIZED"].set<glm::vec2>({ vertex.x, vertex.y });
+        v["NORMALIZED"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
         v["ID"].set<uint32_t>(id);
 
     }

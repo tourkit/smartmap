@@ -34,7 +34,7 @@ struct Texture {
     void bind();
 
     void destroy();
-
+    void reset();
     void clear();
 
     operator GLuint();

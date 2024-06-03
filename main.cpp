@@ -9,17 +9,16 @@
 #include "layer.hpp"
 #include "utils.hpp"
 #include "artnet.hpp"
-
-
-
-
-
+#include "texture.hpp"
 
 int main() {
 
     engine.init();
 
     UberLayer ubl;
+
+    ubl.fb.texture->destroy();
+    ubl.fb.texture->create(ubl.fb.texture->width,ubl.fb.texture->height,1,ubl.fb.texture->mipmaps,ubl.fb.texture->informat,ubl.fb.texture->outformat);
 
     ubl.addLayer(1920,1080).s.quantity(7);
 
@@ -39,15 +38,22 @@ int main() {
 
 
     l1 = *ubl.layers.begin();
-    l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
-    l1.addEffector(engine.effectors->childrens[3]->is_a<File>());
-    l1.addEffector(engine.effectors->childrens[2]->is_a<File>());
+    l1.addEffector(engine.effectors->child("argb")->is_a<File>());
+    l1.addEffector(engine.effectors->child("rectangle")->is_a<File>());
+    l1.addEffector(engine.effectors->child("feedback")->is_a<File>());
     engine.stack->trigchange();
 
     engine.run();
 
 }
 
+// fix static layer count
+
+// merge uber layers
+
+// fine feedback
+
+// glsl rotate
 
 // artnet output
 
