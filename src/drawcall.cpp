@@ -51,15 +51,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     effectors.clear();
 
-    for (auto dc_ : engine.stack->childrens) {
+    if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) ADD_UNIQUE<File*>(effectors, effector->file);
 
-        auto dc = dc_->is_a<Layer>();
-
-        for (auto &model : dc->models) for (auto &effector : model.get()->effectors) ADD_UNIQUE<File*>(effectors, effector->file);
-
-        for (auto &effector : dc->effectors) ADD_UNIQUE<File*>(effectors, effector->file);
-
-    }
+    if(dc) for (auto &effector : dc->effectors) ADD_UNIQUE<File*>(effectors, effector->file);
 
     ShaderProgram::Builder::build();
 

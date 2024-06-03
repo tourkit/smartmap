@@ -24,8 +24,6 @@ int main() {
 
 }
 
-// json uberlayer
-
 // fine feedback
 
 // glsl rotate

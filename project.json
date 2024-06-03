@@ -13,7 +13,9 @@
   "inputs": {
     "artnet": { "ArtNet": [ "2.0.0.991", {  } ] }
   },
-
+  "layers": {
+    "layernonono": [ 1920, 1080, { "quad": [ "quad.obj", 1] }, { "argb": "argb.glsl"} ]
+  },
   "uberlayers": {
 
     "ubersmart1": { "smartlayer1" : [ 1920, 1080, 10,  { "argb": "argb.glsl", "rectangle": "rectangle.glsl", "feedback": "feedback.glsl" } ] }
