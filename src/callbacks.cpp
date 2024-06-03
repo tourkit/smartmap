@@ -103,6 +103,7 @@ void Callbacks::init() {
     ////////// ENGINE.HPP (and Stack)
 
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){ auto x = _this->addOwnr<Layer>(); x->add(node); return x->node(); });
+    // NODE<Stack>::onadd<UberLayer>([](Node*_this,Node*node){ return _this; });
 
     NODE<Stack>::onchange([](Node*node,Stack*stack){
 
@@ -130,6 +131,17 @@ void Callbacks::init() {
 
     NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
     NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ node->name(layer->s.name()); });
+    // NODE<UberLayer::VLayer>::onadd<File>([](Node*_this,Node*node){
+
+    //     auto file = node->is_a<File>();
+
+    //     auto x =  _this->is_a<UberLayer::VLayer>()->addEffector( file )  ;
+
+    //     if (!x) return _this;
+
+    //     return _this->addPtr<Effector>( x )->node();
+
+    // });
 
     ////////// DRAWCALL.HPP
 
@@ -148,6 +160,7 @@ void Callbacks::init() {
         return _this->addPtr<Model>(_this->is_a<Layer>()->add( file ))->node();
 
         });
+
 
     ////////// MODEL.HPP
 

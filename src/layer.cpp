@@ -40,6 +40,8 @@ UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
 
         layer_def.striding(true);
 
+        // fb.texture->bind(3);
+
     }
 
     engine.static_ubo.add(&layer_def);
@@ -59,7 +61,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
     auto layers = this->layers;
 
-    std::sort( layers.begin(), layers.end(), [](auto a,auto b){ return a.h > b.h; } );
+    std::sort( layers.begin(), layers.end(), [](auto a,auto b){ return a.get()->h > b.get()->h; } );
 
     auto first_of_line = layers.begin();
 
@@ -72,13 +74,13 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
     for (auto it = layers.begin(); it != layers.end(); it++ ) {
 
-        for (int i = 0 ; i < it->s.quantity(); i++) {
+        for (int i = 0 ; i < it->get()->s.quantity(); i++) {
 
-     matrice.back().emplace_back( std::array<int,5>{it->w, it->h, last_x, last_y, count} );
+            matrice.back().emplace_back( std::array<int,5>{it->get()->w, it->get()->h, last_x, last_y, count} );
 
-            if (it->h > max_line_h) max_line_h = it->h;
+            if (it->get()->h > max_line_h) max_line_h = it->get()->h;
 
-            if (last_x+it->w > max_tex_size/2) { // beware /2 just for me
+            if (last_x+it->get()->w > max_tex_size/2) { // beware /2 just for me
 
                 matrice.resize( matrice.size()+1 );
                 last_y += max_line_h;
@@ -87,7 +89,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
             }else{
 
-                last_x += it->w;
+                last_x += it->get()->w;
 
             }
 
@@ -137,9 +139,11 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
 UberLayer::VLayer& UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
 
-    layers.emplace_back(w,h,layers.size());
+    layers.emplace_back(std::make_shared<UberLayer::VLayer>(w,h,layers.size()));
 
-    return layers.back();
+    engine.dynamic_ubo.add(&layers.back().get()->s);
+
+    return *layers.back().get();
 
 }
 
@@ -151,7 +155,7 @@ void UberLayer::ShaderProgramBuilder::build() {
     effectors.clear();
 
     for (auto &layer : ubl->layers)
-        for (auto effector : layer.effectors)
+        for (auto effector : layer.get()->effectors)
             ADD_UNIQUE<File*>(effectors, effector.get()->file);
 
     ShaderProgram::Builder::build();
@@ -196,7 +200,7 @@ static std::string print_layer(UberLayer::VLayer &layer) {
 
 void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::frag();
 
-    if (ubl->layers.size() == 1) body_fragment += print_layer(ubl->layers[0]);
+    if (ubl->layers.size() == 1) body_fragment += print_layer(*ubl->layers[0].get());
 
     else {
 
@@ -206,9 +210,9 @@ void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::f
 
             if (last_id) body_fragment += "\n} else ";
 
-            last_id += x.s.quantity();
+            last_id += x.get()->s.quantity();
 
-            body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer(x); ;
+            body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer(*x.get()); ;
 
         }
 

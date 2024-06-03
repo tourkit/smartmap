@@ -237,7 +237,7 @@ struct TypedNode : UntypedNode {
                 if (!n) return nullptr;
 
 
-            }
+            }//else PLOGD << n->name() << " ha no onadd_cb";
 
         }
 

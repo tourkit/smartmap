@@ -295,16 +295,84 @@ void Engine::open(const char* file) {
 
             new_model->get()->s.quantity(info[1].GetInt());
 
-            if (info.Size() < 3 || !info[2].IsObject()) { PLOGW << json_error; return; }
+            if (info.Size() < 3 || !info[2].IsObject()) return;
 
-            addEffectors( info[2], new_model->node() );
+            // addEffectors( info[2], new_model->node() );
 
         }
 
-        addEffectors( info[info.Size()-1], layer->node());
+        // addEffectors( info[info.Size()-1], layer->node());
 
         layer->update();
 
+
+    });
+    if_obj("uberlayers", [&](auto &l) {
+
+
+        if (!l.name.IsString() || !l.value.IsObject()) { PLOGW << json_error; return; }
+
+        auto ubl_ = stack->addOwnr<UberLayer>();
+        auto &ubl = *ubl_->get();
+
+        auto list = l.value.GetObj();
+
+        for (auto &x : list) {
+
+            if (!x.name.IsString() || !x.value.IsArray()) { PLOGW << json_error; continue; }
+
+            auto info = x.value.GetArray();
+
+            int width = window.width, height = window.height;
+
+            int effectors_id = 2;
+
+            int q = 1;
+
+            if (info.Size() > 1 && info[0].IsInt() && info[1].IsInt()) {
+
+                width = info[0].GetInt(); height = info[1].GetInt();
+
+                if (info.Size() > 2 && info[2].IsInt()) {
+
+                    q = info[2].GetInt() ;
+
+                    if (info.Size() > 3) effectors_id = 3;
+
+                }
+
+                auto &l = ubl.addLayer(width,height);
+
+                auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
+                l_->active(true)->name(x.name.GetString());
+
+                l.s.quantity(q);
+
+                if (info.Size() > effectors_id && info[effectors_id].IsObject()) {
+
+
+                    for (auto &e : info[effectors_id].GetObj()) {
+
+                        if (!e.name.IsString() || !e.value.IsString()) { PLOGW <<"weird fx"; continue;}
+
+                        Node* effector = nullptr;
+
+
+                        engine.effectors->each<File>([&](Node* n, File* f) { if (f->filename() == e.value.GetString()) effector = n; });
+
+                        if (effector) l_->addPtr<Effector>(l.addEffector(effector->is_a<File>()));
+
+                    }
+
+                    engine.stack->trigchange();
+
+                }
+
+            }
+
+        }
+
+        ubl.calc_matrice(nullptr);
 
     });
 

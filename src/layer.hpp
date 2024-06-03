@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "struct.hpp"
 #include "framebuffer.hpp"
 #include "vbo.hpp"
@@ -36,7 +38,7 @@ struct UberLayer : Layer {
     };
 
 
-    std::vector<VLayer> layers;
+    std::vector<std::shared_ptr<VLayer>> layers;
 
     int w ; int h;
 
