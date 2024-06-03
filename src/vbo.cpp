@@ -136,17 +136,15 @@ void VBO::addQuad(float w, float h, float x, float y, float id) {
 
     if (o) id = (*this)[0].eq(o-1)[0]["ID"].get<float>()+1;
 
-    auto x_ = x-w;
-    auto y_ = y-h;
-    auto w_ = x+w;
-    auto h_ = y+h;
+    auto x_ = x;
+    auto y_ = y;
+    auto w_ = (x+w);
+    auto h_ = (y+h);
 
-    struct Vert { float x, y, u, v; float id; };
-
-    (*this)[0].push()[0].set<Vert>({ x_ , y_ , 0, 1,  id});
-    (*this)[0].push()[0].set<Vert>({ w_ , y_ , 1, 1,  id});
-    (*this)[0].push()[0].set<Vert>({ x_ , h_ , 0, 0,  id});
-    (*this)[0].push()[0].set<Vert>({ w_ , h_ , 1, 0,  id});
+    (*this)[0].push()[0].set<std::array<float,7>>({ x_*2-1 , y_*2-1 , 0, 1, x_ , y_ ,  id});
+    (*this)[0].push()[0].set<std::array<float,7>>({ w_*2-1 , y_*2-1 , 1, 1, w_ , y_ ,  id});
+    (*this)[0].push()[0].set<std::array<float,7>>({ x_*2-1 , h_*2-1 , 0, 0, x_ , h_ ,  id});
+    (*this)[0].push()[0].set<std::array<float,7>>({ w_*2-1 , h_*2-1 , 1, 0, w_ , h_ ,  id});
 
     (*this)[1].push()[0].set<std::array<int,3>>({o+0,o+1,o+2});
     (*this)[1].push()[0].set<std::array<int,3>>({o+1,o+2,o+3});
@@ -177,8 +175,9 @@ bool VBO::add_noupload(File* file, int id) {
 
         auto v = (*this)[0].push()[0];
 
-        v["Position"].set<glm::vec2>({ vertex.x, vertex.y });
+        v["POSITION"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
+        v["NORMALIZED"].set<glm::vec2>({ vertex.x, vertex.y });
         v["ID"].set<uint32_t>(id);
 
     }

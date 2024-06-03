@@ -19,51 +19,35 @@ int main() {
 
     engine.init();
 
-    // UberLayer ubl;
+    UberLayer ubl;
 
-    // ubl.addLayer(1920,1080).s.quantity(7);
+    ubl.addLayer(1920,1080).s.quantity(7);
 
-    // ubl.calc_matrice(nullptr);
+    ubl.calc_matrice(nullptr);
 
-    // auto ub_ = engine.tree->addPtr<UberLayer>(&ubl);
+    auto ub_ = engine.tree->addPtr<UberLayer>(&ubl);
 
-    // ub_->active(true);
+    ub_->active(true);
 
-    // auto &l1 = *ubl.layers.begin();
+    auto &l1 = *ubl.layers.begin();
 
-    // engine.dynamic_ubo.add(&l1.s);
+    engine.dynamic_ubo.add(&l1.s);
 
     engine.open("project.json");
 
-    // ub_->referings.insert(engine.inputs->childrens[0]->childrens[1]);
+    ub_->referings.insert(engine.inputs->childrens[0]->childrens[1]);
 
 
-
-    logger.cout();
-
-    ShaderProgram::Builder builder;
-
-    PLOGD << "-------------------------";
-    PLOGD << builder.layout(&engine.dynamic_ubo);
-    PLOGD << "-------------------------";
-
-
-
-
-
-
-    // l1 = *ubl.layers.begin();
-    // l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
-    // l1.addEffector(engine.effectors->childrens[3]->is_a<File>());
-    // l1.addEffector(engine.effectors->childrens[2]->is_a<File>());
-    // engine.stack->trigchange();
+    l1 = *ubl.layers.begin();
+    l1.addEffector(engine.effectors->childrens[0]->is_a<File>());
+    l1.addEffector(engine.effectors->childrens[3]->is_a<File>());
+    l1.addEffector(engine.effectors->childrens[2]->is_a<File>());
+    engine.stack->trigchange();
 
     engine.run();
 
 }
 
-
-// linuxify a.k.a gl1.1 is the pb
 
 // artnet output
 

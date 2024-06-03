@@ -17,14 +17,14 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
 void Layer::draw() {
 
-    // if (feedback) { feedback->bind(); }
+    if (feedback) { feedback->bind(); }
 
     fb.bind();
     // engine.render_passes[0].bind();
 
     DrawCall::draw();
 
-    // if (feedback) { return feedback->read(fb.texture); }
+    if (feedback) { return feedback->read(fb.texture); }
 
 }
 
@@ -108,14 +108,14 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
         auto w = y[0] / matrice_width;
         auto h = y[1] / matrice_height;
-        auto x_ = y[2] / matrice_width *2-1+w;
-        auto y_ = y[3] / matrice_height *2-1+h;
+        auto x_ = y[2] / matrice_width;
+        auto y_ = y[3] / matrice_height;
 
         glsl_layers->eq(y[4]).set<glm::vec4>(glm::vec4(w, h, x_, y_));
 
         vbo.addQuad(w, h, x_, y_);
 
-        PLOGD << z++ << " - " << y[0] << " " << y[1] << " " << y[2] << " " << y[3];
+        // PLOGD << z++ << " - " << y[0] << " " << y[1] << " " << y[2] << " " << y[3];
         // PLOGD << z++ << " - "  << w << " " << h << " " << x_ << " " << y_;
 
     }

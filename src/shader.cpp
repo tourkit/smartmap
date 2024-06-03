@@ -123,10 +123,14 @@ void ShaderProgram::Builder::vert() { body_vertex.clear(); }
 
 std::string ShaderProgram::Builder::define(Member* member) {
 
+    if (!member->size()) return "";
+
     std::string out;
 
     out+="struct "+list[member]+" {\n";
     for (auto x : member->members) {
+
+        if (!x->size()) continue;
 
         out+="\t"+(list.find(x)!=list.end()?list[x]:x->type_name())+" "+lower(x->name());
         if (x->quantity()>1) out += "["+std::to_string(x->quantity())+"]";

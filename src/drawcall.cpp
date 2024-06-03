@@ -73,6 +73,7 @@ void Layer::ShaderProgramBuilder::frag() {
     header_fragment += "uniform sampler2D medias;\n\n";
     header_fragment += "uniform sampler2D render_pass;\n\n";
 
+    header_fragment += "in vec2 NORMALIZED;\n\n";
     header_fragment += "in vec2 UV;\n\n";
     header_fragment += "out vec4 COLOR;\n\n";
     header_fragment += "in flat int ID;\n\n";
@@ -156,13 +157,16 @@ void Layer::ShaderProgramBuilder::vert() {
 
     header_vertex += "layout (location = 0) in vec2 POSITION;\n";
     header_vertex += "layout (location = 1) in vec2 UV_;\n";
-    header_vertex += "layout (location = 2) in float OBJ_;\n\n";
+    header_vertex += "layout (location = 2) in vec2 NORMALIZED_;\n";
+    header_vertex += "layout (location = 3) in float OBJ_;\n\n";
 
+    header_vertex += "out vec2 NORMALIZED;\n\n";
     header_vertex += "out vec2 UV;\n\n";
-    header_vertex += "out int ID;\n\n";
-    header_vertex += "out int OBJ;\n\n";
+    header_vertex += "out flat int ID;\n\n";
+    header_vertex += "out flat int OBJ;\n\n";
 
     body_vertex.clear();
+    body_vertex += "\tNORMALIZED = NORMALIZED_;\n\n";
     body_vertex += "\tUV = UV_;\n\n";
     body_vertex += "\tUV.y = 1-UV.y;\n\n";
     body_vertex += "\tOBJ = int(OBJ_);\n\n";

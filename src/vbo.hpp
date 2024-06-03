@@ -13,7 +13,7 @@ struct VBO : Buffer {
 
     static inline struct Quad : File { Quad() { data = "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"; } } quad;
 
-    static inline Struct *vertice = &Struct::create("Vertice").add<glm::vec2>("Position").range(-1,1,0).add<glm::vec2>("UV").add<float>("ID");
+    static inline Struct *vertice = &Struct::create("Vertice").add<glm::vec2>("POSITION").range(-1,1,0).add<glm::vec2>("UV").add<glm::vec2>("NORMALIZED").add<float>("ID");
 
     static inline Struct *indice = &Struct::create("Indice").add<int>("vert1").add<int>( "vert2").add<int>("vert3");
 
