@@ -420,13 +420,13 @@ void Editors::init() {
 
             if (!x.second.get()->instances.size()) continue;
 
-            auto &inst = x.second.get()->instances[0];
+            auto &inst = *x.second.get()->instances[0].get();
 
             str = "universe "+std::to_string(x.first) + " " + std::to_string(inst.offset) + " " + x.second.get()->name();
             ImGui::Text(str.c_str());
 
             ImGui::NewLine();
-            draw_raw(x.second.get()->instances[0].data(), 512);
+            draw_raw(x.second.get()->instances[0].get()->data(), 512);
             ImGui::NewLine();
 
         };

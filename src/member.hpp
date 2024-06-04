@@ -6,6 +6,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <memory>
 
 
 #include "glm/glm.hpp"
@@ -75,7 +76,7 @@ struct Member {
 
     std::vector<Member*> members;
 
-    std::vector<Instance> instances;
+    std::vector<std::shared_ptr<Instance>> instances;
 
     void* range_from_ptr = nullptr;
     void* range_to_ptr = nullptr;

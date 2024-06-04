@@ -160,6 +160,7 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
     std::string output;
 
     list.clear();
+    list[ubo] = camel(ubo->name());
 
     std::vector<Member*> order;
 
@@ -183,13 +184,15 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     for (auto x : order) output += define(x)+";\n";
 
-    output += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + " ";
+    output += define(ubo)+";\n";
 
-    auto s = define(ubo);
+    output += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + "_ ";
 
-    output += s.c_str()+s.find("{");
+    output += " { " + camel(ubo->name()) + " " + lower(ubo->name());
 
-    output += ";\n\n";
+    if (ubo->quantity()>1) output += "["+std::to_string(ubo->quantity())+"]";
+
+    output += + "; };\n\n\n";
 
     return output;
 

@@ -50,9 +50,9 @@ struct Instance {
 
     Instance& track() {
 
-        def()->instances.emplace_back(buff, offset, stl);
+        def()->instances.emplace_back(std::make_shared<Instance>(buff, offset, stl));
 
-        return def()->instances.back();
+        return *def()->instances.back().get();
 
     }
 
@@ -80,7 +80,7 @@ struct Instance {
 
         memcpy(data(), ptr, size);
 
-        for (auto &inst : def()->instances) for (auto r : inst.remaps) r->update();
+        for (auto &inst : def()->instances) for (auto r : inst.get()->remaps) r->update();
 
         return *this;
 

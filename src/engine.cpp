@@ -87,8 +87,8 @@ void Engine::init() {
 
 
 
-    std::string frag = "#version 430 core\n\nlayout (binding = 0, std140) uniform dynamic_ubo { int frame, fps, s0, s1; };\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); if (fps<60)COLOR+=vec4(mod(frame,10)*.05,0,0,1); }";
-    std::string vert = "#version 430 core\n\nlayout (binding = 0, std140) uniform dynamic_ubo { int frame, fps, s0, s1; };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
+    std::string frag = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); if (fps<60)COLOR+=vec4(mod(frame,10)*.05,0,0,1); }";
+    std::string vert = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
     shader = new ShaderProgram(frag,vert);
 
     vbo = new VBO();
@@ -156,15 +156,19 @@ void Engine::run() {
     while (!glfwWindowShouldClose(window.id)) window.render([](){
 
         static int frame = 0;
-        memcpy(engine.dynamic_ubo.data.data(), &(frame), sizeof(int)); // aka engine.dynamic_ubo["ENGINE"]["frame"]
+        memcpy(engine.dynamic_ubo.data.data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
         int fps = std::round(ImGui::GetIO().Framerate);
-        memcpy(engine.dynamic_ubo.data.data()+4, &fps, sizeof(float)); // aka engine.dynamic_ubo["ENGINE"]["fps"]
+        memcpy(engine.dynamic_ubo.data.data()+4, &fps, 4); // aka engine.dynamic_ubo["ENGINE"]["fps"]
+        int alt = frame % 2;
+        memcpy(engine.dynamic_ubo.data.data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
+
         frame = (frame+1) % 1000;
 
-        static Instance& dynubo1 = Instance(&engine.dynamic_ubo).track();
         static Instance& dynubo2 = Instance(&engine.dynamic_ubo).eq(1).track();
 
-        engine.dynamic_ubo.upload(dynubo1.data(),dynubo2.offset);
+        int offset = 0;
+        if (alt) offset = dynubo2.offset;
+        engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data()+offset,dynubo2.offset,offset);
 
         engine.atlas->texture->bind();
 
@@ -512,7 +516,7 @@ void Engine::open(const char* file) {
 
                 if (inst.def() == inst.buff) { PLOGW << json_error; continue; }
 
-                auto &uni = an.universe(arr[0].GetInt()).instances[0];
+                auto &uni = *an.universe(arr[0].GetInt()).instances[0].get();
 
                 std::vector<DMXRemap::Attribute> attrs;
                 if ( arr.Size() > 3 && arr[3].IsArray() ) for (auto &x : arr[3].GetArray()) if (x.IsInt()) attrs.push_back({x.GetInt()});

@@ -149,7 +149,7 @@ void Artnet::connect(std::string ip_) {
 
         int uni_id = p->data.admx.universe;
 
-        auto &u = an->universe(uni_id).instances[0];
+        auto &u = *an->universe(uni_id).instances[0].get();
 
         u.set<std::array<char,512>>(p->data.admx.data);
 

@@ -70,7 +70,7 @@ struct Engine {
 
     static void Draw2D(Texture* texture);
 
-    static inline Struct& glsl_data = Struct::create("ENGINE").add<int>("frame").add<int>("fps");
+    static inline Struct& glsl_data = Struct::create("ENGINE").add<int>("frame").add<int>("fps").add<int>("alt");
     Struct layers_s;
 
     bool COND = false;

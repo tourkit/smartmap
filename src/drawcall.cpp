@@ -110,7 +110,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
                 for (auto &arg : Effector::get(effector.get()->file).args) {
 
-                    arg_str += dc->s.name()+"."+lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
+                    arg_str += "dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+dc->s.name()+"."+lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
 
                 }
 

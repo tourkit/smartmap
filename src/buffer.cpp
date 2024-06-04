@@ -104,9 +104,9 @@ void Buffer::update() {
 
         for (auto &x : inst.def()->instances) {
 
-            if (x.buff == inst.buff && x.stl == inst.stl) {
+            if (x.get()->buff == inst.buff && x.get()->stl == inst.stl) {
                 // int y = inst.eq_id;
-                x.offset = inst.offset;
+                x.get()->offset = inst.offset;
 
             }
 
