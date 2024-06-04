@@ -11,7 +11,6 @@
 int main() {
 
     engine.init();
-    // logger.cout();
 
     engine.open("project.json");
 

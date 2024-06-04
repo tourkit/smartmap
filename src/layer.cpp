@@ -42,8 +42,6 @@ UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
 
         layer_def.striding(true);
 
-        fb.texture->bind(3);
-
     }
 
     engine.static_ubo.add(&layer_def);

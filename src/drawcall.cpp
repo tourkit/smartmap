@@ -81,6 +81,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
     header_fragment += "vec2 uv = UV;\n\n";
     header_fragment += "vec4 color = vec4(0);\n\n";
+    header_fragment += "float aspect_ratio = 1;\n\n";
 
     int model_id = 0;
 

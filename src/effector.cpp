@@ -23,6 +23,7 @@ void Effector::init(File* file) {
     std::smatch match;
 
 
+    // fetch defaul values a.k.a // xxx(min,max,def)
     int range_count = 0;
     std::string source = data;
     std::regex regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*)?)?)?\))");
@@ -40,17 +41,24 @@ void Effector::init(File* file) {
     }
 
 
-    if (std::regex_search(source, match, std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))"))) {
 
+    regex = std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))");
+    for (std::sregex_iterator it(source.begin(), source.end(), regex), end; it != end; ++it) {
+        std::smatch match = *it;
+
+        std::string nameStr = match[1].str();
+        if (strcmp(nameStr.c_str(),file->name().c_str())) continue;
         std::string argsStr = match[2].str();
 
         std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
-        std::sregex_iterator iter(argsStr.begin(), argsStr.end(), regex);
-        std::sregex_iterator end;
-        while (iter != end) {
-            def.args.push_back({(*iter)[1].str(),(*iter)[2].str()});
-            ++iter;
+        std::sregex_iterator it_(argsStr.begin(), argsStr.end(), regex);
+        std::sregex_iterator end_;
+        while (it_ != end_) {
+            def.args.push_back({(*it_)[1].str(),(*it_)[2].str()});
+            ++it_;
         }
+
+        break;
     }
 
     def.s.name( file->name() );
@@ -90,7 +98,7 @@ std::string Effector::source(File* file) {
 
     out_code.resize(out_code.find_last_of("}")+1);
 
-    return out_code.c_str()+out_code.find("void");
+    return out_code;
 
 
 }
