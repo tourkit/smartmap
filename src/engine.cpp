@@ -30,6 +30,15 @@ extern "C" {
 
 Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo"),layers_s("Layer") {
 
+    glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
+    glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
+    PLOGD << "GL_VERSION                 : " << gl_major_version << "." << gl_minor_version;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &gl_max_texture_size);
+    PLOGD << "GL_MAX_TEXTURE_SIZE        : " << gl_max_texture_size << " x " << gl_max_texture_size;
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
+    PLOGD << "GL_MAX_TEXTURE_IMAGE_UNITS : " << gl_max_texture_image_units;
+
+
     glsl_data.striding(true);
 
     render_passes.reserve(10);
@@ -64,10 +73,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
 
     tree = new Node("tree");
 
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &gl_max_texture_size);
-    PLOGI << "GL_MAX_TEXTURE_SIZE : " << gl_max_texture_size << "px";
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
-    PLOGI << "GL_MAX_TEXTURE_IMAGE_UNITS : " << gl_max_texture_image_units << "px";
 
 }
 
@@ -589,7 +594,8 @@ void Engine::save(const char* file) {
 
         auto  lay = rapidjson::Value(rapidjson::kArrayType);
 
-        auto layer = m->is_a<Layer>();
+        auto layer = m->is_a_nowarning<Layer>();
+        if (!layer) return;
         lay.PushBack(layer->fb.width, allocator);
         lay.PushBack(layer->fb.height, allocator);
 

@@ -854,10 +854,6 @@ void Editors::init() {
             glGetIntegerv(GL_MINOR_VERSION,  &min);
         }
 
-    ImGui::Text(("openGL version "+std::to_string(maj)+"."+std::to_string(min)).c_str());
-
-        ImGui::Separator();
-
     });
 
     ////////// FRAMEBUFFER.HPP

@@ -77,7 +77,8 @@ struct Engine {
 
 
 
-    GLint gl_max_texture_size,gl_max_texture_image_units;
+    GLint gl_max_texture_size,gl_max_texture_image_units, gl_major_version, gl_minor_version;
+
 
 private:
 

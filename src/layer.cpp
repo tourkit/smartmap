@@ -219,7 +219,7 @@ void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::f
 
         }
 
-        body_fragment += "\n}\n";
+        if (ubl->layers.size()) body_fragment += "\n}\n";
 
     }
 
