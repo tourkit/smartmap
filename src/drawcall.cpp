@@ -4,8 +4,11 @@
 #include "utils.hpp"
 #include "layer.hpp"
 
+#include "effector.hpp"
+#include "model.hpp"
 
 
+Effectable::Effectable(std::string name) : s(name) {  }
 
 bool Effectable::removeEffector(Effector* effector) {
 

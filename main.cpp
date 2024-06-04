@@ -11,8 +11,8 @@
 #include "artnet.hpp"
 #include "texture.hpp"
 
-int main() {
 
+int main() {
 
     engine.init();
 

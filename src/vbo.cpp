@@ -112,11 +112,11 @@ void VBO::upload() {
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_size, data.data() + v_size , GL_STATIC_DRAW );
 
-    std::string str;
-    str += "ID " + std::to_string(vbo) + " - ";
-    str += std::to_string(v_size) + " : ";
-    for (int i = 0 ; i < v_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i)) + " "; }
-    PLOGV << str;
+    // std::string str;
+    // str += "ID " + std::to_string(vbo) + " - ";
+    // str += std::to_string(v_size) + " : ";
+    // for (int i = 0 ; i < v_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i)) + " "; }
+    // PLOGV << str;
 
 }
 

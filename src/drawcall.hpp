@@ -6,11 +6,13 @@
 #include <vector>
 #include <cstring>
 
+struct Effector;
+struct Model;
 struct Effectable {
 
     Struct s;
 
-    Effectable(std::string name = "sdfklg" ) : s(name) { }
+    Effectable(std::string name = "sdfklg" );
 
     std::vector<std::shared_ptr<Effector>> effectors;
     Effector* addEffector(File* f); // kinda ctor for effectors
@@ -21,6 +23,8 @@ struct Effectable {
 struct Modelable : Effectable {
 
     VBO vbo;
+
+    using Effectable::Effectable;
 
     std::vector<std::shared_ptr<Model>> models;
     Model* addModel(File* f); // kinda ctor for Model

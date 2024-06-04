@@ -202,7 +202,7 @@ void Callbacks::init() {
 
         if (!model) { node->parent()->is_a<Layer>()->removeEffector(effector); return ;}
 
-        model->remove(effector);
+        model->removeEffector(effector);
 
     });
 

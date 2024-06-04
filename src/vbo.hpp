@@ -2,7 +2,6 @@
 
 #include "buffer.hpp"
 #include "instance.hpp"
-#include "model.hpp"
 
 #include <cstdint>
 #include <list>

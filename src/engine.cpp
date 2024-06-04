@@ -297,11 +297,11 @@ void Engine::open(const char* file) {
 
             if (info.Size() < 3 || !info[2].IsObject()) return;
 
-            // addEffectors( info[2], new_model->node() );
+            addEffectors( info[2], new_model->node() );
 
         }
 
-        // addEffectors( info[info.Size()-1], layer->node());
+        addEffectors( info[info.Size()-1], layer->node());
 
         layer->update();
 

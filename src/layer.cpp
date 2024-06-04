@@ -4,6 +4,8 @@
 #include "utils.hpp"
 
 
+#include "effector.hpp"
+#include "model.hpp"
 
 ///////// Layer ////
 
@@ -137,11 +139,15 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
 }
 
-UberLayer::VLayer& UberLayer::addLayer(int w , int h) { // kinda ctor for VLaye
+UberLayer::VLayer& UberLayer::addLayer(int w , int h) {
 
     layers.emplace_back(std::make_shared<UberLayer::VLayer>(w,h,layers.size()));
 
-    engine.dynamic_ubo.add(&layers.back().get()->s);
+    auto &l = *layers.back().get();
+
+    l.s.name("layer"+std::to_string(l.id));
+
+    s.add(&l.s);
 
     return *layers.back().get();
 
@@ -162,7 +168,7 @@ void UberLayer::ShaderProgramBuilder::build() {
 
 }
 
-static std::string print_layer(UberLayer::VLayer &layer) {
+std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &layer) {
 
     std::vector<Effector*> unique;
 
@@ -183,7 +189,7 @@ static std::string print_layer(UberLayer::VLayer &layer) {
 
         for (auto &arg : Effector::get(effector->file).args) {
 
-            arg_str += lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
+            arg_str += lower(ubl->s.name())+"."+lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
 
         }
 

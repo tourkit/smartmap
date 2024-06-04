@@ -8,22 +8,15 @@ struct Effector;
 
 #include "struct.hpp"
 #include "effector.hpp"
+#include "drawcall.hpp"
 
-struct Model {
+struct Model : Modelable {
 
     File* file;
-
-    Struct s;
 
     Model(File* f, std::string name);
 
     ~Model();
-
-    Effector* addEffector(File* file);
-
-    bool remove(Effector* effector);
-
-    std::vector<std::shared_ptr<Effector>> effectors;
 
     static void convert(File* model, std::string type);
 

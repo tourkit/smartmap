@@ -8,24 +8,9 @@
 #include <assimp/postprocess.h>
 
 
-Model::Model(File* f, std::string name) : s(name), file(f) {  };
+Model::Model(File* f, std::string name) : Modelable(name), file(f) {  };
 
 Model::~Model() { }
-
-bool Model::remove(Effector* effector) { return std::erase_if( effectors, [&](std::shared_ptr<Effector> e) { return e.get() == effector; }); }
-
-Effector* Model::addEffector(File* file) {
-
-    if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return nullptr;}
-
-    auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
-
-    s.add(&effector->ref);
-
-    return effector;
-
-}
-
 
 void Model::convert(File* file, std::string type) {
 

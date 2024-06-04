@@ -29,7 +29,7 @@ struct UberLayer : Layer {
 
     struct VLayer : Effectable {
 
-        VLayer(int w, int h, int id = 0) : w(w), h(h), id(id) { s.name("layer"+std::to_string(id)); }
+        VLayer(int w, int h, int id = 0) : w(w), h(h), id(id) {  }
 
         int w ;
         int h;
@@ -55,6 +55,8 @@ struct UberLayer : Layer {
         void build() override;
         void frag() override;
         void vert() override;
+
+        std::string print_layer(UberLayer::VLayer &layer);
 
         UberLayer* ubl;
 
