@@ -4,13 +4,7 @@
 
                         */
 
-#include "log.hpp"
 #include "engine.hpp"
-#include "layer.hpp"
-#include "utils.hpp"
-#include "artnet.hpp"
-#include "texture.hpp"
-
 
 int main() {
 

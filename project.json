@@ -14,7 +14,7 @@
     "artnet": { "ArtNet": [ "2.0.0.991", { "remap1": [ 0, 131, "layer1::quad", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ], "remap2": [ 0, 1, "UberLayer1::SmartLayer1", [ 1, 1, 1, 1, 2, 2, 2, 2, 1 ] ] } ] }
   },
   "layers": {
-    "layer1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, {} ]
+    "layer1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, { "feedback": "feedback.glsl" } ]
   },
   "uberlayers": {
     "UberLayer1": { "SmartLayer1": [ 1920, 1080, 10, { "argb": "argb.glsl", "rectangle": "rectangle.glsl", "feedback": "feedback.glsl" } ] }
