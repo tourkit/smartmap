@@ -325,6 +325,8 @@ void Engine::open(const char* file) {
         auto ubl_ = stack->addOwnr<UberLayer>();
         auto &ubl = *ubl_->get();
 
+        ubl_->name(l.name.GetString());
+
         auto list = l.value.GetObj();
 
         for (auto &x : list) {
@@ -588,14 +590,13 @@ void Engine::save(const char* file) {
     rapidjson::Document::AllocatorType& allocator = json.document.GetAllocator();
 
     json.document["layers"].RemoveAllMembers();
-    for (auto m : stack->childrens) {
+
+    stack->each<Layer>([&](Node* node, Layer* layer){
 
         auto &arr = json.document["layers"];
 
         auto  lay = rapidjson::Value(rapidjson::kArrayType);
 
-        auto layer = m->is_a_nowarning<Layer>();
-        if (!layer) return;
         lay.PushBack(layer->fb.width, allocator);
         lay.PushBack(layer->fb.height, allocator);
 
@@ -623,9 +624,38 @@ void Engine::save(const char* file) {
         for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );
         lay.PushBack( effects, allocator );
 
-        arr.AddMember( rapidjson::Value(m->name().c_str(), allocator)  , lay, allocator );
+        arr.AddMember( rapidjson::Value(node->name().c_str(), allocator)  , lay, allocator );
 
-    }
+    });
+
+
+    json.document["uberlayers"].RemoveAllMembers();
+
+    stack->each<UberLayer>([&](Node* node, UberLayer* ubl){
+
+        auto &arr = json.document["uberlayers"];
+
+        auto  ubl_ = rapidjson::Value(rapidjson::kObjectType);
+
+        for (auto layer : ubl->layers) {
+
+            auto  layer_ = rapidjson::Value(rapidjson::kArrayType);
+
+            layer_.PushBack(layer.get()->w, allocator);
+            layer_.PushBack(layer.get()->h, allocator);
+            layer_.PushBack(layer.get()->s.quantity(), allocator);
+
+            auto  effectors_ = rapidjson::Value(rapidjson::kObjectType);
+            for (auto e : layer->effectors) effectors_.AddMember( rapidjson::Value(e.get()->ref.name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );
+            layer_.PushBack(effectors_, allocator);
+
+            ubl_.AddMember(rapidjson::Value(layer.get()->s.name().c_str(), allocator)  , layer_, allocator);
+
+        }
+
+        arr.AddMember(rapidjson::Value(node->name().c_str(), allocator), ubl_, allocator);
+
+    });
 
     // json.document["inputs"].SetObject();
     // json.document["inputs"].RemoveAllMembers();

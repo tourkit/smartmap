@@ -125,12 +125,15 @@ void Callbacks::init() {
 
     ////////// UberLayer.HPP
 
-    NODE<UberLayer>::oncreate([](Node* node, UberLayer *ubl){ for (auto &x : ubl->layers) { node->addPtr<UberLayer::VLayer>(&x); } });
+    NODE<UberLayer>::oncreate([](Node* node, UberLayer *ubl){ NODE<Struct>::oncreate_cb(node, &ubl->s);  for (auto &x : ubl->layers) { node->addPtr<UberLayer::VLayer>(&x); } });
 
-
+    NODE<UberLayer>::onchange([](Node* node, UberLayer *ubl){ NODE<Struct>::onchange_cb(node, &ubl->s); /*ubl->update();*/ });
 
     NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
-    NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ node->name(layer->s.name()); });
+
+
+    NODE<UberLayer::VLayer>::onchange([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); });
+    NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); });
     // NODE<UberLayer::VLayer>::onadd<File>([](Node*_this,Node*node){
 
     //     auto file = node->is_a<File>();
@@ -147,9 +150,9 @@ void Callbacks::init() {
 
     NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
 
-    NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
-
     NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s);   layer->update(); });
+
+    NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
 
     NODE<Layer>::onadd<File>([](Node*_this,Node*node){
 

@@ -24,7 +24,6 @@ int main() {
 
 }
 
-// uber save
 
 // fine feedback
 
@@ -32,20 +31,10 @@ int main() {
 
 // artnet output
 
-// fine feedback
-
 // later gater :
 
-// ~save remap
+// deletion is fucked
 
 // static Effector should  update on file update
-
-// sort && thus add fx & models accordingly
-
-// timelines (thus player) maybeee
-
-// model editor about instance :) c ( engine.selected should be instance? inst is only members.)
-
-// drop remap
 
 // c# librehardwaremonitor set fanspeed@burne
