@@ -84,8 +84,10 @@ void Engine::init() {
 
     Editors::init();
 
-    std::string frag = "#version 430 core\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); }";
-    std::string vert = "#version 430 core\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
+
+
+    std::string frag = "#version 430 core\n\nlayout (binding = 0, std140) uniform dynamic_ubo { int frame, fps, s0, s1; };\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); if (fps<60)COLOR+=vec4(mod(frame,10)*.05,0,0,1); }";
+    std::string vert = "#version 430 core\n\nlayout (binding = 0, std140) uniform dynamic_ubo { int frame, fps, s0, s1; };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
     shader = new ShaderProgram(frag,vert);
 
     vbo = new VBO();
@@ -110,9 +112,9 @@ void Engine::init() {
 
     // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 
-    timelines = tree->addOwnr<Node>("Timelines")->node();
+    // timelines = tree->addOwnr<Node>("Timelines")->node();
 
-    remaps = tree->addOwnr<Node>("Remaps")->node();
+    // remaps = tree->addOwnr<Node>("Remaps")->node();
 
     inputs = tree->addOwnr<Node>("Inputs")->node()->active(1);
 
@@ -129,6 +131,24 @@ void Engine::init() {
 void Engine::run() {
 
     if (!engine.gui->editors.size()) engine.gui->editors.push_back(new EditorWidget());
+
+    if (!engine.models->childrens.size()) {
+
+        auto quad = engine.models->addPtr<File>( &VBO::quad );
+
+
+    //  auto x = engine.stack->addOwnr<Layer>();
+        // x->add(quad);
+
+    }
+
+    if (!engine.outputs->childrens.size()) {
+
+        auto win = engine.outputs->addPtr<Window>( &engine.window );
+        if (engine.stack->childrens.size()) win->get()->layer = engine.stack->childrens[0]->is_a<Layer>();
+
+    }
+
 
     auto &window = getInstance().window;
 
@@ -432,13 +452,6 @@ void Engine::open(const char* file) {
 
     });
 
-    if (!engine.outputs->childrens.size()) {
-
-        auto win = engine.outputs->addPtr<Window>( &engine.window );
-        if (engine.stack->childrens.size()) win->get()->layer = engine.stack->childrens[0]->is_a<Layer>();
-
-    }
-
 
     if_obj("inputs", [&](auto &m) {
 
@@ -551,10 +564,14 @@ void Engine::save() { save(project_filepath.c_str()); }
 
 void Engine::save(const char* file) {
 
+    if (!strlen(file)) { PLOGE << "No project file"; return;}
+
+
     if (!json.document.HasMember("editors")) json.document.AddMember("editors", rapidjson::Value(rapidjson::kArrayType), json.document.GetAllocator());
     if (!json.document.HasMember("models")) json.document.AddMember("models", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("effectors")) json.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("layers")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
+    if (!json.document.HasMember("uberlayers")) json.document.AddMember("uberlayers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("outputs")) json.document.AddMember("outputs", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
     if (!json.document.HasMember("remaps")) json.document.AddMember("remaps", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
 

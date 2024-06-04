@@ -52,7 +52,7 @@ void Atlas::fromDir(std::string path) {
 
     for (auto &file:dir.files) {
 
-        Image img(file.path);
+        Image img(file.path_v);
 
         if (!img.loaded) continue;
 

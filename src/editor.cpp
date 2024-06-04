@@ -678,11 +678,11 @@ void Editors::init() {
 
         char path[512];
         memset(path,0,512);
-        memcpy(path,file->path.c_str(),file->path.size());
+        memcpy(path,file->path_v.c_str(),file->path_v.size());
 
         if (ImGui::InputText("path", path, 512)) {
 
-            if (strcmp(path, file->path.c_str())) {
+            if (strcmp(path, file->path_v.c_str())) {
 
                 file->read(path);
 

@@ -208,7 +208,7 @@ void DrawCall::update() {
 
         if (x.get()->file->owned) continue;
 
-        auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::loc()) / x.get()->file->path);
+        auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::loc()) / x.get()->file->path_v);
 
         if (last_modified  < last_) { last_modified = last_; has_changed = true; }
 

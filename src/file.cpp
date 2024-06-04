@@ -20,13 +20,13 @@ static std::vector<std::string> explodefilename(std::string const & s, char deli
 
 File::File() { }
 
-File::File(std::string path, bool load) : path(path) { if (load) read(path, 0); }
+File::File(std::string path, bool load) { this->path(path); if (load) read(path, 0); }
 
 File::File(std::string path, const char* value) { owned = true; read(path, 0); loadString(value); }
 
 int64_t File::getTimeModified() {
 
-    auto last_modified_time = std::filesystem::last_write_time(std::filesystem::path(REPO_DIR) / path);
+    auto last_modified_time = std::filesystem::last_write_time(std::filesystem::path(REPO_DIR) / path_v);
 
     std::int64_t last_modified_ms = std::chrono::time_point_cast<std::chrono::nanoseconds>(last_modified_time).time_since_epoch().count();
 
@@ -34,9 +34,9 @@ int64_t File::getTimeModified() {
 
 }
 
-void File::update() { read(path); }
+void File::update() { read(path_v); }
 
-void File::reload() { read(path); }
+void File::reload() { read(path_v); }
 
 bool File::hasChanged() {
 
@@ -59,16 +59,9 @@ void File::name(std::string name) { name_v = name; }
 std::string File::location() { if (owned) return  "~"; return REPO_DIR+location_v; }
 
 void File::location(std::string location) { location_v = location; }
+void File::path(std::string path) {
 
-std::string File::filename() { return name_v + "." + extension; }
-
-void File::read(std::string path, bool binary){
-
-    this->path = path;
-
-    data.resize(0);
-
-    loaded = false;
+    path_v = path;
 
     name_v = std::filesystem::path(path).stem().filename().string();
 
@@ -78,6 +71,18 @@ void File::read(std::string path, bool binary){
     else PLOGW << "\"" << name_v << "\" has no extension";
 
     location_v = std::filesystem::path(path).parent_path().string();
+
+ }
+
+std::string File::filename() { return name_v + "." + extension; }
+
+void File::read(std::string path, bool binary){
+
+    data.resize(0);
+
+    loaded = false;
+
+    this->path(path);
 
     if (owned)  return;
 
@@ -131,7 +136,7 @@ void File::write(const char* data){
 
     if (!loaded) return;
 
-    File::write(path,data);
+    File::write(path_v,data);
 
     reload();
 

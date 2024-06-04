@@ -8,7 +8,7 @@
 
 struct File {
 
-    std::string name_v, path, location_v, extension;
+    std::string name_v, path_v, location_v, extension;
     std::string filename();
 
     std::string data;
@@ -42,6 +42,7 @@ struct File {
     std::string location();
 
     void location(std::string val);
+    void path(std::string val);
 
     void reload();
 

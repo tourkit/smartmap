@@ -189,7 +189,13 @@ using namespace ImGui;
 
         if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));
 
-        if (ImGui::MenuItem("editor")) engine.gui->editors.push_back(new EditorWidget());
+        if (ImGui::MenuItem("editor")) {
+
+            engine.gui->editors.push_back(new EditorWidget());
+            engine.gui->editors.back()->selected = node;
+            engine.gui->editors.back()->locked = true;
+
+        }
 
         ImGui::Checkbox("demo", &demodemo);
 

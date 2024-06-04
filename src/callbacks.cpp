@@ -102,8 +102,13 @@ void Callbacks::init() {
 
     ////////// ENGINE.HPP (and Stack)
 
-    NODE<Stack>::onadd<File>([](Node*_this,Node*node){ auto x = _this->addOwnr<Layer>(); x->add(node); return x->node(); });
-    // NODE<Stack>::onadd<UberLayer>([](Node*_this,Node*node){ return _this; });
+    NODE<Stack>::onadd<File>([](Node*_this,Node*node){
+
+        auto x = _this->addOwnr<Layer>();
+        x->add(node)->active(false);
+        return x->node();
+
+    });
 
     NODE<Stack>::onchange([](Node*node,Stack*stack){
 
