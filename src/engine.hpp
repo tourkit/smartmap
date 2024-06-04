@@ -75,6 +75,10 @@ struct Engine {
 
     bool COND = false;
 
+
+
+    GLint gl_max_texture_size,gl_max_texture_image_units;
+
 private:
 
     std::string project_name;

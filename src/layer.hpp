@@ -42,8 +42,6 @@ struct UberLayer : Layer {
 
     int w ; int h;
 
-    GLint max_tex_size;
-
     UberLayer() ;
 
     void calc_matrice(VBO* vbo) ;

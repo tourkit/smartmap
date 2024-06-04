@@ -50,8 +50,6 @@ UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
 
     glsl_layers = &engine.static_ubo[layer_def.name()].track();
 
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
-    PLOGI << "GL max_tex_size : " << max_tex_size;
 
     shader.builder = &builder;
 
@@ -81,7 +79,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
             if (it->get()->h > max_line_h) max_line_h = it->get()->h;
 
-            if (last_x+it->get()->w > max_tex_size/2) { // beware /2 just for me
+            if (last_x+it->get()->w > engine.max_tex_size/2) { // beware /2 just for me
 
                 matrice.resize( matrice.size()+1 );
                 last_y += max_line_h;

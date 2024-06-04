@@ -64,6 +64,11 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
 
     tree = new Node("tree");
 
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &gl_max_texture_size);
+    PLOGI << "GL_MAX_TEXTURE_SIZE : " << gl_max_texture_size << "px";
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
+    PLOGI << "GL_MAX_TEXTURE_IMAGE_UNITS : " << gl_max_texture_image_units << "px";
+
 }
 
 Engine::~Engine() { PLOGI << "Engine destroyed"; }
