@@ -881,7 +881,7 @@ void Editors::init() {
 
             ubl->layers[0].get()->s.quantity(ubl->layers[0].get()->s.quantity_v); // for some callback (updates dynUBO)
 
-            ubl->calc_matrice(nullptr);
+            ubl->calc_matrice();
 
             engine.stack->trigchange(); // update all shaders
 

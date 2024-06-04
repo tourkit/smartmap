@@ -126,7 +126,7 @@ std::string ShaderProgram::Builder::define(Member* member) {
 
     std::string out;
 
-    out+="struct "+list[member]+" {\n";
+    out+="struct "+list[member]+" {\n\n";
     for (auto x : member->members) {
 
         if (!x->size()) continue;
@@ -148,7 +148,7 @@ std::string ShaderProgram::Builder::define(Member* member) {
 
     }
 
-    out+="}";
+    out+="\n}";
     return out;
 
 }
@@ -182,9 +182,9 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     });
 
-    for (auto x : order) output += define(x)+";\n";
+    for (auto x : order) output += define(x)+";\n\n";
 
-    output += define(ubo)+";\n";
+    output += define(ubo)+";\n\n";
 
     output += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + "_ ";
 
@@ -192,7 +192,7 @@ std::string ShaderProgram::Builder::layout(UBO* ubo) {
 
     if (ubo->quantity()>1) output += "["+std::to_string(ubo->quantity())+"]";
 
-    output += + "; };\n\n\n";
+    output += + "; };\n\n";
 
     return output;
 

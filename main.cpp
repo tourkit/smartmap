@@ -5,10 +5,13 @@
                         */
 
 #include "engine.hpp"
+#include "layer.hpp"
+#include "texture.hpp"
 
 int main() {
 
     engine.init();
+    // logger.cout();
 
     engine.open("project.json");
 

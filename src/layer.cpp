@@ -42,7 +42,7 @@ UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
 
         layer_def.striding(true);
 
-        // fb.texture->bind(3);
+        fb.texture->bind(3);
 
     }
 
@@ -56,7 +56,7 @@ UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
 
 }
 
-void UberLayer::calc_matrice(VBO* vbo_) {
+void UberLayer::calc_matrice() {
 
     auto layers = this->layers;
 

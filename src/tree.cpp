@@ -138,7 +138,7 @@ using namespace ImGui;
     }
     else {
 
-
+PLOGE<<"coc";
         if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
             node->name(&renaming_name[0]);

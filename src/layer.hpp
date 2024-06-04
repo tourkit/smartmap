@@ -44,7 +44,7 @@ struct UberLayer : Layer {
 
     UberLayer() ;
 
-    void calc_matrice(VBO* vbo) ;
+    void calc_matrice() ;
 
     VLayer& addLayer(int w , int h) ; // kinda ctor for VLaye
 

@@ -168,7 +168,8 @@ void Engine::run() {
 
         int offset = 0;
         if (alt) offset = dynubo2.offset;
-        engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data()+offset,dynubo2.offset,offset);
+        engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset,offset);
+        // engine.dynamic_ubo.upload();
 
         engine.atlas->texture->bind();
 
@@ -277,6 +278,81 @@ void Engine::open(const char* file) {
         if (m.name.IsString() && m.value.IsString()) auto n = effectors->addOwnr<File>(m.name.GetString(), m.value.GetString());
     });
 
+   if_obj("uberlayers", [&](auto &l) {
+
+
+        if (!l.name.IsString() || !l.value.IsObject()) { PLOGW << json_error; return; }
+
+        auto ubl_ = stack->addOwnr<UberLayer>();
+        auto &ubl = *ubl_->get();
+
+        ubl_->name(l.name.GetString());
+
+        auto list = l.value.GetObj();
+
+        for (auto &x : list) {
+
+            if (!x.name.IsString() || !x.value.IsArray()) { PLOGW << json_error; continue; }
+
+            auto info = x.value.GetArray();
+
+            int width = window.width, height = window.height;
+
+            int effectors_id = 2;
+
+            int q = 1;
+
+            if (info.Size() > 1 && info[0].IsInt() && info[1].IsInt()) {
+
+                width = info[0].GetInt(); height = info[1].GetInt();
+
+                if (info.Size() > 2 && info[2].IsInt()) {
+
+                    q = info[2].GetInt() ;
+
+                    if (info.Size() > 3) effectors_id = 3;
+
+                }
+
+                auto &l = ubl.addLayer(width,height);
+
+                auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
+                l_->active(true)->name(x.name.GetString());
+
+                l.s.quantity(q);
+
+                if (info.Size() > effectors_id && info[effectors_id].IsObject()) {
+
+
+                    for (auto &e : info[effectors_id].GetObj()) {
+
+                        if (!e.name.IsString() || !e.value.IsString()) { PLOGW <<"weird fx"; continue;}
+
+                        Node* effector = nullptr;
+
+
+                        engine.effectors->each<File>([&](Node* n, File* f) { if (f->filename() == e.value.GetString()) effector = n; });
+
+                        if (effector) l_->addPtr<Effector>(l.addEffector(effector->is_a<File>()));
+
+                    }
+
+                    engine.stack->trigchange();
+
+                }
+
+            }
+
+        }
+
+        ubl.calc_matrice();
+
+        engine.stack->trigchange();
+
+        ubl.fb.texture->bind(3);
+
+    });
+
 
     if_obj("layers", [&](auto &l) {
 
@@ -344,76 +420,6 @@ void Engine::open(const char* file) {
 
         layer->update();
 
-
-    });
-    if_obj("uberlayers", [&](auto &l) {
-
-
-        if (!l.name.IsString() || !l.value.IsObject()) { PLOGW << json_error; return; }
-
-        auto ubl_ = stack->addOwnr<UberLayer>();
-        auto &ubl = *ubl_->get();
-
-        ubl_->name(l.name.GetString());
-
-        auto list = l.value.GetObj();
-
-        for (auto &x : list) {
-
-            if (!x.name.IsString() || !x.value.IsArray()) { PLOGW << json_error; continue; }
-
-            auto info = x.value.GetArray();
-
-            int width = window.width, height = window.height;
-
-            int effectors_id = 2;
-
-            int q = 1;
-
-            if (info.Size() > 1 && info[0].IsInt() && info[1].IsInt()) {
-
-                width = info[0].GetInt(); height = info[1].GetInt();
-
-                if (info.Size() > 2 && info[2].IsInt()) {
-
-                    q = info[2].GetInt() ;
-
-                    if (info.Size() > 3) effectors_id = 3;
-
-                }
-
-                auto &l = ubl.addLayer(width,height);
-
-                auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
-                l_->active(true)->name(x.name.GetString());
-
-                l.s.quantity(q);
-
-                if (info.Size() > effectors_id && info[effectors_id].IsObject()) {
-
-
-                    for (auto &e : info[effectors_id].GetObj()) {
-
-                        if (!e.name.IsString() || !e.value.IsString()) { PLOGW <<"weird fx"; continue;}
-
-                        Node* effector = nullptr;
-
-
-                        engine.effectors->each<File>([&](Node* n, File* f) { if (f->filename() == e.value.GetString()) effector = n; });
-
-                        if (effector) l_->addPtr<Effector>(l.addEffector(effector->is_a<File>()));
-
-                    }
-
-                    engine.stack->trigchange();
-
-                }
-
-            }
-
-        }
-
-        ubl.calc_matrice(nullptr);
 
     });
 
