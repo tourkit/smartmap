@@ -79,7 +79,7 @@ void UberLayer::calc_matrice(VBO* vbo_) {
 
             if (it->get()->h > max_line_h) max_line_h = it->get()->h;
 
-            if (last_x+it->get()->w > engine.max_tex_size/2) { // beware /2 just for me
+            if (last_x+it->get()->w > engine.gl_max_texture_size/2) { // beware /2 just for me
 
                 matrice.resize( matrice.size()+1 );
                 last_y += max_line_h;
