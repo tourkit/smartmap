@@ -1,12 +1,10 @@
 /*
 
-    SMARTMAP (beta)
+   SMARTMAP ( v 1.3.1.2 beta )
 
-                        */
+                                */
 
 #include "engine.hpp"
-#include "layer.hpp"
-#include "texture.hpp"
 
 int main() {
 

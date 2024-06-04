@@ -66,19 +66,18 @@ struct Engine {
     std::vector<std::string> available_ips;
 
     VBO *vbo;
+
     ShaderProgram *shader;
 
     static void Draw2D(Texture* texture);
 
     static inline Struct& glsl_data = Struct::create("ENGINE").add<int>("frame").add<int>("fps").add<int>("alt");
-    Struct layers_s;
 
-    bool COND = false;
+    static inline Struct &layer_def = Struct::create("Layers").add<glm::vec2>("size").add<glm::vec2>("pos").add<glm::vec2>("pos_norm").add<glm::vec2>("dim");
 
-
+    Instance* glsl_layers;
 
     GLint gl_max_texture_size,gl_max_texture_image_units, gl_major_version, gl_minor_version;
-
 
 private:
 

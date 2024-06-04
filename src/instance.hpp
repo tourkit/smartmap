@@ -39,6 +39,7 @@ struct Instance {
 
     Member* def() { if(stl.size()) return stl.back(); return buff; }
 
+    Instance(Buffer* buff, Member* m);
     Instance(Buffer* buff = nullptr, uint32_t offset = 0, std::vector<Member*> stl = {}, int eq_id = 0);
 
 

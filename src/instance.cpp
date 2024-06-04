@@ -24,6 +24,11 @@ bool Instance::exist(){
 
 }
 
+Instance::Instance(Buffer* buff, Member* m) : buff(buff) {
+    buff->each( [&](Instance& inst) {if (inst.def() == m) {offset = inst.offset; stl = inst.stl;} });
+
+ }
+
 Instance::Instance(Buffer* buff, uint32_t offset, std::vector<Member*> stl, int eq_id) : buff(buff), offset(offset), stl(stl), eq_id(eq_id) { }
 
 Instance Instance::operator[](std::string name) {

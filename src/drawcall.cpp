@@ -35,7 +35,9 @@ Model* Modelable::addModel(File* f) {
 
     s.add(&mod->s);
 
-    vbo.add(f, s.size()) ;
+    vbo.add(f, first_id) ;
+
+    first_id+=1;
 
     return mod;
 
@@ -81,7 +83,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
     header_fragment += "vec2 uv = UV;\n\n";
     header_fragment += "vec4 color = vec4(0);\n\n";
-    header_fragment += "float aspect_ratio = 1;\n\n";
+    header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
 
     int model_id = 0;
 
@@ -102,8 +104,9 @@ void Layer::ShaderProgramBuilder::frag() {
 
             if (model.get()->s.quantity() > 1) name += "["+std::to_string(instance)+"]";
 
-            body_fragment += "\t// "+name+"\n"; // would love this to be a node name instead // still matters ?
-            body_fragment += "\ttic();\n"; // would love this to be a node name instead // still matters ?
+            body_fragment += "\t// "+name+"\n";
+            body_fragment += "\taspect_ratio = static_ubo.layers[OBJ].dim;\n";
+            body_fragment += "\ttic();\n";
 
             for (auto &effector : model.get()->effectors) {
 

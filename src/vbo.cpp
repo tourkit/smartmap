@@ -134,7 +134,7 @@ void VBO::addQuad(float w, float h, float x, float y, float id) {
 
     int o = (*this)[0].def()->quantity();
 
-    if (o) id = (*this)[0].eq(o-1)[0]["ID"].get<float>()+1;
+    //if (o) id = (*this)[0].eq(o-1)[0]["OBJ"].get<float>()+1;//
 
     auto x_ = x;
     auto y_ = y;
@@ -163,7 +163,7 @@ bool VBO::add_noupload(File* file, int id) {
         aiProcess_JoinIdenticalVertices  |
         aiProcess_SortByPType);
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) { PLOGE << "Failed to load OBJ file: " << file->path << " . " << importer.GetErrorString(); return false; }
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) { PLOGE << "Failed to load OBJ file: " << file->path_v << " . " << importer.GetErrorString(); return false; }
 
     auto mesh = scene->mMeshes[0];
 
@@ -178,7 +178,7 @@ bool VBO::add_noupload(File* file, int id) {
         v["POSITION"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
         v["NORMALIZED"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["ID"].set<uint32_t>(id);
+        v["OBJ"].set<float>(id);
 
     }
 

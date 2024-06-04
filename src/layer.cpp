@@ -15,6 +15,12 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
     feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
 
+    first_id = engine.glsl_layers->def()->quantity();
+
+    engine.glsl_layers->push()[3].set<std::array<float,2>>({(float)width,(float)height});
+    engine.static_ubo.upload();
+
+
 }
 
 void Layer::draw() {
@@ -34,23 +40,10 @@ void Layer::draw() {
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
-
-    static bool init = false;
-
-    if (!init){
-
-        layer_def.striding(true);
-
-    }
-
-    engine.static_ubo.add(&layer_def);
-
-    glsl_layers = &engine.static_ubo[layer_def.name()].track();
+UberLayer::UberLayer() : Layer(0,0,"UberLayerNonono"), builder(this) {
 
 
     shader.builder = &builder;
-
 
 }
 
@@ -104,7 +97,7 @@ void UberLayer::calc_matrice() {
     fb.create( matrice_width, matrice_height );
     feedback->create( matrice_width, matrice_height );
 
-    glsl_layers->def()->quantity(count);
+    engine.glsl_layers->def()->quantity(count + engine.glsl_layers->def()->quantity() );
 
     auto x = vbo[0].def();
     vbo[0].def()->quantity(0);
@@ -119,7 +112,7 @@ void UberLayer::calc_matrice() {
         auto x_ = y[2] / matrice_width;
         auto y_ = y[3] / matrice_height;
 
-        glsl_layers->eq(z).set<glm::vec4>(glm::vec4(w, h, x_, y_));
+        engine.glsl_layers->eq(z).set<glm::vec4>(glm::vec4(w, h, x_, y_));
 
         vbo.addQuad(w, h, x_, y_);
 

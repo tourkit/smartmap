@@ -4,14 +4,13 @@
   },
   "effectors": {
     "rectangle2.glsl": "void rectangle2(vec2 size, vec2 pos, float angle) {\n\n\tuv = pos - uv; \n    \n    uv.x *= aspect_ratio; \n    \n    float hypot = sqrt(uv.x * uv.x + uv.y * uv.y);\n    \n    float uvang = atan(uv.y, uv.x);\n    \n    float newang = uvang + angle;\n    \n    vec2 rot = vec2(hypot * cos(newang), hypot * sin(newang));\n    \n    if(rot.x <= size.x && rot.x >= -size.x && rot.y <= size.y && rot.y >= -size.y) color*= vec4(1);\n    \n    color*= vec4(0);\n    \n}\n\n\n\n\n",
-    "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}\n\nvoid rectangle(vec2 pos, vec2 size, float orientation) {\n\n\tfloat angle = 0;\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tuv=rotate(uv,orientation);\n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n\n"
+    "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}\n\nvoid rectangle(vec2 pos, vec2 size, float orientation) {\n\n\tfloat angle = 0;\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tuv = rotate(uv*aspect_ratio,orientation)*(1./aspect_ratio);\n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n\n\n"
   },
   "layers": {
     "layer1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "rectangle": "rectangle.glsl" } ] }, {} ]
   },
   "editors": [
-    [ 0, 0, 0, 0, "Effectors::rectangle2" ],
-    [ 0, 0, 0, 0, "tree::Debug", true ],
+    [ 0, 0, 0, 0, "Stack::layer1", true ],
     [ 0, 0, 0, 0, "layer1::quad", true ]
   ],
   "uberlayers": {},
