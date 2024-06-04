@@ -38,6 +38,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
     PLOGD << "GL_MAX_TEXTURE_IMAGE_UNITS : " << gl_max_texture_image_units;
 
+    dynamic_ubo.quantity(2);
 
     glsl_data.striding(true);
 
@@ -160,7 +161,11 @@ void Engine::run() {
         memcpy(engine.dynamic_ubo.data.data()+4, &fps, sizeof(float)); // aka engine.dynamic_ubo["ENGINE"]["fps"]
         frame = (frame+1) % 1000;
 
-        engine.dynamic_ubo.upload();
+        static Instance& dynubo1 = Instance(&engine.dynamic_ubo).track();
+        static Instance& dynubo2 = Instance(&engine.dynamic_ubo).eq(1).track();
+
+        engine.dynamic_ubo.upload(dynubo1.data(),dynubo2.offset);
+
         engine.atlas->texture->bind();
 
         engine.tree->run();

@@ -78,7 +78,7 @@ Instance Instance::operator[](int id) {
 
 Instance Instance::eq(int id) {
 
-    if (!stl.size() || id >= def()->quantity()) {PLOGE<<"Not that many quantity exist (" << id << " < " << def()->quantity() << ")" ;return *this;}
+    if ( id >= def()->quantity()) {PLOGE<<"Not that many quantity exist (" << id << " < " << def()->quantity() << ")" ;return *this;}
 
     uint32_t new_offset = offset + def()->footprint() * (id-eq_id);
 
