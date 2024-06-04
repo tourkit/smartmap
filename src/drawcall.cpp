@@ -181,7 +181,7 @@ void Layer::ShaderProgramBuilder::vert() {
 
 // DRAWCALLL //////////////////////////////////////
 
-DrawCall::DrawCall(std::string name = "") : s(name.length()?name:"layer"), builder(this) {
+DrawCall::DrawCall(std::string name = "") : Modelable(name.length()?name:"layer"), builder(this) {
 
     shader.builder = &builder;
 

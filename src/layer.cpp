@@ -51,8 +51,7 @@ UberLayer::UberLayer() : Layer(0,0,"imuber"), builder(this) {
     glsl_layers = &engine.static_ubo[layer_def.name()].track();
 
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max_tex_size);
-
-    PLOGI << "max tex size : " << max_tex_size;
+    PLOGI << "GL max_tex_size : " << max_tex_size;
 
     shader.builder = &builder;
 
@@ -145,7 +144,7 @@ UberLayer::VLayer& UberLayer::addLayer(int w , int h) {
 
     auto &l = *layers.back().get();
 
-    l.s.name("layer"+std::to_string(l.id));
+    // l.s.name("layer"+std::to_string(l.id));
 
     s.add(&l.s);
 

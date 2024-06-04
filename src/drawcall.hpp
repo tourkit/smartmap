@@ -12,7 +12,7 @@ struct Effectable {
 
     Struct s;
 
-    Effectable(std::string name = "sdfklg" );
+    Effectable(std::string name = "Effectable" );
 
     std::vector<std::shared_ptr<Effector>> effectors;
     Effector* addEffector(File* f); // kinda ctor for effectors
@@ -37,8 +37,6 @@ struct DrawCall : Modelable {
     DrawCall(std::string name);
 
     ShaderProgram shader;
-
-    Struct s;
 
     virtual void update();
 

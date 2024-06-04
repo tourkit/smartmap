@@ -24,6 +24,8 @@ int main() {
 
 }
 
+// achh q (Model*)quad is not in (Layer*)layernooo
+
 // fine feedback
 
 // glsl rotate
