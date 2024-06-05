@@ -8,13 +8,14 @@
   },
   "editors": [
     [ 0, 0, 0, 0, "Stack::UberLayer1", true ],
-    [ 0, 0, 0, 0, "layer1::quad", true ]
+    [ 0, 0, 0, 0, "Debug::dynamic_ubo" ]
   ],
   "uberlayers": {
     "UberLayer1": { "SmartLayer1": [ 1920, 1080, 10, { "rectangle": "rectangle.glsl" } ] }
   },
   "outputs": {
-    "monitor": { "Window": [ 1, 1, 0, 0, "layer1" ] }
+    "monitor": { "Window": [ 1, 1, 0, 0 ] }
   },
-  "remaps": {}
+  "remaps": {},
+  "layers": {}
 }

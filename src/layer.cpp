@@ -185,8 +185,8 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
     auto name = lower(layer.s.name());
 
     // body_fragment += "\t"+camel(name)+" "+name+" = dynubo."+lower(ubl->s.name())+"."+name+(layer.s.quantity() > 1?"[OBJ]":"")+";\n";
+
     if (layer.s.quantity() > 1) name += "[OBJ]";
-    // dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+lower(ubl->s.name())+"."+name++";\n";
 
     for (auto effector : unique) {
 

@@ -114,8 +114,6 @@ void Layer::ShaderProgramBuilder::frag() {
             body_fragment += "\t// "+name+"\n";
             body_fragment += "\taspect_ratio = static_ubo.layers[OBJ].dim;\n";
             body_fragment += "\ttic();\n";
-            // body_fragment += "\t"+camel(name)+" "+lower(name)+" = dynubo."+dc->s.name()+";\n";
-            // body_fragment += "\t"+camel(name)+" "+lower(name)+" = dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+dc->s.name()+";\n";
 
             for (auto &effector : model.get()->effectors) {
 
