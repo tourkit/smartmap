@@ -192,7 +192,7 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 
         std::string arg_str;
 
-        for (auto &arg : Effector::get(effector->file).args) arg_str += "dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+lower(ubl->s.name())+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
+        for (auto &arg : Effector::get(effector->file).args) arg_str += "dynamic_ubo[ping]."+lower(ubl->s.name())+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
 
         arg_str.resize(arg_str.size()-2);
 

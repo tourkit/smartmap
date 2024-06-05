@@ -83,7 +83,8 @@ void Layer::ShaderProgramBuilder::frag() {
 
     }
 
-    header_fragment += "in flat int ID;\n\n";
+    header_fragment += "\n";
+    header_fragment += "in flat int ID;\n";
     header_fragment += "out vec4 COLOR;\n\n";
 
     header_fragment += "vec2 uv = UV;\n\n";
@@ -96,8 +97,10 @@ void Layer::ShaderProgramBuilder::frag() {
 
     header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
-    // header_fragment += "Dynamic_ubo dynubo = dynamic_ubo[dynamic_ubo[0].eNGINE.alt];\n";
-    // header_fragment += "Dynamic_ubo dynubo_last = dynamic_ubo[abs(dynamic_ubo[0].eNGINE.alt-1)];\n\n";
+    header_fragment += "int ping = dynamic_ubo[0].eNGINE.alt;\n";
+    header_fragment += "int pong = abs(ping-1)\n\n;";
+    // header_fragment += "Dynamic_ubo dynubo = dynamic_ubo[ping];\n";
+    // header_fragment += "Dynamic_ubo dynubo_last = dynamic_ubo[pong];\n\n";
 
     header_fragment += comment_line;
 
@@ -147,7 +150,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
             for (auto &arg : Effector::get(effector.get()->file).args) {
 
-                arg_str += "dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
+                arg_str += "dynamic_ubo[ping]."+dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
 
             }
 
