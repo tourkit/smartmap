@@ -34,12 +34,17 @@ int main() {
 
 
 
-// struct Dynamic_ubo { int a,b,c,d; };
 
-// layout (binding = 0, std140) uniform dynamic_ubo_  { Dynamic_ubo dynamic_ubo[2]; };
+// EDID SELECT HAPPEN ON RESTART ONLY
 
-// Dynamic_ubo dynubofx() { return dynamic_ubo[1]; } // is this copied or ref/ptr ?
+// EXTRA CONTROLER CRASH - NO TURN OFF ON RACK HARD KILL THEN WRONG PACKE T// need auto restart on crash (aka WRONG PACKET)
 
-// Dynamic_ubo dynubovar = dynamic_ubo[1]; // is this copied or ref/ptr ?
+// SIGNALKILL/EDIDMAN NOT WORK W/OUT EXTRA CONTROLER // more linked to mainboard ?
 
-// for (int i = 0; i < 1000; i++) { dynamic_ubo[1].a } // the bracket operator happens everytime ? if so can I do better ?
+// CODING WHEEL REALLY SHITY // NOT INTUITIVE MISLEADING , NEED 4 click button wheel OR 4 button not both
+
+// MOVE EDID MENU PER OUTPUT IN OUTPUT->X->EDID
+
+// DISPLAY INFO MESSAGE ON START / SHUTDOWN  "STARTING" "SHUTTING DOWN"
+
+// NETWORK REPEAT FAILURE

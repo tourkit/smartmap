@@ -318,7 +318,6 @@ void Engine::open(const char* file) {
 
                 if (info.Size() > effectors_id && info[effectors_id].IsObject()) {
 
-
                     for (auto &e : info[effectors_id].GetObj()) {
 
                         if (!e.name.IsString() || !e.value.IsString()) { PLOGW <<"weird fx"; continue;}
@@ -332,8 +331,6 @@ void Engine::open(const char* file) {
 
                     }
 
-                    engine.stack->trigchange();
-
                 }
 
             }
@@ -345,6 +342,8 @@ void Engine::open(const char* file) {
         engine.stack->trigchange();
 
         ubl.fb.texture->bind(3);
+
+        ubl.update();
 
     });
 

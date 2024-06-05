@@ -10,10 +10,14 @@
     "layer1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "rectangle": "rectangle.glsl" } ] }, {} ]
   },
   "editors": [
-    [ 0, 0, 0, 0, "Stack::layer1", true ],
-    [ 0, 0, 0, 0, "Debug::static_ubo" ]
+    [ 0, 0, 0, 0, "Stack::UberLayer1" ],
+    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
+    [ 0, 0, 0, 0, "tree::Debug", true ],
+    [ 0, 0, 0, 0, "Debug::static_ubo", true ]
   ],
-  "uberlayers": {},
+  "uberlayers": {
+    "UberLayer1": { "SmartLayer1": [ 1920, 1080, 10, { "rectangle": "rectangle.glsl" } ] }
+  },
   "outputs": {
     "monitor": { "Window": [ 1, 1, 0, 0, "layer1" ] }
   },

@@ -91,8 +91,7 @@ void ShaderProgram::Builder::build() {
 
     header_common.clear();
     header_common += version;
-    header_common += layout(&engine.static_ubo);
-    header_common += layout(&engine.dynamic_ubo);
+    header_common += layout({&engine.dynamic_ubo,&engine.static_ubo});
 
     frag();
 
@@ -125,74 +124,86 @@ std::string ShaderProgram::Builder::define(Member* member) {
     if (!member->size()) return "";
 
     std::string out;
+    std::string nl = "";
+    std::string tb = "";
+    // if (member->members.size() == 1) nl = "";
 
-    out+="struct "+list[member]+" {\n\n";
+    out+="struct "+list[member]+" { "+nl+nl;
     for (auto x : member->members) {
 
         if (!x->size()) continue;
 
-        out+="\t"+(list.find(x)!=list.end()?list[x]:x->type_name())+" "+lower(x->name());
+        out+=tb+""+(list.find(x)!=list.end()?list[x]:x->type_name())+" "+lower(x->name());
         if (x->quantity()>1) out += "["+std::to_string(x->quantity())+"]";
 
-        out += ";\n";
+        out += "; "+nl;
 
     }
 
 
     if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
 
-        out += "\t";
+        out += tb;
         out += (member->members.back()->type() == typeid(int) ? "int" : "float");
         out += " stride";
-        out += std::to_string(i) + ";\n" ;
+        out += std::to_string(i) + "; "+nl ;
 
     }
 
-    out+="\n}";
+    out+=nl+"}";
     return out;
 
 }
 
-std::string ShaderProgram::Builder::layout(UBO* ubo) {
+std::string ShaderProgram::Builder::layout(std::vector<UBO*> ubos) {
 
-    if (!ubo->members.size() || !ubo->data.size()) return "";
+    if (!ubos.size() || !ubos[0]->members.size() || !ubos[0]->data.size()) return "";
 
     std::string output;
 
     list.clear();
-    list[ubo] = camel(ubo->name());
 
     std::vector<Member*> order;
 
-    ubo->each([&](Instance& inst) {
+    for (auto ubo : ubos) {
 
-        auto m = inst.def();
+        list[ubo] = camel(ubo->name());
 
-        if (m->type() == typeid(Struct) && !m->isRef()) {
+        ubo->each([&](Instance& inst) {
 
-            for (auto &x : list) if (x.first == m) return;
+            auto m = inst.def();
 
-            auto name = camel(m->name());
+            if (m->type() == typeid(Struct) && !m->isRef()) {
 
-            for (auto &x : list) if (x.second == name) name += "_";
+                for (auto &x : list) if (x.first == m) return;
 
-            list[m] = name;
-            order.push_back(m);
-        }
+                auto name = camel(m->name());
 
-    });
+                for (auto &x : list) if (x.second == name) name += "_";
 
-    for (auto x : order) output += define(x)+";\n\n";
+                list[m] = name;
+                order.push_back(m);
+            }
 
-    output += define(ubo)+";\n\n";
+        });
 
-    output += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + "_ ";
+        order.push_back(ubo);
 
-    output += " { " + camel(ubo->name()) + " " + lower(ubo->name());
+    }
 
-    if (ubo->quantity()>1) output += "["+std::to_string(ubo->quantity())+"]";
+    for (auto x : order) { auto def = define(x); if (def.length()) def+=";\n\n"; output += def; }
 
-    output += + "; };\n\n";
+    for (auto ubo : ubos) {
+
+        output += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + "_ ";
+
+        output += " { " + camel(ubo->name()) + " " + lower(ubo->name());
+
+        if (ubo->quantity()>1) output += "["+std::to_string(ubo->quantity())+"]";
+
+        output += + "; };\n\n";
+
+    }
 
     return output;
 

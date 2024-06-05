@@ -82,7 +82,7 @@ struct ShaderProgram {
 
     virtual void vert();
 
-    std::string layout(UBO* ubo);
+    std::string layout(std::vector<UBO*> ubo);
 
     std::string define(Member* member);
 

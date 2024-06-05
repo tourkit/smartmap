@@ -127,21 +127,23 @@ void VBO::draw(int count) {
 
 }
 
-void VBO::addQuad(float w, float h, float x, float y, float id) {
+void VBO::addQuad(float w, float h, float x, float y, int id) {
 
     int o = (*this)[0].def()->quantity();
 
-    if (o) id = (*this)[0].eq(o-1)[0]["OBJ"].get<float>()+1;//
+    if (o) id = (*this)[0].eq(o-1)[0]["OBJ"].get<float>()+1;
 
     auto x_ = x;
     auto y_ = y;
     auto w_ = (x+w);
     auto h_ = (y+h);
 
-    (*this)[0].push()[0].set<std::array<float,7>>({ x_*2-1 , y_*2-1 , 0, 1, x_ , y_ ,  id});
-    (*this)[0].push()[0].set<std::array<float,7>>({ w_*2-1 , y_*2-1 , 1, 1, w_ , y_ ,  id});
-    (*this)[0].push()[0].set<std::array<float,7>>({ x_*2-1 , h_*2-1 , 0, 0, x_ , h_ ,  id});
-    (*this)[0].push()[0].set<std::array<float,7>>({ w_*2-1 , h_*2-1 , 1, 0, w_ , h_ ,  id});
+    struct Vec { float a,b,c,d,e,f; float g,h; };
+
+    (*this)[0].push()[0].set<Vec>({ x_*2-1 , y_*2-1 , 0, 1, x_ , y_ ,  (float)id, (float)layer_id});
+    (*this)[0].push()[0].set<Vec>({ w_*2-1 , y_*2-1 , 1, 1, w_ , y_ ,  (float)id, (float)layer_id});
+    (*this)[0].push()[0].set<Vec>({ x_*2-1 , h_*2-1 , 0, 0, x_ , h_ ,  (float)id, (float)layer_id});
+    (*this)[0].push()[0].set<Vec>({ w_*2-1 , h_*2-1 , 1, 0, w_ , h_ ,  (float)id, (float)layer_id});
 
     (*this)[1].push()[0].set<std::array<int,3>>({o+0,o+1,o+2});
     (*this)[1].push()[0].set<std::array<int,3>>({o+1,o+2,o+3});
@@ -176,8 +178,8 @@ bool VBO::add_noupload(File* file, int id) {
         v["POSITION"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
         v["NORMALIZED"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["OBJ"].set<int>(id);
-        v["LAYER"].set<int>(layer_id);
+        v["OBJ"].set<float>(id);
+        v["LAYER"].set<float>(layer_id);
 
     }
 

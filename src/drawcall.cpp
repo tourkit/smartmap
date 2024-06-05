@@ -85,8 +85,8 @@ void Layer::ShaderProgramBuilder::frag() {
     header_fragment += "in flat int ID;\n";
     header_fragment += "out vec4 COLOR;\n\n";
 
-    header_fragment += "vec2 uv = UV;\n\n";
-    header_fragment += "vec4 color = vec4(0);\n\n";
+    header_fragment += "vec2 uv = UV;\n";
+    header_fragment += "vec4 color = vec4(0);\n";
     header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
 
     int model_id = 0;
@@ -95,10 +95,10 @@ void Layer::ShaderProgramBuilder::frag() {
 
     header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
-    header_fragment += "int ping = dynamic_ubo[0].eNGINE.alt;\n";
-    header_fragment += "int pong = abs(ping-1);\n\n";
-    // header_fragment += "Dynamic_ubo dynubo = dynamic_ubo[ping];\n";
-    // header_fragment += "Dynamic_ubo dynubo_last = dynamic_ubo[pong];\n\n";
+    header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
+    header_fragment += "int last = abs(curr-1);\n\n";
+    // header_fragment += "Dynamic_ubo dynubo = dynamic_ubo[curr];\n";
+    // header_fragment += "Dynamic_ubo dynubo_last = dynamic_ubo[last];\n\n";
 
     header_fragment += comment_line;
 
@@ -113,7 +113,7 @@ void Layer::ShaderProgramBuilder::frag() {
             if (model.get()->s.quantity() > 1) name += "["+std::to_string(instance)+"]";
 
             body_fragment += "\t// "+name+"\n";
-            body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[LAYER]":"")+".dim;\n";
+            body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
             body_fragment += "\ttic();\n";
 
             // body_fragment += "\t"+camel(name)+" "+name+" = dynubo."+lower(ubl->s.name())+"."+name+(layer.s.quantity() > 1?"[OBJ]":"")+";\n";
@@ -124,7 +124,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
                 for (auto &arg : Effector::get(effector.get()->file).args) {
 
-                    arg_str += "dynamic_ubo[ping]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
+                    arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
                     // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
 
                 }
@@ -151,7 +151,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
             for (auto &arg : Effector::get(effector.get()->file).args) {
 
-                arg_str += "dynamic_ubo[ping]."+dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
+                arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
 
             }
 

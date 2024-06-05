@@ -30,6 +30,8 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
     feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
 
+    int xxx = glsl_layers->def()->quantity();
+
     vbo.layer_id = glsl_layers->def()->quantity();
 
     glsl_layers->push().set<std::array<float,2>>({(float)width,(float)height});
@@ -38,6 +40,16 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
 }
 
+void Layer::update() {
+
+    glsl_layers->eq(vbo.layer_id).set<std::array<float,2>>({(float)fb.width,(float)fb.height});
+
+    engine.static_ubo.upload();
+
+    DrawCall::update();
+
+
+}
 void Layer::draw() {
 
     if (feedback) { feedback->bind(); }
@@ -55,8 +67,13 @@ void Layer::draw() {
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : Layer(0,0,"UberLayerNonono"), builder(this) {
+UberLayer::UberLayer() : Layer(0,0,"UberLayerNonono"), builder(this), uberlayer_s("ubervbo",0) {
 
+    uberlayer_s.add(&uberlayer_def);
+
+    engine.static_ubo.add(&uberlayer_s);
+
+    glsl_uberlayer = &Instance(&engine.static_ubo, &uberlayer_s).track();
 
     shader.builder = &builder;
 
@@ -112,8 +129,8 @@ void UberLayer::calc_matrice() {
     fb.create( matrice_width, matrice_height );
     feedback->create( matrice_width, matrice_height );
 
-    auto offset = glsl_layers->def()->quantity();
-    glsl_layers->def()->quantity(count + offset );
+
+    glsl_uberlayer->def()->quantity(count);
 
     auto x = vbo[0].def();
     vbo[0].def()->quantity(0);
@@ -128,9 +145,9 @@ void UberLayer::calc_matrice() {
         auto x_ = y[2] / matrice_width;
         auto y_ = y[3] / matrice_height;
 
-        glsl_layers->eq(offset+z).set<glm::vec4>(glm::vec4(w, h, x_, y_));
+        glsl_uberlayer->eq(z).set<std::array<float,8>>({w, h,x_*2-1,y_*2-1, x_, y_,(float)y[0],(float)y[1]});
 
-        vbo.addQuad(w, h, x_, y_, offset+z);
+        vbo.addQuad(w, h, x_, y_);
 
         // PLOGD << z++ << " - " << y[0] << " " << y[1] << " " << y[2] << " " << y[3];
         // PLOGD << z++ << " - "  << w << " " << h << " " << x_ << " " << y_;
@@ -180,17 +197,20 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 
     std::string body_fragment;
 
+
 	body_fragment += "\ttic();\n";
 
     auto name = lower(layer.s.name());
 
-    if (layer.s.quantity() > 1) name += "[OBJ]";
+    if (layer.s.quantity() > 1) name += "[int(OBJ)]";
+
+    body_fragment += "\taspect_ratio = static_ubo."+ubl->glsl_uberlayer->def()->name()+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"")+".uberLayer.dim;\n";
 
     for (auto effector : unique) {
 
         std::string arg_str;
 
-        for (auto &arg : Effector::get(effector->file).args) arg_str += "dynamic_ubo[ping]."+lower(ubl->s.name())+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
+        for (auto &arg : Effector::get(effector->file).args) arg_str += "dynamic_ubo[curr]."+lower(ubl->s.name())+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
 
         arg_str.resize(arg_str.size()-2);
 
