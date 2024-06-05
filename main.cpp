@@ -16,9 +16,9 @@ int main() {
 
 }
 
-// fine feedback
+// fine feedback ~ish
 
-// glsl rotate
+// freetype
 
 // artnet output
 
@@ -28,11 +28,9 @@ int main() {
 
 // static Effector should  update on file update
 
-// c# librehardwaremonitor set fanspeed@burne
+// c# librehardwaremonitor get temps &set fanspeed@burne
 
-
-
-
+// npcap
 
 
 // EDID SELECT HAPPEN ON RESTART ONLY
