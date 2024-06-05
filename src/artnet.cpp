@@ -6,6 +6,8 @@
 
 void DMXRemap::update() {
 
+    // add striding taken care of
+
   auto data = (uint8_t*)src->data()+chan;
 
     for (int offset = 0; offset < dst->def()->quantity(); offset++) {

@@ -48,8 +48,8 @@ void Layer::update() {
 
     DrawCall::update();
 
-
 }
+
 void Layer::draw() {
 
     if (feedback) { feedback->bind(); }

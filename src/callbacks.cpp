@@ -155,17 +155,7 @@ void Callbacks::init() {
 
     NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
 
-    NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s);
-
-
-
-
-    layer->update();
-
-
-
-
-     });
+    NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
 
     NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
 

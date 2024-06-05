@@ -1,25 +1,32 @@
 {
   "models": {
-    "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
+    "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4",
+    "circle.obj": "\n\tfloat steps = 5;\n\tfloat feedback_smoothing = 1;\n\tif (dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].feedback.intensity != 0) for (float i = 1; i < steps; i++) {\n\t\n\t\tif (abs(COLOR)!=vec4(0)) break;\n\n\t\tfloat angle = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.orientation;\n\t\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.size;\n\t\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.pos;\n\n\t\tvec2 pos2 = dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.pos;\n\n\t\tfloat step = i/steps;\n\n\t\tfeedback_smoothing -= step*.00231;\n\t\t\n\t\t// // 3.14159265359 // 6.2831853072\n\t\tif (abs(angle-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.orientation)<.25) angle = mix(angle,dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.orientation,step);\n\t\tif (abs(size.x-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size.x)<.015 && abs(size.y-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size.y)<.015) size = mix(size,dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size,step);\n\t\tif (abs(pos.x-pos2.x)<.12 && abs(pos.y-pos2.y)<.12) pos = mix(pos,pos2,step);\n\n\t\ttic();\n\n\t\targb(dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].argb.alpha, dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].argb.red, dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].argb.green, dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].argb.blue);\n\t\trectangle(pos, size,angle);\n \n\t\ttac();\n\t\t\n\t}\n\n\n\t"
   },
   "effectors": {
-    "rectangle2.glsl": "void rectangle2(vec2 size, vec2 pos, float angle) {\n\n\tuv = pos - uv; \n    \n    uv.x *= aspect_ratio; \n    \n    float hypot = sqrt(uv.x * uv.x + uv.y * uv.y);\n    \n    float uvang = atan(uv.y, uv.x);\n    \n    float newang = uvang + angle;\n    \n    vec2 rot = vec2(hypot * cos(newang), hypot * sin(newang));\n    \n    if(rot.x <= size.x && rot.x >= -size.x && rot.y <= size.y && rot.y >= -size.y) color*= vec4(1);\n    \n    color*= vec4(0);\n    \n}\n\n\n\n\n",
-    "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \nvec2 rotate(vec2 v, float a) {\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}\n\nvoid rectangle(vec2 pos, vec2 size, float orientation) {\n\n\tfloat angle = 0;\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tuv = rotate(uv*aspect_ratio,orientation)*(1./aspect_ratio);\n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n\n\n"
+    "argb.glsl": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float  blue) { \n\n\tcolor = color * vec4 (red, green, blue, 0) * alpha; \n\n}\n\n",
+    "atlas.glsl": "//id(0,10,0)\n\nvoid atlas(int id) {\n\n\tvec2 tuv = uv;\n\n\ttuv *= media[id].size;\n\ttuv += media[id].pos;\n\tcolor *= texture(medias, tuv);\n\n}\n",
+    "feedback.glsl": "//intensity(0,1,0)\n\nvoid feedback(float intensity) { \n\n\tcolor += ( texture( render_pass, NORMALIZED) - .002 ) * pow(abs(intensity),.1);\n\n}\n\n\n\n\n\n\n\n",
+    "uber.glsl": "//id(0,10,0)\n//q(0,10,5)\n\nvoid uber(int id, int q) {\n\t\tvec4 color_=  vec4(0);\n\tfor (int i =0; i < q; i++) {\n\n\tvec2 tuv = uv;\n\n\t\ttuv *= static_ubo.ubervbo[id+i].uberLayer.size;\n\t\ttuv += static_ubo.ubervbo[id+i].uberLayer.norm;\n\t\n\t\tcolor_ += texture(uberlayer, tuv);\n\t\t\n\t}\n\t\tcolor *= color_;\n};\n\n\n",
+    "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \nvec2 rotate(vec2 v, float a) {\n\n\ta -= .5;\n\n\ta *= 3.14159;\n\n\tfloat s = sin(a);\n\tfloat c = cos(a);\n\n\treturn v * mat2(c, -s, s, c);\n}\n\nvoid rectangle(vec2 pos, vec2 size, float orientation) {\n\n\tfloat angle = 0;\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tuv = rotate(uv*aspect_ratio,orientation)*(1./aspect_ratio);\n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n\n\n"
+  },
+  "inputs": {
+    "artnet": { "ArtNet": [ "2.0.0.991", { "remap2": [ 0, 1, "UberLayer1::SmartLayer1", [ 1, 1, 1, 1, 2, 2, 2, 2, 1, 0, 0, 0, 1 ] ] } ] }
   },
   "layers": {
-    "layer1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "rectangle": "rectangle.glsl" } ] }, {} ]
+    "layer1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "uber": "uber.glsl" } ] }, {} ]
+  },
+  "uberlayers": {
+    "UberLayer1": { "SmartLayer1": [ 1920, 1080, 5, { "argb": "argb.glsl", "rectangle": "rectangle.glsl", "feedback": "feedback.glsl" } ] }
   },
   "editors": [
-    [ 0, 0, 0, 0, "Stack::UberLayer1" ],
-    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
+    [ 0, 0, 0, 0, "Stack::UberLayer1", true ],
+    [ 0, 0, 0, 0, "Debug::static_ubo", true ],
     [ 0, 0, 0, 0, "tree::Debug", true ],
-    [ 0, 0, 0, 0, "Debug::static_ubo", true ]
+    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ]
   ],
-  "uberlayers": {
-    "UberLayer1": { "SmartLayer1": [ 1920, 1080, 10, { "rectangle": "rectangle.glsl" } ] }
-  },
   "outputs": {
-    "monitor": { "Window": [ 1, 1, 0, 0, "layer1" ] }
+    "monitor": { "Window": [ 1920, 1080, 2560, 0, "layer1" ] }
   },
   "remaps": {}
 }
