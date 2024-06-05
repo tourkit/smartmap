@@ -75,11 +75,16 @@ void Layer::ShaderProgramBuilder::frag() {
     header_fragment += "uniform sampler2D render_pass;\n\n";
     header_fragment += "uniform sampler2D uberlayer;\n\n";
 
-    header_fragment += "in vec2 NORMALIZED;\n\n";
-    header_fragment += "in vec2 UV;\n\n";
-    header_fragment += "out vec4 COLOR;\n\n";
+    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
+
+        auto m = dc->vbo.vertice->members[i];
+
+        header_fragment += "in "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+
+    }
+
     header_fragment += "in flat int ID;\n\n";
-    header_fragment += "in flat int OBJ;\n\n";
+    header_fragment += "out vec4 COLOR;\n\n";
 
     header_fragment += "vec2 uv = UV;\n\n";
     header_fragment += "vec4 color = vec4(0);\n\n";
@@ -89,8 +94,10 @@ void Layer::ShaderProgramBuilder::frag() {
 
     for (auto file : effectors)  header_fragment += Effector::source(file)+";\n\n";
 
-    header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n\n";
+    header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
+    // header_fragment += "Dynamic_ubo dynubo = dynamic_ubo[dynamic_ubo[0].eNGINE.alt];\n";
+    // header_fragment += "Dynamic_ubo dynubo_last = dynamic_ubo[abs(dynamic_ubo[0].eNGINE.alt-1)];\n\n";
 
     header_fragment += comment_line;
 
@@ -107,6 +114,8 @@ void Layer::ShaderProgramBuilder::frag() {
             body_fragment += "\t// "+name+"\n";
             body_fragment += "\taspect_ratio = static_ubo.layers[OBJ].dim;\n";
             body_fragment += "\ttic();\n";
+            // body_fragment += "\t"+camel(name)+" "+lower(name)+" = dynubo."+dc->s.name()+";\n";
+            // body_fragment += "\t"+camel(name)+" "+lower(name)+" = dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+dc->s.name()+";\n";
 
             for (auto &effector : model.get()->effectors) {
 
@@ -114,7 +123,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
                 for (auto &arg : Effector::get(effector.get()->file).args) {
 
-                    arg_str += "dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+dc->s.name()+"."+lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
+                    arg_str += lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
 
                 }
 
@@ -159,23 +168,31 @@ void Layer::ShaderProgramBuilder::vert() {
 
     header_vertex.clear();
 
-    header_vertex += "layout (location = 0) in vec2 POSITION;\n";
-    header_vertex += "layout (location = 1) in vec2 UV_;\n";
-    header_vertex += "layout (location = 2) in vec2 NORMALIZED_;\n";
-    header_vertex += "layout (location = 3) in float OBJ_;\n\n";
+    int count = 0;
+    for (auto x : dc->vbo.vertice->members) header_vertex += "layout (location = "+std::to_string(count++)+") in "+x->type_name()+" "+x->name()+(count?"_":"")+";\n";
+    header_vertex += "\n";
 
-    header_vertex += "out vec2 NORMALIZED;\n\n";
-    header_vertex += "out vec2 UV;\n\n";
+    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
+
+        auto m = dc->vbo.vertice->members[i];
+
+        header_vertex += "out "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+
+    }
+
     header_vertex += "out flat int ID;\n\n";
-    header_vertex += "out flat int OBJ;\n\n";
 
     body_vertex.clear();
-    body_vertex += "\tNORMALIZED = NORMALIZED_;\n\n";
-    body_vertex += "\tUV = UV_;\n\n";
-    //body_vertex += "\tUV.y = 1-UV.y;\n\n";
-    body_vertex += "\tOBJ = int(OBJ_);\n\n";
+
+    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
+
+        auto m = dc->vbo.vertice->members[i];
+        body_vertex += "\t"+m->name()+" = "+m->name()+"_;\n\n";
+
+    }
+
     body_vertex += "\tID = gl_InstanceID;\n\n";
-    body_vertex += "\t// vec2 pos = POSITION*layer[ID].size+layer[ID].pos;\n\n";
+    body_vertex += "\t// vec2 POS = POSITION_*layer[ID].size+layer[ID].pos;\n\n";
 
     body_vertex += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 

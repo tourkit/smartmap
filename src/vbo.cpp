@@ -89,7 +89,6 @@ void VBO::upload() {
         for (auto & m : members[0]->members[0]->members) {
 
             auto type = GL_FLOAT;
-            if (m->type() == typeid(float)) type = GL_FLOAT;
             if (m->type() == typeid(int)) type = GL_INT;
             if (m->type() == typeid(uint32_t)) type = GL_UNSIGNED_INT;
 
@@ -134,7 +133,7 @@ void VBO::addQuad(float w, float h, float x, float y, float id) {
 
     int o = (*this)[0].def()->quantity();
 
-    //if (o) id = (*this)[0].eq(o-1)[0]["OBJ"].get<float>()+1;//
+    if (o) id = (*this)[0].eq(o-1)[0]["OBJ"].get<float>()+1;//
 
     auto x_ = x;
     auto y_ = y;
@@ -178,7 +177,7 @@ bool VBO::add_noupload(File* file, int id) {
         v["POSITION"].set<glm::vec2>({ vertex.x, vertex.y });
         v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
         v["NORMALIZED"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["OBJ"].set<float>(id);
+        v["OBJ"].set<int>(id);
 
     }
 

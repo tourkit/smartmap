@@ -13,11 +13,26 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
     : fb((width?width:engine.window.width), (height?height:engine.window.height)), DrawCall(name) {
 
+        static bool init = false;
+
+        if (!init) {
+
+            layer_def.striding(true);
+
+            engine.static_ubo.add(&layer_def);
+
+            glsl_layers = &Instance(&engine.static_ubo, &layer_def).track();
+
+            init = true;
+
+        }
+
+
     feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
 
-    first_id = engine.glsl_layers->def()->quantity();
+    if (glsl_layers) first_id = glsl_layers->def()->quantity();
 
-    engine.glsl_layers->push()[3].set<std::array<float,2>>({(float)width,(float)height});
+    glsl_layers->push()[3].set<std::array<float,2>>({(float)width,(float)height});
     engine.static_ubo.upload();
 
 
@@ -97,7 +112,8 @@ void UberLayer::calc_matrice() {
     fb.create( matrice_width, matrice_height );
     feedback->create( matrice_width, matrice_height );
 
-    engine.glsl_layers->def()->quantity(count + engine.glsl_layers->def()->quantity() );
+    auto offset = glsl_layers->def()->quantity();
+    glsl_layers->def()->quantity(count + offset );
 
     auto x = vbo[0].def();
     vbo[0].def()->quantity(0);
@@ -112,9 +128,9 @@ void UberLayer::calc_matrice() {
         auto x_ = y[2] / matrice_width;
         auto y_ = y[3] / matrice_height;
 
-        engine.glsl_layers->eq(z).set<glm::vec4>(glm::vec4(w, h, x_, y_));
+        glsl_layers->eq(offset+z).set<glm::vec4>(glm::vec4(w, h, x_, y_));
 
-        vbo.addQuad(w, h, x_, y_);
+        vbo.addQuad(w, h, x_, y_, offset+z);
 
         // PLOGD << z++ << " - " << y[0] << " " << y[1] << " " << y[2] << " " << y[3];
         // PLOGD << z++ << " - "  << w << " " << h << " " << x_ << " " << y_;
@@ -160,34 +176,32 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 
     std::vector<Effector*> unique;
 
-    for (auto x : layer.effectors)
-        ADD_UNIQUE<Effector*>(unique, x.get());
+    for (auto x : layer.effectors) ADD_UNIQUE<Effector*>(unique, x.get());
 
     std::string body_fragment;
 
 	body_fragment += "\ttic();\n";
 
+    auto name = lower(layer.s.name());
+
+    // body_fragment += "\t"+camel(name)+" "+name+" = dynubo."+lower(ubl->s.name())+"."+name+(layer.s.quantity() > 1?"[OBJ]":"")+";\n";
+    if (layer.s.quantity() > 1) name += "[OBJ]";
+    // dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+lower(ubl->s.name())+"."+name++";\n";
+
     for (auto effector : unique) {
 
         std::string arg_str;
 
-            auto name = layer.s.name();
-
-            if (layer.s.quantity() > 1) name += "[OBJ]";
-
-        for (auto &arg : Effector::get(effector->file).args) {
-
-            arg_str += "dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+lower(ubl->s.name())+"."+lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
-
-        }
+        for (auto &arg : Effector::get(effector->file).args) arg_str += "dynamic_ubo[dynamic_ubo[0].eNGINE.alt]."+lower(ubl->s.name())+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
 
         arg_str.resize(arg_str.size()-2);
 
         body_fragment += "\t"+effector->file->name()+"("+arg_str+");\n";
+
     }
 
-
 	body_fragment += "\ttac();\n";
+
     return body_fragment;
 
 }

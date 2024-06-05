@@ -73,10 +73,6 @@ struct Engine {
 
     static inline Struct& glsl_data = Struct::create("ENGINE").add<int>("frame").add<int>("fps").add<int>("alt");
 
-    static inline Struct &layer_def = Struct::create("Layers").add<glm::vec2>("size").add<glm::vec2>("pos").add<glm::vec2>("pos_norm").add<glm::vec2>("dim");
-
-    Instance* glsl_layers;
-
     GLint gl_max_texture_size,gl_max_texture_image_units, gl_major_version, gl_minor_version;
 
 private:

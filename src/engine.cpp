@@ -42,9 +42,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
 
     glsl_data.striding(true);
 
-    layer_def.striding(true);
-
-
     render_passes.reserve(10);
 
 
@@ -84,10 +81,6 @@ void Engine::init() {
     Callbacks::init();
 
     Editors::init();
-
-    static_ubo.add(&layer_def);
-
-    glsl_layers = &Instance(&engine.static_ubo, &layer_def).track();
 
     std::string frag = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); if (fps<60)COLOR+=vec4(mod(frame,10)*.05,0,0,1); }";
     std::string vert = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
