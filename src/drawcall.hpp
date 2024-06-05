@@ -24,8 +24,6 @@ struct Modelable : Effectable {
 
     VBO vbo;
 
-    int first_id = 0;
-
     using Effectable::Effectable;
 
     std::vector<std::shared_ptr<Model>> models;

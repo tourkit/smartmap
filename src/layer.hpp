@@ -19,9 +19,9 @@ struct Layer : DrawCall {
 
     void draw() override;
 
-    static inline Struct &layer_def = Struct::create("Layers").add<glm::vec2>("size").add<glm::vec2>("pos").add<glm::vec2>("pos_norm").add<glm::vec2>("dim");
+    static inline Struct &layer_def = Struct::create("Layers",0).add<glm::vec2>("dim");
 
-    Instance* glsl_layers;
+    static inline Instance* glsl_layers;
 
 };
 
@@ -36,6 +36,8 @@ struct UberLayer : Layer {
         int id;
 
     };
+
+    static inline Struct &uberlayer_def = Struct::create("UberLayer",0).add<glm::vec2>("size").add<glm::vec2>("pos").add<glm::vec2>("pos_norm");
 
     std::vector<std::shared_ptr<VLayer>> layers;
 

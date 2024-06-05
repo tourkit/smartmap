@@ -30,11 +30,11 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
     feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
 
-    if (glsl_layers) first_id = glsl_layers->def()->quantity();
+    vbo.layer_id = glsl_layers->def()->quantity();
 
-    glsl_layers->push()[3].set<std::array<float,2>>({(float)width,(float)height});
+    glsl_layers->push().set<std::array<float,2>>({(float)width,(float)height});
+
     engine.static_ubo.upload();
-
 
 }
 
@@ -183,8 +183,6 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 	body_fragment += "\ttic();\n";
 
     auto name = lower(layer.s.name());
-
-    // body_fragment += "\t"+camel(name)+" "+name+" = dynubo."+lower(ubl->s.name())+"."+name+(layer.s.quantity() > 1?"[OBJ]":"")+";\n";
 
     if (layer.s.quantity() > 1) name += "[OBJ]";
 

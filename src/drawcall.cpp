@@ -35,9 +35,7 @@ Model* Modelable::addModel(File* f) {
 
     s.add(&mod->s);
 
-    vbo.add(f, first_id) ;
-
-    first_id+=1;
+    vbo.add(f, s.size()) ;
 
     return mod;
 
@@ -98,7 +96,7 @@ void Layer::ShaderProgramBuilder::frag() {
     header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
     header_fragment += "int ping = dynamic_ubo[0].eNGINE.alt;\n";
-    header_fragment += "int pong = abs(ping-1)\n\n;";
+    header_fragment += "int pong = abs(ping-1);\n\n";
     // header_fragment += "Dynamic_ubo dynubo = dynamic_ubo[ping];\n";
     // header_fragment += "Dynamic_ubo dynubo_last = dynamic_ubo[pong];\n\n";
 
@@ -110,13 +108,15 @@ void Layer::ShaderProgramBuilder::frag() {
 
         for (int instance = 0; instance < model.get()->s.quantity(); instance++) {
 
-            auto name = model.get()->s.name();
+            auto name = lower(model.get()->s.name());
 
             if (model.get()->s.quantity() > 1) name += "["+std::to_string(instance)+"]";
 
             body_fragment += "\t// "+name+"\n";
-            body_fragment += "\taspect_ratio = static_ubo.layers[OBJ].dim;\n";
+            body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[LAYER]":"")+".dim;\n";
             body_fragment += "\ttic();\n";
+
+            // body_fragment += "\t"+camel(name)+" "+name+" = dynubo."+lower(ubl->s.name())+"."+name+(layer.s.quantity() > 1?"[OBJ]":"")+";\n";
 
             for (auto &effector : model.get()->effectors) {
 
@@ -124,7 +124,8 @@ void Layer::ShaderProgramBuilder::frag() {
 
                 for (auto &arg : Effector::get(effector.get()->file).args) {
 
-                    arg_str += lower(name)+"."+effector->ref.name()+"."+arg.second+", ";
+                    arg_str += "dynamic_ubo[ping]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
+                    // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
 
                 }
 

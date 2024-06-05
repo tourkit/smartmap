@@ -45,10 +45,6 @@ struct VBO : Buffer {
     bool add(File *file = &quad, int id = 0);
     bool add_noupload(File *file = &quad, int id = 0);
 
-
-
-
-
-
+    int layer_id = 0;
 
 };

@@ -742,7 +742,9 @@ void Editors::init() {
 
     Editor<Buffer>([](Node* node, Buffer *buffer){
 
-    // tofix
+        ImGui::Separator();
+
+        if (draw_guis(buffer)) buffer->upload();
 
         ImGui::Separator();
 
@@ -753,21 +755,6 @@ void Editors::init() {
         draw_raw(buffer->data.data(),buffer->data.size());
 
         ImGui::Separator();
-
-        // draw_guis(buffer->data.data(),buffer->data.size());
-
-        // static StringsBuffer object_str;
-        // static int obj_current = 0;
-        // std::vector<std::string> obect_strs;
-        // for (auto &m : buffer->members) obect_strs.push_back(m->name());
-        // if (!obect_strs.size()) return;
-        // object_str.create(obect_strs);
-        // ImGui::Combo("Buffer##234sdfgsdfg", &obj_current, object_str.buffer);
-
-        // auto inst = (*buffer)[obj_current];
-
-        // if (obj_current <= buffer->members.size()-1)
-        if (draw_guis(buffer)) buffer->upload();
 
     });
 
