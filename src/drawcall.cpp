@@ -194,7 +194,12 @@ void Layer::ShaderProgramBuilder::vert() {
     }
 
     body_vertex += "\tID = gl_InstanceID;\n\n";
-    body_vertex += "\t// vec2 POS = POSITION_*layer[ID].size+layer[ID].pos;\n\n";
+
+	body_vertex += "\tint curr = dynamic_ubo[0].eNGINE.alt;\n\n";
+
+	body_vertex += "\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.size;\n\n";
+	body_vertex += "\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.pos;\n\n";
+	body_vertex += "\tvec2 POS = POSITION*size+pos;\n\n";
 
     body_vertex += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
 

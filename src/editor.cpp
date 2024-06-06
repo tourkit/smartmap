@@ -546,6 +546,7 @@ void Editors::init() {
                     memset(&x[frageditor.GetText().size()-2],0,1);
 
                     shader->create(x,shader->vert.src);
+                    if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
 
                 }
 
@@ -584,6 +585,8 @@ void Editors::init() {
                     memset(&x[verteditor.GetText().size()],0,1);
 
                     shader->create(shader->frag.src,x);
+
+                    if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
 
                 }
 

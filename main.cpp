@@ -16,6 +16,10 @@ int main() {
 
 }
 
+// cpu transform matrice matrice_elem_XY
+
+// try 3d movement
+
 // fine feedback ~ish
 
 // freetype

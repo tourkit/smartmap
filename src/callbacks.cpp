@@ -132,7 +132,9 @@ void Callbacks::init() {
 
     NODE<UberLayer>::oncreate([](Node* node, UberLayer *ubl){ NODE<Struct>::oncreate_cb(node, &ubl->s);  for (auto &x : ubl->layers) { node->addPtr<UberLayer::VLayer>(&x); } });
 
-    NODE<UberLayer>::onchange([](Node* node, UberLayer *ubl){ NODE<Struct>::onchange_cb(node, &ubl->s); ubl->update(); });
+    NODE<UberLayer>::onchange([](Node* node, UberLayer *ubl){
+        NODE<Struct>::onchange_cb(node, &ubl->s); ubl->update();
+    });
 
     NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
 
