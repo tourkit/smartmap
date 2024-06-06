@@ -194,14 +194,23 @@ void Layer::ShaderProgramBuilder::vert() {
     }
 
     body_vertex += "\tID = gl_InstanceID;\n\n";
+    body_vertex += "//\tif (OBJ > 0) return;\n\n";
 
 	body_vertex += "\tint curr = dynamic_ubo[0].eNGINE.alt;\n\n";
 
 	body_vertex += "\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.size;\n\n";
 	body_vertex += "\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.pos;\n\n";
-	body_vertex += "\tvec2 POS = POSITION;//*size+pos;\n\n";
+	body_vertex += "\tvec2 POS = POSITION;\n\n";
 
-    body_vertex += "\tgl_Position = vec4(POS.x,POS.y,0,1);\n\n";
+    body_vertex += "//\tPOS = POS*.5+.5;\n\n";
+	body_vertex += "//\tPOS -= static_ubo.ubervbo[int(OBJ)].uberLayer.norm;\n\n";
+	body_vertex += "//\tPOS *= size;\n\n";
+	body_vertex += "//\tPOS += pos;\n\n";
+	body_vertex += "//\tPOS += static_ubo.ubervbo[int(OBJ)].uberLayer.norm;\n\n";
+
+	body_vertex += "//\tPOS = POS*2-1;\n\n";
+
+    body_vertex += "\tgl_Position = vec4(POS, 0, 1);\n\n";
 
 }
 

@@ -16,7 +16,7 @@
     "layer1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "uber": "uber.glsl" } ] }, {} ]
   },
   "uberlayers": {
-    "UberLayer1": { "SmartLayer1": [ 960, 540, 2, {  "rectangle": "rectangle.glsl", "atlas": "atlas.glsl" } ] }
+    "UberLayer1": { "SmartLayer1": [ 960, 540, 3, {  "rectangle": "rectangle.glsl", "atlas": "atlas.glsl" } ] }
   },
   "editors": [
     [ 0, 0, 0, 0, "Stack::UberLayer1", true ],

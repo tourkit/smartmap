@@ -150,14 +150,10 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) window.render([](){
 
-
-        engine.atlas->texture->bind();
-
-        engine.tree->run();
-
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         engine.gui->draw();
+
         static int frame = 0;
         memcpy(engine.dynamic_ubo.data.data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
         int fps = std::round(ImGui::GetIO().Framerate);
@@ -173,6 +169,12 @@ void Engine::run() {
         if (alt) offset = dynubo2.offset;
         engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset,offset);
         // engine.dynamic_ubo.upload();
+
+
+
+        engine.atlas->texture->bind();
+
+        engine.tree->run();
 
     });
 
