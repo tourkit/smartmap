@@ -546,7 +546,7 @@ void Editors::init() {
                     memset(&x[frageditor.GetText().size()-2],0,1);
 
                     shader->create(x,shader->vert.src);
-                    if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
+                    // if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
 
                 }
 
@@ -586,7 +586,7 @@ void Editors::init() {
 
                     shader->create(shader->frag.src,x);
 
-                    if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
+                    // if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
 
                 }
 
@@ -749,10 +749,10 @@ void Editors::init() {
 
         if (draw_guis(buffer)) { buffer->upload();
 
-        engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});
-        engine.stack->each<Layer>([](Node*n, Layer* layer){ layer ->fb.clear();});
+        // engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});
+        // engine.stack->each<Layer>([](Node*n, Layer* layer){ layer ->fb.clear();});
 
-        engine.stack->each([](Node* node){ if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear(); });
+        // engine.stack->each([](Node* node){ if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear(); });
 
         }
 

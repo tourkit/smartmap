@@ -56,7 +56,7 @@ void Layer::draw() {
 
     if (feedback) { feedback->bind(); }
 
-    fb.bind();
+    fb.clear();
     // engine.render_passes[0].bind();
 
     DrawCall::draw();
