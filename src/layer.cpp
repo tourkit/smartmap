@@ -46,7 +46,7 @@ void Layer::update() {
 
     engine.static_ubo.upload();
 
-    // fb.clear(); // Layer::update()
+    fb.clear(); // Layer::update()
 
     DrawCall::update();
 

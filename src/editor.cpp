@@ -747,7 +747,14 @@ void Editors::init() {
 
         ImGui::Separator();
 
-        if (draw_guis(buffer)) buffer->upload();
+        if (draw_guis(buffer)) { buffer->upload();
+
+        engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});
+        engine.stack->each<Layer>([](Node*n, Layer* layer){ layer ->fb.clear();});
+
+        engine.stack->each([](Node* node){ if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear(); });
+
+        }
 
         ImGui::Separator();
 

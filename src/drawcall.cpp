@@ -199,9 +199,9 @@ void Layer::ShaderProgramBuilder::vert() {
 
 	body_vertex += "\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.size;\n\n";
 	body_vertex += "\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.pos;\n\n";
-	body_vertex += "\tvec2 POS = POSITION*size+pos;\n\n";
+	body_vertex += "\tvec2 POS = POSITION;//*size+pos;\n\n";
 
-    body_vertex += "\tgl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n";
+    body_vertex += "\tgl_Position = vec4(POS.x,POS.y,0,1);\n\n";
 
 }
 
