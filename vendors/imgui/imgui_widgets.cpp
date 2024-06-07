@@ -3074,14 +3074,14 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
 }
 
 // Add multiple sliders on 1 line for compact edition of multiple components
-bool ImGui::SliderScalarN(const char* label, ImGuiDataType data_type, void* v, int components, const void* v_min, const void* v_max, const char* format, ImGuiSliderFlags flags, ImGuiInputTextFlags temp_flags, ImGuiInputTextCallback temp_callback, void* temp_user_data)
+char ImGui::SliderScalarN(const char* label, ImGuiDataType data_type, void* v, int components, const void* v_min, const void* v_max, const char* format, ImGuiSliderFlags flags, ImGuiInputTextFlags temp_flags, ImGuiInputTextCallback temp_callback, void* temp_user_data)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
         return false;
 
     ImGuiContext& g = *GImGui;
-    bool value_changed = false;
+    char value_changed = -1;
     BeginGroup();
     PushID(label);
     PushMultiItemsWidths(components, CalcItemWidth());
@@ -3091,7 +3091,7 @@ bool ImGui::SliderScalarN(const char* label, ImGuiDataType data_type, void* v, i
         PushID(i);
         if (i > 0)
             SameLine(0, g.Style.ItemInnerSpacing.x);
-        value_changed |= SliderScalar("", data_type, v, v_min, v_max, format, flags, temp_flags, temp_callback, temp_user_data);
+        if (SliderScalar("", data_type, v, v_min, v_max, format, flags, temp_flags, temp_callback, temp_user_data)) value_changed = i;
         PopID();
         PopItemWidth();
         v = (void*)((char*)v + type_size);

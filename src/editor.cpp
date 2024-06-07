@@ -181,6 +181,7 @@ static void draw_raw(void *data, size_t size) {
     ImGui::PopStyleVar(5);
 
 }
+#include "vendors/imgui/imgui_internal.h"
 
 
 static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
@@ -268,30 +269,44 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
 
                 static std::string str__;
+                static std::string last_value;
 
-                if (ImGui::SliderScalarN(name.c_str(), type, buff->data.data()+offset, q, range_from, range_to,NULL,0,ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue,MyResizeCallback, &str__)) {
+                auto x = ImGui::SliderScalarN(name.c_str(), type, buff->data.data()+offset, q, range_from, range_to,NULL,0,
+                ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
+
+                if (x>=0) {
+
+                    x*=4;
 
                     static te_parser tep;
-                    double r = tep.evaluate(str__);
-                    if (!std::isnan(r)) {
 
-                        // xxx = old value but how
-                        // if (type == ImGuiDataType_Float) str__ = std::to_string(*(float*)xxx + str__;
-                        // else if (type == ImGuiDataType_S16) str__ = std::to_string(*(int16_t*)xxx + str__;
-                        // else if (type == ImGuiDataType_U16) str__ = std::to_string(*(uint16_t*)xxx + str__;
+                    if (!std::isdigit(atoi( str__.c_str() ))) {
 
-                        r = tep.evaluate(str__);
+                        if (last_value.length())str__=last_value+str__;
+
+                        last_value = "";
                     }
+
+                    double r = tep.evaluate(str__);
+
                     if (!std::isnan(r)){
 
-                        if (type == ImGuiDataType_Float) *(float*)(buff->data.data()+offset) = r;
-                        else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data.data()+offset) = r;
-                        else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data.data()+offset) = r;
-
+                        if (type == ImGuiDataType_Float) *(float*)(buff->data.data()+offset+x) = r;
+                        else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data.data()+offset+x) = r;
+                        else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data.data()+offset+x) = r;
 
                     }
 
                     has_changed = true;
+                }
+
+
+                if (ImGui::IsItemClicked()) {
+
+                        if (type == ImGuiDataType_Float) last_value = std::to_string(*(float*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
+                        else if (type == ImGuiDataType_S16) last_value = std::to_string(*(int16_t*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
+                        else if (type == ImGuiDataType_U16) last_value = std::to_string(*(uint16_t*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
+                        PLOGD << last_value;
                 }
 
         }else{
