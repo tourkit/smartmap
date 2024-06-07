@@ -50,6 +50,8 @@ struct DrawCall : Modelable {
         void frag() override;
         void vert() override;
 
+        std::string prout(std::string xtra, Model& model);
+
         DrawCall* dc;
 
         ShaderProgramBuilder();

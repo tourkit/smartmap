@@ -57,9 +57,10 @@ void Layer::draw() {
     if (feedback) { feedback->bind(); }
 
     fb.clear();
-    // engine.render_passes[0].bind();
 
-    DrawCall::draw();
+    shader.use();
+
+    vbo.draw(2);//(models.size()==1?models[0].get()->s.quantity():1));
 
     if (feedback) { return feedback->read(fb.texture); }
 

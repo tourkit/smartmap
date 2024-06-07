@@ -16,6 +16,8 @@ int main() {
 
 }
 
+// if layer model size == 1 use instanceID draw mujltipt @ shaderbuild
+
 // cpu transform matrice matrice_elem_XY
 
 // try 3d movement

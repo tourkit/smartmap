@@ -218,7 +218,7 @@ Shader::~Shader() { if (id > -1) glDeleteShader(id);  }
 
 Shader::Shader(std::string src, uint8_t type)  { create(src,type); }
 
-void Shader::create(std::string src, uint8_t type)  {
+bool Shader::create(std::string src, uint8_t type)  {
 
     this->src = src;
 
@@ -236,7 +236,8 @@ void Shader::create(std::string src, uint8_t type)  {
 
     // Check for errors
 
-    GLchar infoLog[512];
+    memset(&infoLog[0],0,512);
+
     GLint success;
 
     glGetShaderiv(id, GL_COMPILE_STATUS, &success);
@@ -249,6 +250,8 @@ void Shader::create(std::string src, uint8_t type)  {
         PLOGV <<source;
 
     }
+
+    return success;
 
 }
 

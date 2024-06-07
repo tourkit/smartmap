@@ -35,7 +35,7 @@ Model* Modelable::addModel(File* f) {
 
     s.add(&mod->s);
 
-    vbo.add(f, s.size()) ;
+    vbo.add(f, models.size()-1) ;
 
     return mod;
 
@@ -64,7 +64,39 @@ void Layer::ShaderProgramBuilder::build() {
 
 }
 
+std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
+    std::string body_fragment;
+
+    auto name = lower(model.s.name());
+
+    if (model.s.quantity() > 1) name += "["+xtra+"]";
+
+    body_fragment += "\t// "+name+"\n";
+
+    body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
+    body_fragment += "\ttic();\n";
+
+    // body_fragment += "\t"+camel(name)+" "+name+" = dynubo."+lower(ubl->s.name())+"."+name+(layer.s.quantity() > 1?"[OBJ]":"")+";\n";
+
+    for (auto &effector : model.effectors) {
+
+        std::string arg_str;
+
+        for (auto &arg : Effector::get(effector.get()->file).args) {
+
+            arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
+            // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
+
+        }
+
+        arg_str.resize(arg_str.size()-2);
+
+        body_fragment += "\t"+effector->file->name()+"("+arg_str+");\n";
+    }
+
+    return body_fragment;
+}
 void Layer::ShaderProgramBuilder::frag() {
 
     header_fragment.clear();
@@ -104,43 +136,23 @@ void Layer::ShaderProgramBuilder::frag() {
 
     body_fragment.clear();
 
-    if (dc) for (auto &model : dc->models) {
+    if (dc) {
 
-        for (int instance = 0; instance < model.get()->s.quantity(); instance++) {
+        std::string indice = "";
 
-            auto name = lower(model.get()->s.name());
+        if (dc->models.size() == 1) body_fragment += prout("ID", *dc->models[0].get()) + "\ttac();\n\n";
 
-            if (model.get()->s.quantity() > 1) name += "["+std::to_string(instance)+"]";
+        else for (auto &model : dc->models) {
 
-            body_fragment += "\t// "+name+"\n";
-            body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
-            body_fragment += "\ttic();\n";
+            for (int instance = 0; instance < model.get()->s.quantity(); instance++) body_fragment += prout(std::to_string(instance), *model.get());
 
-            // body_fragment += "\t"+camel(name)+" "+name+" = dynubo."+lower(ubl->s.name())+"."+name+(layer.s.quantity() > 1?"[OBJ]":"")+";\n";
+            model_id++;
 
-            for (auto &effector : model.get()->effectors) {
-
-                std::string arg_str;
-
-                for (auto &arg : Effector::get(effector.get()->file).args) {
-
-                    arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
-                    // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
-
-                }
-
-                arg_str.resize(arg_str.size()-2);
-
-                body_fragment += "\t"+effector->file->name()+"("+arg_str+");\n";
-            }
+            body_fragment += "\ttac();\n\n";
 
         }
 
-        body_fragment += "\ttac();\n\n";
 
-        body_fragment += "\n";
-
-        model_id++;
     }
 
     if (dc) {
@@ -230,7 +242,7 @@ void DrawCall::draw() {
 
     shader.use();
 
-    vbo.draw(s.quantity());
+    vbo.draw();
 
 }
 
