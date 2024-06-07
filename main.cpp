@@ -5,16 +5,66 @@
                                 */
 
 #include "engine.hpp"
+#include "layer.hpp"
+#include "texture.hpp"
+#include "editor.hpp"
+#include "node.hpp"
+
+struct SmartLayer : Layer {
+
+    int draw_count = 1;
+
+    SmartLayer() : Layer(1920,1080) {}
+
+    void draw() override {
+
+        if (feedback) { feedback->bind(); }
+
+        fb.clear();
+
+        shader.use();
+
+        vbo.draw(draw_count);
+
+        if (feedback) { return feedback->read(fb.texture); }
+
+    }
+
+};
+
+// Editor<SmartLayer>([](Node* node, SmartLayer* layer) {
+
+
+// });
+
+// on new Node detect if is a from known list of types
+
+// change Node::type() to *ptr
+
+// compare typeid(n->ptr)
 
 int main() {
+
+
 
     engine.init();
 
     engine.open("project.json");
 
+    glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_COLOR);
+
+    auto sl_ = engine.stack->addOwnr<SmartLayer>();
+    auto &sl = *sl_->get();
+if (dynamic_cast<Layer*>(&sl) != nullptr) std::cout  <<"OOOOOOOOOOOOOOOOO";
+    if (typeid(*sl_->ptr) == typeid(Layer)) { std::cout << "SISIS" << std::endl; }
+
+
     engine.run();
 
 }
+
+
+// Layer::dyninst && Layer::statinst (also for editors ;) though need per Effectable ... oulalal)
 
 // if layer model size == 1 use instanceID draw mujltipt @ shaderbuild
 

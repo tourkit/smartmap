@@ -24,7 +24,10 @@
 #include "layer.hpp"
 
 
+
+#include "tinyexpr/tinyexpr.h"
 #include <ctime>
+
 #include <cstring>
 #include <format>
 static int hovered_offset = -1;
@@ -179,6 +182,15 @@ static void draw_raw(void *data, size_t size) {
 
 }
 
+
+static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
+
+    *(std::string*)data->UserData = data->Buf;
+
+    return 0;
+
+}
+
 static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 0) {
 
 
@@ -254,7 +266,33 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
                 std::string name = (m->name()+"##SIE"+member->name()+m->name()+std::to_string(member_count++));
 
-                if (ImGui::SliderScalarN(name.c_str(), type, buff->data.data()+offset, q, range_from, range_to)) has_changed = true;
+
+                static std::string str__;
+
+                if (ImGui::SliderScalarN(name.c_str(), type, buff->data.data()+offset, q, range_from, range_to,NULL,0,ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue,MyResizeCallback, &str__)) {
+
+                    static te_parser tep;
+                    double r = tep.evaluate(str__);
+                    if (!std::isnan(r)) {
+
+                        // xxx = old value but how ?
+                        // if (type == ImGuiDataType_Float) str__ = std::to_string(*(float*)xxx + str__;
+                        // else if (type == ImGuiDataType_S16) str__ = std::to_string(*(int16_t*)xxx + str__;
+                        // else if (type == ImGuiDataType_U16) str__ = std::to_string(*(uint16_t*)xxx + str__;
+
+                        r = tep.evaluate(str__);
+                    }
+                    if (!std::isnan(r)){
+
+                        if (type == ImGuiDataType_Float) *(float*)(buff->data.data()+offset) = r;
+                        else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data.data()+offset) = r;
+                        else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data.data()+offset) = r;
+
+
+                    }
+
+                    has_changed = true;
+                }
 
         }else{
 
@@ -575,7 +613,6 @@ void Editors::init() {
                     vert_last_change = shader->last_change;
 
                 }
-
                 verteditor.Render("frageditor");
 
                 if (verteditor.IsTextChanged()) {
@@ -839,17 +876,11 @@ void Editors::init() {
 
     Editor<Debug>([](Node* node, Debug *debug){
 
+        static std::vector<GLenum> enums = {GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, GL_SRC_ALPHA_SATURATE, GL_SRC1_COLOR, GL_ONE_MINUS_SRC1_COLOR, GL_SRC1_ALPHA, GL_ONE_MINUS_SRC1_ALPHA};
+        static int blendin = 0, blendout = 0;
+        if (ImGui::SliderInt2( "blend", &blendin, 0, enums.size()-1)) glBlendFunc(enums[blendin],enums[blendout]);
+
         Editor<Log>::cb(node, &logger);
-
-
-       static int maj = -1, min;
-
-       if (maj<0) {
-
-            glGetIntegerv(GL_MAJOR_VERSION,  &maj);
-
-            glGetIntegerv(GL_MINOR_VERSION,  &min);
-        }
 
     });
 

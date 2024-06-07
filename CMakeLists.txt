@@ -58,6 +58,8 @@ add_executable( smartmap
   src/tree.cpp
 
 
+  vendors/tinyexpr/tinyexpr.cpp
+
   vendors/imgui/imgui.cpp
   vendors/imgui/imgui_tables.cpp
   vendors/imgui/imgui_widgets.cpp
