@@ -24,7 +24,7 @@
 #include "layer.hpp"
 
 
-
+#include <ctype.h>
 #include "tinyexpr/tinyexpr.h"
 #include <ctime>
 
@@ -279,8 +279,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                     x*=4;
 
                     static te_parser tep;
-
-                    if (!std::isdigit(atoi( str__.c_str() ))) {
+                    if (str__.length() && !isdigit(str__.at(0))) {
 
                         if (last_value.length())str__=last_value+str__;
 
