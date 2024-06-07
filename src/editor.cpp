@@ -275,7 +275,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                     double r = tep.evaluate(str__);
                     if (!std::isnan(r)) {
 
-                        // xxx = old value but how ?
+                        // xxx = old value but how
                         // if (type == ImGuiDataType_Float) str__ = std::to_string(*(float*)xxx + str__;
                         // else if (type == ImGuiDataType_S16) str__ = std::to_string(*(int16_t*)xxx + str__;
                         // else if (type == ImGuiDataType_U16) str__ = std::to_string(*(uint16_t*)xxx + str__;
