@@ -102,6 +102,7 @@ void ShaderProgram::Builder::build() {
     vertex += header_vertex;
     vertex += "\nvoid main() {\n\n";
     vertex += body_vertex;
+    vertex += "\tgl_Position = vec4(POS, 0, 1);\n\n";
     vertex += "}\n////////////";
 
     fragment.clear();
@@ -245,7 +246,8 @@ bool Shader::create(std::string src, uint8_t type)  {
     if (!success) {
 
         glGetShaderInfoLog(id, 512, NULL, infoLog);
-        std::memset(std::strchr(infoLog, '\n'), 0, 1);
+        auto nl = std::strchr(infoLog, '\n');
+        if (nl) std::memset(nl, 0, 1);
         PLOGE << (type==1?"vertex: ":"fragment: ") << &infoLog[7];
         PLOGV <<source;
 

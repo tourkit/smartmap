@@ -12,9 +12,10 @@
 
 struct SmartLayer : Layer {
 
-    int draw_count = 1;
+    int draw_count = 5;
 
-    SmartLayer() : Layer(1920,1080) {}
+    SmartLayer() : Layer(1920,1080) {  addModel(&VBO::quad);addModel(&VBO::quad); shader.builder = &builder; }
+
 
     void draw() override {
 
@@ -30,24 +31,62 @@ struct SmartLayer : Layer {
 
     }
 
+        struct ShaderProgramBuilder : DrawCall::ShaderProgramBuilder {
+
+        // void build() override;
+        void frag() {
+
+            body_fragment+= "if (ID == 0) {\n\n";
+            body_fragment+= "\tCOLOR = texture(render_pass,NORMALIZED)-.02;//*static_ubo.ubervbo[int(OBJ)].uberLayer.size+static_ubo.ubervbo[int(OBJ)].uberLayer.norm)-.02;\n\n";
+            body_fragment+= "\treturn;\n\n";
+            body_fragment+= "}\n\n";
+            body_fragment+= "COLOR = vec4(UV.x+.01);\n\n";
+            body_fragment+= "if (OBJ==0) { COLOR *= vec4(0,1,.1,1); }\n\n";
+            body_fragment+= "else if (OBJ==1) { COLOR *= vec4(0,0,1,1); }\n\n";
+            body_fragment+= "else if (OBJ==2) { COLOR *= vec4(1,0,1,1); }\n\n";
+            body_fragment+= "else if (OBJ==3) { COLOR *= vec4(1,0,0,1); }\n\n";
+            body_fragment+= "else if (OBJ==4) { COLOR *= vec4(1,1,0,1); }\n\n";
+            body_fragment+= "else if (OBJ==5) { COLOR *= vec4(0,1,0,1); }\n\n";
+            body_fragment+= "else { \n\n";
+            body_fragment+= "\tif (OBJ>1) COLOR *= .5;\n\n";
+            body_fragment+= "}\n\n";
+            body_fragment+= "if ( NORMALIZED.x < 0 || NORMALIZED.y < 0 || NORMALIZED.x > 1 || NORMALIZED.y > 1 ) COLOR = vec4(0);\n\n";
+            body_fragment+= "}\n\n///////////////////";
+
+        }
+
+        void vert() {
+
+            body_vertex += "\tPOS = NORMALIZED;\n\n";
+            body_vertex += "\tif (ID == 1) {\n\n";
+            body_vertex += "\t\tUV = POS;\n\n";
+            body_vertex += "\t\tint curr = dynamic_ubo[0].eNGINE.alt;\n\n";
+            body_vertex += "\t\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(0)].rectangle.size;\n\n";
+            body_vertex += "\t\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(0)].rectangle.pos;\n\n";
+            body_vertex += "\t\tPOS *= size;\n\n";
+            body_vertex += "\t\tPOS += pos*(1+size);//-1;\n\n";
+            body_vertex += "\t\tPOS -= size;\n\n";
+            body_vertex += "\t}\n\n";
+            body_vertex += "\tNORMALIZED = POS;\n\n";
+            body_vertex += "\t// POS *= static_ubo.ubervbo[int(OBJ)].uberLayer.size;\n\n";
+            body_vertex += "\t// POS += static_ubo.ubervbo[int(OBJ)].uberLayer.norm;\n\n";
+            body_vertex += "\tPOS = POS*2-1;\n\n";
+        }
+
+
+    } builder;
+
 };
 
-// Editor<SmartLayer>([](Node* node, SmartLayer* layer) {
-
-
-// });
-
-// on new Node detect if is a from known list of types
-
-// change Node::type() to *ptr
-
-// compare typeid(n->ptr)
 
 int main() {
 
-
+Editor<SmartLayer>([](Node* node, SmartLayer* layer) { Editor<Layer>::cb(node, layer); });
+NODE<SmartLayer>::onrun( [](Node* node, SmartLayer* layer) { NODE<Layer>::onrun_cb(node, layer); });
+NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onchange_cb(node, layer); });
 
     engine.init();
+
 
     engine.open("project.json");
 
@@ -58,11 +97,13 @@ int main() {
 if (dynamic_cast<Layer*>(&sl) != nullptr) std::cout  <<"OOOOOOOOOOOOOOOOO";
     if (typeid(*sl_->ptr) == typeid(Layer)) { std::cout << "SISIS" << std::endl; }
 
+    sl.shader.create();
 
     engine.run();
 
 }
 
+// fix struct deletion and remap
 
 // Layer::dyninst && Layer::statinst (also for editors ;) though need per Effectable ... oulalal)
 

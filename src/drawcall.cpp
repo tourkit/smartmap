@@ -209,7 +209,6 @@ void Layer::ShaderProgramBuilder::vert() {
 
 	body_vertex += "\tvec2 POS = POSITION;\n\n";
 
-    body_vertex += "\tgl_Position = vec4(POS, 0, 1);\n\n";
 
 }
 

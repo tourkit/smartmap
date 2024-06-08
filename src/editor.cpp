@@ -279,7 +279,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                     x*=4;
 
                     static te_parser tep;
-                    if (str__.length() && !isdigit(str__.at(0))) {
+                    if (str__.length() &&!isdigit(str__.at(0))) {
 
                         if (last_value.length())str__=last_value+str__;
 
@@ -705,7 +705,9 @@ void Editors::init() {
             str+="] ";
 
             str += m.msg;
-            ImGui::Text(str.c_str());
+
+            int x = 130;
+            ImGui::TextEx(str.c_str(), str.c_str()+(str.length()>x?x:str.length())); if (str.length()>x) { ImGui::SameLine(); ImGui::Text("..."); }
             ImGui::PopStyleColor();
 
             if (ImGui::BeginPopupContextItem(("##dsfgsdf"+std::to_string(count)).c_str())) {
@@ -891,7 +893,7 @@ void Editors::init() {
     Editor<Debug>([](Node* node, Debug *debug){
 
         static std::vector<GLenum> enums = {GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, GL_SRC_ALPHA_SATURATE, GL_SRC1_COLOR, GL_ONE_MINUS_SRC1_COLOR, GL_SRC1_ALPHA, GL_ONE_MINUS_SRC1_ALPHA};
-        static int blendin = 0, blendout = 0;
+        static int blendin = 1, blendout = 3;
         if (ImGui::SliderInt2( "blend", &blendin, 0, enums.size()-1)) glBlendFunc(enums[blendin],enums[blendout]);
 
         Editor<Log>::cb(node, &logger);
