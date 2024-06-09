@@ -125,7 +125,7 @@ void Artnet::connect(std::string ip_) {
 
         }
 
-        PLOGW <<  using_ip << " ! ";
+        PLOGW << "ip address " << ip_ << " not found, using " << using_ip << " instead";
 
     }
 

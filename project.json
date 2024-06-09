@@ -18,7 +18,7 @@
   },
   "editors": [
     [ 0, 0, 0, 0, "tree::Debug", true ],
-    [ 0, 0, 0, 0, "Debug::dynamic_ubo" ],
+    [ 0, 0, 0, 0, "Stack::SmartLayer" ],
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ]
   ],
   "outputs": {

@@ -562,7 +562,8 @@ void Engine::open(const char* file) {
 
                 engine.gui->editors.back()->locked = true;
 
-            }
+            }else PLOGW << "no \"" << e[4].GetString() << "\" found";
+
 
             // if (e.Size() > 5 && e[5].IsBool() ) engine.gui->editors.back()->locked = e[5].GetBool();
 

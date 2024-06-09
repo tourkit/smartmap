@@ -104,7 +104,13 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
 }
 
-// fix struct deletion and remap
+// c# librehardwaremonitor tryiing
+
+// test 2 OBJ  10 inst, PER / INST // with 1 first nan ?>
+
+// fix remap ? or just default set ?
+
+// fix struct deletion
 
 // Layer::dyninst && Layer::statinst (also for editors ;) though need per Effectable ... oulalal)
 
