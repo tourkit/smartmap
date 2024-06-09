@@ -36,22 +36,22 @@ struct SmartLayer : Layer {
         // void build() override;
         void frag() {
 
-            body_fragment+= "if (ID == 0) {\n\n";
-            body_fragment+= "\tCOLOR = texture(render_pass,NORMALIZED)-.02;//*static_ubo.ubervbo[int(OBJ)].uberLayer.size+static_ubo.ubervbo[int(OBJ)].uberLayer.norm)-.02;\n\n";
-            body_fragment+= "\treturn;\n\n";
-            body_fragment+= "}\n\n";
-            body_fragment+= "COLOR = vec4(UV.x+.01);\n\n";
-            body_fragment+= "if (OBJ==0) { COLOR *= vec4(0,1,.1,1); }\n\n";
-            body_fragment+= "else if (OBJ==1) { COLOR *= vec4(0,0,1,1); }\n\n";
-            body_fragment+= "else if (OBJ==2) { COLOR *= vec4(1,0,1,1); }\n\n";
-            body_fragment+= "else if (OBJ==3) { COLOR *= vec4(1,0,0,1); }\n\n";
-            body_fragment+= "else if (OBJ==4) { COLOR *= vec4(1,1,0,1); }\n\n";
-            body_fragment+= "else if (OBJ==5) { COLOR *= vec4(0,1,0,1); }\n\n";
-            body_fragment+= "else { \n\n";
-            body_fragment+= "\tif (OBJ>1) COLOR *= .5;\n\n";
-            body_fragment+= "}\n\n";
-            body_fragment+= "if ( NORMALIZED.x < 0 || NORMALIZED.y < 0 || NORMALIZED.x > 1 || NORMALIZED.y > 1 ) COLOR = vec4(0);\n\n";
-            body_fragment+= "}\n\n///////////////////";
+            body_fragment+= "\tif (ID == 0) {\n\n";
+            body_fragment+= "\t//\tCOLOR = texture(render_pass,NORMALIZED)-.02;//*static_ubo.ubervbo[int(OBJ)].uberLayer.size+static_ubo.ubervbo[int(OBJ)].uberLayer.norm)-.02;\n\n";
+            body_fragment+= "\t\treturn;\n\n";
+            body_fragment+= "\t}\n\n";
+            body_fragment+= "\tif (ID > 1) return;\n\n";
+            body_fragment+= "\tCOLOR = vec4(UV.x+.01);\n\n";
+            body_fragment+= "\tif (OBJ==0) { COLOR *= vec4(0,1,.1,1); }\n\n";
+            body_fragment+= "\telse if (OBJ==1) { COLOR *= vec4(0,0,1,1); }\n\n";
+            body_fragment+= "\telse if (OBJ==2) { COLOR *= vec4(1,0,1,1); }\n\n";
+            body_fragment+= "\telse if (OBJ==3) { COLOR *= vec4(1,0,0,1); }\n\n";
+            body_fragment+= "\telse if (OBJ==4) { COLOR *= vec4(1,1,0,1); }\n\n";
+            body_fragment+= "\telse if (OBJ==5) { COLOR *= vec4(0,1,0,1); }\n\n";
+            body_fragment+= "\telse { \n\n";
+            body_fragment+= "\t\tif (OBJ>1) COLOR *= .5;\n\n";
+            body_fragment+= "\t}\n\n";
+            body_fragment+= "\tif ( NORMALIZED.x < 0 || NORMALIZED.y < 0 || NORMALIZED.x > 1 || NORMALIZED.y > 1 ) COLOR = vec4(0);\n\n";
 
         }
 
@@ -63,6 +63,7 @@ struct SmartLayer : Layer {
             body_vertex += "\t\tint curr = dynamic_ubo[0].eNGINE.alt;\n\n";
             body_vertex += "\t\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(0)].rectangle.size;\n\n";
             body_vertex += "\t\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(0)].rectangle.pos;\n\n";
+            body_vertex += "\t\tpos.x = mod(dynamic_ubo[curr].eNGINE.frame,100)/100;\n\n";
             body_vertex += "\t\tPOS *= size;\n\n";
             body_vertex += "\t\tPOS += pos*(1+size);//-1;\n\n";
             body_vertex += "\t\tPOS -= size;\n\n";
@@ -92,9 +93,9 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
     glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_COLOR);
 
-    auto sl_ = engine.stack->addOwnr<SmartLayer>();
+    auto sl_ = engine.stack->addOwnr<SmartLayer>()->select();
     auto &sl = *sl_->get();
-if (dynamic_cast<Layer*>(&sl) != nullptr) std::cout  <<"OOOOOOOOOOOOOOOOO";
+    if (dynamic_cast<Layer*>(&sl) != nullptr) std::cout  <<"OOOOOOOOOOOOOOOOO";
     if (typeid(*sl_->ptr) == typeid(Layer)) { std::cout << "SISIS" << std::endl; }
 
     sl.shader.create();
@@ -107,11 +108,7 @@ if (dynamic_cast<Layer*>(&sl) != nullptr) std::cout  <<"OOOOOOOOOOOOOOOOO";
 
 // Layer::dyninst && Layer::statinst (also for editors ;) though need per Effectable ... oulalal)
 
-// if layer model size == 1 use instanceID draw mujltipt @ shaderbuild
-
 // cpu transform matrice matrice_elem_XY
-
-// try 3d movement
 
 // fine feedback ~ish
 

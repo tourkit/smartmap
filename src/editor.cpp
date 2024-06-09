@@ -279,7 +279,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                     x*=4;
 
                     static te_parser tep;
-                    if (str__.length() &&!isdigit(str__.at(0))) {
+                    if (str__.length() && !isdigit(str__.at(0)) && str__.at(0) != 46) {
 
                         if (last_value.length())str__=last_value+str__;
 
