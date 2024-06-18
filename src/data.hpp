@@ -31,6 +31,7 @@ struct Data : Member {
 
         else  if (typeid(T) == typeid(float) || typeid(T) == typeid(glm::vec2) || typeid(T) == typeid(glm::vec3) || typeid(T) == typeid(glm::vec4) ) *(float*)range_to_ptr = 1.0f;
 
+        else if (typeid(char) == typeid(T))   *(char*)range_to_ptr = 255;
 
     }
 

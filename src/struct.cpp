@@ -35,8 +35,11 @@ bool Struct::destroy(std::string name) {
 
 Struct::~Struct(){
 
+    removing.insert(this);
+
     structs.erase(this);
 
+    // remove from other structs
     for (auto s : structs) {
 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
@@ -46,6 +49,8 @@ Struct::~Struct(){
         }
 
     }
+
+    removing.erase(this);
 
     // delete isData() a.k.a Data members
     for (auto x : members) {
@@ -57,6 +62,7 @@ Struct::~Struct(){
         }
 
     }
+
 }
 
 Struct::Struct(const Member& other) : Member(other) {
@@ -207,6 +213,11 @@ Struct& Struct::range(float from, float to, float def) {
         ((Data<int>*)members.back())->range_from = (int) from;
         ((Data<int>*)members.back())->range_to = (int) to;
         ((Data<int>*)members.back())->default_val = (int) def;
+    }
+    if (a->type() == typeid(char)) {
+        ((Data<char>*)members.back())->range_from = (char) from;
+        ((Data<char>*)members.back())->range_to = (char) to;
+        ((Data<char>*)members.back())->default_val = (char) def;
     }
 
     if (a->type() == typeid(glm::vec2)) {

@@ -19,7 +19,7 @@ Buffer::Buffer(const Buffer& other) : Struct( other ) , data( other.data ) { }
 
 void Buffer::upload() { }
 
-void  Buffer::pre_change() {
+void  Buffer::pre_change() { // return;
 
     if (!data.size()) return;
 
@@ -29,7 +29,7 @@ void  Buffer::pre_change() {
 
 }
 
-void  Buffer::post_change(std::vector<Member*> addeds) {
+void  Buffer::post_change(std::vector<Member*> addeds) { //return;
 
     for (auto added : addeds) { // only to set default I guess
 
@@ -160,7 +160,22 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             }
 
-            if (!found) { src_offset_ += src_member_->footprint(); PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer.name(); continue; }
+
+            if (!found ) {
+
+                src_offset_ += src_member_->footprint();
+
+#ifdef ROCH
+               if (![src_member_](){ // COULD BE DEBUG MODE ONLY
+
+                    for (auto x : removing) if (!strcmp(x->name().c_str(),src_member_->name().c_str())) return true;
+
+                    return false;
+
+                }()) PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer.name();
+#endif
+                continue;
+            }
 
             remap(src_buffer, src_member_, found, src_offset_, this_offset_);
 

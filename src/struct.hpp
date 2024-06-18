@@ -58,9 +58,10 @@ struct Struct : Member {
     static bool destroy(std::string name) ;
 
     Struct* isStruct() override;
-// private:
 
     Member* add(Member* m);
+protected:
+    static inline std::set<Member*> removing;
 
 #ifdef ROCH
     std::string DEBUG_TYPE;
