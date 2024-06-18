@@ -37,52 +37,39 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
             bool found = false;
 
-            for (auto x : inst.stl) for (auto y : addeds) if ( x == y.m ) { found = true; break; break; }
+            if (inst.def()->isRef()) for (auto x : inst.stl) for (auto y : addeds) if ( x == y.m ) { found = true; break; break; }
 
             if (found) {
 
                 auto *m = inst.def();
 
-                int offset = inst.offset+(m->size()*added.eq);
+                int offset = inst.offset;
 
-                if (m->isRef()) m = m->members[0];
-
-                for (auto m_ : m->members) {
+                for (auto m_ : m->members[0]->members) {
 
                     if (m_->default_val_ptr) {
 
-                            // if (m_->type() == typeid(glm::vec2)) {
+                        // if (m_->type() == typeid(glm::vec2)) {
 
-                            //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) m_->default_val_ptr).x ;
-                            // }
+                        //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) m_->default_val_ptr).x ;
+                        // }
 
-                            // if (m_->type() == typeid(float)) {
+                        // if (m_->type() == typeid(float)) {
 
-                            //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val : " << *(float*) m_->default_val_ptr ;
+                        //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val : " << *(float*) m_->default_val_ptr ;
 
-                            // }
+                        // }
 
                         for (int i = inst.stl.size()-1; i>=0; i--) { // if parent q>1
 
                             auto x = inst.stl[i];
 
-                            if (x->quantity()>1) {
+                            if (x->quantity()>1) for (int todo = 0 ; todo < x->quantity(); todo++) memcpy(&data[offset+x->size()*todo], m_->default_val_ptr, m_->size());
 
-                                for (int todo = 0 ; todo < x->quantity(); todo++) {
-
-                                    memcpy(&data[offset+x->size()*todo], m_->default_val_ptr, m_->size());
-
-                                }
-
-
-
-                            }
 
                         }
 
-                        for (int i = 0 ; i < added.q; i++) // if q>1 added
-
-                            memcpy(&data[offset+(i*m->size())], m_->default_val_ptr, m_->size());
+                        memcpy(&data[offset], m_->default_val_ptr, m_->size());
 
 
                     }

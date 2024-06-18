@@ -31,6 +31,17 @@ Instance::Instance(Buffer* buff, Member* m) : buff(buff) {
 
 Instance::Instance(Buffer* buff, uint32_t offset, std::vector<Member*> stl, int eq_id) : buff(buff), offset(offset), stl(stl), eq_id(eq_id) { }
 
+Instance Instance::parent() {
+
+    auto offset = this->offset;
+    offset-=def()->footprint();
+    auto stl_ = stl;
+    stl_.resize(stl_.size()-1);
+
+    return Instance(buff,offset,stl_);
+
+}
+
 Instance Instance::find(Member* x) {
 
     auto offset = this->offset;

@@ -49,6 +49,8 @@ struct Instance {
 
     Instance find(Member* m);
 
+    Instance parent();
+
     bool exist();
 
     Instance& track() {
