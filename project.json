@@ -10,21 +10,17 @@
     "uber.glsl": "//id(0,10,0)\n//q(0,10,1)\n\nvoid uber(int id, int q) {\n\t\n\tvec4 color_=  vec4(0);\n\t\n\tfor (int i =0; i < q; i++) {\n\n\t\tvec2 tuv = uv;\n\n\t\ttuv *= static_ubo.ubervbo[id+i].uberLayer.size;\n\t\ttuv += static_ubo.ubervbo[id+i].uberLayer.norm;\n\t\n\t\tcolor_ += texture(uberlayer, tuv);\n\t\t\n\t}\n\t\n\tcolor *= color_;\n\t\n};\n\n\n\n",
     "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size, float angle) {\n\n\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tangle *= 6.2831853072;\n\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\n\tuv *= aspect_ratio * mat2(c, -s, s, c) * (1./aspect_ratio);\n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n"
   },
-  "inputs": {
-    "artnet": { "ArtNet": [ "2.0.0.991", { "remap2": [ 0, 1, "UberLayer1::SmartLayer1", [ 1, 1, 1, 1, 2, 2, 2, 2 ] ] } ] }
-  },
-  "uberlayers": {
-    "UberLayer1": { "SmartLayer1": [ 1, 1, 10, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }
-  },
   "editors": [
     [ 0, 0, 0, 0, "tree::Debug", true ],
-    [ 0, 0, 0, 0, "Stack::SmartLayer" ],
-    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
-    [ 0, 0, 0, 0, "Stack::SmartLayer" ]
+    [ 0, 0, 0, 0, "Stack::layer_1", true ],
+    [ 0, 0, 0, 0, "layer_1::quad", true ]
   ],
   "outputs": {
     "monitor": { "Window": [ 1920, 1080, 2560, 0 ] }
   },
   "remaps": {},
-  "layers": {}
+  "layers": {
+    "layer_1": [ 1920, 1080, { "quad": [ "quad.obj", 2, { "argb": "argb.glsl", "rectangle": "rectangle.glsl" } ] }, {} ]
+  },
+  "uberlayers": {}
 }

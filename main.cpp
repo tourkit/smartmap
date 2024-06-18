@@ -153,19 +153,23 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
     engine.open("project.json");
 
-    glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_COLOR);
+    // glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_COLOR);
 
-    auto sl_ = engine.stack->addOwnr<SmartLayer>()->select();
-    auto &sl = *sl_->get();
-    engine.stack->addPtr<Struct>(&sl.s);
-    if (dynamic_cast<Layer*>(&sl) != nullptr) std::cout  <<"OOOOOOOOOOOOOOOOO";
-    if (typeid(*sl_->ptr) == typeid(Layer)) { std::cout << "SISIS" << std::endl; }
+    // auto sl_ = engine.stack->addOwnr<SmartLayer>()->select();
+    // auto &sl = *sl_->get();
+    // engine.stack->addPtr<Struct>(&sl.s);
+    // if (dynamic_cast<Layer*>(&sl) != nullptr) std::cout  <<"OOOOOOOOOOOOOOOOO";
+    // if (typeid(*sl_->ptr) == typeid(Layer)) { std::cout << "SISIS" << std::endl; }
 
-    sl.shader.create();
+    // sl.shader.create();
 
     engine.run();
 
 }
+
+// pk strobe on q change or dcynupdate?
+
+// fix struct deletion Instace VBO > 0
 
 // WrapperEffector : Effector
 
@@ -173,9 +177,6 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
 // test 2 OBJ  10 inst, PER / INST // with 1 first nan ?>
 
-// fix remap ? or just default set ?
-
-// fix struct deletion
 
 // c# librehardwaremonitor tryiing // theb ImGraphView
 
@@ -211,5 +212,6 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 // MOVE EDID MENU PER OUTPUT IN OUTPUT->X->EDID
 
 // DISPLAY INFO MESSAGE ON START / SHUTDOWN  "STARTING" "SHUTTING DOWN"
+
 
 // NETWORK REPEAT FAILURE

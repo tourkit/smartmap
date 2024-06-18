@@ -60,7 +60,7 @@ void Layer::draw() {
 
     shader.use();
 
-    vbo.draw(2);//(models.size()==1?models[0].get()->s.quantity():1));
+    vbo.draw(models.size()==1?models[0].get()->s.quantity():1);
 
     if (feedback) { return feedback->read(fb.texture); }
 
