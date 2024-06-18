@@ -29,17 +29,17 @@ void  Buffer::pre_change() { // return;
 
 }
 
-void  Buffer::post_change(std::vector<Member*> addeds) { //return;
+void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
-    for (auto added : addeds) { // only to set default I guess
+    for (auto added : addeds) { // only to set default I guess // need to handle Q
 
         each([&](Instance& inst) {
 
             auto *m = inst.def();
 
-            int offset = inst.offset;
+            int offset = inst.offset+(m->size()*added.eq);
 
-            if (m == added) {
+            if (m == added.m) {
 
                 if (m->isRef()) m = m->members[0];
 
@@ -57,8 +57,9 @@ void  Buffer::post_change(std::vector<Member*> addeds) { //return;
                             //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val : " << *(float*) m_->default_val_ptr ;
 
                             // }
-
-                        memcpy(&data[offset], m_->default_val_ptr, m_->size());
+                        for (int i = 0 ; i < added.q; i++) {
+                        memcpy(&data[offset+(i*m->size())], m_->default_val_ptr, m_->size());
+                        }
 
                     }
 

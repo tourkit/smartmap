@@ -188,7 +188,7 @@ Member* Struct::add(Member* m_) {
 
     update();
 
-    post_change({&m});
+    post_change({{&m}});
 
     return &m;
 

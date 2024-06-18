@@ -95,11 +95,13 @@ Member* Member::quantity(uint32_t quantity_v) {
 
     pre_change();
 
+    auto old = this->quantity_v;
+
     this->quantity_v = quantity_v;
 
     update();
 
-    post_change();
+    post_change({{this, old, quantity_v-old}});
 
     return this;
 
@@ -214,7 +216,7 @@ void Member::pre_change() {
 
 }
 
-void Member::post_change(std::vector<Member*> added) {
+void Member::post_change(std::vector<NewMember> added) {
 
     for (auto x : getTop()) x->post_change(added);
 

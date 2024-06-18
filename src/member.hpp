@@ -86,7 +86,10 @@ struct Member {
     std::set<Member*> getTop(bool z = false);
 
     virtual void pre_change();
-    virtual void post_change(std::vector<Member*> added = {});
+
+    struct NewMember{Member* m; int eq = 0, q = 1; };
+
+    virtual void post_change(std::vector<NewMember> added = {});
 
     template <typename U>
     std::array<U,3> range() { return { *(U*)range_from_ptr, *(U*)range_to_ptr, *(U*)default_val_ptr}; }
