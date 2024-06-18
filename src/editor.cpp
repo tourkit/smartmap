@@ -820,7 +820,20 @@ void Editors::init() {
 
     ////////// MODEL.HPP
 
+    Editor<Model>([](Node* node, Model *model){
 
+
+        ImGui::Text(("effectorz : " + std::to_string(model->effectors.size())+ " .").c_str());
+
+        static std::map<Node*,int> effector_currents;
+
+       effector_currents[node] = model->s.quantity();
+
+        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->s.quantity(effector_currents[node]); node->update(); }
+
+        if (draw_guis(&engine.dynamic_ubo))engine.dynamic_ubo.upload();
+
+    });
 
     ////////// Artnet.HPP
 

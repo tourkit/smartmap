@@ -110,30 +110,7 @@ void struct_editor(Node* node, Member* m, int offset = 0) {
 }
 
 int main() {
-    Editor<Model>([](Node* node, Model *model){
 
-
-        ImGui::Text(("effectorz : " + std::to_string(model->effectors.size())+ " .").c_str());
-
-        static std::map<Node*,int> effector_currents;
-
-       effector_currents[node] = model->s.quantity();
-
-        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) {
-
-
-
-model->s.quantity(effector_currents[node]); node->update();
-
-
-
-
-              }
-
-        if (draw_guis(&engine.dynamic_ubo))
-            engine.dynamic_ubo.upload();
-
-    });
 
 
 Editor<Struct>([](Node* node, Struct* s){ struct_editor(node,s); });
