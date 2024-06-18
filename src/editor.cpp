@@ -490,27 +490,12 @@ void Editors::init() {
 
     ////////// STRUCT.HPP
 
-    // TOFIX
-
-    // Editor<Struct>([](Node* node, Struct *s){
-
-    //     std::string str = s->name+" " +std::to_string(s->size());
-    //     ImGui::Text(str.c_str());
-
-    //     for (auto& c : s->comps) {
-
-    //         std::string str = " - "+c->name+" "+std::to_string(c->size);
-    //         ImGui::Text(str.c_str());
-
-    //         for (auto& m : c->members) {
-    //             std::string str = "  -- "+m.name+" "+std::to_string(m.size);
-    //             ImGui::Text(str.c_str());
-    //         }
 
 
-    //     }
+// Editor<Struct>([](Node* node, Struct* s){
+//     ImGui::Text( "/====");
 
-    // });
+//      });
 
     ////////// WINDOW.HPP
 

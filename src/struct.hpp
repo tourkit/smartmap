@@ -57,7 +57,7 @@ struct Struct : Member {
 
     static bool destroy(std::string name) ;
 
-
+    Struct* isStruct() override;
 // private:
 
     Member* add(Member* m);

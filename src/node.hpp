@@ -282,7 +282,9 @@ struct TypedNode : UntypedNode {
 
     }
 
-    void editor() override { if(Editor<T>::cb) Editor<T>::cb(node(),this->ptr); }
+    void editor() override { if(Editor<T>::cb)
+    Editor<T>::cb(node(),this->ptr);
+    }
 
     template <typename U>
     TypedNode<T>* addFolder(std::string name, std::string path) {

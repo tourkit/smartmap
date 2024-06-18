@@ -68,6 +68,7 @@ struct Member {
 
     virtual bool isData();
     virtual bool isRef();
+    virtual Struct* isStruct();
     virtual Buffer* isBuff();
 
     virtual void hard_delete() {}

@@ -14,7 +14,7 @@ struct SmartLayer : Layer {
 
     int draw_count = 5;
 
-    SmartLayer() : Layer(1920,1080) {  addModel(&VBO::quad);addModel(&VBO::quad); shader.builder = &builder; }
+    SmartLayer() : Layer(1920,1080) {  addModel(&VBO::quad); shader.builder = &builder; }
 
 
     void draw() override {
@@ -37,20 +37,10 @@ struct SmartLayer : Layer {
         void frag() {
 
             body_fragment+= "\tif (ID == 0) {\n\n";
-            body_fragment+= "\t//\tCOLOR = texture(render_pass,NORMALIZED)-.02;//*static_ubo.ubervbo[int(OBJ)].uberLayer.size+static_ubo.ubervbo[int(OBJ)].uberLayer.norm)-.02;\n\n";
+            body_fragment+= "\t\tCOLOR = texture(render_pass,NORMALIZED)-.02;//*static_ubo.ubervbo[int(OBJ)].uberLayer.size+static_ubo.ubervbo[int(OBJ)].uberLayer.norm)-.02;\n\n";
             body_fragment+= "\t\treturn;\n\n";
             body_fragment+= "\t}\n\n";
-            body_fragment+= "\tif (ID > 1) return;\n\n";
-            body_fragment+= "\tCOLOR = vec4(UV.x+.01);\n\n";
-            body_fragment+= "\tif (OBJ==0) { COLOR *= vec4(0,1,.1,1); }\n\n";
-            body_fragment+= "\telse if (OBJ==1) { COLOR *= vec4(0,0,1,1); }\n\n";
-            body_fragment+= "\telse if (OBJ==2) { COLOR *= vec4(1,0,1,1); }\n\n";
-            body_fragment+= "\telse if (OBJ==3) { COLOR *= vec4(1,0,0,1); }\n\n";
-            body_fragment+= "\telse if (OBJ==4) { COLOR *= vec4(1,1,0,1); }\n\n";
-            body_fragment+= "\telse if (OBJ==5) { COLOR *= vec4(0,1,0,1); }\n\n";
-            body_fragment+= "\telse { \n\n";
-            body_fragment+= "\t\tif (OBJ>1) COLOR *= .5;\n\n";
-            body_fragment+= "\t}\n\n";
+            body_fragment+= "\tCOLOR = vec4(1);\n\n";
             body_fragment+= "\tif ( NORMALIZED.x < 0 || NORMALIZED.y < 0 || NORMALIZED.x > 1 || NORMALIZED.y > 1 ) COLOR = vec4(0);\n\n";
 
         }
@@ -58,16 +48,25 @@ struct SmartLayer : Layer {
         void vert() {
 
             body_vertex += "\tPOS = NORMALIZED;\n\n";
-            body_vertex += "\tif (ID == 1) {\n\n";
-            body_vertex += "\t\tUV = POS;\n\n";
-            body_vertex += "\t\tint curr = dynamic_ubo[0].eNGINE.alt;\n\n";
-            body_vertex += "\t\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(0)].rectangle.size;\n\n";
-            body_vertex += "\t\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(0)].rectangle.pos;\n\n";
-            body_vertex += "\t\tpos.x = mod(dynamic_ubo[curr].eNGINE.frame,100)/100;\n\n";
+
+            body_vertex += "\tint id = int(mod(ID,8));\n\n";
+            body_vertex += "\tif (id >0) {\n\n";
+            body_vertex += "\t\tOBJ = (id-1)/8;\n\n";
+            body_vertex += "\t\tint last = dynamic_ubo[0].eNGINE.alt;\n";
+            body_vertex += "\t\tint curr = dynamic_ubo[1].eNGINE.alt;\n\n";
+            body_vertex += "\t\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.size;\n";
+            body_vertex += "\t\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.pos;\n\n";
+            body_vertex += "\t\tfloat steps = 6;\n\n";
+            body_vertex += "\t\tfloat smoothing = .8;\n\n";
+            body_vertex += "\t\tvec2 pos2 = dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.pos;\n\n";
+            body_vertex += "\t\tfloat step = (int(ID)-1)/steps;\n\n";
+            body_vertex += "\t\tif (abs(size.x-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size.x)<.015 && abs(size.y-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size.y)<.015) size = mix(size,dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size,step);\n\n";
+            body_vertex += "\t\tif (abs(pos.x-pos2.x)<.12 && abs(pos.y-pos2.y)<.12) pos = mix(pos,pos2,step);\n\n";
             body_vertex += "\t\tPOS *= size;\n\n";
             body_vertex += "\t\tPOS += pos*(1+size);//-1;\n\n";
             body_vertex += "\t\tPOS -= size;\n\n";
             body_vertex += "\t}\n\n";
+
             body_vertex += "\tNORMALIZED = POS;\n\n";
             body_vertex += "\t// POS *= static_ubo.ubervbo[int(OBJ)].uberLayer.size;\n\n";
             body_vertex += "\t// POS += static_ubo.ubervbo[int(OBJ)].uberLayer.norm;\n\n";
@@ -79,10 +78,73 @@ struct SmartLayer : Layer {
 
 };
 
+void struct_editor(Node* node, Member* m, int offset = 0) {
+
+    static std::vector<std::shared_ptr<Struct>> owned_structs;
+
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX()+offset*20);
+
+                    // ImGui::PushID(*(int*)m);
+    ImGui::Text( ("+"+m->name()).c_str() );
+
+    if (ImGui::BeginPopupContextItem(m->name().c_str())) {
+
+        // ImGui::Text(m->name().c_str());
+        ImGui::Separator();
+        if (ImGui::MenuItem("new struct")) {  node->addOwnr<Struct>(); }
+        ImGui::Separator();
+        if (ImGui::MenuItem("new data")) {}
+        ImGui::Separator();
+
+        ImGui::EndPopup();
+    }
+
+                    // ImGui::PopID();
+    offset += 1;
+
+    for (auto x : m->members) struct_editor( node, x, offset );
+
+
+
+}
 
 int main() {
 
-Editor<SmartLayer>([](Node* node, SmartLayer* layer) { Editor<Layer>::cb(node, layer); });
+Editor<Struct>([](Node* node, Struct* s){ struct_editor(node,s); });
+
+Editor<SmartLayer>([](Node* node, SmartLayer* layer) {
+
+
+    if (ImGui::BeginTabBar("damdmamd")) {
+
+        if (ImGui::BeginTabItem("layer")) {
+
+            ImGui::SliderInt("draw count", &layer->draw_count, 0 , 20);
+
+            Editor<Layer>::cb(node, layer);
+
+            ImGui::EndTabItem();
+
+        }
+
+        if (ImGui::BeginTabItem("specials")) {
+
+            ImGui::SliderInt("draw count", &layer->draw_count, 0 , 20);
+            Editor<Struct>::cb(node, &layer->s);
+
+            ImGui::EndTabItem();
+
+        }
+
+        ImGui::EndTabBar();
+    }
+
+
+});
+
+
+
+
 NODE<SmartLayer>::onrun( [](Node* node, SmartLayer* layer) { NODE<Layer>::onrun_cb(node, layer); });
 NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onchange_cb(node, layer); });
 
@@ -95,6 +157,7 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
     auto sl_ = engine.stack->addOwnr<SmartLayer>()->select();
     auto &sl = *sl_->get();
+    engine.stack->addPtr<Struct>(&sl.s);
     if (dynamic_cast<Layer*>(&sl) != nullptr) std::cout  <<"OOOOOOOOOOOOOOOOO";
     if (typeid(*sl_->ptr) == typeid(Layer)) { std::cout << "SISIS" << std::endl; }
 
@@ -104,13 +167,17 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
 }
 
-// c# librehardwaremonitor tryiing
+// WrapperEffector : Effector
+
+// test 1+nth_pass*objcopunt inst,
 
 // test 2 OBJ  10 inst, PER / INST // with 1 first nan ?>
 
 // fix remap ? or just default set ?
 
 // fix struct deletion
+
+// c# librehardwaremonitor tryiing // theb ImGraphView
 
 // Layer::dyninst && Layer::statinst (also for editors ;) though need per Effectable ... oulalal)
 

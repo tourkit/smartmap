@@ -167,7 +167,7 @@ bool VBO::add_noupload(File* file, int id) {
 
     auto mesh = scene->mMeshes[0];
 
-    int next_indice =  members[1]->quantity();
+    int next_indice =  members[0]->quantity();
 
     for (int i = 0; i < mesh->mNumVertices; i++) {
 

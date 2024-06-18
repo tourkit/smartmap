@@ -176,6 +176,7 @@ Member* Member::copy() { return new Member(*this); }
 
 bool Member::isData() { return false; }
 bool Member::isRef() { return false; }
+Struct* Member::isStruct() { return nullptr; }
 Buffer* Member::isBuff() { return nullptr; }
 
 void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offset, std::vector<Member*> stl) {

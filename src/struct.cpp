@@ -16,6 +16,8 @@ Struct& Struct::id(std::string name) {
 }
 
 
+Struct* Struct::isStruct() { return this; }
+
 bool Struct::destroy(std::string name) {
 
     Struct* found = nullptr;
