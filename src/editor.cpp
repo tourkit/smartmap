@@ -193,10 +193,7 @@ static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
 }
 
-static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 0) {
-
-
-
+bool draw_guis(Buffer* buff, Member* member, uint32_t offset) {
 
     static int member_count = 0;
 
@@ -306,7 +303,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                         if (type == ImGuiDataType_Float) last_value = std::to_string(*(float*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
                         else if (type == ImGuiDataType_S16) last_value = std::to_string(*(int16_t*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
                         else if (type == ImGuiDataType_U16) last_value = std::to_string(*(uint16_t*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
-                        // PLOGD << last_value;
+                        PLOGD << last_value;
                 }
 
         }else{
@@ -823,20 +820,7 @@ void Editors::init() {
 
     ////////// MODEL.HPP
 
-    Editor<Model>([](Node* node, Model *model){
 
-
-        ImGui::Text(("effectorz : " + std::to_string(model->effectors.size())+ " .").c_str());
-
-        static std::map<Node*,int> effector_currents;
-
-       effector_currents[node] = model->s.quantity();
-
-        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->s.quantity(effector_currents[node]); node->update(); }
-
-        if (draw_guis(&engine.dynamic_ubo))engine.dynamic_ubo.upload();
-
-    });
 
     ////////// Artnet.HPP
 

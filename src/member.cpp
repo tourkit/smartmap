@@ -205,6 +205,7 @@ void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offs
 
     inst.stl = stl;
 
+    // if (inst.stl.size())
     cb(inst);
 
 }

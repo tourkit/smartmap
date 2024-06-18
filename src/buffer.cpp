@@ -117,8 +117,8 @@ void Buffer::update() {
         for (auto &x : inst.def()->instances) {
 
             if (x.get()->buff == inst.buff && x.get()->stl == inst.stl) {
-                // int y = inst.eq_id;
-                x.get()->offset = inst.offset;
+
+                 x.get()->offset = inst.stl.size()?inst.offset:inst.def()->footprint(); // dirty shity hack rigght here // also might be missing eq support
 
             }
 

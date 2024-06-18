@@ -3,6 +3,10 @@
 #include "gui.hpp"
 
 struct Node;
+struct Buffer;
+struct Member;
+
+bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 0);
 
 template <typename T>
 struct Editor  {
