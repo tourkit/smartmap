@@ -31,6 +31,23 @@ Instance::Instance(Buffer* buff, Member* m) : buff(buff) {
 
 Instance::Instance(Buffer* buff, uint32_t offset, std::vector<Member*> stl, int eq_id) : buff(buff), offset(offset), stl(stl), eq_id(eq_id) { }
 
+Instance Instance::find(Member* x) {
+
+    auto offset = this->offset;
+
+    bool found = false;
+
+    for (auto &m : def()->members) if (m == x) { found = true; break; }
+
+    offset += x->footprint_all();
+
+    if (!found) PLOGE << "\"" << x->name() << "\" does not exist in " << def()->name();
+    auto stl_ = stl;
+    stl_.push_back(x);
+    return Instance{buff,offset,stl_};
+
+}
+
 Instance Instance::operator[](std::string name) {
 
     auto offset = this->offset;
@@ -62,7 +79,8 @@ Instance Instance::operator[](int id) {
     auto offset = this->offset;
     auto member = this->def();
 
-    if (id >= def()->members.size()) PLOGE << id << " > " << def()->members.size() << " in " << def()->name();
+    if (id >= def()->members.size())
+        PLOGE << id << " > " << def()->members.size() << " in " << def()->name();
 
     for (int i = 0 ; i < id; i ++ ){
 

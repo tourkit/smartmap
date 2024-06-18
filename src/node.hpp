@@ -96,7 +96,8 @@ public:
 
         auto x = is_a_nowarning<U>();
 
-        if (!x) PLOGW << "\"" << name() << "\" is not a " << boost::typeindex::type_id_with_cvr<U>().pretty_name() << " ! ";
+        if (!x)
+            PLOGW << "\"" << name() << "\" is " << type_name() << " not a " << boost::typeindex::type_id_with_cvr<U>().pretty_name() << " ! ";
 
         return x;
 

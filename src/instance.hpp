@@ -47,6 +47,8 @@ struct Instance {
 
     Instance operator[](int id);
 
+    Instance find(Member* m);
+
     bool exist();
 
     Instance& track() {

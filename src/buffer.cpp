@@ -31,15 +31,19 @@ void  Buffer::pre_change() { // return;
 
 void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
-    for (auto added : addeds) { // only to set default I guess // need to handle Q
+    for (auto added : addeds) {
 
         each([&](Instance& inst) {
 
-            auto *m = inst.def();
+            bool found = false;
 
-            int offset = inst.offset+(m->size()*added.eq);
+            for (auto x : inst.stl) for (auto y : addeds) if ( x == y.m ) { found = true; break; break; }
 
-            if (m == added.m) {
+            if (found) {
+
+                auto *m = inst.def();
+
+                int offset = inst.offset+(m->size()*added.eq);
 
                 if (m->isRef()) m = m->members[0];
 
@@ -57,9 +61,29 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
                             //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val : " << *(float*) m_->default_val_ptr ;
 
                             // }
-                        for (int i = 0 ; i < added.q; i++) {
-                        memcpy(&data[offset+(i*m->size())], m_->default_val_ptr, m_->size());
+
+                        for (int i = inst.stl.size()-1; i>=0; i--) { // if parent q>1
+
+                            auto x = inst.stl[i];
+
+                            if (x->quantity()>1) {
+
+                                for (int todo = 0 ; todo < x->quantity(); todo++) {
+
+                                    memcpy(&data[offset+x->size()*todo], m_->default_val_ptr, m_->size());
+
+                                }
+
+
+
+                            }
+
                         }
+
+                        for (int i = 0 ; i < added.q; i++) // if q>1 added
+
+                            memcpy(&data[offset+(i*m->size())], m_->default_val_ptr, m_->size());
+
 
                     }
 

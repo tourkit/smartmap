@@ -192,11 +192,13 @@ void Callbacks::init() {
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
-        auto dc = node->parent()->is_a<DrawCall>();
-        if (dc) dc->removeModel(model);
+        auto dc = node->parent()->is_a_nowarning<DrawCall>();
+        if (dc) { dc->removeModel(model); return; }
 
-        auto layer = node->parent()->is_a<Layer>();
-        if (layer) layer->removeModel(model);
+        auto layer = node->parent()->is_a_nowarning<Layer>();
+        if (layer) { layer->removeModel(model); return; }
+
+        PLOGE << "no found";
 
     });
 
