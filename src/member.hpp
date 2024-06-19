@@ -100,6 +100,7 @@ struct Member {
 
     int get_offset();
 
+    uint32_t size_v = 0;
 protected:
 
     std::string name_v;
@@ -109,6 +110,5 @@ protected:
 
     bool is_copy = false;
 
-    uint32_t size_v = 0;
 
 };

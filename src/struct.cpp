@@ -43,14 +43,12 @@ Struct::~Struct(){
     for (auto s : structs) {
 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
+            s->removeHard(*this);
 
-            s->remove(*this);
 
         }
 
     }
-
-    removing.erase(this);
 
     // delete isData() a.k.a Data members
     for (auto x : members) {
@@ -62,6 +60,8 @@ Struct::~Struct(){
         }
 
     }
+
+    removing.erase(this);
 
 }
 
@@ -97,12 +97,7 @@ Struct& Struct::clear() {
 
 }
 
-
-Struct& Struct::remove(Member& m) {
-
-    PLOGV << name() << " remove " << m.name();
-
-    pre_change();
+Struct& Struct::removeHard(Member& m) {
 
     auto it = std::find( members.begin(), members.end(), &m );
 
@@ -111,6 +106,18 @@ Struct& Struct::remove(Member& m) {
     size_v -= members.back()->footprint_all();
 
     members.erase(it);
+
+    return *this;
+
+}
+
+Struct& Struct::remove(Member& m) {
+
+    PLOGV << name() << " remove " << m.name();
+
+    pre_change();
+
+    removeHard(m);
 
     update();
 
@@ -252,7 +259,8 @@ uint32_t Struct::size() {
         members[0]->isData()&&
         !members[0]->name().length()
 
-    ) return members[0]->size();
+    )
+        return members[0]->size();
 
      return size_v;
 
@@ -260,8 +268,8 @@ uint32_t Struct::size() {
 
 
 std::type_index Struct::type()  { if (isData()) { return members[0]->type(); } return Member::type(); }
-
 Member* Struct::copy()  { return new Struct(*this); }
+
 
 
 

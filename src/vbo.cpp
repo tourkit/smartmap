@@ -69,7 +69,9 @@ void VBO::update() { Buffer::update(); }
 
 void VBO::upload() {
 
-    if (!(*this)[0].size() || !(*this)[1].size()) return;
+    Instance inst(this);
+
+    if (!inst[0].size() || !inst[1].size()) return;
 
     auto v_size = members[0]->footprint_all();
 

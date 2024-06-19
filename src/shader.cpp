@@ -129,18 +129,24 @@ std::string ShaderProgram::Builder::define(Member* member) {
     std::string tb = "";
     // if (member->members.size() == 1) nl = "";
 
-    out+="struct "+list[member]+" { "+nl+nl;
+    std::string content;
+
     for (auto x : member->members) {
 
-        if (!x->size()) continue;
+        auto xx = x->size();
 
-        out+=tb+""+(list.find(x)!=list.end()?list[x]:x->type_name())+" "+lower(x->name());
-        if (x->quantity()>1) out += "["+std::to_string(x->quantity())+"]";
+        if (!xx) continue;
 
-        out += "; "+nl;
+        content+=tb+""+(list.find(x)!=list.end()?list[x]:x->type_name())+" "+lower(x->name());
+        if (x->quantity()>1) content += "["+std::to_string(x->quantity())+"]";
+
+        content += "; "+nl;
 
     }
 
+    if (!content.length()) return "";
+
+    out+="struct "+list[member]+" { "+nl+nl+content;
 
     if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
 

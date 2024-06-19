@@ -34,6 +34,7 @@ struct Struct : Member {
     Struct& range(float from, float to, float def) ;
 
     Struct& remove(Member& s) ;
+    Struct& removeHard(Member& s) ;
 
     Struct& clear();
 

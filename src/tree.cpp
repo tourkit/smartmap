@@ -72,7 +72,15 @@ if (demodemo) ImGui::ShowDemoWindow();
 
         drawChildrens(selected);
 
-        for (auto x : delete_list) delete x;
+        for (auto x : delete_list) {
+
+            auto parent = x->parent();
+
+            delete x;
+
+            if (parent) parent->update();
+        }
+
         delete_list.clear();
 
         ImGui::EndTable();
@@ -166,9 +174,7 @@ PLOGE<<"coc";
             if(ImGui::MenuItem("Sure ?")){
 
                 is_deleting = false;
-                auto parent = node->parent();
                 delete_list.push_back(node);
-                if (parent) parent->update();
 
             }
 

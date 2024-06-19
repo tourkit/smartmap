@@ -111,8 +111,6 @@ void struct_editor(Node* node, Member* m, int offset = 0) {
 
 int main() {
 
-
-
 Editor<Struct>([](Node* node, Struct* s){ struct_editor(node,s); });
 
 Editor<SmartLayer>([](Node* node, SmartLayer* layer) {
@@ -165,12 +163,10 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
     // if (typeid(*sl_->ptr) == typeid(Layer)) { std::cout << "SISIS" << std::endl; }
 
     // sl.shader.create();
-
+    logger.cout(true);
     engine.run();
 
 }
-
-// pk strobe on q change or dcynupdate?
 
 // fix struct deletion Instace VBO > 0
 
