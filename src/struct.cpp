@@ -53,7 +53,7 @@ Struct::~Struct(){
     // delete isData() a.k.a Data members
     for (auto x : members) {
 
-        if (x->isData()){
+        if (x->isData() ){
 
             delete x;
 
@@ -113,6 +113,8 @@ Struct& Struct::removeHard(Member& m) {
 
 Struct& Struct::remove(Member& m) {
 
+    removing.insert(&m);
+
     PLOGV << name() << " remove " << m.name();
 
     pre_change();
@@ -122,6 +124,8 @@ Struct& Struct::remove(Member& m) {
     update();
 
     post_change();
+
+    removing.erase(&m);
 
     return *this;
 

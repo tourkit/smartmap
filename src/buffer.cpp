@@ -177,15 +177,17 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
                 src_offset_ += src_member_->footprint();
 
-#ifdef ROCH
+// #ifdef ROCH
                if (![src_member_](){ // COULD BE DEBUG MODE ONLY
 
                     for (auto x : removing) if (!strcmp(x->name().c_str(),src_member_->name().c_str())) return true;
 
                     return false;
 
-                }()) PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer.name();
-#endif
+                }())
+
+                    PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer.name();
+// #endif
                 continue;
             }
 

@@ -74,7 +74,15 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
 
 }
 
-Engine::~Engine() { PLOGI << "Engine destroyed"; }
+Engine::~Engine() {
+
+    for (auto x : Struct::owned) {
+       delete x;
+    }
+
+    PLOGI << "Engine destroyed";
+
+}
 
 void Engine::init() {
 

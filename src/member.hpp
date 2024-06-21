@@ -101,6 +101,7 @@ struct Member {
     int get_offset();
 
     uint32_t size_v = 0;
+    bool is_copy = false;
 protected:
 
     std::string name_v;
@@ -108,7 +109,6 @@ protected:
 
     bool is_striding = false;
 
-    bool is_copy = false;
 
 
 };
