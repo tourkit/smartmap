@@ -78,7 +78,7 @@ struct Ref : Struct {
 
     Ref(const Member& other) : Struct(other) { }
 
-    ~Ref() { PLOGD << "by ref " << name(); }
+    ~Ref() {  }
 
     Member* copy() override { return new Ref(*this); }
 

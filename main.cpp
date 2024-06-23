@@ -163,7 +163,11 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
     // if (typeid(*sl_->ptr) == typeid(Layer)) { std::cout << "SISIS" << std::endl; }
 
     // sl.shader.create();
-    logger.cout(true);
+
+    // am I removing ref or fx u dumfuk?
+
+
+
     engine.run();
 
 }
