@@ -14,6 +14,8 @@ struct Model : Modelable {
 
     File* file;
 
+    Instance* instance;
+
     Model(File* f, std::string name);
 
     ~Model();

@@ -33,6 +33,13 @@ Model* Modelable::addModel(File* f) {
 
     auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
 
+    // for (auto x : s.getTop()) { // should be once even if its a for
+
+    // //    Instance inst(&x);
+
+
+    // }
+
     s.add(&mod->s);
 
     vbo.add(f, models.size()-1) ;

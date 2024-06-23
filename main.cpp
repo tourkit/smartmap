@@ -169,8 +169,9 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 }
 
 
-// isntance UI dude;
+// Modelable editor  Modelable::inst() isntance UI dude; + D&D Node::s* in remap
 
+// check  isnt deletion mgmt plz
 
 // WrapperEffector : Effector
 
@@ -192,8 +193,6 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
 
 // later gater :
-
-// Layer::dyninst && Layer::statinst (also for editors ;) though need per Effectable ... oulalal)
 
 // static Effector should  update on file update
 
