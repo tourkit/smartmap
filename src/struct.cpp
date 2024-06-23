@@ -43,8 +43,8 @@ Struct::~Struct(){
     for (auto s : structs) {
 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
-            s->removeHard(*this);
 
+            s->removeHard(*this);
 
         }
 
@@ -60,6 +60,8 @@ Struct::~Struct(){
         }
 
     }
+
+    // update();
 
     removing.erase(this);
 
@@ -107,8 +109,9 @@ Struct& Struct::removeHard(Member& m) {
 
     members.erase(it);
 
-    return *this;
+    update();
 
+    return *this;
 }
 
 Struct& Struct::remove(Member& m) {
@@ -121,7 +124,6 @@ Struct& Struct::remove(Member& m) {
 
     removeHard(m);
 
-    update();
 
     post_change();
 
