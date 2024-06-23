@@ -831,7 +831,8 @@ void Editors::init() {
 
         if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->s.quantity(effector_currents[node]); node->update(); }
 
-        if (draw_guis(&engine.dynamic_ubo))engine.dynamic_ubo.upload();
+
+        if (draw_guis(&engine.dynamic_ubo, &model->s, model->instance->offset))engine.dynamic_ubo.upload();
 
     });
 
