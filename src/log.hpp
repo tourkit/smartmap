@@ -22,7 +22,7 @@ struct Log {
     struct Appender : public plog::IAppender {
 
         bool cmd = false;
-        bool is_verbose = false;
+        plog::Severity severity = plog::Severity::error, max_severity = plog::Severity::error;
 
         struct Message {
 
@@ -42,7 +42,7 @@ struct Log {
 
     Appender appender;
 
-    bool cout(bool is_verbose = false) { appender.cmd = true; appender.is_verbose = is_verbose; return is_verbose;}
+    void cout(plog::Severity severity = plog::Severity::debug, plog::Severity max_severity = plog::Severity::error) { appender.cmd = true; appender.severity = severity; appender.max_severity = max_severity; }
 
     static Log& getInstance() { static Log instance;  return instance; }
 
