@@ -146,7 +146,7 @@ using namespace ImGui;
     }
     else {
 
-PLOGE<<"coc";
+// PLOGE<<"coc";
         if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
             node->name(&renaming_name[0]);
@@ -274,7 +274,7 @@ void TreeWidget::drawNode(Node* node) {
 
             ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
 
-            bool recurse = recurse = TreeViewNode(node);
+            bool recurse = TreeViewNode(node);
 
         // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
 
