@@ -11,6 +11,8 @@
 #include "model.hpp"
 #include "node.hpp"
 
+#include "vendors/imgui/imgui_internal.h"
+
 struct SmartLayer : Layer {
 
     int draw_count = 5;
@@ -109,6 +111,7 @@ void struct_editor(Node* node, Member* m, int offset = 0) {
 
 }
 
+
 int main() {
 
 Editor<Struct>([](Node* node, Struct* s){ struct_editor(node,s); });
@@ -153,6 +156,8 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
 
     engine.open("project.json");
+
+
 
     // glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_COLOR);
 

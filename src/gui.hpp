@@ -6,6 +6,8 @@
 #include <cstring>
 
 #include "log.hpp"
+
+#define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui.h"
 #include "vendors/ImGuiColorTextEdit/TextEditor.h"
 
@@ -56,6 +58,10 @@ struct StringsBuffer {
 };
 
 struct GLFWwindow;
+
+
+    bool VCharSlider(void* c, int label_id = 0) ;
+
 
 struct GUI {
 

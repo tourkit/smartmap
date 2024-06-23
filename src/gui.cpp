@@ -13,6 +13,76 @@
 
 #include "imgui/imgui_internal.h"
 
+bool VCharSlider(void* c, int label_id) {
+
+        static const char* format = "%d";
+        static ImVec2 size = ImVec2(22,30);
+        static uint8_t min = 0;
+        static uint8_t max = 255;
+        static const char* label = "##vcs";
+
+        using namespace ImGui;
+
+
+        ImGuiWindow* window = GetCurrentWindow();
+        if (window->SkipItems)
+            return false;
+
+        ImGuiContext& g = *GImGui;
+        const ImGuiStyle& style = g.Style;
+        const ImGuiID id = window->GetID((label+std::to_string(label_id)).c_str());
+
+        const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + size);
+        const ImRect bb(frame_bb.Min, frame_bb.Max);
+
+        ItemSize(bb, style.FramePadding.y);
+        if (!ItemAdd(frame_bb, id)) return false;
+
+        PushStyleVar(ImGuiStyleVar_GrabMinSize, 0);
+
+        const bool hovered = ItemHoverable(frame_bb, id);
+        const bool clicked = hovered && IsMouseClicked(0, id);
+        if (clicked || g.NavActivateId == id)
+        {
+            if (clicked)
+                SetKeyOwner(ImGuiKey_MouseLeft, id);
+            SetActiveID(id, window);
+            SetFocusID(id, window);
+            FocusWindow(window);
+            g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Up) | (1 << ImGuiDir_Down);
+        }
+
+        // Draw frame
+        const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+        RenderNavHighlight(frame_bb, id);
+        RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, g.Style.FrameRounding);
+
+        // Slider behavior
+        ImRect grab_bb;
+        const bool value_changed = SliderBehavior(frame_bb, id, ImGuiDataType_U8, c, &min, &max, "",  ImGuiSliderFlags_Vertical, &grab_bb);
+
+        grab_bb.Max.y=frame_bb.Max.y-2;
+        // grab_bb.Min.y+=style.GrabMinSize;
+
+        if (value_changed)
+            MarkItemEdited(id);
+
+        // Render grab
+        if (grab_bb.Max.y > grab_bb.Min.y)
+            window->DrawList->AddRectFilled(grab_bb.Min, grab_bb.Max, GetColorU32(g.ActiveId == id ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab), style.GrabRounding);
+
+        // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
+        // For the vertical slider we allow centered text to overlap the frame padding
+        char value_buf[64];
+        const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), ImGuiDataType_U8, c, format);
+        RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.0f));
+
+        PopStyleVar(1);
+
+        return value_changed;
+    }
+
+
 void GUI::Window::drawFull() { {
 
       if (!active) return;
@@ -133,6 +203,10 @@ void GUI::newframe() {
 void GUI::draw() {
 
   newframe();
+
+
+
+
 
   if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) engine.save();
   if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_I)) engine.gui->draw_gui = !engine.gui->draw_gui;

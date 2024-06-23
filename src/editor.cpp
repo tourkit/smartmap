@@ -115,7 +115,11 @@ static void draw_definition(Member *member, int offset = 0, int depth = 0) {
 
 }
 
-static void draw_raw(void *data, size_t size) {
+static bool draw_raw(void *data, size_t size) {
+
+    bool has_changed = false;
+
+    ImGui::NewLine();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6);
@@ -127,21 +131,18 @@ static void draw_raw(void *data, size_t size) {
 
     auto window_width = ImGui::GetWindowWidth()-15;
 
-    int cell_width = 20;
+    int cell_width = 24;
     int cell_margin = 1;
 
     int cells_per_line = (float)window_width/(cell_width+cell_margin);
 
-    uint8_t ndata = 0;
-    uint8_t cell_min = 0;
-    uint8_t cell_max = 255;
-
     bool colorized = false;
 
-        ImGui::BeginDisabled();
+    // ImGui::BeginDisabled();
 
          if (size > 1025) size = 1025;
-    if (cells_per_line) for (int member_count = 0; member_count < size; member_count++) {
+
+        if (cells_per_line) for (int member_count = 0; member_count < size; member_count++) {
 
 
         ImGui::PushID(member_count);
@@ -156,30 +157,21 @@ static void draw_raw(void *data, size_t size) {
         if (member_count && !(member_count%cells_per_line)) ImGui::NewLine();
         ImGui::SameLine(((member_count%cells_per_line)*(cell_width+cell_margin)));
 
-        ImGuiDataType_ datatype = ImGuiDataType_U8;
-        ImGui::PushStyleVar(ImGuiStyleVar_GrabMinSize, ((*(((uint8_t*)data)+member_count))/255.0f)*26);
-        if (ImGui::VSliderScalar("",  ImVec2(cell_width,30),    datatype, &ndata,  &cell_min,   &cell_max,   "")) {
-
-
-        }
-
-        ImGui::PopStyleVar(1);
-
-        ImGui::SameLine(0);
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() - cell_width) ;
-        std::string str = std::to_string(member_count);
-        ImGui::Text(str.c_str());
+        if (VCharSlider((((uint8_t*)data)+member_count),member_count)) has_changed = true;
 
         ImGui::PopID();
         if (colorized && (member_count == hovered_offset+hovered_size-1 || member_count == size-1)) { ImGui::PopStyleColor(); colorized= false; }
 
     }
 
-    ImGui::EndDisabled();
+    // ImGui::EndDisabled();
 
     ImGui::SetWindowFontScale(1);
 
     ImGui::PopStyleVar(5);
+    ImGui::NewLine();
+
+    return has_changed;
 
 }
 #include "vendors/imgui/imgui_internal.h"
@@ -798,7 +790,7 @@ void Editors::init() {
 
         ImGui::Separator();
 
-        draw_raw(buffer->data.data(),buffer->data.size());
+        if (draw_raw(buffer->data.data(),buffer->data.size())) buffer->upload();
 
         ImGui::Separator();
 
