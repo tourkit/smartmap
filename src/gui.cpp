@@ -19,7 +19,8 @@ bool VCharSlider(void* c, int label_id) {
         static ImVec2 size = ImVec2(22,30);
         static uint8_t min = 0;
         static uint8_t max = 255;
-        static const char* label = "##vcs";
+        static const char* label_ = "##vcs";
+        std::string label = label_+std::to_string(label_id);
 
         using namespace ImGui;
 
@@ -30,27 +31,65 @@ bool VCharSlider(void* c, int label_id) {
 
         ImGuiContext& g = *GImGui;
         const ImGuiStyle& style = g.Style;
-        const ImGuiID id = window->GetID((label+std::to_string(label_id)).c_str());
+        const ImGuiID id = window->GetID(label.c_str());
 
         const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + size);
         const ImRect bb(frame_bb.Min, frame_bb.Max);
 
+        const bool temp_input_allowed = 1;
         ItemSize(bb, style.FramePadding.y);
-        if (!ItemAdd(frame_bb, id)) return false;
+        if (!ItemAdd(frame_bb, id, &frame_bb, temp_input_allowed ? ImGuiItemFlags_Inputable : 0)) return false;
+
+        // const bool hovered = ItemHoverable(frame_bb, id);
+        // const bool clicked = hovered && IsMouseClicked(0, id);
+        // if (clicked || g.NavActivateId == id)
+        // {
+        //     if (clicked)
+        //         SetKeyOwner(ImGuiKey_MouseLeft, id);
+        //     SetActiveID(id, window);
+        //     SetFocusID(id, window);
+        //     FocusWindow(window);
+        //     g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Up) | (1 << ImGuiDir_Down);
+        // }
+
+        const bool hovered = ItemHoverable(frame_bb, id);
+        bool temp_input_is_active = temp_input_allowed && TempInputIsActive(id);
+        if (!temp_input_is_active)
+        {
+            // Tabbing or CTRL-clicking on Slider turns it into an input box
+            const bool input_requested_by_tabbing = temp_input_allowed && (g.LastItemData.StatusFlags & ImGuiItemStatusFlags_FocusedByTabbing) != 0;
+            const bool clicked = hovered && IsMouseClicked(0, id);
+            const bool make_active = (input_requested_by_tabbing || clicked || g.NavActivateId == id);
+            if (make_active && clicked)
+                SetKeyOwner(ImGuiKey_MouseLeft, id);
+            if (make_active && temp_input_allowed)
+                if (input_requested_by_tabbing || (clicked && g.IO.KeyCtrl) || (g.NavActivateId == id && (g.NavActivateFlags & ImGuiActivateFlags_PreferInput)))
+                    temp_input_is_active = true;
+
+            if (make_active && !temp_input_is_active)
+            {
+                SetActiveID(id, window);
+                SetFocusID(id, window);
+                FocusWindow(window);
+                g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Left) | (1 << ImGuiDir_Right);
+            }
+        }
+
+        if (temp_input_is_active)
+        {
+            // Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
+            const bool is_clamp_input = ( ImGuiSliderFlags_AlwaysClamp) != 0;
+
+
+            return TempInputScalar(frame_bb, id, label.c_str(), ImGuiDataType_U8, c, format, &min, &max);
+
+        }
+
 
         PushStyleVar(ImGuiStyleVar_GrabMinSize, 0);
 
-        const bool hovered = ItemHoverable(frame_bb, id);
-        const bool clicked = hovered && IsMouseClicked(0, id);
-        if (clicked || g.NavActivateId == id)
-        {
-            if (clicked)
-                SetKeyOwner(ImGuiKey_MouseLeft, id);
-            SetActiveID(id, window);
-            SetFocusID(id, window);
-            FocusWindow(window);
-            g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Up) | (1 << ImGuiDir_Down);
-        }
+        PushID(label_id);
+
 
         // Draw frame
         const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
@@ -77,6 +116,8 @@ bool VCharSlider(void* c, int label_id) {
         const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), ImGuiDataType_U8, c, format);
         RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.0f));
 
+
+        PopID();
         PopStyleVar(1);
 
         return value_changed;

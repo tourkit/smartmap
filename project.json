@@ -13,7 +13,7 @@
   "editors": [
     [ 0, 0, 0, 0, "tree::Debug", true ],
     [ 0, 0, 0, 0, "Stack::layer_1", true ],
-    [ 0, 0, 0, 0, "layer_1::quad", true ],
+    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
     [ 0, 0, 0, 0, "Stack::layer", true ]
   ],
   "outputs": {

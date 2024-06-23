@@ -148,7 +148,6 @@ Editor<SmartLayer>([](Node* node, SmartLayer* layer) {
 
 
 
-
 NODE<SmartLayer>::onrun( [](Node* node, SmartLayer* layer) { NODE<Layer>::onrun_cb(node, layer); });
 NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onchange_cb(node, layer); });
 
