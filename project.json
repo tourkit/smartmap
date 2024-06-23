@@ -22,7 +22,7 @@
   "remaps": {},
   "layers": {
     "layer_1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl" } ] }, {} ],
-    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "rectangle": "rectangle.glsl" } ] }, {} ]
+    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, {} ] }, {} ]
   },
   "uberlayers": {}
 }

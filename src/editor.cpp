@@ -169,6 +169,9 @@ static bool draw_raw(void *data, size_t size) {
     ImGui::SetWindowFontScale(1);
 
     ImGui::PopStyleVar(5);
+
+    if (ImGui::Button("ALL @ 63"))  {memset(data, 63, size); has_changed = true; }
+
     ImGui::NewLine();
 
     return has_changed;
@@ -991,8 +994,9 @@ void EditorWidget::draw() {
 
     std::string name = selected->name();
     // this->name = name;
-
-    if (selected->parent()) { name = selected->parent()->name() + "::" + name;  }
+    auto parent = selected->parent();
+    if (parent) {
+        name = parent->name() + "::" + name;  }
 
     ImGui::PushStyleColor(ImGuiCol_Text, selected->color);
     ImGui::Text("%s", name.c_str());

@@ -63,6 +63,8 @@ struct GLFWwindow;
     bool VCharSlider(void* c, int label_id = 0) ;
 
 
+struct Node;
+
 struct GUI {
 
   void *dragging = nullptr;
@@ -81,6 +83,9 @@ struct GUI {
   std::vector<EditorWidget*> editors;
   std::vector<TreeWidget*> trees;
 
+
+  static inline std::vector<Node*> delete_list;
+
   struct Window {
 
     static inline std::vector<Window*> pool;
@@ -94,7 +99,7 @@ struct GUI {
     virtual  ~Window() { std::erase_if(pool, [this](Window* w) { return w == this; }); }
     void drawFull();
 
-    virtual void close() { eraselist.push_back(this); }
+    virtual void close() { close_list.push_back(this); }
 
     virtual void draw() {}
     virtual void drawTree() { draw(); }
@@ -102,5 +107,5 @@ struct GUI {
   };
 
 private:
-    static inline std::vector<Window*> eraselist;
+    static inline std::vector<Window*> close_list;
 };

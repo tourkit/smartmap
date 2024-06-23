@@ -259,12 +259,43 @@ void GUI::draw() {
 
     for (auto window : Window::pool) { window->drawFull(); }
 
-    for (auto x : eraselist) delete x;
-    eraselist.resize(0);
+    for (auto x : close_list) delete x;
+    close_list.resize(0);
 
   }
 
   render();
+
+
+
+        for (auto x : delete_list) {
+
+            auto parent = x->parent();
+
+            for (auto editor : engine.gui->editors) {
+
+              bool found = false;
+
+              auto is = editor->selected;
+
+              if (is) {
+
+                if (is == x) found = true;
+
+                is = is->parent();
+
+              }
+
+              if (found) editor->selected = engine.tree->childrens[0];
+
+            }
+
+            delete x;
+
+            if (parent) parent->update();
+        }
+
+        delete_list.clear();
 
 }
 void GUI::render() {

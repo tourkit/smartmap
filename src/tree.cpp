@@ -72,17 +72,6 @@ if (demodemo) ImGui::ShowDemoWindow();
 
         drawChildrens(selected);
 
-        for (auto x : delete_list) {
-
-            auto parent = x->parent();
-
-            delete x;
-
-            if (parent) parent->update();
-        }
-
-        delete_list.clear();
-
         ImGui::EndTable();
     }
 
@@ -174,7 +163,7 @@ using namespace ImGui;
             if(ImGui::MenuItem("Sure ?")){
 
                 is_deleting = false;
-                delete_list.push_back(node);
+                engine.gui->delete_list.push_back(node);
 
             }
 
