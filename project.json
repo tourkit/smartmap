@@ -13,7 +13,8 @@
   "editors": [
     [ 0, 0, 0, 0, "layer::quad", true ],
     [ 0, 0, 0, 0, "Stack::layer_1", true ],
-    [ 0, 0, 0, 0, "layer_1::quad", true ]
+    [ 0, 0, 0, 0, "layer_1::quad", true ],
+    [ 0, 0, 0, 0, "Stack::layer", true ]
   ],
   "outputs": {
     "monitor": { "Window": [ 1920, 1080, 2560, 0 ] }
