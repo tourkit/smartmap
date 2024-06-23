@@ -108,9 +108,10 @@ void ShaderProgram::Builder::build() {
     fragment.clear();
     fragment += header_common;
     fragment += comment_line;
+    fragment += "out vec4 COLOR;\n\n";
     fragment += header_fragment;
-    fragment += "\nvoid main() {\n\n";
-    fragment += body_fragment;
+    fragment += "void main() {\n\n";
+    fragment += (body_fragment.length() ? body_fragment : "\tCOLOR = vec4(0,0,0,1);\n\n");
     fragment += "}\n////////////";
 
 }

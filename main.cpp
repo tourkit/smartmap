@@ -164,28 +164,15 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
     // sl.shader.create();
 
-    // am I removing ref or fx u dumfuk?
-
-
-
     engine.run();
 
 }
 
-// fix struct deletion Instace VBO > 0
+
+// isntance UI dude;
+
 
 // WrapperEffector : Effector
-
-// test 1+nth_pass*objcopunt inst,
-
-// test 2 OBJ  10 inst, PER / INST // with 1 first nan ?>
-
-
-// c# librehardwaremonitor tryiing // theb ImGraphView
-
-// Layer::dyninst && Layer::statinst (also for editors ;) though need per Effectable ... oulalal)
-
-// cpu transform matrice matrice_elem_XY
 
 // fine feedback ~ish
 
@@ -193,15 +180,27 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 
 // artnet output
 
+
+
+// test 1+nth_pass*objcopunt inst,
+
+// test 2 OBJ  10 inst, PER / INST // with 1 first nan ?>
+
+
+// cpu transform matrice matrice_elem_XY
+
+
+
 // later gater :
 
-// deletion is fucked
+// Layer::dyninst && Layer::statinst (also for editors ;) though need per Effectable ... oulalal)
 
 // static Effector should  update on file update
 
-// c# librehardwaremonitor get temps &set fanspeed@burne
+// c# librehardwaremonitor tryiing // theb ImGraphView get temps &set fanspeed@burne
 
 // npcap
+
 
 
 // EDID SELECT HAPPEN ON RESTART ONLY
@@ -215,6 +214,5 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
 // MOVE EDID MENU PER OUTPUT IN OUTPUT->X->EDID
 
 // DISPLAY INFO MESSAGE ON START / SHUTDOWN  "STARTING" "SHUTTING DOWN"
-
 
 // NETWORK REPEAT FAILURE

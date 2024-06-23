@@ -12,8 +12,8 @@
   },
   "editors": [
     [ 0, 0, 0, 0, "tree::Debug", true ],
-    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
-    [ 0, 0, 0, 0, "Debug::dynamic_ubo" ]
+    [ 0, 0, 0, 0, "Stack::layer_1", true ],
+    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ]
   ],
   "outputs": {
     "monitor": { "Window": [ 1920, 1080, 2560, 0 ] }

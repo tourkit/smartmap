@@ -115,7 +115,6 @@ void Layer::ShaderProgramBuilder::frag() {
 
     header_fragment += "\n";
     header_fragment += "in flat int ID;\n";
-    header_fragment += "out vec4 COLOR;\n\n";
 
     header_fragment += "vec2 uv = UV;\n";
     header_fragment += "vec4 color = vec4(0);\n";

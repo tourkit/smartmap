@@ -303,7 +303,7 @@ bool draw_guis(Buffer* buff, Member* member, uint32_t offset) {
                         if (type == ImGuiDataType_Float) last_value = std::to_string(*(float*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
                         else if (type == ImGuiDataType_S16) last_value = std::to_string(*(int16_t*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
                         else if (type == ImGuiDataType_U16) last_value = std::to_string(*(uint16_t*)(buff->data.data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
-                        PLOGD << last_value;
+
                 }
 
         }else{
