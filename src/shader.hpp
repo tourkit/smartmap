@@ -6,6 +6,8 @@
 #include <map>
 #include <string>
 
+// #include "vbo.hpp"
+struct VBO;
 struct UBO;
 struct DrawCall;
 
@@ -90,11 +92,12 @@ struct ShaderProgram {
 
     std::map<Member*,std::string> list;
 
+    VBO* vbo = nullptr;
+
   };
 
-  static inline Builder default_builder;
 
-  Builder* builder = &default_builder;
+  Builder* builder = nullptr;
 
   void create();
 

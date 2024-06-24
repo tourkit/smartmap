@@ -101,7 +101,7 @@ void ShaderProgram::Builder::build() {
     vertex += header_common;
     vertex += header_vertex;
     vertex += "\nvoid main() {\n\n";
-    vertex += body_vertex;
+    vertex += (body_vertex.length() ? body_vertex : "\tvec2 POS = POSITION;\n\n");;
     vertex += "\tgl_Position = vec4(POS, 0, 1);\n\n";
     vertex += "}\n////////////";
 
@@ -118,7 +118,18 @@ void ShaderProgram::Builder::build() {
 
 void ShaderProgram::Builder::frag() { body_fragment.clear(); }
 
-void ShaderProgram::Builder::vert() { body_vertex.clear(); }
+void ShaderProgram::Builder::vert() {
+
+    body_vertex.clear();
+    header_vertex.clear();
+
+    if (!vbo) return;
+    int count = 0;
+    for (auto x : vbo->vertice->members) header_vertex += "layout (location = "+std::to_string(count++)+") in "+x->type_name()+" "+x->name()+(count?"_":"")+";\n";
+    header_vertex += "\n";
+
+
+}
 
 
 std::string ShaderProgram::Builder::define(Member* member) {
@@ -280,7 +291,7 @@ void ShaderProgram::destroy() {
 }
 
 
-void  ShaderProgram::create() { create(builder); }
+void  ShaderProgram::create() { if (builder) create(builder); }
 
 void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->fragment, builder->vertex); }
 

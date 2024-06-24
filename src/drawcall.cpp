@@ -185,15 +185,13 @@ void Layer::ShaderProgramBuilder::frag() {
 
 void Layer::ShaderProgramBuilder::vert() {
 
-    header_vertex.clear();
+    vbo = &dc->vbo;
 
-    int count = 0;
-    for (auto x : dc->vbo.vertice->members) header_vertex += "layout (location = "+std::to_string(count++)+") in "+x->type_name()+" "+x->name()+(count?"_":"")+";\n";
-    header_vertex += "\n";
+    ShaderProgram::Builder::vert();
 
-    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
+    for (int i = 1; i < vbo->vertice->members.size(); i++) {
 
-        auto m = dc->vbo.vertice->members[i];
+        auto m = vbo->vertice->members[i];
 
         header_vertex += "out "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
 

@@ -540,7 +540,13 @@ void Editors::init() {
 
          ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
+        static ShaderProgram::Builder builder;
+
+        if (ImGui::Button("create")) shader->create();
+        ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
+
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
+
 
             if (ImGui::BeginTabItem("fragment")) {
 
@@ -622,6 +628,7 @@ void Editors::init() {
                 ImGui::EndTabItem();
 
             }
+
 
             ImGui::EndTabBar();
 
@@ -844,8 +851,17 @@ void Editors::init() {
     ////////// VBO.HPP
 
     Editor<VBO>([](Node*node,VBO*vbo){
-        ImGui::Text(("ID " + std::to_string(vbo->vbo)).c_str());
-         Editor<Buffer>::cb(node, vbo); });
+
+        ImGui::Text(("VBO " + std::to_string(vbo->vbo) + " - IBO " + std::to_string(vbo->ibo) + " - VAO " + std::to_string(vbo->vao)).c_str());
+
+        if (ImGui::Button("destroy")) vbo->destroy();
+        ImGui::SameLine(); if (ImGui::Button("create")) vbo->create();
+        ImGui::SameLine(); if (ImGui::Button("reset")) vbo->reset();
+        ImGui::SameLine(); if (ImGui::Button("addQuad")) vbo->addQuad();
+
+        Editor<Buffer>::cb(node, vbo);
+
+    });
 
     ////////// Effector.HPP
 
@@ -895,9 +911,26 @@ void Editors::init() {
 
     Editor<DrawCall>([](Node* node, DrawCall *dc){
 
-        Editor<ShaderProgram>::cb(node, &dc->shader);
+        if (ImGui::BeginTabBar("dctqb", ImGuiTabBarFlags_None)) {
 
-        Editor<VBO>::cb(node, &dc->vbo);
+            if (ImGui::BeginTabItem("ShaderProgram")) {
+
+                Editor<ShaderProgram>::cb(node, &dc->shader);
+
+                ImGui::EndTabItem();
+
+            }
+
+            if (ImGui::BeginTabItem("VBO")) {
+
+                Editor<VBO>::cb(node, &dc->vbo);
+
+                ImGui::EndTabItem();
+
+            }
+            ImGui::EndTabBar();
+        }
+
 
     });
 
@@ -920,11 +953,7 @@ void Editors::init() {
 
     Editor<Layer>([](Node* node, Layer *layer){
 
-        if (ImGui::Button("reload")) {
-
-            layer->update();
-
-        }
+        ImGui::SliderFloat4("clear_color", &layer->clear_color[0], 0, 1);
 
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
@@ -949,7 +978,9 @@ void Editors::init() {
         }
 
 
-    Editor<DrawCall>::cb(node, layer);  });
+        Editor<DrawCall>::cb(node, layer);
+
+    });
 
     ////////// Atlas.HPP
 

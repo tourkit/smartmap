@@ -56,9 +56,12 @@ void Layer::draw() {
 
     if (feedback) { feedback->bind(); }
 
-    fb.clear();
+    fb.clear(clear_color[0],clear_color[1],clear_color[2],clear_color[3]);
+
 
     shader.use();
+
+    // engine.vbo->draw();
 
     vbo.draw(models.size()==1?models[0].get()->s.quantity():1);
 

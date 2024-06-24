@@ -15,6 +15,8 @@ struct Layer : DrawCall {
 
     Texture* feedback = nullptr;
 
+    float clear_color[4] = {0,0,0,0};
+
     Layer(uint16_t width = 0, uint16_t height = 0, std::string name = "");
 
     void draw() override;

@@ -157,7 +157,6 @@ NODE<SmartLayer>::onchange( [](Node* node, SmartLayer* layer) { NODE<Layer>::onc
     engine.open("project.json");
 
     engine.gui->delete_list.push_back(engine.stack->childrens[0]);
-    // delete engine.stack->childrens[0];
 
 
     // glBlendFunc(GL_ONE,GL_ONE_MINUS_SRC_COLOR);
