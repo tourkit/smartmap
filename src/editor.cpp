@@ -920,6 +920,12 @@ void Editors::init() {
 
     Editor<Layer>([](Node* node, Layer *layer){
 
+        if (ImGui::Button("reload")) {
+
+            layer->update();
+
+        }
+
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
             if (ImGui::BeginTabItem("main")) {

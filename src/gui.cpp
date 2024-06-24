@@ -110,11 +110,16 @@ bool VCharSlider(void* c, int label_id) {
         if (grab_bb.Max.y > grab_bb.Min.y)
             window->DrawList->AddRectFilled(grab_bb.Min, grab_bb.Max, GetColorU32(g.ActiveId == id ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab), style.GrabRounding);
 
+        PushStyleColor(ImGuiCol_Text, ImVec4(.05,.05,.05,1));
+        std::string  lid = std::to_string(label_id);
+        RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, &(*lid.begin()), &(*lid.end()), NULL, ImVec2(0.5f, 0.0f));
+        PopStyleColor();
+
         // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
         // For the vertical slider we allow centered text to overlap the frame padding
         char value_buf[64];
         const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), ImGuiDataType_U8, c, format);
-        RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.0f));
+        RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y+14), frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.0f));
 
 
         PopID();
