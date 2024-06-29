@@ -8,7 +8,32 @@ struct Effector;
 
 #include "struct.hpp"
 #include "effector.hpp"
-#include "drawcall.hpp"
+
+
+struct Effector;
+struct Model;
+struct Effectable {
+
+    Struct s;
+
+    Effectable(std::string name = "Effectable" );
+
+    std::vector<std::shared_ptr<Effector>> effectors;
+    Effector* addEffector(File* f); // kinda ctor for effectors
+    bool removeEffector(Effector* effector);
+
+};
+
+struct Modelable : Effectable {
+
+    using Effectable::Effectable;
+
+    std::vector<std::shared_ptr<Model>> models;
+    virtual Model* addModel(File* f); // kinda ctor for Model
+    bool removeModel(Model* model);
+
+};
+
 
 struct Model : Modelable {
 

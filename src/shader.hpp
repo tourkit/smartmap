@@ -55,7 +55,7 @@ struct ShaderProgram {
   void use(uint32_t x, uint32_t y = 1, uint32_t z = 1);
 
   void destroy();
-  void create(std::string frag, std::string vert);
+  virtual void create(std::string frag, std::string vert);
 
   int getLoc(const std::string& name);
   void sendUniform(const std::string& name, int i1);
@@ -81,6 +81,8 @@ struct ShaderProgram {
     std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, fragment, vertex  ;
 
     virtual void build();
+
+    virtual void common();
 
     virtual void frag();
 

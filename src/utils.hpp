@@ -16,6 +16,21 @@ static bool ADD_UNIQUE( std::vector<T>& list, T n) {
 }
 
 template <typename T>
+static bool REMOVE ( std::vector<T>& list, T n) {
+
+    int found = -1;
+
+    for (int i = 0; i < list.size(); i++) if (list[i] == n) { found = i; break; }
+
+    if (found==-1) {PLOGW << "REMOVE : " << 3457 << " not found"; return false; }
+
+    list.erase(list.begin() + found);
+
+    return true;
+
+}
+
+template <typename T>
 struct Pool {
 
     std::vector<T*> list;

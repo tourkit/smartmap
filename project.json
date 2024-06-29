@@ -11,17 +11,16 @@
     "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size, float angle) {\n\n\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tangle *= 6.2831853072;\n\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\n\tuv *= aspect_ratio * mat2(c, -s, s, c) * (1./aspect_ratio);\n\t\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n"
   },
   "editors": [
-    [ 0, 0, 0, 0, "tree::Debug", true ],
-    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
-    [ 0, 0, 0, 0, "Stack::layer", true ]
+    [ 0, 0, 0, 0, "Outputs::Window" ]
   ],
-  "outputs": {
-    "monitor": { "Window": [ 1920, 1080, 2560, 0 ] }
-  },
-  "remaps": {},
   "layers": {
-    "layer_1": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl" } ] }, {} ],
-    "layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, {} ] }, {} ]
+    "layer_1": [ 100, 100, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl" } ] }, {} ],
+    "layer": [ 100, 100, { "quad": [ "quad.obj", 1, {} ] }, {} ],
+    "layer_2": [ 100, 100, { "quad": [ "quad.obj", 1, { "argb": "argb.glsl" } ] }, {} ]
   },
-  "uberlayers": {}
+  "uberlayers": {},
+  "outputs": {
+    "monitor": { "Window": [ 100, 100, 0, 0, "layer_2" ] }
+  },
+  "remaps": {}
 }

@@ -1,8 +1,10 @@
 #include "framebuffer.hpp"
 #include "texture.hpp"
-#include "engine.hpp"
+#include "utils.hpp"
 
 FrameBuffer::~FrameBuffer() {
+
+    REMOVE<FrameBuffer*>(pool, this);
 
     destroy();
 
@@ -10,14 +12,24 @@ FrameBuffer::~FrameBuffer() {
 
 FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height) : id(id), width(width), height(height) {
 
-    // auto n = Engine::getInstance().framebuffers->create();
     // n.set<uint32_t>(0,width);
     // n.set<uint32_t>(1,height);
 
+    ADD_UNIQUE<FrameBuffer*>(pool, this);
+
 }
+
+FrameBuffer::FrameBuffer(GLuint width, GLuint height) {
+
+    create(width, height);
+
+    ADD_UNIQUE<FrameBuffer*>(pool, this);
+}
+
+
 void FrameBuffer::create(GLuint width, GLuint height){
 
-    if (!destroy()) attachments++;
+    destroy();
 
     this->width = width;
     this->height = height;
@@ -25,6 +37,7 @@ void FrameBuffer::create(GLuint width, GLuint height){
     texture = new Texture(width,height, 0,1,GL_RGB8 );
 
     glGenFramebuffers(1, &id);
+
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments), GL_TEXTURE_2D, texture->id, 0);
@@ -35,14 +48,6 @@ void FrameBuffer::create(GLuint width, GLuint height){
 
 }
 
-FrameBuffer::FrameBuffer(GLuint width, GLuint height) {
-
-    if (!width) width = Engine::getInstance().window.width;
-    if (!height) height = Engine::getInstance().window.height;
-
-    create(width, height);
-
-}
 
 
 bool FrameBuffer::destroy() {
@@ -58,6 +63,12 @@ bool FrameBuffer::destroy() {
  }
 
 void FrameBuffer::bind() {  glBindFramebuffer(GL_FRAMEBUFFER, id); glViewport(0,0,width,height); }
+
+void FrameBuffer::clear() {
+
+    clear(clear_color[0],clear_color[1],clear_color[2],clear_color[3]);
+
+}
 
 void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {
 

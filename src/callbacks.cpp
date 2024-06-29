@@ -155,11 +155,19 @@ void Callbacks::init() {
 
     ////////// DRAWCALL.HPP
 
+    NODE<Layer>::ondelete([](Node* node, Layer *layer){ engine.outputs->each([layer](Node* node){
+
+        auto o = ((Output*)node->ptr_());
+        if (o->fb == &layer->fb) o->fb = nullptr;
+
+    });  }); // for what ??????
     NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
 
     NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
 
-    NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
+    NODE<Layer>::onrun([](Node* node, Layer *layer){
+        layer->draw();
+    });
 
     NODE<Layer>::onadd<File>([](Node*_this,Node*node){
 
@@ -266,9 +274,9 @@ void Callbacks::init() {
 
     NODE<NDI::Sender>::onchange([](Node* node, NDI::Sender *sender){
 
-        if (!sender->layer) return;
+        if (!sender->fb) return;
 
-        if (sender->layer->fb.width != sender->width || sender->layer->fb.height != sender->height) { sender->size(sender->layer->fb.width, sender->layer->fb.height); }
+        if (sender->fb->width != sender->width || sender->fb->height != sender->height) { sender->size(sender->fb->width, sender->fb->height); }
 
       });
 

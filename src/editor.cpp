@@ -188,14 +188,11 @@ static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
 }
 
-bool draw_guis(Buffer* buff, Member* member, uint32_t offset) {
-
-    static int member_count = 0;
+bool draw_guis(Buffer* buff, Member* member, uint32_t offset, int member_count) {
 
     if (!member) {
 
         member = buff;
-         member_count = 0;
 
         }
     else if (member->isRef()) member = member->members[0];
@@ -309,7 +306,7 @@ bool draw_guis(Buffer* buff, Member* member, uint32_t offset) {
 
             ImGui::SeparatorText(septxt.c_str());
 
-            if (draw_guis(buff, m, offset)) has_changed = true;
+            if (draw_guis(buff, m, offset, member_count)) has_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
@@ -451,12 +448,12 @@ void Editors::init() {
         ImGui::Text(an->name().c_str());
 
         ImGuiTextBuffer tbuff;
-        for (auto x : engine.available_ips) tbuff.append(x.c_str(), x.c_str()+x.length()+1);
+        for (auto x : an->available_ips) tbuff.append(x.c_str(), x.c_str()+x.length()+1);
 
         if (Combo("device##available_ips", &an->device_id, tbuff.begin())) {
 
             node->active(false);
-            an->connect(engine.available_ips[an->device_id]);
+            an->connect(an->available_ips[an->device_id]);
 
         }
 
@@ -526,7 +523,7 @@ void Editors::init() {
 
         for (auto x : engine.stack->childrens) tbuff.append(x->name().c_str(), x->name().c_str()+x->name().length()+1);
 
-        if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) output->layer = engine.stack->childrens[output_currents[output]]->is_a<Layer>();
+        if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) output->fb = &engine.stack->childrens[output_currents[output]]->is_a<Layer>()->fb;
 
         if (ImGui::DragScalarN("position###winpos", ImGuiDataType_U32,  &output->offset_x, 2, 1, &min)) output->pos( output->offset_x, output->offset_y );
 
@@ -620,6 +617,17 @@ void Editors::init() {
                     memset(&x[verteditor.GetText().size()],0,1);
 
                     shader->create(shader->frag.src,x);
+
+
+                    // engine.atlas->link(this);
+
+                    engine.dynamic_ubo.bind(shader);
+
+                    engine.static_ubo.bind(shader);
+
+                    shader->sendUniform("medias", 1);
+                    shader->sendUniform("render_pass", 2);
+                    shader->sendUniform("uberlayer", 3);
 
                     // if (node->type() == typeid(UberLayer) || node->type() == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
 
@@ -852,12 +860,15 @@ void Editors::init() {
 
     Editor<VBO>([](Node*node,VBO*vbo){
 
-        ImGui::Text(("VBO " + std::to_string(vbo->vbo) + " - IBO " + std::to_string(vbo->ibo) + " - VAO " + std::to_string(vbo->vao)).c_str());
+        std::ostringstream address;
+        address << (void const *)vbo;
+        ImGui::Text(("VBO " + std::to_string(vbo->vbo) + " - IBO " + std::to_string(vbo->ibo) + " - VAO " + std::to_string(vbo->vao) + " - " +  address.str()).c_str());
 
         if (ImGui::Button("destroy")) vbo->destroy();
         ImGui::SameLine(); if (ImGui::Button("create")) vbo->create();
         ImGui::SameLine(); if (ImGui::Button("reset")) vbo->reset();
         ImGui::SameLine(); if (ImGui::Button("addQuad")) vbo->addQuad();
+        ImGui::SameLine(); if (ImGui::Button("glDeleteVertexArrays")) glDeleteVertexArrays(1, &vbo->vao);
 
         Editor<Buffer>::cb(node, vbo);
 
@@ -902,6 +913,8 @@ void Editors::init() {
     ////////// FRAMEBUFFER.HPP
 
     Editor<FrameBuffer>([](Node* node, FrameBuffer *fb ){
+
+        ImGui::Text(("attachment "+std::to_string(fb->attachments)).c_str());
 
         Editor<Texture>::cb(node, fb->texture);
 
@@ -953,13 +966,15 @@ void Editors::init() {
 
     Editor<Layer>([](Node* node, Layer *layer){
 
-        ImGui::SliderFloat4("clear_color", &layer->clear_color[0], 0, 1);
+        ImGui::Text(("FB "+std::to_string(layer->fb.id)).c_str());
+
+        ImGui::SliderFloat4("clear_color", &layer->fb.clear_color[0], 0, 1);
 
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
             if (ImGui::BeginTabItem("main")) {
 
-                Editor<FrameBuffer>::cb(node, &layer->fb);
+                    Editor<FrameBuffer>::cb(node, &layer->fb);
 
                 ImGui::EndTabItem();
 

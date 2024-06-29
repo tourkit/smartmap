@@ -1,6 +1,6 @@
 #include "ndi.hpp"
 #include "log.hpp"
-#include "layer.hpp"
+#include "framebuffer.hpp"
 
 #include "messagetype.hpp"
 
@@ -14,7 +14,7 @@ public:
     std::vector<uint8_t> data;
 };
 
-Sender::Sender(uint32_t width, uint32_t height, std::string name, Layer* layer) : Thread("NDI::Sender"), Output(width,height,layer), name(name) {
+Sender::Sender(uint32_t width, uint32_t height, std::string name, FrameBuffer* fb) : Thread("NDI::Sender"), Output(width,height,fb), name(name) {
 
     size(width, height);
 
@@ -22,9 +22,9 @@ Sender::Sender(uint32_t width, uint32_t height, std::string name, Layer* layer) 
 
 void Sender::draw(){
 
-    if (!layer) return;
+    if (!fb) return;
     int size = data.size();
-    layer->fb.read(&data[0], GL_BGRA);
+    fb->read(&data[0], GL_BGRA);
 
     send();
 

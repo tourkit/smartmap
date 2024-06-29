@@ -11,15 +11,30 @@ struct Texture;
 
 struct FrameBuffer {
 
-    uint32_t id, width, height, attachments = 0;
+    uint32_t id = 0, width = 0, height = 0, attachments = 0;
+
     Texture *texture = nullptr;
+
+    float clear_color[4] = {0,0,0,0};
+
+    static inline std::vector<FrameBuffer*> pool;
+
     FrameBuffer(GLuint id, GLuint width, GLuint height);
-    FrameBuffer(GLuint width = 0, GLuint height = 0);
+
+    FrameBuffer(GLuint width, GLuint height);
+
     void create(GLuint width, GLuint height);
+
     ~FrameBuffer();
+
     bool destroy();
+
     void bind();
-    void clear(GLfloat r = 0, GLfloat  g = 0, GLfloat b = 0, GLfloat a = 0);
+
+    void clear();
+
+    void clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a);
+
     void read(unsigned char* data, GLenum format = GL_RGB, GLuint width = 0, GLuint height = 0, GLuint x = 0, GLuint y = 0);
 
 };

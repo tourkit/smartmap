@@ -4,7 +4,6 @@
 #include "model.hpp"
 #include "file.hpp"
 #include "instance.hpp"
-#include "engine.hpp"
 #include "log.hpp"
 #include "utils.hpp"
 
@@ -27,19 +26,28 @@ VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
 
     create();
 
+    ADD_UNIQUE<VBO*>(pool, this);
+
 }
 
 void VBO::destroy() {
 
     init = false;
 
-    for (int i = 0 ; i < enabled_attrs; i++) glDisableVertexAttribArray(i);
+
+    if (vao) {
+
+        glBindVertexArray(vao);
+
+        for (int i = 0 ; i < enabled_attrs; i++) glDisableVertexAttribArray(i);
+
+        glDeleteVertexArrays(1, &vao);
+
+    }
 
     glDeleteBuffers(1, &vbo);
 
     glDeleteBuffers(1, &ibo);
-
-    glDeleteVertexArrays(1, &vao);
 
 }
 
@@ -53,7 +61,13 @@ void VBO::create() {
 
 }
 
-VBO::~VBO()  { destroy(); }
+VBO::~VBO()  {
+
+    destroy();
+
+    REMOVE<VBO*>(pool, this);
+
+}
 
 void VBO::reset() {
 
@@ -113,11 +127,10 @@ void VBO::upload() {
 
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_size, data.data() + v_size , GL_STATIC_DRAW );
 
-    // std::string str;
-    // str += "ID " + std::to_string(vbo) + " - ";
-    // str += std::to_string(v_size) + " : ";
-    // for (int i = 0 ; i < v_size; i++) { str += std::to_string(*(uint8_t*)(data.data()+i)) + " "; }
-    // PLOGV << str;
+
+    std::string str;
+    for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)&data[0])+i)) + " ";
+    PLOGV << name() << ": " << data.size() << " - " << str;
 
 }
 

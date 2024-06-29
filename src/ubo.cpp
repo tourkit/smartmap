@@ -60,8 +60,8 @@ void UBO::upload(){ upload(data.data(), data.size()); }
 
 void UBO::upload(void* data, size_t size, uint32_t offset){
 
-    std::string str;
-    for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
+    // std::string str;
+    // for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
     // if (binding /*aka statubo*/) PLOGV << name() << " " << binding << ": " << size << " - " << str;
 
     glBindBuffer(GL_UNIFORM_BUFFER, id);

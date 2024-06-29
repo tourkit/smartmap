@@ -4,51 +4,15 @@
 #include "utils.hpp"
 #include "layer.hpp"
 
-#include "effector.hpp"
-#include "model.hpp"
 
+Model* DrawCall::addModel(File* f) {
 
-Effectable::Effectable(std::string name) : s(name) {  }
+     auto x = Modelable::addModel(f);
 
-bool Effectable::removeEffector(Effector* effector) {
+     vbo.add(f, models.size()-1);
 
-    return std::erase_if( effectors, [&](std::shared_ptr<Effector> e) { return e.get() == effector; });
-
+     return x;
 }
-
-
-Effector* Effectable::addEffector(File* file) {
-
-    if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return nullptr;}
-
-    auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
-
-    s.add(&effector->ref);
-
-    return effector;
-
-}
-
-Model* Modelable::addModel(File* f) {
-
-    auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
-
-    s.add(&mod->s);
-
-    for (auto x : s.getTop()) { // should be once even if its a for
-
-        x->isBuff()->each([&](Instance& inst){ if (inst.def() == &mod->s) mod->instance = &inst.track(); });
-
-    }
-
-    vbo.add(f, models.size()-1) ;
-
-    return mod;
-
-}
-
-bool Modelable::removeModel(Model* model){ return std::erase_if( models, [&](std::shared_ptr<Model> e) { return e.get() == model; }); }
-
 
 ///////// LayerBuilder ////
 
@@ -103,6 +67,17 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
     return body_fragment;
 }
+void Layer::ShaderProgramBuilder::common() {
+
+    ShaderProgram::Builder::common();
+
+    header_common += version;
+
+    header_common += layout({&engine.dynamic_ubo, &engine.static_ubo});
+
+}
+
+
 void Layer::ShaderProgramBuilder::frag() {
 
     header_fragment.clear();
@@ -266,6 +241,6 @@ void DrawCall::update() {
 
     }
 
-    shader.create();
+    ((ShaderProgram*)&shader)->create();
 
 }

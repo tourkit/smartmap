@@ -1,8 +1,8 @@
-#include "engine.hpp"
 #include "shader.hpp"
 #include "log.hpp"
 #include "ubo.hpp"
-#include "drawcall.hpp"
+#include "vbo.hpp"
+#include "instance.hpp"
 #include "model.hpp"
 #include "atlas.hpp"
 
@@ -89,9 +89,7 @@ static std::string print_recurse(Member* _this, int recurse=-1, int depth=0) {
 
 void ShaderProgram::Builder::build() {
 
-    header_common.clear();
-    header_common += version;
-    header_common += layout({&engine.dynamic_ubo,&engine.static_ubo});
+    common();
 
     frag();
 
@@ -111,12 +109,14 @@ void ShaderProgram::Builder::build() {
     fragment += "out vec4 COLOR;\n\n";
     fragment += header_fragment;
     fragment += "void main() {\n\n";
-    fragment += (body_fragment.length() ? body_fragment : "\tCOLOR = vec4(0,0,0,1);\n\n");
+    fragment += (body_fragment.length() ? body_fragment : "\tCOLOR = vec4(0,1,0,1);\n\n");
     fragment += "}\n////////////";
 
 }
 
 void ShaderProgram::Builder::frag() { body_fragment.clear(); }
+
+void ShaderProgram::Builder::common() { header_common.clear(); }
 
 void ShaderProgram::Builder::vert() {
 
@@ -308,16 +308,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     glAttachShader(id, vert.id);
 
     glLinkProgram( id );
-
-    // engine.atlas->link(this);
-
-    engine.dynamic_ubo.bind(this);
-
-    engine.static_ubo.bind(this);
-
-    sendUniform("medias", 1);
-    sendUniform("render_pass", 2);
-    sendUniform("uberlayer", 3);
 
     loaded = true;
 

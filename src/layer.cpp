@@ -56,12 +56,9 @@ void Layer::draw() {
 
     if (feedback) { feedback->bind(); }
 
-    fb.clear(clear_color[0],clear_color[1],clear_color[2],clear_color[3]);
-
+    fb.clear();
 
     shader.use();
-
-    // engine.vbo->draw();
 
     vbo.draw(models.size()==1?models[0].get()->s.quantity():1);
 
@@ -160,7 +157,8 @@ void UberLayer::calc_matrice() {
         z++;
     }
 
-    shader.create();
+    ((ShaderProgram*)&shader)->create();
+
 
     engine.static_ubo.upload();
 

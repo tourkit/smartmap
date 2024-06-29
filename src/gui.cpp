@@ -2,6 +2,8 @@
 
 #include "editor.hpp"
 #include "tree.hpp"
+#include "layer.hpp"
+#include "vbo.hpp"
 
 
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -297,10 +299,11 @@ void GUI::draw() {
 
             delete x;
 
-            if (parent) parent->update();
+            if (parent) parent->update(); // useless cause already in Node::Dtor na ?
         }
 
         delete_list.clear();
+
 
 }
 void GUI::render() {

@@ -2,6 +2,7 @@
 #define ARTNETDEVICE_H
 
 #include <vector>
+#include <string>
 #include <map>
 #include <unordered_map>
 #include <set>
@@ -36,6 +37,8 @@ struct DMXRemap : Remap {
 struct Artnet : Buffer {
 
   static inline Struct &uni_s = Struct::create("universe").add<char>("chan",512);
+
+  static inline std::vector<std::string> available_ips;
 
   artnet_node artnet = NULL;
 

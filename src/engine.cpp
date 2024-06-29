@@ -20,13 +20,7 @@
 
 #include "callbacks.hpp"
 
-extern "C" {
 
-    iface_t* artnet_list_ifaces();
-    iface_t* artnet_list_ifaces_next(iface_t* ift);
-    void artnet_free_ifaces(iface_t* ift);
-
-}
 
 Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
 
@@ -47,17 +41,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
 
     dynamic_ubo.add(&glsl_data);
 
-    auto y= artnet_list_ifaces();
-
-    for (auto ift = y; ift != NULL; ift = artnet_list_ifaces_next(ift)) {
-
-        available_ips.push_back(inet_ntoa(ift->ip_addr.sin_addr));
-
-        PLOGV << "found IP : " << available_ips.back();
-
-    }
-
-    artnet_free_ifaces(y);
 
     window.max_fps = 59;
 
@@ -89,14 +72,6 @@ void Engine::init() {
     Callbacks::init();
 
     Editors::init();
-
-    std::string frag = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); if (fps<60)COLOR+=vec4(mod(frame,10)*.05,0,0,1); }";
-    std::string vert = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
-    shader = new ShaderProgram(frag,vert);
-
-    vbo = new VBO();
-    vbo->add(&VBO::quad);
-
 
     debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
@@ -149,7 +124,7 @@ void Engine::run() {
     if (!engine.outputs->childrens.size()) {
 
         auto win = engine.outputs->addPtr<Window>( &engine.window );
-        if (engine.stack->childrens.size()) win->get()->layer = engine.stack->childrens[0]->is_a<Layer>();
+        // if (engine.stack->childrens.size()) win->get()->layer = engine.stack->childrens[0]->is_a<Layer>();
 
     }
 
@@ -443,7 +418,7 @@ void Engine::open(const char* file) {
             Node* layer = nullptr;
             if (arr.Size()>4) layer = engine.stack->child(arr[4].GetString());
 
-            Node* n = engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?layer->is_a<Layer>():nullptr))->active(false);
+            Node* n = engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?&layer->is_a<Layer>()->fb:nullptr))->active(false);
 
             if (layer) layer->referings.insert( n );
 
@@ -460,7 +435,7 @@ void Engine::open(const char* file) {
             auto window = engine.outputs->addPtr<Window>( &engine.window );
 
             window->name(x.name.GetString());
-            window->get()->layer = (layer?layer->is_a<Layer>():nullptr);
+            window->get()->fb = (layer?&layer->is_a<Layer>()->fb:nullptr);
 
             engine.window.size( arr[0].GetInt() , arr[1].GetInt() );
             engine.window.pos( arr[2].GetInt() , arr[3].GetInt() );
@@ -712,7 +687,15 @@ void Engine::save(const char* file) {
         outputarr.PushBack( output_->height, allocator );
         outputarr.PushBack( output_->offset_x, allocator );
         outputarr.PushBack( output_->offset_y, allocator );
-        if (output_->layer) outputarr.PushBack( rapidjson::Value(output_->layer->s.name().c_str(), allocator ), allocator );
+        if (output_->fb) {
+
+            Layer* lay = nullptr;
+
+            stack->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
+
+            outputarr.PushBack( rapidjson::Value(lay->s.name().c_str(), allocator ), allocator );
+
+        }
 
         // if ( output->is_a<NDI::Sender>() ) { }
 
@@ -750,5 +733,21 @@ void Engine::save(const char* file) {
     File::write(file,result);
 
     PLOGD << "SAVED to " << file;
+
+}
+
+void Engine::Shader::create(std::string frag, std::string vert) {
+
+    ShaderProgram::create(frag, vert);
+
+    // engine.atlas->link(this);
+
+    engine.dynamic_ubo.bind(this);
+
+    engine.static_ubo.bind(this);
+
+    sendUniform("medias", 1);
+    sendUniform("render_pass", 2);
+    sendUniform("uberlayer", 3);
 
 }

@@ -2,45 +2,27 @@
 
 #include "vbo.hpp"
 #include "shader.hpp"
+#include "engine.hpp"
+#include "model.hpp"
 
 #include <vector>
 #include <cstring>
 
-struct Effector;
-struct Model;
-struct Effectable {
 
-    Struct s;
-
-    Effectable(std::string name = "Effectable" );
-
-    std::vector<std::shared_ptr<Effector>> effectors;
-    Effector* addEffector(File* f); // kinda ctor for effectors
-    bool removeEffector(Effector* effector);
-
-};
-
-struct Modelable : Effectable {
-
-    VBO vbo;
-
-    using Effectable::Effectable;
-
-    std::vector<std::shared_ptr<Model>> models;
-    Model* addModel(File* f); // kinda ctor for Model
-    bool removeModel(Model* model);
-
-};
 
 struct DrawCall : Modelable {
 
     DrawCall(std::string name);
 
-    ShaderProgram shader;
+    Engine::Shader shader;
 
     virtual void update();
 
     virtual void draw();
+
+    VBO vbo;
+
+    Model* addModel(File* f) override;
 
     struct ShaderProgramBuilder : ShaderProgram::Builder {
 
@@ -49,6 +31,7 @@ struct DrawCall : Modelable {
         void build() override;
         void frag() override;
         void vert() override;
+        void common() override;
 
         std::string prout(std::string xtra, Model& model);
 

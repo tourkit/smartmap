@@ -1,8 +1,8 @@
 #include "output.hpp"
 
-Output::Output(uint32_t width, uint32_t height, Layer *layer, uint32_t offset_x, uint32_t offset_y)
+Output::Output(uint32_t width, uint32_t height, FrameBuffer *fb, uint32_t offset_x, uint32_t offset_y)
 
-    : layer(layer) {
+    : fb(fb) {
 
         size(width, height);
 

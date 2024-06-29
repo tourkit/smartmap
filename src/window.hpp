@@ -12,8 +12,8 @@
 
 #include "output.hpp"
 // #include "fps.hpp"
-// #include "drawcall.hpp"
 
+// #include "drawcall.hpp"
 struct ShaderProgram; struct VBO; struct Texture;
 
 struct Window : Output {

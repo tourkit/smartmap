@@ -4,6 +4,7 @@
 #include "json.hpp"
 #include "node.hpp"
 #include "ubo.hpp"
+#include "shader.hpp"
 #include "log.hpp"
 
 #include <memory>
@@ -61,19 +62,17 @@ struct Engine {
 
     std::string project_filepath;
 
-    void* debug_payload = nullptr;
-
-    std::vector<std::string> available_ips;
-
-    VBO *vbo;
-
-    ShaderProgram *shader;
-
-    static void Draw2D(Texture* texture);
-
     static inline Struct& glsl_data = Struct::create("ENGINE").add<int>("frame").add<int>("fps").add<int>("alt");
 
     GLint gl_max_texture_size,gl_max_texture_image_units, gl_major_version, gl_minor_version;
+
+    struct Shader : ShaderProgram {
+
+        using ShaderProgram::ShaderProgram;
+
+        void create(std::string frag, std::string vert) override;
+
+    };
 
 private:
 
@@ -89,5 +88,6 @@ private:
     Log &log = Log::getInstance();
 
 };
+
 
 static inline Engine &engine = Engine::getInstance();

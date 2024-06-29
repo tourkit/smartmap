@@ -14,7 +14,7 @@ struct Sender : public Output, Thread {
     NDIlib_video_frame_v2_t frame;
     std::vector<uint8_t> currentFrameBuffer;
 
-    Sender(uint32_t width, uint32_t height, std::string name, Layer* layer);
+    Sender(uint32_t width, uint32_t height, std::string name, FrameBuffer* fb);
     ~Sender();
 
     void size(uint32_t width, uint32_t height) override;

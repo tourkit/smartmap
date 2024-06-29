@@ -1,5 +1,4 @@
 #include "window.hpp"
-#include "engine.hpp"
 #include "framebuffer.hpp"
 #include "log.hpp"
 #include "gui.hpp"
@@ -7,7 +6,6 @@
 #include "shader.hpp"
 #include "texture.hpp"
 #include "vbo.hpp"
-#include "layer.hpp"
 
 #include <chrono>
 #include <thread>
@@ -148,14 +146,33 @@ void Window::keypress() {
 
 void Window::draw() {
 
-    if (layer) {
+    static VBO *vbo;
+
+    static ShaderProgram *shader;
+
+    static bool init = false;
+
+    if (!init){
+
+        static std::string frag = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); if (fps<60)COLOR+=vec4(mod(frame,10)*.05,0,0,1); }";
+        static std::string vert = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
+        shader = new ShaderProgram(frag,vert);
+
+        vbo = new VBO();
+        vbo->add(&VBO::quad);
+
+        init = true;
+
+    }
+
+    if (fb) {
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, engine.window.width, engine.window.height);
+        glViewport(0, 0, width, height);
 
-        layer->fb.texture->bind();
-        engine.shader->use();
-        engine.vbo->draw();
+        fb->texture->bind();
+        shader->use();
+        vbo->draw();
 
     }
 
