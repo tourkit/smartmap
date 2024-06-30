@@ -44,7 +44,7 @@ Struct::~Struct(){
 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
 
-            s->removeHard(*this);
+            s->remove(*this);
 
         }
 

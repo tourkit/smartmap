@@ -44,18 +44,18 @@ Instance Instance::parent() {
 
 Instance Instance::find(Member* x) {
 
-    auto offset = this->offset;
+    Instance inst;
 
-    bool found = false;
+    buff->each([&](Instance inst_){
 
-    for (auto &m : def()->members) if (m == x) { found = true; break; }
+        if (x == inst_.def())
+            inst = inst_;
 
-    offset += x->footprint_all();
+    });
 
-    if (!found) PLOGE << "\"" << x->name() << "\" does not exist in " << def()->name();
-    auto stl_ = stl;
-    stl_.push_back(x);
-    return Instance{buff,offset,stl_};
+    if (!inst.offset) PLOGE << "\"" << x->name() << "\" does not exist in " << def()->name();
+
+    return inst;
 
 }
 

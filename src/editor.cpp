@@ -793,6 +793,11 @@ void Editors::init() {
 
         ImGui::Separator();
 
+        std::stringstream ss;
+        ss << buffer;
+
+        ImGui::Text(( ss.str()).c_str());
+
         if (draw_guis(buffer)) { buffer->upload();
 
         // engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});

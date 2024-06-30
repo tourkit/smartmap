@@ -74,7 +74,7 @@ protected:
 
 struct Ref : Struct {
 
-    Ref(std::string name, uint32_t quantity = 1) : Struct(name, quantity) { }
+    Ref(std::string name = "Ref", uint32_t quantity = 1) : Struct(name, quantity) { }
 
     Ref(const Member& other) : Struct(other) { }
 

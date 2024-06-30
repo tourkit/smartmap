@@ -65,6 +65,9 @@ VBO::~VBO()  {
 
     destroy();
 
+    removeHard(indices);
+    removeHard(vertices);
+
     REMOVE<VBO*>(pool, this);
 
 }
