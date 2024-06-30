@@ -1,28 +1,11 @@
 #pragma once
 
-struct File;
-struct Effector;
-
 #include <vector>
 #include <string>
 
-#include "struct.hpp"
 #include "effector.hpp"
 
-
-struct Effector;
 struct Model;
-struct Effectable {
-
-    Struct s;
-
-    Effectable(std::string name = "Effectable" );
-
-    std::vector<std::shared_ptr<Effector>> effectors;
-    Effector* addEffector(File* f); // kinda ctor for effectors
-    bool removeEffector(Effector* effector);
-
-};
 
 struct Modelable : Effectable {
 
@@ -33,7 +16,6 @@ struct Modelable : Effectable {
     bool removeModel(Model* model);
 
 };
-
 
 struct Model : Modelable {
 

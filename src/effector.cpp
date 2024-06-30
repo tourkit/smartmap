@@ -102,3 +102,27 @@ std::string Effector::source(File* file) {
 
 
 }
+
+
+
+
+Effectable::Effectable(std::string name) : s(name) {  }
+
+bool Effectable::removeEffector(Effector* effector) {
+
+    return std::erase_if( effectors, [&](std::shared_ptr<Effector> e) { return e.get() == effector; });
+
+}
+
+
+Effector* Effectable::addEffector(File* file) {
+
+    if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return nullptr;}
+
+    auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
+
+    s.add(&effector->ref);
+
+    return effector;
+
+}

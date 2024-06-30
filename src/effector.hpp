@@ -7,7 +7,6 @@
 #include <string>
 
 struct File;
-struct Struct;
 
 struct Effector  {
 
@@ -44,5 +43,17 @@ struct Effector  {
 
     Effector(File* f, std::string name );
 
+
+};
+
+struct Effectable {
+
+    Struct s;
+
+    Effectable(std::string name = "Effectable" );
+
+    std::vector<std::shared_ptr<Effector>> effectors;
+    Effector* addEffector(File* f); // kinda ctor for effectors
+    bool removeEffector(Effector* effector);
 
 };
