@@ -883,13 +883,17 @@ void Editors::init() {
 
     Editor<Effector>([](Node* node, Effector *effector){
 
-        if (effector->file) Editor<File>::cb(node, effector->file);
+        if (!effector->def->file) return;
 
-        for (auto x : Effector::get(effector->file).args)  {
+        Editor<File>::cb(node, effector->def->file);
+
+        auto &def = Effector::get(effector->def->file);
+
+        for (auto x : def.args)  {
 
             std::string out_str = x.first+ " "+x.second;
 
-            if ( Effector::get(effector->file).ranges.find(x.second) !=  Effector::get(effector->file).ranges.end()) for (auto x :  Effector::get(effector->file).ranges[x.second])  out_str += " " + std::to_string(x).substr(0,3) + ",";
+            if ( def.ranges.find(x.second) !=  def.ranges.end()) for (auto x :  def.ranges[x.second])  out_str += " " + std::to_string(x).substr(0,3) + ",";
 
             ImGui::Text(out_str.c_str());
         }

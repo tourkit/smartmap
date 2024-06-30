@@ -8,7 +8,7 @@
 
 Effector::Definition& Effector::get(File * file) { if (effects.find(file) == effects.end()) init(file); return effects[file]; }
 
-Effector::Effector(File* file, std::string name ) : ref(name), file(file) { ref.add( &get(file).s ); };
+Effector::Effector(Definition* def, std::string name ) : ref(name), def(def) { ref.add( &def->s ); };
 
 void Effector::init(File* file) {
 
@@ -80,6 +80,7 @@ void Effector::init(File* file) {
 
     }
 
+    def.source = Effector::source(file);
 
 }
 
@@ -115,11 +116,9 @@ bool Effectable::removeEffector(Effector* effector) {
 }
 
 
-Effector* Effectable::addEffector(File* file) {
+Effector* Effectable::addEffector(Effector::Definition* def) {
 
-    if (file->extension != "glsl") { PLOGW << "WARUM :GLSL only BB !!"; return nullptr;}
-
-    auto effector = effectors.emplace_back(std::make_shared<Effector>(file, s.next_name(file->name()))).get();
+    auto effector = effectors.emplace_back(std::make_shared<Effector>(def, s.next_name(def->s.name()))).get();
 
     s.add(&effector->ref);
 

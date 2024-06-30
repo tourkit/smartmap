@@ -173,7 +173,7 @@ void Callbacks::init() {
 
         auto file = node->is_a<File>();
 
-        if (file->extension == "glsl") return _this->addPtr<Effector>( _this->is_a<Layer>()->addEffector(file) )->node();
+        if (file->extension == "glsl") return _this->addPtr<Effector>( _this->is_a<Layer>()->addEffector(&Effector::get(file)) )->node();
 
         return _this->addPtr<Model>(_this->is_a<Layer>()->addModel( file ))->node();
 
@@ -190,7 +190,7 @@ void Callbacks::init() {
 
         auto file = node->is_a<File>();
 
-        auto x =  _this->is_a<Model>()->addEffector( file )  ;
+        auto x =  _this->is_a<Model>()->addEffector( &Effector::get(file) )  ;
 
         if (!x) return _this;
 

@@ -4,6 +4,7 @@
 #include "shader.hpp"
 #include "engine.hpp"
 #include "model.hpp"
+// #include "effector.hpp"
 
 #include <vector>
 #include <cstring>
@@ -26,7 +27,7 @@ struct DrawCall : Modelable {
 
     struct ShaderProgramBuilder : ShaderProgram::Builder {
 
-        std::vector<File*> effectors;
+        std::vector<Effector::Definition*> effectors;
 
         void build() override;
         void frag() override;

@@ -12,11 +12,15 @@ struct Effector  {
 
     struct Definition {
 
+        File* file;
+
         Struct s;
 
         std::vector<std::pair<std::string,std::string>> args;
 
         std::map<std::string, float[3]> ranges;
+
+        std::string source;
 
     };
 
@@ -39,9 +43,9 @@ struct Effector  {
 
     Ref ref;
 
-    File* file;
+    Definition* def;
 
-    Effector(File* f, std::string name );
+    Effector(Definition* def, std::string name );
 
 
 };
@@ -53,7 +57,7 @@ struct Effectable {
     Effectable(std::string name = "Effectable" );
 
     std::vector<std::shared_ptr<Effector>> effectors;
-    Effector* addEffector(File* f); // kinda ctor for effectors
+    Effector* addEffector(Effector::Definition* def); // kinda ctor for effectors
     bool removeEffector(Effector* effector);
 
 };
