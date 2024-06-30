@@ -6,7 +6,6 @@
 
 #include "engine.hpp"
 
-
 int main() {
 
     engine.init();
@@ -16,5 +15,3 @@ int main() {
     engine.run();
 
 }
-
-// create struct Tester
