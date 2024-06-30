@@ -26,9 +26,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     effectors.clear();
 
-    if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) ADD_UNIQUE<File*>(effectors, effector->file);
+    if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) ADD_UNIQUE<Effector::Definition*>(effectors, effector->def);
 
-    if(dc) for (auto &effector : dc->effectors) ADD_UNIQUE<File*>(effectors, effector->file);
+    if(dc) for (auto &effector : dc->effectors) ADD_UNIQUE<Effector::Definition*>(effectors, effector->def);
 
     ShaderProgram::Builder::build();
 
@@ -53,7 +53,7 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
         std::string arg_str;
 
-        for (auto &arg : Effector::get(effector.get()->file).args) {
+        for (auto &arg : effector.get()->def->args) {
 
             arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
             // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
@@ -62,7 +62,7 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
         arg_str.resize(arg_str.size()-2);
 
-        body_fragment += "\t"+effector->file->name()+"("+arg_str+");\n";
+        body_fragment += "\t"+effector->def->s.name()+"("+arg_str+");\n";
     }
 
     return body_fragment;
@@ -103,7 +103,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
     int model_id = 0;
 
-    for (auto file : effectors)  header_fragment += Effector::source(file)+";\n\n";
+    for (auto def : effectors)  header_fragment += def->source+";\n\n";
 
     header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
@@ -141,7 +141,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
             std::string arg_str;
 
-            for (auto &arg : Effector::get(effector.get()->file).args) {
+            for (auto &arg : effector.get()->def->args) {
 
                 arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
 
@@ -149,7 +149,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
             arg_str.resize(arg_str.size()-2);
 
-            body_fragment += "\t"+effector->file->name()+"("+arg_str+");\n";
+            body_fragment += "\t"+effector.get()->def->s.name()+"("+arg_str+");\n";
         }
 
         if (dc->effectors.size()) body_fragment += "\ttac();\n\n";

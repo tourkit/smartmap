@@ -26,7 +26,7 @@ int main() {
 
     // engine.effectors.add
 
-    engine.open("project.json");
+    // engine.open("project.json");
 
     engine.run();
 
