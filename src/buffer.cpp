@@ -37,7 +37,7 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
             bool found = false;
 
-            if (inst.def()->ref) for (auto x : inst.stl) for (auto y : addeds) if ( x == y.m ) { found = true; break; break; }
+            if (inst.def()->ref()) for (auto x : inst.stl) for (auto y : addeds) if ( x == y.m ) { found = true; break; break; }
 
             if (found) {
 
@@ -45,7 +45,7 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
                 int offset = inst.offset;
 
-                for (auto m_ : m->ref->members) {
+                for (auto m_ : m->ref()->members) {
 
                     if (m_->default_val_ptr) {
 

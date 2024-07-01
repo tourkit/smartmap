@@ -70,7 +70,7 @@ void draw_definition(Member *member_, int offset, int depth) {
 
     auto member = member_;
 
-    if (member->ref) member = member->ref;
+    if (member->ref()) member = member->ref();
 
     std::vector<float> range;
 
@@ -196,7 +196,7 @@ bool draw_guis(Buffer* buff, Member* member, uint32_t offset, int member_count) 
         member = buff;
 
         }
-    else if (member->ref) member = member->ref;
+    else if (member->ref()) member = member->ref();
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;

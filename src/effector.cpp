@@ -100,7 +100,7 @@ Effector::Definition::Definition(File* file) {
 
 Effector::Effector(std::string name, int wrap, std::vector<Definition*> defs ) : ref(name) { }
 
-Effector::Effector(std::string name, Definition* def ) : Effector(name) { definitions.push_back(def); ref.ref = ( &def->s ); };
+Effector::Effector(std::string name, Definition* def ) : Effector(name) { definitions.push_back(def); ref.ref( &def->s ); };
 
 Effectable::Effectable(std::string name) : s(name) {  }
 
@@ -108,21 +108,26 @@ void Effector::update() {
 
     if (wrap) {
 
-        if (ref.ref) bkpref = ref.ref;
+        if (ref.ref()) {
 
-        ref.ref = nullptr;
+            bkpref = ref.ref();
+
+            ref.ref(nullptr);
+
+        }
 
         ref.clear();
 
         ref.add<int>("id");
 
-        for (int i = 0 ; i < wrap; i++) ref.add<float>("param_"+std::to_string(i));
+        for (int i = 0 ; i < wrap; i++)
+            ref.add<float>("param_"+std::to_string(i));
 
         return;
 
     }
 
-    if (bkpref) ref.ref = bkpref;
+    if (bkpref) ref.ref(bkpref);
 
 };
 

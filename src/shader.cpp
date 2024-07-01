@@ -34,9 +34,9 @@ static std::string print_recurse(Member* _this, int recurse=-1, int depth=0) {
 
         if (m != _this->members[0]) str += tab_str+tab;
 
-        if ( m->isData() || m->ref ) {
+        if ( m->isData() || m->ref() ) {
 
-            if (m->ref && m->members.size()) str += camel(m->type_name());
+            if (m->ref() && m->members.size()) str += camel(m->type_name());
 
             else str += m->type_name();
 
@@ -200,7 +200,7 @@ std::string ShaderProgram::Builder::layout(std::vector<UBO*> ubos) {
             auto *ubo_ = ubo;
             if (m->type() == typeid(Struct)) {
 
-                if (m->ref) m = m->ref;
+                if (m->ref()) m = m->ref();
 
                 for (auto &x : list) if (x.first == m) return;
 
