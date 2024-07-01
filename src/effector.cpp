@@ -123,12 +123,10 @@ void Effector::update() {
 
         s.clear();
 
-        s.add<int>("id");
+        s.add<int>("id").range(0,definitions.size()-1,0);
 
         for (int i = 0 ; i < wrap; i++)
             s.add<float>("param_"+std::to_string(i));
-
-        logger.cout(Sev::verbose);
 
         return;
 

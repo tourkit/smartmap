@@ -53,9 +53,9 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
         std::string arg_str;
 
-        if (!effector->wrap) for (auto def : effector->definitions) {
+        if (effector->definitions.size() == 1)  {
 
-            for (auto &arg : def->s.members) {
+            for (auto &arg : effector->definitions[0]->s.members) {
 
                 arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
                 // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
@@ -64,7 +64,21 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
             arg_str.resize(arg_str.size()-2);
 
-            body_fragment += "\t"+def->s.name()+"("+arg_str+");\n";
+            body_fragment += "\t"+effector->definitions[0]->s.name()+"("+arg_str+"); // 2\n";
+
+        }else if (effector->definitions.size())  {
+
+            for (auto &arg : effector->s.members) {
+
+                arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
+                // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
+
+            }
+
+            arg_str.resize(arg_str.size()-2);
+
+            body_fragment += "\t"+effector->s.name()+"("+arg_str+"); // 4\n";
+
 
         }
     }
@@ -155,7 +169,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
                 arg_str.resize(arg_str.size()-2);
 
-                body_fragment += "\t"+def->s.name()+"("+arg_str+");\n";
+                body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 3\n";
 
             }
 

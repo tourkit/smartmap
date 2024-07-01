@@ -62,7 +62,9 @@ void Callbacks::init() {
 
     NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name(s->name()); });
 
-    NODE<Struct>::onchange([&](Node*node, Struct* s){ if (s->name() != node->name()) s->name(node->name()); });
+    NODE<Struct>::onchange([&](Node*node, Struct* s){
+        if (s->name() != node->name())
+            s->name(node->name()); });
 
     ////////// Artnet.HPP
 
@@ -207,6 +209,23 @@ void Callbacks::init() {
     NODE<Effector>::oncreate([](Node*node, Effector* fx){ NODE<Struct>::oncreate_cb(node, &fx->s); });
 
     NODE<Effector>::onchange([&](Node*node, Effector* effector){ NODE<Struct>::onchange_cb(node, &effector->s); effector->update(); });
+
+    NODE<Effector>::onadd<Effector::Definition>([](Node* _this, Node *node) {
+
+        Effector * effector = _this->is_a<Effector>();
+        Effector::Definition * def = node->is_a<Effector::Definition>();
+
+        effector->definitions.push_back(def);
+
+        effector->wrap = 3;
+
+        effector->update();
+
+        _this->name("wrappy");
+
+        return nullptr;
+
+    });
 
     NODE<Effector>::ondelete([](Node* node, Effector *effector) {
 
