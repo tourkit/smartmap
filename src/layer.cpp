@@ -221,7 +221,7 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 
             arg_str.resize(arg_str.size()-2);
 
-            body_fragment += "\t"+def->s.name()+"("+arg_str+");\n";
+            body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 1\n";
 
         }
 
