@@ -263,7 +263,7 @@ void Struct::update() {
 
 uint32_t Struct::size() {
 
-    if ( ref ) return ref->size();
+    if ( ref() ) return ref()->size();
 
      return size_v;
 

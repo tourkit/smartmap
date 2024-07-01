@@ -127,7 +127,7 @@ std::string Member::type_name() {
 
     if (type() == typeid(Struct)) return camel(name());
 
-    if (ref) return ref->type_name();
+    if (ref()) return ref()->type_name();
 
     if (type() == typeid(glm::vec2)) return "vec2";
 
@@ -197,7 +197,7 @@ void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offs
 
     auto offset_ = offset;
 
-    for (auto m : ref?ref->members:members) {
+    for (auto m : ref()?ref()->members:members) {
 
         m->each(cb, buff, offset_, stl);
 
