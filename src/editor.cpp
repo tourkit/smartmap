@@ -42,7 +42,7 @@ namespace ImGui {
 
         for (int i = 0; i < depth; i++) label = "    "+label;
 
-        if (range.size()==2) label += " ( " +std::format("{}",range[0])+", "+std::format("{}", range[1])+" )";
+        if (range.size()==2) label += " (" +std::format("{}",range[0])+", "+std::format("{}", range[1])+")";
 
         while (strlen(label.c_str()) < 35) label += " ";
         label += std::to_string(offset);
@@ -66,11 +66,12 @@ namespace ImGui {
 
 using namespace ImGui;
 
-static void draw_definition(Member *member, int offset = 0, int depth = 0) {
+void draw_definition(Member *member_, int offset, int depth) {
 
-    if (member->isRef()) {
-        member = member->members[0];
-        }
+    auto member = member_;
+
+    if (member->ref) member = member->ref;
+
     std::vector<float> range;
 
     if (member->isData()) {
@@ -102,7 +103,7 @@ static void draw_definition(Member *member, int offset = 0, int depth = 0) {
 
     }
 
-    ImGui::TextX(std::string(!member->isData() ? "struct" : member->type_name()) + " " + member->name(), offset, member->footprint(), depth,range);
+    ImGui::TextX(std::string(!member->isData() ? "struct" : member->type_name()) + " " + member_->name(), offset, member->footprint(), depth,range);
 
     for (auto m : member->members) {
 
@@ -195,7 +196,7 @@ bool draw_guis(Buffer* buff, Member* member, uint32_t offset, int member_count) 
         member = buff;
 
         }
-    else if (member->isRef()) member = member->members[0];
+    else if (member->ref) member = member->ref;
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
@@ -883,20 +884,9 @@ void Editors::init() {
 
     Editor<Effector>([](Node* node, Effector *effector){
 
-        if (!effector->def->file) return;
+        if (InputInt("wrap", &effector->wrap)) node->update();
 
-        Editor<File>::cb(node, effector->def->file);
-
-        auto &def = Effector::get(effector->def->file);
-
-        for (auto x : def.args)  {
-
-            std::string out_str = x.first+ " "+x.second;
-
-            if ( def.ranges.find(x.second) !=  def.ranges.end()) for (auto x :  def.ranges[x.second])  out_str += " " + std::to_string(x).substr(0,3) + ",";
-
-            ImGui::Text(out_str.c_str());
-        }
+        for (auto def : effector->definitions) Editor<Effector::Definition>::cb(node, def);
 
     });
 

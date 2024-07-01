@@ -187,7 +187,8 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     for (auto &layer : ubl->layers)
         for (auto effector : layer.get()->effectors)
-            ADD_UNIQUE<Effector::Definition*>(effectors, effector.get()->def);
+            for (auto def : effector.get()->definitions)
+                ADD_UNIQUE<Effector::Definition*>(effectors, def);
 
     ShaderProgram::Builder::build();
 
@@ -214,11 +215,15 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 
         std::string arg_str;
 
-        for (auto &arg : effector->def->args) arg_str += "dynamic_ubo[curr]."+lower(ubl->s.name())+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
+        for (auto def : effector->definitions) {
 
-        arg_str.resize(arg_str.size()-2);
+            for (auto &arg : def->s.members) arg_str += "dynamic_ubo[curr]."+lower(ubl->s.name())+"."+name+"."+effector->ref.name()+"."+arg->name()+", ";
 
-        body_fragment += "\t"+effector->def->s.name()+"("+arg_str+");\n";
+            arg_str.resize(arg_str.size()-2);
+
+            body_fragment += "\t"+def->s.name()+"("+arg_str+");\n";
+
+        }
 
     }
 

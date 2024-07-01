@@ -26,9 +26,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     effectors.clear();
 
-    if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) ADD_UNIQUE<Effector::Definition*>(effectors, effector->def);
+    if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector::Definition*>(effectors, x);
 
-    if(dc) for (auto &effector : dc->effectors) ADD_UNIQUE<Effector::Definition*>(effectors, effector->def);
+    if(dc) for (auto &effector : dc->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector::Definition*>(effectors, x);
 
     ShaderProgram::Builder::build();
 
@@ -53,16 +53,20 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
         std::string arg_str;
 
-        for (auto &arg : effector.get()->def->args) {
+        for (auto def : effector->definitions) {
 
-            arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg.second+", ";
-            // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
+            for (auto &arg : def->s.members) {
+
+                arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg->name()+", ";
+                // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
+
+            }
+
+            arg_str.resize(arg_str.size()-2);
+
+            body_fragment += "\t"+def->s.name()+"("+arg_str+");\n";
 
         }
-
-        arg_str.resize(arg_str.size()-2);
-
-        body_fragment += "\t"+effector->def->s.name()+"("+arg_str+");\n";
     }
 
     return body_fragment;
@@ -70,8 +74,6 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 void Layer::ShaderProgramBuilder::common() {
 
     ShaderProgram::Builder::common();
-
-    header_common += version;
 
     header_common += layout({&engine.dynamic_ubo, &engine.static_ubo});
 
@@ -141,15 +143,22 @@ void Layer::ShaderProgramBuilder::frag() {
 
             std::string arg_str;
 
-            for (auto &arg : effector.get()->def->args) {
+                // if (effector.get().c)
+            for (auto def : effector->definitions) {
 
-                arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+effector->ref.name()+"."+arg.second+", ";
+
+                for (auto &arg : def->s.members) {
+
+                    arg_str += "     dynamic_ubo[cdurr]."+dc->s.name()+"."+effector->ref.name()+"."+arg->name()+", ";
+
+                }
+
+                arg_str.resize(arg_str.size()-2);
+
+                body_fragment += "\t"+def->s.name()+"("+arg_str+");\n";
 
             }
 
-            arg_str.resize(arg_str.size()-2);
-
-            body_fragment += "\t"+effector.get()->def->s.name()+"("+arg_str+");\n";
         }
 
         if (dc->effectors.size()) body_fragment += "\ttac();\n\n";

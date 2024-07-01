@@ -17,6 +17,15 @@
 #include <string>
 #include <fstream>
 
+using Sev = plog::Severity;
+// using plog::Severity::debug;
+// using plog::Severity::error;
+// using plog::Severity::verbose;
+// using plog::Severity::none;
+// using plog::Severity::fatal;
+// using plog::Severity::warning;
+// using plog::Severity::info;
+
 struct Log {
 
     struct Appender : public plog::IAppender {
