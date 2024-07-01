@@ -85,6 +85,10 @@ void Member::name(std::string name_v) { this->name_v = next_name(name_v); }
 
 std::string Member::name() { if (name_v.length()) return name_v; return "parentName" ; }
 
+Member* Member::ref() { return ref_v; }
+
+bool Member::ref(Member* ref) { ref_v = ref; return true; }
+
 uint32_t Member::size() { return 0; }
 
 uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16);  return size(); }

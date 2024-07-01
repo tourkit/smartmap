@@ -30,15 +30,19 @@ struct Effector  {
 
     std::vector<Definition*> definitions;
 
-    Effector(Definition* def, std::string name);
+    Effector(std::string name, Definition* def);
 
-    Effector(std::string name);
+    Effector(std::string name, int wrap = 0, std::vector<Definition*> defs = {});
 
     virtual std::string source();
 
     int wrap = 0;
 
     void update();
+
+private:
+
+    Member* bkpref = nullptr;
 
 };
 

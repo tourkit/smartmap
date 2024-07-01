@@ -98,15 +98,31 @@ Effector::Definition::Definition(File* file) {
 
 }
 
-Effector::Effector(std::string name ) : ref(name) { }
+Effector::Effector(std::string name, int wrap, std::vector<Definition*> defs ) : ref(name) { }
 
-Effector::Effector(Definition* def, std::string name ) : Effector(name) { definitions.push_back(def); ref.ref = ( &def->s ); };
+Effector::Effector(std::string name, Definition* def ) : Effector(name) { definitions.push_back(def); ref.ref = ( &def->s ); };
 
 Effectable::Effectable(std::string name) : s(name) {  }
 
 void Effector::update() {
 
-    // ref.e
+    if (wrap) {
+
+        if (ref.ref) bkpref = ref.ref;
+
+        ref.ref = nullptr;
+
+        ref.clear();
+
+        ref.add<int>("id");
+
+        for (int i = 0 ; i < wrap; i++) ref.add<float>("param_"+std::to_string(i));
+
+        return;
+
+    }
+
+    if (bkpref) ref.ref = bkpref;
 
 };
 
@@ -118,7 +134,7 @@ bool Effectable::removeEffector(Effector* effector) {
 
 Effector* Effectable::addEffector(Effector::Definition* def) {
 
-    auto effector = effectors.emplace_back(std::make_shared<Effector>(def, s.next_name(def->s.name()))).get();
+    auto effector = effectors.emplace_back(std::make_shared<Effector>(s.next_name(def->s.name()), def)).get();
 
     s.add(&effector->ref);
 
