@@ -9,7 +9,7 @@
 #include <memory>
 
 
-#include "glm/glm.hpp"
+#include "vendors/glm/glm.hpp"
 #include "log.hpp"
 
 

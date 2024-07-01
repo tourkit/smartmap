@@ -53,11 +53,11 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
         std::string arg_str;
 
-        for (auto def : effector->definitions) {
+        if (!effector->wrap) for (auto def : effector->definitions) {
 
             for (auto &arg : def->s.members) {
 
-                arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->ref.name()+"."+arg->name()+", ";
+                arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
                 // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
 
             }
@@ -149,7 +149,7 @@ void Layer::ShaderProgramBuilder::frag() {
 
                 for (auto &arg : def->s.members) {
 
-                    arg_str += "     dynamic_ubo[cdurr]."+dc->s.name()+"."+effector->ref.name()+"."+arg->name()+", ";
+                    arg_str += "     dynamic_ubo[cdurr]."+dc->s.name()+"."+effector->s.name()+"."+arg->name()+", ";
 
                 }
 

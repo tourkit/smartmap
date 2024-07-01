@@ -6,7 +6,12 @@
 
 
 
-std::string Effector::source() { if (!definitions.size()) return ""; return definitions.back()->source; }
+std::string Effector::source() {
+
+    if (!definitions.size()) return ""; return definitions.back()->source;
+
+
+}
 
 Effector::Definition::Definition() {
 
@@ -98,36 +103,38 @@ Effector::Definition::Definition(File* file) {
 
 }
 
-Effector::Effector(std::string name, int wrap, std::vector<Definition*> defs ) : ref(name) { }
+Effector::Effector(std::string name, int wrap, std::vector<Definition*> defs ) : s(name), wrap(wrap), definitions(defs) { update(); }
 
-Effector::Effector(std::string name, Definition* def ) : Effector(name) { definitions.push_back(def); ref.ref( &def->s ); };
+Effector::Effector(std::string name, Definition* def ) : Effector(name) { definitions.push_back(def); s.ref( &def->s ); };
 
 Effectable::Effectable(std::string name) : s(name) {  }
 
 void Effector::update() {
 
-    if (wrap) {
+    if (definitions.size()>1) {
 
-        if (ref.ref()) {
+        if (s.ref()) {
 
-            bkpref = ref.ref();
+            bkpref = s.ref();
 
-            ref.ref(nullptr);
+            s.ref(nullptr);
 
         }
 
-        ref.clear();
+        s.clear();
 
-        ref.add<int>("id");
+        s.add<int>("id");
 
         for (int i = 0 ; i < wrap; i++)
-            ref.add<float>("param_"+std::to_string(i));
+            s.add<float>("param_"+std::to_string(i));
+
+        logger.cout(Sev::verbose);
 
         return;
 
     }
 
-    if (bkpref) ref.ref(bkpref);
+    if (bkpref) {s.ref(bkpref); bkpref = nullptr; }
 
 };
 
@@ -141,7 +148,7 @@ Effector* Effectable::addEffector(Effector::Definition* def) {
 
     auto effector = effectors.emplace_back(std::make_shared<Effector>(s.next_name(def->s.name()), def)).get();
 
-    s.add(&effector->ref);
+    s.add(&effector->s);
 
     return effector;
 
