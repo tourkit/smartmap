@@ -26,7 +26,7 @@ struct Effector  {
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
-    Struct ref;
+    Struct s;
 
     std::vector<Definition*> definitions;
 

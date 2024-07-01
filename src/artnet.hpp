@@ -9,7 +9,7 @@
 #include <array>
 #include <functional>
 #include <iostream>
-#include "../../vendors/ofxLibArtnet/artnet/artnet.h"
+#include "vendors/ofxLibArtnet/artnet/artnet.h"
 
 #include "dmx.hpp"
 #include "buffer.hpp"

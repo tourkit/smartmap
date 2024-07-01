@@ -87,6 +87,8 @@ Struct& Struct::clear() {
 
     for (auto x : ms) delete x;
 
+    members.clear();
+
     // PLOGV << name() << " clear " ;
 
     // pre_change();

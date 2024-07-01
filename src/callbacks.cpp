@@ -204,9 +204,9 @@ void Callbacks::init() {
 
     NODE<Effector::Definition>::oncreate([](Node*node, Effector::Definition* def){ NODE<Struct>::oncreate_cb(node, &def->s); });
 
-    NODE<Effector>::oncreate([](Node*node, Effector* fx){ NODE<Struct>::oncreate_cb(node, &fx->ref); });
+    NODE<Effector>::oncreate([](Node*node, Effector* fx){ NODE<Struct>::oncreate_cb(node, &fx->s); });
 
-    NODE<Effector>::onchange([&](Node*node, Effector* effector){ NODE<Struct>::onchange_cb(node, &effector->ref); effector->update(); });
+    NODE<Effector>::onchange([&](Node*node, Effector* effector){ NODE<Struct>::onchange_cb(node, &effector->s); effector->update(); });
 
     NODE<Effector>::ondelete([](Node* node, Effector *effector) {
 

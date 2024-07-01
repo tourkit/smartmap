@@ -4,7 +4,7 @@
 
                                 */
 
-#include "engine.hpp"
+#include "src/engine.hpp"
 #include "effector.hpp"
 #include "instance.hpp"
 #include "vbo.hpp"
@@ -14,7 +14,7 @@ struct WrapperEffector : Effector {
 
     WrapperEffector() : Effector("ooooo") {
 
-        ref.name("wrapper");
+        s.name("wrapper");
 
         q(1);
 
@@ -27,11 +27,11 @@ struct WrapperEffector : Effector {
 
         q_v = q_;
 
-        auto members = ref.members;
+        auto members = s.members;
 
         for (auto x : members) delete x;
 
-        for (int i = 0 ; i < q_v; i++) ref.add<float>("param_"+std::to_string(i));
+        for (int i = 0 ; i < q_v; i++) s.add<float>("param_"+std::to_string(i));
 
     }
 

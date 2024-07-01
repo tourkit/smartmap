@@ -6,7 +6,7 @@
 #include <vector>
 #include <functional>
 
-#include <GL/gl3w.h>
+#include "vendors/gl3w/include/GL/gl3w.h"
 #include <GLFW/glfw3.h>
 
 

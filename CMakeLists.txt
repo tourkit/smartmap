@@ -103,17 +103,18 @@ include(CPack)
 file(COPY assets DESTINATION .)
 find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
+# include_directories(${})
+include_directories(${CMAKE_SOURCE_DIR}/vendors)
 
 target_include_directories(
   smartmap
   PRIVATE .
           src
-          include
-          vendors/
           vendors/imgui/
           vendors/gl3w/include/
           vendorss/glm/
           # ${FREETYPE_INCLUDE_DIRS}
+
 )
 
 # link_directories(${FREETYPE_LIBRARY_DIRS})
@@ -123,7 +124,9 @@ target_link_libraries(
 )
 
 target_link_directories(smartmap PRIVATE
-                        ${CMAKE_CURRENT_SOURCE_DIR}/vendors/NDI/Lib/)
+                        ${CMAKE_CURRENT_SOURCE_DIR}/vendors/NDI/Lib/
+                        vendors/
+                        )
 
 if(WIN32)
   file(

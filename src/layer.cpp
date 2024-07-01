@@ -215,9 +215,9 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 
         std::string arg_str;
 
-        for (auto def : effector->definitions) {
+        if (!effector->wrap) for (auto def : effector->definitions) {
 
-            for (auto &arg : def->s.members) arg_str += "dynamic_ubo[curr]."+lower(ubl->s.name())+"."+name+"."+effector->ref.name()+"."+arg->name()+", ";
+            for (auto &arg : def->s.members) arg_str += "dynamic_ubo[curr]."+lower(ubl->s.name())+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
 
             arg_str.resize(arg_str.size()-2);
 
