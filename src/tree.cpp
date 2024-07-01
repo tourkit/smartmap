@@ -180,6 +180,8 @@ using namespace ImGui;
 
         }
 
+        if(ImGui::MenuItem("update")) node->update();
+
         if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
 
         if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));

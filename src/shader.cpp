@@ -34,9 +34,9 @@ static std::string print_recurse(Member* _this, int recurse=-1, int depth=0) {
 
         if (m != _this->members[0]) str += tab_str+tab;
 
-        if ( m->isData() || m->isRef() ) {
+        if ( m->isData() || m->ref ) {
 
-            if (m->isRef() && m->members.size()) str += camel(m->type_name());
+            if (m->ref && m->members.size()) str += camel(m->type_name());
 
             else str += m->type_name();
 
@@ -116,7 +116,11 @@ void ShaderProgram::Builder::build() {
 
 void ShaderProgram::Builder::frag() { body_fragment.clear(); }
 
-void ShaderProgram::Builder::common() { header_common.clear(); }
+void ShaderProgram::Builder::common() {
+
+    header_common = version;
+
+}
 
 void ShaderProgram::Builder::vert() {
 
@@ -192,7 +196,11 @@ std::string ShaderProgram::Builder::layout(std::vector<UBO*> ubos) {
 
             auto m = inst.def();
 
-            if (m->type() == typeid(Struct) && !m->isRef()) {
+            std::string ttt = m->type().name();
+            auto *ubo_ = ubo;
+            if (m->type() == typeid(Struct)) {
+
+                if (m->ref) m = m->ref;
 
                 for (auto &x : list) if (x.first == m) return;
 
@@ -201,6 +209,7 @@ std::string ShaderProgram::Builder::layout(std::vector<UBO*> ubos) {
                 for (auto &x : list) if (x.second == name) name += "_";
 
                 list[m] = name;
+
                 order.push_back(m);
             }
 

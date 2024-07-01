@@ -312,7 +312,7 @@ void Engine::open(const char* file) {
 
                         engine.effectors->each<File>([&](Node* n, File* f) { if (f->filename() == e.value.GetString()) effector = n; });
 
-                        if (effector) l_->addPtr<Effector>(l.addEffector(&Effector::get(effector->is_a<File>())));
+                        // if (effector) l_->addPtr<Effector>(l.addEffector(&Effector::get(effector->is_a<File>()))); // TODODOODODOD
 
                     }
 

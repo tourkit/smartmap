@@ -12,41 +12,33 @@ struct Effector  {
 
     struct Definition {
 
-        File* file;
-
         Struct s;
-
-        std::vector<std::pair<std::string,std::string>> args;
-
-        std::map<std::string, float[3]> ranges;
 
         std::string source;
 
-    };
+        Definition(File* file);
 
-    static std::string source(File* file);
+        Definition();
+
+    };
 
     static inline std::map<File*, Definition> effects;
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
-    static void init(File* f);
+    Struct ref;
 
-    //     effects[f] = Struct(f->name_v.c_str());
+    std::vector<Definition*> definitions;
 
-    //     effects[f].add<float>("x").range(0,1,0);
-    //     effects[f].add<float>("y").range(0,1,0);
+    Effector(Definition* def, std::string name);
 
-    // }
+    Effector(std::string name);
 
-    static Definition& get(File* f) ;
+    virtual std::string source();
 
-    Ref ref;
+    int wrap = 0;
 
-    Definition* def;
-
-    Effector(Definition* def, std::string name );
-
+    void update();
 
 };
 

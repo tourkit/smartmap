@@ -81,7 +81,7 @@ void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m 
 
  }
 
-void Member::name(std::string name_v) { this->name_v = name_v; }
+void Member::name(std::string name_v) { this->name_v = next_name(name_v); }
 
 std::string Member::name() { if (name_v.length()) return name_v; return "parentName" ; }
 
@@ -123,7 +123,7 @@ std::string Member::type_name() {
 
     if (type() == typeid(Struct)) return camel(name());
 
-    if (isRef()) return members[0]->type_name();
+    if (ref) return ref->type_name();
 
     if (type() == typeid(glm::vec2)) return "vec2";
 
@@ -193,7 +193,7 @@ void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offs
 
     auto offset_ = offset;
 
-    for (auto m : members) {
+    for (auto m : ref?ref->members:members) {
 
         m->each(cb, buff, offset_, stl);
 

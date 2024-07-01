@@ -62,7 +62,7 @@ void Callbacks::init() {
 
     NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name(s->name()); });
 
-    NODE<Struct>::onchange([&](Node*node, Struct* s){ s->name(node->name()); });
+    NODE<Struct>::onchange([&](Node*node, Struct* s){ if (s->name() != node->name()) s->name(node->name()); });
 
     ////////// Artnet.HPP
 
@@ -173,11 +173,11 @@ void Callbacks::init() {
 
         auto file = node->is_a<File>();
 
-        if (file->extension == "glsl") return _this->addPtr<Effector>( _this->is_a<Layer>()->addEffector(&Effector::get(file)) )->node();
-
         return _this->addPtr<Model>(_this->is_a<Layer>()->addModel( file ))->node();
 
-        });
+    });
+
+    NODE<Layer>::onadd<Effector::Definition>([](Node*_this,Node*node){ return _this->addPtr<Effector>( _this->is_a<Layer>()->addEffector( node->is_a<Effector::Definition>() ) )->node(); });
 
 
     ////////// MODEL.HPP
@@ -186,17 +186,7 @@ void Callbacks::init() {
 
     NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
 
-    NODE<Model>::onadd<File>([](Node*_this,Node*node){
-
-        auto file = node->is_a<File>();
-
-        auto x =  _this->is_a<Model>()->addEffector( &Effector::get(file) )  ;
-
-        if (!x) return _this;
-
-        return _this->addPtr<Effector>( x )->node();
-
-    });
+    NODE<Model>::onadd<Effector::Definition>([](Node*_this,Node*node){ return _this->addPtr<Effector>( _this->is_a<Model>()->addEffector( node->is_a<Effector::Definition>() ) )->node(); });
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
@@ -212,9 +202,11 @@ void Callbacks::init() {
 
     ////////// Effector.HPP
 
+    NODE<Effector::Definition>::oncreate([](Node*node, Effector::Definition* def){ NODE<Struct>::oncreate_cb(node, &def->s); });
+
     NODE<Effector>::oncreate([](Node*node, Effector* fx){ NODE<Struct>::oncreate_cb(node, &fx->ref); });
 
-    NODE<Effector>::onchange([&](Node*node, Effector* fx){ NODE<Struct>::onchange_cb(node, &fx->ref); });
+    NODE<Effector>::onchange([&](Node*node, Effector* effector){ NODE<Struct>::onchange_cb(node, &effector->ref); effector->update(); });
 
     NODE<Effector>::ondelete([](Node* node, Effector *effector) {
 

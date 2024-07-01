@@ -68,6 +68,9 @@ struct Member {
 
     virtual bool isData();
     virtual bool isRef();
+
+    Member* ref = nullptr;
+
     virtual Struct* isStruct();
     virtual Buffer* isBuff();
 

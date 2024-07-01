@@ -181,7 +181,7 @@ Member* Struct::add(Member* m_) {
 
                  PLOGW << m.name() << " already exist !";
 
-                m.name(next_name( m.name() ));
+                m.name( m.name() );
 
                 break ;
 
@@ -259,14 +259,7 @@ void Struct::update() {
 
 uint32_t Struct::size() {
 
-    if (
-
-        members.size() == 1 &&
-        members[0]->isData()&&
-        !members[0]->name().length()
-
-    )
-        return members[0]->size();
+    if ( ref ) return ref->size();
 
      return size_v;
 
