@@ -53,6 +53,8 @@ struct Log {
 
     void cout(plog::Severity max_severity = plog::Severity::error, plog::Severity severity = plog::Severity::debug) { appender.cmd = true; appender.severity = severity; appender.max_severity = max_severity; }
 
+    void cout( int max_severity = 2,  int severity = 5) { appender.cmd = true; appender.severity = plog::Severity(severity); appender.max_severity = plog::Severity(max_severity); }
+
     static Log& getInstance() { static Log instance;  return instance; }
 
 private:
