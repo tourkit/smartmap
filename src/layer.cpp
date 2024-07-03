@@ -188,7 +188,7 @@ void UberLayer::ShaderProgramBuilder::build() {
     for (auto &layer : ubl->layers)
         for (auto effector : layer.get()->effectors)
             for (auto def : effector.get()->definitions)
-                ADD_UNIQUE<Effector::Definition*>(effectors, def);
+                ADD_UNIQUE<Effector*>(effectors, def);
 
     ShaderProgram::Builder::build();
 
@@ -196,9 +196,9 @@ void UberLayer::ShaderProgramBuilder::build() {
 
 std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &layer) {
 
-    std::vector<Effector*> unique;
+    std::vector<EffectorRef*> unique;
 
-    for (auto x : layer.effectors) ADD_UNIQUE<Effector*>(unique, x.get());
+    for (auto x : layer.effectors) ADD_UNIQUE<EffectorRef*>(unique, x.get());
 
     std::string body_fragment;
 

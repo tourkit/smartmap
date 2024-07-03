@@ -27,7 +27,7 @@ struct DrawCall : Modelable {
 
     struct ShaderProgramBuilder : ShaderProgram::Builder {
 
-        std::vector<Effector::Definition*> effectors;
+        std::vector<Effector*> effectors;
 
         void build() override;
         void frag() override;

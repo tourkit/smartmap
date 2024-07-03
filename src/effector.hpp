@@ -7,32 +7,32 @@
 #include <string>
 
 struct File;
+struct Effector {
 
-struct Effector  {
+    Struct s;
 
-    struct Definition {
+    std::string source;
 
-        Struct s;
+    Effector(File* file);
 
-        std::string source;
+    Effector();
 
-        Definition(File* file);
+};
 
-        Definition();
+struct EffectorRef  {
 
-    };
 
-    static inline std::map<File*, Definition> effects;
+    static inline std::map<File*, Effector> effects;
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
     Struct s;
 
-    std::vector<Definition*> definitions;
+    std::vector<Effector*> definitions;
 
-    Effector(std::string name, Definition* def);
+    EffectorRef(std::string name, Effector* def);
 
-    Effector(std::string name, int wrap = 0, std::vector<Definition*> defs = {});
+    EffectorRef(std::string name, int wrap = 0, std::vector<Effector*> defs = {});
 
     virtual std::string source();
 
@@ -52,8 +52,8 @@ struct Effectable {
 
     Effectable(std::string name = "Effectable" );
 
-    std::vector<std::shared_ptr<Effector>> effectors;
-    Effector* addEffector(Effector::Definition* def); // kinda ctor for effectors
-    bool removeEffector(Effector* effector);
+    std::vector<std::shared_ptr<EffectorRef>> effectors;
+    EffectorRef* addEffector(Effector* def); // kinda ctor for effectors
+    bool removeEffector(EffectorRef* effector);
 
 };

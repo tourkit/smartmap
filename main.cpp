@@ -17,6 +17,15 @@ int main() {
 
     ShaderProgram::Builder builder;
 
+    Effector def;
+
+    EffectorRef effector("effector", &def);
+
+    logger.cout(5);
+
+    PLOGD << effector.source();
+
+    exit(0);
 
     engine.run();
 

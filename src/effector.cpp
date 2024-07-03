@@ -6,20 +6,20 @@
 
 
 
-std::string Effector::source() {
+std::string EffectorRef::source() {
 
     if (!definitions.size()) return ""; return definitions.back()->source;
 
 
 }
 
-Effector::Definition::Definition() {
+Effector::Effector() {
 
     //
 
 }
 
-Effector::Definition::Definition(File* file) {
+Effector::Effector(File* file) {
 
     source = (&file->data[0]);
 
@@ -103,13 +103,13 @@ Effector::Definition::Definition(File* file) {
 
 }
 
-Effector::Effector(std::string name, int wrap, std::vector<Definition*> defs ) : s(name), wrap(wrap), definitions(defs) { update(); }
+EffectorRef::EffectorRef(std::string name, int wrap, std::vector<Effector*> defs ) : s(name), wrap(wrap), definitions(defs) { update(); }
 
-Effector::Effector(std::string name, Definition* def ) : Effector(name) { definitions.push_back(def); s.ref( &def->s ); };
+EffectorRef::EffectorRef(std::string name, Effector* def ) : EffectorRef(name) { definitions.push_back(def); s.ref( &def->s ); };
 
 Effectable::Effectable(std::string name) : s(name) {  }
 
-void Effector::update() {
+void EffectorRef::update() {
 
     if (definitions.size()>1) {
 
@@ -136,15 +136,15 @@ void Effector::update() {
 
 };
 
-bool Effectable::removeEffector(Effector* effector) {
+bool Effectable::removeEffector(EffectorRef* effector) {
 
-    return std::erase_if( effectors, [&](std::shared_ptr<Effector> e) { return e.get() == effector; });
+    return std::erase_if( effectors, [&](std::shared_ptr<EffectorRef> e) { return e.get() == effector; });
 
 }
 
-Effector* Effectable::addEffector(Effector::Definition* def) {
+EffectorRef* Effectable::addEffector(Effector* def) {
 
-    auto effector = effectors.emplace_back(std::make_shared<Effector>(s.next_name(def->s.name()), def)).get();
+    auto effector = effectors.emplace_back(std::make_shared<EffectorRef>(s.next_name(def->s.name()), def)).get();
 
     s.add(&effector->s);
 

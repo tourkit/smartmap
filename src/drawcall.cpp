@@ -26,9 +26,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     effectors.clear();
 
-    if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector::Definition*>(effectors, x);
+    if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector*>(effectors, x);
 
-    if(dc) for (auto &effector : dc->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector::Definition*>(effectors, x);
+    if(dc) for (auto &effector : dc->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector*>(effectors, x);
 
     ShaderProgram::Builder::build();
 
