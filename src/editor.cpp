@@ -883,17 +883,17 @@ void Editors::init() {
 
     ////////// Effector.HPP
 
-    Editor<Effector>([](Node* node, Effector *effector){
+    Editor<EffectorRef>([](Node* node, EffectorRef *effector){
 
         if (InputInt("wrap", &effector->wrap)) node->update();
 
-        for (auto def : effector->definitions) Editor<Effector::Definition>::cb(node, def);
+        for (auto def : effector->definitions) Editor<Effector>::cb(node, def);
 
     });
 
-    Editor<Effector::Definition>([](Node* node, Effector::Definition *def){
+    Editor<Effector>([](Node* node, Effector *def){
 
-        static std::map<Effector::Definition*,TextEditor> codeeditors;
+        static std::map<Effector*,TextEditor> codeeditors;
 
         if (codeeditors.find(def) == codeeditors.end()) {
 

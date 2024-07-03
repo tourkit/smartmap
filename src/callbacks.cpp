@@ -179,7 +179,7 @@ void Callbacks::init() {
 
     });
 
-    NODE<Layer>::onadd<Effector::Definition>([](Node*_this,Node*node){ return _this->addPtr<Effector>( _this->is_a<Layer>()->addEffector( node->is_a<Effector::Definition>() ) )->node(); });
+    NODE<Layer>::onadd<Effector>([](Node*_this,Node*node){ return _this->addPtr<EffectorRef>( _this->is_a<Layer>()->addEffector( node->is_a<Effector>() ) )->node(); });
 
 
     ////////// MODEL.HPP
@@ -188,7 +188,7 @@ void Callbacks::init() {
 
     NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
 
-    NODE<Model>::onadd<Effector::Definition>([](Node*_this,Node*node){ return _this->addPtr<Effector>( _this->is_a<Model>()->addEffector( node->is_a<Effector::Definition>() ) )->node(); });
+    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return _this->addPtr<EffectorRef>( _this->is_a<Model>()->addEffector( node->is_a<Effector>() ) )->node(); });
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
@@ -204,16 +204,16 @@ void Callbacks::init() {
 
     ////////// Effector.HPP
 
-    NODE<Effector::Definition>::oncreate([](Node*node, Effector::Definition* def){ NODE<Struct>::oncreate_cb(node, &def->s); });
+    NODE<Effector>::oncreate([](Node*node, Effector* def){ NODE<Struct>::oncreate_cb(node, &def->s); });
 
-    NODE<Effector>::oncreate([](Node*node, Effector* fx){ NODE<Struct>::oncreate_cb(node, &fx->s); });
+    NODE<EffectorRef>::oncreate([](Node*node, EffectorRef* fx){ NODE<Struct>::oncreate_cb(node, &fx->s); });
 
-    NODE<Effector>::onchange([&](Node*node, Effector* effector){ NODE<Struct>::onchange_cb(node, &effector->s); effector->update(); });
+    NODE<EffectorRef>::onchange([&](Node*node, EffectorRef* effector){ NODE<Struct>::onchange_cb(node, &effector->s); effector->update(); });
 
-    NODE<Effector>::onadd<Effector::Definition>([](Node* _this, Node *node) {
+    NODE<EffectorRef>::onadd<Effector>([](Node* _this, Node *node) {
 
-        Effector * effector = _this->is_a<Effector>();
-        Effector::Definition * def = node->is_a<Effector::Definition>();
+        EffectorRef * effector = _this->is_a<EffectorRef>();
+        Effector * def = node->is_a<Effector>();
 
         effector->definitions.push_back(def);
 
@@ -227,7 +227,7 @@ void Callbacks::init() {
 
     });
 
-    NODE<Effector>::ondelete([](Node* node, Effector *effector) {
+    NODE<EffectorRef>::ondelete([](Node* node, EffectorRef *effector) {
 
         auto model = node->parent()->is_a_nowarning<Model>();
 

@@ -92,7 +92,7 @@ struct ShaderProgram {
 
     void remove(Member*);
 
-    std::vector<Effector::Definition*> methods;
+    std::vector<Effector*> methods;
 
     std::vector<UBO*> ubos;
 
