@@ -853,6 +853,7 @@ void Editors::init() {
     });
 
     ////////// Artnet.HPP
+    ////////// Artnet.HPP
 
     // Editor<Universe>([](Node*node,Universe* dmx){
 
@@ -890,7 +891,32 @@ void Editors::init() {
 
     });
 
+    Editor<Effector::Definition>([](Node* node, Effector::Definition *def){
 
+        static std::map<Effector::Definition*,TextEditor> codeeditors;
+
+        if (codeeditors.find(def) == codeeditors.end()) {
+
+            codeeditors[def].SetShowWhitespaces(false);
+            codeeditors[def].SetReadOnly(false);
+            codeeditors[def].SetText(def->source.data());
+        }
+
+        auto &codeeditor = codeeditors[def];
+
+        codeeditor.Render("codeeditor");
+
+        if (codeeditor.IsTextChanged()) {
+
+            def->source = codeeditor.GetText().c_str();
+
+            node->bkpupdate(); // do I need bkp here ? is even the fx useful
+
+        }
+
+        draw_definition(&def->s);
+
+    });
     // REMAP.HPP
 
     // Editor<Universe::Remap>([](Node*node, Universe::Remap* remap){ Editor<Remap>::cb(node, remap); });

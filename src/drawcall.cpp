@@ -77,7 +77,7 @@ std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
 
             arg_str.resize(arg_str.size()-2);
 
-            body_fragment += "\t"+effector->s.name()+"("+arg_str+"); // 4\n";
+            body_fragment += "\t"+effector->s.name()+"("+arg_str+"); d\n";
 
 
         }
@@ -89,7 +89,7 @@ void Layer::ShaderProgramBuilder::common() {
 
     ShaderProgram::Builder::common();
 
-    header_common += layout({&engine.dynamic_ubo, &engine.static_ubo});
+    header_common += ubo_layout({&engine.dynamic_ubo, &engine.static_ubo});
 
 }
 

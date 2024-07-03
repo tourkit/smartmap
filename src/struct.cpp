@@ -83,23 +83,21 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
 Struct& Struct::clear() {
 
+    // PLOGV << name() << " clear " ;
+
+    pre_change();
+
+    size_v = 0;
+
     auto ms = members;
 
     for (auto x : ms) delete x;
 
     members.clear();
 
-    // PLOGV << name() << " clear " ;
+    update();
 
-    // pre_change();
-
-    // size_v = 0;
-
-    // members.resize(0);
-
-    // update();
-
-    // post_change();
+    post_change();
 
     return *this;
 

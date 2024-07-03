@@ -7,10 +7,15 @@
 #include <vector>
 #include <string>
 
-// #include "vbo.hpp"
+#include "effector.hpp"
+
 struct VBO;
 struct UBO;
 struct DrawCall;
+struct Member;
+
+
+
 
 struct Shader {
 
@@ -81,6 +86,22 @@ struct ShaderProgram {
 
     std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, fragment, vertex  ;
 
+    std::vector<Member*> structs;
+
+    void add(Member*);
+
+    void remove(Member*);
+
+    std::vector<Effector::Definition*> methods;
+
+    std::vector<UBO*> ubos;
+
+    std::vector<std::string> samplers;
+
+    std::string ubo_layout(std::vector<UBO*> ubo);
+
+    std::string define(Member* member, std::string name = "");
+
     virtual void build();
 
     virtual void common();
@@ -89,13 +110,11 @@ struct ShaderProgram {
 
     virtual void vert();
 
-    std::string layout(std::vector<UBO*> ubo);
-
-    std::string define(Member* member);
-
-    std::map<Member*,std::string> list;
+    std::string print_structs();
 
     VBO* vbo = nullptr;
+
+    std::map<Member*,std::string> list; // toremove
 
   };
 
