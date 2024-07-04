@@ -184,13 +184,13 @@ std::string ShaderProgram::Builder::print_structs() {
     }
 
 
-    for (auto x : unique_name_list) { auto def = define(x.first,x.second); if (def.length()) def+=";\n\n"; out += def; }
+    for (auto x : unique_name_list) { auto def = define(x.first,unique_name_list); if (def.length()) def+=";\n\n"; out += def; }
 
     return out;
 
 }
 
-std::string ShaderProgram::Builder::define(Member* member, std::string name) {
+std::string ShaderProgram::Builder::define(Member* member, std::map<Member*,std::string> &unique_name_list) {
 
     if (!member->size()) return "";
 
@@ -205,7 +205,9 @@ std::string ShaderProgram::Builder::define(Member* member, std::string name) {
 
         if (!x->size()) continue;
 
-        content+=tb+""+(x->ref()?x->ref()->type_name():x->type_name())+" "+lower(x->ref()?x->type_name():x->name());
+        auto name = unique_name_list.find(x)!=unique_name_list.end()?unique_name_list[x]:x->type_name();
+
+        content+=tb+""+name+" "+lower(x->ref()?x->type_name():x->name());
         if (x->quantity()>1) content += "["+std::to_string(x->quantity())+"]";
 
         content += "; "+nl;
@@ -214,7 +216,7 @@ std::string ShaderProgram::Builder::define(Member* member, std::string name) {
 
     if (!content.length()) return "";
 
-    out+="struct "+name+" { "+nl+nl+content;
+    out+="struct "+unique_name_list[member]+" { "+nl+nl+content;
 
     if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
 
@@ -271,7 +273,7 @@ std::string ShaderProgram::Builder::ubo_layout(std::vector<UBO*> ubos) {
 
     }
 
-    for (auto x : order) { auto def = define(x, list[x]); if (def.length()) def+=";\n\n"; output += def; }
+    // for (auto x : order) { auto def = define(x, list[x]); if (def.length()) def+=";\n\n"; output += def; }
 
     for (auto ubo : ubos) {
 

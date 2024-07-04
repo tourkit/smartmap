@@ -94,7 +94,7 @@ struct ShaderProgram {
 
     std::string ubo_layout(std::vector<UBO*> ubo);
 
-    std::string define(Member* member, std::string name = "");
+    std::string define(Member* member, std::map<Member*,std::string> &unique_name_list);
 
     virtual void build();
 
