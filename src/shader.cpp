@@ -139,10 +139,23 @@ void ShaderProgram::Builder::vert() {
 
 }
 
-void ShaderProgram::Builder::add(Member* m) { ADD_UNIQUE<Member*>(structs,m); }
-void ShaderProgram::Builder::remove(Member* m) { REMOVE<Member*>(structs,m); }
-
 std::string ShaderProgram::Builder::print_structs() {
+
+    std::vector<Member*> structs;
+
+    for (auto ubo : ubos)    {
+
+        ubo->each([&](Instance& inst) {
+
+            auto m = inst.def();
+
+            if (m->type() == typeid(Struct)) ADD_UNIQUE<Member*>(structs,m);
+
+        });
+
+        ADD_UNIQUE<Member*>(structs,ubo);
+
+    }
 
     std::string out;
 
@@ -325,7 +338,12 @@ bool Shader::create(std::string src, uint8_t type)  {
 
 Shader::operator GLuint() { return id; }
 
-ShaderProgram::~ShaderProgram() { destroy(); if (owned) delete builder_v; }
+ShaderProgram::~ShaderProgram() { destroy();
+
+    if (owned)
+        delete builder_v;
+
+}
 
 ShaderProgram::ShaderProgram() { Builder builder; create(builder.fragment,builder.vertex); }
 
@@ -334,16 +352,43 @@ ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,v
 void ShaderProgram::destroy() {
 
     loaded = false;
-    if (id > -1) glDeleteProgram(id);
+    if (id > -1)
+        glDeleteProgram(id);
 
 }
 
 
-ShaderProgram::Builder* ShaderProgram::builder() { if (!owned) { builder_v = new Builder(); owned = true; } return builder_v; }
+ShaderProgram::Builder* ShaderProgram::builder() {
 
-bool ShaderProgram::builder(Builder* builder) { if (owned) delete builder_v; builder_v = builder; owned = false; return true; }
+    if (!builder_v) {
 
-void  ShaderProgram::create() { if (builder_v) create(builder_v); }
+        builder_v = new Builder();
+
+        owned = true;
+
+    }
+
+    return builder_v;
+
+}
+
+bool ShaderProgram::builder(Builder* builder) {
+
+    if (owned)
+        delete builder_v;
+
+    builder_v = builder; owned = false;
+
+    return true;
+
+}
+
+void  ShaderProgram::create() {
+
+    if (builder_v)
+        create(builder_v);
+
+}
 
 void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->fragment, builder->vertex); }
 
