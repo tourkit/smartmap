@@ -78,7 +78,7 @@ UberLayer::UberLayer() : Layer(0,0,"UberLayerNonono"), builder(this), uberlayer_
 
     glsl_uberlayer = &Instance(&engine.static_ubo, &uberlayer_s).track();
 
-    shader.builder = &builder;
+    shader.builder(&builder);
 
 }
 

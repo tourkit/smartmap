@@ -15,15 +15,25 @@ int main() {
 
     engine.init();
 
-    ShaderProgram::Builder builder;
+    ShaderProgram shader;
+
+    // ShaderProgram::Builder builder;
 
     Wrappy wrapy;
 
-    EffectorRef ref("wrapy", &wrapy);
+    Effectable model;
+
+    model.addEffector(&wrapy);
 
     logger.cout(5);
 
-    // PLOGD << ref.wrapy->source();
+    shader.builder()->build();
+
+    for (auto ref : model.refs) ref.get()->effector->setup(&shader);
+
+    PLOGD << shader.builder()->fragment;
+
+    PLOGD << shader.builder()->vertex;
 
     PLOGD << "pidooouu";
 

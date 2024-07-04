@@ -212,7 +212,7 @@ void Layer::ShaderProgramBuilder::vert() {
 
 DrawCall::DrawCall(std::string name = "") : Modelable(name.length()?name:"layer"), builder(this) {
 
-    shader.builder = &builder;
+    shader.builder(&builder);
 
     engine.dynamic_ubo.add(s_);
 
