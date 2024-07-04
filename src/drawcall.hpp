@@ -13,7 +13,7 @@
 
 struct DrawCall : Modelable {
 
-    DrawCall(std::string name);
+    DrawCall(std::string name = "DrawCall");
 
     Engine::Shader shader;
 
@@ -27,19 +27,13 @@ struct DrawCall : Modelable {
 
     struct ShaderProgramBuilder : ShaderProgram::Builder {
 
-        std::vector<Effector*> effectors;
-
         void build() override;
-        // void frag() override;
-        // void vert() override;
 
         std::string print_model(std::string xtra, Model& model);
 
         DrawCall* dc;
 
-        ShaderProgramBuilder();
-
-        ShaderProgramBuilder(DrawCall* dc);
+        ShaderProgramBuilder(DrawCall* dc = nullptr);
 
         int stride_count = 0;
 

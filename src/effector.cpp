@@ -114,6 +114,11 @@ Wrappy::Wrappy(std::vector<Effector*> effectors, int count, std::string name) : 
 
 };
 
+std::string Wrappy::source() {
+
+return "//wrappy(){}";
+
+}
 void Wrappy::update() {
 
 

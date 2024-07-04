@@ -58,8 +58,6 @@ struct UberLayer : Layer {
     struct ShaderProgramBuilder : DrawCall::ShaderProgramBuilder {
 
         void build() override;
-        // void frag() override;
-        // void vert() override;
 
         std::string print_layer(UberLayer::VLayer &layer);
 

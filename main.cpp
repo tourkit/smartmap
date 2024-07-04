@@ -8,6 +8,8 @@
 #include "effector.hpp"
 #include "instance.hpp"
 #include "vbo.hpp"
+#include "drawcall.hpp"
+#include "layer.hpp"
 
 
 
@@ -15,14 +17,9 @@ int main() {
 
     engine.init();
 
-    ShaderProgram shader;
+    Layer dc;
 
-    ShaderProgram::Builder builder;
-
-    auto *builder_ = &builder;
-
-    builder.ubos.push_back(&engine.dynamic_ubo);
-    builder.ubos.push_back(&engine.static_ubo);
+    DrawCall::ShaderProgramBuilder builder(&dc);
 
     Wrappy wrapy;
 
@@ -30,19 +27,22 @@ int main() {
 
     model.addEffector(&wrapy);
 
+    builder.effectors_fragment.push_back(&wrapy);
+
     logger.cout(5);
 
-    shader.builder(&builder);
 
-    auto builder_2 =shader.builder();
+    dc.shader.builder(&builder);
 
-    shader.builder()->build();
+    auto builder_2 =dc.shader.builder();
 
-    for (auto ref : model.refs) ref.get()->effector->setup(&shader);
+    dc.shader.builder()->build();
 
-    PLOGD << shader.builder()->fragment;
+    for (auto ref : model.refs) ref.get()->effector->setup(&dc.shader); // does it do shit ?
 
-    PLOGD << shader.builder()->vertex;
+    PLOGD << dc.shader.builder()->frag();
+
+    PLOGD << dc.shader.builder()->vert();
 
     Struct quad("quad");
     quad.add<float>("x").add<float>("y").add<float>("z");
@@ -64,11 +64,11 @@ int main() {
     engine.dynamic_ubo.add(&z2);
 
     builder.build();
-    PLOGD << "\n" << builder.layout();
+    PLOGD << "\n" << builder.frag();
 
     PLOGD << "pidooouu";
 
-    exit(0);
+    // exit(0);
 
     engine.run();
 

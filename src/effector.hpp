@@ -19,6 +19,8 @@ struct Effector {
 
     virtual void update() {}
 
+    virtual std::string source() { return ""; }
+
     Effector(std::string name = "effector");
 
 };
@@ -78,6 +80,7 @@ struct Wrappy : Effector, Effectable {
 
     void update() override;
 
+    std::string source() override;
 
 };
 
