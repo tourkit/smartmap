@@ -14,12 +14,12 @@ struct Config {
 
 
     static void load(const char* filename) {
-        
+
         rapidjson::Document json;
 
 
         File file(filename);
-        json.Parse(file->data.data());
+        json.Parse(file.data.data());
 
         if (json.HasMember("ip")) ip = json["ip"].GetString();
         else ip = "10.0.0.99";

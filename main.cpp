@@ -16,59 +16,35 @@
 int main() {
 
     engine.init();
+    engine.open("project.json");
 
-    Layer dc;
+    // Layer dc(100,100);
 
-    DrawCall::ShaderProgramBuilder builder(&dc);
+    // Layer::ShaderProgramBuilder builder(&dc);
 
-    Wrappy wrapy;
+    // Wrappy wrapy;
 
-    Effectable model;
+    // dc.addEffector(&wrapy);
 
-    model.addEffector(&wrapy);
+    // builder.effectors_fragment.push_back(&wrapy);
 
-    builder.effectors_fragment.push_back(&wrapy);
+    // logger.cout(5);
 
-    logger.cout(5);
+    // dc.shader.builder(&builder);
 
+    // Struct argb("argb");
+    // argb.add<float>("a").add<float>("r").add<float>("g").add<float>("b"); //.add<float>("x").add<float>("y").add<float>("z");
 
-    dc.shader.builder(&builder);
+    // builder.build();
 
-    auto builder_2 =dc.shader.builder();
-
-    dc.shader.builder()->build();
-
-    for (auto ref : model.refs) ref.get()->effector->setup(&dc.shader); // does it do shit ?
-
-    PLOGD << dc.shader.builder()->frag();
-
-    PLOGD << dc.shader.builder()->vert();
-
-    Struct quad("quad");
-    quad.add<float>("x").add<float>("y").add<float>("z");
-
-
-    Struct z1("zzz");
-    // Struct q1("qqq");
-    // q1.add<float>("x");
-    z1.ref(&quad);
-    // z1.add(&q1);
-
-    Struct z2("zzz");
-    Struct q2("qqq");
-    // q2.add<float>("x");
-    z2.ref(&quad);
-    // z2.add(&q1);
-
-    engine.dynamic_ubo.add(&z1);
-    engine.dynamic_ubo.add(&z2);
-
-    builder.build();
-    PLOGD << "\n" << builder.frag();
+    // PLOGD << "\n" << builder.vert();
+    // PLOGD << "\n" << builder.frag();
 
     PLOGD << "pidooouu";
 
     // exit(0);
+
+    // engine.tree->addPtr<Layer>(&dc)->select();
 
     engine.run();
 

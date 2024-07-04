@@ -173,15 +173,17 @@ static void addEffectors(rapidjson::Value &v, Node* node) {
 
         Node* effector = nullptr;
 
-        for (auto x : engine.effectors->childrens) {
+        engine.effectors->each<Effector>([&](Node* n, Effector* effector_) {
 
-            auto f = x->is_a<File>();
+            if (dynamic_cast<FileEffector*>(effector_) == nullptr) return;
 
-            if (!f) continue;
+            auto xxx = ((FileEffector*)effector_)->file;
+            std::string str = ((FileEffector*)effector_)->file.filename();
 
-            if (f->filename() == e.value.GetString()) effector = x;
+            if (str == e.value.GetString())
+                effector = n;
 
-        }
+        });
 
         if (effector) node->add(effector)->name(e.name.GetString()); else PLOGE << "no effector: " << e.value.GetString();
 
@@ -255,7 +257,14 @@ void Engine::open(const char* file) {
 
     if_obj("effectors", [&](auto &m) {
 
-        if (m.name.IsString() && m.value.IsString()) auto n = effectors->addOwnr<File>(m.name.GetString(), m.value.GetString());
+        if (m.name.IsString() && m.value.IsString()) {
+
+            File file(m.name.GetString(), m.value.GetString());
+            auto x = new FileEffector(file);
+            auto n = effectors->addPtr<Effector>(x);
+            effectors->owned = true;
+
+        }
     });
 
    if_obj("uberlayers", [&](auto &l) {

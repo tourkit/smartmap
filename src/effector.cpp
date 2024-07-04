@@ -18,9 +18,9 @@ Effector::Effector(std::string name) : s(name) {
 bool FileEffector::setup(ShaderProgram* shader) {}
 
 
-FileEffector::FileEffector(File* file, std::string name) : Effector(name) {
+FileEffector::FileEffector(File file, std::string name) : Effector(name), file(file) {
 
-    source = (&file->data[0]);
+    source = (&file.data[0]);
 
     // extract args
 
@@ -33,7 +33,7 @@ FileEffector::FileEffector(File* file, std::string name) : Effector(name) {
         std::smatch match = *it;
 
         std::string nameStr = match[1].str();
-        if (strcmp(nameStr.c_str(),file->name().c_str())) continue;
+        if (strcmp(nameStr.c_str(),file.name().c_str())) continue;
         std::string argsStr = match[2].str();
 
         std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
@@ -69,7 +69,7 @@ FileEffector::FileEffector(File* file, std::string name) : Effector(name) {
 
     // build Member
 
-    s.name( file->name() );
+    s.name( file.name() );
 
     s.striding(true);
 
