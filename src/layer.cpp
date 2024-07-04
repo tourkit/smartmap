@@ -231,29 +231,29 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 
 }
 
-void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::frag();
+// void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::frag();
 
-    if (ubl->layers.size() == 1) body_fragment += print_layer(*ubl->layers[0].get());
+//     if (ubl->layers.size() == 1) body_fragment += print_layer(*ubl->layers[0].get());
 
-    else {
+//     else {
 
-        int last_id = 0;
+//         int last_id = 0;
 
-        for (auto &x : ubl->layers) {
+//         for (auto &x : ubl->layers) {
 
-            if (last_id) body_fragment += "\n} else ";
+//             if (last_id) body_fragment += "\n} else ";
 
-            last_id += x.get()->s_->quantity();
+//             last_id += x.get()->s_->quantity();
 
-            body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer(*x.get()); ;
+//             body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer(*x.get()); ;
 
-        }
+//         }
 
-        if (ubl->layers.size()) body_fragment += "\n}\n";
+//         if (ubl->layers.size()) body_fragment += "\n}\n";
 
-    }
+//     }
 
-    body_fragment += "\n";
+//     body_fragment += "\n";
 
-}
-void UberLayer::ShaderProgramBuilder::vert() { DrawCall::ShaderProgramBuilder::vert();}
+// }
+// void UberLayer::ShaderProgramBuilder::vert() { DrawCall::ShaderProgramBuilder::vert();}

@@ -49,21 +49,22 @@ int main() {
 
 
     Struct z1("zzz");
-    Struct q1("qqq");
-    q1.add<float>("x");
-    // z1.ref(&quad);
-    z1.add(&q1);
+    // Struct q1("qqq");
+    // q1.add<float>("x");
+    z1.ref(&quad);
+    // z1.add(&q1);
 
     Struct z2("zzz");
     Struct q2("qqq");
-    q2.add<float>("x");
-    // z2.ref(&quad);
-    z2.add(&q1);
+    // q2.add<float>("x");
+    z2.ref(&quad);
+    // z2.add(&q1);
 
     engine.dynamic_ubo.add(&z1);
     engine.dynamic_ubo.add(&z2);
 
-    PLOGD << "\n" << builder.print_structs();
+    builder.build();
+    PLOGD << "\n" << builder.layout();
 
     PLOGD << "pidooouu";
 

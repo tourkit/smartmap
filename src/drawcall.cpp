@@ -81,130 +81,93 @@ std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& mo
 
     return body_fragment;
 }
-void Layer::ShaderProgramBuilder::common() {
-
-    ShaderProgram::Builder::common();
-
-    header_common += ubo_layout({&engine.dynamic_ubo, &engine.static_ubo});
-
-}
 
 
-void Layer::ShaderProgramBuilder::frag() {
+// void Layer::ShaderProgramBuilder::frag() {
 
-    header_fragment.clear();
+//     header_fragment.clear();
 
-    header_fragment += "uniform sampler2D medias;\n\n";
-    header_fragment += "uniform sampler2D render_pass;\n\n";
-    header_fragment += "uniform sampler2D uberlayer;\n\n";
+//     header_fragment += "uniform sampler2D medias;\n\n";
+//     header_fragment += "uniform sampler2D render_pass;\n\n";
+//     header_fragment += "uniform sampler2D uberlayer;\n\n";
 
-    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
+//     for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
 
-        auto m = dc->vbo.vertice->members[i];
+//         auto m = dc->vbo.vertice->members[i];
 
-        header_fragment += "in "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+//         header_fragment += "in "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
 
-    }
+//     }
 
-    header_fragment += "\n";
-    header_fragment += "in flat int ID;\n";
+//     header_fragment += "\n";
+//     header_fragment += "in flat int ID;\n";
 
-    header_fragment += "vec2 uv = UV;\n";
-    header_fragment += "vec4 color = vec4(0);\n";
-    header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
+//     header_fragment += "vec2 uv = UV;\n";
+//     header_fragment += "vec4 color = vec4(0);\n";
+//     header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
 
-    int model_id = 0;
+//     int model_id = 0;
 
-    // for (auto def : effectors)  header_fragment += def->source+";\n\n";
+//     // for (auto def : effectors)  header_fragment += def->source+";\n\n";
 
-    header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
-    header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
-    header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
-    header_fragment += "int last = abs(curr-1);\n\n";
+//     header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
+//     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
+//     header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
+//     header_fragment += "int last = abs(curr-1);\n\n";
 
-    header_fragment += comment_line;
+//     header_fragment += comment_line;
 
-    body_fragment.clear();
+//     body_fragment.clear();
 
-    if (dc) {
+//     if (dc) {
 
-        std::string indice = "";
+//         std::string indice = "";
 
-        if (dc->models.size() == 1) body_fragment += print_model("ID", *dc->models[0].get()) + "\ttac();\n\n";
+//         if (dc->models.size() == 1) body_fragment += print_model("ID", *dc->models[0].get()) + "\ttac();\n\n";
 
-        else for (auto &model : dc->models) {
+//         else for (auto &model : dc->models) {
 
-            for (int instance = 0; instance < model.get()->s_->quantity(); instance++) body_fragment += print_model(std::to_string(instance), *model.get());
+//             for (int instance = 0; instance < model.get()->s_->quantity(); instance++) body_fragment += print_model(std::to_string(instance), *model.get());
 
-            model_id++;
+//             model_id++;
 
-            body_fragment += "\ttac();\n\n";
+//             body_fragment += "\ttac();\n\n";
 
-        }
-
-
-    }
-
-    if (dc) {
-
-        for (auto &effector : dc->refs) {
-
-            std::string arg_str;
-
-            // for (auto def : effector->definitions) {
+//         }
 
 
-            //     for (auto &arg : def->s.members) {
+//     }
 
-            //         arg_str += "     dynamic_ubo[cdurr]."+dc->s_->name()+"."+effector->s_->name()+"."+arg->name()+", ";
+//     if (dc) {
 
-            //     }
+//         for (auto &effector : dc->refs) {
 
-            //     arg_str.resize(arg_str.size()-2);
+//             std::string arg_str;
 
-            //     body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 3\n";
-
-            // }
-
-        }
-
-        // if (dc->effectors.size()) body_fragment += "\ttac();\n\n";
-
-    }
-
-}
-
-void Layer::ShaderProgramBuilder::vert() {
-
-    vbo = &dc->vbo;
-
-    ShaderProgram::Builder::vert();
-
-    for (int i = 1; i < vbo->vertice->members.size(); i++) {
-
-        auto m = vbo->vertice->members[i];
-
-        header_vertex += "out "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
-
-    }
-
-    header_vertex += "out flat int ID;\n\n";
-
-    body_vertex.clear();
-
-    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
-
-        auto m = dc->vbo.vertice->members[i];
-        body_vertex += "\t"+m->name()+" = "+m->name()+"_;\n\n";
-
-    }
-
-    body_vertex += "\tID = gl_InstanceID;\n\n";
-
-	body_vertex += "\tvec2 POS = POSITION;\n\n";
+//             // for (auto def : effector->definitions) {
 
 
-}
+//             //     for (auto &arg : def->s.members) {
+
+//             //         arg_str += "     dynamic_ubo[cdurr]."+dc->s_->name()+"."+effector->s_->name()+"."+arg->name()+", ";
+
+//             //     }
+
+//             //     arg_str.resize(arg_str.size()-2);
+
+//             //     body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 3\n";
+
+//             // }
+
+//         }
+
+//         // if (dc->effectors.size()) body_fragment += "\ttac();\n\n";
+
+//     }
+
+// }
+
+//
 
 
 
