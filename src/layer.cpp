@@ -181,7 +181,7 @@ UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : ubl(ubl)
 
 void UberLayer::ShaderProgramBuilder::build() {
 
-    effectors.clear();
+    // effectors.clear();
 
     // for (auto &layer : ubl->layers)
     //     for (auto effector : layer.get()->effectors)

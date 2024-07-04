@@ -84,14 +84,13 @@ struct ShaderProgram {
 
     static inline std::string version = "#version 430 core\n\n";
 
-    std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, fragment, vertex  ;
+    std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, effectors_fragment_str, effectors_vertex_str ;
 
-    std::vector<Effector*> methods;
+    std::vector<Effector*> effectors_fragment, effectors_vertex;
 
     std::vector<UBO*> ubos;
 
     std::vector<std::string> samplers;
-
 
     virtual void build();
 

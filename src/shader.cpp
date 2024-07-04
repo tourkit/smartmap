@@ -12,73 +12,66 @@
 
 #include <set>
 #include "struct.hpp"
+#include "texture.hpp"
 
 //// SHADERBUILDER
 
 
 void ShaderProgram::Builder::build() {
 
+
     header_common = version;
 
     header_common += layout();
 
-}
+    header_fragment = "out vec4 COLOR;\n\n";
 
-std::string ShaderProgram::Builder::frag() {
+    for (auto x : samplers) header_fragment += "uniform sampler2D "+x+";\n"; if (samplers.size()) header_fragment += "\n";
 
-    std::string fragment = header_common;
-
-    fragment += comment_line;
-
-    fragment += "out vec4 COLOR;\n\n";
-
-    fragment += header_fragment;
-
-    fragment += "void main() {\n\n";
-
-    fragment += (body_fragment.length() ? body_fragment : "\tCOLOR = vec4(0,1,0,1);\n\n");
-
-    fragment += "}\n////////////";
-
-    return fragment ;
-
-}
-
-std::string ShaderProgram::Builder::vert() {
-
-    std::string vertex = header_common;
+    header_vertex.clear();
 
     if (vbo) {
-
-        vertex += comment_line;
 
         int count = 0;
 
         for (auto x : vbo->vertice->members) {
 
-            vertex += "layout (location = "+std::to_string(count)+") in "+x->type_name()+" "+x->name()+(count?"_":"")+";\n";
+            header_vertex += "layout (location = "+std::to_string(count)+") in "+x->type_name()+" "+x->name()+(count?"_":"")+";\n";
 
             count ++;
 
         }
 
-        vertex += "\n";
+        header_vertex += "\n";
 
     }
 
-    vertex += comment_line;
+    effectors_fragment_str.clear();
+    for (auto x : effectors_fragment)  effectors_fragment_str += x->source()+"\n\n";
 
-    fragment += header_vertex;
+    effectors_vertex_str.clear();
 
-    vertex += "\nvoid main() {\n\n";
+    for (auto x : effectors_vertex)  {
 
-    vertex += (body_vertex.length() ? body_vertex : "\tvec2 POS = POSITION;\n\n");;
+        effectors_vertex_str += x->source()+"\n\n";
 
-    vertex += "\tgl_Position = vec4(POS, 0, 1);\n\n";
+        header_vertex += x->source()+"\n\n";
 
-    vertex += "}\n////////////";
+    }
 
-    return vertex ;
+    body_fragment.clear();
+    body_vertex.clear();
+}
+
+std::string ShaderProgram::Builder::frag() {
+
+    return header_common + comment_line + header_fragment + (header_fragment.length()?comment_line:"") + effectors_fragment_str + (effectors_fragment_str.length()?comment_line:"") + "void main() {\n\n" + (body_fragment.length()?body_fragment:"\tCOLOR = vec4(0,1,0,1);\n\n") + "}\n\n" + comment_line;
+
+}
+
+std::string ShaderProgram::Builder::vert() {
+
+    return header_common + comment_line + header_vertex + (header_vertex.length()?comment_line:"") + effectors_vertex_str + (effectors_vertex_str.length()?comment_line:"") + comment_line + "void main() {\n\n" + (body_vertex.length()?body_vertex:"\tvec2 POS = POSITION;\n\n\tgl_Position = vec4(POS, 0, 1);\n\n") + "}\n\n" + comment_line;
 
 }
 
@@ -250,7 +243,7 @@ ShaderProgram::~ShaderProgram() { destroy();
 
 }
 
-ShaderProgram::ShaderProgram() { Builder builder; create(builder.fragment,builder.vertex); }
+ShaderProgram::ShaderProgram() { Builder builder; create(builder.frag(),builder.vert()); }
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 
@@ -295,7 +288,7 @@ void  ShaderProgram::create() {
 
 }
 
-void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->fragment, builder->vertex); }
+void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->frag(), builder->vert()); }
 
 void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 

@@ -16,21 +16,94 @@ Model* DrawCall::addModel(File* f) {
 
 ///////// LayerBuilder ////
 
-Layer::ShaderProgramBuilder::ShaderProgramBuilder() : ShaderProgramBuilder(nullptr) { }
+Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
-Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) { build(); }
+    ubos.push_back(&engine.dynamic_ubo);
+    ubos.push_back(&engine.static_ubo);
+
+    samplers = {"medias", "render_pass", "uberlayer"};
+
+    build();
+
+}
+
+
 
 void Layer::ShaderProgramBuilder::build() {
 
+    ShaderProgram::Builder::build();
+
     stride_count = 0;
 
-    effectors.clear();
+    // FRAGMENT ////////////////
 
-    // if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->refs) for (auto x : effector->definitions) ADD_UNIQUE<Effector*>(effectors, x);
+    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
 
-    // if(dc) for (auto &effector : dc->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector*>(effectors, x);
+        auto m = dc->vbo.vertice->members[i];
 
-    ShaderProgram::Builder::build();
+        header_fragment += "in "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+
+    }
+
+    header_fragment += "\n";
+    header_fragment += "in flat int ID;\n";
+
+    header_fragment += "vec2 uv = UV;\n";
+    header_fragment += "vec4 color = vec4(0);\n";
+    header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
+
+    int model_id = 0;
+
+    header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
+    header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
+    header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
+    header_fragment += "int last = abs(curr-1);\n\n";
+
+
+    if (dc) {
+
+        std::string indice = "";
+
+        if (dc->models.size() == 1) body_fragment += print_model("ID", *dc->models[0].get()) + "\ttac();\n\n";
+
+        else for (auto &model : dc->models) {
+
+            for (int instance = 0; instance < model.get()->s_->quantity(); instance++) body_fragment += print_model(std::to_string(instance), *model.get());
+
+            model_id++;
+
+            body_fragment += "\ttac();\n\n";
+
+        }
+
+
+    }
+
+    if (dc) {
+
+        for (auto &effector : dc->refs) {
+
+            std::string arg_str;
+
+            for (auto &arg : effector->s.members) {
+
+                arg_str += "\tdynamic_ubo[cdurr]."+dc->s_->name()+"."+effector->s.name()+"."+arg->name()+", ";
+
+            }
+
+            arg_str.resize(arg_str.size()-2);
+
+            body_fragment += "\t"+effector->s.name()+"("+arg_str+"); // 3\n";
+
+
+
+        }
+
+        if (dc->refs.size()) body_fragment += "\ttac();\n\n";
+
+    }
+
+    // VERTEX ////////////////
 
 }
 
@@ -85,85 +158,10 @@ std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& mo
 
 // void Layer::ShaderProgramBuilder::frag() {
 
-//     header_fragment.clear();
 
-//     header_fragment += "uniform sampler2D medias;\n\n";
-//     header_fragment += "uniform sampler2D render_pass;\n\n";
-//     header_fragment += "uniform sampler2D uberlayer;\n\n";
-
-//     for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
-
-//         auto m = dc->vbo.vertice->members[i];
-
-//         header_fragment += "in "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
-
-//     }
-
-//     header_fragment += "\n";
-//     header_fragment += "in flat int ID;\n";
-
-//     header_fragment += "vec2 uv = UV;\n";
-//     header_fragment += "vec4 color = vec4(0);\n";
-//     header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
-
-//     int model_id = 0;
-
-//     // for (auto def : effectors)  header_fragment += def->source+";\n\n";
-
-//     header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
-//     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
-//     header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
-//     header_fragment += "int last = abs(curr-1);\n\n";
-
-//     header_fragment += comment_line;
 
 //     body_fragment.clear();
 
-//     if (dc) {
-
-//         std::string indice = "";
-
-//         if (dc->models.size() == 1) body_fragment += print_model("ID", *dc->models[0].get()) + "\ttac();\n\n";
-
-//         else for (auto &model : dc->models) {
-
-//             for (int instance = 0; instance < model.get()->s_->quantity(); instance++) body_fragment += print_model(std::to_string(instance), *model.get());
-
-//             model_id++;
-
-//             body_fragment += "\ttac();\n\n";
-
-//         }
-
-
-//     }
-
-//     if (dc) {
-
-//         for (auto &effector : dc->refs) {
-
-//             std::string arg_str;
-
-//             // for (auto def : effector->definitions) {
-
-
-//             //     for (auto &arg : def->s.members) {
-
-//             //         arg_str += "     dynamic_ubo[cdurr]."+dc->s_->name()+"."+effector->s_->name()+"."+arg->name()+", ";
-
-//             //     }
-
-//             //     arg_str.resize(arg_str.size()-2);
-
-//             //     body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 3\n";
-
-//             // }
-
-//         }
-
-//         // if (dc->effectors.size()) body_fragment += "\ttac();\n\n";
-
-//     }
 
 // }
 
@@ -173,7 +171,7 @@ std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& mo
 
 // DRAWCALLL //////////////////////////////////////
 
-DrawCall::DrawCall(std::string name = "") : Modelable(name.length()?name:"layer"), builder(this) {
+DrawCall::DrawCall(std::string name) : Modelable(name.length()?name:"layer"), builder(this) {
 
     shader.builder(&builder);
 
