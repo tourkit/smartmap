@@ -37,6 +37,8 @@ struct DrawCall : Modelable {
 
         int stride_count = 0;
 
+        std::string print_arg(Struct* s);
+
     };
 
     // Builder* builder() { }

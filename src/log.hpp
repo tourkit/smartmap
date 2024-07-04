@@ -31,7 +31,7 @@ struct Log {
     struct Appender : public plog::IAppender {
 
         bool cmd = false;
-        plog::Severity severity = plog::Severity::none, max_severity = plog::Severity::verbose;
+        plog::Severity severity = plog::Severity::none, max_severity = plog::Severity::error;
 
         struct Message {
 

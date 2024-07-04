@@ -27,9 +27,11 @@ struct Effector {
 
 struct FileEffector : Effector {
 
+    File file;
+
     std::string source;
 
-    FileEffector(File* file, std::string name = "fileEffector");
+    FileEffector(File file, std::string name = "fileEffector");
 
     bool setup(ShaderProgram* shader) override;
 

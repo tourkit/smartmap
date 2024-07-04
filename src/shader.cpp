@@ -19,7 +19,6 @@
 
 void ShaderProgram::Builder::build() {
 
-
     header_common = version;
 
     header_common += layout();
@@ -71,7 +70,7 @@ std::string ShaderProgram::Builder::frag() {
 
 std::string ShaderProgram::Builder::vert() {
 
-    return header_common + comment_line + header_vertex + (header_vertex.length()?comment_line:"") + effectors_vertex_str + (effectors_vertex_str.length()?comment_line:"") + comment_line + "void main() {\n\n" + (body_vertex.length()?body_vertex:"\tvec2 POS = POSITION;\n\n\tgl_Position = vec4(POS, 0, 1);\n\n") + "}\n\n" + comment_line;
+    return header_common + comment_line + (header_vertex.length()?header_vertex:"layout (location = 0) in vec2 POSITION;\n") + (header_vertex.length()?comment_line:"") + effectors_vertex_str + (effectors_vertex_str.length()?comment_line:"") + comment_line + "void main() {\n\n" + (body_vertex.length()?body_vertex:"\tvec2 POS = POSITION;\n\n\tgl_Position = vec4(POS, 0, 1);\n\n") + "}\n\n" + comment_line;
 
 }
 
@@ -243,7 +242,7 @@ ShaderProgram::~ShaderProgram() { destroy();
 
 }
 
-ShaderProgram::ShaderProgram() { Builder builder; create(builder.frag(),builder.vert()); }
+ShaderProgram::ShaderProgram() { Builder builder; builder.build(); create(builder.frag(),builder.vert()); }
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 

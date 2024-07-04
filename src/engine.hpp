@@ -20,6 +20,7 @@ struct Atlas;
 struct ShaderProgram;
 struct VBO;
 struct FrameBuffer;
+struct Effector;
 
 struct Engine {
 

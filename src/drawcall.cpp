@@ -23,11 +23,27 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
     samplers = {"medias", "render_pass", "uberlayer"};
 
+    for (auto ref : dc->refs) ref.get()->effector->setup(&dc->shader); // does it do shit ?
+
     build();
 
 }
 
+std::string Layer::ShaderProgramBuilder::print_arg(Struct* s) {  // should be Instance
 
+    std::string out;
+
+    for (auto &arg : s->ref()?s->ref()->members:s->members)
+        out += "dynamic_ubo[cdurr]."+dc->s_->name()+"."+s->name()+"."+arg->name()+", "; // for this nbeed inst
+
+    if (out.length()) out.resize(out.size()-2);
+
+    out = "\t"+s->name()+"("+out+"); // 3\n";
+
+    return out;
+
+
+}
 
 void Layer::ShaderProgramBuilder::build() {
 
@@ -81,23 +97,7 @@ void Layer::ShaderProgramBuilder::build() {
 
     if (dc) {
 
-        for (auto &effector : dc->refs) {
-
-            std::string arg_str;
-
-            for (auto &arg : effector->s.members) {
-
-                arg_str += "\tdynamic_ubo[cdurr]."+dc->s_->name()+"."+effector->s.name()+"."+arg->name()+", ";
-
-            }
-
-            arg_str.resize(arg_str.size()-2);
-
-            body_fragment += "\t"+effector->s.name()+"("+arg_str+"); // 3\n";
-
-
-
-        }
+        for (auto &ref : dc->refs) body_fragment += print_arg(&ref.get()->s);
 
         if (dc->refs.size()) body_fragment += "\ttac();\n\n";
 
@@ -111,61 +111,20 @@ std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& mo
 
     std::string body_fragment;
 
-    // auto name = lower(model.s_->name());
+    auto name = lower(model.s_->name());
 
-    // if (model.s_->quantity() > 1) name += "["+xtra+"]";
+    if (model.s_->quantity() > 1) name += "["+xtra+"]";
 
-    // body_fragment += "\t// "+name+"\n";
+    body_fragment += "\t// "+name+"\n";
 
-    // body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
-    // body_fragment += "\ttic();\n";
+    body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
+    body_fragment += "\ttic();\n";
 
-    // for (auto &effector : model.refs) {
-
-    //     std::string arg_str;
-
-    //     if (effector->definitions.size() == 1)  {
-
-    //         for (auto &arg : effector->definitions[0]->s.members) {
-
-    //             arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
-
-    //         }
-
-    //         arg_str.resize(arg_str.size()-2);
-
-    //         body_fragment += "\t"+effector->definitions[0]->s.name()+"("+arg_str+"); // 2\n";
-
-    //     }else if (effector->definitions.size())  {
-
-    //         for (auto &arg : effector->s.members) {
-
-    //             arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
-
-    //         }
-
-    //         arg_str.resize(arg_str.size()-2);
-
-    //         body_fragment += "\t"+effector->s.name()+"("+arg_str+"); d\n";
-
-
-    //     }
-    // }
+    for (auto &ref : model.refs) print_arg( &ref.get()->s );
 
     return body_fragment;
 }
 
-
-// void Layer::ShaderProgramBuilder::frag() {
-
-
-
-//     body_fragment.clear();
-
-
-// }
-
-//
 
 
 
@@ -218,6 +177,7 @@ void DrawCall::update() {
 
     }
 
+    builder.build();
     ((ShaderProgram*)&shader)->create();
 
 }
