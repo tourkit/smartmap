@@ -17,7 +17,10 @@ int main() {
 
     ShaderProgram shader;
 
-    // ShaderProgram::Builder builder;
+    ShaderProgram::Builder builder;
+
+    builder.ubos.push_back(&engine.dynamic_ubo);
+    builder.ubos.push_back(&engine.static_ubo);
 
     Wrappy wrapy;
 
@@ -27,6 +30,8 @@ int main() {
 
     logger.cout(5);
 
+    shader.builder(&builder);
+
     shader.builder()->build();
 
     for (auto ref : model.refs) ref.get()->effector->setup(&shader);
@@ -34,6 +39,35 @@ int main() {
     PLOGD << shader.builder()->fragment;
 
     PLOGD << shader.builder()->vertex;
+
+    Struct quad("quad");
+    quad.add<float>("x").add<float>("y").add<float>("z");
+
+
+    Struct z1("zzz");
+    z1.ref(&quad);
+
+    Struct z2("zzz");
+    z2.ref(&quad);
+
+    engine.dynamic_ubo.add(&z1);
+    engine.dynamic_ubo.add(&z2);
+
+    {
+
+        engine.dynamic_ubo.each([&](Instance& inst) {
+
+            auto m = inst.def();
+
+            if (m->type() == typeid(Struct)) shader.builder()->add(m);
+
+        });
+
+        shader.builder()->add(&engine.dynamic_ubo);
+
+    }
+
+    PLOGD << "\n" << shader.builder()->print_structs();
 
     PLOGD << "pidooouu";
 

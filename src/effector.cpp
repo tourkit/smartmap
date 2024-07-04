@@ -135,7 +135,7 @@ void Wrappy::attrs(int count) {
 
 }
 
-bool Wrappy::setup(ShaderProgram* shader) {}
+bool Wrappy::setup(ShaderProgram* shader) { return true; }
 
 // Ref  ////////////////
 // Ref  ////////////////
