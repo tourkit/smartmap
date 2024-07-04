@@ -60,7 +60,7 @@ void Layer::draw() {
 
     shader.use();
 
-    vbo.draw(models.size()==1?models[0].get()->s.quantity():1);
+    vbo.draw(models.size()==1?models[0].get()->s_->quantity():1);
 
     if (feedback) { return feedback->read(fb.texture); }
 
@@ -99,7 +99,7 @@ void UberLayer::calc_matrice() {
 
     for (auto it = layers.begin(); it != layers.end(); it++ ) {
 
-        for (int i = 0 ; i < it->get()->s.quantity(); i++) {
+        for (int i = 0 ; i < it->get()->s_->quantity(); i++) {
 
             matrice.back().emplace_back( std::array<int,5>{it->get()->w, it->get()->h, last_x, last_y, count} );
 
@@ -170,9 +170,7 @@ UberLayer::VLayer& UberLayer::addLayer(int w , int h) {
 
     auto &l = *layers.back().get();
 
-    // l.s.name("layer"+std::to_string(l.id));
-
-    s.add(&l.s);
+    s_->add(l.s_);
 
     return *layers.back().get();
 
@@ -185,10 +183,10 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     effectors.clear();
 
-    for (auto &layer : ubl->layers)
-        for (auto effector : layer.get()->effectors)
-            for (auto def : effector.get()->definitions)
-                ADD_UNIQUE<Effector*>(effectors, def);
+    // for (auto &layer : ubl->layers)
+    //     for (auto effector : layer.get()->effectors)
+    //         for (auto def : effector.get()->definitions)
+    //             ADD_UNIQUE<Effector*>(effectors, def);
 
     ShaderProgram::Builder::build();
 
@@ -198,36 +196,36 @@ std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &laye
 
     std::vector<EffectorRef*> unique;
 
-    for (auto x : layer.effectors) ADD_UNIQUE<EffectorRef*>(unique, x.get());
+    // for (auto x : layer.effectors) ADD_UNIQUE<EffectorRef*>(unique, x.get());
 
     std::string body_fragment;
 
 
-	body_fragment += "\ttic();\n";
+	// body_fragment += "\ttic();\n";
 
-    auto name = lower(layer.s.name());
+    // auto name = lower(layer.s.name());
 
-    if (layer.s.quantity() > 1) name += "[int(OBJ)]";
+    // if (layer.s.quantity() > 1) name += "[int(OBJ)]";
 
-    body_fragment += "\taspect_ratio = static_ubo."+ubl->glsl_uberlayer->def()->name()+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"")+".uberLayer.dim;\n";
+    // body_fragment += "\taspect_ratio = static_ubo."+ubl->glsl_uberlayer->def()->name()+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"")+".uberLayer.dim;\n";
 
-    for (auto effector : unique) {
+    // for (auto effector : unique) {
 
-        std::string arg_str;
+    //     std::string arg_str;
 
-        if (!effector->wrap) for (auto def : effector->definitions) {
+    //     if (!effector->wrap) for (auto def : effector->definitions) {
 
-            for (auto &arg : def->s.members) arg_str += "dynamic_ubo[curr]."+lower(ubl->s.name())+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
+    //         for (auto &arg : def->s.members) arg_str += "dynamic_ubo[curr]."+lower(ubl->s.name())+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
 
-            arg_str.resize(arg_str.size()-2);
+    //         arg_str.resize(arg_str.size()-2);
 
-            body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 1\n";
+    //         body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 1\n";
 
-        }
+    //     }
 
-    }
+    // }
 
-	body_fragment += "\ttac();\n";
+	// body_fragment += "\ttac();\n";
 
     return body_fragment;
 
@@ -245,7 +243,7 @@ void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::f
 
             if (last_id) body_fragment += "\n} else ";
 
-            last_id += x.get()->s.quantity();
+            last_id += x.get()->s_->quantity();
 
             body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer(*x.get()); ;
 

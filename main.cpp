@@ -17,13 +17,15 @@ int main() {
 
     ShaderProgram::Builder builder;
 
-    Effector def;
+    Wrappy wrapy;
 
-    EffectorRef effector("effector", &def);
+    EffectorRef ref("wrapy", &wrapy);
 
     logger.cout(5);
 
-    PLOGD << effector.source();
+    // PLOGD << ref.wrapy->source();
+
+    PLOGD << "pidooouu";
 
     exit(0);
 

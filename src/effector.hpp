@@ -7,53 +7,82 @@
 #include <string>
 
 struct File;
+struct ShaderProgram;
+
 struct Effector {
 
     Struct s;
 
-    std::string source;
+    enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
-    Effector(File* file);
+    virtual bool setup(ShaderProgram* shader) = 0;
 
-    Effector();
+    virtual void update() {}
+
+    Effector(std::string name = "effector");
 
 };
 
+struct FileEffector : Effector {
+
+    std::string source;
+
+    FileEffector(File* file, std::string name = "fileEffector");
+
+    bool setup(ShaderProgram* shader) override;
+
+};
+
+
+
 struct EffectorRef  {
-
-
-    static inline std::map<File*, Effector> effects;
-
-    enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
     Struct s;
 
-    std::vector<Effector*> definitions;
+    Effector* effector;
 
-    EffectorRef(std::string name, Effector* def);
-
-    EffectorRef(std::string name, int wrap = 0, std::vector<Effector*> defs = {});
-
-    virtual std::string source();
-
-    int wrap = 0;
+    EffectorRef(std::string name, Effector* effector);
 
     void update();
-
-private:
-
-    Member* bkpref = nullptr;
 
 };
 
 struct Effectable {
 
-    Struct s;
+    Struct *s_;
 
+    void s(Struct* s_);
+
+    bool owned = true;
+
+    Effectable(Struct* s_);
     Effectable(std::string name = "Effectable" );
+    ~Effectable();
 
-    std::vector<std::shared_ptr<EffectorRef>> effectors;
-    EffectorRef* addEffector(Effector* def); // kinda ctor for effectors
-    bool removeEffector(EffectorRef* effector);
+    std::vector<std::shared_ptr<EffectorRef>> refs;
+    EffectorRef* addEffector(Effector* effector); // kinda ctor for effectors
+    bool removeEffector(EffectorRef* ref);
 
 };
+
+
+struct Wrappy : Effector, Effectable {
+
+    bool setup(ShaderProgram* shader) override;
+
+    Wrappy(std::vector<Effector*> effectors = {}, int count = 3, std::string name = "wrapperEffector");
+
+    int count;
+
+    void attrs(int count);
+
+    void update() override;
+
+
+};
+
+// struct Feedback : Wrappy {
+
+//     bool setup(ShaderProgram* shader) override;
+
+// };

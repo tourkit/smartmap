@@ -34,7 +34,7 @@ struct DrawCall : Modelable {
         void vert() override;
         void common() override;
 
-        std::string prout(std::string xtra, Model& model);
+        std::string print_model(std::string xtra, Model& model);
 
         DrawCall* dc;
 

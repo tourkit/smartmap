@@ -839,16 +839,16 @@ void Editors::init() {
     Editor<Model>([](Node* node, Model *model){
 
 
-        ImGui::Text(("effectorz : " + std::to_string(model->effectors.size())+ " .").c_str());
+        ImGui::Text(("effectorz : " + std::to_string(model->refs.size())+ " .").c_str());
 
         static std::map<Node*,int> effector_currents;
 
-       effector_currents[node] = model->s.quantity();
+       effector_currents[node] = model->s_->quantity();
 
-        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->s.quantity(effector_currents[node]); node->update(); }
+        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->s_->quantity(effector_currents[node]); node->update(); }
 
 
-        if (draw_guis(&engine.dynamic_ubo, &model->s, model->instance->offset))engine.dynamic_ubo.upload();
+        if (draw_guis(&engine.dynamic_ubo, model->s_, model->instance->offset))engine.dynamic_ubo.upload();
 
     });
 
@@ -883,13 +883,13 @@ void Editors::init() {
 
     ////////// Effector.HPP
 
-    Editor<EffectorRef>([](Node* node, EffectorRef *effector){
+    // Editor<EffectorRef>([](Node* node, EffectorRef *effector){
 
-        if (InputInt("wrap", &effector->wrap)) node->update();
+    //     if (InputInt("wrap", &effector->wrap)) node->update();
 
-        for (auto def : effector->definitions) Editor<Effector>::cb(node, def);
+    //     for (auto def : effector->definitions) Editor<Effector>::cb(node, def);
 
-    });
+    // });
 
     Editor<Effector>([](Node* node, Effector *def){
 
@@ -899,20 +899,20 @@ void Editors::init() {
 
             codeeditors[def].SetShowWhitespaces(false);
             codeeditors[def].SetReadOnly(false);
-            codeeditors[def].SetText(def->source.data());
+            // codeeditors[def].SetText(def->source.data());
         }
 
         auto &codeeditor = codeeditors[def];
 
-        codeeditor.Render("codeeditor");
+        // codeeditor.Render("codeeditor");
 
-        if (codeeditor.IsTextChanged()) {
+        // if (codeeditor.IsTextChanged()) {
 
-            def->source = codeeditor.GetText().c_str();
+        //     def->source = codeeditor.GetText().c_str();
 
-            node->bkpupdate(); // do I need bkp here ? is even the fx useful
+        //     node->bkpupdate(); // do I need bkp here ? is even the fx useful
 
-        }
+        // }
 
         draw_definition(&def->s);
 
@@ -975,9 +975,9 @@ void Editors::init() {
 
     Editor<UberLayer>([](Node* node, UberLayer *ubl){
 
-        if (ImGui::SliderInt("quantitay##dsf",&ubl->layers[0].get()->s.quantity_v, 1, 10)) {
+        if (ImGui::SliderInt("quantitay##dsf",&ubl->layers[0].get()->s_->quantity_v, 1, 10)) {
 
-            ubl->layers[0].get()->s.quantity(ubl->layers[0].get()->s.quantity_v); // for some callback (updates dynUBO)
+            ubl->layers[0].get()->s_->quantity(ubl->layers[0].get()->s_->quantity_v); // for some callback (updates dynUBO)
 
             ubl->calc_matrice();
 
