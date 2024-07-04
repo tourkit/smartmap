@@ -42,13 +42,13 @@ if (x) PLOGE << exporter.GetErrorString();
 
 Model* Modelable::addModel(File* f) {
 
-    auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
+    auto mod = models.emplace_back(std::make_shared<Model>(f, s_->next_name(f->name()))).get();
 
-    s.add(&mod->s);
+    s_->add(mod->s_);
 
-    for (auto x : s.getTop()) { // should be once even if its a for
+    for (auto x : s_->getTop()) { // should be once even if its a for
 
-        x->isBuff()->each([&](Instance& inst){ if (inst.def() == &mod->s) mod->instance = &inst.track(); });
+        x->isBuff()->each([&](Instance& inst){ if (inst.def() == mod->s_) mod->instance = &inst.track(); });
 
     }
 

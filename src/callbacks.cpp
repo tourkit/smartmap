@@ -132,17 +132,17 @@ void Callbacks::init() {
 
     ////////// UberLayer.HPP
 
-    NODE<UberLayer>::oncreate([](Node* node, UberLayer *ubl){ NODE<Struct>::oncreate_cb(node, &ubl->s);  for (auto &x : ubl->layers) { node->addPtr<UberLayer::VLayer>(&x); } });
+    // NODE<UberLayer>::oncreate([](Node* node, UberLayer *ubl){ NODE<Struct>::oncreate_cb(node, &ubl->s);  for (auto &x : ubl->layers) { node->addPtr<UberLayer::VLayer>(&x); } });
 
-    NODE<UberLayer>::onchange([](Node* node, UberLayer *ubl){
-        NODE<Struct>::onchange_cb(node, &ubl->s); ubl->update();
-    });
+    // NODE<UberLayer>::onchange([](Node* node, UberLayer *ubl){
+    //     NODE<Struct>::onchange_cb(node, &ubl->s); ubl->update();
+    // });
 
-    NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
+    // NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
 
 
-    NODE<UberLayer::VLayer>::onchange([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); });
-    NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); });
+    // NODE<UberLayer::VLayer>::onchange([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); });
+    // NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); });
     // NODE<UberLayer::VLayer>::onadd<File>([](Node*_this,Node*node){
 
     //     auto file = node->is_a<File>();
@@ -163,9 +163,9 @@ void Callbacks::init() {
         if (o->fb == &layer->fb) o->fb = nullptr;
 
     });  }); // for what ??????
-    NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
+    // NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
 
-    NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
+    // NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
 
     NODE<Layer>::onrun([](Node* node, Layer *layer){
         layer->draw();
@@ -184,9 +184,9 @@ void Callbacks::init() {
 
     ////////// MODEL.HPP
 
-    NODE<Model>::oncreate([](Node*node, Model* mod){ NODE<Struct>::oncreate_cb(node, &mod->s); });
+    // NODE<Model>::oncreate([](Node*node, Model* mod){ NODE<Struct>::oncreate_cb(node, &mod->s); });
 
-    NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
+    // NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
 
     NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return _this->addPtr<EffectorRef>( _this->is_a<Model>()->addEffector( node->is_a<Effector>() ) )->node(); });
 
@@ -210,22 +210,22 @@ void Callbacks::init() {
 
     NODE<EffectorRef>::onchange([&](Node*node, EffectorRef* effector){ NODE<Struct>::onchange_cb(node, &effector->s); effector->update(); });
 
-    NODE<EffectorRef>::onadd<Effector>([](Node* _this, Node *node) {
+    // NODE<EffectorRef>::onadd<Effector>([](Node* _this, Node *node) {
 
-        EffectorRef * effector = _this->is_a<EffectorRef>();
-        Effector * def = node->is_a<Effector>();
+    //     EffectorRef * ref = _this->is_a<EffectorRef>();
+    //     Effector * effector = node->is_a<Effector>();
 
-        effector->definitions.push_back(def);
+    //     ref->definitions.push_back(effector);
 
-        effector->wrap = 3;
+    //     ref->wrap = 3;
 
-        effector->update();
+    //     ref->update();
 
-        _this->name("wrappy");
+    //     _this->name("wrappy");
 
-        return nullptr;
+    //     return nullptr;
 
-    });
+    // });
 
     NODE<EffectorRef>::ondelete([](Node* node, EffectorRef *effector) {
 

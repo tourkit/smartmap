@@ -299,7 +299,7 @@ void Engine::open(const char* file) {
                 auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
                 l_->active(true)->name(x.name.GetString());
 
-                l.s.quantity(q);
+                l.s_->quantity(q);
 
                 if (info.Size() > effectors_id && info[effectors_id].IsObject()) {
 
@@ -387,7 +387,7 @@ void Engine::open(const char* file) {
 
             if (info.Size() < 2 || !info[1].IsInt()) { PLOGW << json_error; return; }
 
-            new_model->get()->s.quantity(info[1].GetInt());
+            new_model->get()->s_->quantity(info[1].GetInt());
 
             if (info.Size() < 3 || !info[2].IsObject()) return;
 
@@ -620,13 +620,13 @@ void Engine::save(const char* file) {
 
             new_model.PushBack(rapidjson::Value(model.get()->file->filename().c_str(), allocator), allocator);
 
-            new_model.PushBack(model.get()->s.quantity(),allocator);
+            new_model.PushBack(model.get()->s_->quantity(),allocator);
 
             auto effects = rapidjson::Value(rapidjson::kObjectType);
             // for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref().name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator ); // TODOTODO
             new_model.PushBack( effects, allocator );
 
-            models.AddMember(rapidjson::Value(model.get()->s.name().c_str(), allocator), new_model, allocator);
+            models.AddMember(rapidjson::Value(model.get()->s_->name().c_str(), allocator), new_model, allocator);
 
         }
 
@@ -655,13 +655,13 @@ void Engine::save(const char* file) {
 
             layer_.PushBack(layer.get()->w, allocator);
             layer_.PushBack(layer.get()->h, allocator);
-            layer_.PushBack(layer.get()->s.quantity(), allocator);
+            layer_.PushBack(layer.get()->s_->quantity(), allocator);
 
             auto  effectors_ = rapidjson::Value(rapidjson::kObjectType);
             // for (auto e : layer->effectors) effectors_.AddMember( rapidjson::Value(e.get()->ref().name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );// TODOTODO
             layer_.PushBack(effectors_, allocator);
 
-            ubl_.AddMember(rapidjson::Value(layer.get()->s.name().c_str(), allocator)  , layer_, allocator);
+            ubl_.AddMember(rapidjson::Value(layer.get()->s_->name().c_str(), allocator)  , layer_, allocator);
 
         }
 
@@ -693,7 +693,7 @@ void Engine::save(const char* file) {
 
             stack->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
 
-            outputarr.PushBack( rapidjson::Value(lay->s.name().c_str(), allocator ), allocator );
+            outputarr.PushBack( rapidjson::Value(lay->s_->name().c_str(), allocator ), allocator );
 
         }
 

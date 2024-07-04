@@ -26,62 +26,58 @@ void Layer::ShaderProgramBuilder::build() {
 
     effectors.clear();
 
-    if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector*>(effectors, x);
+    // if(dc) for (auto &model : dc->models) for (auto &effector : model.get()->refs) for (auto x : effector->definitions) ADD_UNIQUE<Effector*>(effectors, x);
 
-    if(dc) for (auto &effector : dc->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector*>(effectors, x);
+    // if(dc) for (auto &effector : dc->effectors) for (auto x : effector->definitions) ADD_UNIQUE<Effector*>(effectors, x);
 
     ShaderProgram::Builder::build();
 
 }
 
-std::string Layer::ShaderProgramBuilder::prout(std::string xtra, Model& model) {
+std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& model) {
 
     std::string body_fragment;
 
-    auto name = lower(model.s.name());
+    // auto name = lower(model.s_->name());
 
-    if (model.s.quantity() > 1) name += "["+xtra+"]";
+    // if (model.s_->quantity() > 1) name += "["+xtra+"]";
 
-    body_fragment += "\t// "+name+"\n";
+    // body_fragment += "\t// "+name+"\n";
 
-    body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
-    body_fragment += "\ttic();\n";
+    // body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
+    // body_fragment += "\ttic();\n";
 
-    // body_fragment += "\t"+camel(name)+" "+name+" = dynubo."+lower(ubl->s.name())+"."+name+(layer.s.quantity() > 1?"[OBJ]":"")+";\n";
+    // for (auto &effector : model.refs) {
 
-    for (auto &effector : model.effectors) {
+    //     std::string arg_str;
 
-        std::string arg_str;
+    //     if (effector->definitions.size() == 1)  {
 
-        if (effector->definitions.size() == 1)  {
+    //         for (auto &arg : effector->definitions[0]->s.members) {
 
-            for (auto &arg : effector->definitions[0]->s.members) {
+    //             arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
 
-                arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
-                // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
+    //         }
 
-            }
+    //         arg_str.resize(arg_str.size()-2);
 
-            arg_str.resize(arg_str.size()-2);
+    //         body_fragment += "\t"+effector->definitions[0]->s.name()+"("+arg_str+"); // 2\n";
 
-            body_fragment += "\t"+effector->definitions[0]->s.name()+"("+arg_str+"); // 2\n";
+    //     }else if (effector->definitions.size())  {
 
-        }else if (effector->definitions.size())  {
+    //         for (auto &arg : effector->s.members) {
 
-            for (auto &arg : effector->s.members) {
+    //             arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
 
-                arg_str += "dynamic_ubo[curr]."+dc->s.name()+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
-                // arg_str += name+"."+effector->ref.name()+"."+arg.second+", "; // super costly
+    //         }
 
-            }
+    //         arg_str.resize(arg_str.size()-2);
 
-            arg_str.resize(arg_str.size()-2);
-
-            body_fragment += "\t"+effector->s.name()+"("+arg_str+"); d\n";
+    //         body_fragment += "\t"+effector->s.name()+"("+arg_str+"); d\n";
 
 
-        }
-    }
+    //     }
+    // }
 
     return body_fragment;
 }
@@ -119,14 +115,12 @@ void Layer::ShaderProgramBuilder::frag() {
 
     int model_id = 0;
 
-    for (auto def : effectors)  header_fragment += def->source+";\n\n";
+    // for (auto def : effectors)  header_fragment += def->source+";\n\n";
 
     header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
     header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
     header_fragment += "int last = abs(curr-1);\n\n";
-    // header_fragment += "Dynamic_ubo dynubo = dynamic_ubo[curr];\n";
-    // header_fragment += "Dynamic_ubo dynubo_last = dynamic_ubo[last];\n\n";
 
     header_fragment += comment_line;
 
@@ -136,11 +130,11 @@ void Layer::ShaderProgramBuilder::frag() {
 
         std::string indice = "";
 
-        if (dc->models.size() == 1) body_fragment += prout("ID", *dc->models[0].get()) + "\ttac();\n\n";
+        if (dc->models.size() == 1) body_fragment += print_model("ID", *dc->models[0].get()) + "\ttac();\n\n";
 
         else for (auto &model : dc->models) {
 
-            for (int instance = 0; instance < model.get()->s.quantity(); instance++) body_fragment += prout(std::to_string(instance), *model.get());
+            for (int instance = 0; instance < model.get()->s_->quantity(); instance++) body_fragment += print_model(std::to_string(instance), *model.get());
 
             model_id++;
 
@@ -153,29 +147,28 @@ void Layer::ShaderProgramBuilder::frag() {
 
     if (dc) {
 
-        for (auto &effector : dc->effectors) {
+        for (auto &effector : dc->refs) {
 
             std::string arg_str;
 
-                // if (effector.get().c)
-            for (auto def : effector->definitions) {
+            // for (auto def : effector->definitions) {
 
 
-                for (auto &arg : def->s.members) {
+            //     for (auto &arg : def->s.members) {
 
-                    arg_str += "     dynamic_ubo[cdurr]."+dc->s.name()+"."+effector->s.name()+"."+arg->name()+", ";
+            //         arg_str += "     dynamic_ubo[cdurr]."+dc->s_->name()+"."+effector->s_->name()+"."+arg->name()+", ";
 
-                }
+            //     }
 
-                arg_str.resize(arg_str.size()-2);
+            //     arg_str.resize(arg_str.size()-2);
 
-                body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 3\n";
+            //     body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 3\n";
 
-            }
+            // }
 
         }
 
-        if (dc->effectors.size()) body_fragment += "\ttac();\n\n";
+        // if (dc->effectors.size()) body_fragment += "\ttac();\n\n";
 
     }
 
@@ -221,7 +214,7 @@ DrawCall::DrawCall(std::string name = "") : Modelable(name.length()?name:"layer"
 
     shader.builder = &builder;
 
-    engine.dynamic_ubo.add(&s);
+    engine.dynamic_ubo.add(s_);
 
 }
 

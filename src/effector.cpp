@@ -5,21 +5,20 @@
 #include <regex>
 
 
+// Effector  ////////////////
 
-std::string EffectorRef::source() {
+Effector::Effector(std::string name) : s(name) {
 
-    if (!definitions.size()) return ""; return definitions.back()->source;
-
-
-}
-
-Effector::Effector() {
-
-    //
 
 }
 
-Effector::Effector(File* file) {
+
+// FileEffector  ////////////////
+
+bool FileEffector::setup(ShaderProgram* shader) {}
+
+
+FileEffector::FileEffector(File* file, std::string name) : Effector(name) {
 
     source = (&file->data[0]);
 
@@ -103,50 +102,79 @@ Effector::Effector(File* file) {
 
 }
 
-EffectorRef::EffectorRef(std::string name, int wrap, std::vector<Effector*> defs ) : s(name), wrap(wrap), definitions(defs) { update(); }
 
-EffectorRef::EffectorRef(std::string name, Effector* def ) : EffectorRef(name) { definitions.push_back(def); s.ref( &def->s ); };
 
-Effectable::Effectable(std::string name) : s(name) {  }
+// WrapperEffector  ////////////////
 
-void EffectorRef::update() {
+Wrappy::Wrappy(std::vector<Effector*> effectors, int count, std::string name) : Effector(name), Effectable("") {
 
-    if (definitions.size()>1) {
+    for (auto x : effectors) addEffector(x);
 
-        if (s.ref()) {
-
-            bkpref = s.ref();
-
-            s.ref(nullptr);
-
-        }
-
-        s.clear();
-
-        s.add<int>("id").range(0,definitions.size()-1,0);
-
-        for (int i = 0 ; i < wrap; i++)
-            s.add<float>("param_"+std::to_string(i));
-
-        return;
-
-    }
-
-    if (bkpref) {s.ref(bkpref); bkpref = nullptr; }
+    attrs(count);
 
 };
 
+void Wrappy::update() {
+
+
+
+}
+
+void Wrappy::attrs(int count) {
+
+    this->count = count;
+
+    Effector::s.clear();
+
+    Effector::s.add<int>("id").range(0,refs.size()-1,0);
+
+    for (int i = 0 ; i < count; i++)
+        Effector::s.add<float>("param_"+std::to_string(i));
+
+    update();
+
+}
+
+bool Wrappy::setup(ShaderProgram* shader) {}
+
+// Ref  ////////////////
+// Ref  ////////////////
+// Ref  ////////////////
+// Ref  ////////////////
+
+EffectorRef::EffectorRef(std::string name, Effector* effector ) : s(name), effector(effector) {  s.ref( &effector->s ); };
+
+void EffectorRef::update() {
+
+
+
+
+};
+
+// Effectable  ////////////////
+// Effectable  ////////////////
+// Effectable  ////////////////
+// Effectable  ////////////////
+
+Effectable::~Effectable() { if (owned) delete s_; }
+
+Effectable::Effectable(std::string name) : s_(new Struct(name)) {  }
+
+Effectable::Effectable(Struct* s_) : s_(s_), owned(false) {  }
+
+void Effectable::s(Struct* s_) { this->s_ = s_; if (owned) delete s_; owned = false; }
+
 bool Effectable::removeEffector(EffectorRef* effector) {
 
-    return std::erase_if( effectors, [&](std::shared_ptr<EffectorRef> e) { return e.get() == effector; });
+    return std::erase_if( refs, [&](std::shared_ptr<EffectorRef> e) { return e.get() == effector; });
 
 }
 
 EffectorRef* Effectable::addEffector(Effector* def) {
 
-    auto effector = effectors.emplace_back(std::make_shared<EffectorRef>(s.next_name(def->s.name()), def)).get();
+    auto effector = refs.emplace_back(std::make_shared<EffectorRef>(s_->next_name(def->s.name()), def)).get();
 
-    s.add(&effector->s);
+    s_->add(&effector->s);
 
     return effector;
 
