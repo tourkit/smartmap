@@ -185,7 +185,7 @@ Member* Struct::add(Member* m_) {
 
                  PLOGW << m.name() << " already exist !";
 
-                m.name( m.name() );
+                m.name( next_name(m.name()) );
 
                 break ;
 

@@ -121,6 +121,9 @@ void ShaderProgram::Builder::common() {
 
     header_common = version;
 
+    // for (auto x : ubos) header_common = define(x);
+    // for (auto x : structs) header_common = define(x);
+
 }
 
 void ShaderProgram::Builder::vert() {
@@ -185,13 +188,11 @@ std::string ShaderProgram::Builder::define(Member* member, std::string name) {
 
     std::string content;
 
-    for (auto x : member->members) {
+    for (auto x : member->ref()?member->ref()->members:member->members) {
 
-        auto xx = x->size();
+        if (!x->size()) continue;
 
-        if (!xx) continue;
-
-        content+=tb+""+(name.length()?name:x->type_name())+" "+lower(x->name());
+        content+=tb+""+(x->type_name())+" "+lower(x->name());
         if (x->quantity()>1) content += "["+std::to_string(x->quantity())+"]";
 
         content += "; "+nl;
