@@ -86,12 +86,6 @@ struct ShaderProgram {
 
     std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, fragment, vertex  ;
 
-    std::vector<Member*> structs;
-
-    void add(Member*);
-
-    void remove(Member*);
-
     std::vector<Effector*> methods;
 
     std::vector<UBO*> ubos;
