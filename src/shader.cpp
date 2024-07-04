@@ -324,7 +324,7 @@ bool Shader::create(std::string src, uint8_t type)  {
 
 Shader::operator GLuint() { return id; }
 
-ShaderProgram::~ShaderProgram() { destroy(); }
+ShaderProgram::~ShaderProgram() { destroy(); if (owned) delete builder_v; }
 
 ShaderProgram::ShaderProgram() { Builder builder; create(builder.fragment,builder.vertex); }
 
@@ -338,7 +338,11 @@ void ShaderProgram::destroy() {
 }
 
 
-void  ShaderProgram::create() { if (builder) create(builder); }
+ShaderProgram::Builder* ShaderProgram::builder() { if (!owned) { builder_v = new Builder(); owned = true; } return builder_v; }
+
+bool ShaderProgram::builder(Builder* builder) { if (owned) delete builder_v; builder_v = builder; owned = false; return true; }
+
+void  ShaderProgram::create() { if (builder_v) create(builder_v); }
 
 void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->fragment, builder->vertex); }
 

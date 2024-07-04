@@ -119,7 +119,10 @@ struct ShaderProgram {
   };
 
 
-  Builder* builder = nullptr;
+  Builder* builder();
+  bool builder(Builder*);
+  bool owned = false;
+  Builder* builder_v = nullptr;
 
   void create();
 
