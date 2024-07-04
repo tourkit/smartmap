@@ -92,23 +92,24 @@ struct ShaderProgram {
 
     std::vector<std::string> samplers;
 
-    std::string ubo_layout(std::vector<UBO*> ubo);
-
-    std::string define(Member* member, std::map<Member*,std::string> &unique_name_list);
 
     virtual void build();
 
-    virtual void common();
+    std::string frag();
 
-    virtual void frag();
+    std::string vert();
 
-    virtual void vert();
+    std::string layout();
 
-    std::string print_structs();
+    bool add(UBO* ubo);
 
     VBO* vbo = nullptr;
 
     std::map<Member*,std::string> list; // toremove
+
+private:
+
+    std::string print_struct(Member* member, std::map<Member*,std::string> &unique_name_list);
 
   };
 

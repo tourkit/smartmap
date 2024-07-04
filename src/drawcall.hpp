@@ -30,9 +30,8 @@ struct DrawCall : Modelable {
         std::vector<Effector*> effectors;
 
         void build() override;
-        void frag() override;
-        void vert() override;
-        void common() override;
+        // void frag() override;
+        // void vert() override;
 
         std::string print_model(std::string xtra, Model& model);
 
