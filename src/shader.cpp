@@ -149,7 +149,8 @@ std::string ShaderProgram::Builder::print_structs() {
 
             auto m = inst.def();
 
-            if (m->type() == typeid(Struct)) ADD_UNIQUE<Member*>(structs,m->ref()?m->ref():m);
+            if (m->type() == typeid(Struct))
+                ADD_UNIQUE<Member*>(structs,m->ref()?m->ref():m);
 
         });
 
@@ -183,8 +184,7 @@ std::string ShaderProgram::Builder::print_structs() {
 
     }
 
-
-    for (auto x : unique_name_list) { auto def = define(x.first,unique_name_list); if (def.length()) def+=";\n\n"; out += def; }
+    for (auto x : structs) { auto def = define(x,unique_name_list); if (def.length()) def+=";\n\n"; out += def; }
 
     return out;
 

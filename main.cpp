@@ -58,7 +58,7 @@ int main() {
     Struct q2("qqq");
     q2.add<float>("x");
     // z2.ref(&quad);
-    z2.add(&q2);
+    z2.add(&q1);
 
     engine.dynamic_ubo.add(&z1);
     engine.dynamic_ubo.add(&z2);
