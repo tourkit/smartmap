@@ -26,7 +26,7 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
     samplers = {"medias", "render_pass", "uberlayer"};
 
-    for (auto ref : dc->effector_refs) ref.get()->effector->setup(&dc->shader); // does it do shit ?
+    for (auto ref : dc->effector_refs) ref.get()->effector->setup(this); // does it do shit ?
 
     build();
 
@@ -75,7 +75,7 @@ void Layer::ShaderProgramBuilder::build() {
         int model_id = 0;
 
         for (auto x : dc->effector_refs)
-            x.get()->effector->setup()
+            x.get()->effector->setup(this);
 
         std::string indice = "";
 
