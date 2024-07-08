@@ -744,19 +744,3 @@ void Engine::save(const char* file) {
     PLOGD << "SAVED to " << file;
 
 }
-
-void Engine::Shader::create(std::string frag, std::string vert) {
-
-    ShaderProgram::create(frag, vert);
-
-    // engine.atlas->link(this);
-
-    engine.dynamic_ubo.bind(this);
-
-    engine.static_ubo.bind(this);
-
-    sendUniform("medias", 1);
-    sendUniform("render_pass", 2);
-    sendUniform("uberlayer", 3);
-
-}
