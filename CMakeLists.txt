@@ -36,6 +36,7 @@ src/ubo.cpp
 src/framebuffer.cpp
 src/texture.cpp
 src/shader.cpp
+src/builder.cpp
 
 src/buffer.cpp
 src/remap.cpp

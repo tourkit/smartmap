@@ -101,7 +101,7 @@ Member* Member::quantity(uint32_t quantity_v) {
 
     update();
 
-    post_change({{this, old, quantity_v-old}});
+    post_change({{this, old, (int)quantity_v-old}});
 
     return this;
 
