@@ -15,7 +15,7 @@ Effector::Effector(std::string name) : s(name) {
 
 // FileEffector  ////////////////
 
-bool FileEffector::setup(ShaderProgram* shader) {}
+bool FileEffector::setup(Builder* builder) {}
 
 
 FileEffector::FileEffector(File file, std::string name) : Effector(name), file(file) {
@@ -131,7 +131,7 @@ void Wrappy::attrs(int count) {
 
     Effector::s.clear();
 
-    Effector::s.add<int>("id").range(0,refs.size()-1,0);
+    Effector::s.add<int>("id").range(0,effector_refs.size()-1,0);
 
     for (int i = 0 ; i < count; i++)
         Effector::s.add<float>("param_"+std::to_string(i));
@@ -140,7 +140,7 @@ void Wrappy::attrs(int count) {
 
 }
 
-bool Wrappy::setup(ShaderProgram* shader) { return true; }
+bool Wrappy::setup(Builder* builder) { return true; }
 
 // Ref  ////////////////
 // Ref  ////////////////
@@ -171,13 +171,13 @@ void Effectable::s(Struct* s_) { this->s_ = s_; if (owned) delete s_; owned = fa
 
 bool Effectable::removeEffector(EffectorRef* effector) {
 
-    return std::erase_if( refs, [&](std::shared_ptr<EffectorRef> e) { return e.get() == effector; });
+    return std::erase_if( effector_refs, [&](std::shared_ptr<EffectorRef> e) { return e.get() == effector; });
 
 }
 
 EffectorRef* Effectable::addEffector(Effector* def) {
 
-    auto effector = refs.emplace_back(std::make_shared<EffectorRef>(s_->next_name(def->s.name()), def)).get();
+    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(s_->next_name(def->s.name()), def)).get();
 
     s_->add(&effector->s);
 

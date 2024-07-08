@@ -4,7 +4,7 @@
 #include "shader.hpp"
 #include "engine.hpp"
 #include "model.hpp"
-// #include "effector.hpp"
+#include "builder.hpp"
 
 #include <vector>
 #include <cstring>
@@ -15,7 +15,7 @@ struct DrawCall : Modelable {
 
     DrawCall(std::string name = "DrawCall");
 
-    Engine::Shader shader;
+    ShaderProgram shader;
 
     virtual void update();
 
@@ -25,7 +25,7 @@ struct DrawCall : Modelable {
 
     Model* addModel(File* f) override;
 
-    struct ShaderProgramBuilder : ShaderProgram::Builder {
+    struct ShaderProgramBuilder : Builder {
 
         void build() override;
 

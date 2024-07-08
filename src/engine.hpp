@@ -67,14 +67,6 @@ struct Engine {
 
     GLint gl_max_texture_size,gl_max_texture_image_units, gl_major_version, gl_minor_version;
 
-    struct Shader : ShaderProgram {
-
-        using ShaderProgram::ShaderProgram;
-
-        void create(std::string frag, std::string vert) override;
-
-    };
-
 private:
 
     std::string project_name;
