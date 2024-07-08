@@ -1,10 +1,11 @@
 #include "shader.hpp"
 #include "log.hpp"
-#include "ubo.hpp"
-#include "vbo.hpp"
 #include "instance.hpp"
 #include "model.hpp"
 #include "atlas.hpp"
+#include "builder.hpp"
+
+
 #include "utils.hpp"
 
 #include <GL/gl3w.h>
@@ -14,180 +15,7 @@
 #include "struct.hpp"
 #include "texture.hpp"
 
-//// SHADERBUILDER
 
-
-void ShaderProgram::Builder::build() {
-
-    header_common = version;
-
-    header_common += layout();
-
-    header_fragment = "out vec4 COLOR;\n\n";
-
-    for (auto x : samplers) header_fragment += "uniform sampler2D "+x+";\n"; if (samplers.size()) header_fragment += "\n";
-
-    header_vertex.clear();
-
-    if (vbo) {
-
-        int count = 0;
-
-        for (auto x : vbo->vertice->members) {
-
-            header_vertex += "layout (location = "+std::to_string(count)+") in "+x->type_name()+" "+x->name()+(count?"_":"")+";\n";
-
-            count ++;
-
-        }
-
-        header_vertex += "\n";
-
-    }
-
-    effectors_fragment_str.clear();
-    for (auto x : effectors_fragment)  effectors_fragment_str += x->source()+"\n\n";
-
-    effectors_vertex_str.clear();
-
-    for (auto x : effectors_vertex)  {
-
-        effectors_vertex_str += x->source()+"\n\n";
-
-        header_vertex += x->source()+"\n\n";
-
-    }
-
-    body_fragment.clear();
-    body_vertex.clear();
-}
-
-std::string ShaderProgram::Builder::frag() {
-
-    return header_common + comment_line + header_fragment + (header_fragment.length()?comment_line:"") + effectors_fragment_str + (effectors_fragment_str.length()?comment_line:"") + "void main() {\n\n" + (body_fragment.length()?body_fragment:"\tCOLOR = vec4(0,1,0,1);\n\n") + "}\n\n" + comment_line;
-
-}
-
-std::string ShaderProgram::Builder::vert() {
-
-    return header_common + comment_line + (header_vertex.length()?header_vertex:"layout (location = 0) in vec2 POSITION;\n") + (header_vertex.length()?comment_line:"") + effectors_vertex_str + (effectors_vertex_str.length()?comment_line:"") + comment_line + "void main() {\n\n" + (body_vertex.length()?body_vertex:"\tvec2 POS = POSITION;\n\n\tgl_Position = vec4(POS, 0, 1);\n\n") + "}\n\n" + comment_line;
-
-}
-
-
-bool ShaderProgram::Builder::add(UBO* ubo) { return true; }
-
-std::string ShaderProgram::Builder::layout() {
-
-    std::vector<Member*> structs;
-
-    for (auto ubo : ubos)    {
-
-        ubo->each([&](Instance& inst) {
-
-            auto m = inst.def();
-
-            if (m->type() == typeid(Struct))
-                ADD_UNIQUE<Member*>(structs,m->ref()?m->ref():m);
-
-        });
-
-        ADD_UNIQUE<Member*>(structs,ubo);
-
-    }
-
-    std::string out;
-
-    std::map<Member*,std::string> unique_name_list;
-
-    for (auto m : structs) {
-
-        auto name = camel(m->name());
-
-        while (true) {
-
-            for (auto &x : unique_name_list) if (x.second == name) {
-
-                name += "_";
-
-                continue;
-
-            }
-
-            break;
-
-        }
-
-        unique_name_list[m] = name;
-
-    }
-
-    for (auto x : structs) { auto def = print_struct(x,unique_name_list); if (def.length()) def+=";\n\n"; out += def; }
-
-    for (auto ubo : ubos) {
-
-        out += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + "_ ";
-
-        out += " { " + camel(ubo->name()) + " " + lower(ubo->name());
-
-        if (ubo->quantity()>1) out += "["+std::to_string(ubo->quantity())+"]";
-
-        out += + "; };\n\n";
-
-    }
-
-    return out;
-
-}
-
-std::string ShaderProgram::Builder::print_struct(Member* member, std::map<Member*,std::string> &unique_name_list) {
-
-    if (!member->size()) return "";
-
-    std::string out;
-    std::string nl = "";
-    std::string tb = "";
-    // if (member->members.size() == 1) nl = "";
-
-    std::string content;
-
-    for (auto x : member->ref()?member->ref()->members:member->members) {
-
-        if (!x->size()) continue;
-
-        auto x_ = x->ref()?x->ref():x;
-
-        auto name = unique_name_list.find(x_)!=unique_name_list.end()?unique_name_list[x_]:x_->type_name();
-
-        content+=tb+""+name+" "+lower(x->ref()?x->type_name():x->name());
-
-        if (x->quantity()>1) content += "["+std::to_string(x->quantity())+"]";
-
-        content += "; "+nl;
-
-    }
-
-    if (!content.length()) return "";
-
-    out+="struct "+unique_name_list[member]+" { "+nl+nl+content;
-
-    if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
-
-        out += tb;
-        out += (member->members.back()->type() == typeid(int) ? "int" : "float");
-        out += " stride";
-        out += std::to_string(i) + "; "+nl ;
-
-    }
-
-    out+=nl+"}";
-    return out;
-
-}
-
-
-
-//// SHADER
 
 Shader::Shader() { }
 
@@ -255,7 +83,7 @@ void ShaderProgram::destroy() {
 }
 
 
-ShaderProgram::Builder* ShaderProgram::builder() {
+Builder* ShaderProgram::builder() {
 
     if (!builder_v) {
 

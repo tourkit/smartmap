@@ -7,7 +7,7 @@
 #include <string>
 
 struct File;
-struct ShaderProgram;
+struct Builder;
 
 struct Effector {
 
@@ -15,8 +15,8 @@ struct Effector {
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
-    virtual bool setup(ShaderProgram* shader) = 0;
 
+    virtual bool setup(Builder* builder) = 0;
     virtual void update() {}
 
     virtual std::string source() { return ""; }
@@ -33,7 +33,7 @@ struct FileEffector : Effector {
 
     FileEffector(File file, std::string name = "fileEffector");
 
-    bool setup(ShaderProgram* shader) override;
+    bool setup(Builder* builder) override;
 
 };
 
@@ -63,7 +63,7 @@ struct Effectable {
     Effectable(std::string name = "Effectable" );
     ~Effectable();
 
-    std::vector<std::shared_ptr<EffectorRef>> refs;
+    std::vector<std::shared_ptr<EffectorRef>> effector_refs;
     EffectorRef* addEffector(Effector* effector); // kinda ctor for effectors
     bool removeEffector(EffectorRef* ref);
 
@@ -72,7 +72,7 @@ struct Effectable {
 
 struct Wrappy : Effector, Effectable {
 
-    bool setup(ShaderProgram* shader) override;
+    bool setup(Builder* builder) override;
 
     Wrappy(std::vector<Effector*> effectors = {}, int count = 3, std::string name = "wrapperEffector");
 

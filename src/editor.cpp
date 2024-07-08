@@ -538,7 +538,7 @@ void Editors::init() {
 
          ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
-        static ShaderProgram::Builder builder;
+        static Builder builder;
 
         if (ImGui::Button("create")) shader->create();
         ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
@@ -839,7 +839,7 @@ void Editors::init() {
     Editor<Model>([](Node* node, Model *model){
 
 
-        ImGui::Text(("effectorz : " + std::to_string(model->refs.size())+ " .").c_str());
+        ImGui::Text(("effectorz : " + std::to_string(model->effector_refs.size())+ " .").c_str());
 
         static std::map<Node*,int> effector_currents;
 

@@ -7,15 +7,9 @@
 #include <vector>
 #include <string>
 
-#include "effector.hpp"
-
-struct VBO;
-struct UBO;
+struct Builder;
 struct DrawCall;
 struct Member;
-
-
-
 
 struct Shader {
 
@@ -41,7 +35,6 @@ struct Shader {
 
 };
 
-struct Member;
 struct ShaderProgram {
 
   uint32_t id = -1;
@@ -73,45 +66,6 @@ struct ShaderProgram {
   operator uint32_t();
 
   std::chrono::_V2::system_clock::time_point last_change;
-
-  struct Builder {
-
-    static inline std::string struct_taber = "";//\t";
-
-    static inline std::string struct_spacer = " ";//\n\n";
-
-    static inline std::string comment_line  = "///////////////////////////////////////////\n\n";
-
-    static inline std::string version = "#version 430 core\n\n";
-
-    std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, effectors_fragment_str, effectors_vertex_str ;
-
-    std::vector<Effector*> effectors_fragment, effectors_vertex;
-
-    std::vector<UBO*> ubos;
-
-    std::vector<std::string> samplers;
-
-    virtual void build();
-
-    std::string frag();
-
-    std::string vert();
-
-    std::string layout();
-
-    bool add(UBO* ubo);
-
-    VBO* vbo = nullptr;
-
-    std::map<Member*,std::string> list; // toremove
-
-private:
-
-    std::string print_struct(Member* member, std::map<Member*,std::string> &unique_name_list);
-
-  };
-
 
   Builder* builder();
   bool builder(Builder*);

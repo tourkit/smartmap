@@ -18,12 +18,15 @@ Model* DrawCall::addModel(File* f) {
 
 Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
+    vbo = &dc->vbo;
+    shader = &dc->shader;
+
     ubos.push_back(&engine.dynamic_ubo);
     ubos.push_back(&engine.static_ubo);
 
     samplers = {"medias", "render_pass", "uberlayer"};
 
-    for (auto ref : dc->refs) ref.get()->effector->setup(&dc->shader); // does it do shit ?
+    for (auto ref : dc->effector_refs) ref.get()->effector->setup(&dc->shader); // does it do shit ?
 
     build();
 
@@ -47,19 +50,11 @@ std::string Layer::ShaderProgramBuilder::print_arg(Struct* s) {  // should be In
 
 void Layer::ShaderProgramBuilder::build() {
 
-    ShaderProgram::Builder::build();
-
-    stride_count = 0;
+    Builder::build();
 
     // FRAGMENT ////////////////
 
-    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
-
-        auto m = dc->vbo.vertice->members[i];
-
-        header_fragment += "in "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
-
-    }
+    header_fragment.clear();
 
     header_fragment += "\n";
     header_fragment += "in flat int ID;\n";
@@ -68,23 +63,29 @@ void Layer::ShaderProgramBuilder::build() {
     header_fragment += "vec4 color = vec4(0);\n";
     header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
 
-    int model_id = 0;
-
     header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
     header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
     header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
     header_fragment += "int last = abs(curr-1);\n\n";
 
+    effectors_fragment.clear();
 
     if (dc) {
 
+        int model_id = 0;
+
+        for (auto x : dc->effector_refs)
+            x.get()->effector->setup()
+
         std::string indice = "";
 
-        if (dc->models.size() == 1) body_fragment += print_model("ID", *dc->models[0].get()) + "\ttac();\n\n";
+        if (dc->models.size() == 1)
+            body_fragment += print_model("ID", *dc->models[0].get()) + "\ttac();\n\n";
 
         else for (auto &model : dc->models) {
 
-            for (int instance = 0; instance < model.get()->s_->quantity(); instance++) body_fragment += print_model(std::to_string(instance), *model.get());
+            for (int instance = 0; instance < model.get()->s_->quantity(); instance++)
+                body_fragment += print_model(std::to_string(instance), *model.get());
 
             model_id++;
 
@@ -97,9 +98,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     if (dc) {
 
-        for (auto &ref : dc->refs) body_fragment += print_arg(&ref.get()->s);
+        for (auto &ref : dc->effector_refs) body_fragment += print_arg(&ref.get()->s);
 
-        if (dc->refs.size()) body_fragment += "\ttac();\n\n";
+        if (dc->effector_refs.size()) body_fragment += "\ttac();\n\n";
 
     }
 
@@ -120,7 +121,7 @@ std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& mo
     body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
     body_fragment += "\ttic();\n";
 
-    for (auto &ref : model.refs) print_arg( &ref.get()->s );
+    for (auto &ref : model.effector_refs) print_arg( &ref.get()->s );
 
     return body_fragment;
 }

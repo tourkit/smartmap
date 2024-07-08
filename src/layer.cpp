@@ -188,7 +188,7 @@ void UberLayer::ShaderProgramBuilder::build() {
     //         for (auto def : effector.get()->definitions)
     //             ADD_UNIQUE<Effector*>(effectors, def);
 
-    ShaderProgram::Builder::build();
+    Builder::build();
 
 }
 
