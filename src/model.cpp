@@ -27,13 +27,14 @@ void Model::convert(File* file, std::string type) {
         aiProcess_SortByPType);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        PLOGE << "Failed to load OBJ file: " << file->path << " . " << importer.GetErrorString(); return; }
+        PLOGE << "Failed to load OBJ file: " << file->path_v << " . " << importer.GetErrorString(); return; }
 
 std::string finale = File::loc()+"/"+file->name()+"."+type;
 
 auto x = exporter.Export(scene, type, finale, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 
-if (x) PLOGE << exporter.GetErrorString();
+if (x) 
+    PLOGE << exporter.GetErrorString();
 
 }
 

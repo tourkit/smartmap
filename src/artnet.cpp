@@ -1,6 +1,7 @@
 #include "artnet.hpp"
 #include "log.hpp"
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
+#include <arpa/inet.h>
 #include <cmath>
 
 void DMXRemap::update() {
@@ -172,7 +173,9 @@ void Artnet::connect(std::string ip_) {
         PLOGE << "artnet_start ERROR: " << artnet_errstr;
         return;
     }
-    artnet_set_dmx_handler(artnet, [](artnet_node n, artnet_packet p, void *_this) {
+    artnet_set_dmx_handler(artnet, [](artnet_node n, void* p_, void *_this) {
+
+        auto p = (artnet_packet)p_;
 
         auto *an = (Artnet*)_this;
 

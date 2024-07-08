@@ -253,7 +253,7 @@ EXTERN int artnet_set_handler(artnet_node vn,
   int (*fh)(artnet_node n, void *pp, void *d),
   void* data);
 EXTERN int artnet_set_dmx_handler(artnet_node vn,
-  int (*fh)(artnet_node n, artnet_packet port, void *d),
+  int (*fh)(artnet_node n, void* port, void *d),
   void *data);
 EXTERN int artnet_set_program_handler(artnet_node vn,
   int (*fh)(artnet_node n, void *d),
