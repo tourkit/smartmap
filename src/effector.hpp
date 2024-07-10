@@ -8,6 +8,7 @@
 
 struct File;
 struct Builder;
+struct Atlas;
 
 struct Effector {
 
@@ -21,9 +22,21 @@ struct Effector {
     virtual bool setup(Builder* builder) = 0;
     virtual void update() {}
 
-    virtual std::string source() { return ""; }
+    std::string source_v;
+
+    virtual std::string source() { return source_v; }
 
     Effector(std::string name = "effector");
+
+};
+
+struct AtlasEffector : Effector {
+
+    Atlas* atlas;
+
+    AtlasEffector(Atlas* atlas = nullptr);
+
+    bool setup(Builder* builder) override;
 
 };
 

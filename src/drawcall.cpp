@@ -24,8 +24,6 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
     ubos.push_back(&engine.dynamic_ubo);
     ubos.push_back(&engine.static_ubo);
 
-    samplers = {"medias", "render_pass", "uberlayer"};
-
     for (auto ref : dc->effector_refs) ref.get()->effector->setup(this); // does it do shit ?
 
     build();

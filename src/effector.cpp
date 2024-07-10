@@ -3,6 +3,8 @@
 #include "builder.hpp"
 #include "log.hpp"
 #include "struct.hpp"
+#include "instance.hpp"
+#include "atlas.hpp"
 #include <regex>
 
 
@@ -14,13 +16,42 @@ Effector::Effector(std::string name) : s(name) {
 }
 
 
+// AtlasEffector  ////////////////
+
+bool AtlasEffector::setup(Builder* builder) { 
+
+    builder->samplers[0] = "medias";
+    
+    return true; 
+    
+}
+
+
+AtlasEffector::AtlasEffector(Atlas* atlas) : Effector("atlasEffector"), atlas(atlas) {
+
+    // if (!atlas->medias->def()->size()) return;
+
+    source_v =  "//id(0,10,0)\n\n";
+    source_v += "void atlas(float id_) {\n\n";
+    source_v +=     "\tint id = int(id_*10);\n\n";
+    source_v +=     "\tvec2 tuv = uv;\n\n";
+    source_v +=     "\ttuv *= static_ubo.media[id].size;\n";
+    source_v +=     "\ttuv += static_ubo.media[id].pos;\n";
+    source_v +=     "\tcolor *= texture(medias, tuv);\n\n";
+    source_v += "}\n\n\n\n";
+
+}
+
+
 // FileEffector  ////////////////
 
 bool FileEffector::setup(Builder* builder) { 
     
     builder->effectors_fragment.push_back(this);
     // for (auto x : effec) 
-    return true; }
+    return true; 
+    
+}
 
 
 FileEffector::FileEffector(File file, std::string name) : Effector(name), file(file) {

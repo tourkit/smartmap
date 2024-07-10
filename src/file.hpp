@@ -49,7 +49,7 @@ struct File {
     bool hasChanged();
 
     #ifdef ROCH
-    static inline const char* REPO_DIR = "C:/users/root/cpp/smartmap/";
+    static inline const char* REPO_DIR = "./";;//"C:/users/root/cpp/smartmap/";
     #else
     static inline const char* REPO_DIR = "./";
     #endif

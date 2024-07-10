@@ -26,7 +26,8 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)
 
     texture->mipmaps = 10;
 
-    if (path.length()) fromDir(path);
+    if (path.length()) 
+        fromDir(path);
 
 }
 
@@ -42,7 +43,9 @@ void Atlas::fromDir(std::string path) {
 
     texture->clear();
 
-    if (!Folder::exist(path)) return;
+    if (!Folder::exist(path)) {
+        PLOGE << "atlas error";
+        return;}
 
     this->path = path;
 
