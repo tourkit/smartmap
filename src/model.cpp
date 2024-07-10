@@ -47,7 +47,7 @@ Model* Modelable::addModel(File* f) {
 
     s_->add(mod->s_);
 
-    for (auto x : s_->getTop()) { // should be once even if its a for
+    for (auto x : s_->getTop()) { // should be one Top only
 
         x->isBuff()->each([&](Instance& inst){ if (inst.def() == mod->s_) mod->instance = &inst.track(); });
 

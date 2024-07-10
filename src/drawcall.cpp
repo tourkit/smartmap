@@ -32,12 +32,12 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
 }
 
-std::string Layer::ShaderProgramBuilder::print_arg(Struct* s) {  // should be Instance
+std::string Layer::ShaderProgramBuilder::print_arg(Struct* s, std::string prefix) {  // should be Instance
 
     std::string out;
 
     for (auto &arg : s->ref()?s->ref()->members:s->members)
-        out += "dynamic_ubo[cdurr]."+dc->s_->name()+"."+s->name()+"."+arg->name()+", "; // for this nbeed inst
+        out += prefix+s->name()+"."+arg->name()+", "; // for this nbeed inst
 
     if (out.length()) out.resize(out.size()-2);
 
@@ -47,6 +47,7 @@ std::string Layer::ShaderProgramBuilder::print_arg(Struct* s) {  // should be In
 
 
 }
+
 
 void Layer::ShaderProgramBuilder::build() {
 
@@ -69,14 +70,16 @@ void Layer::ShaderProgramBuilder::build() {
     header_fragment += "int last = abs(curr-1);\n\n";
 
     effectors_fragment.clear();
+    body_fragment.clear();
+    body_fragment += "\tCOLOR = vec4(0);\n\n";
 
     if (dc) {
 
         int model_id = 0;
 
-        for (auto x : dc->effector_refs)
-            x.get()->effector->setup(this);
-
+        for (auto x : dc->effector_refs) x.get()->effector->setup(this);
+        for (auto &model : dc->models) for (auto x : model->effector_refs) x.get()->effector->setup(this);
+        
         std::string indice = "";
 
         if (dc->models.size() == 1)
@@ -98,13 +101,40 @@ void Layer::ShaderProgramBuilder::build() {
 
     if (dc) {
 
-        for (auto &ref : dc->effector_refs) body_fragment += print_arg(&ref.get()->s);
+        // for (auto &ref : dc->effector_refs) body_fragment += print_arg(&ref.get()->s);
 
         if (dc->effector_refs.size()) body_fragment += "\ttac();\n\n";
 
     }
 
     // VERTEX ////////////////
+
+    header_vertex.clear();
+
+    for (int i = 1; i < vbo->vertice->members.size(); i++) {
+
+        auto m = vbo->vertice->members[i];
+
+        header_vertex += "out "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+
+    }
+
+    header_vertex += "out flat int ID;\n\n";
+
+    body_vertex.clear();
+
+    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
+
+        auto m = dc->vbo.vertice->members[i];
+        body_vertex += "\t"+m->name()+" = "+m->name()+"_;\n\n";
+
+    }
+
+    body_vertex += "\tID = gl_InstanceID;\n\n";
+
+	body_vertex += "\tvec2 POS = POSITION;\n\n";
+	body_vertex += "\tgl_Position = vec4(POS, 0, 1);\n\n";
+
 
 }
 
@@ -121,7 +151,24 @@ std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& mo
     body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
     body_fragment += "\ttic();\n";
 
-    for (auto &ref : model.effector_refs) print_arg( &ref.get()->s );
+    PLOGE << "===============================";
+
+    
+    
+    model.instance->def()->each([&](Instance& isnt){
+
+        // body_fragment += print_arg(isnt, "dynamic_ubo[curr]."+dc->s_->name()+".");
+        // PLOGE << "dynamic_ubo[curr]."+dc->s_->name()+"."+isnt.stl_name();
+
+
+    });
+// 
+    for (auto &ref : model.effector_refs) {
+    
+ 
+   body_fragment +=  print_arg( &ref.get()->s , "dynamic_ubo[curr]."+dc->s_->name()+"."+model.s_->name()+".");
+    
+    }
 
     return body_fragment;
 }

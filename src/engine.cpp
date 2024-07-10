@@ -15,6 +15,7 @@
 #include "ndi.hpp"
 #include "texture.hpp"
 #include "json.hpp"
+#include "log.hpp"
 #include "model.hpp"
 #include "utils.hpp"
 
@@ -68,6 +69,13 @@ Engine::~Engine() {
 }
 
 void Engine::init() {
+
+    #ifdef ROCH
+    auto old_sev = logger.appender.max_severity;
+    logger.cout(Sev::info);
+    PLOGI << "hello Roch !";
+    logger.cout(old_sev);
+    #endif
 
     Callbacks::init();
 
@@ -185,7 +193,10 @@ static void addEffectors(rapidjson::Value &v, Node* node) {
 
         });
 
-        if (effector) node->add(effector)->name(e.name.GetString()); else PLOGE << "no effector: " << e.value.GetString();
+        if (effector) 
+            node->add(effector)->name(e.name.GetString()); 
+        else 
+            PLOGE << "no effector: " << e.value.GetString();
 
     }
 

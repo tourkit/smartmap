@@ -5,6 +5,7 @@
 #include "engine.hpp"
 #include "model.hpp"
 #include "builder.hpp"
+#include "instance.hpp"
 
 #include <vector>
 #include <cstring>
@@ -37,7 +38,7 @@ struct DrawCall : Modelable {
 
         int stride_count = 0;
 
-        std::string print_arg(Struct* s);
+        std::string print_arg(Struct* s, std::string prefix = "");
 
     };
 

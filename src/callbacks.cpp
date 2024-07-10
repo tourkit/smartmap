@@ -28,19 +28,14 @@ void Callbacks::init() {
 
     // NODE<xxx>::onadd<yyy>([](Node*_this,Node*node){
 
-    //     auto s = _this->is_a<xxx>();
-    //     auto f = node->is_a<yyy>();
+    //     auto x = _this->is_a<xxx>();
+    //     auto y = node->is_a<yyy>();
 
     //     return _this->UntypedNode::add(node);
 
     // });
 
-    // NODE<Folder>::oncreate([](Node* node, Folder *folder){
 
-
-
-
-    // });
 
     ////////// FILE.HPP
 
@@ -188,7 +183,11 @@ void Callbacks::init() {
 
     // NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
 
-    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ return _this->addPtr<EffectorRef>( _this->is_a<Model>()->addEffector( node->is_a<Effector>() ) )->node(); });
+    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
+        
+        return _this->addPtr<EffectorRef>( _this->is_a<Model>()->addEffector( node->is_a<Effector>() ) )->node(); 
+        
+    });
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
