@@ -4,6 +4,7 @@
 
                                 */
 
+#include "log.hpp"
 #include "src/engine.hpp"
 #include "effector.hpp"
 #include "instance.hpp"
@@ -16,7 +17,8 @@
 int main() {
 
     engine.init();
-    engine.open("project.json");
+
+    engine.open("/home/user/cpp/smartmap/project.json");
 
     // Layer dc(100,100);
 

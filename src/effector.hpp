@@ -13,6 +13,8 @@ struct Effector {
 
     Struct s;
 
+    std::string method;
+
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
 

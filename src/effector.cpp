@@ -1,5 +1,6 @@
 #include "effector.hpp"
 #include "file.hpp"
+#include "builder.hpp"
 #include "log.hpp"
 #include "struct.hpp"
 #include <regex>
@@ -15,12 +16,16 @@ Effector::Effector(std::string name) : s(name) {
 
 // FileEffector  ////////////////
 
-bool FileEffector::setup(Builder* builder) {}
+bool FileEffector::setup(Builder* builder) { 
+    
+    builder->effectors_fragment.push_back(this);
+    // for (auto x : effec) 
+    return true; }
 
 
 FileEffector::FileEffector(File file, std::string name) : Effector(name), file(file) {
 
-    source = (&file.data[0]);
+    method = (&file.data[0]);
 
     // extract args
 
@@ -29,7 +34,7 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
     std::regex regex; std::smatch match;
 
     regex = std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))");
-    for (std::sregex_iterator it(source.begin(), source.end(), regex), end; it != end; ++it) {
+    for (std::sregex_iterator it(method.begin(), method.end(), regex), end; it != end; ++it) {
         std::smatch match = *it;
 
         std::string nameStr = match[1].str();
@@ -54,7 +59,7 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
     // fetch defaul values a.k.a // xxx(min,max,def)
     int range_count = 0;
     regex = std::regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*)?)?)?\))");
-    std::sregex_iterator next(source.begin(), source.end(), regex);
+    std::sregex_iterator next(method.begin(), method.end(), regex);
     std::sregex_iterator end;
     while (next != end) {
 
@@ -87,18 +92,18 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
 
     }
 
-    // clean source
+    // clean method
 
     size_t pos = 0;
-    while ((pos = source.find("//", pos)) != std::string::npos) {
+    while ((pos = method.find("//", pos)) != std::string::npos) {
 
-        size_t end = source.find("\n", pos);
-        if (end == std::string::npos) end = source.length();
-        source.erase(pos, end - pos+1);
+        size_t end = method.find("\n", pos);
+        if (end == std::string::npos) end = method.length();
+        method.erase(pos, end - pos+1);
 
     }
 
-    source.resize(source.find_last_of("}")+1);
+    method.resize(method.find_last_of("}")+1);
 
 }
 
