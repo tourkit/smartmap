@@ -14,8 +14,10 @@ struct Effector {
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
-
     virtual bool setup(Builder* builder) = 0;
+
+    virtual bool body(Builder* builder, Instance isnt);
+
     virtual void update() {}
 
     std::string source_v;
@@ -26,7 +28,15 @@ struct Effector {
 
 };
 
+struct FeedbackEffector : Effector {
 
+    FeedbackEffector();
+
+    bool setup(Builder* builder) override;
+    
+    bool body(Builder* builder, Instance isnt) override;
+
+};
 
 struct FileEffector : Effector {
 

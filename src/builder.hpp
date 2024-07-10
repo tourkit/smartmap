@@ -20,7 +20,7 @@ struct Builder {
 
     static inline std::string version = "#version 430 core\n\n";
 
-    std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, effectors_vertex_str ;
+    std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, effectors_vertex_str , current_model, current_layer;
 
     std::vector<Effector*> effectors_fragment, effectors_vertex;
 

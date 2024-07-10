@@ -53,7 +53,7 @@ Instance Instance::find(Member* x) {
 
     });
 
-    if (!inst.offset) PLOGE << "\"" << x->name() << "\" does not exist in " << def()->name();
+    if (!inst.stl.size()) PLOGE << "\"" << x->name() << "\" does not exist in " << def()->name();
 
     return inst;
 
@@ -166,13 +166,13 @@ Instance Instance::push(void* ptr, size_t size) {
 }
 
 
-std::string Instance::stl_name() {
+std::string Instance::stl_name(std::string separator) {
 
     std::string str;
 
-    for (auto x : stl)  str += x->name() + "::";
+    for (auto x : stl)  str += x->name() + separator;
 
-    if (str.length()) str.resize(str.length()-2);
+    if (str.length()) str.resize(str.length()-separator.length());
 
     else str = buff->name();
 

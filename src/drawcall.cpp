@@ -30,21 +30,6 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
 }
 
-std::string Layer::ShaderProgramBuilder::print_arg(Struct* s, std::string prefix) {  // should be Instance
-
-    std::string out;
-
-    for (auto &arg : s->ref()?s->ref()->members:s->members)
-        out += prefix+s->name()+"."+arg->name()+", "; // for this nbeed inst
-
-    if (out.length()) out.resize(out.size()-2);
-
-    out = "\t"+s->name()+"("+out+"); // 3\n";
-
-    return out;
-
-
-}
 
 
 void Layer::ShaderProgramBuilder::build() {
@@ -75,24 +60,43 @@ void Layer::ShaderProgramBuilder::build() {
 
         int model_id = 0;
 
-        for (auto x : dc->effector_refs) x.get()->effector->setup(this);
-        for (auto &model : dc->models) for (auto x : model->effector_refs) x.get()->effector->setup(this);
-        
-        std::string indice = "";
+        for (auto &model : dc->models) {
 
-        if (dc->models.size() == 1)
-            body_fragment += print_model("ID", *dc->models[0].get()) + "\ttac();\n\n";
+            for (int instance = 0; instance < model.get()->s_->quantity(); instance++) {
 
-        else for (auto &model : dc->models) {
+                auto name = lower(model.get()->s_->name());
 
-            for (int instance = 0; instance < model.get()->s_->quantity(); instance++)
-                body_fragment += print_model(std::to_string(instance), *model.get());
+                if (model.get()->s_->quantity() > 1) name += "["+(dc->models.size() == 1?"ID":std::to_string(instance))+"]";
+
+                body_fragment += "\t// "+name+"\n";
+
+                body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
+                body_fragment += "\ttic();\n";
+
+                current_model.clear();
+
+                for (auto &ref : model.get()->effector_refs) 
+
+                    ref->effector->body(this, model.get()->instance->find(&ref->s));
+                
+                body_fragment+=current_model;
+
+            }
 
             model_id++;
 
             body_fragment += "\ttac();\n\n";
 
         }
+
+        // this.
+
+        for (auto ref : dc->effector_refs) 
+            ref.get()->effector->body(this, Instance(&engine.dynamic_ubo).find(dc->s_).find(&ref->s));
+
+        for (auto &model : dc->models) for (auto x : model->effector_refs) x.get()->effector->setup(this);
+        
+        for (auto x : dc->effector_refs) x.get()->effector->setup(this);
 
 
     }
@@ -134,24 +138,6 @@ void Layer::ShaderProgramBuilder::build() {
 	body_vertex += "\tgl_Position = vec4(POS, 0, 1);\n\n";
 
 
-}
-
-std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& model) {
-
-    std::string body_fragment;
-
-    auto name = lower(model.s_->name());
-
-    if (model.s_->quantity() > 1) name += "["+xtra+"]";
-
-    body_fragment += "\t// "+name+"\n";
-
-    body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
-    body_fragment += "\ttic();\n";
-
-    for (auto &ref : model.effector_refs) body_fragment +=  print_arg( &ref.get()->s , "dynamic_ubo[curr]."+dc->s_->name()+"."+model.s_->name()+".");
-
-    return body_fragment;
 }
 
 

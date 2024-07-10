@@ -21,6 +21,8 @@ int main() {
 
     engine.open("/home/user/cpp/smartmap/project.json");
 
+    // S
+
     // Layer dc(100,100);
 
     // Layer::ShaderProgramBuilder builder(&dc);
