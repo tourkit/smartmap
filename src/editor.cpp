@@ -1022,7 +1022,8 @@ void Editors::init() {
 
     Editor<Atlas>([](Node* node, Atlas *atlas){
 
-        Editor<Texture>::cb(node, atlas->texture);
+        if (atlas) Editor<Texture>::cb(node, atlas->texture);
+        else PLOGE << "NONONON";
 
         // Editor<Object>::cb(node, atlas->buffer);  // tofix
 

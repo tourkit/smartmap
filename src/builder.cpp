@@ -27,7 +27,7 @@ std::string Builder::frag() {
 
     std::string samplers_str; for (auto x : samplers) samplers_str += "uniform sampler2D "+x.second+";\n"; if (samplers.size()) samplers_str += "\n";
 
-    std::string effectors_str; for (auto x : effectors_fragment)  effectors_str += x->method+"\n\n";
+    std::string effectors_str; for (auto x : effectors_fragment)  effectors_str += x->source()+"\n\n";
 
     std::string ins_str;
 

@@ -149,24 +149,7 @@ std::string Layer::ShaderProgramBuilder::print_model(std::string xtra, Model& mo
     body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
     body_fragment += "\ttic();\n";
 
-    PLOGE << "===============================";
-
-    
-    
-    model.instance->def()->each([&](Instance& isnt){
-
-        // body_fragment += print_arg(isnt, "dynamic_ubo[curr]."+dc->s_->name()+".");
-        // PLOGE << "dynamic_ubo[curr]."+dc->s_->name()+"."+isnt.stl_name();
-
-
-    });
-// 
-    for (auto &ref : model.effector_refs) {
-    
- 
-   body_fragment +=  print_arg( &ref.get()->s , "dynamic_ubo[curr]."+dc->s_->name()+"."+model.s_->name()+".");
-    
-    }
+    for (auto &ref : model.effector_refs) body_fragment +=  print_arg( &ref.get()->s , "dynamic_ubo[curr]."+dc->s_->name()+"."+model.s_->name()+".");
 
     return body_fragment;
 }

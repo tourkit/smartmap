@@ -85,9 +85,8 @@ void Engine::init() {
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
 
-    atlas = new Atlas(4096, 4096, "assets/medias/");
 
-    debug->addPtr<Atlas>(atlas);
+    
 
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
@@ -96,6 +95,12 @@ void Engine::init() {
     // models = tree->addFolder<File>("Models", "assets/models/")->node();
 
     effectors = tree->addOwnr<Node>("Effectors")->node();
+
+    atlas = new Atlas(4096, 4096, "assets/medias/");
+    
+    debug->addPtr<Atlas>(atlas);
+
+    engine.effectors->addPtr<Effector>(&atlas->effector);
 
     // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 

@@ -5,7 +5,6 @@
   },
   "effectors": {
     "argb.glsl": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float  blue) { \n\n\tcolor = color * vec4 (red, green, blue, 0) * alpha; \n\n}\n\n",
-    "atlas.glsl": "//id(0,10,0)\n\nvoid atlas(float id_) {\n\n\tint id = int(id_*10);\n\n\tvec2 tuv = uv;\n\n\ttuv *= static_ubo.media[id].size;\n\ttuv += static_ubo.media[id].pos;\n\tcolor *= texture(medias, tuv);\n\n}\n\n\n\n",
     "feedback.glsl": "//intensity(0,1,0)\n\nvoid feedback(float intensity) { \n\n\tcolor += ( texture( render_pass, NORMALIZED) - .002 ) * pow(abs(intensity),.1);\n\n}\n\n\n\n\n\n\n\n",
     "uber.glsl": "//id(0,10,0)\n//q(0,10,1)\n\nvoid uber(int id, int q) {\n\t\n\tvec4 color_=  vec4(0);\n\t\n\tfor (int i =0; i < q; i++) {\n\n\t\tvec2 tuv = uv;\n\n\t\ttuv *= static_ubo.ubervbo[id+i].uberLayer.size;\n\t\ttuv += static_ubo.ubervbo[id+i].uberLayer.norm;\n\t\n\t\tcolor_ += texture(uberlayer, tuv);\n\t\t\n\t}\n\t\n\tcolor *= color_;\n\t\n};\n\n\n\n",
     "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size,float angle) {\n\n\tangle*=3.14*2;\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tuv *= mat2(c, -s, s, c);\n\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n"

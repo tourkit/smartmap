@@ -42,8 +42,6 @@ int main() {
     // PLOGD << "\n" << builder.vert();
     // PLOGD << "\n" << builder.frag();
 
-    PLOGD << "pidooouu";
-
     // exit(0);
 
     // engine.tree->addPtr<Layer>(&dc)->select();

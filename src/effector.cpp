@@ -1,44 +1,17 @@
 #include "effector.hpp"
 #include "file.hpp"
 #include "builder.hpp"
-#include "log.hpp"
 #include "struct.hpp"
-#include "instance.hpp"
 #include "atlas.hpp"
 #include <regex>
+#include <string>
 
 
 // Effector  ////////////////
 
 Effector::Effector(std::string name) : s(name) {
 
-
-}
-
-
-// AtlasEffector  ////////////////
-
-bool AtlasEffector::setup(Builder* builder) { 
-
-    builder->samplers[0] = "medias";
     
-    return true; 
-    
-}
-
-
-AtlasEffector::AtlasEffector(Atlas* atlas) : Effector("atlasEffector"), atlas(atlas) {
-
-    // if (!atlas->medias->def()->size()) return;
-
-    source_v =  "//id(0,10,0)\n\n";
-    source_v += "void atlas(float id_) {\n\n";
-    source_v +=     "\tint id = int(id_*10);\n\n";
-    source_v +=     "\tvec2 tuv = uv;\n\n";
-    source_v +=     "\ttuv *= static_ubo.media[id].size;\n";
-    source_v +=     "\ttuv += static_ubo.media[id].pos;\n";
-    source_v +=     "\tcolor *= texture(medias, tuv);\n\n";
-    source_v += "}\n\n\n\n";
 
 }
 
@@ -48,7 +21,6 @@ AtlasEffector::AtlasEffector(Atlas* atlas) : Effector("atlasEffector"), atlas(at
 bool FileEffector::setup(Builder* builder) { 
     
     builder->effectors_fragment.push_back(this);
-    // for (auto x : effec) 
     return true; 
     
 }
@@ -56,7 +28,7 @@ bool FileEffector::setup(Builder* builder) {
 
 FileEffector::FileEffector(File file, std::string name) : Effector(name), file(file) {
 
-    method = (&file.data[0]);
+    source_v = (&file.data[0]);
 
     // extract args
 
@@ -65,7 +37,7 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
     std::regex regex; std::smatch match;
 
     regex = std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))");
-    for (std::sregex_iterator it(method.begin(), method.end(), regex), end; it != end; ++it) {
+    for (std::sregex_iterator it(source_v.begin(), source_v.end(), regex), end; it != end; ++it) {
         std::smatch match = *it;
 
         std::string nameStr = match[1].str();
@@ -90,7 +62,7 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
     // fetch defaul values a.k.a // xxx(min,max,def)
     int range_count = 0;
     regex = std::regex(R"(//\s*([a-zA-Z]+)\s*\((\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*(,\s*-?\d*(\.\d*)?\s*)?)?)?\))");
-    std::sregex_iterator next(method.begin(), method.end(), regex);
+    std::sregex_iterator next(source_v.begin(), source_v.end(), regex);
     std::sregex_iterator end;
     while (next != end) {
 
@@ -123,18 +95,18 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
 
     }
 
-    // clean method
+    // clean source_v
 
     size_t pos = 0;
-    while ((pos = method.find("//", pos)) != std::string::npos) {
+    while ((pos = source_v.find("//", pos)) != std::string::npos) {
 
-        size_t end = method.find("\n", pos);
-        if (end == std::string::npos) end = method.length();
-        method.erase(pos, end - pos+1);
+        size_t end = source_v.find("\n", pos);
+        if (end == std::string::npos) end = source_v.length();
+        source_v.erase(pos, end - pos+1);
 
     }
 
-    method.resize(method.find_last_of("}")+1);
+    source_v.resize(source_v.find_last_of("}")+1);
 
 }
 
