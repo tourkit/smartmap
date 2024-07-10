@@ -1,6 +1,7 @@
 #pragma once
 
 #include "struct.hpp"
+#include "effector.hpp"
 
 #include "RectangleBinPack/MaxRectsBinPack.h"
 #include <string>
@@ -33,4 +34,15 @@ struct Atlas {
 
     void link(ShaderProgram* shader);
 
+    struct Effector : ::Effector {
+
+        Atlas* atlas;
+
+        Effector(Atlas* atlas = nullptr);
+
+        bool setup(Builder* builder) override;
+
+        std::string source() override;
+
+    } effector;
 };

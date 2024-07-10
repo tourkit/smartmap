@@ -6,14 +6,16 @@
 #include "texture.hpp"
 #include "ubo.hpp"
 #include "buffer.hpp"
+#include "builder.hpp"
 #include "struct.hpp"
 #include "member.hpp"
 #include "instance.hpp"
+#include "utils.hpp"
 
 #include "image.hpp"
 
 
-Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0), s("atlas")  {
+Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0), s("atlas"), effector(this) {
 
     static Struct& media_struct = Struct::create("Rect",0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
@@ -77,8 +79,54 @@ void Atlas::fromDir(std::string path) {
 
 void Atlas::link(ShaderProgram* shader) {
 
-    shader->sendUniform("medias", 1);
+    shader->sendUniform(s.name(), 1);
 
     texture->bind();
+
+}
+
+
+///// EFFECTOR
+
+
+
+
+// AtlasEffector  ////////////////
+
+bool Atlas::Effector::setup(Builder* builder) { 
+
+    builder->shader->sendUniform(s.name()+"_pass", 1);
+
+    atlas->texture->bind();
+
+    builder->samplers[0] = s.name()+"_pass";
+
+    ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
+    
+    return true; 
+    
+}
+
+std::string Atlas::Effector::source() {
+
+    std::string out;
+
+    if (!atlas || !s.size()) return out;
+
+    out += "void "+s.name()+"(float id_) {\n\n";
+    out +=     "\tint id = int(id_*"+std::to_string(atlas->medias->def()->size())+");\n\n";
+    out +=     "\tvec2 tuv = uv;\n\n";
+    out +=     "\ttuv *= static_ubo."+s.name()+"[id].size;\n";
+    out +=     "\ttuv += static_ubo."+s.name()+"[id].pos;\n";
+    out +=     "\tcolor *= texture("+s.name()+"_pass, tuv);\n\n";
+    out += "}\n\n\n\n";
+
+    return out;
+
+}
+
+Atlas::Effector::Effector(Atlas* atlas) : ::Effector(atlas->s.name()), atlas(atlas) {
+
+    s.add<float>("id_").range(0, atlas->s.size(), 0);
 
 }

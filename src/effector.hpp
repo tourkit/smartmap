@@ -2,19 +2,15 @@
 
 #include "struct.hpp"
 
-#include <map>
 #include <vector>
 #include <string>
 
 struct File;
 struct Builder;
-struct Atlas;
 
 struct Effector {
 
     Struct s;
-
-    std::string method;
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
@@ -30,15 +26,7 @@ struct Effector {
 
 };
 
-struct AtlasEffector : Effector {
 
-    Atlas* atlas;
-
-    AtlasEffector(Atlas* atlas = nullptr);
-
-    bool setup(Builder* builder) override;
-
-};
 
 struct FileEffector : Effector {
 
