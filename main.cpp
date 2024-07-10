@@ -16,6 +16,7 @@
 
 int main() {
 
+    logger.cout(Sev::error);
     engine.init();
 
     engine.open("/home/user/cpp/smartmap/project.json");
