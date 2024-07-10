@@ -26,7 +26,7 @@ struct Builder {
 
     std::vector<UBO*> ubos;
 
-    std::vector<std::string> samplers;
+    std::map<int,std::string> samplers;
 
     void addSampler(std::string name);
 

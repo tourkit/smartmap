@@ -13,9 +13,11 @@ void Builder::build() {
     header_common = version;
     header_common += layout();
 
+    samplers.clear();
+    
     if (!shader) return;
 
-    for (int i = 0; i < samplers.size(); i++) shader->sendUniform(samplers[i], i);
+    for (auto s : samplers) shader->sendUniform(s.second, s.first);
 
     for (auto x : ubos) x->bind(shader);
 
@@ -23,7 +25,7 @@ void Builder::build() {
 
 std::string Builder::frag() {
 
-    std::string samplers_str; for (auto x : samplers) samplers_str += "uniform sampler2D "+x+";\n"; if (samplers.size()) samplers_str += "\n";
+    std::string samplers_str; for (auto x : samplers) samplers_str += "uniform sampler2D "+x.second+";\n"; if (samplers.size()) samplers_str += "\n";
 
     std::string effectors_str; for (auto x : effectors_fragment)  effectors_str += x->method+"\n\n";
 
