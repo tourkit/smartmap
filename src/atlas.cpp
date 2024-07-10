@@ -93,6 +93,7 @@ void Atlas::link(ShaderProgram* shader) {
 
 // AtlasEffector  ////////////////
 
+
 bool Atlas::Effector::setup(Builder* builder) { 
 
     builder->shader->sendUniform(s.name()+"_pass", 1);

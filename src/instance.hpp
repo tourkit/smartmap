@@ -33,9 +33,9 @@ struct Instance {
     std::vector<Member*> stl;
     std::vector<Remap*> remaps;
 
-    uint32_t offset = 0;
+    uint32_t offset = -1;
 
-    std::string stl_name();
+    std::string stl_name(std::string separator = "::");
 
     Member* def() { if(stl.size()) return stl.back(); return buff; }
 

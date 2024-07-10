@@ -102,6 +102,10 @@ void Engine::init() {
 
     engine.effectors->addPtr<Effector>(&atlas->effector);
 
+
+    auto feedbackeffector = new FeedbackEffector();
+    engine.effectors->addPtr<Effector>(feedbackeffector);
+
     // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
 
     // timelines = tree->addOwnr<Node>("Timelines")->node();
