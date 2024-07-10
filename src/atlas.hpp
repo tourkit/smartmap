@@ -1,5 +1,7 @@
 #pragma once
 
+#include "struct.hpp"
+
 #include "RectangleBinPack/MaxRectsBinPack.h"
 #include <string>
 
@@ -11,7 +13,7 @@ struct Instance;
  
 struct Atlas {
 
-    Struct* buffer;
+    Struct s;
 
     rbp::MaxRectsBinPack binpack;
 

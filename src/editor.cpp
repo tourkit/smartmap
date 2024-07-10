@@ -190,17 +190,13 @@ static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 }
 
 bool draw_guis(Buffer* buff, Member* member, uint32_t offset, int member_count) {
-
-    if (!member) {
-
-        member = buff;
-
-        }
-    else if (member->ref()) member = member->ref();
+    
+    if (!member) member = buff;
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
     int &elem_current = elem_currents[member].val;
+
 
     if (member->quantity() > 1 ) {
 
@@ -212,7 +208,7 @@ bool draw_guis(Buffer* buff, Member* member, uint32_t offset, int member_count) 
 
     bool has_changed = false;
 
-
+    if (member->ref()) member = member->ref();
 
     for (auto& m : member->members) {
 
