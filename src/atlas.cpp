@@ -11,16 +11,17 @@
 #include "instance.hpp"
 
 #include "image.hpp"
-#include "log.hpp"
 
 
-Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)  {
+Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0), s("atlas")  {
 
-    static Struct& media_struct = Struct::create("Media",0).add<glm::vec2>("size").add<glm::vec2>("pos");
+    static Struct& media_struct = Struct::create("Rect",0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
-    engine.static_ubo.add(&media_struct);
+    s.ref(&media_struct);
 
-    buffer = &media_struct;
+    engine.static_ubo.add(&s);
+
+    medias = &Instance(&engine.static_ubo).find(&s).track();
 
     texture = new Texture(width,height,1,1);
 
@@ -33,7 +34,7 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0)
 
 void Atlas::clear() {
 
-    PLOGI << "TODO buffer clear()";
+    s.clear();
 
     binpack.Init(texture->width,texture->height);
 
@@ -44,8 +45,8 @@ void Atlas::fromDir(std::string path) {
     texture->clear();
 
     if (!Folder::exist(path)) {
-        PLOGE << "atlas error";
-        return;}
+        PLOGE << "atlas error"; return; 
+    }
 
     this->path = path;
 
@@ -64,7 +65,7 @@ void Atlas::fromDir(std::string path) {
 
         float x[4] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
 
-        auto m = engine.static_ubo["Media"].push(&x[0]);
+        auto m = medias->push(&x[0]);
 
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 
