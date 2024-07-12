@@ -16,38 +16,11 @@
 
 int main() {
 
-    logger.cout(Sev::error);
     engine.init();
 
+    FileEffector fileEffector(File("prout.yolo", ""));
+
     engine.open("/home/user/cpp/smartmap/project.json");
-
-    // S
-
-    // Layer dc(100,100);
-
-    // Layer::ShaderProgramBuilder builder(&dc);
-
-    // Wrappy wrapy;
-
-    // dc.addEffector(&wrapy);
-
-    // builder.effectors_fragment.push_back(&wrapy);
-
-    // logger.cout(5);
-
-    // dc.shader.builder(&builder);
-
-    // Struct argb("argb");
-    // argb.add<float>("a").add<float>("r").add<float>("g").add<float>("b"); //.add<float>("x").add<float>("y").add<float>("z");
-
-    // builder.build();
-
-    // PLOGD << "\n" << builder.vert();
-    // PLOGD << "\n" << builder.frag();
-
-    // exit(0);
-
-    // engine.tree->addPtr<Layer>(&dc)->select();
 
     engine.run();
 
