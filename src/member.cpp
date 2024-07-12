@@ -42,6 +42,7 @@ Member::Member(const Member& other)
     name_v(other.name_v) ,
     members(other.members) ,
     size_v( other.size_v ) ,
+    ref_v(other.ref_v),
     is_copy(true)
 
  {
@@ -217,7 +218,9 @@ void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offs
 
 void Member::pre_change() {
 
-    for (auto x : getTop())  x->pre_change();
+    auto tops = getTop();
+    for (auto x : tops)  
+        x->pre_change();
 
 }
 

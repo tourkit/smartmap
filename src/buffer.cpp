@@ -37,9 +37,14 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
             bool found = false;
 
-            if (inst.def() == added.m) found = true; else 
+            if (inst.def() == added.m) 
+                found = true;   
+            else  
+                if (inst.def()->ref()) 
+                    for (auto x : inst.stl) 
+                        for (auto y : addeds) 
+                            if ( x == y.m ) { found = true; break; break; } // carnage ?
             
-            if (inst.def()->ref()) for (auto x : inst.stl) for (auto y : addeds) if ( x == y.m ) { found = true; break; break; } // carnage ?
 
             if (found) {
 
@@ -152,7 +157,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
         int src_offset_ = src_offset + src_member->eq(i);
 
-        for (auto src_member_ : src_member->members) {
+        for (auto src_member_ : src_member->ref()?src_member->ref()->members:src_member->members) {
 
             Member* found = nullptr;
 
@@ -160,7 +165,7 @@ void Buffer::remap(Buffer& src_buffer, Member* src_member, Member* this_member ,
 
             int this_offset_ = this_offset + thiseq;
 
-            for (auto this_member_ : this_member->members) {
+            for (auto this_member_ : this_member->ref()?this_member->ref()->members:this_member->members) {
 
                 if (
 
