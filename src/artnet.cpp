@@ -1,8 +1,10 @@
 #include "artnet.hpp"
 #include "log.hpp"
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
-#include <arpa/inet.h>
 #include <cmath>
+#ifdef UNIX
+#include <arpa/inet.h>
+#endif
 
 void DMXRemap::update() {
 

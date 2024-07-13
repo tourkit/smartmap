@@ -47,6 +47,8 @@ struct FileEffector : Effector {
     FileEffector(File file, std::string name = "fileEffector");
 
     bool setup(Builder* builder) override;
+    
+    bool body(Builder* builder, Instance isnt) override;
 
 };
 
