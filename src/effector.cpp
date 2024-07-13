@@ -85,6 +85,22 @@ FeedbackEffector::FeedbackEffector() : Effector("feedbackEffector") {
 
 // FileEffector  ////////////////
 
+bool FileEffector::body(Builder* builder, Instance isnt) {
+
+    Member *s = isnt.def();
+
+    std::string args;
+
+    for (auto &arg : s->ref()?s->ref()->members:s->members)
+        args += "dynamic_ubo[curr]."+isnt.stl_name(".")+"."+arg->name()+", "; 
+
+    if (args.length()) args.resize(args.size()-2);
+
+    builder->current_model += "\t"+file.name()+"("+args+"); // \n";
+
+    return true;
+}
+
 bool FileEffector::setup(Builder* builder) { 
     
     builder->effectors_fragment.push_back(this);
