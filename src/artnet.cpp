@@ -3,8 +3,8 @@
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
 #ifdef UNIX
-#include <arpa/inet.h>
 #endif
+#include <arpa/inet.h>
 
 void DMXRemap::update() {
 
