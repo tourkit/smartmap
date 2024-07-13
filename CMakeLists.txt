@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.12)
 project(smartmap VERSION 0.1.0)
 
 option(PLUGREGIE "c moi" OFF)
-option(ROCH "nan c twa" OFF)
 
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
