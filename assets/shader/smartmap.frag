@@ -122,26 +122,6 @@ vec4 border(vec2 t_uv, float thickness) {
 
 }
 
-vec4 flower(vec2 t_uv, float inratio, float shape, float petals) {
-
-     float c = length(t_uv)+.5;
-
-     float a = atan(t_uv.x,t_uv.y);//+iTime;
-
-     float r = a * ((petals*29.)+3.);//  - rotation*3.14*2.;
-
-     r = abs(fract(.5/3.14*r)-.5)*2.;
-
-     r = pow(r,.5+pow(shape*2.,4.)); // petal type
-
-     r = 1.-r*inratio*.5;//; // spikes out
-
-     r = step(c,r);
-
-    return vec4(r);
-
-}
-
 vec2 rotate(vec2 v, float a) {
 
     a *= 6.28318530718;
@@ -154,44 +134,7 @@ vec2 rotate(vec2 v, float a) {
 
 }
 
-float burst(vec2 uv, float inratio, float shape, float petals) {
 
-    shape = 1-shape;
-
-
-        float c = length(uv)+.5;
-
-     float a = atan(uv.x,uv.y);//+iTime;
-
-     float r = a * ((petals*29.)+3.);//  - rotation*3.14*2.;
-
-
-      r = abs(fract(.5/3.14*r)-.5)*2.; // equals : abs(mod(.5/3.14*r,1.)-.5); equals sdTriangle(a,petals);
-
-
-      r = clamp(r*c*.9,0.,1.);
-
-      r += (1.-inratio*2.); // gradient to white
-
-      float zzz = shape*.4999;
-      r = smoothstep(zzz,1.-zzz, r);
-
-      r = mix(0.,1.,r);
-
-        return r;
-}
-
-vec4 gradient(vec2 uv, float aaaa, float inratio, float angle) {
-
-    uv = rotate(uv, angle);
-    uv += .5;
-
-    uv += 1-aaaa*2;
-
-    return vec4(uv.x);
-
-
-}
 
 vec3 random3(vec3 c) {
     float j = 4096.0 * sin(dot(c, vec3(17.0, 59.4, 15.0)));

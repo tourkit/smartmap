@@ -138,7 +138,7 @@ using namespace ImGui;
 // PLOGE<<"coc";
         if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
-            node->name(&renaming_name[0]);
+            engine.gui->rename_list[node] = &renaming_name[0];
 
             is_renaming = nullptr;
 

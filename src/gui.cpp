@@ -275,6 +275,14 @@ void GUI::draw() {
 
 
 
+        for (auto x : rename_list) {
+
+          x.first->name(x.second);
+
+        }
+        
+        rename_list.clear();
+
         for (auto x : delete_list) {
 
             auto parent = x->parent();
