@@ -18,8 +18,6 @@ int main() {
 
     engine.init();
 
-    FileEffector fileEffector(File("prout.yolo", ""));
-
     engine.open("/home/user/cpp/smartmap/project.json");
 
     engine.run();
