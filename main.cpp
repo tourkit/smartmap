@@ -18,7 +18,7 @@ int main() {
 
     engine.init();
 
-    // engine.open("/home/user/cpp/smartmap/project.json");
+    engine.open("/home/user/cpp/smartmap/project.json");
 
     engine.run();
 

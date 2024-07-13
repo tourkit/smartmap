@@ -73,7 +73,7 @@ void Engine::init() {
     #ifdef ROCH
     auto old_sev = logger.appender.max_severity;
     logger.cout(Sev::info); 
-    PLOGI << "hello Roch ! ";
+    PLOGI << "hello Roche ! ";
     logger.cout(old_sev);
     #endif
 

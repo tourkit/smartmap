@@ -2,9 +2,9 @@
 #include "log.hpp"
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
-#ifdef UNIX
-#endif
+#ifdef ISUNIX
 #include <arpa/inet.h>
+#endif
 
 void DMXRemap::update() {
 

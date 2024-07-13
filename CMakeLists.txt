@@ -146,11 +146,10 @@ if(UNIX)
   set_target_properties(
     smartmap PROPERTIES COMPILE_FLAGS
                         "-DHAVE_GETIFADDRS -DHAVE_LINUX_IF_PACKET_H")
+    target_compile_definitions(smartmap PRIVATE ISUNIX=1)
 endif(UNIX)
 
-if(ROCH)
-  target_compile_definitions(smartmap PRIVATE ROCH=1)
-endif(ROCH)
+
 if(PLUGREGIE)
   target_compile_definitions(smartmap PRIVATE PLUGREGIE=1)
 endif(PLUGREGIE)
