@@ -120,7 +120,7 @@ uint32_t Member::footprint_all() { return eq( quantity_v ); }
 
 void Member::striding(bool is_striding){ this->is_striding = is_striding; update(); }
 
-bool Member::striding() { return is_striding; }
+bool Member::striding() { return ref()?ref()->is_striding:is_striding; }
 
 std::type_index Member::type() { return typeid( *this ); }
 
