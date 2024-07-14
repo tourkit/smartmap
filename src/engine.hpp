@@ -30,6 +30,7 @@ struct Engine {
     Node* stack;
     Node* models;
     Node* effectors;
+    Node* medias;
     Node* remaps;
     Node* inputs;
     Node* outputs;

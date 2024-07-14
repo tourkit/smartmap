@@ -889,27 +889,43 @@ void Editors::init() {
     // });
 
     Editor<Effector>([](Node* node, Effector *def){
+        
+        auto wrap_ = dynamic_cast<Wrappy*>(def);
+        if (wrap_) {
+            
+            for (auto x : wrap_->effector_refs) ImGui::Text(x->s.name().c_str());
 
-        static std::map<Effector*,TextEditor> codeeditors;
-
-        if (codeeditors.find(def) == codeeditors.end()) {
-
-            codeeditors[def].SetShowWhitespaces(false);
-            codeeditors[def].SetReadOnly(false);
-            // codeeditors[def].SetText(def->source.data());
+            return;
+            
         }
 
-        auto &codeeditor = codeeditors[def];
+        static std::map<Effector*,TextEditor> codeeditors;
+        auto file_ = dynamic_cast<FileEffector*>(def);
+        if (file_) {
 
-        // codeeditor.Render("codeeditor");
+            if (codeeditors.find(def) == codeeditors.end()) {
 
-        // if (codeeditor.IsTextChanged()) {
+                codeeditors[def].SetShowWhitespaces(false);
+                codeeditors[def].SetReadOnly(false);
+                codeeditors[def].SetText(file_->file.data.data());
+            }
 
-        //     def->source = codeeditor.GetText().c_str();
+            auto &codeeditor = codeeditors[def];
 
-        //     node->bkpupdate(); // do I need bkp here ? is even the fx useful
+            codeeditor.Render("codeeditor");
 
-        // }
+            if (codeeditor.IsTextChanged()) {
+
+                file_->file.data = codeeditor.GetText().c_str();
+                file_->load(&file_->file);
+
+                node->bkpupdate(); // do I need bkp here ? is even the fx useful
+
+            }
+            
+            return;
+            
+        }
 
         draw_definition(&def->s);
 

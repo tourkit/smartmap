@@ -84,9 +84,8 @@ void Engine::init() {
     debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
-
-
     
+    medias = tree->addOwnr<Node>("Medias")->node();
 
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
@@ -95,13 +94,6 @@ void Engine::init() {
     // models = tree->addFolder<File>("Models", "assets/models/")->node();
 
     effectors = tree->addOwnr<Node>("Effectors")->node();
-
-    atlas = new Atlas(4096, 4096, "assets/medias/");
-    
-    debug->addPtr<Atlas>(atlas);
-
-    engine.effectors->addPtr<Effector>(&atlas->effector);
-
 
     auto feedbackeffector = new FeedbackEffector();
     engine.effectors->addPtr<Effector>(feedbackeffector);
@@ -170,9 +162,6 @@ void Engine::run() {
         engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset,offset);
         // engine.dynamic_ubo.upload();
 
-
-
-        engine.atlas->texture->bind();
 
         engine.tree->run();
 
@@ -268,6 +257,21 @@ void Engine::open(const char* file) {
 
     project_name = file;
 
+    if_obj("medias", [&](auto &m) {
+
+        if (!m.name.IsString() || !m.value.IsString()) return;
+        if (strcmp(m.name.GetString(), "atlas") ) return;
+
+        auto atlas = new Atlas(4096, 4096, m.value.GetString());
+    
+        medias->addPtr<Atlas>(atlas);
+
+        engine.effectors->addPtr<Effector>(&atlas->effector);
+
+        atlas->texture->bind();
+
+    });
+
     if_obj("models", [&](auto &m) {
 
         if (m.name.IsString() && m.value.IsString()) auto n = models->addOwnr<File>(m.name.GetString(), m.value.GetString());
@@ -282,6 +286,31 @@ void Engine::open(const char* file) {
             auto x = new FileEffector(file);
             auto n = effectors->addPtr<Effector>(x);
             effectors->owned = true;
+
+            return;
+
+        }
+        if (m.name.IsString() && m.value.IsArray()) {
+
+            auto arr = m.value.GetArray();
+
+            Wrappy* wrap = new Wrappy({},3,m.name.GetString() );
+
+            for (auto &x : arr) {
+
+                if (!x.IsString()) continue;
+
+                Node* n = (*engine.effectors)[x.GetString()];
+                if (!n) continue;
+                Effector* effector = n->is_a<Effector>();
+
+                if (effector)  wrap->addEffector(effector);  
+
+
+            }
+
+            auto wrap_ = engine.effectors->addPtr<Effector>(wrap)->owned = true;
+
 
         }
     });

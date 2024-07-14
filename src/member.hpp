@@ -99,6 +99,9 @@ struct Member {
 
     template <typename U>
     std::array<U,3> range() { return { *(U*)range_from_ptr, *(U*)range_to_ptr, *(U*)default_val_ptr}; }
+    
+    template <typename U>
+    void range(U from, U to, U def) { *(U*)range_from_ptr = from; *(U*)range_to_ptr = to; *(U*)default_val_ptr = def; }
 
     int32_t quantity_v = 1;
 
