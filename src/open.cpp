@@ -364,34 +364,35 @@ void Open::effectors(){
         if (m.name.IsString() && m.value.IsString()) {
 
             File file(m.name.GetString(), m.value.GetString());
+
             auto x = new FileEffector(file);
+
             auto n = engine.effectors->addPtr<Effector>(x);
+
             n->owned = true;
 
             return;
 
         }
+
         if (m.name.IsString() && m.value.IsArray()) {
 
             auto arr = m.value.GetArray();
 
-            Wrappy* wrap = new Wrappy({},3,m.name.GetString() );
+            auto  wrap_ = engine.effectors->addPtr<Effector>(new Wrappy(std::vector<Effector*>{},3,m.name.GetString()));
+            wrap_->owned=true;
+
+            auto wrap = wrap_->get();
 
             for (auto &x : arr) {
 
                 if (!x.IsString()) continue;
 
                 Node* n = (*engine.effectors)[x.GetString()];
-                if (!n) continue;
-                Effector* effector = n->is_a<Effector>();
 
-                if (effector)  wrap->addEffector(effector);  
-
+                if (n && n->is_a<Effector>())  wrap_->add(n);  
 
             }
-
-            auto wrap_ = engine.effectors->addPtr<Effector>(wrap)->owned = true;
-
 
         }
     });

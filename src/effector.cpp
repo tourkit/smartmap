@@ -123,6 +123,8 @@ void FileEffector::load(File *file) {
 
     std::regex regex; std::smatch match;
 
+    s.clear();
+
     regex = std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))");
     for (std::sregex_iterator it(source_v.begin(), source_v.end(), regex), end; it != end; ++it) {
         std::smatch match = *it;
