@@ -49,6 +49,8 @@ struct FileEffector : Effector {
     std::string source;
 
     FileEffector(File file, std::string name = "fileEffector");
+    
+    void load(File* file);
 
     bool setup(Builder* builder) override;
     

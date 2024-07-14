@@ -238,7 +238,12 @@ void Callbacks::init() {
 
     ////////// Atlas.HPP
 
-    NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { atlas->fromDir(atlas->path); });
+    NODE<Atlas>::oncreate([](Node* node, Atlas *atlas) { 
+        node->name(atlas->path);
+        });
+    NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { 
+        atlas->fromDir(atlas->path); 
+        });
 
     //////// Remap.HPP
 

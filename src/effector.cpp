@@ -113,10 +113,9 @@ bool FileEffector::setup(Builder* builder) {
     
 }
 
+void FileEffector::load(File *file) {
 
-FileEffector::FileEffector(File file, std::string name) : Effector(name), file(file) {
-
-    source_v = (&file.data[0]);
+ source_v = (&file->data[0]);
 
     // extract args
 
@@ -129,7 +128,7 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
         std::smatch match = *it;
 
         std::string nameStr = match[1].str();
-        if (strcmp(nameStr.c_str(),file.name().c_str())) continue;
+        if (strcmp(nameStr.c_str(),file->name().c_str())) continue;
         std::string argsStr = match[2].str();
 
         std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
@@ -165,7 +164,7 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
 
     // build Member
 
-    s.name( file.name() );
+    s.name( file->name() );
 
     s.striding(true);
 
@@ -198,6 +197,12 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
 
 }
 
+FileEffector::FileEffector(File file, std::string name) : Effector(name), file(file) {
+
+   load(&file);
+
+}
+
 
 
 // WrapperEffector  ////////////////
@@ -219,18 +224,22 @@ std::string Wrappy::source() {
 
     std::string out = "void " + Effector::s.name() + " ( " + (args.length()?args.substr(0, args.length() - 2):"") + " ) ";
 
-    out += "{"; 
+    out += "{\n\n"; 
     
-        for (auto x : effector_refs) {
+    int id = 0;
+    for (auto x : effector_refs) {
 
-            std::string args;
-            for (int i = 0; i < x->s.ref()->members.size(); i++) args += "0, ";
-            
-            out += "\t" + x->s.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " );\n\n";
-            
-        }
+        std::string args;
+        int max = x->s.ref()->members.size();
+        // if (Effector::s.members.size() < max) max = Effector::s.members.size();
 
-    out += "}";
+        for (int i = 0; i < max; i++) args +=  Effector::s.members[i+1]->name() + ", ";
+        
+        out += "\tif (id=="+std::to_string(id++)+") { " + x->s.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " ); return; }\n\n";
+        
+    }
+
+    out += "\n\n}\n\n";
     
     return out;
 
@@ -257,6 +266,8 @@ void Wrappy::attrs(int count) {
 }
 
 bool Wrappy::setup(Builder* builder) { 
+
+    Effector::s.members[0]->range<int>(0,effector_refs.size()-1,0);
     
     for (auto x : effector_refs) {
         
