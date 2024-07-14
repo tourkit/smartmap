@@ -1,12 +1,11 @@
 #pragma once
 
 #include "window.hpp"
+#include "framebuffer.hpp"
 #include "node.hpp"
 #include "ubo.hpp"
-#include "shader.hpp"
 #include "log.hpp"
 
-#include <memory>
 
 struct Stack {  };
 
@@ -18,7 +17,6 @@ struct DrawCall;
 struct Atlas;
 struct ShaderProgram;
 struct VBO;
-struct FrameBuffer;
 struct Effector;
 
 struct Engine {
