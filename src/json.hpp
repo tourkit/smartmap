@@ -11,7 +11,43 @@
 
 struct File;
 
-struct JSON {
+    struct JSONVal { 
+        
+        rapidjson::Value &value; 
+
+        std::string name_v;
+
+        std::vector<JSONVal> childrens; 
+
+        JSONVal(rapidjson::Value &value, std::string name = "");
+
+        ~JSONVal() ;
+
+
+        JSONVal operator[](std::string name) ;
+
+
+        JSONVal operator[](int id) ;
+        
+
+        auto begin() { 
+            
+            return childrens.begin();
+            
+        }
+
+        auto end() { 
+    
+            return childrens.end();
+            
+        }
+
+        std::string name();
+
+        std::string str();
+        
+    };
+struct JSON : JSONVal {
 
     rapidjson::Document document;
 
@@ -32,4 +68,6 @@ struct JSON {
     bool load(const char* data);
 
     static void if_obj_in(std::string name, rapidjson::Value &in, std::function<void(rapidjson::Value::Member&)> cb);
+
+    
 };

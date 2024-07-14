@@ -1,4 +1,6 @@
 {
+  "xxx": {"yyy":["popo"]},
+  "medidas": ["oo","ll", {"ooo":"iiii"}],
   "medias": {
     "atlas":"assets/medias/"
   },
