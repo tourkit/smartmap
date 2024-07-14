@@ -48,10 +48,10 @@ struct File {
 
     bool hasChanged();
 
-    #ifdef ROCH
-    static inline const char* REPO_DIR = "./";;//"C:/users/root/cpp/smartmap/";
-    #else
+    #ifdef ISUNIX
     static inline const char* REPO_DIR = "./";
+    #else
+    static inline const char* REPO_DIR = "C:/users/root/cpp/smartmap/";
     #endif
 
     static std::string loc() { return REPO_DIR; }

@@ -33,6 +33,8 @@ void Image::read(std::string path) {
 
     }
 
+    PLOGV << "" << width << "x" << height << " px"  ;
+
 }
 
 void Image::convert(Encoding type, int quality) {
