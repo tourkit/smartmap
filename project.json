@@ -7,9 +7,12 @@
     "argb.glsl": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float  blue) { \n\n\tcolor = color * vec4 (red, green, blue, 0) * alpha; \n\n}\n\n",
     "feedback.glsl": "//intensity(0,1,0)\n\nvoid feedback(float intensity) { \n\n\tcolor += ( texture( render_pass, NORMALIZED) - .002 ) * pow(abs(intensity),.1);\n\n}\n\n\n\n\n\n\n\n",
     "uber.glsl": "//id(0,10,0)\n//q(0,10,1)\n\nvoid uber(int id, int q) {\n\t\n\tvec4 color_=  vec4(0);\n\t\n\tfor (int i =0; i < q; i++) {\n\n\t\tvec2 tuv = uv;\n\n\t\ttuv *= static_ubo.ubervbo[id+i].uberLayer.size;\n\t\ttuv += static_ubo.ubervbo[id+i].uberLayer.norm;\n\t\n\t\tcolor_ += texture(uberlayer, tuv);\n\t\t\n\t}\n\t\n\tcolor *= color_;\n\t\n};\n\n\n\n",
-    "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size,float angle) {\n\n\tangle*=3.14*2;\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tuv *= mat2(c, -s, s, c);\n\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n"
-  },
+    "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5)\n//orientation(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size, float orientation) {\n\n\n\tuv = uv - pos - pos*size + size*0.5;\n\n\torientation = orientation*6.2831853072-3.14159265359;\n\t\n\tfloat c = cos(orientation);\n\tfloat s = sin(orientation);\n\tuv = vec2(uv.x * c - uv.y * s, uv.x * s + uv.y * c);\n\n\tvec2 tuv = abs(uv) - size * 0.5;\n\tfloat dist = length(max(tuv, 0.0)) + min(max(tuv.x, tuv.y), 0.0);\n\n\tuv/=size;\n\n\tuv+=.5;\n\t\n\tcolor *= vec4(vec3(1.0 - step(0.0, dist)), 1.0);\n\n}\n\n\n\n",
+    "flower.glsl": "//inratio(0,1,0)\n//shape(0,1,0)\n//petals(0,1,0)\n\nvoid flower(float inratio, float shape, float petals) {\n\n\tuv-=.5;\n\n\tfloat c = length(uv)+.5;\n\n\tfloat a = atan(uv.x,uv.y);//+iTime;\n\n\tfloat r = a * ((petals*29.)+3.);//  - rotation*3.14*2.;\n\n\tr = abs(fract(.5/3.14*r)-.5)*2.;\n\n\tr = pow(r,.5+pow(shape*2.,4.)); // petal type\n\n\tr = 1.-r*inratio*.5;//; // spikes out\n\n\tr = step(c,r);\n\n\tcolor *= vec4(r);\n\n}",
+    "gradient.glsl": "void gradient(float exp, float angle) {\n\tangle *= 6.28318530718;\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\tuv *= mat2(c, -s, s, c);\n\tuv += .5;\n\tuv += 1-exp*2;\n\tcolor *= vec4(uv.x);}",
+    "burst.glsl": "void burst(float inratio, float shape, float petals) {\n\n\tuv -= .5;\n\n\tshape = 1-shape;\n\n\tfloat c = length(uv)+.5;\n\n\tfloat a = atan(uv.x,uv.y);//+iTime;\n\n\tfloat r = a * ((petals*29.)+3.);//\t- rotation*3.14*2.;\n\n\tr = abs(fract(.5/3.14*r)-.5)*2.; // equals : abs(mod(.5/3.14*r,1.)-.5); equals sdTriangle(a,petals);\n\n\tr = clamp(r*c*.9,0.,1.);\n\n\tr += (1.-inratio*2.); // gradient to white\n\n\tfloat zzz = shape*.4999;\n\tr = smoothstep(zzz,1.-zzz, r);\n\n\tr = mix(0.,1.,r);\n\n\tcolor *= r;\n\nuv += .5;\n\n}"
+   },
   "layers": {
-    "layer_1": [ 100, 100, { "quad": [ "quad.obj", 1, { "atlas": "atlas" } ] }, {} ]
+    "layer_1": [ 100, 100, { "quad": [ "quad.obj", 1, {  } ] }, {} ]
   }
 }

@@ -13,7 +13,7 @@
 
 Effector::Effector(std::string name) : s(name) {
 
-    
+    s.striding(true);
 
 }
 
@@ -210,9 +210,29 @@ Wrappy::Wrappy(std::vector<Effector*> effectors, int count, std::string name) : 
 
 };
 
+
+// static 
 std::string Wrappy::source() {
 
-return "//wrappy(){}";
+    std::string args;
+    for (auto x : Effector::s.members) args += x->type_name() + " " + x->name() + ", ";
+
+    std::string out = "void " + Effector::s.name() + " ( " + (args.length()?args.substr(0, args.length() - 2):"") + " ) ";
+
+    out += "{"; 
+    
+        for (auto x : effector_refs) {
+
+            std::string args;
+            for (int i = 0; i < x->s.ref()->members.size(); i++) args += "0, ";
+            
+            out += "\t" + x->s.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " );\n\n";
+            
+        }
+
+    out += "}";
+    
+    return out;
 
 }
 void Wrappy::update() {
@@ -236,7 +256,19 @@ void Wrappy::attrs(int count) {
 
 }
 
-bool Wrappy::setup(Builder* builder) { return true; }
+bool Wrappy::setup(Builder* builder) { 
+    
+    for (auto x : effector_refs) {
+        
+        ADD_UNIQUE<Effector*>(builder->effectors_fragment, x->effector);
+
+        x->effector->setup(builder);
+    
+    }
+    
+    ADD_UNIQUE<Effector*>(builder->effectors_fragment, this);
+    
+    return true; }
 
 // Ref  ////////////////
 // Ref  ////////////////

@@ -21,6 +21,8 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,fa
 
     static Struct& media_struct = Struct::create("Rect",0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
+    s.striding(true);
+    
     s.ref(&media_struct);
 
     engine.static_ubo.add(&s);
@@ -122,6 +124,7 @@ std::string Atlas::Effector::source() {
 
     if (!atlas || !s.size()) return out;
 
+
     out += "void "+s.name()+"(float id_) {\n\n";
     out +=     "\tint id = int(id_*"+std::to_string(atlas->medias->def()->size())+");\n\n";
     out +=     "\tvec2 tuv = uv;\n\n";
@@ -129,7 +132,7 @@ std::string Atlas::Effector::source() {
     out +=     "\ttuv += static_ubo."+s.name()+"[id].pos;\n";
     out +=     "\tcolor *= texture("+s.name()+"_pass, tuv);\n\n";
     out += "}\n\n\n\n";
-
+    
     return out;
 
 }

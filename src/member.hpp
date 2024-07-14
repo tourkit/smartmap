@@ -71,7 +71,8 @@ struct Member {
 
     Member* ref();
     bool ref(Member*);
-    Member* ref_v = nullptr;
+    Member* 
+    ref_v = nullptr;
 
     virtual Struct* isStruct();
     virtual Buffer* isBuff();
