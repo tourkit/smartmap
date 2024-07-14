@@ -1,18 +1,16 @@
 #include "engine.hpp"
-#include "folder.hpp"
 #include "struct.hpp"
 #include "effector.hpp"
-#include "layer.hpp"
 #include "gui.hpp"
 #include "editor.hpp"
-#include "file.hpp"
 #include "gui.hpp"
 #include "ubo.hpp"
 #include "node.hpp"
 #include "atlas.hpp"
-#include "ndi.hpp"
-#include "json.hpp"
+#include "vbo.hpp"
+#include "instance.hpp"
 #include "open.hpp"
+#include "save.hpp"
 
 #include "callbacks.hpp"
 
@@ -177,9 +175,9 @@ void Engine::reset() {
 
 }
 
-struct Prout {};
-
 void Engine::open(const char* file) {
+
+    project_filepath  = file;
 
     Open o;
     
@@ -193,178 +191,8 @@ void Engine::save(const char* file) {
 
     if (!strlen(file)) { PLOGE << "No project file"; return;}
 
-    JSON json;
+    Save save;
 
-    if (!json.document.HasMember("editors")) json.document.AddMember("editors", rapidjson::Value(rapidjson::kArrayType), json.document.GetAllocator());
-    if (!json.document.HasMember("models")) json.document.AddMember("models", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-    if (!json.document.HasMember("effectors")) json.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-    if (!json.document.HasMember("layers")) json.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-    if (!json.document.HasMember("uberlayers")) json.document.AddMember("uberlayers", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-    if (!json.document.HasMember("outputs")) json.document.AddMember("outputs", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-    if (!json.document.HasMember("remaps")) json.document.AddMember("remaps", rapidjson::Value(rapidjson::kObjectType), json.document.GetAllocator());
-
-    json.document["editors"].Clear();
-
-    for (auto e : gui->editors) {
-
-        auto v = rapidjson::Value(rapidjson::kArrayType);
-
-        v.PushBack(0, json.document.GetAllocator());
-        v.PushBack(0, json.document.GetAllocator());
-        v.PushBack(0, json.document.GetAllocator());
-        v.PushBack(0, json.document.GetAllocator());
-
-        if (e->selected) v.PushBack(rapidjson::Value(e->selected->nameSTL().c_str(), json.document.GetAllocator()), json.document.GetAllocator());
-        if (e->locked) v.PushBack(rapidjson::Value(true), json.document.GetAllocator());
-
-        auto &x = json.document["editors"].PushBack(v, json.document.GetAllocator());
-
-    }
-
-
-    json.document["models"].RemoveAllMembers();
-    for (auto m : models->childrens) { json.document["models"].AddMember(rapidjson::Value(m->is_a<File>()->filename().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator()); }
-
-    json.document["effectors"].RemoveAllMembers();
-    for (auto m : effectors->childrens) {
-
-        json.document["effectors"].AddMember(rapidjson::Value(m->is_a<File>()->filename().c_str(), json.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json.document.GetAllocator()), json.document.GetAllocator());
-
-    }
-
-    rapidjson::Document::AllocatorType& allocator = json.document.GetAllocator();
-
-    json.document["layers"].RemoveAllMembers();
-
-    stack->each<Layer>([&](Node* node, Layer* layer){
-
-        auto &arr = json.document["layers"];
-
-        auto  lay = rapidjson::Value(rapidjson::kArrayType);
-
-        lay.PushBack(layer->fb.width, allocator);
-        lay.PushBack(layer->fb.height, allocator);
-
-        auto  models = rapidjson::Value(rapidjson::kObjectType);
-
-        for (auto model : layer->models) {
-
-            auto new_model = rapidjson::Value(rapidjson::kArrayType);
-
-            new_model.PushBack(rapidjson::Value(model.get()->file->filename().c_str(), allocator), allocator);
-
-            new_model.PushBack(model.get()->s_->quantity(),allocator);
-
-            auto effects = rapidjson::Value(rapidjson::kObjectType);
-            // for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref().name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator ); // TODOTODO
-            new_model.PushBack( effects, allocator );
-
-            models.AddMember(rapidjson::Value(model.get()->s_->name().c_str(), allocator), new_model, allocator);
-
-        }
-
-        lay.PushBack(models, allocator);
-
-        auto effects = rapidjson::Value(rapidjson::kObjectType);
-        // for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref().name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );// TODOTODO
-        lay.PushBack( effects, allocator );
-
-        arr.AddMember( rapidjson::Value(node->name().c_str(), allocator)  , lay, allocator );
-
-    });
-
-
-    json.document["uberlayers"].RemoveAllMembers();
-
-    stack->each<UberLayer>([&](Node* node, UberLayer* ubl){
-
-        auto &arr = json.document["uberlayers"];
-
-        auto  ubl_ = rapidjson::Value(rapidjson::kObjectType);
-
-        for (auto layer : ubl->layers) {
-
-            auto  layer_ = rapidjson::Value(rapidjson::kArrayType);
-
-            layer_.PushBack(layer.get()->w, allocator);
-            layer_.PushBack(layer.get()->h, allocator);
-            layer_.PushBack(layer.get()->s_->quantity(), allocator);
-
-            auto  effectors_ = rapidjson::Value(rapidjson::kObjectType);
-            // for (auto e : layer->effectors) effectors_.AddMember( rapidjson::Value(e.get()->ref().name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );// TODOTODO
-            layer_.PushBack(effectors_, allocator);
-
-            ubl_.AddMember(rapidjson::Value(layer.get()->s_->name().c_str(), allocator)  , layer_, allocator);
-
-        }
-
-        arr.AddMember(rapidjson::Value(node->name().c_str(), allocator), ubl_, allocator);
-
-    });
-
-    // json.document["inputs"].SetObject();
-    // json.document["inputs"].RemoveAllMembers();
-    // for (auto input : inputs->childrens) {
-
-    // }
-
-    json.document["outputs"].SetObject();
-    json.document["outputs"].RemoveAllMembers();
-    for (auto output : outputs->childrens) {
-
-        auto  outputarr = rapidjson::Value(rapidjson::kArrayType);
-
-        auto output_ = (Output*)output->ptr_(); // big leap
-
-        outputarr.PushBack( output_->width, allocator );
-        outputarr.PushBack( output_->height, allocator );
-        outputarr.PushBack( output_->offset_x, allocator );
-        outputarr.PushBack( output_->offset_y, allocator );
-        if (output_->fb) {
-
-            Layer* lay = nullptr;
-
-            stack->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
-
-            outputarr.PushBack( rapidjson::Value(lay->s_->name().c_str(), allocator ), allocator );
-
-        }
-
-        // if ( output->is_a<NDI::Sender>() ) { }
-
-        auto &outputs = json.document["outputs"];
-
-        if ( output->is_a_nowarning<Window>() ) {
-
-            if (!outputs.HasMember("monitor")) outputs.AddMember(rapidjson::Value("monitor", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
-
-            outputs["monitor"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
-
-        }
-        if ( output->is_a_nowarning<NDI::Sender>() ) {
-
-            if (!outputs.HasMember("ndi")) outputs.AddMember(rapidjson::Value("ndi", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
-
-            outputs["ndi"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
-
-        }
-
-
-
-    }
-
-    rapidjson::StringBuffer buffer;
-    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-    writer.SetIndent(' ', 2); // Set indent to 2 spaces
-    json.document.Accept(writer);
-
-    // inline from depth
-    std::string result = std::regex_replace(buffer.GetString(), std::regex(R"(\s{5}(([\]\}])|\s{2,}))"), " $2");
-    // result = std::regex_replace(result, std::regex(R"(\n)"), " \n\n");
-
-    // PLOGD << result;
-    File::write(file,result);
-
-    PLOGD << "SAVED to " << file;
+    save.json(file);
 
 }
