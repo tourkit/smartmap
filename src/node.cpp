@@ -104,7 +104,7 @@ Node* UntypedNode::add(void* node_v)  {
 
     if (n == node_v) n->parent(node());
 
-    else n->referings.insert(this->node()); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback
+    else n->referings.insert(this->node()); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
 
     update();
 

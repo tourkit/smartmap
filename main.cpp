@@ -4,15 +4,7 @@
 
                                 */
 
-#include "log.hpp"
 #include "src/engine.hpp"
-#include "effector.hpp"
-#include "instance.hpp"
-#include "vbo.hpp"
-#include "drawcall.hpp"
-#include "layer.hpp"
-
-
 
 int main() {
 

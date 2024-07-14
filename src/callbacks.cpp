@@ -209,22 +209,20 @@ void Callbacks::init() {
 
     NODE<EffectorRef>::onchange([&](Node*node, EffectorRef* effector){ NODE<Struct>::onchange_cb(node, &effector->s); effector->update(); });
 
-    // NODE<EffectorRef>::onadd<Effector>([](Node* _this, Node *node) {
+    NODE<Effector>::onadd<Effector>([](Node* _this, Node *node) {
 
-    //     EffectorRef * ref = _this->is_a<EffectorRef>();
-    //     Effector * effector = node->is_a<Effector>();
 
-    //     ref->definitions.push_back(effector);
+        Effector * from_effector = _this->is_a<Effector>();
+        Effector * to_effector = node->is_a<Effector>();
+        auto wrap = dynamic_cast<Wrappy*>(from_effector);
 
-    //     ref->wrap = 3;
+        if (!wrap) return _this;
 
-    //     ref->update();
+        wrap->addEffector(to_effector);
 
-    //     _this->name("wrappy");
+        return _this;
 
-    //     return nullptr;
-
-    // });
+    });
 
     NODE<EffectorRef>::ondelete([](Node* node, EffectorRef *effector) {
 
