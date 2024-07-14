@@ -1,11 +1,9 @@
 
 #include "layer.hpp"
 #include "texture.hpp"
-#include "utils.hpp"
 
 
 #include "effector.hpp"
-#include "model.hpp"
 
 ///////// Layer ////
 
@@ -177,7 +175,7 @@ UberLayer::VLayer& UberLayer::addLayer(int w , int h) {
 }
 
 
-UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : ubl(ubl) {  }
+UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : Layer::ShaderProgramBuilder(ubl), ubl(ubl) {  }
 
 void UberLayer::ShaderProgramBuilder::build() {
 
