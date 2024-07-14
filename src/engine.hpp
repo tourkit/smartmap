@@ -1,7 +1,6 @@
 #pragma once
 
 #include "window.hpp"
-#include "json.hpp"
 #include "node.hpp"
 #include "ubo.hpp"
 #include "shader.hpp"
@@ -46,8 +45,6 @@ struct Engine {
     UBO dynamic_ubo, static_ubo;
 
     Atlas *atlas;
-
-    JSON json;
 
     void init();
 

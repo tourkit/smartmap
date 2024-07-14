@@ -56,6 +56,7 @@ src/model.cpp
 
 
 src/engine.cpp
+src/open.cpp
 src/layer.cpp
 src/fps.cpp
 src/drawcall.cpp
