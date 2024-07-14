@@ -8,6 +8,15 @@
 
 #include "utils.hpp"
 
+void Builder::post() {
+
+    for (auto x : effectors_fragment) x->post(this);
+
+    for (auto x : effectors_vertex) x->post(this);
+
+    for (auto s : samplers) shader->sendUniform(s.second, s.first);
+
+}
 void Builder::build() {
 
     header_common = version;
@@ -16,8 +25,6 @@ void Builder::build() {
     samplers.clear();
     
     if (!shader) return;
-
-    for (auto s : samplers) shader->sendUniform(s.second, s.first);
 
     for (auto x : ubos) x->bind(shader);
 

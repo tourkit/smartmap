@@ -85,24 +85,25 @@ void Atlas::link(ShaderProgram* shader) {
 
 }
 
-
 ///// EFFECTOR
-
-
 
 
 // AtlasEffector  ////////////////
 
 
+void Atlas::Effector::post(Builder* builder) { 
+
+
+
+}
+
 bool Atlas::Effector::setup(Builder* builder) { 
 
-    builder->shader->sendUniform(s.name()+"_pass", 1);
-
-    atlas->texture->bind();
-
-    builder->samplers[0] = s.name()+"_pass";
+    builder->samplers[1] = s.name()+"_pass";
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
+    
+    atlas->texture->bind();
     
     return true; 
     

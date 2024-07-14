@@ -24,8 +24,6 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
     ubos.push_back(&engine.dynamic_ubo);
     ubos.push_back(&engine.static_ubo);
 
-    for (auto ref : dc->effector_refs) ref.get()->effector->setup(this); // does it do shit ?
-
     build();
 
 }
@@ -88,8 +86,6 @@ void Layer::ShaderProgramBuilder::build() {
             body_fragment += "\ttac();\n\n";
 
         }
-
-        // this.
 
         for (auto ref : dc->effector_refs) 
             ref.get()->effector->body(this, Instance(&engine.dynamic_ubo).find(dc->s_).find(&ref->s));

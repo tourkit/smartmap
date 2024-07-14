@@ -10,6 +10,6 @@
     "rectangle.glsl": "//size(0,1,1) \n//pos(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size,float angle) {\n\n\tangle*=3.14*2;\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\n\tpos *= 1+size;\n\tpos -= size*.5;\n\tuv -= pos; \n\n\tuv *= mat2(c, -s, s, c);\n\n\tuv /= size; \n\tuv += .5;\n\t\n\tif (uv.x > 1. || uv.y > 1. || uv.x < 0. || uv.y < 0. ) color = vec4(0);\n\t\n}\n\n\n\n"
   },
   "layers": {
-    "layer_1": [ 100, 100, { "quad": [ "quad.obj", 1, { "rectangle": "rectangle.glsl" } ] }, {} ]
+    "layer_1": [ 100, 100, { "quad": [ "quad.obj", 1, { "atlas": "atlas" } ] }, {} ]
   }
 }

@@ -192,13 +192,12 @@ static void addEffectors(rapidjson::Value &v, Node* node) {
 
         engine.effectors->each<Effector>([&](Node* n, Effector* effector_) {
 
-            if (dynamic_cast<FileEffector*>(effector_) == nullptr) return;
+            auto file_ = dynamic_cast<FileEffector*>(effector_);
 
-            auto xxx = ((FileEffector*)effector_)->file;
-            std::string str = ((FileEffector*)effector_)->file.filename();
+            if (file_ && file_->file.filename() == e.value.GetString()) effector = n;
 
-            if (str == e.value.GetString())
-                effector = n;
+            else 
+                if (n->name() == e.value.GetString()) effector = n;
 
         });
 
