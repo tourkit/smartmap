@@ -1,5 +1,6 @@
 #include "atlas.hpp"
 
+#include "file.hpp"
 #include "folder.hpp"
 #include "engine.hpp"
 #include "shader.hpp"
@@ -13,9 +14,10 @@
 #include "utils.hpp"
 
 #include "image.hpp"
+#include <array>
 
 
-Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,0), s("atlas"), effector(this) {
+Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,false), s("atlas", 0), effector(this) {
 
     static Struct& media_struct = Struct::create("Rect",0).add<glm::vec2>("size").add<glm::vec2>("pos");
 
@@ -38,7 +40,7 @@ void Atlas::clear() {
 
     s.clear();
 
-    binpack.Init(texture->width,texture->height);
+    binpack.Init(texture->width,texture->height, false);
 
 }
 
@@ -56,21 +58,26 @@ void Atlas::fromDir(std::string path) {
 
     Folder dir(path, false);
 
-    for (auto &file:dir.files) {
+    std::map<File*, std::array<float, 4>> temp_list;
 
-        Image img(file.path_v);
+    for (auto file:dir.files) {
+
+        Image img(file->path_v);
 
         if (!img.loaded) continue;
 
         auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
         if (!r.width) {PLOGE << img.name() << " can't fit, need more space."; continue;}
 
-        float x[4] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
-
-        auto m = medias->push(&x[0]);
+        temp_list[file] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
 
         texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
 
+    }
+
+    for (auto x : dir.files) {
+        
+        auto m = medias->push(temp_list[x].begin());
     }
 
     engine.static_ubo.upload();
@@ -129,6 +136,6 @@ std::string Atlas::Effector::source() {
 
 Atlas::Effector::Effector(Atlas* atlas) : ::Effector(atlas->s.name()), atlas(atlas) {
 
-    s.add<float>("id_").range(0, atlas->s.size(), 0);
+    s.add<float>("id_").range(0, 1, 0);
 
 }

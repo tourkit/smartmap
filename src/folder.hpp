@@ -10,7 +10,7 @@ struct Folder {
 
     std::string path;
 
-    std::vector<File> files;
+    std::vector<File*> files;
 
     Folder(std::string path, bool load = true);
 

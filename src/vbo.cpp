@@ -133,7 +133,7 @@ void VBO::upload() {
 
     std::string str;
     for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)&data[0])+i)) + " ";
-    PLOGV << name() << ": " << data.size() << " - " << str;
+    // PLOGV << name() << ": " << data.size() << " - " << str;
 
 }
 
