@@ -988,7 +988,7 @@ void Editors::init() {
 
     Editor<UberLayer>([](Node* node, UberLayer *ubl){
 
-        if (ImGui::SliderInt("quantitay##dsf",&ubl->layers[0].get()->s_->quantity_v, 1, 10)) {
+        if (ubl->layers.size()) if (ImGui::SliderInt("quantitay##dsf",&ubl->layers[0].get()->s_->quantity_v, 1, 10)) {
 
             ubl->layers[0].get()->s_->quantity(ubl->layers[0].get()->s_->quantity_v); // for some callback (updates dynUBO)
 

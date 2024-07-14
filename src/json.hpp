@@ -46,6 +46,8 @@ struct File;
 
         std::string str();
         
+        float num();
+        
     };
 struct JSON : JSONVal {
 

@@ -106,13 +106,19 @@ JSONVal JSONVal::operator[](int id) {
 
 std::string JSONVal::name() { return name_v; }
 
+float JSONVal::num() { 
+    
+    if (value.IsFloat()) return value.GetFloat();
+
+    if (value.IsInt()) return value.GetInt();
+    
+    return -666.999; 
+    
+}
+
 std::string JSONVal::str() { 
     
     if (value.IsString()) return value.GetString();  
-    
-    if (value.IsFloat()) return std::to_string(value.GetFloat()); 
-
-    if (value.IsInt()) return std::to_string(value.GetInt()); 
     
     return ""; 
     

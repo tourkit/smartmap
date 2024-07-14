@@ -4,7 +4,6 @@
 
 #include "struct.hpp"
 #include "framebuffer.hpp"
-#include "vbo.hpp"
 #include "shader.hpp"
 #include "engine.hpp"
 #include "drawcall.hpp"
