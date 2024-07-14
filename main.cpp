@@ -4,11 +4,18 @@
 
                                 */
 
+#include "member.hpp"
+#include "rapidjson/document.h"
 #include "src/engine.hpp"
+#include "src/json.hpp"
+#include <string>
+
 
 int main() {
 
     engine.init();
+
+    logger.cout(Sev::warning);
 
     engine.open("./project.json");
 

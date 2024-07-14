@@ -359,43 +359,40 @@ void Open::layers(){
 
 void Open::effectors(){
 
-    JSON::if_obj_in("effectors", json_v.document, [&](auto &m) {
+    for (auto x : json_v["effectors"]) {
 
-        if (m.name.IsString() && m.value.IsString()) {
+        if (!x.name_v.length() ) continue;
 
-            File file(m.name.GetString(), m.value.GetString());
+        if (x.str().length()) {
 
-            auto x = new FileEffector(file);
+            File file(x.name_v, x.str().c_str());
 
-            auto n = engine.effectors->addPtr<Effector>(x);
+            engine.effectors->addPtr<Effector>(new FileEffector(file))->owned = true;
 
-            n->owned = true;
-
-            return;
+            continue;
 
         }
 
-        if (m.name.IsString() && m.value.IsArray()) {
+        if (!x.childrens.size()) continue;
 
-            auto arr = m.value.GetArray();
+        auto  wrap_ = engine.effectors->addPtr<Effector>(new Wrappy(std::vector<Effector*>{},3,x.name_v));
 
-            auto  wrap_ = engine.effectors->addPtr<Effector>(new Wrappy(std::vector<Effector*>{},3,m.name.GetString()));
-            wrap_->owned=true;
+        wrap_->owned=true;
+        
+        auto wrap = wrap_->get();
 
-            auto wrap = wrap_->get();
+        for (auto sub : x) 
 
-            for (auto &x : arr) {
+            if (sub.str().c_str()) {
 
-                if (!x.IsString()) continue;
-
-                Node* n = (*engine.effectors)[x.GetString()];
+                Node* n = (*engine.effectors)[sub.str()];
 
                 if (n && n->is_a<Effector>())  wrap_->add(n);  
 
             }
 
-        }
-    });
+        
+    }
 
 }
 
@@ -433,17 +430,12 @@ void Open::editors(){
 }
 
 void Open::models(){
-
-    JSON::if_obj_in("models", json_v.document,[&](auto &m) {
-
-        if (m.name.IsString() && m.value.IsString()) 
-
-            auto n = engine.models->addOwnr<File>(m.name.GetString(), m.value.GetString());
-
-    });
+    
+    for (auto x : json_v["models"]) 
+        if (x.name_v.length() && x.str().length()) 
+            engine.models->addOwnr<File>(x.name_v, x.str().c_str());
 
 }
-
 
 
 void Open::json(std::string path) {
