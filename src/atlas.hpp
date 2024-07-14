@@ -41,6 +41,8 @@ struct Atlas {
         Effector(Atlas* atlas = nullptr);
 
         bool setup(Builder* builder) override;
+        
+        void post(Builder* builder) override;
 
         std::string source() override;
 

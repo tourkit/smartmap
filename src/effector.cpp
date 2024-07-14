@@ -4,6 +4,7 @@
 #include "struct.hpp"
 #include "instance.hpp"
 #include "atlas.hpp"
+#include "utils.hpp"
 #include <regex>
 #include <string>
 
@@ -15,6 +16,9 @@ Effector::Effector(std::string name) : s(name) {
     
 
 }
+
+bool Effector::header(Builder* builder, Instance isnt) {}
+
 
 bool Effector::body(Builder* builder, Instance isnt) {
 
@@ -102,8 +106,9 @@ bool FileEffector::body(Builder* builder, Instance isnt) {
 }
 
 bool FileEffector::setup(Builder* builder) { 
-    
-    builder->effectors_fragment.push_back(this);
+
+    ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
+
     return true; 
     
 }

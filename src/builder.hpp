@@ -31,6 +31,8 @@ struct Builder {
     void addSampler(std::string name);
 
     virtual void build();
+    
+    virtual void post();
 
     std::string frag();
 

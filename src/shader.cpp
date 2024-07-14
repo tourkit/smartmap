@@ -70,7 +70,7 @@ ShaderProgram::~ShaderProgram() { destroy();
 
 }
 
-ShaderProgram::ShaderProgram() { Builder builder; builder.build(); create(builder.frag(),builder.vert()); }
+ShaderProgram::ShaderProgram() { Builder builder; builder.build(); create(builder.frag(),builder.vert()); builder.post(); }
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 
@@ -115,7 +115,7 @@ void  ShaderProgram::create() {
 
 }
 
-void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->frag(), builder->vert()); }
+void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->frag(), builder->vert()); builder->post(); }
 
 void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
@@ -134,6 +134,8 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     loaded = true;
 
     last_change = std::chrono::system_clock::now();
+
+    // sendUniform("atlas_pass", 1);
 
     use();
 

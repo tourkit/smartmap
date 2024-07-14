@@ -18,6 +18,10 @@ struct Effector {
 
     virtual bool body(Builder* builder, Instance isnt);
 
+    virtual bool header(Builder* builder, Instance isnt);
+    
+    virtual void post(Builder* builder) {};
+
     virtual void update() {}
 
     std::string source_v;
