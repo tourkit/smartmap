@@ -172,6 +172,8 @@ void UntypedNode::bkpupdate() {
 
 }
 
+Node* UntypedNode::operator[](std::string name) { for (auto c : childrens) if (c->name() == name) return c->node(); return nullptr; }
+
 Node* UntypedNode::operator[](int id) { return childrens[id]->node(); }
 
 void UntypedNode::update() {

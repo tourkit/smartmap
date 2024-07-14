@@ -148,6 +148,7 @@ public:
     static inline std::unordered_map<std::type_index,std::unordered_map<std::type_index, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
 
     Node* operator[](int id);
+    Node* operator[](std::string name);
 
 private:
 
