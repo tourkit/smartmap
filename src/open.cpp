@@ -225,8 +225,6 @@ void Open::uberlayers(){
 
             int width = engine.window.width;
             int height = engine.window.height;
-            int offset_x = 0;
-            int offset_y = 0;
             int count = 1;
             int fx_pos = 0;
 
@@ -241,22 +239,7 @@ void Open::uberlayers(){
 
                     fx_pos = 3;
 
-                    if (layi[3].isnum()) {
-                        
-                        fx_pos = 3;
-
-                        offset_x = layi[2].num();
-                        offset_y = layi[3].num();
-
-                        if (layi[4].isnum()) {
-                            
-                            fx_pos = 4;
-                            
-                            count = layi[4].num();
-                            
-                        } 
-
-                    }else count = layi[2].num();
+                    count = layi[2].num();
 
                 }
 
