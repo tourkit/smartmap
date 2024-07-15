@@ -16,13 +16,15 @@ struct Effector {
 
     virtual bool setup(Builder* builder) = 0;
 
-    virtual bool body(Builder* builder, Instance isnt);
+    virtual bool body(Builder* builder, std::string prepend = "");
 
     virtual bool header(Builder* builder, Instance isnt);
     
     virtual void post(Builder* builder) {};
 
     virtual void update() {}
+
+    std::string call(std::string prepend="");
 
     std::string source_v;
 
@@ -38,7 +40,7 @@ struct FeedbackEffector : Effector {
 
     bool setup(Builder* builder) override;
     
-    bool body(Builder* builder, Instance isnt) override;
+    bool body(Builder* builder, std::string prepend = "") override;
 
 };
 
@@ -54,7 +56,7 @@ struct FileEffector : Effector {
 
     bool setup(Builder* builder) override;
     
-    bool body(Builder* builder, Instance isnt) override;
+    bool body(Builder* builder, std::string prepend = "") override;
 
 };
 

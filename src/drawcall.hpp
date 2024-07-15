@@ -30,7 +30,11 @@ struct DrawCall : Modelable {
 
         ShaderProgramBuilder(DrawCall* dc = nullptr);
 
+        // std::string print_layer(UberLayer::VLayer &layer);
+
         int stride_count = 0;
+
+        std::string print_layer(Effectable &effectable,std::string prepend ,std::string instance, std::string ar = "");
 
     };
 

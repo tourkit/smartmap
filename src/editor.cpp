@@ -555,7 +555,21 @@ void Editors::init() {
 
         for (auto x : engine.stack->childrens) tbuff.append(x->name().c_str(), x->name().c_str()+x->name().length()+1);
 
-        if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) output->fb = &engine.stack->childrens[output_currents[output]]->is_a<Layer>()->fb;
+        if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) {
+
+            engine.stack->each([&](Node* n){
+
+                Layer* layer = n->is_a_nowarning<Layer>(); 
+
+                if (layer && &layer->fb == output->fb) n->referings.erase(node);
+
+            });
+            
+            output->fb = &engine.stack->childrens[output_currents[output]]->is_a<Layer>()->fb;
+
+            engine.stack->childrens[output_currents[output]]->referings.insert(node);
+            
+        }
 
         if (ImGui::DragScalarN("position###winpos", ImGuiDataType_U32,  &output->offset_x, 2, 1, &min)) output->pos( output->offset_x, output->offset_y );
 

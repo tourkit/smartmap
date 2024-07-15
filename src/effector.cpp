@@ -17,24 +17,29 @@ Effector::Effector(std::string name) : s(name) {
 
 }
 
-bool Effector::header(Builder* builder, Instance isnt) {}
+bool Effector::header(Builder* builder, Instance isnt) { return true; }
 
 
-bool Effector::body(Builder* builder, Instance isnt) {
+bool Effector::body(Builder* builder, std::string prepend) {
 
-    Member *s = isnt.def();
-
-    std::string args;
-
-    for (auto &arg : s->ref()?s->ref()->members:s->members)
-        args += "dynamic_ubo[curr]."+isnt.stl_name(".")+"."+arg->name()+", "; 
-
-    if (args.length()) args.resize(args.size()-2);
-
-    builder->current_model += "\t"+s->name()+"("+args+"); // \n";
+    builder->current_model += "\t"+call(prepend)+"\n";
 
     return true;
 }
+
+
+std::string Effector::call(std::string prepend) {
+
+    std::string args;
+
+    for (auto &arg : s.members) args += prepend +"."+ arg->name()+", "; 
+
+    if (args.length()) args.resize(args.size()-2);
+
+    return s.name()+"("+args+");";
+    
+}
+
 
 // FeedbackEffector  ////////////////
 
@@ -46,7 +51,7 @@ bool FeedbackEffector::setup(Builder* builder) {
     
 }
 
-bool FeedbackEffector::body(Builder* builder, Instance isnt) { 
+bool FeedbackEffector::body(Builder* builder, std::string prepend) { 
 
     std::string current;
     
@@ -89,18 +94,8 @@ FeedbackEffector::FeedbackEffector() : Effector("feedbackEffector") {
 
 // FileEffector  ////////////////
 
-bool FileEffector::body(Builder* builder, Instance isnt) {
-
-    Member *s = isnt.def();
-
-    std::string args;
-
-    for (auto &arg : s->ref()?s->ref()->members:s->members)
-        args += "dynamic_ubo[curr]."+isnt.stl_name(".")+"."+arg->name()+", "; 
-
-    if (args.length()) args.resize(args.size()-2);
-
-    builder->current_model += "\t"+file.name()+"("+args+"); // \n";
+bool FileEffector::body(Builder* builder, std::string prepend) {
+Effector::body( builder,  prepend) ;
 
     return true;
 }
