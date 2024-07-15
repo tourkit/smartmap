@@ -1,5 +1,6 @@
 #include "editor.hpp"
 
+#include "imgui.h"
 #include "log.hpp"
 #include "node.hpp"
 #include "gui.hpp"
@@ -171,7 +172,41 @@ static bool draw_raw(void *data, size_t size) {
 
     ImGui::PopStyleVar(5);
 
-    if (ImGui::Button("ALL @ 63"))  {memset(data, 63, size); has_changed = true; }
+    static int all_at = 0;
+    static std::vector<char> bkp;
+    if (Button("ALL @ 63###allat63"))  { all_at = 63; has_changed = true; }
+    SameLine(); SetNextItemWidth(50);
+    if (DragInt("##all_at",&all_at,1,0,255)) has_changed = true; 
+
+    if (has_changed) {
+
+        if (!bkp.size()){
+            
+            bkp.resize(size);
+
+            memcpy(bkp.data(), data, size);
+        
+        }
+        
+        memset(data, all_at, size);
+        
+    }
+
+    if (bkp.size()) {
+    
+        SameLine();
+
+        if (Button("reset##rereresset"))  { 
+
+            memcpy(data, bkp.data(), size>bkp.size()?bkp.size():size);
+
+            bkp.resize(0);
+
+            has_changed = true;
+
+        }
+
+    }
 
     ImGui::NewLine();
 
