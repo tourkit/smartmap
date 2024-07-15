@@ -1,6 +1,7 @@
 
 #include "layer.hpp"
 #include "texture.hpp"
+#include "utils.hpp"
 
 
 #include "effector.hpp"
@@ -174,84 +175,35 @@ UberLayer::VLayer& UberLayer::addLayer(int w , int h) {
 
 }
 
-
 UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : Layer::ShaderProgramBuilder(ubl), ubl(ubl) {  }
 
 void UberLayer::ShaderProgramBuilder::build() {
 
-    // effectors.clear();
+    DrawCall::ShaderProgramBuilder::build();
 
-    // for (auto &layer : ubl->layers)
-    //     for (auto effector : layer.get()->effectors)
-    //         for (auto def : effector.get()->definitions)
-    //             ADD_UNIQUE<Effector*>(effectors, def);
+    std::string ar_str = ubl->glsl_uberlayer->def()->name()+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"")+".uberLayer";
 
-    Builder::build();
+    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->s_->name()), "int(OBJ)", ar_str );
 
-}
+    else {
 
-std::string UberLayer::ShaderProgramBuilder::print_layer(UberLayer::VLayer &layer) {
+        int last_id = 0;
 
-    std::vector<EffectorRef*> unique;
+        for (auto &x : ubl->layers) {
 
-    // for (auto x : layer.effectors) ADD_UNIQUE<EffectorRef*>(unique, x.get());
+            if (last_id) body_fragment += "\n} else ";
 
-    std::string body_fragment;
+            last_id += x.get()->s_->quantity();
 
+            body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer( *x.get(), lower(dc->s_->name()), "int(OBJ)", ar_str );
 
-	// body_fragment += "\ttic();\n";
+        }
 
-    // auto name = lower(layer.s.name());
+        if (ubl->layers.size()) body_fragment += "\n}\n";
 
-    // if (layer.s.quantity() > 1) name += "[int(OBJ)]";
+    }
 
-    // body_fragment += "\taspect_ratio = static_ubo."+ubl->glsl_uberlayer->def()->name()+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"")+".uberLayer.dim;\n";
-
-    // for (auto effector : unique) {
-
-    //     std::string arg_str;
-
-    //     if (!effector->wrap) for (auto def : effector->definitions) {
-
-    //         for (auto &arg : def->s.members) arg_str += "dynamic_ubo[curr]."+lower(ubl->s.name())+"."+name+"."+effector->s.name()+"."+arg->name()+", ";
-
-    //         arg_str.resize(arg_str.size()-2);
-
-    //         body_fragment += "\t"+def->s.name()+"("+arg_str+"); // 1\n";
-
-    //     }
-
-    // }
-
-	// body_fragment += "\ttac();\n";
-
-    return body_fragment;
+    body_fragment += "\n";
 
 }
 
-// void UberLayer::ShaderProgramBuilder::frag() { DrawCall::ShaderProgramBuilder::frag();
-
-//     if (ubl->layers.size() == 1) body_fragment += print_layer(*ubl->layers[0].get());
-
-//     else {
-
-//         int last_id = 0;
-
-//         for (auto &x : ubl->layers) {
-
-//             if (last_id) body_fragment += "\n} else ";
-
-//             last_id += x.get()->s_->quantity();
-
-//             body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer(*x.get()); ;
-
-//         }
-
-//         if (ubl->layers.size()) body_fragment += "\n}\n";
-
-//     }
-
-//     body_fragment += "\n";
-
-// }
-// void UberLayer::ShaderProgramBuilder::vert() { DrawCall::ShaderProgramBuilder::vert();}

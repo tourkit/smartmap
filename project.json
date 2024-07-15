@@ -1,8 +1,12 @@
 {
-  "xxx": {"yyy":["popo"]},
-  "medidas": ["oo","ll", {"ooo":"iiii"}],
   "medias": {
     "atlas":"assets/medias/"
+  },
+  "inputs": {
+    "artnet":{"artnet1":["1.2.3.4"]}
+  },
+  "outputs": {
+    "ndi":{"NDi!1":[1920,1080, 0, 0, "ubersmart1"]}
   },
   "models": {
     "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
@@ -16,6 +20,9 @@
     "wrapper":["atlas", "flower", "burst", "gradient"]
    },
   "uberlayers": {
-    "layer_1": {"tttt":[ 100, 100, { "quad": [ "quad.obj", 1, { "wrapper" : "wrapper" } ] }, { "feedback" : "feedback" } ]}
+
+    "ubersmart1": { "smartlayer1" : [ 1920, 1080, 10,  { "argb": "argb.glsl", "rectangle": "rectangle.glsl", "wrapper":"wrapper" } ] }
+
   }
 }
+

@@ -162,12 +162,17 @@ void Callbacks::init() {
 
     ////////// DRAWCALL.HPP
 
-    NODE<Layer>::ondelete([](Node* node, Layer *layer){ engine.outputs->each([layer](Node* node){
+    NODE<Layer>::ondelete([](Node* node, Layer *layer){ 
+        
+        engine.outputs->each([layer](Node* node){
 
-        auto o = ((Output*)node->ptr_());
-        if (o->fb == &layer->fb) o->fb = nullptr;
+            auto o = ((Output*)node->ptr_());
+            if (o->fb == &layer->fb) o->fb = nullptr;
 
-    });  }); // for what ??????
+        });  
+    
+    }); 
+
     // NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
 
     // NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
@@ -223,8 +228,8 @@ void Callbacks::init() {
 
 
         Effector * from_effector = _this->is_a<Effector>();
-        Effector * to_effector = node->is_a<Effector>();
         auto wrap = dynamic_cast<Wrappy*>(from_effector);
+        Effector * to_effector = node->is_a<Effector>();
 
         if (!wrap) return _this;
 
@@ -236,11 +241,14 @@ void Callbacks::init() {
 
     NODE<EffectorRef>::ondelete([](Node* node, EffectorRef *effector) {
 
+        auto lay = node->parent()->is_a_nowarning<Layer>();
+        if (lay) lay->removeEffector(effector); 
+
+        auto ubl = node->parent()->is_a_nowarning<UberLayer::VLayer>();
+        if (ubl) ubl->removeEffector(effector);
+
         auto model = node->parent()->is_a_nowarning<Model>();
-
-        if (!model) { node->parent()->is_a<Layer>()->removeEffector(effector); return ;}
-
-        model->removeEffector(effector);
+        if (model) model->removeEffector(effector);
 
     });
 

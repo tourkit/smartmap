@@ -1,4 +1,5 @@
 #include "tree.hpp"
+#include "imgui.h"
 #include "node.hpp"
 #include "engine.hpp"
 #include "drawcall.hpp"
@@ -195,6 +196,10 @@ using namespace ImGui;
         }
 
         ImGui::Checkbox("demo", &demodemo);
+
+        Separator();
+
+        ImGui::Text(node->type_name().c_str());
 
         ImGui::EndPopup();
     }

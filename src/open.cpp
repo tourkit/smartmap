@@ -98,7 +98,8 @@ void Open::inputs(){
 
             auto &an = *an_->get();
 
-            if (arr.Size() < 2 || !arr[1].IsObject()) { PLOGW << json_error; continue; }
+            if (arr.Size() < 2) continue;
+            if (!arr[1].IsObject()) { PLOGW << json_error; continue; }
 
             for (auto &remap : arr[1].GetObj()) {
 
@@ -211,10 +212,12 @@ void Open::uberlayers(){
    JSON::if_obj_in("uberlayers", json_v.document, [&](auto &l) {
 
 
-        if (!l.name.IsString() || !l.value.IsObject()) { PLOGW << json_error; return; }
+        if (!l.name.IsString() || !l.value.IsObject()) { PLOGW << json_error; return; } 
 
-        auto ubl_ = engine.stack->addOwnr<UberLayer>();
-        auto &ubl = *ubl_->get();
+        
+        auto &ubl = *new UberLayer();
+        auto ubl_ = engine.stack->addPtr<Layer>(&ubl);
+        ubl_->owned = true;
 
         ubl_->name(l.name.GetString());
 
@@ -258,7 +261,6 @@ void Open::uberlayers(){
                         if (!e.name.IsString() || !e.value.IsString()) { PLOGW <<"weird fx"; continue;}
 
                         Node* effector = nullptr;
-
 
                         engine.effectors->each<File>([&](Node* n, File* f) { if (f->filename() == e.value.GetString()) effector = n; });
 

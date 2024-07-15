@@ -58,8 +58,6 @@ struct UberLayer : Layer {
 
         void build() override;
 
-        std::string print_layer(UberLayer::VLayer &layer);
-
         UberLayer* ubl;
 
         ShaderProgramBuilder(UberLayer* ubl);

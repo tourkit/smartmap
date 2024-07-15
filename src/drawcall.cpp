@@ -30,8 +30,44 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
 
 
+std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
+
+    auto name = lower(effectable.s_->name());
+
+    if (effectable.s_->quantity() > 1) name += "["+(dc->models.size() == 1?"ID":instance)+"]";
+
+    std::string body_fragment;
+
+    body_fragment += "\t// "+name+"\n";
+
+    body_fragment += "\taspect_ratio = static_ubo."+ar+".dim;\n";
+                
+	body_fragment += "\ttic();\n";
+
+    current_model.clear();
+
+    for (auto ref : effectable.effector_refs) 
+
+        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->s.name());
+
+
+    body_fragment+=current_model;
+
+	body_fragment += "\ttac();\n";
+
+    for (auto ref : effectable.effector_refs) {
+
+        ref->effector->setup(this);
+
+    }
+
+    return body_fragment;
+
+}
+
 void Layer::ShaderProgramBuilder::build() {
 
+   
     Builder::build();
 
     // FRAGMENT ////////////////
@@ -56,50 +92,25 @@ void Layer::ShaderProgramBuilder::build() {
 
     if (dc) {
 
-        int model_id = 0;
+        // do all body 
 
-        for (auto &model : dc->models) {
+        for (auto &model : dc->models)
 
-            for (int instance = 0; instance < model.get()->s_->quantity(); instance++) {
-
-                auto name = lower(model.get()->s_->name());
-
-                if (model.get()->s_->quantity() > 1) name += "["+(dc->models.size() == 1?"ID":std::to_string(instance))+"]";
-
-                body_fragment += "\t// "+name+"\n";
-
-                body_fragment += "\taspect_ratio = static_ubo.layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":"")+".dim;\n";
-                body_fragment += "\ttic();\n";
-
-                current_model.clear();
-
-                for (auto &ref : model.get()->effector_refs) 
-
-                    ref->effector->body(this, model.get()->instance->find(&ref->s));
+            for (int instance = 0; instance < model.get()->s_->quantity(); instance++) 
                 
-                body_fragment+=current_model;
-
-            }
-
-            model_id++;
-
-            body_fragment += "\ttac();\n\n";
-
-        }
+                body_fragment += print_layer(*model, lower(dc->s_->name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":""));
+                
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, Instance(&engine.dynamic_ubo).find(dc->s_).find(&ref->s));
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->s_->name()+"."+ref->s.name());
+
+        
+        // setup all effector_refs
 
         for (auto &model : dc->models) for (auto x : model->effector_refs) x.get()->effector->setup(this);
         
         for (auto x : dc->effector_refs) x.get()->effector->setup(this);
 
-
-    }
-
-    if (dc) {
-
-        // for (auto &ref : dc->effector_refs) body_fragment += print_arg(&ref.get()->s);
 
         if (dc->effector_refs.size()) body_fragment += "\ttac();\n\n";
 
