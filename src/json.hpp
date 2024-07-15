@@ -46,6 +46,7 @@ struct File;
 
         std::string str();
         
+        bool isnum();
         float num();
         
     };

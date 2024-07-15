@@ -207,71 +207,74 @@ void Open::outputs(){
 
 }
 
+
 void Open::uberlayers(){
 
-   JSON::if_obj_in("uberlayers", json_v.document, [&](auto &l) {
+    for (auto ubli : json_v["uberlayers"]) {
 
+        if (!ubli.name().data()) continue;
 
-        if (!l.name.IsString() || !l.value.IsObject()) { PLOGW << json_error; return; } 
-
-        
         auto &ubl = *new UberLayer();
         auto ubl_ = engine.stack->addPtr<Layer>(&ubl);
         ubl_->owned = true;
+        ubl_->name(ubli.name());
 
-        ubl_->name(l.name.GetString());
+        for (auto layi : ubli) {
 
-        auto list = l.value.GetObj();
+            if (!layi.name().data()) continue;
 
-        for (auto &x : list) {
+            int width = engine.window.width;
+            int height = engine.window.height;
+            int offset_x = 0;
+            int offset_y = 0;
+            int count = 1;
+            int fx_pos = 0;
 
-            if (!x.name.IsString() || !x.value.IsArray()) { PLOGW << json_error; continue; }
+            if (layi[0].isnum() && layi[1].isnum()) {
 
-            auto info = x.value.GetArray();
+                fx_pos = 2;
 
-            int width = engine.window.width, height = engine.window.height;
+                width = layi[0].num();
+                height = layi[1].num();
 
-            int effectors_id = 2;
+                if (layi[2].isnum()) {
 
-            int q = 1;
+                    fx_pos = 3;
 
-            if (info.Size() > 1 && info[0].IsInt() && info[1].IsInt()) {
+                    if (layi[3].isnum()) {
+                        
+                        fx_pos = 3;
 
-                width = info[0].GetInt(); height = info[1].GetInt();
+                        offset_x = layi[2].num();
+                        offset_y = layi[3].num();
 
-                if (info.Size() > 2 && info[2].IsInt()) {
+                        if (layi[4].isnum()) {
+                            
+                            fx_pos = 4;
+                            
+                            count = layi[4].num();
+                            
+                        } 
 
-                    q = info[2].GetInt() ;
-
-                    if (info.Size() > 3) effectors_id = 3;
-
-                }
-
-                auto &l = ubl.addLayer(width,height);
-
-                auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
-                l_->active(true)->name(x.name.GetString());
-
-                l.s_->quantity(q);
-
-                if (info.Size() > effectors_id && info[effectors_id].IsObject()) {
-
-                    for (auto &e : info[effectors_id].GetObj()) {
-
-                        if (!e.name.IsString() || !e.value.IsString()) { PLOGW <<"weird fx"; continue;}
-
-                        Node* effector = nullptr;
-
-                        engine.effectors->each<File>([&](Node* n, File* f) { if (f->filename() == e.value.GetString()) effector = n; });
-
-                        // if (effector) l_->addPtr<Effector>(l.addEffector(&Effector::get(effector->is_a<File>()))); // TODODOODODOD
-
-                    }
+                    }else count = layi[2].num();
 
                 }
 
             }
 
+            auto &l = ubl.addLayer(width,height);
+            auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
+            l_->active(true)->name(layi.name());
+            l.s_->quantity(count);
+
+            for (auto effectori : layi[fx_pos]) {
+
+                if (!effectori.name().data() || ! effectori.str().data())  { PLOGW << json_error; continue; }
+
+                engine.effectors->each([&](Node* n) { if (n->name() == effectori.name()) l_->add(n);  });
+
+            }
+            
         }
 
         ubl.calc_matrice();
@@ -282,7 +285,7 @@ void Open::uberlayers(){
 
         ubl.update();
 
-    });
+    }
 
 }
 
