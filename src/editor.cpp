@@ -174,11 +174,14 @@ static bool draw_raw(void *data, size_t size) {
 
     static int all_at = 0;
     static std::vector<char> bkp;
-    if (Button("ALL @ 63###allat63"))  { all_at = 63; has_changed = true; }
+    
+    bool has_changed_all = false;
+    
+    if (Button("ALL @ 63###allat63"))  { all_at = 63; has_changed_all = true; }
     SameLine(); SetNextItemWidth(50);
-    if (DragInt("##all_at",&all_at,1,0,255)) has_changed = true; 
+    if (DragInt("##all_at",&all_at,1,0,255)) has_changed_all = true; 
 
-    if (has_changed) {
+    if (has_changed_all) {
 
         if (!bkp.size()){
             
@@ -189,6 +192,8 @@ static bool draw_raw(void *data, size_t size) {
         }
         
         memset(data, all_at, size);
+
+        has_changed = true;
         
     }
 
