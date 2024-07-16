@@ -227,10 +227,12 @@ std::string Wrappy::source() {
     for (auto x : effector_refs) {
 
         std::string args;
-        int max = x->s.ref()->members.size();
-        // if (Effector::s.members.size() < max) max = Effector::s.members.size();
 
-        for (int i = 0; i < max; i++) args +=  Effector::s.members[i+1]->name() + ", ";
+        for (int i = 0; i < x->s.ref()->members.size(); i++) {
+            
+            args +=  (i<count?Effector::s.members[i+1]->name():"0") + ", ";
+            
+        }
         
         out += "\tif (id=="+std::to_string(id++)+") { " + x->s.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " ); return; }\n\n";
         
