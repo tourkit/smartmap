@@ -47,7 +47,12 @@ struct File;
         std::string str();
         
         bool isnum();
+        bool isarr();
+        bool isobj();
         float num();
+        size_t size();
+
+        std::string stringify();
         
     };
 struct JSON : JSONVal {

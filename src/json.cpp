@@ -2,7 +2,10 @@
 
 #include "file.hpp"
 #include "log.hpp"
+#include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
+#include <cstddef>
+#include <regex>
 
 JSON::JSON() : JSONVal(document) {  }
 
@@ -19,6 +22,10 @@ bool JSON::load(File* file) {
     return load(file->data.data());
 
 }
+
+
+
+
 bool JSON::load(const char* data) {
 
     loaded = false;
@@ -52,6 +59,17 @@ void JSON::if_obj_in(std::string name, rapidjson::Value &in, std::function<void(
 }
 
 
+std::string JSONVal::stringify() {
+
+
+    rapidjson::StringBuffer buffer;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+    value.Accept(writer);
+
+    return std::regex_replace(buffer.GetString(), std::regex("[\r\n\t ]+"), " ");
+
+}
+
 
   JSONVal::JSONVal(rapidjson::Value &value, std::string name) : value(value), name_v(name) {
 
@@ -79,13 +97,14 @@ void JSON::if_obj_in(std::string name, rapidjson::Value &in, std::function<void(
 
 JSONVal::~JSONVal() { }
 
+static rapidjson::Value null_val;
 
 JSONVal JSONVal::operator[](std::string name) { 
 
 
     if (!value.HasMember(name.c_str())) {
         PLOGW << "no " << name;
-        return JSONVal(value);
+        return JSONVal(null_val);
     }
     
     return JSONVal(value[name.c_str()]);
@@ -99,7 +118,7 @@ JSONVal JSONVal::operator[](int id) {
     
     PLOGW << "no " << id;
 
-    return JSONVal(value);
+    return JSONVal(null_val);
     
 }
 
@@ -113,6 +132,30 @@ bool JSONVal::isnum() {
     if (value.IsInt()) return value.GetInt();
     
     return 0; 
+}
+bool JSONVal::isarr() {     
+    
+    if (value.IsArray()) return true;
+    
+    return false; 
+}
+
+bool JSONVal::isobj() {     
+    
+    if (value.IsObject()) return true;
+    
+    return false; 
+}
+
+size_t JSONVal::size() { 
+
+    if (isarr()) return value.GetArray().Size();
+    
+    if (isobj()) return value.GetObj().MemberCount();
+    
+    return 0; 
+    
+
 }
 
 float JSONVal::num() { 
