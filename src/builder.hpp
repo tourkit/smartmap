@@ -8,6 +8,7 @@ struct Member;
 struct UBO;
 struct VBO;
 struct ShaderProgram;
+struct Texture;
 struct Effector;
 
 struct Builder {
@@ -26,7 +27,7 @@ struct Builder {
 
     std::vector<UBO*> ubos;
 
-    std::map<int,std::string> samplers;
+    std::map<int,Texture*> samplers;
 
     void addSampler(std::string name);
 

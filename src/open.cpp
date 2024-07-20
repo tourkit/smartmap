@@ -87,20 +87,10 @@ void Open::inputs(){
 
                 Instance inst(&engine.dynamic_ubo);
 
-                bool continue_ = false;
-                for (auto name : split(arr[2].GetString())) {
-
-                        inst = inst[name];
-
-                        if (!inst.def()) {
-
-                            PLOGW << json_error;
-                             continue_ = true;
-                             break;
-
-                        }
-                }
-                if (continue_) continue;
+                Node* n = engine.tree->child(arr[2].GetString());
+                auto vlayer = n->is_a<UberLayer::VLayer>();
+                if (vlayer) 
+                    inst = inst.find(vlayer->s_);
 
                 if (inst.def() == inst.buff) { PLOGW << json_error; continue; }
 
@@ -116,12 +106,12 @@ void Open::inputs(){
 
                 uni.remaps.push_back( dmxremap );
 
-                auto n = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
+                auto out = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
 
                 std::string sss =arr[2].GetString() ;
                 auto w = engine.tree->child(sss);
                 if (!w) { PLOGE <<arr[2].GetString()<< " not found"; return; }
-                w->referings.insert( n );
+                w->referings.insert( out );
 
             }
 
@@ -192,8 +182,8 @@ static void addEffectors(JSONVal v, Node* node) {
         engine.effectors->each<Effector>([&](Node* n, Effector* e) {
 
             auto file_ = dynamic_cast<FileEffector*>(e);
-
             if (file_ && file_->file.filename() == effector_def.str()) effector_ = n;
+            else if (n->name() == effector_def.str()) effector_ = n;
 
         });
 
