@@ -12,6 +12,8 @@ struct Texture {
     GLenum informat = GL_RGB8;
     GLenum outformat = GL_RGB;
 
+    std::string sampler_name;
+
     Texture(GLuint width = 1, GLuint height = 1, GLuint unit = 0, int mipmaps = 1, GLenum informat = GL_RGB8, GLenum outformat = GL_RGB);
 
     Texture(void* data, GLuint width, GLuint height, GLuint unit = 0, int mipmaps = 1, GLenum informat = GL_RGB8, GLenum outformat = GL_RGB);

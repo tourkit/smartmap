@@ -43,7 +43,7 @@ void DMXRemap::update() {
 
 void DMXRemap::extract(Member *s) {
 
-    for (auto m : s->members) {
+    for (auto m : s->ref()?s->ref()->members:s->members) {
 
         if (m->isData()) {
 
@@ -103,9 +103,11 @@ Artnet::Artnet(std::string ip)  {
 
   Artnet::Universe& Artnet::universe(int id) {
 
-    try { return *universes.at(id).get(); }
+    if (universes.find(id) != universes.end()){ 
+        
+        return *universes.at(id).get(); }
 
-    catch(const std::out_of_range& e) {
+    else{
 
         uint32_t offset = universes.size()*512;
 

@@ -3,7 +3,7 @@
     "atlas": "assets/medias/"
   },
   "inputs": {
-    "artnet": { "artnet1": [ "1.2.3.4" ] }
+    "artnet": { "artnet1": [ "1.2.3.4", {"remap1":[1,1, "ubersmart1::smartlayer1"]} ] }
   },
   "outputs": {
     "monitor": { "Window": [ 1, 1, 0, 0 ] }
@@ -24,9 +24,9 @@
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
     [ 0, 0, 0, 0, "tree::Debug", true ]
   ],
-  "remaps": {},
   "layers": {
     "ubersmart1": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
-    "Layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, {} ] }, {} ]
+    "Layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, {"uber": "ubersmart1"} ] }, {} ]
   }
 }
+

@@ -1064,6 +1064,7 @@ void Editors::init() {
 
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
+
             if (ImGui::BeginTabItem("main")) {
 
                     Editor<FrameBuffer>::cb(node, &layer->fb);
@@ -1071,6 +1072,7 @@ void Editors::init() {
                 ImGui::EndTabItem();
 
             }
+            for (auto x : layer->builder.samplers) {}
             if (ImGui::BeginTabItem("1st pass")) {
 
                 Editor<Texture>::cb(node, layer->feedback);

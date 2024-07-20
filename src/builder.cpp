@@ -4,6 +4,7 @@
 #include "ubo.hpp"
 #include "vbo.hpp"
 #include "shader.hpp"
+#include "texture.hpp"
 #include "effector.hpp"
 
 #include "utils.hpp"
@@ -14,7 +15,7 @@ void Builder::post() {
 
     for (auto x : effectors_vertex) x->post(this);
 
-    for (auto s : samplers) shader->sendUniform(s.second, s.first);
+    for (auto s : samplers) shader->sendUniform(s.second->sampler_name, s.first);
 
 }
 void Builder::build() {
@@ -32,7 +33,7 @@ void Builder::build() {
 
 std::string Builder::frag() {
 
-    std::string samplers_str; for (auto x : samplers) samplers_str += "uniform sampler2D "+x.second+";\n"; if (samplers.size()) samplers_str += "\n";
+    std::string samplers_str; for (auto x : samplers) samplers_str += "uniform sampler2D "+x.second->sampler_name+";\n"; if (samplers.size()) samplers_str += "\n";
 
     std::string effectors_str; for (auto x : effectors_fragment)  effectors_str += x->source()+"\n\n";
 

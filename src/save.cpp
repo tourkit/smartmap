@@ -217,8 +217,7 @@ void Save::json(std::string path) {
     if (!json_v.document.HasMember("effectors")) json_v.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
     if (!json_v.document.HasMember("layers")) json_v.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
     if (!json_v.document.HasMember("outputs")) json_v.document.AddMember("outputs", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
-    if (!json_v.document.HasMember("remaps")) json_v.document.AddMember("remaps", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
- 
+   
     medias();
 
     models();
