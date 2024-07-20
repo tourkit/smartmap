@@ -71,54 +71,42 @@ void Save::outputs(){
 
 }
 
-void Save::uberlayers(){
-
-    json_v.document["uberlayers"].RemoveAllMembers();
-
-    engine.stack->each<Layer>([&](Node* node, Layer* layer){
-
-        auto ubl = dynamic_cast<UberLayer*>(layer);
-        
-        if (!ubl) return ;
-
-        auto &arr = json_v.document["uberlayers"];
-
-        auto  ubl_ = rapidjson::Value(rapidjson::kObjectType);
-
-
-        node->each<UberLayer::VLayer>([&](Node* node_, UberLayer::VLayer* layer){
-
-            auto  layer_ = rapidjson::Value(rapidjson::kArrayType);
-
-            layer_.PushBack(layer->w, allocator);
-            layer_.PushBack(layer->h, allocator);
-            layer_.PushBack(layer->s_->quantity(), allocator);
-
-            auto  effectors_ = rapidjson::Value(rapidjson::kObjectType);
-
-            for (auto ref : layer->effector_refs) effectors_.AddMember( rapidjson::Value(ref->s.name().c_str(), allocator), rapidjson::Value(ref->effector->s.name().c_str(), allocator), allocator );
-
-            layer_.PushBack(effectors_, allocator);
-
-            ubl_.AddMember(rapidjson::Value(node_->name().c_str(), allocator)  , layer_, allocator);
-
-        });
-
-        arr.AddMember(rapidjson::Value(node->name().c_str(), allocator), ubl_, allocator);
-
-    });
-
-}
-
 void Save::layers(){
 
    json_v.document["layers"].RemoveAllMembers();
 
     engine.stack->each<Layer>([&](Node* node, Layer* layer){
-        
-        if (dynamic_cast<UberLayer*>(layer)) return ;
 
         auto &arr = json_v.document["layers"];
+        
+        if (dynamic_cast<UberLayer*>(layer)) {
+
+            auto  ubl_ = rapidjson::Value(rapidjson::kObjectType);
+
+
+            node->each<UberLayer::VLayer>([&](Node* node_, UberLayer::VLayer* layer){
+
+                auto  layer_ = rapidjson::Value(rapidjson::kArrayType);
+
+                layer_.PushBack(layer->w, allocator);
+                layer_.PushBack(layer->h, allocator);
+                layer_.PushBack(layer->s_->quantity(), allocator);
+
+                auto  effectors_ = rapidjson::Value(rapidjson::kObjectType);
+
+                for (auto ref : layer->effector_refs) effectors_.AddMember( rapidjson::Value(ref->s.name().c_str(), allocator), rapidjson::Value(ref->effector->s.name().c_str(), allocator), allocator );
+
+                layer_.PushBack(effectors_, allocator);
+
+                ubl_.AddMember(rapidjson::Value(node_->name().c_str(), allocator)  , layer_, allocator);
+
+            });
+
+            arr.AddMember(rapidjson::Value(node->name().c_str(), allocator), ubl_, allocator);
+                
+            return ;
+            
+        }
 
         auto  lay = rapidjson::Value(rapidjson::kArrayType);
 
@@ -228,7 +216,6 @@ void Save::json(std::string path) {
     if (!json_v.document.HasMember("models")) json_v.document.AddMember("models", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
     if (!json_v.document.HasMember("effectors")) json_v.document.AddMember("effectors", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
     if (!json_v.document.HasMember("layers")) json_v.document.AddMember("layers", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
-    if (!json_v.document.HasMember("uberlayers")) json_v.document.AddMember("uberlayers", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
     if (!json_v.document.HasMember("outputs")) json_v.document.AddMember("outputs", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
     if (!json_v.document.HasMember("remaps")) json_v.document.AddMember("remaps", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());
  
@@ -240,8 +227,6 @@ void Save::json(std::string path) {
     
     layers();
 
-    uberlayers();
-    
     outputs();
 
     inputs();

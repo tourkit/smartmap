@@ -1,6 +1,7 @@
 #include "open.hpp"
 #include "engine.hpp"
 #include "atlas.hpp"
+#include "json.hpp"
 #include "texture.hpp"
 #include "file.hpp"
 #include "effector.hpp"
@@ -11,35 +12,7 @@
 
 static std::string json_error = "JSON error";
 
-static void addEffectors(rapidjson::Value &v, Node* node) {
 
-    if (!v.IsObject()) return;
-
-    for (auto &e : v.GetObj()) {
-
-        if (!e.name.IsString() || !e.value.IsString()) continue;
-
-        Node* effector = nullptr;
-
-        engine.effectors->each<Effector>([&](Node* n, Effector* effector_) {
-
-            auto file_ = dynamic_cast<FileEffector*>(effector_);
-
-            if (file_ && file_->file.filename() == e.value.GetString()) effector = n;
-
-            else 
-                if (n->name() == e.value.GetString()) effector = n;
-
-        });
-
-        if (effector) 
-            node->add(effector)->name(e.name.GetString()); 
-        else 
-            PLOGE << "no effector: " << e.value.GetString();
-
-    }
-
-}
 
 bool isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>& x) {
 
@@ -208,141 +181,138 @@ void Open::outputs(){
 }
 
 
-void Open::uberlayers(){
+static void addEffectors(JSONVal v, Node* node) {
 
-    for (auto ubli : json_v["uberlayers"]) {
+     for (auto effector_def : v) {
 
-        if (!ubli.name().data()) continue;
+        if (!effector_def.name().c_str() || !effector_def.str().c_str()) { PLOGW << "not an FX : " << v.stringify(); continue; }
 
-        auto &ubl = *new UberLayer();
-        auto ubl_ = engine.stack->addPtr<Layer>(&ubl);
-        ubl_->owned = true;
-        ubl_->name(ubli.name());
+        Node* effector_ = nullptr;
 
-        for (auto layi : ubli) {
+        engine.effectors->each<Effector>([&](Node* n, Effector* e) {
 
-            if (!layi.name().data()) continue;
+            auto file_ = dynamic_cast<FileEffector*>(e);
 
-            int width = engine.window.width;
-            int height = engine.window.height;
-            int count = 1;
-            int fx_pos = 0;
+            if (file_ && file_->file.filename() == effector_def.str()) effector_ = n;
 
-            if (layi[0].isnum() && layi[1].isnum()) {
+        });
 
-                fx_pos = 2;
+        if (! effector_)   { PLOGW << "not an FX : " << effector_def.str(); continue; }
+        
+        node->add(effector_)->name(effector_def.str()); 
+     
+     }
 
-                width = layi[0].num();
-                height = layi[1].num();
-
-                if (layi[2].isnum()) {
-
-                    fx_pos = 3;
-
-                    count = layi[2].num();
-
-                }
-
-            }
-
-            auto &l = ubl.addLayer(width,height);
-            auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
-            l_->active(true)->name(layi.name());
-            l.s_->quantity(count);
-
-            for (auto effectori : layi[fx_pos]) {
-
-                if (!effectori.name().data() || ! effectori.str().data())  { PLOGW << json_error; continue; }
-
-                engine.effectors->each([&](Node* n) { if (n->name() == effectori.name()) l_->add(n);  });
-
-            }
-            
-        }
-
-        ubl.calc_matrice();
-
-        engine.stack->trigchange();
-
-        ubl.fb.texture->bind(3);
-
-        ubl.update();
-
-    }
+     if (v.size()) node->update();
 
 }
 
 void Open::layers(){
+    
+    for (auto layer_def : json_v["layers"]) {
 
-    JSON::if_obj_in("layers", json_v.document, [&](auto &l) {
-
-        if (!l.value.IsArray()) { PLOGW << json_error; return; }
-
-        auto info = l.value.GetArray();
+        if (!layer_def.name().data()) { PLOGW << layer_def.stringify(); continue; }
 
         int width = engine.window.width, height = engine.window.height;
 
         int models_id = 0;
 
-        if (info.Size() > 2) if (info[0].IsInt() && info[1].IsInt()) {
+        if (layer_def.isarr())  {  
 
-            width = info[0].GetInt(); height = info[1].GetInt();
+            if (layer_def[0].isnum() && layer_def[1].isnum()) {
 
-            if (info[2].IsObject()) models_id = 2;
+                width = layer_def[0].num(); height = layer_def[1].num();
 
-        }
-
-        TypedNode<Layer>* layer = engine.stack->addOwnr<Layer>(width,height,l.name.IsString() ? l.name.GetString() : "");
-
-        if (info.Size() <= models_id || !info[models_id].IsObject()) { PLOGW << json_error; return; }
-
-        for (auto &model : info[models_id].GetObj()) {
-
-            if (!model.name.IsString() || !model.value.IsArray()) { PLOGW << json_error; return; }
-
-            auto info = model.value.GetArray();
-
-            if (!info.Size() || !info[0].IsString()) { PLOGW << json_error; return; }
-
-            Node* model_file = nullptr;
-
-            for (Node* x : engine.models->childrens) {
-
-                auto f = x->is_a<File>();
-
-                if (!f) { PLOGW << json_error; return; }
-
-                std::string y = info[0].GetString();
-
-                if (f->filename() == y) model_file = x;
+                models_id = 2;
 
             }
 
-            // for (auto x : engine.models->childrens) if (x->is_a<File>() && x->is_a<File>()->filename == info[0].GetString()) model_file = x;
+            if (!layer_def[models_id].isobj()) { PLOGW << layer_def.stringify(); continue; }
 
-            if (!model_file) { PLOGE << "no model : " << info[0].GetString(); { PLOGW << json_error; return; } }
+            TypedNode<Layer>* layer = engine.stack->addOwnr<Layer>(width,height,layer_def.name());
+            
+            for (auto model_def : layer_def[models_id]) {
 
-            auto new_model = layer->add(model_file)->get<Model>();
+                Node* model_file = nullptr;
 
-            new_model->name(model.name.GetString());
+                engine.models->each<File>([&](Node* n, File* file) {
 
-            if (info.Size() < 2 || !info[1].IsInt()) { PLOGW << json_error; return; }
+                    if (file->filename() == model_def[0].str()) model_file = n;
 
-            new_model->get()->s_->quantity(info[1].GetInt());
+                });
 
-            if (info.Size() < 3 || !info[2].IsObject()) return;
+                if (!model_file) { PLOGW << "no model " << model_def[0].str(); continue; }
 
-            addEffectors( info[2], new_model->node() );
+                auto new_model = layer->add(model_file)->get<Model>();
 
+                new_model->name(model_def.name());
+
+                if (model_def[1].isnum()) new_model->get()->s_->quantity(model_def[1].num());
+
+                if (model_def[2].isobj()) addEffectors( model_def[2], new_model->node() );
+
+            }
+
+        }else{ // uberlayer
+
+            if (!layer_def.name().data()) continue;
+
+            auto &ubl = *new UberLayer();
+            auto ubl_ = engine.stack->addPtr<Layer>(&ubl);
+            ubl_->owned = true;
+            ubl_->name(layer_def.name());
+
+            for (auto vlayer_def : layer_def) {
+
+                if (!vlayer_def.name().data()) continue;
+
+                int width = engine.window.width;
+                int height = engine.window.height;
+                int count = 1;
+                int fx_pos = 0;
+
+                if (vlayer_def[0].isnum() && vlayer_def[1].isnum()) {
+
+                    fx_pos = 2;
+
+                    width = vlayer_def[0].num();
+                    height = vlayer_def[1].num();
+
+                    if (vlayer_def[2].isnum()) {
+
+                        fx_pos = 3;
+
+                        count = vlayer_def[2].num();
+
+                    }
+
+                }
+
+                auto &l = ubl.addLayer(width,height);
+                auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
+                l_->active(true)->name(vlayer_def.name());
+                l.s_->quantity(count);
+
+                for (auto effectori : vlayer_def[fx_pos]) {
+
+                    if (!effectori.name().data() || ! effectori.str().data())  { PLOGW << json_error; continue; }
+
+                    engine.effectors->each([&](Node* n) { if (n->name() == effectori.name()) l_->add(n);  });
+
+                }
+                
+            }
+
+            ubl.calc_matrice();
+
+            engine.stack->trigchange();
+
+            ubl.fb.texture->bind(3);
+
+            ubl.update();         
+        
         }
-
-        addEffectors( info[info.Size()-1], layer->node());
-
-        layer->update();
-
-
-    });
-
+    }
 }
 
 void Open::effectors(){
@@ -462,8 +432,6 @@ void Open::json(std::string path) {
     effectors();
     
     layers();
-
-    uberlayers();
     
     outputs();
 

@@ -19,9 +19,6 @@
     "burst.glsl": "void burst(float inratio, float shape, float petals) {\n\n\tuv -= .5;\n\n\tshape = 1-shape;\n\n\tfloat c = length(uv)+.5;\n\n\tfloat a = atan(uv.x,uv.y);//+iTime;\n\n\tfloat r = a * ((petals*29.)+3.);//\t- rotation*3.14*2.;\n\n\tr = abs(fract(.5/3.14*r)-.5)*2.; // equals : abs(mod(.5/3.14*r,1.)-.5); equals sdTriangle(a,petals);\n\n\tr = clamp(r*c*.9,0.,1.);\n\n\tr += (1.-inratio*2.); // gradient to white\n\n\tfloat zzz = shape*.4999;\n\tr = smoothstep(zzz,1.-zzz, r);\n\n\tr = mix(0.,1.,r);\n\n\tcolor *= r;\n\nuv += .5;\n\n}",
     "wrapper": [ "atlas", "flower", "burst", "gradient" ]
   },
-  "uberlayers": {
-    "ubersmart1": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] }
-  },
   "editors": [
     [ 0, 0, 0, 0, "Stack::ubersmart1", true ],
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
@@ -29,6 +26,7 @@
   ],
   "remaps": {},
   "layers": {
-    "Layer": [ 1, 1, { "quad": [ "quad.obj", 1, {} ] }, {} ]
+    "ubersmart1": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
+    "Layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, {} ] }, {} ]
   }
 }
