@@ -1072,15 +1072,17 @@ void Editors::init() {
                 ImGui::EndTabItem();
 
             }
-            for (auto x : layer->builder.samplers) {}
-            if (ImGui::BeginTabItem("1st pass")) {
+            for (auto x : layer->shader.builder()->samplers) {
+                
+                if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
 
-                Editor<Texture>::cb(node, layer->feedback);
+                    Editor<Texture>::cb(node, x.second);
 
-                ImGui::EndTabItem();
+                    ImGui::EndTabItem();
+
+                }
 
             }
-
 
             ImGui::EndTabBar();
 
