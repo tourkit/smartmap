@@ -6,7 +6,6 @@ struct Node;
 struct Buffer;
 struct Member;
 
-bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 0, int member_count = 0);
 void draw_definition(Member *member, int offset = 0, int depth = 0);
 
 template <typename T>

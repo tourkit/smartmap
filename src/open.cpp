@@ -313,7 +313,7 @@ void Open::effectors(){
 
         if (x.str().length()) {
 
-            File file(x.name_v, x.str().c_str());
+            File file(x.name_v+".glsl", x.str().c_str());
 
             engine.effectors->addPtr<Effector>(new FileEffector(file))->owned = true;
 
