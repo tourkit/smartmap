@@ -69,9 +69,9 @@ void Layer::draw() {
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : Layer(0,0,"UberLayerNonono"), builder(this), uberlayer_s("ubervbo",0) {
+UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(s_->name(),0) {
 
-    uberlayer_s.add(&uberlayer_def);
+    uberlayer_s.ref(&uberlayer_def);
 
     engine.static_ubo.add(&uberlayer_s);
 
@@ -181,7 +181,7 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     DrawCall::ShaderProgramBuilder::build();
 
-    std::string ar_str = ubl->glsl_uberlayer->def()->name()+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"")+".uberLayer";
+    std::string ar_str = lower(ubl->glsl_uberlayer->def()->name())+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"");
 
     if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->s_->name()), "int(OBJ)", ar_str );
 

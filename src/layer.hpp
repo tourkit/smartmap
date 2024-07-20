@@ -38,7 +38,7 @@ struct UberLayer : Layer {
 
     };
 
-    static inline Struct &uberlayer_def = Struct::create("UberLayer").add<glm::vec2>("size").add<glm::vec2>("pos").add<glm::vec2>("norm").add<glm::vec2>("dim");
+    static inline Struct &uberlayer_def = Struct::create("UberLayers").add<glm::vec2>("size").add<glm::vec2>("pos").add<glm::vec2>("norm").add<glm::vec2>("dim");
 
     std::vector<std::shared_ptr<VLayer>> layers;
 

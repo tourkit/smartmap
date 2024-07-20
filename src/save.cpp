@@ -124,7 +124,7 @@ void Save::layers(){
             new_model.PushBack(model.get()->s_->quantity(),allocator);
 
             auto effects = rapidjson::Value(rapidjson::kObjectType);
-            // for (auto e : model.get()->effectors) effects.AddMember( rapidjson::Value(e.get()->ref().name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator ); // TODOTODO
+            for (auto e : model.get()->effector_refs) effects.AddMember( rapidjson::Value(e.get()->s.name().c_str(), allocator), rapidjson::Value(e.get()->effector->s.name().c_str(), allocator), allocator ); // TODOTODO
             new_model.PushBack( effects, allocator );
 
             models.AddMember(rapidjson::Value(model.get()->s_->name().c_str(), allocator), new_model, allocator);
@@ -134,7 +134,7 @@ void Save::layers(){
         lay.PushBack(models, allocator);
 
         auto effects = rapidjson::Value(rapidjson::kObjectType);
-        // for (auto e : layer->effectors) effects.AddMember( rapidjson::Value(e.get()->ref().name().c_str(), allocator), rapidjson::Value(e.get()->file->filename().c_str(), allocator), allocator );// TODOTODO
+        for (auto e : layer->effector_refs) effects.AddMember( rapidjson::Value(e.get()->s.name().c_str(), allocator), rapidjson::Value(e.get()->s.name().c_str(), allocator), allocator );// TODOTODO
         lay.PushBack( effects, allocator );
 
         arr.AddMember( rapidjson::Value(node->name().c_str(), allocator)  , lay, allocator );

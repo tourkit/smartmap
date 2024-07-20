@@ -229,7 +229,9 @@ static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
 }
 
-bool draw_guis(Buffer* buff, Member* member, uint32_t offset, int member_count) {
+static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 0) {
+
+    static  int member_count = 0;
     
     if (!member) member = buff;
 
@@ -343,7 +345,7 @@ bool draw_guis(Buffer* buff, Member* member, uint32_t offset, int member_count) 
 
             ImGui::SeparatorText(septxt.c_str());
 
-            if (draw_guis(buff, m, offset, member_count)) has_changed = true;
+            if (draw_guis(buff, m, offset)) has_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
