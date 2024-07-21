@@ -7,9 +7,9 @@
 #include <unordered_set>
 #include <typeindex>
 #include <type_traits>
+#include <typeinfo>
 #include <functional>
 
-#include "log.hpp"
 #include "file.hpp"
 #include "editor.hpp"
 #include "folder.hpp"
@@ -150,6 +150,11 @@ public:
     Node* operator[](int id);
     Node* operator[](std::string name);
 
+    static inline Node* selected = nullptr;
+    
+    static inline std::map<std::type_info, std::function<void()>> callers;
+    static inline std::map< std::type_index, std::type_index> is_lists;
+
 private:
 
     Node* parent_node = nullptr;
@@ -188,6 +193,8 @@ struct TypedNode : UntypedNode {
     TypedNode(void* ptr, bool owned = false) :
 
         UntypedNode((isNode()? ((UntypedNode*)ptr)->name_v : type_name())), ptr((T*)ptr), owned(owned), stored_type(typeid(T)) {
+
+            // if (callers.find(typeid(T)) == callers.end()) callers[typeid(T)] = [](){  };
 
             if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
 
@@ -230,16 +237,20 @@ struct TypedNode : UntypedNode {
 
         if (n->parent() == node()) return nullptr;
 
-        if (onaddtyped_cb[type()].size()) {
+        std::type_index n_type = n->type();
+        
+        while (true) {
 
-            if (onaddtyped_cb[type()].find(n->type()) != onaddtyped_cb[type()].end()) {
+            if (onaddtyped_cb.find(type()) == onaddtyped_cb.end()) break;
+            if (onaddtyped_cb.at(type()).find(n_type) == onaddtyped_cb.at(type()).end()) break;
 
-                n = onaddtyped_cb[type()][n->type()](node(),n->node());
+            n = (TypedNode<Any>*)onaddtyped_cb[type()][n_type](node(),n->node());
 
-                if (!n) return nullptr;
+            if (!n) return nullptr;
 
+            if (UntypedNode::is_lists.find(n_type) == UntypedNode::is_lists.end()) break;
 
-            }//else PLOGD << n->name() << " ha no onadd_cb";
+            n_type = UntypedNode::is_lists.at(n_type);
 
         }
 
@@ -252,7 +263,7 @@ struct TypedNode : UntypedNode {
     }
 
 
-    TypedNode(TypedNode<Any>* other) : TypedNode<Any>(other->ptr) { stored_type = other->type(); }
+    TypedNode(TypedNode<Any>* other) : TypedNode(other->ptr) { stored_type = other->type(); }
 
     template <typename U>
     TypedNode<U>* addPtr(void* ptr) { return (TypedNode<U>*)TypedNode<T>::add(new TypedNode<U>((U*)ptr)); }
@@ -299,7 +310,7 @@ struct TypedNode : UntypedNode {
 
         // dir->hide();
 
-        for (auto f : dir->get()->list)  dir->node()->TypedNode::addOwnr<File>(f);
+        for (auto f : dir->get()->list)  ((TypedNode*)dir)->addOwnr<File>(f); // gne
 
         // for (auto f : dir->childrens) folder->TypedNode::addOwnr<U>(f->TypedNode::is_a<File>());//->referings.insert(f); this shjouldnt hpn here
 
@@ -354,8 +365,20 @@ struct NODE : TypedNode<T> {
     NODE(T *ptr)  : TypedNode<T>(ptr)  { }
 
     template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onaddtyped_cb[typeid(T)][typeid(U)] = cb; }
+    static inline void  is_a() { 
+        
+        UntypedNode::is_lists.emplace(typeid(T),typeid(U));
+        
+    }
 
+    template <typename U>
+    static void onadd(std::function<Node*(Node*,Node*)> cb) { 
+
+        UntypedNode::onaddtyped_cb[typeid(T)][typeid(U)] = cb; 
+
+    }
+
+    // static void onadd(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onaddtyped_cb[typeid(T)][typeid(U)] = cb; }
     static void ondelete(std::function<void(Node*,T*)> cb) { TypedNode<T>::ondelete_cb = cb;  }
     static void oncreate(std::function<void(Node*,T*)> cb) { TypedNode<T>::oncreate_cb = cb;  }
     static void onchange(std::function<void(Node*,T*)> cb) { TypedNode<T>::onchange_cb = cb;  }

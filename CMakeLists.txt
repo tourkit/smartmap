@@ -26,7 +26,11 @@ src/messagequeue.cpp
 
 vendors/gl3w/src/gl3w.c
 
-
+src/node.cpp
+src/data.cpp
+src/member.cpp
+src/struct.cpp
+src/instance.cpp
 
 src/output.cpp
 src/window.cpp
@@ -35,14 +39,10 @@ src/ubo.cpp
 src/framebuffer.cpp
 src/texture.cpp
 src/shader.cpp
-src/builder.cpp
 
+src/builder.cpp
 src/buffer.cpp
 src/remap.cpp
-src/data.cpp
-src/member.cpp
-src/struct.cpp
-src/instance.cpp
 
 src/dmx.cpp
 src/ndi.cpp
@@ -50,7 +50,6 @@ src/ndi.cpp
 src/effector.cpp
 src/model.cpp
 
-  src/node.cpp
   src/callbacks.cpp
   src/editor.cpp
 

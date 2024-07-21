@@ -1,6 +1,5 @@
 #include "node.hpp"
 #include "log.hpp"
-#include "engine.hpp"
 #include "buffer.hpp"
 #include "ubo.hpp"
 #include "utils.hpp"
@@ -116,7 +115,7 @@ std::string UntypedNode::nameSTL(){ if (parent()) { return parent()->name() + ":
 
 Node *UntypedNode::parent() { return parent_node; }
 
-Node* UntypedNode::select(){ engine.selected = node(); return node();  }
+Node* UntypedNode::select(){ selected = node(); return node();  }
 
 void UntypedNode::parent(Node* parent_node) {
 
@@ -136,7 +135,7 @@ void UntypedNode::parent(Node* parent_node) {
 
 Node* UntypedNode::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; return node(); }
 Node* UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; return node(); }
-Node* UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; active(true); return node(); }
+Node* UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; return node(); }
 
 void UntypedNode::runCB(std::function<void(Node*)> cb) {
 
@@ -164,7 +163,7 @@ Node* UntypedNode::hide() {
 
 void UntypedNode::bkpupdate() {
 
-    //TOFIX
+    //TOFIX // hein ?
     // engine.static_ubo.bkp();
     // engine.dynamic_ubo.bkp();
 
@@ -222,7 +221,7 @@ uint32_t UntypedNode::index() {
 
 void UntypedNode::run() {
 
-    if (!is_active && this != engine.tree) return; // PAas fan  sde  && this != engine.tree
+    if (!is_active ) return; 
 
     if (onrun_cb) onrun_cb(node());
 
