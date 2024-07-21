@@ -69,7 +69,7 @@ void Layer::draw() {
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(s_->name(),0) {
+UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(engine.static_ubo.next_name(s_->name()),0) {
 
     uberlayer_s.ref(&uberlayer_def);
 
