@@ -237,20 +237,21 @@ struct TypedNode : UntypedNode {
 
         if (n->parent() == node()) return nullptr;
 
-        std::type_index n_type = n->type();
+        std::type_index t = type();
+        std::type_index u = n->type();
         
         while (true) {
 
-            if (onaddtyped_cb.find(type()) == onaddtyped_cb.end()) break;
-            if (onaddtyped_cb.at(type()).find(n_type) == onaddtyped_cb.at(type()).end()) break;
+            if (onaddtyped_cb.find(t) == onaddtyped_cb.end()) break;
+            if (onaddtyped_cb.at(t).find(u) == onaddtyped_cb.at(t).end()) break;
 
-            n = (TypedNode<Any>*)onaddtyped_cb[type()][n_type](node(),n->node());
+            n = (TypedNode<Any>*)onaddtyped_cb[t][u](node(),n->node());
 
             if (!n) return nullptr;
 
-            if (UntypedNode::is_lists.find(n_type) == UntypedNode::is_lists.end()) break;
+            if (UntypedNode::is_lists.find(u) == UntypedNode::is_lists.end()) break;
 
-            n_type = UntypedNode::is_lists.at(n_type);
+            u = UntypedNode::is_lists.at(u);
 
         }
 

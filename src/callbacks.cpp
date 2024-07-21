@@ -198,11 +198,17 @@ void Callbacks::init() {
 
     // NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
 
-    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
+
+    NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
         
-        return _this->addPtr<EffectorRef>( _this->is_a<Model>()->addEffector( node->is_a<Effector>() ) )->node(); 
+        return _this->addPtr<EffectorRef>( ((Effectable*)_this->ptr_())->addEffector( node->is_a<Effector>() ) )->node(); 
         
     });
+
+    NODE<Model>::is_a<Effectable>();
+    NODE<Layer>::is_a<Effectable>();
+    NODE<UberLayer::VLayer>::is_a<Effectable>();
+
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
