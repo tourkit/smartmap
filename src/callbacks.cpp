@@ -126,7 +126,7 @@ void Callbacks::init() {
     ////////// LAYER.HPP
 
     ////////// UberLayer.HPP
-
+    
     NODE<UberLayer>::oncreate([](Node* node, UberLayer *ubl){
         
          NODE<Struct>::oncreate_cb(node, ubl->s_); //not sure if should be s_

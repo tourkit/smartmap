@@ -175,18 +175,11 @@ static void addEffectors(JSONVal v, Node* node) {
 
      for (auto effector_def : v) {
 
-        if (!effector_def.name().c_str() || !effector_def.str().c_str()) { PLOGW << "not an FX : " << v.stringify(); continue; }
+        if (!effector_def.name().c_str() || !effector_def.str().c_str()) { PLOGW << v.stringify(); continue; }
 
-        Node* effector_ = nullptr;
-
-        engine.effectors->each<Effector>([&](Node* n, Effector* e) {
-
-            auto file_ = dynamic_cast<FileEffector*>(e);
-            if (file_ && file_->file.filename() == effector_def.str()) effector_ = n;
-            else if (n->name() == effector_def.str()) effector_ = n;
-
-        });
-
+        Node* effector_;
+        effector_ = engine.effectors->child(effector_def.str());
+        if (! effector_)   effector_ = engine.stack->child(effector_def.str());
         if (! effector_)   { PLOGW << "not an FX : " << effector_def.str(); continue; }
         
         node->add(effector_)->name(effector_def.str()); 
