@@ -233,7 +233,7 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
     static  int member_count = 0;
     
-    if (!member) member = buff;
+    if (!member) {member = buff; member_count = 2550;}
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
@@ -294,7 +294,9 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
                 if (m->type() == typeid(glm::vec3)) q = 3;
                 if (m->type() == typeid(glm::vec4)) q = 4;
 
-                std::string name = (m->name()+"##SIE"+member->name()+m->name()+std::to_string(member_count++));
+                PushID(member_count);
+
+                std::string name = (m->name());
 
 
                 static std::string str__;
@@ -337,6 +339,9 @@ static bool draw_guis(Buffer* buff, Member* member = nullptr, uint32_t offset = 
 
                 }
 
+                PopID();
+
+                member_count++;
         }else{
 
             std::string septxt  = m->name();
