@@ -47,6 +47,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
     // window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
 
     tree = new Node("tree");
+    tree->active(1);
 
 
 }
@@ -74,19 +75,19 @@ void Engine::init() {
 
     Editors::init();
 
-    debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(true);//->close();
+    debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(false);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
     
-    medias = tree->addOwnr<Node>("Medias")->node();
+    medias = tree->addOwnr<Node>("Medias")->active(false)->node();
 
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
-    models = tree->addOwnr<Node>("Models")->node();
+    models = tree->addOwnr<Node>("Models")->active(false)->node();
     // models = tree->addFolder<File>("Models", "assets/models/")->node();
 
-    effectors = tree->addOwnr<Node>("Effectors")->node();
+    effectors = tree->addOwnr<Node>("Effectors")->active(false)->node();
 
     auto feedbackeffector = new FeedbackEffector();
     engine.effectors->addPtr<Effector>(feedbackeffector);
