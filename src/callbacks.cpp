@@ -148,17 +148,7 @@ void Callbacks::init() {
 
     // NODE<UberLayer::VLayer>::onchange([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); });
     // NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); });
-    NODE<UberLayer::VLayer>::onadd<Effector>([](Node*_this,Node*node){
 
-        auto effector = node->is_a<Effector>();
-
-        auto x =  _this->is_a<UberLayer::VLayer>()->addEffector( effector )  ;
-
-        if (!x) return _this;
-
-        return _this->addPtr<EffectorRef>( x )->node();
-
-    });
 
     ////////// DRAWCALL.HPP
 
@@ -199,15 +189,35 @@ void Callbacks::init() {
     // NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
 
 
-    NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
+    // NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
         
-        return _this->addPtr<EffectorRef>( ((Effectable*)_this->ptr_())->addEffector( node->is_a<Effector>() ) )->node(); 
+    //     UberLayer::VLayer* xx = (UberLayer::VLayer*)_this->ptr_();
+    //     return _this->addPtr<EffectorRef>( ((Effectable*)_this->ptr_())->addEffector( node->is_a<Effector>() ) )->node(); 
+        
+    // });
+    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
+
+        Effectable* m = (Model*)_this->ptr_();
+        Effectable* m2 = (Effectable*)_this->ptr_();
+
+        
+        return _this->addPtr<EffectorRef>( m->addEffector( node->is_a<Effector>() ) )->node(); 
         
     });
 
-    NODE<Model>::is_a<Effectable>();
-    NODE<Layer>::is_a<Effectable>();
-    NODE<UberLayer::VLayer>::is_a<Effectable>();
+    // NODE<Effectable>::onadd<Layer>([](Node*_this,Node*node){ 
+
+    //     auto ubl_ = dynamic_cast<UberLayer*>(node->is_a<Layer>());
+
+    //     if (!ubl_) return _this;
+        
+    //     return _this->addPtr<EffectorRef>( ((Effectable*)_this->ptr_())->addEffector( &ubl_->effector ) )->node(); 
+        
+    // });
+
+    // NODE<Model>::is_a<Effectable>();
+    // NODE<Layer>::is_a<Effectable>();
+    // NODE<UberLayer::VLayer>::is_a<Effectable>();
 
 
     NODE<Model>::ondelete([](Node* node, Model *model) {

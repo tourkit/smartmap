@@ -2,10 +2,10 @@
 
 #include <memory>
 
+#include "effector.hpp"
 #include "struct.hpp"
 #include "framebuffer.hpp"
 #include "shader.hpp"
-#include "engine.hpp"
 #include "drawcall.hpp"
 
 struct Layer : DrawCall {
@@ -23,6 +23,15 @@ struct Layer : DrawCall {
     static inline Instance* glsl_layers;
 
     void update() override;
+
+};
+
+
+struct UberEffector : Effector {
+
+    bool setup(Builder* builder) override;
+    
+    bool body(Builder* builder, std::string prepend = "") override;
 
 };
 
@@ -63,5 +72,7 @@ struct UberLayer : Layer {
         ShaderProgramBuilder(UberLayer* ubl);
 
     } builder;
+
+    UberEffector effector;
 
 };
