@@ -229,7 +229,8 @@ void Open::layers(){
 
                 if (!model_file) { PLOGW << "no model " << model_def[0].str(); continue; }
 
-                auto new_model = new_layer->add(model_file)->get<Model>();
+                auto new_model_ = new_layer->add(model_file);
+                auto new_model = new_model_->get<Model>();
 
                 new_model->name(model_def.name());
 

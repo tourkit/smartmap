@@ -8,8 +8,6 @@
 #include "ubo.hpp"
 #include "buffer.hpp"
 #include "builder.hpp"
-#include "struct.hpp"
-#include "member.hpp"
 #include "instance.hpp"
 #include "utils.hpp"
 

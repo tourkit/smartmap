@@ -69,24 +69,11 @@ void Engine::init() {
 
     Editors::init();
 
-    NODE<Debug>::allow<UBO>();
-    NODE<Debug>::allow<File>();
-    NODE<Any>::allow<Node>();
-    NODE<Any>::allow<Stack>();
-    NODE<Any>::allow<Debug>();
-    NODE<Node>::allow<Atlas>();
-    NODE<Node>::allow<Effector>();
-    NODE<Node>::allow<File>();
-    NODE<Node>::allow<Window>();
-    NODE<Layer>::allow<Modelable>();
-    NODE<UberLayer::VLayer>::allow<EffectorRef>();
-    // NODE<Layer>::allow<Effectable>();
-    NODE<Modelable>::allow<Effectable>();
 
-    NODE<Modelable>::is_a<Effectable>();
-    NODE<Layer>::is_a<Modelable>();
-    NODE<UberLayer>::is_a<Layer>();
-    NODE<UberLayer::VLayer>::is_a<Layer>();
+
+    // NODE<Model>::is_a<Modelable>();
+    // NODE<Modelable>::is_a<Effectable>();
+    // NODE<Layer>::is_a<Modelable>();
     
     
     auto* debug_ = tree->addOwnr<Debug>();
