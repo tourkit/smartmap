@@ -88,6 +88,8 @@ void Open::inputs(){
                 Instance inst(&engine.dynamic_ubo);
 
                 Node* n = engine.tree->child(arr[2].GetString());
+
+                if (!n) { PLOGW << arr[2].GetString() << " not found"; continue; }
                 auto vlayer = n->is_a<UberLayer::VLayer>();
                 if (vlayer) 
                     inst = inst.find(vlayer->s_);
@@ -182,7 +184,8 @@ static void addEffectors(JSONVal v, Node* node) {
         if (! effector_)   effector_ = engine.stack->child(effector_def.str());
         if (! effector_)   { PLOGW << "not an FX : " << effector_def.str(); continue; }
         
-        node->add(effector_)->name(effector_def.str()); 
+        auto new_ = node->add(effector_);
+        if (new_) new_->name(effector_def.str()); 
      
      }
 
@@ -212,7 +215,7 @@ void Open::layers(){
 
             if (!layer_def[models_id].isobj()) { PLOGW << layer_def.stringify(); continue; }
 
-            TypedNode<Layer>* layer = engine.stack->addOwnr<Layer>(width,height,layer_def.name());
+            TypedNode<Layer>* new_layer = engine.stack->addOwnr<Layer>(width,height,layer_def.name());
             
             for (auto model_def : layer_def[models_id]) {
 
@@ -226,7 +229,7 @@ void Open::layers(){
 
                 if (!model_file) { PLOGW << "no model " << model_def[0].str(); continue; }
 
-                auto new_model = layer->add(model_file)->get<Model>();
+                auto new_model = new_layer->add(model_file)->get<Model>();
 
                 new_model->name(model_def.name());
 
@@ -235,6 +238,8 @@ void Open::layers(){
                 if (model_def[2].isobj()) addEffectors( model_def[2], new_model->node() );
 
             }
+            
+            if (layer_def[models_id+1].isobj()) addEffectors( layer_def[models_id+1], new_layer->node() );
 
         }else{ // uberlayer
 
@@ -249,21 +254,18 @@ void Open::layers(){
 
                 if (!vlayer_def.name().data()) continue;
 
-                int width = engine.window.width;
-                int height = engine.window.height;
                 int count = 1;
-                int fx_pos = 0;
 
                 if (vlayer_def[0].isnum() && vlayer_def[1].isnum()) {
 
-                    fx_pos = 2;
+                    models_id = 2;
 
                     width = vlayer_def[0].num();
                     height = vlayer_def[1].num();
 
                     if (vlayer_def[2].isnum()) {
 
-                        fx_pos = 3;
+                        models_id = 3;
 
                         count = vlayer_def[2].num();
 
@@ -276,13 +278,7 @@ void Open::layers(){
                 l_->active(true)->name(vlayer_def.name());
                 l.s_->quantity(count);
 
-                for (auto effectori : vlayer_def[fx_pos]) {
-
-                    if (!effectori.name().data() || ! effectori.str().data())  { PLOGW << json_error; continue; }
-
-                    engine.effectors->each([&](Node* n) { if (n->name() == effectori.name()) l_->add(n);  });
-
-                }
+                addEffectors( vlayer_def[models_id], l_->node() );
                 
             }
 

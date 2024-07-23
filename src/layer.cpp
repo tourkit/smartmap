@@ -2,6 +2,7 @@
 #include "layer.hpp"
 #include "texture.hpp"
 #include "utils.hpp"
+#include "engine.hpp"
 
 
 #include "effector.hpp"
@@ -65,6 +66,20 @@ void Layer::draw() {
 
 }
 
+
+
+///////// UBEREFFECTOR ////
+
+
+bool UberEffector::setup(Builder* builder) { 
+
+    ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
+
+    return true; 
+    
+}
+
+bool UberEffector::body(Builder* builder, std::string prepend) {  Effector::body(builder, prepend); return true; }
 
 
 ///////// UBERLAYER ////

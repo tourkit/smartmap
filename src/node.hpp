@@ -83,7 +83,7 @@ public:
 
     virtual std::string type_name() { return "Node"; }
 
-    virtual void* ptr_() { return this; }
+    void* ptr_() { return bkptr; }
 
     Node* onchange(std::function<void(Node*)> cb = nullptr);
 
@@ -154,6 +154,9 @@ public:
     
     static inline std::map<std::type_info, std::function<void()>> callers;
     static inline std::map< std::type_index, std::type_index> is_lists;
+    static inline std::map< std::type_index, void*> is_lists2;
+
+    void* bkptr = nullptr;
 
 private:
 
@@ -196,6 +199,8 @@ struct TypedNode : UntypedNode {
 
             // if (callers.find(typeid(T)) == callers.end()) callers[typeid(T)] = [](){  };
 
+            bkptr = ptr;
+
             if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
 
             #ifdef ROCH
@@ -212,8 +217,6 @@ struct TypedNode : UntypedNode {
     TypedNode<U>* get() { return (TypedNode<U>*)this; }
 
     std::type_index type() override { return stored_type; }
-
-    void* ptr_() override { return ptr; }
 
     operator T*() { return ptr; }
 
@@ -233,25 +236,29 @@ struct TypedNode : UntypedNode {
 
     Node* add(void *node_v) override {
 
-        auto n = (TypedNode<Any>*)node_v;
+        auto n = (UntypedNode*)node_v;
 
         if (n->parent() == node()) return nullptr;
 
         std::type_index t = type();
         std::type_index u = n->type();
         
-        while (true) {
+        while (true) { // find all derived onadds
+        
+            std::string _t = t.name();
+            std::string _u = u.name();
 
-            if (onaddtyped_cb.find(t) == onaddtyped_cb.end()) break;
-            if (onaddtyped_cb.at(t).find(u) == onaddtyped_cb.at(t).end()) break;
+            if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) {
+                
+                n = (TypedNode<Any>*)onaddtyped_cb[t][u](node(),n->node());
 
-            n = (TypedNode<Any>*)onaddtyped_cb[t][u](node(),n->node());
+                if (n == this) return nullptr;
 
-            if (!n) return nullptr;
+            }
+            
+            if (UntypedNode::is_lists.find(t) == UntypedNode::is_lists.end()) break;
 
-            if (UntypedNode::is_lists.find(u) == UntypedNode::is_lists.end()) break;
-
-            u = UntypedNode::is_lists.at(u);
+            t = UntypedNode::is_lists.at(t);
 
         }
 
@@ -369,6 +376,7 @@ struct NODE : TypedNode<T> {
     static inline void  is_a() { 
         
         UntypedNode::is_lists.emplace(typeid(T),typeid(U));
+        // UntypedNode::is_lists2.emplace(typeid(T),dynamic_cast<U>);
         
     }
 
