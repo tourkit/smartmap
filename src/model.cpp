@@ -43,13 +43,13 @@ if (x)
 
 Model* Modelable::addModel(File* f) {
 
-    auto mod = models.emplace_back(std::make_shared<Model>(f, s_->next_name(f->name()))).get();
+    auto mod = models.emplace_back(std::make_shared<Model>(f, s.next_name(f->name()))).get();
 
-    s_->add(mod->s_);
+    s.add(&mod->s);
 
-    for (auto x : s_->getTop()) { // should be one Top only
+    for (auto x : s.getTop()) { // should be one Top only
 
-        x->isBuff()->each([&](Instance& inst){ if (inst.def() == mod->s_) mod->instance = &inst.track(); });
+        x->isBuff()->each([&](Instance& inst){ if (inst.def() == &mod->s) mod->instance = &inst.track(); });
 
     }
 

@@ -299,13 +299,9 @@ void EffectorRef::update() {
 // Effectable  ////////////////
 // Effectable  ////////////////
 
-Effectable::~Effectable() { if (owned) delete s_; }
+Effectable::~Effectable() {  }
 
-Effectable::Effectable(std::string name) : s_(new Struct(name)) {  }
-
-Effectable::Effectable(Struct* s_) : s_(s_), owned(false) {  }
-
-void Effectable::s(Struct* s_) { this->s_ = s_; if (owned) delete s_; owned = false; }
+Effectable::Effectable(std::string name) : s(name) {  }
 
 bool Effectable::removeEffector(EffectorRef* effector) {
 
@@ -315,9 +311,9 @@ bool Effectable::removeEffector(EffectorRef* effector) {
 
 EffectorRef* Effectable::addEffector(Effector* def) {
 
-    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(s_->next_name(def->s.name()), def)).get();
+    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(s.next_name(def->s.name()), def)).get();
 
-    s_->add(&effector->s);
+    s.add(&effector->s);
 
     return effector;
 

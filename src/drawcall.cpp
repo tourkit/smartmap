@@ -32,9 +32,9 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
 std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
 
-    auto name = lower(effectable.s_->name());
+    auto name = lower(effectable.s.name());
 
-    if (effectable.s_->quantity() > 1) name += "["+(dc->models.size() == 1?"ID":instance)+"]";
+    if (effectable.s.quantity() > 1) name += "["+(dc->models.size() == 1?"ID":instance)+"]";
 
     std::string body_fragment;
 
@@ -96,13 +96,13 @@ void Layer::ShaderProgramBuilder::build() {
 
         for (auto &model : dc->models)
 
-            for (int instance = 0; instance < model.get()->s_->quantity(); instance++) 
+            for (int instance = 0; instance < model.get()->s.quantity(); instance++) 
                 
-                body_fragment += print_layer(*model, lower(dc->s_->name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":""));
+                body_fragment += print_layer(*model, lower(dc->s.name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":""));
                 
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->s_->name()+"."+ref->s.name());
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->s.name()+"."+ref->s.name());
 
         
         // setup all effector_refs
@@ -156,7 +156,7 @@ DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo.next_name(na
 
     shader.builder(&builder);
 
-    engine.dynamic_ubo.add(s_);
+    engine.dynamic_ubo.add(&s);
 
 }
 

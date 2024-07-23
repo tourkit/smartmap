@@ -76,14 +76,10 @@ struct EffectorRef  {
 
 struct Effectable {
 
-    Struct *s_;
+    Struct s;
 
-    void s(Struct* s_);
-
-    bool owned = true;
-
-    Effectable(Struct* s_);
     Effectable(std::string name = "Effectable" );
+    
     ~Effectable();
 
     std::vector<std::shared_ptr<EffectorRef>> effector_refs;

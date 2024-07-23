@@ -899,12 +899,12 @@ void Editors::init() {
 
         static std::map<Node*,int> effector_currents;
 
-       effector_currents[node] = model->s_->quantity();
+       effector_currents[node] = model->s.quantity();
 
-        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->s_->quantity(effector_currents[node]); node->update(); }
+        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->s.quantity(effector_currents[node]); node->update(); }
 
 
-        if (draw_guis(&engine.dynamic_ubo, model->s_, model->instance->offset))engine.dynamic_ubo.upload();
+        if (draw_guis(&engine.dynamic_ubo, &model->s, model->instance->offset))engine.dynamic_ubo.upload();
 
     });
 
@@ -1047,9 +1047,9 @@ void Editors::init() {
 
     Editor<UberLayer>([](Node* node, UberLayer *ubl){
 
-        if (ubl->layers.size()) if (ImGui::SliderInt("quantitay##dsf",&ubl->layers[0].get()->s_->quantity_v, 1, 10)) {
+        if (ubl->layers.size()) if (ImGui::SliderInt("quantitay##dsf",&ubl->layers[0].get()->s.quantity_v, 1, 10)) {
 
-            ubl->layers[0].get()->s_->quantity(ubl->layers[0].get()->s_->quantity_v); // for some callback (updates dynUBO)
+            ubl->layers[0].get()->s.quantity(ubl->layers[0].get()->s.quantity_v); // for some callback (updates dynUBO)
 
             ubl->calc_matrice();
 
