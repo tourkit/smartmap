@@ -60,7 +60,7 @@ void Layer::draw() {
 
     shader.use();
 
-    vbo.draw(models.size()==1?models[0].get()->s_->quantity():1);
+    vbo.draw(models.size()==1?models[0].get()->s.quantity():1);
 
     if (feedback) { return feedback->read(fb.texture); }
 
@@ -84,7 +84,7 @@ bool UberEffector::body(Builder* builder, std::string prepend) {  Effector::body
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(engine.static_ubo.next_name(s_->name()),0) {
+UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(engine.static_ubo.next_name(s.name()),0) {
 
     uberlayer_s.ref(&uberlayer_def);
 
@@ -113,7 +113,7 @@ void UberLayer::calc_matrice() {
 
     for (auto it = layers.begin(); it != layers.end(); it++ ) {
 
-        for (int i = 0 ; i < it->get()->s_->quantity(); i++) {
+        for (int i = 0 ; i < it->get()->s.quantity(); i++) {
 
             matrice.back().emplace_back( std::array<int,5>{it->get()->w, it->get()->h, last_x, last_y, count} );
 
@@ -184,7 +184,7 @@ UberLayer::VLayer& UberLayer::addLayer(int w , int h) {
 
     auto &l = *layers.back().get();
 
-    s_->add(l.s_);
+    s.add(&l.s);
 
     return *layers.back().get();
 
@@ -198,7 +198,7 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     std::string ar_str = lower(ubl->glsl_uberlayer->def()->name())+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"");
 
-    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->s_->name()), "int(OBJ)", ar_str );
+    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->s.name()), "int(OBJ)", ar_str );
 
     else {
 
@@ -208,9 +208,9 @@ void UberLayer::ShaderProgramBuilder::build() {
 
             if (last_id) body_fragment += "\n} else ";
 
-            last_id += x.get()->s_->quantity();
+            last_id += x.get()->s.quantity();
 
-            body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer( *x.get(), lower(dc->s_->name()), "int(OBJ)", ar_str );
+            body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer( *x.get(), lower(dc->s.name()), "int(OBJ)", ar_str );
 
         }
 

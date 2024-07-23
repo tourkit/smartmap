@@ -44,7 +44,7 @@ void Save::outputs(){
 
             engine.stack->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
 
-            outputarr.PushBack( rapidjson::Value(lay->s_->name().c_str(), allocator ), allocator );
+            outputarr.PushBack( rapidjson::Value(lay->s.name().c_str(), allocator ), allocator );
 
         }
 
@@ -92,7 +92,7 @@ void Save::layers(){
 
                 layer_.PushBack(layer->w, allocator);
                 layer_.PushBack(layer->h, allocator);
-                layer_.PushBack(layer->s_->quantity(), allocator);
+                layer_.PushBack(layer->s.quantity(), allocator);
 
                 auto  effectors_ = rapidjson::Value(rapidjson::kObjectType);
 
@@ -123,13 +123,13 @@ void Save::layers(){
 
             new_model.PushBack(rapidjson::Value(model.get()->file->filename().c_str(), allocator), allocator);
 
-            new_model.PushBack(model.get()->s_->quantity(),allocator);
+            new_model.PushBack(model.get()->s.quantity(),allocator);
 
             auto effects = rapidjson::Value(rapidjson::kObjectType);
             for (auto e : model.get()->effector_refs) effects.AddMember( rapidjson::Value(e.get()->s.name().c_str(), allocator), rapidjson::Value(e.get()->effector->s.name().c_str(), allocator), allocator ); // TODOTODO
             new_model.PushBack( effects, allocator );
 
-            models.AddMember(rapidjson::Value(model.get()->s_->name().c_str(), allocator), new_model, allocator);
+            models.AddMember(rapidjson::Value(model.get()->s.name().c_str(), allocator), new_model, allocator);
 
         }
 
