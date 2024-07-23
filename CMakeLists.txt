@@ -151,6 +151,7 @@ if(UNIX)
 endif(UNIX)
 
 
+target_compile_definitions(smartmap PRIVATE ROCH=1)
 if(PLUGREGIE)
   target_compile_definitions(smartmap PRIVATE PLUGREGIE=1)
 endif(PLUGREGIE)

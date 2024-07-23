@@ -97,8 +97,6 @@ void Callbacks::init() {
 
     ////////// ENGINE.HPP (and Stack)
 
-    NODE<Stack>::allow<Layer>();
-
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){
 
         auto x = _this->addOwnr<Layer>();
@@ -180,17 +178,6 @@ void Callbacks::init() {
 
     });
 
-    NODE<Layer>::onadd<Effector>([](Node*_this,Node*node){ 
-
-        auto layer = _this->is_a<Layer>();
-        
-        auto n = layer->addEffector( node->is_a<Effector>() );
-
-        return _this->addPtr<EffectorRef>( n )->node(); 
-
-    });
-
-
     ////////// MODEL.HPP
 
     // NODE<Model>::oncreate([](Node*node, Model* mod){ NODE<Struct>::oncreate_cb(node, &mod->s); });
@@ -204,11 +191,9 @@ void Callbacks::init() {
     //     return _this->addPtr<EffectorRef>( ((Effectable*)_this->ptr_())->addEffector( node->is_a<Effector>() ) )->node(); 
         
     // });
-    NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
+    NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
 
-        Effectable* m = _this->is_a<Model>();
-        // Effectable* m2 = (Effectable*)_this->ptr_();
-
+        Effectable* m = _this->is_a<Effectable>();
         
         return _this->addPtr<EffectorRef>( m->addEffector( node->is_a<Effector>() ) )->node(); 
         

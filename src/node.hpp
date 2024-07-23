@@ -178,13 +178,11 @@ struct TypedNode : UntypedNode {
 
         UntypedNode((isNode()? ((UntypedNode*)ptr)->name_v : type_name())), ptr((T*)ptr), owned(owned), stored_type(typeid(T)) {
 
-            // if (callers.find(typeid(T)) == callers.end()) callers[typeid(T)] = [](){  };
-
-
-            if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
+            if(TypedNode::oncreate_cb) 
+                TypedNode::oncreate_cb(node(),this->ptr); 
 
             #ifdef ROCH
-            EASY_TYPE_DEBUG = type().name();
+            EASY_TYPE_DEBUG = type().name();    
             EASY_TYPE_DEBUG += " " + type_name();
             #endif
 
@@ -202,7 +200,15 @@ struct TypedNode : UntypedNode {
 
     TypedNode<T>* select() { UntypedNode::select(); return this; }
 
-    void trigchange() override { UntypedNode::trigchange(); if(onchange_cb) onchange_cb(node(),this->ptr); }
+    void trigchange() override { 
+        
+        UntypedNode::trigchange(); 
+        auto cb = TypedNode::onchange_cb;
+        if(cb) 
+        
+            cb(node(),this->ptr); 
+        
+    }
 
     void run() override {
 
@@ -252,7 +258,7 @@ struct TypedNode : UntypedNode {
 
         }
         
-        if (!found) return nullptr;
+        // if (!found) return nullptr;
 
         if (n == node_v) 
             return UntypedNode::add(n);
