@@ -220,29 +220,42 @@ struct TypedNode : UntypedNode {
 
         if (n->parent() == node()) return nullptr;
 
+        bool found = false;
+
         std::type_index t = type();
         std::type_index u = n->type();
         
         while (true) { // find all derived onadds
+            
+            while (true) { // find all derived onadds
         
-            std::string _t = t.name();
-            std::string _u = u.name();
+                std::string _t = t.name();
+                std::string _u = u.name();
 
-            if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) {
+                if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) { found = true;
+                    
+                    n = (TypedNode<Any>*)onaddtyped_cb[t][u](node(),n->node());
+
+                    if (n == this) return nullptr;
+
+                }
                 
-                n = (TypedNode<Any>*)onaddtyped_cb[t][u](node(),n->node());
+                if (UntypedNode::is_lists.find(u) == UntypedNode::is_lists.end()) break;
 
-                if (n == this) return nullptr;
+                u = UntypedNode::is_lists.at(u);
 
             }
             
-            if (UntypedNode::is_lists.find(u) == UntypedNode::is_lists.end()) break;
+            if (UntypedNode::is_lists.find(t) == UntypedNode::is_lists.end()) break;
 
-            u = UntypedNode::is_lists.at(u);
+            t = UntypedNode::is_lists.at(t);
 
         }
+        
+        if (!found) return nullptr;
 
-        if (n == node_v) {return UntypedNode::add(n);}
+        if (n == node_v) 
+            return UntypedNode::add(n);
         else {
             ((TypedNode<Any>*)node_v)->referings.insert(n->node()); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback
             return n->node();
@@ -330,11 +343,17 @@ struct TypedNode : UntypedNode {
 
         while (true) {
 
-            if (typeid(U) == t || is_lists.find(t) == is_lists.end()) break;
+            if (typeid(T) == t || is_lists.find(t) == is_lists.end()) break;
 
-            out = upcast_lists[t](ptr);
+            while (true) {
 
-            t = is_lists.at(t);
+                if (typeid(U) == t || is_lists.find(t) == is_lists.end()) break;
+
+                out = upcast_lists[t](ptr);
+
+                t = is_lists.at(t);
+            
+            }
         
         }
 
@@ -386,6 +405,13 @@ struct NODE : TypedNode<T> {
         UntypedNode::is_lists.emplace(typeid(T),typeid(U));
         UntypedNode::upcast_lists.emplace(typeid(T),[&](void* t){ return (U*)(T*)t; });
         
+    }
+
+    template <typename U>
+    static void allow() { 
+
+        NODE<T>::onadd<U>([](Node*_this,Node*node){ return node; }); 
+
     }
 
     template <typename U>

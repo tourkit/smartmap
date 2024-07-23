@@ -245,8 +245,8 @@ void Open::layers(){
 
             if (!layer_def.name().data()) continue;
 
-            auto &ubl = *new UberLayer();
-            auto ubl_ = engine.stack->addPtr<Layer>(&ubl);
+            auto ubl_ = engine.stack->addOwnr<UberLayer>();
+            auto &ubl = *ubl_->get();
             ubl_->owned = true;
             ubl_->name(layer_def.name());
 

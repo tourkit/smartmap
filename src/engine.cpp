@@ -1,4 +1,5 @@
 #include "engine.hpp"
+#include "layer.hpp"
 #include "struct.hpp"
 #include "effector.hpp"
 #include "gui.hpp"
@@ -68,7 +69,29 @@ void Engine::init() {
 
     Editors::init();
 
-    debug = tree->addOwnr<Debug>()->node()->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(false);//->close();
+    NODE<Debug>::allow<UBO>();
+    NODE<Debug>::allow<File>();
+    NODE<Any>::allow<Node>();
+    NODE<Any>::allow<Stack>();
+    NODE<Any>::allow<Debug>();
+    NODE<Node>::allow<Atlas>();
+    NODE<Node>::allow<Effector>();
+    NODE<Node>::allow<File>();
+    NODE<Node>::allow<Window>();
+    NODE<Layer>::allow<Modelable>();
+    NODE<UberLayer::VLayer>::allow<EffectorRef>();
+    // NODE<Layer>::allow<Effectable>();
+    NODE<Modelable>::allow<Effectable>();
+
+    NODE<Modelable>::is_a<Effectable>();
+    NODE<Layer>::is_a<Modelable>();
+    NODE<UberLayer>::is_a<Layer>();
+    NODE<UberLayer::VLayer>::is_a<Layer>();
+    
+    
+    auto* debug_ = tree->addOwnr<Debug>();
+    debug = debug_->node();
+    debug->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(false);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
     
