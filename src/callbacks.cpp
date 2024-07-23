@@ -34,9 +34,7 @@ void Callbacks::init() {
     //     return _this->UntypedNode::add(node);
 
     // });
-
-
-
+    
     ////////// FILE.HPP
 
     NODE<File>::oncreate([](Node* node, File *file){ node->name(file->name()); });
@@ -99,6 +97,8 @@ void Callbacks::init() {
 
     ////////// ENGINE.HPP (and Stack)
 
+    NODE<Stack>::allow<Layer>();
+
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){
 
         auto x = _this->addOwnr<Layer>();
@@ -109,15 +109,15 @@ void Callbacks::init() {
 
     NODE<Stack>::onchange([](Node*node,Stack*stack){
 
-        engine.tree->each_([](Node* n) {
+        node->each<Layer>([](Node* n, Layer* layer) {
 
-            ShaderProgram* shader = nullptr;
-            if (n->is_a_nowarning<Layer>()) shader = &n->is_a<Layer>()->shader;
-            else if (n->is_a_nowarning<UberLayer>()) shader = &n->is_a<UberLayer>()->shader;
-            else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
-            else return;
+            // ShaderProgram* shader = &layer->shader;
+            // if (n->is_a_nowarning<Layer>()) shader = ;
+            // else if (n->is_a_nowarning<UberLayer>()) shader = &layer->shader;
+            // else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
+            // else return;
 
-            if (shader) shader->create();
+            // if (shader) shader->create();
 
         });
 
@@ -153,13 +153,15 @@ void Callbacks::init() {
     ////////// DRAWCALL.HPP
 
     NODE<Layer>::ondelete([](Node* node, Layer *layer){ 
+
+        for (auto x : node->referings) {
+
+            auto o = x->is_a<Output>();
+
+            if (o && o->fb == &layer->fb) o->fb = nullptr;
+
+        } 
         
-        engine.outputs->each<Output>([layer](Node* node, Output* o){
-
-            if (o->fb == &layer->fb) o->fb = nullptr;
-
-        });  
-    
     }); 
 
     // NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
@@ -178,7 +180,15 @@ void Callbacks::init() {
 
     });
 
-    NODE<Layer>::onadd<Effector>([](Node*_this,Node*node){ return _this->addPtr<EffectorRef>( _this->is_a<Layer>()->addEffector( node->is_a<Effector>() ) )->node(); });
+    NODE<Layer>::onadd<Effector>([](Node*_this,Node*node){ 
+
+        auto layer = _this->is_a<Layer>();
+        
+        auto n = layer->addEffector( node->is_a<Effector>() );
+
+        return _this->addPtr<EffectorRef>( n )->node(); 
+
+    });
 
 
     ////////// MODEL.HPP
