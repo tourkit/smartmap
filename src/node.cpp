@@ -83,7 +83,8 @@ Node* UntypedNode::node() { return (Node*)this; }
 
 Node* UntypedNode::top() { auto top = node(); while(top->parent()) { top = top->parent(); } return top; }
 
-void UntypedNode::addList(NodeList *nodes) { for (auto n : *nodes) add(n); }
+void UntypedNode::
+addList(NodeList *nodes) { for (auto n : *nodes) add(n); }
 
 Node* UntypedNode::add(void* node_v)  {
 

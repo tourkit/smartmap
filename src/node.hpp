@@ -83,7 +83,6 @@ public:
 
     virtual std::string type_name() { return "Node"; }
 
-    void* ptr_() { return bkptr; }
 
     Node* onchange(std::function<void(Node*)> cb = nullptr);
 
@@ -91,28 +90,12 @@ public:
 
     Node* onrun(std::function<void(Node*)> cb = nullptr);
 
-    template <typename U>
-    U* is_a() {
-
-        auto x = is_a_nowarning<U>();
-
-        if (!x)
-            PLOGW << "\"" << name() << "\" is " << type_name() << " not a " << boost::typeindex::type_id_with_cvr<U>().pretty_name() << " ! ";
-
-        return x;
-
-    }
-
-    template <typename U>
-    U* is_a_nowarning() { if (type() == typeid(U)) return (U*)ptr_(); else return nullptr; }
 
     // template <typename V>
     // void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { Node* isa = c->is_a<V>(); if (isa) cb(c,isa); } }
 
-    template <typename V>
-    void each(std::function<void(Node*, V*)> cb) { each([&](Node* n) { auto isa = ((UntypedNode*)n)->is_a_nowarning<V>(); if (isa) cb(n,isa); }); }
 
-    void each(std::function<void(Node*)> cb) { for (auto c : childrens) { ((UntypedNode*)c)->each(cb); } cb(node());  }
+    void each_(std::function<void(Node*)> cb) { for (auto c : childrens) { ((UntypedNode*)c)->each_(cb); } cb(node());  }
 
     static inline uint32_t total_uid = 0;
     uint32_t uid = 0;
@@ -154,9 +137,7 @@ public:
     
     static inline std::map<std::type_info, std::function<void()>> callers;
     static inline std::map< std::type_index, std::type_index> is_lists;
-    static inline std::map< std::type_index, void*> is_lists2;
-
-    void* bkptr = nullptr;
+    static inline std::map< std::type_index, std::function<void*(void*)> > upcast_lists;
 
 private:
 
@@ -190,7 +171,7 @@ struct TypedNode : UntypedNode {
 
     bool owned;
 
-    std::type_index stored_type;
+    std::type_index stored_type = typeid(UntypedNode);
 
 
     TypedNode(void* ptr, bool owned = false) :
@@ -199,7 +180,6 @@ struct TypedNode : UntypedNode {
 
             // if (callers.find(typeid(T)) == callers.end()) callers[typeid(T)] = [](){  };
 
-            bkptr = ptr;
 
             if(oncreate_cb) { oncreate_cb(node(),this->ptr); }
 
@@ -256,9 +236,9 @@ struct TypedNode : UntypedNode {
 
             }
             
-            if (UntypedNode::is_lists.find(t) == UntypedNode::is_lists.end()) break;
+            if (UntypedNode::is_lists.find(u) == UntypedNode::is_lists.end()) break;
 
-            t = UntypedNode::is_lists.at(t);
+            u = UntypedNode::is_lists.at(u);
 
         }
 
@@ -328,10 +308,38 @@ struct TypedNode : UntypedNode {
     }
 
     template <typename U>
-    U* is_derived_nowarning() {
+    void each(std::function<void(Node*, U*)> cb) { each_([&](Node* n) { auto isa = ((TypedNode*)n)->is_a_nowarning<U>(); if (isa) cb(n,isa); }); }
 
-        if (dynamic_cast<U*>(ptr) != nullptr) return (U*)ptr; else return nullptr;
+    template <typename U>
+    U* is_a() {
 
+        auto x = is_a_nowarning<U>();
+
+        if (!x) { PLOGW << "\"" << name() << "\" is " << type_name() << " not a " << boost::typeindex::type_id_with_cvr<U>().pretty_name() << " ! "; }
+
+        return x;
+
+    }
+
+    template <typename U>
+    U* is_a_nowarning() {
+
+        auto t = stored_type;
+
+        void* out = typeid(U) == t ? ptr : nullptr;
+
+        while (true) {
+
+            if (typeid(U) == t || is_lists.find(t) == is_lists.end()) break;
+
+            out = upcast_lists[t](ptr);
+
+            t = is_lists.at(t);
+        
+        }
+
+        return (U*)out; 
+        
     }
 
 private:
@@ -370,13 +378,13 @@ struct Ptr : TypedNode<T> { Ptr(T *ptr)  : TypedNode<T>(ptr)  { } };
 template <typename T>
 struct NODE : TypedNode<T> {
 
-    NODE(T *ptr)  : TypedNode<T>(ptr)  { }
+    using TypedNode<T>::TypedNode;
 
     template <typename U>
     static inline void  is_a() { 
         
         UntypedNode::is_lists.emplace(typeid(T),typeid(U));
-        // UntypedNode::is_lists2.emplace(typeid(T),dynamic_cast<U>);
+        UntypedNode::upcast_lists.emplace(typeid(T),[&](void* t){ return (U*)(T*)t; });
         
     }
 
