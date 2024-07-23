@@ -30,7 +30,9 @@ void Save::outputs(){
 
         auto  outputarr = rapidjson::Value(rapidjson::kArrayType);
 
-        auto output_ = (Output*)output->ptr_(); // big leap
+        Output* output_ = output->is_a_nowarning<Window>();
+        if (!output_) output_ = output->is_a_nowarning<NDI::Sender>();
+        if (!output_) continue;
 
         outputarr.PushBack( output_->width, allocator );
         outputarr.PushBack( output_->height, allocator );

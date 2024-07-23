@@ -569,9 +569,7 @@ void Editors::init() {
 
         if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) {
 
-            engine.stack->each([&](Node* n){
-
-                Layer* layer = n->is_a_nowarning<Layer>(); 
+            engine.stack->each<Layer>([&](Node* n, Layer* layer){
 
                 if (layer && &layer->fb == output->fb) n->referings.erase(node);
 

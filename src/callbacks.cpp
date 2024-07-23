@@ -109,7 +109,7 @@ void Callbacks::init() {
 
     NODE<Stack>::onchange([](Node*node,Stack*stack){
 
-        engine.tree->each([](Node* n) {
+        engine.tree->each_([](Node* n) {
 
             ShaderProgram* shader = nullptr;
             if (n->is_a_nowarning<Layer>()) shader = &n->is_a<Layer>()->shader;
@@ -154,9 +154,8 @@ void Callbacks::init() {
 
     NODE<Layer>::ondelete([](Node* node, Layer *layer){ 
         
-        engine.outputs->each([layer](Node* node){
+        engine.outputs->each<Output>([layer](Node* node, Output* o){
 
-            auto o = ((Output*)node->ptr_());
             if (o->fb == &layer->fb) o->fb = nullptr;
 
         });  
@@ -197,8 +196,8 @@ void Callbacks::init() {
     // });
     NODE<Model>::onadd<Effector>([](Node*_this,Node*node){ 
 
-        Effectable* m = (Model*)_this->ptr_();
-        Effectable* m2 = (Effectable*)_this->ptr_();
+        Effectable* m = _this->is_a<Model>();
+        // Effectable* m2 = (Effectable*)_this->ptr_();
 
         
         return _this->addPtr<EffectorRef>( m->addEffector( node->is_a<Effector>() ) )->node(); 
