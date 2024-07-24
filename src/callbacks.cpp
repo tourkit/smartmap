@@ -59,43 +59,16 @@ void Callbacks::init() {
         if (s->name() != node->name())
             s->name(node->name()); });
 
-    ////////// Artnet.HPP
-
-    NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run();
-    static int size = 0;
-
-    // if (an->universes.size() != size) {
-    //     size = an->universes.size();
-    //     // node->get<Artnet>()->trigchange();
-    // }
-    });
-
-    NODE<Artnet>::onchange([](Node* node, Artnet *an){
-
-        NODE<Struct>::onchange_cb(node, an);
 
 
-        // for (auto c :node->childrens) delete c;
-
-        // // for (auto &uni :an->universes) {
-
-        // //     uni.second->id = uni.first;
-
-        // //     node->addPtr<Universe>(uni.second)->name("universe "+std::to_string(uni.first));
-
-        // // }
-
-    });
-
-
-    ////////// UBO.HPP
+    ////////// ENGINE
 
     NODE<UBO>::onrun([](Node* node, UBO *ubo){ ubo->upload(); });
 
     NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name(ubo->name()); });
 
 
-    ////////// ENGINE.HPP (and Stack)
+    ////////// DRAWCALL
 
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){
 
@@ -104,32 +77,17 @@ void Callbacks::init() {
         return x->node();
 
     });
+    
+    NODE<Stack>::onchange([](Node*node, Stack* stack){
 
-    // NODE<Stack>::onchange([](Node*node,Stack*stack){
+        for (auto c : node->childrens) {
 
-    //     node->each<Layer>([](Node* n, Layer* layer) {
+            Layer* layer = c->is_a<Layer>();
 
-    //         // ShaderProgram* shader = &layer->shader;
-    //         // if (n->is_a_nowarning<Layer>()) shader = ;
-    //         // else if (n->is_a_nowarning<UberLayer>()) shader = &layer->shader;
-    //         // else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
-    //         // else return;
-
-    //         // if (shader) shader->create();
-
-    //     });
-
-    //  });
-
-    ////////// LAYER.HPP
-
-    ////////// UberLayer.HPP
-
-    // NODE<UberLayer::VLayer>::onchange([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); });
-    // NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); });
-
-
-    ////////// DRAWCALL.HPP
+            if (layer) layer->shader.create();
+        }
+        
+    });
 
     NODE<Layer>::ondelete([](Node* node, Layer *layer){ 
 
@@ -227,6 +185,35 @@ void Callbacks::init() {
         atlas->fromDir(atlas->path); 
         });
 
+    ////////// Artnet.HPP
+
+    NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run();
+
+        static int size = 0;
+
+        // if (an->universes.size() != size) {
+        //     size = an->universes.size();
+        //     // node->get<Artnet>()->trigchange();
+        // }
+    });
+    
+
+    NODE<Artnet>::onchange([](Node* node, Artnet *an){
+
+        NODE<Struct>::onchange_cb(node, an);
+
+
+        // for (auto c :node->childrens) delete c;
+
+        // // for (auto &uni :an->universes) {
+
+        // //     uni.second->id = uni.first;
+
+        // //     node->addPtr<Universe>(uni.second)->name("universe "+std::to_string(uni.first));
+
+        // // }
+
+    });
     //////// Remap.HPP
 
     // NODE<DMXRemap>::onrun([](Node* node, DMXRemap *remap) {

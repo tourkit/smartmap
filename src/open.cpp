@@ -91,6 +91,7 @@ void Open::inputs(){
 
                 if (!n) { PLOGW << arr[2].GetString() << " not found"; continue; }
                 auto vlayer = n->is_a<UberLayer::VLayer>();
+                
                 if (vlayer) 
                     inst = inst.find(&vlayer->s);
 
@@ -276,10 +277,13 @@ void Open::layers(){
 
                 auto &l = ubl.addLayer(width,height);
                 auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
-                l_->active(true)->name(vlayer_def.name());
+                l_->active(true);
+                auto name = vlayer_def.name();
+                l_->name(name);
                 l.s.quantity(count);
 
                 addEffectors( vlayer_def[models_id], l_->node() );
+
                 
             }
 
