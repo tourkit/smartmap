@@ -318,6 +318,7 @@ void Open::effectors(){
         auto  wrap_ = engine.effectors->addOwnr<Wrappy>(std::vector<Effector*>{},3,x.name_v);
 
         wrap_->owned=true;
+        wrap_->name(x.name_v);
         
         auto wrap = wrap_->get();
 
