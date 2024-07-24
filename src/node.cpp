@@ -10,6 +10,8 @@ Node::Node(void* ptr, TypeIndex type, bool owned) : void_ptr(ptr), stored_type(t
 
     init();
 
+    name(type_name());
+
 }
 
 Node::Node(std::string name, ImVec4 color) : name_v(name), color(color) {
