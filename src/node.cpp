@@ -3,22 +3,42 @@
 #include "buffer.hpp"
 #include "ubo.hpp"
 #include "utils.hpp"
+#include <boost/type_index.hpp>
 
 
-UntypedNode::UntypedNode(std::string name, ImVec4 color) : name_v(name), color(color) {
+Node::Node(void* ptr, boost::typeindex::type_index type, bool owned) : void_ptr(ptr), stored_type(type), owned(owned) {
+
+    init();
+
+}
+
+Node::Node(std::string name, ImVec4 color) : name_v(name), color(color) {
+
+    init();
+
+}
+
+void Node::init() {
 
     uid = total_uid++;
 
     pool.insert(this);
-    PLOGV << "#" << name;
+    PLOGV << "#" << name();
+
+    #ifdef ROCH
+    EASY_TYPE_DEBUG = type().name();    
+    EASY_TYPE_DEBUG += " " + type_name();
+    #endif
+
+    trigcreate();
 
 }
 
-const std::string& UntypedNode::name() { return name_v; }
+const std::string& Node::name() { return name_v; }
 
-Node* UntypedNode::name(std::string value) { name_v = value; update();  return node();}
+Node* Node::name(std::string value) { name_v = value; update();  return this;}
 
-UntypedNode::~UntypedNode() {
+Node::~Node() {
 
     auto t_childrens = childrens;
     for (auto c : childrens) delete c;
@@ -29,16 +49,20 @@ UntypedNode::~UntypedNode() {
     for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
 
 
-    if (ondelete_cb) ondelete_cb(this->node());
+    if (ondelete_cb) ondelete_cb(this);
 
-    if (parent_node) parent_node->remove(node());
+    if (parent_node) parent_node->remove(this);
+
+    trigdelete();
+
+    // if (owned) delete void_ptr; // how ?
 
     pool.erase(this);
     PLOGV << "~" << name();
 
 }
 
-Node* UntypedNode::child(std::vector<std::string> names) {
+Node* Node::child(std::vector<std::string> names) {
 
     auto traget = names.back();
 
@@ -71,58 +95,102 @@ Node* UntypedNode::child(std::vector<std::string> names) {
 }
 
 
-Node* UntypedNode::child(std::string  name) {
+Node* Node::child(std::string  name) {
 
     return child(split(name));
 
 }
 
-Node* UntypedNode::active(bool value) { is_active = value; return node(); }
+Node* Node::active(bool value) { is_active = value; return this; }
 
-Node* UntypedNode::node() { return (Node*)this; }
 
-Node* UntypedNode::top() { auto top = node(); while(top->parent()) { top = top->parent(); } return top; }
+Node* Node::top() { auto top = this; while(top->parent()) { top = top->parent(); } return top; }
 
-void UntypedNode::
+void Node::
 addList(NodeList *nodes) { for (auto n : *nodes) add(n); }
 
-Node* UntypedNode::add(void* node_v)  {
+Node* Node::add(void* node_v)  {
 
-    auto n = (Node*)node_v;
+        auto n = (Node*)node_v;
 
-    PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
+        if (n->parent() == this) return nullptr;
 
-    if (n->parent() == node()) return nullptr;
+        bool found = false;
 
-    if (onadd_cb.find(n->type()) != onadd_cb.end()) {
+        boost::typeindex::type_index t = type();
+        boost::typeindex::type_index u = n->type();
+        
+        while (true) { // find all derived onadds
+            
+            while (true) { // find all derived onadds
+        
+                std::string _t = t.name();
+                std::string _u = u.name();
 
-        n = onadd_cb[n->type()](this->node(),n->node());
+                if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) { found = true;
+                    
+                    n = onaddtyped_cb[t][u](this,n);
 
-        if (!n) return nullptr;
+                    if (n == this) return nullptr;
 
-    }
+                }
+                
+                if (Node::is_lists.find(u) == Node::is_lists.end()) break;
 
-    if (n == node_v) n->parent(node());
+                u = Node::is_lists.at(u);
 
-    else n->referings.insert(this->node()); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
+            }
+            
+            if (Node::is_lists.find(t) == Node::is_lists.end()) break;
 
-    // update();
-    n->trigchange();
-    return n;
+            t = Node::is_lists.at(t);
+
+        }
+        
+        // if (!found) return nullptr;
+
+        if (n == node_v) {
+
+            PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
+
+            if (n->parent() == this) return nullptr;
+
+            if (onadd_cb.find(n->type()) != onadd_cb.end()) {
+
+                n = onadd_cb[n->type()](this,n);
+
+                if (!n) return nullptr;
+
+            }
+
+            if (n == node_v) n->parent(this);
+
+            else n->referings.insert(this); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
+
+            // update();
+            n->trigchange();
+            return n;
+
+        }else {
+
+            n->referings.insert(n); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback
+            return n;
+        }
+
 
 }
 
-std::string UntypedNode::nameSTL(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
+std::string Node::nameSTL(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
 
-Node *UntypedNode::parent() { return parent_node; }
+Node *Node::parent() { return parent_node; }
 
-Node* UntypedNode::select(){ selected = node(); return node();  }
+Node* Node::select(){ selected = this; return this;  }
 
-void UntypedNode::parent(Node* parent_node) {
+void Node::parent(Node* parent_node) {
 
     if (this->parent_node == parent_node) return;
 
-    if (this->parent_node) this->parent_node->remove(node());
+    if (this->parent_node) this->parent_node->remove(this);
 
     this->parent_node = parent_node;
 
@@ -130,39 +198,39 @@ void UntypedNode::parent(Node* parent_node) {
 
     is_active = parent_node->is_active;
 
-    parent_node->childrens.push_back(node());
+    parent_node->childrens.push_back(this);
 
 }
 
-Node* UntypedNode::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; return node(); }
-Node* UntypedNode::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; return node(); }
-Node* UntypedNode::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; return node(); }
+Node* Node::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; return this; }
+Node* Node::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; return this; }
+Node* Node::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; return this; }
 
-void UntypedNode::runCB(std::function<void(Node*)> cb) {
+void Node::runCB(std::function<void(Node*)> cb) {
 
     for (auto c:childrens) c->runCB(cb);
 
-    if(cb) cb(node());
+    if(cb) cb(this);
 
 }
 
-Node* UntypedNode::close() {
+Node* Node::close() {
 
     open = false;
-    return node();
+    return this;
 }
 
-Node* UntypedNode::hide() {
+Node* Node::hide() {
 
-    parent_node->remove(node());
+    parent_node->remove(this);
 
-    parent()->hidden_childrens.push_back(node());
+    parent()->hidden_childrens.push_back(this);
 
-    return node();
+    return this;
 
 }
 
-void UntypedNode::bkpupdate() {
+void Node::bkpupdate() {
 
     //TOFIX // hein ?
     // engine.static_ubo.bkp();
@@ -172,11 +240,11 @@ void UntypedNode::bkpupdate() {
 
 }
 
-Node* UntypedNode::operator[](std::string name) { for (auto c : childrens) if (c->name() == name) return c->node(); return nullptr; }
+Node* Node::operator[](std::string name) { for (auto c : childrens) if (c->name() == name) return c; return nullptr; }
 
-Node* UntypedNode::operator[](int id) { return childrens[id]->node(); }
+Node* Node::operator[](int id) { return childrens[id]; }
 
-void UntypedNode::update() {
+void Node::update() {
 
     PLOGV << type_name() << "::" << name();
 
@@ -191,7 +259,7 @@ void UntypedNode::update() {
 
 }
 
-bool UntypedNode::remove(Node *child) {
+bool Node::remove(Node *child) {
 
     PLOGV << type_name() << "::" << name() << " remove " << child->type_name() << "::" << child->name();
 
@@ -212,7 +280,7 @@ bool UntypedNode::remove(Node *child) {
 
 }
 
-uint32_t UntypedNode::index() {
+uint32_t Node::index() {
 
     auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
 
@@ -220,24 +288,24 @@ uint32_t UntypedNode::index() {
 
 }
 
-void UntypedNode::run() {
+void Node::run() {
 
     if (!is_active ) return; 
 
-    auto t = stored_type;
+    boost::typeindex::type_index t = stored_type;
 
     void* out = void_ptr;
 
     if (out) while (true) {
 
-        if (onruntyped_cb.find(t) != onruntyped_cb.end()) (*(std::function<void(Node*,void*)>*)
+        if (onruntyped.find(t) != onruntyped.end()) (*(std::function<void(Node*,void*)>*)
         
-            onruntyped_cb.at(t))(node(),out);  
+            onruntyped.at(t))(this,out);  
 
-        if (UntypedNode::is_lists.find(t) == UntypedNode::is_lists.end()) break;
+        if (Node::is_lists.find(t) == Node::is_lists.end()) break;
 
         out = upcast_lists[t](out);
-        t = UntypedNode::is_lists.at(t);
+        t = Node::is_lists.at(t);
     
     }
 
@@ -245,32 +313,94 @@ void UntypedNode::run() {
 
 }
 
-void UntypedNode::trigchange() {   }
+void Node::trigchange()  { 
+        
+        auto t = stored_type;
 
-void UntypedNode::up() {
+        void* out = void_ptr;
+
+        while (true) {
+
+            if (onchangetyped.find(t) != onchangetyped.end()) (*(std::function<void(Node*,void*)>*)
+            
+                onchangetyped.at(t))(this,out);  
+
+            if (Node::is_lists.find(t) == Node::is_lists.end()) break;
+
+            out = upcast_lists[t](out);
+
+            t = Node::is_lists.at(t);
+        
+        }
+        
+    }
+void Node::trigdelete()  { 
+        
+    auto t = stored_type;
+
+    void* out = void_ptr;
+
+    while (true) {
+
+        if (ondeletetyped.find(t) != ondeletetyped.end()) (*(std::function<void(Node*,void*)>*)
+        
+            ondeletetyped.at(t))(this,out);  
+
+        if (Node::is_lists.find(t) == Node::is_lists.end()) break;
+
+        out = upcast_lists[t](out);
+
+        t = Node::is_lists.at(t);
+    
+    }
+    
+}
+void Node::trigcreate()  { 
+        
+    auto t = stored_type;
+
+    void* out = void_ptr;
+
+    while (true) {
+
+        if (oncreatetyped.find(t) != oncreatetyped.end()) (*(std::function<void(Node*,void*)>*)
+        
+            oncreatetyped.at(t))(this,out);  
+
+        if (Node::is_lists.find(t) == Node::is_lists.end()) break;
+
+        out = upcast_lists[t](out);
+
+        t = Node::is_lists.at(t);
+    
+    }
+    
+}
+
+void Node::up() {
 
     if (!parent_node) return;
 
-    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), node());
+    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
     int index = std::distance(parent_node->childrens.begin(), it);
 
     if(index<1) return;
 
     parent_node->childrens.erase(it);
-    parent_node->childrens.insert(parent_node->childrens.begin() + index - 1, node());
+    parent_node->childrens.insert(parent_node->childrens.begin() + index - 1, this);
 
 }
 
-void UntypedNode::down() {
+void Node::down() {
 
     if (!parent_node) return;
 
-    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), node());
+    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
     int index = std::distance(parent_node->childrens.begin(), it);
 
     if(index > parent_node->childrens.size()-2) return;
 
     parent_node->childrens.erase(it);
-    parent_node->childrens.insert(parent_node->childrens.begin() + index + 1, node());
+    parent_node->childrens.insert(parent_node->childrens.begin() + index + 1, this);
 
 }

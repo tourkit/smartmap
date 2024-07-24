@@ -28,7 +28,7 @@ Test::Test() { logger.cout();
     //  });
 
     // auto dc = tree->addOwnr<DrawCall>();;
-    // this->dc = dc->node();
+    // this->dc = dc;
     // dc->name = "engine";
     // dc->addPtr(models->childrens[0]);
 

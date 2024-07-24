@@ -1154,7 +1154,7 @@ EditorWidget::~EditorWidget()  { std::erase_if(engine.gui->editors, [this](Edito
 
 void EditorWidget::draw() {
 
-    if (!selected || !locked) selected = UntypedNode::selected;
+    if (!selected || !locked) selected = Node::selected;
 
     std::string name = selected->name();
     // this->name = name;
