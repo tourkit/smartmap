@@ -28,8 +28,7 @@ struct Node {
     std::string EASY_TYPE_DEBUG = "NODE";
 #endif
 
-    ImVec4 color;
-
+    ImVec4 color = {1,1,1,1};
 
     std::vector<Node*> childrens;
 
