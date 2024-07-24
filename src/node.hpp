@@ -3,20 +3,15 @@
 #include <cstring>
 #include <vector>
 #include <set>
-#include <unordered_map>
-#include <unordered_set>
-#include <typeindex>
-#include <type_traits>
-#include <typeinfo>
 #include <functional>
 
-#include "file.hpp"
 #include "editor.hpp"
-#include "folder.hpp"
 
 #include <boost/type_index.hpp>
 
 #include "imgui/imgui.h"
+
+using TypeIndex = boost::typeindex::type_index;
 
 struct Node;
 
@@ -24,6 +19,14 @@ using NodeList = std::vector<Node*>;
 
 struct Node {
 
+    enum Event {
+
+        CREATE,
+        CHANGE,
+        RUN,
+        DELETE
+
+    };
     std::string name_v;
 #ifdef ROCH
 public:
@@ -43,7 +46,7 @@ public:
     static inline std::set<Node*> pool;
 
     Node(std::string name = "node", ImVec4 color = {1,1,1,1});
-    Node(void* ptr, boost::typeindex::type_index type, bool owned);
+    Node(void* ptr, TypeIndex type, bool owned);
 
 
     Node(Node* other) : Node(other->void_ptr, other->stored_type, other->owned) {  }
@@ -55,8 +58,6 @@ public:
     // void editor() { if(Editor<T>::cb)
     // Editor<T>::cb(this,this->void_ptr);
     // }
-
-    virtual void run();
 
     virtual void update();
 
@@ -85,15 +86,11 @@ public:
 
     bool remove(Node *child);
 
-    boost::typeindex::type_index type() { return stored_type; }
+    TypeIndex type() { return stored_type; }
 
     virtual std::string type_name() { return type().pretty_name();  }
 
-    Node* onchange(std::function<void(Node*)> cb = nullptr);
-
-    Node* ondelete(std::function<void(Node*)> cb = nullptr);
-
-    Node* onrun(std::function<void(Node*)> cb = nullptr);
+    Node* on(NodeEvent event, std::function<void(Node*)> cb = nullptr);
 
 
     // template <typename V>
@@ -107,11 +104,7 @@ public:
 
     bool is_typed = false;
 
-    void trigchange();
-
-    void trigcreate();
-    
-    void trigdelete();
+    void trig(NodeEvent event);
 
     Node* top();
 
@@ -123,39 +116,33 @@ public:
 
     std::set<Node*> referings;
 
-
     auto begin() { return childrens.begin(); }
 
     auto end() { return childrens.end(); }
 
-    std::function<void(Node*)> onchange_cb = nullptr;
-    std::function<void(Node*)> onrun_cb = nullptr;
-    std::function<void(Node*)> ondelete_cb = nullptr;
-
-    template <typename T>
-    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
 
     template <typename U>
     static void editor(std::function<void(Node*,U*)> cb) { Editor<U>::cb = cb; }
 
-    std::map<boost::typeindex::type_index, std::function<Node*(Node*,Node*)>> onadd_cb;
+    template <typename T>
+    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
 
-    static inline std::map<boost::typeindex::type_index,std::map<boost::typeindex::type_index, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
+    std::map<TypeIndex, std::function<Node*(Node*,Node*)>> onadd_cb;
+    std::map<NodeEvent,std::function<void(Node*)>> on_cb;
+
+    static inline std::map< TypeIndex, TypeIndex> is_lists;
+    static inline std::map< TypeIndex, std::function<void*(void*)> > upcast_lists;
+    static inline std::map<NodeEvent,std::map<TypeIndex, void*>> ontyped;
+    static inline std::map<TypeIndex,std::map<TypeIndex, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
 
     Node* operator[](int id);
     Node* operator[](std::string name);
 
     static inline Node* selected = nullptr;
     
-    static inline std::map< boost::typeindex::type_index, boost::typeindex::type_index> is_lists;
-    static inline std::map< boost::typeindex::type_index, std::function<void*(void*)> > upcast_lists;
     
-    static inline std::map<boost::typeindex::type_index, void*> onchangetyped;
-    static inline std::map<boost::typeindex::type_index, void*> oncreatetyped;
-    static inline std::map<boost::typeindex::type_index, void*> ondeletetyped;
-    static inline std::map<boost::typeindex::type_index, void*> onruntyped;
 
-    boost::typeindex::type_index stored_type = typeid(Node);
+    TypeIndex stored_type = typeid(Node);
 
     void* void_ptr = nullptr;
 
@@ -177,7 +164,7 @@ public:
 
         auto NEW_U = new Node(ptr, typeid(U), true);
 
-        if (!add(NEW_U)) { delete ptr; return nullptr; } // et delete NEW_U non ?
+        if (!add(NEW_U)) { delete ptr; delete NEW_U; return nullptr; } // et delete NEW_U non ?
 
         return NEW_U;
 
@@ -200,7 +187,7 @@ public:
     template <typename U>
     U* is_a_nowarning() {
 
-        boost::typeindex::type_index t = stored_type;
+        TypeIndex t = stored_type;
 
         void* out = typeid(U) == t ? void_ptr : nullptr;
 
@@ -227,7 +214,7 @@ private:
 
     void runCB(std::function<void(Node*)> cb = nullptr);
 
-    bool isNode() { return stored_type == boost::typeindex::type_index(typeid(Node)); }
+    bool isNode() { return stored_type == TypeIndex(typeid(Node)); }
 
 };
 
@@ -235,11 +222,8 @@ private:
 template <typename T>
 
 struct NODE {
-
-    static inline std::function<void(Node*,T*)> ondelete_cb = nullptr;
-    static inline std::function<void(Node*,T*)> oncreate_cb = nullptr;
-    static inline std::function<void(Node*,T*)> onrun_cb = nullptr;
-    static inline std::function<void(Node*,T*)> onchange_cb = nullptr;
+    
+    static inline std::map<NodeEvent, std::function<void(Node*,T*)>> on_cb;
 
     template <typename U>
     static inline void  is_a() { 
@@ -259,9 +243,7 @@ struct NODE {
 
     template <typename U>
     static void onadd(std::function<Node*(Node*,Node*)> cb) { Node::onaddtyped_cb[typeid(T)][typeid(U)] = cb;  }
-    static void ondelete(std::function<void(Node*,T*)> cb) { ondelete_cb = cb;  Node::ondeletetyped[typeid(T)] = &ondelete_cb; }
-    static void oncreate(std::function<void(Node*,T*)> cb) { oncreate_cb = cb;  Node::oncreatetyped[typeid(T)] = &oncreate_cb; }
-    static void onchange(std::function<void(Node*,T*)> cb) { onchange_cb = cb; Node::onchangetyped[typeid(T)] = &onchange_cb; }
-    static void onrun(std::function<void(Node*,T*)> cb) { onrun_cb = cb; Node::onruntyped[typeid(T)] = &onrun_cb; }
+
+    static void on(NodeEvent event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped[event][typeid(T)] = &on_cb[event]; }
 
 };

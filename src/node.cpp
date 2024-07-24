@@ -6,7 +6,7 @@
 #include <boost/type_index.hpp>
 
 
-Node::Node(void* ptr, boost::typeindex::type_index type, bool owned) : void_ptr(ptr), stored_type(type), owned(owned) {
+Node::Node(void* ptr, TypeIndex type, bool owned) : void_ptr(ptr), stored_type(type), owned(owned) {
 
     init();
 
@@ -30,7 +30,7 @@ void Node::init() {
     EASY_TYPE_DEBUG += " " + type_name();
     #endif
 
-    trigcreate();
+    trig(NodeEvent::CREATE);
 
 }
 
@@ -48,14 +48,11 @@ Node::~Node() {
 
     for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
 
-
-    if (ondelete_cb) ondelete_cb(this);
-
     if (parent_node) parent_node->remove(this);
 
-    trigdelete();
-
     // if (owned) delete void_ptr; // how ?
+
+    trig(NodeEvent::DELETE);
 
     pool.erase(this);
     PLOGV << "~" << name();
@@ -117,8 +114,8 @@ Node* Node::add(void* node_v)  {
 
         bool found = false;
 
-        boost::typeindex::type_index t = type();
-        boost::typeindex::type_index u = n->type();
+        TypeIndex t = type();
+        TypeIndex u = n->type();
         
         while (true) { // find all derived onadds
             
@@ -168,7 +165,7 @@ Node* Node::add(void* node_v)  {
             else n->referings.insert(this); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
 
             // update();
-            n->trigchange();
+            n->trig(NodeEvent::CHANGE);
             return n;
 
         }else {
@@ -202,9 +199,7 @@ void Node::parent(Node* parent_node) {
 
 }
 
-Node* Node::ondelete(std::function<void(Node*)> cb) { ondelete_cb = cb; return this; }
-Node* Node::onchange(std::function<void(Node*)> cb) { onchange_cb = cb; return this; }
-Node* Node::onrun(std::function<void(Node*)> cb) { onrun_cb = cb; return this; }
+Node* Node::on(NodeEvent event, std::function<void(Node*)> cb) { on_cb[event] = cb; return this; }
 
 void Node::runCB(std::function<void(Node*)> cb) {
 
@@ -248,7 +243,7 @@ void Node::update() {
 
     PLOGV << type_name() << "::" << name();
 
-    trigchange();
+    trig(NodeEvent::CHANGE);
 
     if (parent_node) parent_node->update();
 
@@ -288,53 +283,7 @@ uint32_t Node::index() {
 
 }
 
-void Node::run() {
-
-    if (!is_active ) return; 
-
-    boost::typeindex::type_index t = stored_type;
-
-    void* out = void_ptr;
-
-    if (out) while (true) {
-
-        if (onruntyped.find(t) != onruntyped.end()) (*(std::function<void(Node*,void*)>*)
-        
-            onruntyped.at(t))(this,out);  
-
-        if (Node::is_lists.find(t) == Node::is_lists.end()) break;
-
-        out = upcast_lists[t](out);
-        t = Node::is_lists.at(t);
-    
-    }
-
-    for (auto c : childrens) c->run();
-
-}
-
-void Node::trigchange()  { 
-        
-        auto t = stored_type;
-
-        void* out = void_ptr;
-
-        while (true) {
-
-            if (onchangetyped.find(t) != onchangetyped.end()) (*(std::function<void(Node*,void*)>*)
-            
-                onchangetyped.at(t))(this,out);  
-
-            if (Node::is_lists.find(t) == Node::is_lists.end()) break;
-
-            out = upcast_lists[t](out);
-
-            t = Node::is_lists.at(t);
-        
-        }
-        
-    }
-void Node::trigdelete()  { 
+void Node::trig(NodeEvent e)  { 
         
     auto t = stored_type;
 
@@ -342,30 +291,9 @@ void Node::trigdelete()  {
 
     while (true) {
 
-        if (ondeletetyped.find(t) != ondeletetyped.end()) (*(std::function<void(Node*,void*)>*)
+        if (ontyped[e].find(t) != ontyped[e].end()) (*(std::function<void(Node*,void*)>*)
         
-            ondeletetyped.at(t))(this,out);  
-
-        if (Node::is_lists.find(t) == Node::is_lists.end()) break;
-
-        out = upcast_lists[t](out);
-
-        t = Node::is_lists.at(t);
-    
-    }
-    
-}
-void Node::trigcreate()  { 
-        
-    auto t = stored_type;
-
-    void* out = void_ptr;
-
-    while (true) {
-
-        if (oncreatetyped.find(t) != oncreatetyped.end()) (*(std::function<void(Node*,void*)>*)
-        
-            oncreatetyped.at(t))(this,out);  
+            ontyped[e].at(t))(this,out);  
 
         if (Node::is_lists.find(t) == Node::is_lists.end()) break;
 
