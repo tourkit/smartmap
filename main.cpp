@@ -13,7 +13,7 @@
 
     struct Zi : Foo {  };
     
-    struct  Test {};
+    struct  Test { };
     struct  Tree {};
 
 int main() {
@@ -36,7 +36,7 @@ int main() {
 
     });
 
-    NODE<Bar>::onchange([](Node*node,Bar*bar){
+    NODE<Bar>::on(NodeEvent::CHANGE, [](Node*node,Bar*bar){
 
         std::cout << "barchange: "<< bar->x << std::endl;
 
@@ -56,16 +56,15 @@ int main() {
 
     Node x;
 
-
-    auto tree = x.addOwnr<Tree>();
+    auto &tree = *x.addOwnr<Tree>();
 
     NODE<Foo>::is_a<Bar>();
 
     NODE<Zi>::is_a<Foo>();
 
-    auto n = tree->addOwnr<Foo>();
+    auto &n = *tree.addOwnr<Foo>();
 
-    n->trigchange();
+    n.trig(NodeEvent::CHANGE);
 
 
 }
