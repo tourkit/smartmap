@@ -148,8 +148,6 @@ void Window::draw() {
 
     static VBO *vbo;
 
-    static ShaderProgram *shader;
-
     static bool init = false;
 
     if (!init){
@@ -170,7 +168,7 @@ void Window::draw() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, width, height);
 
-        fb->texture->bind();
+        fb->texture->bind(0);
         shader->use();
         vbo->draw();
 

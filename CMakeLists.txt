@@ -32,38 +32,38 @@ src/member.cpp
 src/struct.cpp
 src/instance.cpp
 
-src/output.cpp
-src/window.cpp
-src/vbo.cpp
-src/ubo.cpp
-src/framebuffer.cpp
-src/texture.cpp
-src/shader.cpp
+# src/output.cpp
+# src/window.cpp
+# src/vbo.cpp
+# src/ubo.cpp
+# src/framebuffer.cpp
+# src/texture.cpp
+# src/shader.cpp
 
-src/builder.cpp
-src/buffer.cpp
-src/remap.cpp
+# src/builder.cpp
+# src/buffer.cpp
+# src/remap.cpp
 
-src/dmx.cpp
-src/ndi.cpp
+# src/dmx.cpp
+# src/ndi.cpp
 
-src/effector.cpp
-src/model.cpp
+# src/effector.cpp
+# src/model.cpp
 
-  src/callbacks.cpp
-  src/editor.cpp
+#   src/callbacks.cpp
+#   src/editor.cpp
 
 
-src/engine.cpp
-src/open.cpp
-src/save.cpp
-src/layer.cpp
-src/fps.cpp
-src/drawcall.cpp
-src/atlas.cpp
-src/tree.cpp
+# src/engine.cpp
+# src/open.cpp
+# src/save.cpp
+# src/layer.cpp
+# src/fps.cpp
+# src/drawcall.cpp
+# src/atlas.cpp
+# src/tree.cpp
 
-src/gui.cpp
+# src/gui.cpp
 vendors/imgui/imgui.cpp
 vendors/imgui/imgui_tables.cpp
 vendors/imgui/imgui_widgets.cpp
@@ -74,7 +74,7 @@ vendors/imgui/backends/imgui_impl_opengl3.cpp
 vendors/ImGuiColorTextEdit/TextEditor.cpp
 
 
-src/artnet.cpp
+# src/artnet.cpp
 vendors/ofxLibArtnet/artnet/artnet.c
 vendors/ofxLibArtnet/artnet/misc.c
 vendors/ofxLibArtnet/artnet/network.c

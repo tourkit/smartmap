@@ -49,6 +49,8 @@ struct Window : Output {
     std::function<void()> clickCallBack = []() { /*  PLOGD << "click"; */ };
 
     std::unordered_map<int, std::function<void(int)>> keypress_cbs;
+    
+    static inline ShaderProgram *shader = nullptr;
 
 };
 
