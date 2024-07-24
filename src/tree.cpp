@@ -182,6 +182,13 @@ using namespace ImGui;
         }
 
         if(ImGui::MenuItem("update")) node->update();
+        if (ImGui::BeginMenu("trig")) {
+            
+            if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
+            if (ImGui::MenuItem("CREATE")) node->trig(Node::CREATE);
+
+            ImGui::EndMenu();
+        }
 
         if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
 

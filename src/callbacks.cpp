@@ -119,17 +119,26 @@ void Callbacks::init() {
 
     NODE<UberLayer>::is_a<Layer>();
     NODE<Layer>::is_a<Modelable>();
+    // NODE<Layer>::is_a<DrawCall>();
     NODE<Model>::is_a<Modelable>();
     NODE<Modelable>::is_a<Effectable>();
     NODE<UberLayer::VLayer>::is_a<Effectable>();
 
-    NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ NODE<Struct>::on_cb[Node::CHANGE](node, &layer->s); layer->update(); });
+    NODE<Modelable>::on(Node::CREATE, [](Node* node, Modelable *m){ 
+    
+        NODE<Struct>::on_cb[Node::CHANGE](node, &m->s);
+        
+    });
 
-    NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ layer->draw(); });
+    NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ layer->update(); });
+
+    NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 
+        layer->draw(); 
+    });
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
-
-        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( node->is_a<File>() ));
+        auto f = node->is_a<File>() ;
+        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( f))->name(f->name());
 
     });
 
