@@ -7,6 +7,8 @@
 #include "effector.hpp"
 #include "layer.hpp"
 #include "ndi.hpp"
+#include "gui.hpp"
+#include "editor.hpp"
 #include "rapidjson/rapidjson.h"
 
 

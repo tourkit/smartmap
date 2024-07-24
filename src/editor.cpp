@@ -824,7 +824,7 @@ void Editors::init() {
 
             else file->loadString(codeeditor.GetText().c_str());
 
-            node->bkpupdate();
+            node->update();
 
         }
 
@@ -1040,7 +1040,7 @@ void Editors::init() {
                 file_->file.data = codeeditor.GetText().c_str();
                 file_->load(&file_->file);
 
-                node->bkpupdate(); // do I need bkp here ? is even the fx useful
+                node->update(); // do I need bkp here ? is even the fx useful
 
             }
             
@@ -1095,7 +1095,7 @@ void Editors::init() {
 
             ubl->calc_matrice();
 
-            engine.stack->trigchange(); // update all shaders
+            engine.stack->trig(Node::CHANGE); // update all shaders
 
         }
 

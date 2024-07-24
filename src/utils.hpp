@@ -60,3 +60,8 @@ static std::vector<std::string> split(std::string s, std::string delimiter = "::
     return out;
 
 }
+
+
+
+#include <boost/type_index.hpp>
+using TypeIndex = boost::typeindex::type_index;

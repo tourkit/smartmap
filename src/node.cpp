@@ -3,8 +3,8 @@
 #include "buffer.hpp"
 #include "ubo.hpp"
 #include "utils.hpp"
-#include <boost/type_index.hpp>
 
+#include "editor.hpp"
 
 Node::Node(void* ptr, TypeIndex type, bool owned) : void_ptr(ptr), stored_type(type), owned(owned) {
 
@@ -104,8 +104,7 @@ Node* Node::active(bool value) { is_active = value; return this; }
 
 Node* Node::top() { auto top = this; while(top->parent()) { top = top->parent(); } return top; }
 
-void Node::
-addList(NodeList *nodes) { for (auto n : *nodes) add(n); }
+void Node::addList(std::vector<Node*> *nodes) { for (auto n : *nodes) add(n); }
 
 Node* Node::add(void* node_v)  {
 
@@ -275,9 +274,9 @@ void Node::trig(Event e)  {
 
     while (true) {
 
-        if (ontyped[e].find(t) != ontyped[e].end()) (*(std::function<void(Node*,void*)>*)
+        if (ontyped[e].find(t) != ontyped[e].end()) 
         
-            ontyped[e].at(t))(this,out);  
+            (*(std::function<void(Node*,void*)>*) ontyped[e].at(t))(this,out);  
 
         if (Node::is_lists.find(t) == Node::is_lists.end()) break;
 
@@ -287,6 +286,14 @@ void Node::trig(Event e)  {
     
     }
     
+}
+
+void Node::editor() { 
+
+    if(EDITOR::ptr.find(stored_type) != EDITOR::ptr.end()) 
+
+        (*(std::function<void(Node*,void*)>*)EDITOR::ptr[stored_type])(this,this->void_ptr);
+
 }
 
 void Node::up() {

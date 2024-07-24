@@ -22,9 +22,9 @@ void Callbacks::init() {
 
     // ////////// xxx.HPP
 
-    // NODE<xxx>::oncreate([](Node* node, xxx *x){ });
-    // NODE<xxx>::onchange([](Node* node, xxx *x){ });
-    // NODE<xxx>::onrun([](Node* node, xxx *x){ });
+    // NODE<xxx>::on(Node::CREATE, [](Node* node, xxx *x){ });
+    // NODE<xxx>::on(Node::CHANGE, [](Node* node, xxx *x){ });
+    // NODE<xxx>::on(Node::RUN, [](Node* node, xxx *x){ });
 
     // NODE<xxx>::onadd<yyy>([](Node*_this,Node*node){
 
@@ -37,9 +37,9 @@ void Callbacks::init() {
     
     ////////// FILE.HPP
 
-    NODE<File>::oncreate([](Node* node, File *file){ node->name(file->name()); });
+    NODE<File>::on(Node::CREATE, [](Node* node, File *file){ node->name(file->name()); });
 
-    NODE<File>::onrun([](Node* node, File *file){
+    NODE<File>::on(Node::RUN, [](Node* node, File *file){
 
         // if (file->last_modified != file->getTimeModified()) file->reload();
         if (file->hasChanged()) {
@@ -53,11 +53,11 @@ void Callbacks::init() {
 
     ////////// Struct.HPP
 
-    NODE<Struct>::oncreate([](Node* node, Struct *s){ 
+    NODE<Struct>::on(Node::CREATE, [](Node* node, Struct *s){ 
         node->name(s->name()); 
     });
 
-    NODE<Struct>::onchange([&](Node*node, Struct* s){
+    NODE<Struct>::on(Node::CHANGE, [&](Node*node, Struct* s){
         if (s->name() != node->name())
             s->name(node->name()); });
 
@@ -65,9 +65,9 @@ void Callbacks::init() {
 
     ////////// ENGINE
 
-    NODE<UBO>::onrun([](Node* node, UBO *ubo){ ubo->upload(); });
+    NODE<UBO>::on(Node::RUN, [](Node* node, UBO *ubo){ ubo->upload(); });
 
-    NODE<UBO>::oncreate([](Node* node, UBO *ubo){ node->name(ubo->name()); });
+    NODE<UBO>::on(Node::CREATE, [](Node* node, UBO *ubo){ node->name(ubo->name()); });
 
 
     ////////// DRAWCALL
@@ -80,7 +80,7 @@ void Callbacks::init() {
 
     });
     
-    NODE<Stack>::onchange([](Node*node, Stack* stack){
+    NODE<Stack>::on(Node::CHANGE, [](Node*node, Stack* stack){
 
         for (auto c : node->childrens) {
 
@@ -91,7 +91,7 @@ void Callbacks::init() {
         
     });
 
-    NODE<Layer>::ondelete([](Node* node, Layer *layer){ 
+    NODE<Layer>::on(Node::DELETE, [](Node* node, Layer *layer){ 
 
         for (auto x : node->referings) {
 
@@ -103,7 +103,7 @@ void Callbacks::init() {
         
     }); 
 
-    NODE<Model>::ondelete([](Node* node, Model *model) {
+    NODE<Model>::on(Node::DELETE, [](Node* node, Model *model) {
 
         auto dc = node->parent()->is_a_nowarning<DrawCall>();
         if (dc) { dc->removeModel(model); return; }
@@ -121,13 +121,9 @@ void Callbacks::init() {
     NODE<Modelable>::is_a<Effectable>();
     NODE<UberLayer::VLayer>::is_a<Effectable>();
 
-    NODE<Layer>::oncreate([](Node* node, Layer *layer){ 
-        NODE<Struct>::oncreate_cb(node, &layer->s);  
-    }); 
+    NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ NODE<Struct>::on_cb[Node::CHANGE](node, &layer->s); layer->update(); });
 
-    NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
-
-    NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
+    NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ layer->draw(); });
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
 
@@ -146,11 +142,11 @@ void Callbacks::init() {
     NODE<FileEffector>::is_a<Effector>();
     NODE<Wrappy>::is_a<Effector>();
 
-    NODE<Effector>::oncreate([](Node*node, Effector* def){ NODE<Struct>::oncreate_cb(node, &def->s); });
+    NODE<Effector>::on(Node::CREATE, [](Node*node, Effector* def){ NODE<Struct>::on_cb[Node::CREATE](node, &def->s); });
 
-    NODE<EffectorRef>::oncreate([](Node*node, EffectorRef* fx){ NODE<Struct>::oncreate_cb(node, &fx->s); });
+    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Struct>::on_cb[Node::CREATE](node, &fx->s); });
 
-    NODE<EffectorRef>::onchange([&](Node*node, EffectorRef* effector){ NODE<Struct>::onchange_cb(node, &effector->s); effector->update(); });
+    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* effector){ NODE<Struct>::on_cb[Node::CHANGE](node, &effector->s);  effector->update(); });
 
     NODE<Effector>::onadd<Effector>([](Node* _this, Node *node) {
 
@@ -167,7 +163,7 @@ void Callbacks::init() {
 
     });
 
-    NODE<EffectorRef>::ondelete([](Node* node, EffectorRef *effector) {
+    NODE<EffectorRef>::on(Node::DELETE, [](Node* node, EffectorRef *effector) {
 
         auto lay = node->parent()->is_a_nowarning<Layer>();
         if (lay) lay->removeEffector(effector); 
@@ -182,29 +178,29 @@ void Callbacks::init() {
 
     ////////// Atlas.HPP
 
-    NODE<Atlas>::oncreate([](Node* node, Atlas *atlas) { 
+    NODE<Atlas>::on(Node::CREATE, [](Node* node, Atlas *atlas) { 
         node->name(atlas->path);
         });
-    NODE<Atlas>::onchange([](Node* node, Atlas *atlas) { 
+    NODE<Atlas>::on(Node::CHANGE, [](Node* node, Atlas *atlas) { 
         atlas->fromDir(atlas->path); 
         });
 
     ////////// Artnet.HPP
 
-    NODE<Artnet>::onrun([](Node* node, Artnet *an){ an->run();
+    NODE<Artnet>::on(Node::RUN, [](Node* node, Artnet *an){ an->run();
 
         static int size = 0;
 
         // if (an->universes.size() != size) {
         //     size = an->universes.size();
-        //     // node->get<Artnet>()->trigchange();
+        //     // node->get<Artnet>()->trig(Node::CHANGE);
         // }
     });
     
 
-    NODE<Artnet>::onchange([](Node* node, Artnet *an){
+    NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){
 
-        NODE<Struct>::onchange_cb(node, an);
+        NODE<Struct>::on_cb[Node::CHANGE](node, an);
 
 
         // for (auto c :node->childrens) delete c;
@@ -220,7 +216,7 @@ void Callbacks::init() {
     });
     //////// Remap.HPP
 
-    // NODE<DMXRemap>::onrun([](Node* node, DMXRemap *remap) {
+    // NODE<DMXRemap>::on(Node::RUN, [](Node* node, DMXRemap *remap) {
 
     //     int count = 0;
     //     remap->dst->def()->each([&](Instance &inst){count++;});
@@ -229,26 +225,26 @@ void Callbacks::init() {
     // });
 
 
-    // NODE<Remap>::onrun([](Node* node, Remap *remap) { remap->update(); });
-    // NODE<Remap>::onchange([](Node* node, Remap *remap) { remap->reset(); });
-    // NODE<Universe::Remap>::onrun([](Node* node, Universe::Remap *remap) { remap->update(); });
-    // NODE<Universe::Remap>::onchange([](Node* node, Universe::Remap *remap) { remap->reset(); });
+    // NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { remap->update(); });
+    // NODE<Remap>::on(Node::CHANGE, [](Node* node, Remap *remap) { remap->reset(); });
+    // NODE<Universe::Remap>::on(Node::RUN, [](Node* node, Universe::Remap *remap) { remap->update(); });
+    // NODE<Universe::Remap>::on(Node::CHANGE, [](Node* node, Universe::Remap *remap) { remap->reset(); });
 
     //////// FrameBuffer.HPP
 
-    NODE<FrameBuffer>::onchange([](Node* node, FrameBuffer *fb) { if (fb->width != fb->texture->width || fb->height != fb->texture->height) { fb->create(fb->width, fb->height); } });
+    NODE<FrameBuffer>::on(Node::CHANGE, [](Node* node, FrameBuffer *fb) { if (fb->width != fb->texture->width || fb->height != fb->texture->height) { fb->create(fb->width, fb->height); } });
 
     //////// Buffer.HPP
 
-    NODE<Buffer>::onchange([](Node* node, Buffer *buffer) { PLOGD<<"ooo"; });
+    NODE<Buffer>::on(Node::CHANGE, [](Node* node, Buffer *buffer) { PLOGD<<"ooo"; });
 
     ////////// Folder.HPP
 
-    NODE<Folder>::oncreate([](Node* node, Folder *dir){ node->name(dir->path); });
+    NODE<Folder>::on(Node::CREATE, [](Node* node, Folder *dir){ node->name(dir->path); });
 
     ////////// Output
 
-    NODE<Output>::onrun([](Node* node, Output *output){ output->draw(); });
+    NODE<Output>::on(Node::RUN, [](Node* node, Output *output){ output->draw(); });
 
     NODE<Window>::is_a<Output>();
 
@@ -256,9 +252,9 @@ void Callbacks::init() {
 
     ////////// NDI
 
-    NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ node->name(sender->name);  });
+    NODE<NDI::Sender>::on(Node::CREATE, [](Node* node, NDI::Sender *sender){ node->name(sender->name);  });
 
-    NODE<NDI::Sender>::onchange([](Node* node, NDI::Sender *sender){
+    NODE<NDI::Sender>::on(Node::CHANGE, [](Node* node, NDI::Sender *sender){
 
         if (!sender->fb) return;
 
@@ -268,6 +264,6 @@ void Callbacks::init() {
 
     ////////// JSON.HPP
 
-    NODE<JSON>::oncreate([](Node* node, JSON *json){ if (json->file) node->name(json->file->name()); });
+    NODE<JSON>::on(Node::CREATE, [](Node* node, JSON *json){ if (json->file) node->name(json->file->name()); });
 
 }

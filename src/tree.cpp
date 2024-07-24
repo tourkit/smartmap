@@ -1,6 +1,7 @@
 #include "tree.hpp"
 #include "imgui.h"
 #include "node.hpp"
+#include "editor.hpp"
 #include "engine.hpp"
 #include "imgui_internal.h"
 
