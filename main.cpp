@@ -15,6 +15,9 @@ int main() {
 
     // engine.open("./project.json");
 
+    engine.tree->addOwnr<Foo>();//->name("dskhj");
+
+
     engine.run();
 
 }

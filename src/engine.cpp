@@ -77,30 +77,30 @@ void Engine::init() {
     debug->addPtr<UBO>(&static_ubo)->on(Node::CHANGE, [](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
     
-    medias = tree->addOwnr<Node>("Medias")->active(false);
+    medias = tree->addOwnr<Node>()->name("Medias")->active(false);
 
-    // auto comps = debug->addOwnr<Node>("Components")->close();
+    // auto comps = debug->addOwnr<Node>()->name("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
-    models = tree->addOwnr<Node>("Models")->active(false);
+    models = tree->addOwnr<Node>()->name("Models")->active(false);
     // models = tree->addFolder<File>("Models", "assets/models/");
 
-    effectors = tree->addOwnr<Node>("Effectors")->active(false);
+    effectors = tree->addOwnr<Node>()->name("Effectors")->active(false);
 
     auto feedbackeffector = new FeedbackEffector();
     engine.effectors->addPtr<Effector>(feedbackeffector);
 
     // effectors = tree->addFolder<File>("Effectors", "assets/effectors/");
 
-    // timelines = tree->addOwnr<Node>("Timelines");
+    // timelines = tree->addOwnr<Node>()->name("Timelines");
 
-    // remaps = tree->addOwnr<Node>("Remaps");
+    // remaps = tree->addOwnr<Node>()->name("Remaps");
 
-    inputs = tree->addOwnr<Node>("Inputs")->active(1);
+    inputs = tree->addOwnr<Node>()->name("Inputs")->active(1);
 
     stack = tree->addOwnr<Stack>()->active(1);
 
-    outputs = tree->addOwnr<Node>("Outputs")->active(true);
+    outputs = tree->addOwnr<Node>()->name("Outputs")->active(true);
 
     debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
 
@@ -141,32 +141,34 @@ void Engine::run() {
 
     auto &window = getInstance().window;
 
-    while (!glfwWindowShouldClose(window.id)) window.render([](){
+    while (!glfwWindowShouldClose(window.id)) 
+    
+        window.render([](){
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        engine.gui->draw();
+            engine.gui->draw();
 
-        static int frame = 0;
-        memcpy(engine.dynamic_ubo.data.data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
-        int fps = std::round(ImGui::GetIO().Framerate);
-        memcpy(engine.dynamic_ubo.data.data()+4, &fps, 4); // aka engine.dynamic_ubo["ENGINE"]["fps"]
-        int alt = frame % 2;
-        memcpy(engine.dynamic_ubo.data.data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
+            static int frame = 0;
+            memcpy(engine.dynamic_ubo.data.data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
+            int fps = std::round(ImGui::GetIO().Framerate);
+            memcpy(engine.dynamic_ubo.data.data()+4, &fps, 4); // aka engine.dynamic_ubo["ENGINE"]["fps"]
+            int alt = frame % 2;
+            memcpy(engine.dynamic_ubo.data.data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
 
-        frame = (frame+1) % 1000;
+            frame = (frame+1) % 1000;
 
-        static Instance& dynubo2 = Instance(&engine.dynamic_ubo).eq(1).track();
+            static Instance& dynubo2 = Instance(&engine.dynamic_ubo).eq(1).track();
 
-        int offset = 0;
-        if (alt) offset = dynubo2.offset;
-        engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset,offset);
-        // engine.dynamic_ubo.upload();
+            int offset = 0;
+            if (alt) offset = dynubo2.offset;
+            engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset,offset);
+            // engine.dynamic_ubo.upload();
 
 
-        engine.tree->trig(Node::RUN);
+            engine.tree->trig(Node::RUN);
 
-    });
+        });
 
 }
 

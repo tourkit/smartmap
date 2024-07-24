@@ -54,7 +54,7 @@ void Callbacks::init() {
     ////////// Struct.HPP
 
     NODE<Struct>::on(Node::CREATE, [](Node* node, Struct *s){ 
-        node->name(s->name()); 
+        node->name_v = (s->name()); 
     });
 
     NODE<Struct>::on(Node::CHANGE, [&](Node*node, Struct* s){
@@ -65,9 +65,11 @@ void Callbacks::init() {
 
     ////////// ENGINE
 
-    NODE<UBO>::on(Node::RUN, [](Node* node, UBO *ubo){ ubo->upload(); });
+    NODE<Buffer>::on(Node::RUN, [](Node* node, Buffer *buff){ buff->upload(); });
+    
+    NODE<UBO>::is_a<Buffer>();
 
-    NODE<UBO>::on(Node::CREATE, [](Node* node, UBO *ubo){ node->name(ubo->name()); });
+    NODE<Buffer>::is_a<Struct>();
 
 
     ////////// DRAWCALL
