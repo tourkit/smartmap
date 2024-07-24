@@ -3,19 +3,13 @@
 #include <cstring>
 #include <vector>
 #include <set>
+#include <map>
 #include <functional>
 
-#include "editor.hpp"
+#include "utils.hpp"
 
-#include <boost/type_index.hpp>
 
 #include "imgui/imgui.h"
-
-using TypeIndex = boost::typeindex::type_index;
-
-struct Node;
-
-using NodeList = std::vector<Node*>;
 
 struct Node {
 
@@ -29,14 +23,13 @@ struct Node {
     };
 
     std::string name_v;
+
 #ifdef ROCH
-public:
     std::string EASY_TYPE_DEBUG = "NODE";
 #endif
-    const std::string& name();
-    Node* name(std::string value);
 
     ImVec4 color;
+
 
     std::vector<Node*> childrens;
 
@@ -56,9 +49,11 @@ public:
 
     void init();
 
-    // void editor() { if(Editor<T>::cb)
-    // Editor<T>::cb(this,this->void_ptr);
-    // }
+    const std::string& name();
+
+    Node* name(std::string value);
+
+    void editor();
 
     virtual void update();
 
@@ -73,7 +68,7 @@ public:
 
     uint32_t index();
 
-    void addList(NodeList *nodes);
+    void addList(std::vector<Node*> *nodes);
 
     Node* hide();
 
@@ -90,11 +85,6 @@ public:
     virtual std::string type_name() { return type().pretty_name();  }
 
     Node* on(Event event, std::function<void(Node*)> cb = nullptr);
-
-
-    // template <typename V>
-    // void each(std::function<void(Node*, V*)> cb) { for (auto c : childrens) { Node* isa = c->is_a<V>(); if (isa) cb(c,isa); } }
-
 
     void each_(std::function<void(Node*)> cb) { for (auto c : childrens) { ((Node*)c)->each_(cb); } cb(this);  }
 
@@ -119,21 +109,17 @@ public:
 
     auto end() { return childrens.end(); }
 
-
-    template <typename U>
-    static void editor(std::function<void(Node*,U*)> cb) { Editor<U>::cb = cb; }
-
     template <typename T>
     void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
 
     std::map<TypeIndex, std::function<Node*(Node*,Node*)>> onadd_cb;
     std::map<Event,std::function<void(Node*)>> on_cb;
 
-    static inline std::map< TypeIndex, TypeIndex> is_lists;
-    static inline std::map< TypeIndex, std::function<void*(void*)> > upcast_lists;
-    static inline std::map< TypeIndex, std::function<void(void*)> > delete_lists;
-    static inline std::map<Event,std::map<TypeIndex, void*>> ontyped;
-    static inline std::map<TypeIndex,std::map<TypeIndex, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
+    static inline std::map<Event, std::map<TypeIndex, void*>> ontyped;
+    static inline std::map<TypeIndex, std::map<TypeIndex, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
+    static inline std::map<TypeIndex, std::function<void*(void*)>> upcast_lists;
+    static inline std::map<TypeIndex, std::function<void(void*)>> delete_lists;
+    static inline std::map<TypeIndex, TypeIndex> is_lists;
 
     Node* operator[](int id);
     Node* operator[](std::string name);

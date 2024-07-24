@@ -7,8 +7,9 @@
 #include "effector.hpp"
 #include "layer.hpp"
 #include "artnet.hpp"
-#include "utils.hpp"
+#include "gui.hpp"
 #include "ndi.hpp"
+#include "editor.hpp"
 
 static std::string json_error = "JSON error";
 
@@ -65,11 +66,11 @@ void Open::inputs(){
 
             if (!arr.Size()) { PLOGW << json_error; continue; }
 
-            TypedNode<Artnet>* an_ = engine.inputs->addOwnr<Artnet>( arr[0].IsString() ? arr[0].GetString() : "" );
+            Node* an_ = engine.inputs->addOwnr<Artnet>( arr[0].IsString() ? arr[0].GetString() : "" );
 
             an_->active(1)->name( x.name.GetString() );
 
-            auto &an = *an_->get();
+            auto &an = *an_->is_a<Artnet>();
 
             if (arr.Size() < 2) continue;
             if (!arr[1].IsObject()) { PLOGW << json_error; continue; }
@@ -159,7 +160,7 @@ void Open::outputs(){
             auto window = engine.outputs->addPtr<Window>( &engine.window );
 
             window->name(x.name.GetString());
-            window->get()->fb = (layer?&layer->is_a<Layer>()->fb:nullptr);
+            engine.window.fb = (layer?&layer->is_a<Layer>()->fb:nullptr);
 
             engine.window.size( arr[0].GetInt() , arr[1].GetInt() );
             engine.window.pos( arr[2].GetInt() , arr[3].GetInt() );
@@ -215,7 +216,7 @@ void Open::layers(){
 
             if (!layer_def[models_id].isobj()) { PLOGW << layer_def.stringify(); continue; }
 
-            TypedNode<Layer>* new_layer = engine.stack->addOwnr<Layer>(width,height,layer_def.name());
+            Node* new_layer = engine.stack->addOwnr<Layer>(width,height,layer_def.name());
             
             for (auto model_def : layer_def[models_id]) {
 
@@ -230,13 +231,12 @@ void Open::layers(){
                 if (!model_file) { PLOGW << "no model " << model_def[0].str(); continue; }
 
                 auto new_model_ = new_layer->add(model_file);
-                auto new_model = new_model_->get<Model>();
 
-                new_model->name(model_def.name());
+                new_model_->name(model_def.name());
 
-                if (model_def[1].isnum()) new_model->get()->s.quantity(model_def[1].num());
+                if (model_def[1].isnum()) new_model_->is_a<Model>()->s.quantity(model_def[1].num());
 
-                if (model_def[2].isobj()) addEffectors( model_def[2], new_model );
+                if (model_def[2].isobj()) addEffectors( model_def[2], new_model_ );
 
             }
             
@@ -247,7 +247,7 @@ void Open::layers(){
             if (!layer_def.name().data()) continue;
 
             auto ubl_ = engine.stack->addOwnr<UberLayer>();
-            auto &ubl = *ubl_->get();
+            auto &ubl = *ubl_->is_a<UberLayer>();
             ubl_->owned = true;
             ubl_->name(layer_def.name());
 
@@ -288,7 +288,7 @@ void Open::layers(){
 
             ubl.calc_matrice();
 
-            engine.stack->trigchange();
+            engine.stack->trig(Node::CHANGE);
 
             ubl.fb.texture->bind(3);
 
@@ -323,7 +323,7 @@ void Open::effectors(){
         wrap_->owned=true;
         wrap_->name(x.name_v);
         
-        auto wrap = wrap_->get();
+        auto wrap = wrap_->is_a<Wrappy>();
 
         for (auto sub : x) 
 
@@ -403,7 +403,7 @@ void Open::json(std::string path) {
 
         auto f = engine.debug->addOwnr<File>(path);
 
-        f->onchange([&](Node* n) { engine.open(path.c_str()); });
+        f->on(Node::CHANGE, [&](Node* n) { engine.open(path.c_str()); });
 
         f->select();
 
