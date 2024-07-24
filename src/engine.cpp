@@ -122,10 +122,19 @@ void Engine::run() {
 
     }
 
-    if (!engine.outputs->childrens.size()) {
+    if (!engine.outputs->childrens.size()) engine.outputs->addPtr<Window>( &engine.window );
 
-        auto win = engine.outputs->addPtr<Window>( &engine.window );
-        // if (engine.stack->childrens.size()) win->get()->layer = engine.stack->childrens[0]->is_a<Layer>();
+    for (auto output_ : engine.outputs->childrens) {
+        
+        auto output = output_->is_a<Output>();
+
+        if (output && !output->fb && engine.stack->childrens.size()) {
+            
+            output->fb = &engine.stack->childrens[0]->is_a<Layer>()->fb;
+            
+            engine.stack->childrens[0]->referings.insert(output_->node());
+        
+        }
 
     }
 

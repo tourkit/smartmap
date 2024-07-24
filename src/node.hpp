@@ -103,6 +103,8 @@ public:
     bool is_typed = false;
 
     virtual void trigchange();
+    
+    virtual void trigcreate() {}
 
     Node* top();
 
@@ -140,11 +142,14 @@ public:
     static inline std::map< std::type_index, std::function<void*(void*)> > upcast_lists;
     
     static inline std::map<std::type_index, void*> onchangetyped_cb;
+    static inline std::map<std::type_index, void*> oncreatetyped_cb;
     static inline std::map<std::type_index, void*> onruntyped_cb;
 
     std::type_index stored_type = typeid(UntypedNode);
 
     void* void_ptr = nullptr;
+
+
 
 private:
 
@@ -179,6 +184,8 @@ struct TypedNode : UntypedNode {
     bool owned;
 
 
+    TypedNode() : TypedNode(new T) {}
+    
     TypedNode(void* ptr, bool owned = false) :
 
         UntypedNode((isNode()? ((UntypedNode*)ptr)->name_v : type_name())), ptr((T*)ptr), owned(owned) {
@@ -187,8 +194,7 @@ struct TypedNode : UntypedNode {
             
             stored_type = typeid(T);
 
-            if(TypedNode::oncreate_cb) 
-                TypedNode::oncreate_cb(node(),this->ptr); 
+            trigcreate() ;
 
             #ifdef ROCH
             EASY_TYPE_DEBUG = type().name();    
@@ -219,6 +225,28 @@ struct TypedNode : UntypedNode {
             if (onchangetyped_cb.find(t) != onchangetyped_cb.end()) (*(std::function<void(Node*,void*)>*)
             
                 onchangetyped_cb.at(t))(node(),out);  
+
+            if (UntypedNode::is_lists.find(t) == UntypedNode::is_lists.end()) break;
+
+            out = upcast_lists[t](out);
+
+            t = UntypedNode::is_lists.at(t);
+        
+        }
+        
+    }
+
+    void trigcreate() override { 
+        
+        auto t = stored_type;
+
+        void* out = ptr;
+
+        while (true) {
+
+            if (oncreatetyped_cb.find(t) != oncreatetyped_cb.end()) (*(std::function<void(Node*,void*)>*)
+            
+                oncreatetyped_cb.at(t))(node(),out);  
 
             if (UntypedNode::is_lists.find(t) == UntypedNode::is_lists.end()) break;
 

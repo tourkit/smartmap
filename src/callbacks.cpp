@@ -53,7 +53,9 @@ void Callbacks::init() {
 
     ////////// Struct.HPP
 
-    NODE<Struct>::oncreate([](Node* node, Struct *s){ node->name(s->name()); });
+    NODE<Struct>::oncreate([](Node* node, Struct *s){ 
+        node->name(s->name()); 
+    });
 
     NODE<Struct>::onchange([&](Node*node, Struct* s){
         if (s->name() != node->name())
@@ -119,7 +121,9 @@ void Callbacks::init() {
     NODE<Modelable>::is_a<Effectable>();
     NODE<UberLayer::VLayer>::is_a<Effectable>();
 
-    NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); 
+    NODE<Layer>::oncreate([](Node* node, Layer *layer){ 
+        NODE<Struct>::oncreate_cb(node, &layer->s);  
+    }); 
 
     NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
 
@@ -242,17 +246,15 @@ void Callbacks::init() {
 
     NODE<Folder>::oncreate([](Node* node, Folder *dir){ node->name(dir->path); });
 
-    ////////// Output.HPP
+    ////////// Output
 
     NODE<Output>::onrun([](Node* node, Output *output){ output->draw(); });
 
-    ////////// Window.HPP
+    NODE<Window>::is_a<Output>();
 
-    NODE<Window>::onrun([](Node* node, Window *window){ NODE<Output>::onrun_cb(node, window); });
+    NODE<NDI::Sender>::is_a<Output>();
 
-    ////////// NDI.HPP
-
-    NODE<NDI::Sender>::onrun([](Node* node, NDI::Sender *sender){ NODE<Output>::onrun_cb(node, sender); });
+    ////////// NDI
 
     NODE<NDI::Sender>::oncreate([](Node* node, NDI::Sender *sender){ node->name(sender->name);  });
 

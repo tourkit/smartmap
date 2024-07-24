@@ -557,6 +557,9 @@ void Editors::init() {
         NewLine();
         NewLine();
 
+
+        if (window->shader) Editor<ShaderProgram>::cb(node, window->shader);
+
     });
 
     ////////// OUTPUT.HPP

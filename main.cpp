@@ -4,18 +4,65 @@
 
                                 */
 
-#include "src/engine.hpp"
+#include "node.hpp"
+
+
+    struct Bar { int x = 666;  };
+
+    struct Foo : Bar { virtual void fuckthewholeworld() {} int y = 999; };
+
+    struct Zi : Foo {  };
+    
+    struct  Test {};
+    struct  Tree {};
 
 int main() {
 
-    engine.init();
 
-    logger.cout(Sev::warning);
+    NODE<Tree>::onadd<Bar>([](Node*_this,Node*node){
 
-    engine.open("./project.json");
+        std::cout << "bar: " << node->is_a<Bar>()->x << std::endl;
 
-    if (engine.stack->childrens.size()) engine.stack->childrens[0]->select();
+        return node;
 
-    engine.run();
+
+    });
+
+    NODE<Tree>::onadd<Foo>([](Node*_this,Node*node){
+
+        std::cout << "foo: " << node->is_a<Foo>()->y << std::endl;
+        
+        return node;
+
+    });
+
+    NODE<Bar>::onchange([](Node*node,Bar*bar){
+
+        std::cout << "barchange: "<< bar->x << std::endl;
+
+    });
+
+    // NODE<Bar>::onrun([](Node*node,Bar*bar){
+
+    //     std::cout << "barrun: "<< std::endl;
+
+    // });
+    // NODE<Foo>::onrun([](Node*node,Foo*foo){
+
+    //     std::cout << "foorun: "<< std::endl;
+
+    // });
+
+
+    TypedNode<Tree> tree;
+
+    NODE<Foo>::is_a<Bar>();
+
+    NODE<Zi>::is_a<Foo>();
+
+    auto n = tree.addOwnr<Foo>();
+
+    n->trigchange();
+
 
 }
