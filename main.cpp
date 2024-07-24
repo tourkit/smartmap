@@ -7,14 +7,15 @@
 #include "node.hpp"
 
 
-    struct Bar { int x = 666;  };
+struct Bar { int x = 666;  };
 
-    struct Foo : Bar { virtual void fuckthewholeworld() {} int y = 999; };
+struct Foo : Bar { virtual void fuckthewholeworld() {} int y = 999; virtual ~Foo() { std::cout << "oooo" << 0 << "\n"; } };
 
-    struct Zi : Foo {  };
-    
-    struct  Test { };
-    struct  Tree {};
+struct Zi : Foo {  };
+
+struct  Test { };
+
+struct  Tree {};
 
 int main() {
 
@@ -36,35 +37,30 @@ int main() {
 
     });
 
-    NODE<Bar>::on(NodeEvent::CHANGE, [](Node*node,Bar*bar){
+    NODE<Bar>::on(Node::CHANGE, [](Node*node,Bar*bar){
 
         std::cout << "barchange: "<< bar->x << std::endl;
 
     });
+    NODE<Foo>::on(Node::DELETE, [](Node*node,Foo*foo){
 
-    // NODE<Bar>::onrun([](Node*node,Bar*bar){
+        std::cout << "foodelete: "<< foo->y << std::endl;
 
-    //     std::cout << "barrun: "<< std::endl;
-
-    // });
-    // NODE<Foo>::onrun([](Node*node,Foo*foo){
-
-    //     std::cout << "foorun: "<< std::endl;
-
-    // });
-
+    });
 
     Node x;
 
-    auto &tree = *x.addOwnr<Tree>();
+    Node &tree = *x.addOwnr<Tree>();
 
     NODE<Foo>::is_a<Bar>();
 
     NODE<Zi>::is_a<Foo>();
 
-    auto &n = *tree.addOwnr<Foo>();
+    Node &n = *tree.addOwnr<Foo>();
 
-    n.trig(NodeEvent::CHANGE);
+    n.trig(Node::CHANGE);
+
+    delete &n;
 
 
 }

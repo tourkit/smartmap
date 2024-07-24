@@ -27,6 +27,7 @@ struct Node {
         DELETE
 
     };
+
     std::string name_v;
 #ifdef ROCH
 public:
@@ -61,8 +62,6 @@ public:
 
     virtual void update();
 
-    void bkpupdate();
-
     Node* add(void *node);
 
     void parent(Node* parent_node);
@@ -90,7 +89,7 @@ public:
 
     virtual std::string type_name() { return type().pretty_name();  }
 
-    Node* on(NodeEvent event, std::function<void(Node*)> cb = nullptr);
+    Node* on(Event event, std::function<void(Node*)> cb = nullptr);
 
 
     // template <typename V>
@@ -104,7 +103,7 @@ public:
 
     bool is_typed = false;
 
-    void trig(NodeEvent event);
+    void trig(Event event);
 
     Node* top();
 
@@ -128,18 +127,18 @@ public:
     void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
 
     std::map<TypeIndex, std::function<Node*(Node*,Node*)>> onadd_cb;
-    std::map<NodeEvent,std::function<void(Node*)>> on_cb;
+    std::map<Event,std::function<void(Node*)>> on_cb;
 
     static inline std::map< TypeIndex, TypeIndex> is_lists;
     static inline std::map< TypeIndex, std::function<void*(void*)> > upcast_lists;
-    static inline std::map<NodeEvent,std::map<TypeIndex, void*>> ontyped;
+    static inline std::map< TypeIndex, std::function<void(void*)> > delete_lists;
+    static inline std::map<Event,std::map<TypeIndex, void*>> ontyped;
     static inline std::map<TypeIndex,std::map<TypeIndex, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
 
     Node* operator[](int id);
     Node* operator[](std::string name);
 
     static inline Node* selected = nullptr;
-    
     
 
     TypeIndex stored_type = typeid(Node);
@@ -160,6 +159,8 @@ public:
     template <typename U, typename... Args>
     Node* addOwnr(Args&&... args) {
 
+        if (delete_lists.find(typeid(U)) == delete_lists.end()) delete_lists.emplace(typeid(U),[&](void* t){ delete (U*)t; });
+        
         auto ptr = new U(std::forward<Args>(args)...);
 
         auto NEW_U = new Node(ptr, typeid(U), true);
@@ -205,16 +206,12 @@ public:
         return (U*)out; 
         
     }
-
+    
 private:
 
     Node* parent_node = nullptr;
 
     bool has_changed = false;
-
-    void runCB(std::function<void(Node*)> cb = nullptr);
-
-    bool isNode() { return stored_type == TypeIndex(typeid(Node)); }
 
 };
 
@@ -222,8 +219,9 @@ private:
 template <typename T>
 
 struct NODE {
+
     
-    static inline std::map<NodeEvent, std::function<void(Node*,T*)>> on_cb;
+    static inline std::map<Node::Event, std::function<void(Node*,T*)>> on_cb;
 
     template <typename U>
     static inline void  is_a() { 
@@ -244,6 +242,6 @@ struct NODE {
     template <typename U>
     static void onadd(std::function<Node*(Node*,Node*)> cb) { Node::onaddtyped_cb[typeid(T)][typeid(U)] = cb;  }
 
-    static void on(NodeEvent event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped[event][typeid(T)] = &on_cb[event]; }
+    static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped[event][typeid(T)] = &on_cb[event]; }
 
 };

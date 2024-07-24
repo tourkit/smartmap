@@ -30,7 +30,7 @@ void Node::init() {
     EASY_TYPE_DEBUG += " " + type_name();
     #endif
 
-    trig(NodeEvent::CREATE);
+    trig(Event::CREATE);
 
 }
 
@@ -50,11 +50,12 @@ Node::~Node() {
 
     if (parent_node) parent_node->remove(this);
 
-    // if (owned) delete void_ptr; // how ?
-
-    trig(NodeEvent::DELETE);
-
     pool.erase(this);
+
+    trig(Event::DELETE);
+
+    if (owned) delete_lists[stored_type](void_ptr);
+
     PLOGV << "~" << name();
 
 }
@@ -108,71 +109,71 @@ addList(NodeList *nodes) { for (auto n : *nodes) add(n); }
 
 Node* Node::add(void* node_v)  {
 
-        auto n = (Node*)node_v;
+    auto n = (Node*)node_v;
+
+    if (n->parent() == this) return nullptr;
+
+    bool found = false;
+
+    TypeIndex t = type();
+    TypeIndex u = n->type();
+    
+    while (true) { // find all derived onadds
+        
+        while (true) { // find all derived onadds
+    
+            std::string _t = t.name();
+            std::string _u = u.name();
+
+            if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) { found = true;
+                
+                n = onaddtyped_cb[t][u](this,n);
+
+                if (n == this) return nullptr;
+
+            }
+            
+            if (Node::is_lists.find(u) == Node::is_lists.end()) break;
+
+            u = Node::is_lists.at(u);
+
+        }
+        
+        if (Node::is_lists.find(t) == Node::is_lists.end()) break;
+
+        t = Node::is_lists.at(t);
+
+    }
+    
+    // if (!found) return nullptr;
+
+    if (n == node_v) {
+
+        PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
 
         if (n->parent() == this) return nullptr;
 
-        bool found = false;
+        if (onadd_cb.find(n->type()) != onadd_cb.end()) {
 
-        TypeIndex t = type();
-        TypeIndex u = n->type();
-        
-        while (true) { // find all derived onadds
-            
-            while (true) { // find all derived onadds
-        
-                std::string _t = t.name();
-                std::string _u = u.name();
+            n = onadd_cb[n->type()](this,n);
 
-                if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) { found = true;
-                    
-                    n = onaddtyped_cb[t][u](this,n);
-
-                    if (n == this) return nullptr;
-
-                }
-                
-                if (Node::is_lists.find(u) == Node::is_lists.end()) break;
-
-                u = Node::is_lists.at(u);
-
-            }
-            
-            if (Node::is_lists.find(t) == Node::is_lists.end()) break;
-
-            t = Node::is_lists.at(t);
+            if (!n) return nullptr;
 
         }
-        
-        // if (!found) return nullptr;
 
-        if (n == node_v) {
+        if (n == node_v) n->parent(this);
 
-            PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
+        else n->referings.insert(this); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
 
-            if (n->parent() == this) return nullptr;
+        // update();
+        n->trig(Event::CHANGE);
+        return n;
 
-            if (onadd_cb.find(n->type()) != onadd_cb.end()) {
+    }else {
 
-                n = onadd_cb[n->type()](this,n);
-
-                if (!n) return nullptr;
-
-            }
-
-            if (n == node_v) n->parent(this);
-
-            else n->referings.insert(this); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
-
-            // update();
-            n->trig(NodeEvent::CHANGE);
-            return n;
-
-        }else {
-
-            n->referings.insert(n); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback
-            return n;
-        }
+        n->referings.insert(n); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback
+        return n;
+    }
 
 
 }
@@ -199,15 +200,8 @@ void Node::parent(Node* parent_node) {
 
 }
 
-Node* Node::on(NodeEvent event, std::function<void(Node*)> cb) { on_cb[event] = cb; return this; }
+Node* Node::on(Event event, std::function<void(Node*)> cb) { on_cb[event] = cb; return this; }
 
-void Node::runCB(std::function<void(Node*)> cb) {
-
-    for (auto c:childrens) c->runCB(cb);
-
-    if(cb) cb(this);
-
-}
 
 Node* Node::close() {
 
@@ -225,16 +219,6 @@ Node* Node::hide() {
 
 }
 
-void Node::bkpupdate() {
-
-    //TOFIX // hein ?
-    // engine.static_ubo.bkp();
-    // engine.dynamic_ubo.bkp();
-
-    update();
-
-}
-
 Node* Node::operator[](std::string name) { for (auto c : childrens) if (c->name() == name) return c; return nullptr; }
 
 Node* Node::operator[](int id) { return childrens[id]; }
@@ -243,7 +227,7 @@ void Node::update() {
 
     PLOGV << type_name() << "::" << name();
 
-    trig(NodeEvent::CHANGE);
+    trig(Event::CHANGE);
 
     if (parent_node) parent_node->update();
 
@@ -283,7 +267,7 @@ uint32_t Node::index() {
 
 }
 
-void Node::trig(NodeEvent e)  { 
+void Node::trig(Event e)  { 
         
     auto t = stored_type;
 
