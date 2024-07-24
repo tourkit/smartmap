@@ -305,7 +305,9 @@ void Open::effectors(){
 
             File file(x.name_v+".glsl", x.str().c_str());
 
-            engine.effectors->addPtr<Effector>(new FileEffector(file))->owned = true;
+            auto e = engine.effectors->addOwnr<FileEffector>(file);
+            e->name(file.name());
+            e->owned = true;
 
             continue;
 
@@ -313,7 +315,7 @@ void Open::effectors(){
 
         if (!x.childrens.size()) continue;
 
-        auto  wrap_ = engine.effectors->addPtr<Effector>(new Wrappy(std::vector<Effector*>{},3,x.name_v));
+        auto  wrap_ = engine.effectors->addOwnr<Wrappy>(std::vector<Effector*>{},3,x.name_v);
 
         wrap_->owned=true;
         

@@ -138,6 +138,13 @@ public:
     static inline std::map<std::type_info, std::function<void()>> callers;
     static inline std::map< std::type_index, std::type_index> is_lists;
     static inline std::map< std::type_index, std::function<void*(void*)> > upcast_lists;
+    
+    static inline std::map<std::type_index, void*> onchangetyped_cb;
+    static inline std::map<std::type_index, void*> onruntyped_cb;
+
+    std::type_index stored_type = typeid(UntypedNode);
+
+    void* void_ptr = nullptr;
 
 private:
 
@@ -171,12 +178,14 @@ struct TypedNode : UntypedNode {
 
     bool owned;
 
-    std::type_index stored_type = typeid(UntypedNode);
-
 
     TypedNode(void* ptr, bool owned = false) :
 
-        UntypedNode((isNode()? ((UntypedNode*)ptr)->name_v : type_name())), ptr((T*)ptr), owned(owned), stored_type(typeid(T)) {
+        UntypedNode((isNode()? ((UntypedNode*)ptr)->name_v : type_name())), ptr((T*)ptr), owned(owned) {
+            
+            void_ptr = ptr;
+            
+            stored_type = typeid(T);
 
             if(TypedNode::oncreate_cb) 
                 TypedNode::oncreate_cb(node(),this->ptr); 
@@ -187,7 +196,6 @@ struct TypedNode : UntypedNode {
             #endif
 
     }
-
 
     T* get() { return ptr; }
 
@@ -202,11 +210,23 @@ struct TypedNode : UntypedNode {
 
     void trigchange() override { 
         
-        UntypedNode::trigchange(); 
-        auto cb = TypedNode::onchange_cb;
-        if(cb) 
+        auto t = stored_type;
+
+        void* out = ptr;
+
+        while (true) {
+
+            if (onchangetyped_cb.find(t) != onchangetyped_cb.end()) (*(std::function<void(Node*,void*)>*)
+            
+                onchangetyped_cb.at(t))(node(),out);  
+
+            if (UntypedNode::is_lists.find(t) == UntypedNode::is_lists.end()) break;
+
+            out = upcast_lists[t](out);
+
+            t = UntypedNode::is_lists.at(t);
         
-            cb(node(),this->ptr); 
+        }
         
     }
 
@@ -347,19 +367,14 @@ struct TypedNode : UntypedNode {
 
         void* out = typeid(U) == t ? ptr : nullptr;
 
+
         while (true) {
 
-            if (typeid(T) == t || is_lists.find(t) == is_lists.end()) break;
+            if (typeid(U) == t || is_lists.find(t) == is_lists.end()) break;
 
-            while (true) {
+            out = upcast_lists[t](ptr);
 
-                if (typeid(U) == t || is_lists.find(t) == is_lists.end()) break;
-
-                out = upcast_lists[t](ptr);
-
-                t = is_lists.at(t);
-            
-            }
+            t = is_lists.at(t);
         
         }
 
@@ -430,7 +445,8 @@ struct NODE : TypedNode<T> {
     // static void onadd(std::function<Node*(Node*,Node*)> cb) { UntypedNode::onaddtyped_cb[typeid(T)][typeid(U)] = cb; }
     static void ondelete(std::function<void(Node*,T*)> cb) { TypedNode<T>::ondelete_cb = cb;  }
     static void oncreate(std::function<void(Node*,T*)> cb) { TypedNode<T>::oncreate_cb = cb;  }
-    static void onchange(std::function<void(Node*,T*)> cb) { TypedNode<T>::onchange_cb = cb;  }
-    static void onrun(std::function<void(Node*,T*)> cb) { TypedNode<T>::onrun_cb = cb;  }
+    static void onchange(std::function<void(Node*,T*)> cb) { TypedNode<T>::onchange_cb = cb; UntypedNode::onchangetyped_cb[typeid(T)] = &TypedNode<T>::onchange_cb; }
+
+    static void onrun(std::function<void(Node*,T*)> cb) { TypedNode<T>::onrun_cb = cb; UntypedNode::onruntyped_cb[typeid(T)] = &TypedNode<T>::onrun_cb; }
 
 };

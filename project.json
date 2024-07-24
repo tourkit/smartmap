@@ -16,6 +16,7 @@
     [ 0, 0, 0, 0, "tree::Debug", true ]
   ],
   "layers": {
-    "Layer": [ 1920, 1080, { "quad": [ "quad.obj"] }, {} ]
+    "ubersmart2": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle" } ] },
+    "Layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "rectangle": "rectangle" } ] }, {} ]
   }
 }
