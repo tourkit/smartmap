@@ -8,9 +8,9 @@
 
 Node::Node(void* ptr, TypeIndex type, bool owned) : void_ptr(ptr), stored_type(type), owned(owned) {
 
-    init();
-
     name(type_name());
+
+    init();
 
 }
 
@@ -166,8 +166,8 @@ Node* Node::add(void* node_v)  {
 
         else n->referings.insert(this); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
 
-        // update();
-        n->trig(Event::CHANGE);
+        trig(Event::CHANGE);
+        
         return n;
 
     }else {
@@ -227,8 +227,6 @@ Node* Node::operator[](int id) { return childrens[id]; }
 void Node::update() {
 
     PLOGV << type_name() << "::" << name();
-
-    trig(Event::CHANGE);
 
     if (parent_node) parent_node->update();
 
