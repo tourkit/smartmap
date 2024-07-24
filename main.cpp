@@ -6,7 +6,6 @@
 
 #include "src/engine.hpp"
 
-
 int main() {
 
     engine.init();

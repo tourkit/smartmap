@@ -68,13 +68,8 @@ void Engine::init() {
     Callbacks::init();
 
     Editors::init();
-
-
-
-    // NODE<Model>::is_a<Modelable>();
-    // NODE<Modelable>::is_a<Effectable>();
-    // NODE<Layer>::is_a<Modelable>();
     
+
     
     auto* debug_ = tree->addOwnr<Debug>();
     debug = debug_->node();

@@ -105,44 +105,25 @@ void Callbacks::init() {
 
     });
 
-    NODE<Stack>::onchange([](Node*node,Stack*stack){
+    // NODE<Stack>::onchange([](Node*node,Stack*stack){
 
-        node->each<Layer>([](Node* n, Layer* layer) {
+    //     node->each<Layer>([](Node* n, Layer* layer) {
 
-            // ShaderProgram* shader = &layer->shader;
-            // if (n->is_a_nowarning<Layer>()) shader = ;
-            // else if (n->is_a_nowarning<UberLayer>()) shader = &layer->shader;
-            // else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
-            // else return;
+    //         // ShaderProgram* shader = &layer->shader;
+    //         // if (n->is_a_nowarning<Layer>()) shader = ;
+    //         // else if (n->is_a_nowarning<UberLayer>()) shader = &layer->shader;
+    //         // else if (n->is_a_nowarning<ShaderProgram>()) shader = n->is_a<ShaderProgram>();
+    //         // else return;
 
-            // if (shader) shader->create();
+    //         // if (shader) shader->create();
 
-        });
+    //     });
 
-     });
+    //  });
 
     ////////// LAYER.HPP
 
     ////////// UberLayer.HPP
-    
-    NODE<UberLayer>::oncreate([](Node* node, UberLayer *ubl){
-        
-         NODE<Struct>::oncreate_cb(node, &ubl->s); //not sure if should be s_
-    
-         for (auto &x : ubl->layers) { node->addPtr<UberLayer::VLayer>(&x); } 
-    
-    });
-
-    NODE<UberLayer>::onchange([](Node* node, UberLayer *ubl){
-
-        NODE<Struct>::onchange_cb(node, &ubl->s); //not sure if should be s_
-        
-        ubl->update();
-    
-    });
-
-    NODE<UberLayer>::onrun([](Node* node, UberLayer *ubl){ ubl->draw(); });
-
 
     // NODE<UberLayer::VLayer>::onchange([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); });
     // NODE<UberLayer::VLayer>::oncreate([](Node* node, UberLayer::VLayer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s); });
@@ -157,62 +138,10 @@ void Callbacks::init() {
             auto o = x->is_a<Output>();
 
             if (o && o->fb == &layer->fb) o->fb = nullptr;
-
+ 
         } 
         
     }); 
-
-    // NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); // for what ??????
-
-    // NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
-
-    NODE<Layer>::onrun([](Node* node, Layer *layer){
-        layer->draw();
-    });
-
-    NODE<Layer>::onadd<File>([](Node*_this,Node*node){
-
-        auto file = node->is_a<File>();
-
-        return _this->addPtr<Model>(_this->is_a<Layer>()->addModel( file ))->node();
-
-    });
-
-    ////////// MODEL.HPP
-
-    // NODE<Model>::oncreate([](Node*node, Model* mod){ NODE<Struct>::oncreate_cb(node, &mod->s); });
-
-    // NODE<Model>::onchange([&](Node*node, Model* mod){ NODE<Struct>::onchange_cb(node, &mod->s); /*PLOGD << engine.dynamic_ubo.print_recurse();*/ });
-
-
-    // NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
-        
-    //     UberLayer::VLayer* xx = (UberLayer::VLayer*)_this->ptr_();
-    //     return _this->addPtr<EffectorRef>( ((Effectable*)_this->ptr_())->addEffector( node->is_a<Effector>() ) )->node(); 
-        
-    // });
-    NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
-
-        Effectable* m = _this->is_a<Effectable>();
-        
-        return _this->addPtr<EffectorRef>( m->addEffector( node->is_a<Effector>() ) )->node(); 
-        
-    });
-
-    // NODE<Effectable>::onadd<Layer>([](Node*_this,Node*node){ 
-
-    //     auto ubl_ = dynamic_cast<UberLayer*>(node->is_a<Layer>());
-
-    //     if (!ubl_) return _this;
-        
-    //     return _this->addPtr<EffectorRef>( ((Effectable*)_this->ptr_())->addEffector( &ubl_->effector ) )->node(); 
-        
-    // });
-
-    // NODE<Model>::is_a<Effectable>();
-    // NODE<Layer>::is_a<Effectable>();
-    // NODE<UberLayer::VLayer>::is_a<Effectable>();
-
 
     NODE<Model>::ondelete([](Node* node, Model *model) {
 
@@ -226,7 +155,34 @@ void Callbacks::init() {
 
     });
 
+    NODE<UberLayer>::is_a<Layer>();
+    NODE<Layer>::is_a<Modelable>();
+    NODE<Model>::is_a<Modelable>();
+    NODE<Modelable>::is_a<Effectable>();
+    NODE<UberLayer::VLayer>::is_a<Effectable>();
+
+    NODE<Layer>::oncreate([](Node* node, Layer *layer){ NODE<Struct>::oncreate_cb(node, &layer->s);  }); 
+
+    NODE<Layer>::onchange([](Node* node, Layer *layer){ NODE<Struct>::onchange_cb(node, &layer->s); layer->update(); });
+
+    NODE<Layer>::onrun([](Node* node, Layer *layer){ layer->draw(); });
+
+    NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
+
+        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( node->is_a<File>() ))->node();
+
+    });
+
+    NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
+        
+        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ) )->node(); 
+        
+    });
+
     ////////// Effector.HPP
+
+    NODE<FileEffector>::is_a<Effector>();
+    NODE<Wrappy>::is_a<Effector>();
 
     NODE<Effector>::oncreate([](Node*node, Effector* def){ NODE<Struct>::oncreate_cb(node, &def->s); });
 

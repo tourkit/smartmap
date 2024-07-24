@@ -40,7 +40,7 @@ void File::reload() { read(path_v); }
 
 bool File::hasChanged() {
 
-    if (loaded && last_modified != getTimeModified()) {
+    if (!owned && loaded && last_modified != getTimeModified()) {
 
         last_modified = getTimeModified();
 

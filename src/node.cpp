@@ -106,8 +106,8 @@ Node* UntypedNode::add(void* node_v)  {
 
     else n->referings.insert(this->node()); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
 
-    update();
-
+    // update();
+    n->trigchange();
     return n;
 
 }
@@ -224,7 +224,22 @@ void UntypedNode::run() {
 
     if (!is_active ) return; 
 
-    if (onrun_cb) onrun_cb(node());
+    auto t = stored_type;
+
+    void* out = void_ptr;
+
+    if (out) while (true) {
+
+        if (onruntyped_cb.find(t) != onruntyped_cb.end()) (*(std::function<void(Node*,void*)>*)
+        
+            onruntyped_cb.at(t))(node(),out);  
+
+        if (UntypedNode::is_lists.find(t) == UntypedNode::is_lists.end()) break;
+
+        out = upcast_lists[t](out);
+        t = UntypedNode::is_lists.at(t);
+    
+    }
 
     for (auto c : childrens) c->run();
 

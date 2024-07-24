@@ -937,6 +937,65 @@ void Editors::init() {
 
     });
 
+  /////////////////////////////////
+
+
+    ////////// Atlas.HPP
+
+    Editor<Atlas>([](Node* node, Atlas *atlas){
+
+        if (atlas) Editor<Texture>::cb(node, atlas->texture);
+        else PLOGE << "NONONON";
+
+        // Editor<Object>::cb(node, atlas->buffer);  // tofix
+
+
+    });
+
+    ////////// Component.HPP
+
+    // Editor<Component>([](Node* node, Component *comp){
+
+    //     for (auto &m : comp->members) {
+
+    //         std::string str = std::string(m.type_name()) + " " + m.name+ "; ";
+    //         ImGui::Text(str.c_str());
+    //     }
+
+
+    // });
+    ////////// JSON.HPP
+
+    Editor<JSON>([](Node* node, JSON *json){
+
+        JSON::if_obj_in("models",json->document, [&](auto &m) { ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString()); });
+        JSON::if_obj_in("effectors",json->document, [&](auto &m) { ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString()); });
+
+    });
+    ////////// FRAMEBUFFER.HPP
+
+    Editor<FrameBuffer>([](Node* node, FrameBuffer *fb ){
+
+        ImGui::Text(("attachment "+std::to_string(fb->attachments)).c_str());
+
+        Editor<Texture>::cb(node, fb->texture);
+
+    });
+
+      ////////// Engine.HPP
+
+    Editor<Stack>([](Node* node, Stack *stack){ Editor<Log>::cb(node, &logger); });
+
+    Editor<Debug>([](Node* node, Debug *debug){
+
+        static std::vector<GLenum> enums = {GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, GL_SRC_ALPHA_SATURATE, GL_SRC1_COLOR, GL_ONE_MINUS_SRC1_COLOR, GL_SRC1_ALPHA, GL_ONE_MINUS_SRC1_ALPHA};
+        static int blendin = 1, blendout = 3;
+        if (ImGui::SliderInt2( "blend", &blendin, 0, enums.size()-1)) glBlendFunc(enums[blendin],enums[blendout]);
+
+        Editor<Log>::cb(node, &logger);
+
+    });
+  
     ////////// Effector.HPP
 
     // Editor<EffectorRef>([](Node* node, EffectorRef *effector){
@@ -993,29 +1052,9 @@ void Editors::init() {
 
     // Editor<Universe::Remap>([](Node*node, Universe::Remap* remap){ Editor<Remap>::cb(node, remap); });
 
-    ////////// Engine.HPP
 
-    Editor<Stack>([](Node* node, Stack *stack){ Editor<Log>::cb(node, &logger); });
 
-    Editor<Debug>([](Node* node, Debug *debug){
 
-        static std::vector<GLenum> enums = {GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, GL_SRC_ALPHA_SATURATE, GL_SRC1_COLOR, GL_ONE_MINUS_SRC1_COLOR, GL_SRC1_ALPHA, GL_ONE_MINUS_SRC1_ALPHA};
-        static int blendin = 1, blendout = 3;
-        if (ImGui::SliderInt2( "blend", &blendin, 0, enums.size()-1)) glBlendFunc(enums[blendin],enums[blendout]);
-
-        Editor<Log>::cb(node, &logger);
-
-    });
-
-    ////////// FRAMEBUFFER.HPP
-
-    Editor<FrameBuffer>([](Node* node, FrameBuffer *fb ){
-
-        ImGui::Text(("attachment "+std::to_string(fb->attachments)).c_str());
-
-        Editor<Texture>::cb(node, fb->texture);
-
-    });
 
     ////////// DRAWCALL.HPP
 
@@ -1077,17 +1116,17 @@ void Editors::init() {
                 ImGui::EndTabItem();
 
             }
-            for (auto x : layer->shader.builder()->samplers) {
+        //     for (auto x : layer->shader.builder()->samplers) {
                 
-                if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
+        //         if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
 
-                    Editor<Texture>::cb(node, x.second);
+        //             Editor<Texture>::cb(node, x.second);
 
-                    ImGui::EndTabItem();
+        //             ImGui::EndTabItem();
 
-                }
+        //         }
 
-            }
+        //     }
 
             ImGui::EndTabBar();
 
@@ -1098,38 +1137,6 @@ void Editors::init() {
 
     });
 
-    ////////// Atlas.HPP
-
-    Editor<Atlas>([](Node* node, Atlas *atlas){
-
-        if (atlas) Editor<Texture>::cb(node, atlas->texture);
-        else PLOGE << "NONONON";
-
-        // Editor<Object>::cb(node, atlas->buffer);  // tofix
-
-
-    });
-
-    ////////// Component.HPP
-
-    // Editor<Component>([](Node* node, Component *comp){
-
-    //     for (auto &m : comp->members) {
-
-    //         std::string str = std::string(m.type_name()) + " " + m.name+ "; ";
-    //         ImGui::Text(str.c_str());
-    //     }
-
-
-    // });
-    ////////// JSON.HPP
-
-    Editor<JSON>([](Node* node, JSON *json){
-
-        JSON::if_obj_in("models",json->document, [&](auto &m) { ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString()); });
-        JSON::if_obj_in("effectors",json->document, [&](auto &m) { ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString()); });
-
-    });
 
 }
 
