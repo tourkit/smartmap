@@ -252,11 +252,13 @@ bool Node::remove(Node *child) {
 
     childrens.erase(it);
 
-    update();
+    if (parent()) parent()->update();
 
     return true;
 
 }
+
+void Node::run() { trig(Node::RUN); for (auto x : childrens) x->run(); }
 
 uint32_t Node::index() {
 

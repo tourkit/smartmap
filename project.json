@@ -23,10 +23,5 @@
     [ 0, 0, 0, 0, "Stack::ubersmart1", true ],
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
     [ 0, 0, 0, 0, "tree::Debug", true ]
-  ],
-  "layers": {
-    "ubersmart1": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
-    "ubersmart2": { "smartlayer1": [ 400, 300, 8, { "argb": "argb", "wrapper": "wrapper" } ] },
-    "Layer": [ 1920, 1080, { "quad": [ "quad.obj", 1, { "rectangle": "rectangle" } ] }, {} ]
-  }
+  ]
 }

@@ -166,7 +166,7 @@ void Engine::run() {
             // engine.dynamic_ubo.upload();
 
 
-            engine.tree->trig(Node::RUN);
+            engine.tree->run();
 
         });
 

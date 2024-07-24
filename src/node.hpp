@@ -99,6 +99,7 @@ struct Node {
     void up();
 
     void down();
+    void run();
 
     std::string nameSTL();
 
