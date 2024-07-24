@@ -72,35 +72,35 @@ void Engine::init() {
 
     
     auto* debug_ = tree->addOwnr<Debug>();
-    debug = debug_->node();
+    debug = debug_;
     debug->onrun( [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(false);//->close();
     debug->addPtr<UBO>(&static_ubo)->onchange([](Node* n) { n->is_a<UBO>()->upload(); })->active(false);
     debug->addPtr<UBO>(&dynamic_ubo)->active(false);
     
-    medias = tree->addOwnr<Node>("Medias")->active(false)->node();
+    medias = tree->addOwnr<Node>("Medias")->active(false);
 
     // auto comps = debug->addOwnr<Node>("Components")->close();
     // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
 
-    models = tree->addOwnr<Node>("Models")->active(false)->node();
-    // models = tree->addFolder<File>("Models", "assets/models/")->node();
+    models = tree->addOwnr<Node>("Models")->active(false);
+    // models = tree->addFolder<File>("Models", "assets/models/");
 
-    effectors = tree->addOwnr<Node>("Effectors")->active(false)->node();
+    effectors = tree->addOwnr<Node>("Effectors")->active(false);
 
     auto feedbackeffector = new FeedbackEffector();
     engine.effectors->addPtr<Effector>(feedbackeffector);
 
-    // effectors = tree->addFolder<File>("Effectors", "assets/effectors/")->node();
+    // effectors = tree->addFolder<File>("Effectors", "assets/effectors/");
 
-    // timelines = tree->addOwnr<Node>("Timelines")->node();
+    // timelines = tree->addOwnr<Node>("Timelines");
 
-    // remaps = tree->addOwnr<Node>("Remaps")->node();
+    // remaps = tree->addOwnr<Node>("Remaps");
 
-    inputs = tree->addOwnr<Node>("Inputs")->node()->active(1);
+    inputs = tree->addOwnr<Node>("Inputs")->active(1);
 
-    stack = tree->addOwnr<Stack>()->node()->active(1);
+    stack = tree->addOwnr<Stack>()->active(1);
 
-    outputs = tree->addOwnr<Node>("Outputs")->node()->active(true);
+    outputs = tree->addOwnr<Node>("Outputs")->active(true);
 
     debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
 
@@ -132,7 +132,7 @@ void Engine::run() {
             
             output->fb = &engine.stack->childrens[0]->is_a<Layer>()->fb;
             
-            engine.stack->childrens[0]->referings.insert(output_->node());
+            engine.stack->childrens[0]->referings.insert(output_);
         
         }
 

@@ -115,11 +115,11 @@ using namespace ImGui;
 
     ImVec4 node_color = *(ImVec4*)&node->color;
 
-    if(UntypedNode::selected != node) {
+    if(Node::selected != node) {
 
         if (hovered) node_color = ImVec4(1, .4, 0, 1);
 
-        else if (UntypedNode::selected) node_color.w = .65;
+        else if (Node::selected) node_color.w = .65;
 
     }
 
@@ -224,7 +224,7 @@ using namespace ImGui;
 
         if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
 
-        if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) UntypedNode::selected = s;
+        if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) Node::selected = s;
 
         if (ImGui::IsMouseReleased(0)) mouse_down = false;
 

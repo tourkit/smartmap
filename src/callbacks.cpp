@@ -31,7 +31,7 @@ void Callbacks::init() {
     //     auto x = _this->is_a<xxx>();
     //     auto y = node->is_a<yyy>();
 
-    //     return _this->UntypedNode::add(node);
+    //     return _this->Node::add(node);
 
     // });
     
@@ -76,7 +76,7 @@ void Callbacks::init() {
 
         auto x = _this->addOwnr<Layer>();
         x->add(node)->active(false);
-        return x->node();
+        return x;
 
     });
     
@@ -131,13 +131,13 @@ void Callbacks::init() {
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
 
-        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( node->is_a<File>() ))->node();
+        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( node->is_a<File>() ));
 
     });
 
     NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
         
-        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ) )->node(); 
+        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ) ); 
         
     });
 

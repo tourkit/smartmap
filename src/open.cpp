@@ -236,11 +236,11 @@ void Open::layers(){
 
                 if (model_def[1].isnum()) new_model->get()->s.quantity(model_def[1].num());
 
-                if (model_def[2].isobj()) addEffectors( model_def[2], new_model->node() );
+                if (model_def[2].isobj()) addEffectors( model_def[2], new_model );
 
             }
             
-            if (layer_def[models_id+1].isobj()) addEffectors( layer_def[models_id+1], new_layer->node() );
+            if (layer_def[models_id+1].isobj()) addEffectors( layer_def[models_id+1], new_layer );
 
         }else{ // uberlayer
 
@@ -281,7 +281,7 @@ void Open::layers(){
                 l_->active(true);
                 l.s.quantity(count);
 
-                addEffectors( vlayer_def[models_id], l_->node() );
+                addEffectors( vlayer_def[models_id], l_ );
 
                 
             }

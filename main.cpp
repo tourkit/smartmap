@@ -54,13 +54,16 @@ int main() {
     // });
 
 
-    TypedNode<Tree> tree;
+    Node x;
+
+
+    auto tree = x.addOwnr<Tree>();
 
     NODE<Foo>::is_a<Bar>();
 
     NODE<Zi>::is_a<Foo>();
 
-    auto n = tree.addOwnr<Foo>();
+    auto n = tree->addOwnr<Foo>();
 
     n->trigchange();
 
