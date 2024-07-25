@@ -25,7 +25,7 @@ struct Node {
     std::string name_v;
 
 #ifdef ROCH
-    std::string EASY_TYPE_DEBUG = "Node";
+    std::string TYPE = "Node";
 #endif
 
     ImVec4 color = {1,1,1,1};

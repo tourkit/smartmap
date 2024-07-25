@@ -88,7 +88,7 @@ void Callbacks::init() {
 
             Layer* layer = c->is_a<Layer>();
 
-            if (layer) layer->shader.create();
+            // if (layer) layer->shader.create();
         }
         
     });
@@ -119,18 +119,21 @@ void Callbacks::init() {
 
     NODE<UberLayer>::is_a<Layer>();
     NODE<Layer>::is_a<Modelable>();
-    // NODE<Layer>::is_a<DrawCall>();
+    NODE<Layer>::is_a<DrawCall>();
     NODE<Model>::is_a<Modelable>();
     NODE<Modelable>::is_a<Effectable>();
     NODE<UberLayer::VLayer>::is_a<Effectable>();
 
     NODE<Modelable>::on(Node::CREATE, [](Node* node, Modelable *m){ 
     
-        NODE<Struct>::on_cb[Node::CHANGE](node, &m->s);
+        NODE<Struct>::on_cb[Node::CREATE](node, &m->s);
         
     });
 
-    NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ layer->update(); });
+    // NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc){ dc->shader.create(); });
+    NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
+        layer->update();
+    });
 
     NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 
         layer->draw(); 
@@ -153,26 +156,19 @@ void Callbacks::init() {
     NODE<FileEffector>::is_a<Effector>();
     NODE<Wrappy>::is_a<Effector>();
 
+    NODE<Wrappy>::onadd<Effector>([](Node* _this, Node *node) {
+
+        _this->is_a<Wrappy>()->addEffector(node->is_a<Effector>());
+
+        return _this;
+
+    });
+
     NODE<Effector>::on(Node::CREATE, [](Node*node, Effector* def){ NODE<Struct>::on_cb[Node::CREATE](node, &def->s); });
 
     NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Struct>::on_cb[Node::CREATE](node, &fx->s); });
 
     NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* effector){ NODE<Struct>::on_cb[Node::CHANGE](node, &effector->s);  effector->update(); });
-
-    NODE<Effector>::onadd<Effector>([](Node* _this, Node *node) {
-
-
-        Effector * from_effector = _this->is_a<Effector>();
-        auto wrap = dynamic_cast<Wrappy*>(from_effector);
-        Effector * to_effector = node->is_a<Effector>();
-
-        if (!wrap) return _this;
-
-        wrap->addEffector(to_effector);
-
-        return _this;
-
-    });
 
     NODE<EffectorRef>::on(Node::DELETE, [](Node* node, EffectorRef *effector) {
 
