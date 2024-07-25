@@ -20,13 +20,13 @@
     "wrapper": [ "atlas", "flower", "burst", "gradient" ]
   },
   "editors": [
-    [ 0, 0, 0, 0, "Stack::ubersmart1", true ],
+    [ 0, 0, 0, 0, "Stack::Layer1", true ],
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
     [ 0, 0, 0, 0, "tree::Debug", true ]
   ],
   "layers": {
     "ubersmart1": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
     "ubersmart2": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "rectangle1": "rectangle", "wrapper1": "wrapper" } ] }, {} ]
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1 ] }, {} ]
   }
 }

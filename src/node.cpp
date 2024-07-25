@@ -28,8 +28,7 @@ void Node::init() {
     PLOGV << "#" << name();
 
     #ifdef ROCH
-    TYPE = type().name();    
-    TYPE += " " + type_name();
+    TYPE = type_name();
     #endif
 
     trig(Node::CREATE);
@@ -119,9 +118,10 @@ Node* Node::add(void* node_v)  {
     bool found = false;
 
     TypeIndex t = type();
-    TypeIndex u = n->type();
     
     while (true) { // find all derived onadds
+    
+        TypeIndex u = n->type();
         
         while (true) { // find all derived onadds
     
