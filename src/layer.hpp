@@ -26,8 +26,15 @@ struct Layer : DrawCall {
 
 };
 
+struct UberLayer;
 
 struct UberEffector : Effector {
+
+    UberLayer *ubl;
+
+    UberEffector(UberLayer* ubl = nullptr) : ubl(ubl) {  }
+
+    std::string  source() override;
 
     bool setup(Builder* builder) override;
     

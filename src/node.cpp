@@ -206,7 +206,7 @@ Node* Node::hide() {
 
 }
 
-Node* Node::operator[](std::string name) { for (auto c : childrens) if (c->name() == name) return c; return nullptr; }
+Node* Node::operator[](std::string name) { return child(name); }
 
 Node* Node::operator[](int id) { return childrens[id]; }
 
