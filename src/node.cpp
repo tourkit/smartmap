@@ -246,7 +246,7 @@ bool Node::remove(Node *child) {
 
 }
 
-void Node::run() { trig(Node::RUN); for (auto x : childrens) x->run(); }
+void Node::run() { if (!is_active) return; trig(Node::RUN); for (auto x : childrens) x->run(); }
 
 uint32_t Node::index() {
 
