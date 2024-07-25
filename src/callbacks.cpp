@@ -129,7 +129,6 @@ void Callbacks::init() {
         
     });
 
-    // NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc){ dc->shader.create(); });
     NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
         layer->update();
     });
@@ -140,13 +139,14 @@ void Callbacks::init() {
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
         auto f = node->is_a<File>() ;
-        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( f))->name(f->name());
+        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( f));
 
     });
 
     NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
         
-        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ) ); 
+        auto e = node->is_a<Effector>() ;
+        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( e ));
         
     });
 
