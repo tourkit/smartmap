@@ -84,7 +84,15 @@ void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m 
 
 void Member::name(std::string name_v) { this->name_v = next_name(name_v); }
 
-std::string Member::name() { if (name_v.length()) return name_v; return "parentName" ; }
+std::string Member::name() { 
+    if (name_v.length()) 
+        return name_v; 
+    
+    if (isRef()) 
+        return ref()->name(); 
+    
+    return "parentName" ; 
+}
 
 Member* Member::ref() { return ref_v; }
 
