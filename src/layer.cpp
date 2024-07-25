@@ -117,8 +117,9 @@ std::string  UberEffector::source() {
 
 bool UberEffector::setup(Builder* builder) { 
 
+    ubl_v->fb.texture->unit = 3;
     ubl_v->fb.texture->sampler_name = ubl_v->s.name()+"_pass";
-    builder->samplers[0] = ubl_v->fb.texture;
+    builder->samplers[ubl_v->fb.texture->unit] = ubl_v->fb.texture;
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
 

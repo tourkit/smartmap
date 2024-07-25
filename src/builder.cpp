@@ -8,6 +8,7 @@
 #include "effector.hpp"
 
 #include "utils.hpp"
+#include <string>
 
 void Builder::post() {
 
@@ -15,10 +16,19 @@ void Builder::post() {
 
     for (auto x : effectors_vertex) x->post(this);
 
+    int id = 0;
+    
+
     for (auto s : samplers) {
         
+        if (s.first > id) {
+            // for ( int i = id; i < s.first; i++) shader->sendUniform("randi"+std::to_string(i), i);
+            id = s.first;
+        }
+        s.second->bind(s.first);
         shader->sendUniform(s.second->sampler_name, s.first);
         
+        id++;
     }
 
 }
@@ -37,7 +47,24 @@ void Builder::build() {
 
 std::string Builder::frag() {
 
-    std::string samplers_str; for (auto x : samplers) samplers_str += "uniform sampler2D "+x.second->sampler_name+";\n"; if (samplers.size()) samplers_str += "\n";
+    std::string samplers_str; 
+
+    int id = 0;
+    
+    for (auto x : samplers) {
+
+        if (x.first > id) {
+            // for ( int i = id; i < x.first; i++) samplers_str += "uniform sampler2D randi"+std::to_string(i)+";\n"; 
+            id = x.first;
+        }
+
+        samplers_str += "uniform sampler2D "+x.second->sampler_name+";\n"; 
+        id++;
+
+    }
+    
+    if (samplers.size()) samplers_str += "\n";
+    
 
     std::string effectors_str; for (auto x : effectors_fragment)  effectors_str += x->source()+"\n\n";
 

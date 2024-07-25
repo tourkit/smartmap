@@ -290,8 +290,6 @@ void Open::layers(){
 
             engine.stack->trig(Node::CHANGE);
 
-            ubl.fb.texture->bind(3);
-
             ubl.update();         
         
         }

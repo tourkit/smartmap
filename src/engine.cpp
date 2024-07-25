@@ -140,7 +140,6 @@ void Engine::run() {
 
     }
 
-
     auto &window = getInstance().window;
 
     while (!glfwWindowShouldClose(window.id)) 
@@ -166,7 +165,6 @@ void Engine::run() {
             if (alt) offset = dynubo2.offset;
             engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset,offset);
             // engine.dynamic_ubo.upload();
-
 
             engine.tree->run();
 

@@ -92,7 +92,9 @@ void Texture::destroy() {
 
 }
 
-void Texture::bind(int unit) { glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0);  }
+void Texture::bind(int unit) { 
+    glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0);  
+}
 
 void Texture::bind() { bind(unit); }
 
