@@ -87,7 +87,7 @@ void Callbacks::init() {
         node->each<Layer>([](Node*n, Layer* layer){ 
 
             layer->shader.create(); 
-            
+
         });
         
     });
@@ -123,9 +123,9 @@ void Callbacks::init() {
     NODE<Modelable>::is_a<Effectable>();
     NODE<UberLayer::VLayer>::is_a<Effectable>();
 
-    NODE<Modelable>::on(Node::CREATE, [](Node* node, Modelable *m){ 
+    NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
     
-        NODE<Struct>::on_cb[Node::CREATE](node, &m->s);
+        NODE<Struct>::on_cb[Node::CREATE](node, &e->s);
         
     });
 
