@@ -149,6 +149,11 @@ void Callbacks::init() {
         return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( e ));
         
     });
+    NODE<Effectable>::onadd<UberLayer>([](Node*_this,Node*node){ 
+        
+        return _this;
+        
+    });
 
     ////////// Effector.HPP
 
