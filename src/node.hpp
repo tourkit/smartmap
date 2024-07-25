@@ -112,9 +112,9 @@ struct Node {
     template <typename T>
     void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
 
-    std::map<TypeIndex, std::function<Node*(Node*,Node*)>> onadd_cb;
-    std::map<Event,std::function<void(Node*)>> on_cb;
 
+    std::map<Event,std::function<void(Node*)>> on_cb;
+    std::map<TypeIndex, std::function<Node*(Node*,Node*)>> onadd_cb;
     static inline std::map<Event, std::map<TypeIndex, void*>> ontyped;
     static inline std::map<TypeIndex, std::map<TypeIndex, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
     static inline std::map<TypeIndex, std::function<void*(void*)>> upcast_lists;
@@ -216,7 +216,6 @@ private:
 template <typename T>
 
 struct NODE {
-
     
     static inline std::map<Node::Event, std::function<void(Node*,T*)>> on_cb;
 

@@ -6,6 +6,7 @@
 
 
 #include "effector.hpp"
+#include <string>
 
 ///////// Layer ////
 
@@ -71,7 +72,38 @@ void Layer::draw() {
 ///////// UBEREFFECTOR ////
 
 
+std::string  UberEffector::source() { 
+
+    std::string out;
+
+    out += "void " + s.name()+ "() {\n\n";
+
+        out +="\tvec4 color_=  vec4(0);\n\n";
+        
+        out +="\tfor (int i =0; i < "+std::to_string(ubl->s.quantity())+"; i++) {\n\n";
+        
+            out +="\t\tvec2 tuv = uv;\n\n";
+        
+            out +="\t\ttuv *= static_ubo."+lower(ubl->uberlayer_s.name())+"[i].size;\n";
+        
+            out +="\t\ttuv += static_ubo."+lower(ubl->uberlayer_s.name())+"[i].norm;\n\n";
+        
+            out +="\t\tcolor_ += texture("+ubl->fb.texture->sampler_name+", tuv);\n\n";
+        
+        out +="\t}\n\n";
+        
+        out +="\tcolor *= color_;\n\n";
+    
+    out +="};\n";
+
+    return out;
+
+}
+
 bool UberEffector::setup(Builder* builder) { 
+
+    ubl->fb.texture->sampler_name = ubl->s.name()+"_pass";
+    builder->samplers[0] = ubl->fb.texture;
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
 
@@ -84,7 +116,9 @@ bool UberEffector::body(Builder* builder, std::string prepend) {  Effector::body
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(engine.static_ubo.next_name(s.name()),0) {
+UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(engine.static_ubo.next_name(s.name()),0), effector(this) {
+    
+    effector.s.name(s.name()+"_effector");
 
     uberlayer_s.ref(&uberlayer_def);
 
