@@ -71,17 +71,3 @@ protected:
 
 };
 
-
-struct Ref : Struct {
-
-    Ref(std::string name = "Ref", uint32_t quantity = 1) : Struct(name, quantity) { }
-
-    Ref(const Member& other) : Struct(other) { }
-
-    ~Ref() {  }
-
-    Member* copy() override { return new Ref(*this); }
-
-    bool isRef() override { return true; }
-
-};

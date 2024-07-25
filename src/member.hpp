@@ -67,7 +67,6 @@ struct Member {
     virtual Member* copy();
 
     virtual bool isData();
-    virtual bool isRef();
 
     Member* ref();
     bool ref(Member*);

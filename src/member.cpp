@@ -88,7 +88,7 @@ std::string Member::name() {
     if (name_v.length()) 
         return name_v; 
     
-    if (isRef()) 
+    if (ref()) 
         return ref()->name(); 
     
     return "parentName" ; 
@@ -96,7 +96,10 @@ std::string Member::name() {
 
 Member* Member::ref() { return ref_v; }
 
-bool Member::ref(Member* ref) { ref_v = ref; return true; }
+bool Member::ref(Member* ref) { 
+    ref_v = ref; 
+    return true; 
+}
 
 uint32_t Member::size() { return 0; }
 
@@ -190,7 +193,6 @@ int Member::get_offset() {
 Member* Member::copy() { return new Member(*this); }
 
 bool Member::isData() { return false; }
-bool Member::isRef() { return false; }
 Struct* Member::isStruct() { return nullptr; }
 Buffer* Member::isBuff() { return nullptr; }
 
