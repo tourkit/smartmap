@@ -128,6 +128,11 @@ void Callbacks::init() {
         NODE<Struct>::on_cb[Node::CREATE](node, &e->s);
         
     });
+    NODE<Effectable>::on(Node::CHANGE, [](Node* node, Effectable *e){ 
+    
+        NODE<Struct>::on_cb[Node::CHANGE](node, &e->s);
+        
+    });
 
     NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
         layer->update();
