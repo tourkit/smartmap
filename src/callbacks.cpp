@@ -113,7 +113,7 @@ void Callbacks::init() {
         if (layer) { layer->removeModel(model); return; }
 
         PLOGE << "no found";
-
+ 
     });
 
     NODE<UberLayer>::is_a<Layer>();

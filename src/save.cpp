@@ -128,7 +128,18 @@ void Save::layers(){
             new_model.PushBack(model.get()->s.quantity(),allocator);
 
             auto effects = rapidjson::Value(rapidjson::kObjectType);
-            for (auto e : model.get()->effector_refs) effects.AddMember( rapidjson::Value(e.get()->s.name().c_str(), allocator), rapidjson::Value(e.get()->effector->s.name().c_str(), allocator), allocator ); // TODOTODO
+            for (auto e : model.get()->effector_refs) {
+
+                std::string name = e.get()->s.name();
+
+                std::string value;
+                auto effector = e.get()->effector;
+                if (effector->s.ref()) value = effector->s.ref()->name();
+                else value = effector->s.name();
+              
+                effects.AddMember( rapidjson::Value(name.c_str(), allocator), rapidjson::Value(value.c_str(), allocator), allocator ); // TODOTODO
+
+            }
             new_model.PushBack( effects, allocator );
 
             models.AddMember(rapidjson::Value(model.get()->s.name().c_str(), allocator), new_model, allocator);

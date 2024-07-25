@@ -69,15 +69,13 @@ void Layer::draw() {
 
 
 
-///////// UBEREFFECTOR ////
+///////// UBEREFFECTOR //// 
 
 void UberEffector::ubl(UberLayer* ubl) {
 
     ubl_v = ubl;
 
     if (!ubl) return;
-
-    s.name("");
 
     s.ref(&ubl->s);
 

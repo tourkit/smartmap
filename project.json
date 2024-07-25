@@ -6,7 +6,7 @@
     "artnet": { "artnet1": [ "1.2.3.4", { "remap1": [ 1, 1, "ubersmart1::smartlayer1" ] } ] }
   },
   "outputs": {
-    "monitor": { "Window": [ 1, 1, 0, 0 ] }
+    "monitor": { "Window": [ 1, 1, 0, 0, "ubersmart1" ] }
   },
   "models": {
     "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
@@ -26,6 +26,6 @@
   ],
   "layers": {
     "ubersmart1": { "smartlayer1": [ 1920, 1080, 2, { "rectangle": "rectangle", "wrapper": "wrapper" } ], "smartlayer2": [ 400, 300, 2, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1,{ "ubersmart1": "ubersmart1"} ] }, {} ]
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "ubersmart1": "ubersmart1" } ] }, {} ]
   }
 }
