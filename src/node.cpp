@@ -8,7 +8,7 @@
 
 Node::Node(void* ptr, TypeIndex type, bool owned) : void_ptr(ptr), stored_type(type), owned(owned) {
 
-    name(type_name());
+    name_v = (type_name());
 
     init();
 
@@ -28,11 +28,11 @@ void Node::init() {
     PLOGV << "#" << name();
 
     #ifdef ROCH
-    EASY_TYPE_DEBUG = type().name();    
-    EASY_TYPE_DEBUG += " " + type_name();
+    TYPE = type().name();    
+    TYPE += " " + type_name();
     #endif
 
-    trig(Event::CREATE);
+    trig(Node::CREATE);
 
 }
 
@@ -112,7 +112,9 @@ Node* Node::add(void* node_v)  {
 
     auto n = (Node*)node_v;
 
-    if (n->parent() == this) return nullptr;
+    if (!n || n == this || n->parent() == this) return nullptr;
+
+    PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
 
     bool found = false;
 
@@ -146,36 +148,20 @@ Node* Node::add(void* node_v)  {
 
     }
     
-    // if (!found) return nullptr;
+    // if (!found) return nullptr; // test for no auto add
 
-    if (n == node_v) {
+    if (onadd_cb.find(n->type()) != onadd_cb.end()) {
+        n = onadd_cb[n->type()](this,n);
 
-        PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
+        if (n == this) return nullptr;
 
-        if (n->parent() == this) return nullptr;
-
-        if (onadd_cb.find(n->type()) != onadd_cb.end()) {
-
-            n = onadd_cb[n->type()](this,n);
-
-            if (!n) return nullptr;
-
-        }
-
-        if (n == node_v) n->parent(this);
-
-        else n->referings.insert(this); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback // no !
-
-        trig(Event::CHANGE);
-        
-        return n;
-
-    }else {
-
-        n->referings.insert(n); // that I think is an overzstatement, inst an alweeays fact. sdhoudl ne handled per callback
-        return n;
     }
 
+    n->parent(this);
+
+    update();
+    
+    return n;
 
 }
 
@@ -228,6 +214,8 @@ void Node::update() {
 
     PLOGV << type_name() << "::" << name();
 
+    trig(Event::CHANGE);
+
     if (parent_node) parent_node->update();
 
     if (referings.size() && *referings.begin())
@@ -268,6 +256,18 @@ uint32_t Node::index() {
 
 }
 
+
+static std::string event_name(Node::Event event){
+    switch (event) {
+        case Node::CREATE: return "CREATE";
+        case Node::CHANGE: return "CHANGE";
+        case Node::RUN: return "RUN";
+        case Node::DELETE: return "DELETE";
+    }
+
+    return "UNKNOWN";
+}
+
 void Node::trig(Event e)  { 
         
     auto t = stored_type;
@@ -275,6 +275,10 @@ void Node::trig(Event e)  {
     void* out = void_ptr;
 
     while (true) {
+
+        auto t_ = t.name();
+
+        PLOGV << event_name(e) << " : " << name() << " is " << type_name() << " as " << t_ ;
 
         if (ontyped[e].find(t) != ontyped[e].end()) 
         
