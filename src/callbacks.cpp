@@ -134,24 +134,25 @@ void Callbacks::init() {
     });
 
     NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 
+
         layer->draw(); 
+        
     });
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
-        auto f = node->is_a<File>() ;
-        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( f));
+
+        return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( node->is_a<File>() ));
 
     });
 
     NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
         
-        auto e = node->is_a<Effector>() ;
-        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( e ));
+        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ));
         
     });
     NODE<Effectable>::onadd<UberLayer>([](Node*_this,Node*node){ 
         
-        return _this;
+        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector(&node->is_a<UberLayer>()->effector));
         
     });
 
