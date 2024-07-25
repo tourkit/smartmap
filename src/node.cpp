@@ -225,6 +225,16 @@ void Node::update() {
 
 }
 
+
+void Node::each_(std::function<void(Node*)> cb) { 
+    
+    for (auto c : childrens) 
+        c->each_(cb); 
+    
+    cb(this);  
+
+}
+
 bool Node::remove(Node *child) {
 
     PLOGV << type_name() << "::" << name() << " remove " << child->type_name() << "::" << child->name();

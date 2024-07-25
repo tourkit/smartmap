@@ -85,7 +85,7 @@ struct Node {
 
     Node* on(Event event, std::function<void(Node*)> cb = nullptr);
 
-    void each_(std::function<void(Node*)> cb) { for (auto c : childrens) { ((Node*)c)->each_(cb); } cb(this);  }
+    void each_(std::function<void(Node*)> cb);
 
     static inline uint32_t total_uid = 0;
     uint32_t uid = 0;
@@ -158,7 +158,13 @@ struct Node {
     }
 
     template <typename U>
-    void each(std::function<void(Node*, U*)> cb) { each_([&](Node* n) { auto isa = n->is_a_nowarning<U>(); if (isa) cb(n,isa); }); }
+    void each(std::function<void(Node*, U*)> cb) { 
+        each_([&](Node* n) { 
+            U* isa = n->is_a_nowarning<U>(); 
+            if (isa) 
+                cb(n,isa); 
+        }); 
+    }
 
     template <typename U>
     U* is_a() {
@@ -176,10 +182,13 @@ struct Node {
 
         TypeIndex t = stored_type;
 
-        void* out = typeid(U) == t ? void_ptr : nullptr;
+        std::string t_ = stored_type.pretty_name();
 
+        void* out = void_ptr ;
 
         while (true) {
+
+            std::string t_ = stored_type.pretty_name();
 
             if (typeid(U) == t || is_lists.find(t) == is_lists.end()) break;
 
@@ -189,6 +198,8 @@ struct Node {
         
         }
 
+        if (typeid(U) != t) return nullptr;
+        
         return (U*)out; 
         
     }
