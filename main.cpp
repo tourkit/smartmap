@@ -1,6 +1,6 @@
 /*
 
-   SMARTMAP ( v 1.3.1.2 beta )
+   SMARTMAP ( v 1.3.1.2 beta ) 
 
                                 */
 
