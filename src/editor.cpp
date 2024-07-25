@@ -1051,6 +1051,10 @@ void Editors::init() {
         draw_definition(&def->s);
 
     });
+
+    Editor<FileEffector>([](Node* node, FileEffector *e){ Editor<Effector>::cb(node, e); });
+
+
     // REMAP.HPP
 
     // Editor<Universe::Remap>([](Node*node, Universe::Remap* remap){ Editor<Remap>::cb(node, remap); });

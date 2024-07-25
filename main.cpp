@@ -5,8 +5,6 @@
                                 */
 
 #include "src/engine.hpp"
-#include "src/layer.hpp"
-#include "src/shader.hpp"
 
 int main() {
 
@@ -15,8 +13,6 @@ int main() {
     logger.cout(Sev::warning);
 
     engine.open("./project.json");
-
-
 
     engine.run();
 

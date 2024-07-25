@@ -7,7 +7,6 @@
 #include "gui.hpp"
 #include "ubo.hpp"
 #include "node.hpp"
-#include "atlas.hpp"
 #include "vbo.hpp"
 #include "instance.hpp"
 #include "open.hpp"
@@ -104,8 +103,6 @@ void Engine::init() {
 
     outputs = tree->addOwnr<Node>()->name("Outputs")->active(true);
 
-    debug->select(); // NEEEEEED TO BE ONE SELECTED NODE !
-
     PLOGI << "Engine initialized";
 
 }
@@ -139,6 +136,8 @@ void Engine::run() {
         }
 
     }
+
+    if (!Node::selected) Node::selected = debug;
 
     auto &window = getInstance().window;
 

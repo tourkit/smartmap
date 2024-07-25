@@ -152,8 +152,8 @@ void Window::draw() {
 
     if (!init){
 
-        static std::string frag = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() { COLOR = texture(tex, UV); if (fps<60)COLOR+=vec4(mod(frame,10)*.05,0,0,1); }";
-        static std::string vert = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}";
+        static std::string frag = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nuniform sampler2D tex;\n\nin vec2 UV; out vec4 COLOR;\n\nvoid main() {\n\n\tCOLOR = texture(tex, UV);\n\n\tif (fps<60) COLOR+=vec4(mod(frame,10)*.05,0,0,1);\n}\n\n";
+        static std::string vert = "#version 430 core\n\nlayout (binding = 0, std140) uniform ubo { int frame, fps, s0, s1; };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\n\nout vec2 UV;\n\n\nvoid main() {\n    \n	UV = TEXCOORD;\n    \n	gl_Position = vec4(POSITION.x,POSITION.y,0,1);\n\n}\n\n";
         shader = new ShaderProgram(frag,vert);
 
         vbo = new VBO();

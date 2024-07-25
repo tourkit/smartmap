@@ -3,7 +3,6 @@
 #include "builder.hpp"
 #include "struct.hpp"
 #include "instance.hpp"
-#include "atlas.hpp"
 #include "utils.hpp"
 #include <regex>
 #include <string>
