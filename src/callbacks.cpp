@@ -65,9 +65,7 @@ void Callbacks::init() {
 
     ////////// ENGINE
 
-    NODE<Buffer>::on(Node::RUN, [](Node* node, Buffer *buff){ 
-        buff->upload(); 
-    });
+    NODE<Buffer>::on(Node::RUN, [](Node* node, Buffer *buff){ buff->upload(); });
     
     NODE<UBO>::is_a<Buffer>();
 
@@ -86,12 +84,11 @@ void Callbacks::init() {
     
     NODE<Stack>::on(Node::CHANGE, [](Node*node, Stack* stack){
 
-        // for (auto c : node->childrens) {
+        node->each<Layer>([](Node*n, Layer* layer){ 
 
-        //     Layer* layer = c->is_a<Layer>();
-
-            // if (layer) layer->shader.create();
-        // }
+            layer->shader.create(); 
+            
+        });
         
     });
 
