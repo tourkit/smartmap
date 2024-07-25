@@ -150,6 +150,28 @@ void Save::layers(){
 
 void Save::effectors(){
 
+    json_v.document["effectors"].RemoveAllMembers();
+
+    engine.effectors->each<Effector>([&](Node* n, Effector* effector) {
+
+        auto fe = dynamic_cast<FileEffector*>(effector);
+
+        if (fe) json_v.document["effectors"].AddMember(rapidjson::Value(fe->file.name().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&fe->file.data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator());
+        
+        auto wrap = dynamic_cast<Wrappy*>(effector);
+        
+        if (wrap) {
+            
+            auto effects = rapidjson::Value(rapidjson::kArrayType);
+
+            for (auto e : wrap->effector_refs) effects.PushBack(rapidjson::Value(e->effector->s.name().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
+
+            json_v.document["effectors"].AddMember(rapidjson::Value(wrap->Effector::s.name().c_str(), json_v.document.GetAllocator()), effects, json_v.document.GetAllocator());
+            
+            
+        }
+
+    });
 
 }
 
@@ -182,28 +204,7 @@ void Save::models(){
     json_v.document["models"].RemoveAllMembers();
     for (auto m : engine.models->childrens) { json_v.document["models"].AddMember(rapidjson::Value(m->is_a<File>()->filename().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator()); }
 
-    json_v.document["effectors"].RemoveAllMembers();
 
-    engine.effectors->each<Effector>([&](Node* n, Effector* effector) {
-
-        auto fe = dynamic_cast<FileEffector*>(effector);
-
-        if (fe) json_v.document["effectors"].AddMember(rapidjson::Value(fe->file.filename().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&fe->file.data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator());
-        
-        auto wrap = dynamic_cast<Wrappy*>(effector);
-        
-        if (wrap) {
-            
-            auto effects = rapidjson::Value(rapidjson::kArrayType);
-
-            for (auto e : wrap->effector_refs) effects.PushBack(rapidjson::Value(e->effector->s.name().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
-
-            json_v.document["effectors"].AddMember(rapidjson::Value(wrap->Effector::s.name().c_str(), json_v.document.GetAllocator()), effects, json_v.document.GetAllocator());
-            
-            
-        }
-
-    });
 
 }
 
