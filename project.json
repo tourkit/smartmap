@@ -27,6 +27,6 @@
   "layers": {
     "ubersmart1": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
     "ubersmart2": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1 ] }, {} ]
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "ubersmart1": "ubersmart1"} ] }, {} ]
   }
 }
