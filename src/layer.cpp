@@ -71,24 +71,41 @@ void Layer::draw() {
 
 ///////// UBEREFFECTOR ////
 
+void UberEffector::ubl(UberLayer* ubl) {
+
+    ubl_v = ubl;
+
+    if (!ubl) return;
+
+    s.name("");
+
+    s.ref(&ubl->s);
+
+}
+
+UberEffector::UberEffector(UberLayer* ubl) {  
+
+    this->ubl(ubl);
+
+}
 
 std::string  UberEffector::source() { 
 
     std::string out;
 
-    out += "void " + s.name()+ "() {\n\n";
+    out += "void " + ubl_v->s.name()+ "_effector() {\n\n";
 
         out +="\tvec4 color_=  vec4(0);\n\n";
         
-        out +="\tfor (int i =0; i < "+std::to_string(ubl->s.quantity())+"; i++) {\n\n";
+        out +="\tfor (int i =0; i < "+std::to_string(ubl_v->uberlayer_s.quantity())+"; i++) {\n\n";
         
             out +="\t\tvec2 tuv = uv;\n\n";
         
-            out +="\t\ttuv *= static_ubo."+lower(ubl->uberlayer_s.name())+"[i].size;\n";
+            out +="\t\ttuv *= static_ubo."+lower(ubl_v->uberlayer_s.name())+"[i].size;\n";
         
-            out +="\t\ttuv += static_ubo."+lower(ubl->uberlayer_s.name())+"[i].norm;\n\n";
+            out +="\t\ttuv += static_ubo."+lower(ubl_v->uberlayer_s.name())+"[i].norm;\n\n";
         
-            out +="\t\tcolor_ += texture("+ubl->fb.texture->sampler_name+", tuv);\n\n";
+            out +="\t\tcolor_ += texture("+ubl_v->fb.texture->sampler_name+", tuv);\n\n";
         
         out +="\t}\n\n";
         
@@ -102,8 +119,8 @@ std::string  UberEffector::source() {
 
 bool UberEffector::setup(Builder* builder) { 
 
-    ubl->fb.texture->sampler_name = ubl->s.name()+"_pass";
-    builder->samplers[0] = ubl->fb.texture;
+    ubl_v->fb.texture->sampler_name = ubl_v->s.name()+"_pass";
+    builder->samplers[0] = ubl_v->fb.texture;
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
 
@@ -111,14 +128,20 @@ bool UberEffector::setup(Builder* builder) {
     
 }
 
-bool UberEffector::body(Builder* builder, std::string prepend) {  Effector::body(builder, prepend); return true; }
+bool UberEffector::body(Builder* builder, std::string prepend) {  
+    
+    builder->current_model += "\t"+ubl_v->s.name()+"_effector();\n";
+    
+    return true; }
 
 
 ///////// UBERLAYER ////
 
-UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(engine.static_ubo.next_name(s.name()),0), effector(this) {
-    
-    effector.s.name(s.name()+"_effector");
+UberLayer::UberLayer() : 
+    Layer(0,0,"UberLayer"), 
+    builder(this), 
+    uberlayer_s(engine.static_ubo.next_name(s.name()),0)
+    {
 
     uberlayer_s.ref(&uberlayer_def);
 
@@ -128,6 +151,8 @@ UberLayer::UberLayer() : Layer(0,0,"UberLayer"), builder(this), uberlayer_s(engi
 
     shader.builder(&builder);
 
+    effector.ubl(this);
+    
 }
 
 void UberLayer::calc_matrice() {
@@ -230,9 +255,11 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     DrawCall::ShaderProgramBuilder::build();
 
-    std::string ar_str = lower(ubl->glsl_uberlayer->def()->name())+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[int(OBJ)]":"");
+    body_fragment += "\tint obj  = int(OBJ);\n\n";
 
-    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->s.name()), "int(OBJ)", ar_str );
+    std::string ar_str = lower(ubl->glsl_uberlayer->def()->name())+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[obj]":"");
+
+    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->s.name()), "obj", ar_str );
 
     else {
 
@@ -242,9 +269,10 @@ void UberLayer::ShaderProgramBuilder::build() {
 
             if (last_id) body_fragment += "\n} else ";
 
+            auto l = last_id;
             last_id += x.get()->s.quantity();
 
-            body_fragment += "if (OBJ < "+std::to_string(last_id)+" ){\n\n" + print_layer( *x.get(), lower(dc->s.name()), "int(OBJ)", ar_str );
+            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->s.name()), "obj", ar_str );
 
         }
 

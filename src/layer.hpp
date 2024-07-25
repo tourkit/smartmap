@@ -30,9 +30,11 @@ struct UberLayer;
 
 struct UberEffector : Effector {
 
-    UberLayer *ubl;
+    UberLayer *ubl_v;
 
-    UberEffector(UberLayer* ubl = nullptr) : ubl(ubl) {  }
+    UberEffector(UberLayer* ubl = nullptr);
+    
+    void ubl(UberLayer* ubl);
 
     std::string  source() override;
 

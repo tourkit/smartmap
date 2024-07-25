@@ -16,8 +16,6 @@ void Builder::post() {
     for (auto x : effectors_vertex) x->post(this);
 
     for (auto s : samplers) {
-
-        // s.second->bind(s.first);
         
         shader->sendUniform(s.second->sampler_name, s.first);
         

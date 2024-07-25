@@ -25,8 +25,7 @@
     [ 0, 0, 0, 0, "tree::Debug", true ]
   ],
   "layers": {
-    "ubersmart1": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
-    "ubersmart2": { "smartlayer1": [ 1920, 1080, 10, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "ubersmart1": "ubersmart1"} ] }, {} ]
+    "ubersmart1": { "smartlayer1": [ 1920, 1080, 2, { "rectangle": "rectangle", "wrapper": "wrapper" } ], "smartlayer2": [ 400, 300, 2, { "rectangle": "rectangle", "wrapper": "wrapper" } ] },
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1,{ "ubersmart1": "ubersmart1"} ] }, {} ]
   }
 }
