@@ -162,8 +162,9 @@ void Engine::run() {
 
             int offset = 0;
             if (alt) offset = dynubo2.offset;
-            engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset,offset);
-            // engine.dynamic_ubo.upload();
+
+            engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset-32,32+offset);
+            engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),32);
 
             engine.tree->run();
 
