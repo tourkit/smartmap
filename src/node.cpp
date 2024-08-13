@@ -161,6 +161,8 @@ Node* Node::add(void* node_v)  {
 
     update();
     
+    if (n != node_v) ((Node*)node_v)->referings.insert(n);
+
     return n;
 
 }
