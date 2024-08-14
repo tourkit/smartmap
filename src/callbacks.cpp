@@ -157,7 +157,7 @@ void Callbacks::init() {
     });
     NODE<Effectable>::onadd<UberLayer>([](Node*_this,Node*node){ 
         
-        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector(&node->is_a<UberLayer>()->effector));//->name(node->name());
+        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector(&node->is_a<UberLayer>()->effector));
         
     });
 

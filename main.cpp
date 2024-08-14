@@ -4,6 +4,7 @@
 
                                 */
 
+#include "effector.hpp"
 #include "src/engine.hpp"
 
 int main() {
@@ -13,6 +14,10 @@ int main() {
     logger.cout(Sev::warning);
 
     engine.open("./project.json");
+
+    auto x = engine.stack->childrens[1]->childrens[0]->childrens[0]->is_a<EffectorRef>();
+
+    PLOGW << x->s.size();
 
     engine.run();
 

@@ -160,7 +160,7 @@ void Open::outputs(){
             auto window = engine.outputs->addPtr<Window>( &engine.window );
 
             window->name(x.name.GetString());
-            engine.window.fb = (layer?&layer->is_a<Layer>()->fb:nullptr);
+            window->add(layer);
 
             engine.window.size( arr[0].GetInt() , arr[1].GetInt() );
             engine.window.pos( arr[2].GetInt() , arr[3].GetInt() );
