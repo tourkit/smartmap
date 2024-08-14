@@ -244,9 +244,10 @@ using namespace ImGui;
 
             auto n = (Node*)(*(uint64_t*)payload->Data);
 
-            if (node->onaddtyped_cb[node->type()].find(n->type()) != node->onaddtyped_cb[node->type()].end() || node->onadd_cb.find(n->type()) != node->onadd_cb.end()) node->add(n);
+            node->add(n);
 
-            if (holding) holding = false;
+            if (holding) 
+                holding = false;
 
         }
 
