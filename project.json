@@ -6,7 +6,7 @@
     "artnet": { "artnet1": [ "1.2.3.4", { "remap1": [ 1, 1, "ubersmart1::smartlayer1" ] } ] }
   },
   "outputs": {
-    "monitor": { "Window": [ 40, 30, 0, 0, "Layer1" ] }
+    "monitor": { "Window": [ 299, 473, 0, 0, "Layer1" ] }
   },
   "models": {
     "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
@@ -18,14 +18,14 @@
     "gradient": "void gradient(float exp, float angle) {\n\tangle *= 6.28318530718;\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\tuv *= mat2(c, -s, s, c);\n\tuv += .5;\n\tuv += 1-exp*2;\n\tcolor *= vec4(uv.x);}",
     "burst": "void burst(float inratio, float shape, float petals) {\n\n\tuv -= .5;\n\n\tshape = 1-shape;\n\n\tfloat c = length(uv)+.5;\n\n\tfloat a = atan(uv.x,uv.y);//+iTime;\n\n\tfloat r = a * ((petals*29.)+3.);//\t- rotation*3.14*2.;\n\n\tr = abs(fract(.5/3.14*r)-.5)*2.; // equals : abs(mod(.5/3.14*r,1.)-.5); equals sdTriangle(a,petals);\n\n\tr = clamp(r*c*.9,0.,1.);\n\n\tr += (1.-inratio*2.); // gradient to white\n\n\tfloat zzz = shape*.4999;\n\tr = smoothstep(zzz,1.-zzz, r);\n\n\tr = mix(0.,1.,r);\n\n\tcolor *= r;\n\nuv += .5;\n\n}",
     "strobe": "//intensity(0,1,0)\n\nvoid strobe(float intensity) {\n\n\t\n\tcolor *= (mod(dynamic_ubo[0].eNGINE.frame,1+int(dynamic_ubo[0].eNGINE.fps*intensity))==0?1:0) ;\n \n}\n\n\n",
-    "wrapper": [ "atlas", "flower", "burst", "gradient" ]
+    "wrapper": [ "gradient", "atlas", "flower", "burst" ]
   },
   "editors": [
-    [ 0, 0, 0, 0, "Effectors::strobe", true ],
-    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
-    [ 0, 0, 0, 0, "tree::Debug", true ]
+    [ 0, 0, 0, 0, "Stack::Layer1" ],
+    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ]
   ],
   "layers": {
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "strobe": "strobe", "rectangle": "rectangle" } ] }, {} ]
+    "ubersmart1": { "smartlayer1": [ 1920, 1080, 1, { "argb": "argb", "wrapper": "wrapper" } ], "smartlayer2": [ 400, 300, 2, { "atlas": "atlas" } ] },
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "ubersmart1": "ubersmart1" } ] }, {} ]
   }
 }

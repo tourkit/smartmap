@@ -148,6 +148,8 @@ void Window::draw() {
 
     static VBO *vbo;
 
+    static struct Quad : File { Quad() : File("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 1\nvt 1 1\nvt 0 0\nvt 1 0\n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4") { } } upside_quad;
+
     static bool init = false;
 
     if (!init){
@@ -157,7 +159,7 @@ void Window::draw() {
         shader = new ShaderProgram(frag,vert);
 
         vbo = new VBO();
-        vbo->add(&VBO::quad);
+        vbo->add(&upside_quad);
 
         init = true;
 

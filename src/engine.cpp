@@ -121,7 +121,15 @@ void Engine::run() {
 
     }
 
-    if (!engine.outputs->childrens.size()) engine.outputs->addPtr<Window>( &engine.window );
+    if (!engine.outputs->childrens.size()) {
+        
+        auto win = engine.outputs->addPtr<Window>( &engine.window );
+
+        if (engine.stack->childrens.size()) 
+        
+            win->add(engine.stack->childrens[0]);
+        
+    }
 
     for (auto output_ : engine.outputs->childrens) {
         

@@ -81,7 +81,7 @@ void UberEffector::ubl(UberLayer* ubl) {
 
 }
 
-UberEffector::UberEffector(UberLayer* ubl) {  
+UberEffector::UberEffector(UberLayer* ubl) : Effector(ubl?ubl->s.name():"ubereffector") {  
 
     this->ubl(ubl);
 
@@ -90,6 +90,8 @@ UberEffector::UberEffector(UberLayer* ubl) {
 std::string  UberEffector::source() { 
 
     std::string out;
+    std::string name = lower(ubl_v->uberlayer_s.name());
+    if (ubl_v->uberlayer_s.quantity()>1) name += "[i]";
 
     out += "void " + ubl_v->s.name()+ "_effector() {\n\n";
 
@@ -99,9 +101,9 @@ std::string  UberEffector::source() {
         
             out +="\t\tvec2 tuv = uv;\n\n";
         
-            out +="\t\ttuv *= static_ubo."+lower(ubl_v->uberlayer_s.name())+"[i].size;\n";
+            out +="\t\ttuv *= static_ubo."+name+".size;\n";
         
-            out +="\t\ttuv += static_ubo."+lower(ubl_v->uberlayer_s.name())+"[i].norm;\n\n";
+            out +="\t\ttuv += static_ubo."+name+".norm;\n\n";
         
             out +="\t\tcolor_ += texture("+ubl_v->fb.texture->sampler_name+", tuv);\n\n";
         

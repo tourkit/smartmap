@@ -158,10 +158,10 @@ void VBO::addQuad(float w, float h, float x, float y, int id) {
 
     struct Vec { float a,b,c,d,e,f; float g,h; };
 
-    (*this)[0].push()[0].set<Vec>({ x_*2-1 , y_*2-1 , 0, 1, x_ , y_ ,  (float)id, (float)layer_id});
-    (*this)[0].push()[0].set<Vec>({ w_*2-1 , y_*2-1 , 1, 1, w_ , y_ ,  (float)id, (float)layer_id});
-    (*this)[0].push()[0].set<Vec>({ x_*2-1 , h_*2-1 , 0, 0, x_ , h_ ,  (float)id, (float)layer_id});
-    (*this)[0].push()[0].set<Vec>({ w_*2-1 , h_*2-1 , 1, 0, w_ , h_ ,  (float)id, (float)layer_id});
+    (*this)[0].push()[0].set<Vec>({ x_*2-1 , y_*2-1 , 0, 0, x_ , y_ ,  (float)id, (float)layer_id});
+    (*this)[0].push()[0].set<Vec>({ w_*2-1 , y_*2-1 , 1, 0, w_ , y_ ,  (float)id, (float)layer_id});
+    (*this)[0].push()[0].set<Vec>({ x_*2-1 , h_*2-1 , 0, 1, x_ , h_ ,  (float)id, (float)layer_id});
+    (*this)[0].push()[0].set<Vec>({ w_*2-1 , h_*2-1 , 1, 1, w_ , h_ ,  (float)id, (float)layer_id});
 
     (*this)[1].push()[0].set<std::array<int,3>>({o+0,o+1,o+2});
     (*this)[1].push()[0].set<std::array<int,3>>({o+1,o+2,o+3});
