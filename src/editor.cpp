@@ -873,7 +873,7 @@ void Editors::init() {
 
         ImGui::Separator();
 
-        if (draw_raw(buffer->data.data(),buffer->data.size())) buffer->upload();
+        if (draw_raw(buffer->data.data(),buffer->data.size()/buffer->quantity())) buffer->upload();
 
         ImGui::Separator();
 
