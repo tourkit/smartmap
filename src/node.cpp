@@ -155,7 +155,7 @@ Node* Node::add(void* node_v)  {
 
         if (n == this) return nullptr;
 
-    }
+    } 
 
     n->parent(this);
 

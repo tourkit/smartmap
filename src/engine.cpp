@@ -156,16 +156,16 @@ void Engine::run() {
             int alt = frame % 2;
             memcpy(engine.dynamic_ubo.data.data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
 
-            frame = (frame+1) % 1000;
+            frame = (frame+1) % engine.window.displays.back().rate;
+            
+            int glsldatafp = engine.glsl_data.footprint();
+            int dynubofp = engine.dynamic_ubo.footprint();
+            
+            engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),alt?glsldatafp:dynubofp);
 
-            static Instance& dynubo2 = Instance(&engine.dynamic_ubo).eq(1).track();
-
-            int offset = 0;
-            if (alt) offset = dynubo2.offset;
-
-            engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),dynubo2.offset-32,32+offset);
-            engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),32);
-
+            if (alt) 
+                engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
+            
             engine.tree->run();
 
         });

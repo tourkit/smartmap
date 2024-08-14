@@ -17,11 +17,11 @@
     "flower": "//inratio(0,1,0)\n//shape(0,1,0)\n//petals(0,1,0)\n\nvoid flower(float inratio, float shape, float petals) {\n\n\tuv-=.5;\n\n\tfloat c = length(uv)+.5;\n\n\tfloat a = atan(uv.x,uv.y);//+iTime;\n\n\tfloat r = a * ((petals*29.)+3.);//  - rotation*3.14*2.;\n\n\tr = abs(fract(.5/3.14*r)-.5)*2.;\n\n\tr = pow(r,.5+pow(shape*2.,4.)); // petal type\n\n\tr = 1.-r*inratio*.5;//; // spikes out\n\n\tr = step(c,r);\n\n\tcolor *= vec4(r);\n\n}",
     "gradient": "void gradient(float exp, float angle) {\n\tangle *= 6.28318530718;\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\tuv *= mat2(c, -s, s, c);\n\tuv += .5;\n\tuv += 1-exp*2;\n\tcolor *= vec4(uv.x);}",
     "burst": "void burst(float inratio, float shape, float petals) {\n\n\tuv -= .5;\n\n\tshape = 1-shape;\n\n\tfloat c = length(uv)+.5;\n\n\tfloat a = atan(uv.x,uv.y);//+iTime;\n\n\tfloat r = a * ((petals*29.)+3.);//\t- rotation*3.14*2.;\n\n\tr = abs(fract(.5/3.14*r)-.5)*2.; // equals : abs(mod(.5/3.14*r,1.)-.5); equals sdTriangle(a,petals);\n\n\tr = clamp(r*c*.9,0.,1.);\n\n\tr += (1.-inratio*2.); // gradient to white\n\n\tfloat zzz = shape*.4999;\n\tr = smoothstep(zzz,1.-zzz, r);\n\n\tr = mix(0.,1.,r);\n\n\tcolor *= r;\n\nuv += .5;\n\n}",
-    "strobe": "//intensity(0,1,0)\nvoid strobe(float intensity) {\ncolor *= mod(dynamic_ubo[0].eNGINE.frame,2);\n}\n\n\n",
+    "strobe": "//intensity(0,1,0)\n\nvoid strobe(float intensity) {\n\n\t\n\tcolor *= (mod(dynamic_ubo[0].eNGINE.frame,1+int(dynamic_ubo[0].eNGINE.fps*intensity))==0?1:0) ;\n \n}\n\n\n",
     "wrapper": [ "atlas", "flower", "burst", "gradient" ]
   },
   "editors": [
-    [ 0, 0, 0, 0, "Stack::Layer1" ],
+    [ 0, 0, 0, 0, "Effectors::strobe", true ],
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
     [ 0, 0, 0, 0, "tree::Debug", true ]
   ],

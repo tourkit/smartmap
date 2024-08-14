@@ -5,6 +5,7 @@
                                 */
 
 #include "src/engine.hpp"
+#include "instance.hpp"
 
 int main() {
 
@@ -13,6 +14,12 @@ int main() {
     logger.cout(Sev::warning);
 
     engine.open("./project.json");
+
+
+    Instance inst(&engine.dynamic_ubo);
+    
+    auto eq1 = inst.eq(1);
+    PLOGW << inst.eq(1).offset;
 
     engine.run();
 
