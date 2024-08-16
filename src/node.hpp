@@ -18,7 +18,7 @@ struct Node {
         CREATE,
         CHANGE,
         RUN,
-        DELETE
+        DESTROY
 
     };
 

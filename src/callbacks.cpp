@@ -92,7 +92,7 @@ void Callbacks::init() {
         
     });
 
-    NODE<Layer>::on(Node::DELETE, [](Node* node, Layer *layer){ 
+    NODE<Layer>::on(Node::DESTROY, [](Node* node, Layer *layer){ 
 
         for (auto x : node->referings) {
 
@@ -104,7 +104,7 @@ void Callbacks::init() {
         
     }); 
 
-    NODE<Model>::on(Node::DELETE, [](Node* node, Model *model) {
+    NODE<Model>::on(Node::DESTROY, [](Node* node, Model *model) {
 
         auto dc = node->parent()->is_a_nowarning<DrawCall>();
         if (dc) { dc->removeModel(model); return; }
@@ -180,7 +180,7 @@ void Callbacks::init() {
 
     NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* effector){ NODE<Struct>::on_cb[Node::CHANGE](node, &effector->s);  effector->update(); });
 
-    NODE<EffectorRef>::on(Node::DELETE, [](Node* node, EffectorRef *effector) {
+    NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
 
         auto lay = node->parent()->is_a_nowarning<Layer>();
         if (lay) lay->removeEffector(effector); 

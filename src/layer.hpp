@@ -62,8 +62,6 @@ struct UberLayer : Layer {
 
     Struct uberlayer_s;
 
-    Instance *glsl_uberlayer;
-
     int w ; int h;
 
     UberLayer() ;

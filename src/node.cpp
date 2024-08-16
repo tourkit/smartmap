@@ -53,7 +53,7 @@ Node::~Node() {
 
     pool.erase(this);
 
-    trig(Event::DELETE);
+    trig(Event::DESTROY);
 
     if (owned) delete_lists[stored_type](void_ptr);
 
@@ -274,7 +274,7 @@ static std::string event_name(Node::Event event){
         case Node::CREATE: return "CREATE";
         case Node::CHANGE: return "CHANGE";
         case Node::RUN: return "RUN";
-        case Node::DELETE: return "DELETE";
+        case Node::DESTROY: return "DELETE";
     }
 
     return "UNKNOWN";

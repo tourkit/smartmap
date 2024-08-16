@@ -227,7 +227,7 @@ std::string Wrappy::source() {
 
         std::string args;
 
-        for (int i = 0; i < x->s.ref()->members.size(); i++) {
+        for (int i = 0; i < x->effector->s.members.size(); i++) {
             
             args +=  (i<count?Effector::s.members[i+1]->name():"0") + ", ";
             
@@ -284,7 +284,10 @@ bool Wrappy::setup(Builder* builder) {
 // Ref  ////////////////
 // Ref  ////////////////
 
-EffectorRef::EffectorRef(std::string name, Effector* effector ) : s(name), effector(effector) {  s.ref( &effector->s ); };
+EffectorRef::EffectorRef(std::string name, Effector* effector ) : s(name), effector(effector) {  
+    s.ref( &effector->s ); 
+    
+};
 
 void EffectorRef::update() {
 

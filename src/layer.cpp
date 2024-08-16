@@ -47,8 +47,6 @@ void Layer::update() {
 
     engine.static_ubo.upload();
 
-    // fb.clear(); // Layer::update()
-
     DrawCall::update();
 
 }
@@ -77,7 +75,7 @@ void UberEffector::ubl(UberLayer* ubl) {
 
     if (!ubl) return;
 
-    s.ref(&ubl->s);
+    // s.ref(&ubl->s);
 
 }
 
@@ -148,8 +146,6 @@ UberLayer::UberLayer() :
 
     engine.static_ubo.add(&uberlayer_s);
 
-    glsl_uberlayer = &Instance(&engine.static_ubo, &uberlayer_s).track();
-
     shader.builder(&builder);
 
     effector.ubl(this);
@@ -206,8 +202,7 @@ void UberLayer::calc_matrice() {
     fb.create( matrice_width, matrice_height );
     feedback->create( matrice_width, matrice_height );
 
-
-    glsl_uberlayer->def()->quantity(count);
+    uberlayer_s.quantity(count);
 
     auto x = vbo[0].def();
     vbo[0].def()->quantity(0);
@@ -222,7 +217,9 @@ void UberLayer::calc_matrice() {
         auto x_ = y[2] / matrice_width;
         auto y_ = y[3] / matrice_height;
 
-        glsl_uberlayer->eq(z).set<std::array<float,8>>({w, h,x_*2-1,y_*2-1, x_, y_,(float)y[0],(float)y[1]});
+        Instance glsl_uberlayer(&engine.static_ubo, &uberlayer_s);
+
+        glsl_uberlayer.eq(z).set<std::array<float,8>>({w, h,x_*2-1,y_*2-1, x_, y_,(float)y[0],(float)y[1]});
 
         vbo.addQuad(w, h, x_, y_);
 
@@ -258,7 +255,7 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     body_fragment += "\tint obj  = int(OBJ);\n\n";
 
-    std::string ar_str = lower(ubl->glsl_uberlayer->def()->name())+std::string(ubl->glsl_uberlayer->def()->quantity()>1?"[obj]":"");
+    std::string ar_str = lower(ubl->uberlayer_s.name())+std::string(ubl->uberlayer_s.quantity()>1?"[obj]":"");
 
     if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->s.name()), "obj", ar_str );
 
