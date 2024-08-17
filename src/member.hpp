@@ -76,7 +76,7 @@ struct Member {
     virtual Struct* isStruct();
     virtual Buffer* isBuff();
 
-    virtual void hard_delete() {}
+    void deleteData();
 
     void each(std::function<void(Instance&)> f, Buffer* buff = nullptr,  uint32_t offset= 0, std::vector<Member*> stl = {});
 

@@ -1,4 +1,5 @@
 #include "struct.hpp"
+#include "log.hpp"
 
 // STATIC
 Struct& Struct::create(std::string name, uint32_t quantity) { return **owned.insert(new Struct(name, quantity)).first; }
@@ -18,7 +19,7 @@ Struct& Struct::id(std::string name) {
 
 Struct* Struct::isStruct() { return this; }
 
-bool Struct::destroy(std::string name) {
+bool Struct::removeFromOwned(std::string name) {
 
     Struct* found = nullptr;
 
@@ -272,23 +273,3 @@ uint32_t Struct::size() {
 
 std::type_index Struct::type()  { if (isData()) { return members[0]->type(); } return Member::type(); }
 Member* Struct::copy()  { return new Struct(*this); }
-
-
-
-
-void Struct::hard_delete() {
-
-    auto t_members = members;
-
-    for (auto &m : t_members) {
-
-        m->hard_delete();
-
-        if (!m->isData()) delete m;
-
-        // members erase m
-        members.erase(std::find(members.begin(), members.end(), m));
-
-    }
-
-}

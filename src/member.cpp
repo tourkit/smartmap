@@ -56,6 +56,21 @@ Member::Member(const Member& other)
 
 }
 
+void Member::deleteData(){
+
+    auto t_members = members;
+
+    for (auto m : t_members) {
+
+        
+        if (m->isData()) 
+            
+            delete m;
+
+        m->deleteData();
+    }
+
+}
 
 std::set<Member*> Member::getTop(bool z) {
 
@@ -78,7 +93,12 @@ std::set<Member*> Member::getTop(bool z) {
 }
 
 
-void Member::update() { for (auto a : structs) for (auto &m : a->members) if (m == this) a->update();
+void Member::update() { 
+    
+    for (auto a : structs) 
+        for (auto &m : a->members) 
+            if (m == this) 
+                a->update();
 
  }
 

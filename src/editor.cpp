@@ -853,10 +853,9 @@ void Editors::init() {
 
         ImGui::Separator();
 
-        std::stringstream ss;
-        ss << buffer;
-
-        ImGui::Text(( ss.str()).c_str());
+        // std::stringstream ss;
+        // ss << buffer;
+        // ImGui::Text(( ss.str()).c_str());
 
         if (draw_guis(buffer)) { buffer->upload();
 
@@ -884,10 +883,10 @@ void Editors::init() {
 
     Editor<UBO>([](Node* node, UBO *ubo){
 
-        std::string subs_str = "data[" + std::to_string(ubo->data.size())+"]";
+        // std::string subs_str = "data[" + std::to_string(ubo->data.size())+"]";
         // std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s):";
         // for (auto s: ubo->subscribers) subs_str += " #"+std::to_string(s->id);
-        ImGui::Text(subs_str.c_str());
+        // ImGui::Text(subs_str.c_str());
 
         Editor<Buffer>::cb(node, ubo);
 
@@ -930,7 +929,7 @@ void Editors::init() {
         address << (void const *)vbo;
         ImGui::Text(("VBO " + std::to_string(vbo->vbo) + " - IBO " + std::to_string(vbo->ibo) + " - VAO " + std::to_string(vbo->vao) + " - " +  address.str()).c_str());
 
-        if (ImGui::Button("destroy")) vbo->destroy();
+        if (ImGui::Button("destroy")) vbo->deleteData();
         ImGui::SameLine(); if (ImGui::Button("create")) vbo->create();
         ImGui::SameLine(); if (ImGui::Button("reset")) vbo->reset();
         ImGui::SameLine(); if (ImGui::Button("addQuad")) vbo->addQuad();

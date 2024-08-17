@@ -97,7 +97,7 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
     remap(*bkp);
 
-    bkp->hard_delete();
+    bkp->deleteData();
 
     delete bkp;
 

@@ -46,8 +46,6 @@ struct Struct : Member {
 
     Member* copy() override ;
 
-    void hard_delete();
-
     static inline std::set<Struct*> owned;
 
     static Struct& create(std::string name, uint32_t quantity = 1);
@@ -56,7 +54,7 @@ struct Struct : Member {
 
     static Struct& id(std::string name);
 
-    static bool destroy(std::string name) ;
+    static bool removeFromOwned(std::string name) ;
 
     Struct* isStruct() override;
 
