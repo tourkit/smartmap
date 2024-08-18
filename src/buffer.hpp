@@ -40,6 +40,10 @@ struct Buffer : Struct {
 
     Buffer* isBuff() override { return this; }
 
+    void poolAdd() override;
+    
+    void poolRemove() override;
+
 private:
 
     Buffer* bkp = nullptr;

@@ -1,5 +1,5 @@
 #include "struct.hpp"
-#include "log.hpp"
+#include "buffer.hpp"
 
 // STATIC
 Struct& Struct::create(std::string name, uint32_t quantity) { return **owned.insert(new Struct(name, quantity)).first; }
@@ -38,8 +38,20 @@ Struct::~Struct(){
 
     removing.insert(this);
 
+    poolRemove();
+
     // remove from other structs
     for (auto s : structs) {
+
+        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
+
+            s->remove(*this);
+
+        }
+
+    }
+    // remove from other structs
+    for (auto s : buffers) {
 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
 
@@ -73,12 +85,20 @@ Struct::Struct(const Member& other) : Member(other) {
 
 Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
-    structs.insert(this);
+    poolAdd();
 
     this->quantity(quantity);
 
 }
 
+void Struct::poolAdd() {
+
+    structs.insert(this);
+}
+void Struct::poolRemove() {
+
+    structs.erase(this);
+}
 
 Struct& Struct::clear() {
 

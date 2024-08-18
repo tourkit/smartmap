@@ -39,6 +39,9 @@ struct Struct : Member {
     Struct& clear();
 
     void update() override;
+    
+    void poolAdd() override;
+    void poolRemove() override;
 
     std::type_index type() override ;
 

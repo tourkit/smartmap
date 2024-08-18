@@ -17,8 +17,13 @@
 Member::~Member() {
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
-    if (!is_copy) PLOGV << "~" << name();// << " ( &" + ss.str() + " )";
 
+    if (is_copy) return;
+    
+    PLOGV << "~" << name();// << " ( &" + ss.str() + " )";
+
+    // poolRemove();
+    
 }
 
 Member::Member(std::string name_v) {
@@ -30,6 +35,8 @@ Member::Member(std::string name_v) {
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
 
     PLOGV << "#" << name();// << " ( &" + ss.str() + " )" ;
+
+    // poolAdd();
 
 }
 

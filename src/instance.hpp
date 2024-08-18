@@ -33,15 +33,21 @@ struct Instance {
     std::vector<Member*> stl;
     std::vector<Remap*> remaps;
 
+    void remap(Instance& inst);
+
     uint32_t offset = -1;
 
     std::string stl_name(std::string separator = "::");
 
-    Member* def() { if(stl.size()) return stl.back(); return buff; }
+    Member* def();
+
+    Instance(const Instance& other);
+
+    Instance(std::string stl_name);
 
     Instance(Buffer* buff, Member* m);
-    Instance(Buffer* buff = nullptr, uint32_t offset = 0, std::vector<Member*> stl = {}, int eq_id = 0);
 
+    Instance(Buffer* buff = nullptr, uint32_t offset = 0, std::vector<Member*> stl = {}, int eq_id = 0);
 
     Instance operator[](std::string name);
 
@@ -53,17 +59,11 @@ struct Instance {
 
     bool exist();
 
-    Instance& track() {
+    Instance& track();
 
-        def()->instances.emplace_back(std::make_shared<Instance>(buff, offset, stl));
+    char* data();
 
-        return *def()->instances.back().get();
-
-    }
-
-    char* data() { return buff->data.data()+offset; }
-
-    uint32_t size() { return def()->footprint_all(); }
+    uint32_t size();
 
     Instance eq(int id);
 
@@ -81,19 +81,16 @@ struct Instance {
         return set(val, sizeof(T));
 
     }
-    Instance& set(void* ptr, size_t size) {
 
-        memcpy(data(), ptr, size);
+    Instance& set(void* ptr, size_t size);
 
-        for (auto &inst : def()->instances) for (auto r : inst.get()->remaps) r->update();
-
-        return *this;
-
-    }
+    void update();
 
     void setDefault(Member* toset = nullptr, int offset = 0);
 
     Instance push(void* ptr = nullptr, size_t size = 0);
+
+    void each(std::function<void(Instance&)> f);
 
 // private:
 
@@ -101,3 +98,5 @@ struct Instance {
     uint32_t eq_id = 0;
 
 };
+
+

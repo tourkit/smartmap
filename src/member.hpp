@@ -27,6 +27,7 @@ struct Member;
 struct Member {
 
     static inline std::set<Struct*> structs;
+    static inline std::set<Buffer*> buffers;
 
     Member(std::string name_v = "") ;
 
@@ -35,6 +36,10 @@ struct Member {
     virtual ~Member();
 
     virtual void update() ;
+    
+    virtual void poolAdd() {}
+
+    virtual void poolRemove() {}
 
     virtual uint32_t size();
 

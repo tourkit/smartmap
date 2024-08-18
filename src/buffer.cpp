@@ -107,6 +107,17 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
 }
 
+void Buffer::poolAdd() {
+
+    buffers.insert(this);
+    
+}
+void Buffer::poolRemove() {
+
+    buffers.erase(this);
+    
+}
+
 Buffer* Buffer::copy() { return new Buffer(*this); }
 
 void Buffer::update() {

@@ -1,6 +1,8 @@
 #include "instance.hpp"
 #include "struct.hpp"
 #include "buffer.hpp"
+#include "src/utils.hpp"
+#include <vector>
 
 
 Remap::Remap(Instance* src , Instance* dst, int quantity) : src(src) ,dst(dst) , quantity(quantity) { }
@@ -165,6 +167,44 @@ Instance Instance::push(void* ptr, size_t size) {
 
 }
 
+void Instance::remap(Instance& inst) {
+
+
+    
+}
+
+Instance::Instance(const Instance& other) {
+
+    buff = other.buff;
+    offset = other.offset;
+    stl = other.stl;
+    eq_id = other.eq_id;
+
+}
+
+Instance::Instance(std::string stl_name) {
+
+    auto names = split(stl_name);
+
+    if (!names.size()) return;
+
+    for (auto x : Member::buffers) if (x->name() == names[0]) buff = x;
+
+    if (!buff) { PLOGE << "no buffer " << names[0]; }
+
+    names.erase(names.begin());
+
+    Member* curr = buff;
+
+    for (auto name : names) {
+
+        // for (auto x : curr->members) if (x->name() == x) m = x;
+
+    }
+ 
+}
+
+void Instance::update() { for (auto &inst : def()->instances) for (auto r : inst.get()->remaps) r->update(); }
 
 std::string Instance::stl_name(std::string separator) {
 
@@ -177,5 +217,68 @@ std::string Instance::stl_name(std::string separator) {
     else str = buff->name();
 
     return str;
+
+}
+
+
+Instance& Instance::track() {
+
+    def()->instances.emplace_back(std::make_shared<Instance>(buff, offset, stl));
+
+    return *def()->instances.back().get();
+
+}
+
+
+
+char* Instance::data() { return buff->data.data()+offset; }
+
+uint32_t Instance::size() { return def()->footprint_all(); }
+
+Instance& Instance::set(void* ptr, size_t size) {
+
+    memcpy(data(), ptr, size);
+
+    update();
+
+    return *this;
+
+}
+
+
+
+Member* Instance::def() { 
+    
+    if (stl.size()) 
+    
+        return stl.back(); 
+    
+    return buff; 
+    
+}
+
+
+
+void Instance::each(std::function<void(Instance&)> cb) { 
+
+    auto x = def();
+
+    int offset = 0;
+
+    for (auto m : x->ref()?x->ref()->members:x->members) {
+
+        Instance inst(*this);
+
+        inst.stl.push_back(m);
+
+        inst.offset += offset;
+
+        inst.each(cb);
+
+        cb(inst);
+
+        offset += m->footprint_all();
+
+    }
 
 }
