@@ -48,7 +48,7 @@ int main() {
 
     engine.init();
 
-    logger.cout(Sev::warning);
+    logger.cout(Sev::verbose);
 
     Buffer testbuf("testbuf");
 
@@ -63,9 +63,20 @@ int main() {
     sb.add(&rgb);
     testbuf.add(&sb);
 
-    Instance inst(&testbuf);
+    Instance &inst = Instance(&testbuf).find(&sb).track();
 
-    inst.each([&](Instance& inst) {
+    PLOGW << inst.offset;
+
+    delete rgb.members[2];
+
+    PLOGW << inst.offset;
+
+    exit(0);
+
+    // try track blue before delete blue;
+    // check if remap is consistent when already is a tracked
+
+    Instance(nullptr, &sa).each([&](Instance& inst) {
 
         std::string lst;
         for (auto x : inst.stl) lst += x->name() + ", ";
@@ -75,13 +86,12 @@ int main() {
 
     });
 
-    inst = inst.find(&sb)[0][0].track();
 
     PLOGW << inst.def()->name();
 
-    std::string stl_name = "Sb::RGB::red";
+    // std::string stl_name = "Sb::RGB::red";
 
-    Instance inst2(stl_name);
+    // Instance inst2(stl_name);
 
     // inst.find("Sb::RGB::red");
 

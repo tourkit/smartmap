@@ -414,7 +414,7 @@ void Editors::init() {
 
             int member_id = 0;
 
-            remap->dst->def()->each([&](auto& inst) {
+            Instance(nullptr,remap->dst->def()).each([&](auto& inst) {
 
                 auto *m = inst.def();
 

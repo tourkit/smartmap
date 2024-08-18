@@ -7,7 +7,16 @@
 Instance Buffer::operator[](std::string name) { return Instance{this}[name]; }
 Instance Buffer::operator[](int id) { return Instance{this}[id]; }
 
+Buffer::~Buffer() {
+
+    buffers.erase(this);
+
+}
+
 Buffer::Buffer(std::string name) : Struct(name) {
+
+    structs.erase(this);
+    buffers.insert(this);
 
     data.reserve(MAX_SIZE);
 
@@ -33,7 +42,7 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
     for (auto added : addeds) {
 
-        each([&](Instance& inst) {
+        Instance(this).each([&](Instance& inst) {
 
             bool found = false;
 
@@ -107,17 +116,6 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
 }
 
-void Buffer::poolAdd() {
-
-    buffers.insert(this);
-    
-}
-void Buffer::poolRemove() {
-
-    buffers.erase(this);
-    
-}
-
 Buffer* Buffer::copy() { return new Buffer(*this); }
 
 void Buffer::update() {
@@ -130,7 +128,7 @@ void Buffer::update() {
 
     memset( data.data(), 0, data.size() );
 
-    each([&](Instance& inst) {
+    Instance(this).each([&](Instance& inst) {
 
         for (auto &x : inst.def()->instances) {
 

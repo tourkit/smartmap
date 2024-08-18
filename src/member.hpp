@@ -36,10 +36,6 @@ struct Member {
     virtual ~Member();
 
     virtual void update() ;
-    
-    virtual void poolAdd() {}
-
-    virtual void poolRemove() {}
 
     virtual uint32_t size();
 
@@ -83,8 +79,6 @@ struct Member {
 
     void deleteData();
 
-    void each(std::function<void(Instance&)> f, Buffer* buff = nullptr,  uint32_t offset= 0, std::vector<Member*> stl = {});
-
     std::vector<Member*> members;
 
     std::vector<std::shared_ptr<Instance>> instances;
@@ -115,8 +109,10 @@ struct Member {
 
     uint32_t size_v = 0;
     bool is_copy = false;
-protected:
 
+protected:
+    static inline std::set<Member*> removing;
+    
     std::string name_v;
 
 

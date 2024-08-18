@@ -36,45 +36,7 @@ bool Struct::removeFromOwned(std::string name) {
 
 Struct::~Struct(){
 
-    removing.insert(this);
-
-    poolRemove();
-
-    // remove from other structs
-    for (auto s : structs) {
-
-        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
-
-            s->remove(*this);
-
-        }
-
-    }
-    // remove from other structs
-    for (auto s : buffers) {
-
-        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
-
-            s->remove(*this);
-
-        }
-
-    }
-
-    // delete isData() a.k.a Data members
-    for (auto x : members) {
-
-        if (x->isData() ){
-
-            delete x;
-
-        }
-
-    }
-
-    // update();
-
-    removing.erase(this);
+    structs.erase(this);
 
 }
 
@@ -85,20 +47,12 @@ Struct::Struct(const Member& other) : Member(other) {
 
 Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 
-    poolAdd();
+    structs.insert(this);
 
     this->quantity(quantity);
 
 }
 
-void Struct::poolAdd() {
-
-    structs.insert(this);
-}
-void Struct::poolRemove() {
-
-    structs.erase(this);
-}
 
 Struct& Struct::clear() {
 

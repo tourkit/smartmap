@@ -19,6 +19,8 @@ struct Buffer : Struct {
     Buffer(std::string name = "buffer_definition");
 
     Buffer(const Buffer& other);
+    
+    ~Buffer();
 
     virtual void upload();
 
@@ -39,10 +41,6 @@ struct Buffer : Struct {
     void post_change(std::vector<NewMember> added = {}) override;
 
     Buffer* isBuff() override { return this; }
-
-    void poolAdd() override;
-    
-    void poolRemove() override;
 
 private:
 

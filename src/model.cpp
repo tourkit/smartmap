@@ -49,7 +49,7 @@ Model* Modelable::addModel(File* f) {
 
     for (auto x : s.getTop()) { // should be one Top only
 
-        x->isBuff()->each([&](Instance& inst){ if (inst.def() == &mod->s) mod->instance = &inst.track(); });
+        Instance(x->isBuff()).each([&](Instance& inst){ if (inst.def() == &mod->s) mod->instance = &inst.track(); });
 
     }
 

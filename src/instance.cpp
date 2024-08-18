@@ -27,7 +27,16 @@ bool Instance::exist(){
 }
 
 Instance::Instance(Buffer* buff, Member* m) : buff(buff) {
-    buff->each( [&](Instance& inst) {if (inst.def() == m) {offset = inst.offset; stl = inst.stl;} });
+    
+    if (buff) each( [&](Instance& inst) {if (inst.def() == m) {offset = inst.offset; stl = inst.stl;} });
+
+    else {
+        
+        stl.push_back(m);
+
+        offset = 0;
+            
+    }
 
  }
 
@@ -48,7 +57,7 @@ Instance Instance::find(Member* x) {
 
     Instance inst;
 
-    buff->each([&](Instance inst_){
+    each([&](Instance inst_){
 
         if (x == inst_.def())
             inst = inst_;
@@ -190,7 +199,7 @@ Instance::Instance(std::string stl_name) {
 
     for (auto x : Member::buffers) if (x->name() == names[0]) buff = x;
 
-    if (!buff) { PLOGE << "no buffer " << names[0]; }
+    if (!buff) { PLOGE << "no member " << names[0]; }
 
     names.erase(names.begin());
 

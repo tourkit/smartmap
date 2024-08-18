@@ -18,11 +18,49 @@ Member::~Member() {
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
 
+    
+    if (!is_copy) PLOGV << "~" << name();// << " ( &" + ss.str() + " )";
+
+    removing.insert(this);
+
+    // remove from other structs
+    for (auto s : structs) {
+
+        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
+
+            s->remove(*this);
+
+        }
+
+    }
+    // remove from other structs
+    for (auto s : buffers) {
+
+        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
+
+            s->remove(*this);
+
+        }
+
+    }
+
+    // delete isData() a.k.a Data members
+    for (auto x : members) {
+
+        if (x->isData() ){
+
+            delete x;
+
+        }
+
+    }
+
+    removing.erase(this);
+
     if (is_copy) return;
     
-    PLOGV << "~" << name();// << " ( &" + ss.str() + " )";
+    // PLOGV << "~" << name();// << " ( &" + ss.str() + " )";
 
-    // poolRemove();
     
 }
 
@@ -35,8 +73,6 @@ Member::Member(std::string name_v) {
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
 
     PLOGV << "#" << name();// << " ( &" + ss.str() + " )" ;
-
-    // poolAdd();
 
 }
 
@@ -222,35 +258,6 @@ Member* Member::copy() { return new Member(*this); }
 bool Member::isData() { return false; }
 Struct* Member::isStruct() { return nullptr; }
 Buffer* Member::isBuff() { return nullptr; }
-
-void Member::each(std::function<void(Instance&)> cb, Buffer* buff, uint32_t offset, std::vector<Member*> stl) {
-
-    Instance inst;
-
-    if (isBuff()) buff = isBuff();
-
-    else stl.push_back(this);
-
-    inst.buff = buff;
-
-    auto offset_ = offset;
-
-    for (auto m : ref()?ref()->members:members) {
-
-        m->each(cb, buff, offset_, stl);
-
-        offset_ += m->footprint_all();
-
-    }
-
-    inst.offset = offset;
-
-    inst.stl = stl;
-
-    // if (inst.stl.size())
-    cb(inst);
-
-}
 
 
 void Member::pre_change() {

@@ -39,9 +39,6 @@ struct Struct : Member {
     Struct& clear();
 
     void update() override;
-    
-    void poolAdd() override;
-    void poolRemove() override;
 
     std::type_index type() override ;
 
@@ -62,8 +59,6 @@ struct Struct : Member {
     Struct* isStruct() override;
 
     Member* add(Member* m);
-protected:
-    static inline std::set<Member*> removing;
 
 #ifdef ROCH
     std::string DEBUG_TYPE;

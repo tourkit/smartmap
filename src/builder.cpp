@@ -147,7 +147,7 @@ std::string Builder::layout() {
 
     for (auto ubo : ubos)    {
 
-        ubo->each([&](Instance& inst) {
+        Instance(ubo).each([&](Instance& inst) {
 
             auto m = inst.def();
 
