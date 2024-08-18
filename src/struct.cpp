@@ -38,8 +38,6 @@ Struct::~Struct(){
 
     removing.insert(this);
 
-    structs.erase(this);
-
     // remove from other structs
     for (auto s : structs) {
 
