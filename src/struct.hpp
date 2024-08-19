@@ -22,23 +22,18 @@ struct Struct : Member {
 
     ~Struct();
 
-    // Struct& add(Member& m, std::string name = "");
     using Member::add;
 
     template <typename T>
     Struct& add(std::string name = "", uint32_t quantity = 1) { auto n = new Data<T>(name, quantity); Member::add(n); return *this; }
 
-    // Struct* add(std::string name) ;
-
     Struct& range(float from, float to, float def) ;
-
-    Struct& clear();
 
     void update() override;
 
-    uint32_t size() override ;
-
     Member* copy() override ;
+
+    /// static 
 
     static inline std::set<Struct*> owned;
 

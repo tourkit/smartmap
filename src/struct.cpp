@@ -56,28 +56,6 @@ Struct::Struct(std::string name, uint32_t quantity) : Member(name) {
 }
 
 
-Struct& Struct::clear() {
-
-    // PLOGV << name() << " clear " ;
-
-    pre_change();
-
-    size_v = 0;
-
-    auto ms = members;
-
-    for (auto x : ms) delete x;
-
-    members.clear();
-
-    update();
-
-    post_change();
-
-    return *this;
-
-}
-
 static bool same_name(Member* x, Member* b) {
 
     auto name_ = x->name();
@@ -160,12 +138,6 @@ void Struct::update() {
 
 }
 
-uint32_t Struct::size() {
 
-    if ( ref() ) return ref()->size();
-
-     return size_v;
-
-}
 
 Member* Struct::copy()  { return new Struct(*this); }

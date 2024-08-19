@@ -178,7 +178,37 @@ bool Member::ref(Member* ref) {
     return true; 
 }
 
-uint32_t Member::size() { return 0; }
+uint32_t Member::size() {     
+    
+    auto m = ref();
+    
+    if (m) return m->size();
+
+    return size_v;
+
+}
+
+bool Member::clear() {
+
+    // PLOGV << name() << " clear " ;
+
+    pre_change();
+
+    size_v = 0;
+
+    auto ms = members;
+
+    for (auto x : ms) delete x;
+
+    members.clear();
+
+    update();
+
+    post_change();
+
+    return true;
+
+}
 
 uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16);  return size(); }
 

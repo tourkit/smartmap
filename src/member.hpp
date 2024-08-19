@@ -53,6 +53,8 @@ struct Member {
 
     bool removeHard(Member& s) ;
 
+    bool clear();
+
     uint32_t eq(int i) ;
 
     uint32_t stride();
