@@ -97,13 +97,13 @@ int main() {
     didoo.add<float>("dada").striding(true);
     
     Struct sa("Sa");
-    sa.ref(&rgb);
+    sa.add(&rgb);
     auto &sa_ = testbuf.add(&sa).track();
     
     testbuf.add(&didoo);
     
     Struct sb("Sb");
-    sb.ref(&rgb);
+    sb.add(&rgb);
     auto &sb_ = testbuf.add(&sb).track();
 
     sb_.set<float,3>(6.0f,66.0f,666.0f);
@@ -116,11 +116,15 @@ int main() {
     PLOGW << Instance(&testbuf).get<float,37>();
 
 
-    Instance xc("testbuf::Sb::RGB::red");
+    Instance xa("testbuf::Sa[2]::RGB::green");
+    Instance xb("testbuf::Sb::RGB::red");
 
     // test de ref();
 
-    PLOGW << xc.get<float,1>();
+    // xc.remap(Instance &inst)
+
+    PLOGW << xa.get<float>();
+    PLOGW << xb.get<float>();
     
     logger.cout(Sev::error);
 

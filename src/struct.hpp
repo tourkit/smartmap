@@ -14,8 +14,6 @@
 #include "log.hpp"
 
 
-struct Ref;
-
 struct Struct : Member {
 
     Struct(std::string name = "", uint32_t quantity = 1);

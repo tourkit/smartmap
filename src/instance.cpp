@@ -2,6 +2,7 @@
 #include "struct.hpp"
 #include "buffer.hpp"
 #include "src/utils.hpp"
+#include <cctype>
 #include <vector>
 
 
@@ -77,15 +78,54 @@ Instance::Instance(std::string stl_name) {
 
     Member* curr = buff;
 
+    offset = 0;
+
     while (names.size()) {
 
         Member* found = nullptr;
 
-        for (auto &m : curr->members) if (m->name() == names[0]){ 
+        auto name = names[0];
 
+        auto b1 = name.find("[");
+
+        int eq = 0;
+
+        if (b1 && name.back() == ']') {
+            
+            auto bracket = name.substr(b1+1,name.length()-4);
+
+            for (int i = 0; i < bracket.length(); i++) 
+                if (!std::isdigit(bracket[i])) 
+                    return;
+
+            
+            eq = std::stoi(bracket);
+            name = name.substr(0, b1);
+
+            PLOGW << name;
+            PLOGW << eq;
+
+        }
+
+        eq_id = 0;
+
+        for (auto &m : curr->members) if (m->name() == name){ 
+            if (eq < m->quantity()) {
+
+                if (names.size() >1 ) offset += m->footprint() * eq;
+                
+                else eq_id = eq;
+                
+            }
+            else{
+                PLOGE << eq << " > " << m->quantity();
+            }
             found = m;
             break;
 
+        }else{
+
+            offset += m->footprint_all();
         }
 
         if (!found) {
@@ -101,7 +141,7 @@ Instance::Instance(std::string stl_name) {
 
     }
 
-    // if (curr != buff && !names.size())
+    
 
  
 }
