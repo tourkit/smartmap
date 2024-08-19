@@ -308,9 +308,14 @@ Instance* Instance::this_() {
      
 }
 
+void Instance::remap(std::string stl_name) { 
+    Instance inst(stl_name); 
+    remap(inst); 
+}
+
 void Instance::remap(Instance& inst) {
 
-    auto this_ = this->this_();
+    auto this_ = &this->track();
 
     this_->remaps.push_back(new Remap(this_, &inst.track())); // waiwai .. check ~Inst :) 
 

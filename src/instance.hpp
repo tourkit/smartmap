@@ -34,6 +34,7 @@ struct Instance {
     std::vector<Remap*> remaps;
 
     void remap(Instance& inst);
+    void remap(std::string stl_name);
 
     uint32_t offset = -1;
 

@@ -102,39 +102,26 @@ int main() {
     sx.add(&didoo);
     auto &sx_ = testbuf.add(&sx).track();
     
-    
-    // Struct sb("Sb");
-    // sb.add(&rgb);
-    // auto &sb_ = testbuf.add(&sb).track();
+    Struct sb("Sb");
+    sb.add(&rgb);
+    auto &sb_ = testbuf.add(&sb).track();
 
-    // sb_.set<float,3>(6.0f,66.0f,666.0f);
+    sb_.set<float,3>(6.0f,66.0f,666.0f);
 
-    // PLOGW << Instance(&testbuf).get<float,37>();
     sx.quantity(2);
-
 
     sa.quantity(10);
     
-    
-    // Instance xb("testbuf::Sb::RGB::red");
+    Instance("testbuf::Sb::RGB::red").remap("testbuf::Sa[2]::RGB::green");
 
+    for (int i = 0; i < 10; i++) 
+        sa_.eq(i).set<float,3>(i*1.0f,i*2.0f,i*3.0f);
 
-    // for (int i = 0; i < 10; i++) 
-    //     sa_.eq(i).set<float,3>(i*1.0f,i*2.0f,i*3.0f);
+    PLOGW << Instance(&testbuf).get<float,41>();
 
+    sb_[0][0].set<float>(987);
 
-
-    // Instance xa("testbuf::Sa[2]::RGB::green");
-
-    // xb.remap(xa);
-
-    // xb.set<float>(987);
-    // // xb.remaps[0]->update();
-
-    // PLOGW << xa.get<float>();
-    // PLOGW << xb.get<float>();
-    
-    PLOGW << Instance(&testbuf).get<float,37>();
+    PLOGW << Instance(&testbuf).get<float,41>();
 
     logger.cout(Sev::error);
 
