@@ -50,8 +50,6 @@ struct Data : Member {
 
     ~Data() { }
 
-    std::type_index type() override { return typeid(T); }
-
     uint32_t size() override { return sizeof(T); }
 
     bool isData() override { return true; }

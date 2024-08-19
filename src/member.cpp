@@ -305,7 +305,7 @@ void Member::striding(bool is_striding){ this->is_striding = is_striding; update
 
 bool Member::striding() { return ref()?ref()->is_striding:is_striding; }
 
-std::type_index Member::type() { return typeid( *this ); }
+std::type_index Member::type() { if (isData()) { for (auto x : members) return x->type(); } return typeid( *this ); }
 
 std::string Member::type_name() {
 

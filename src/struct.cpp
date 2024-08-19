@@ -168,6 +168,4 @@ uint32_t Struct::size() {
 
 }
 
-
-std::type_index Struct::type()  { if (isData()) { return members[0]->type(); } return Member::type(); }
 Member* Struct::copy()  { return new Struct(*this); }

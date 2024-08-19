@@ -36,8 +36,6 @@ struct Struct : Member {
 
     void update() override;
 
-    std::type_index type() override ;
-
     uint32_t size() override ;
 
     Member* copy() override ;

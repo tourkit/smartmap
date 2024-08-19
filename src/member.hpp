@@ -49,8 +49,8 @@ struct Member {
 
     Member* add(Member* m);
 
-
     bool remove(Member& s) ;
+
     bool removeHard(Member& s) ;
 
     uint32_t eq(int i) ;
@@ -61,7 +61,7 @@ struct Member {
 
     bool striding();
 
-    virtual std::type_index type();
+    std::type_index type();
 
     std::string type_name() ;
 
