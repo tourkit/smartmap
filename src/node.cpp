@@ -290,12 +290,14 @@ void Node::trig(Event e)  {
 
         auto t_ = t.name();
 
-        PLOGV << event_name(e) << " : " << name() << " is " << type_name() << " as " << t_ ;
-
-        if (ontyped[e].find(t) != ontyped[e].end()) 
+        if (ontyped[e].find(t) != ontyped[e].end()) {
+            
+            // PLOGV << event_name(e) << " : " << name() << " is " << type_name() << " as " << t_ ;
         
             (*(std::function<void(Node*,void*)>*) ontyped[e].at(t))(this,out);  
 
+        }
+        
         if (Node::is_lists.find(t) == Node::is_lists.end()) break;
 
         out = upcast_lists[t](out);

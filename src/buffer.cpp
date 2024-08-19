@@ -38,6 +38,14 @@ void  Buffer::pre_change() { // return;
 
 }
 
+Instance Buffer::add(Member* m) { 
+    
+    Struct::add(m); 
+    
+    return Instance(this).find(m); 
+    
+}
+
 void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
     for (auto added : addeds) {
@@ -100,6 +108,8 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
 
     }
 
+    update(); 
+    
     if (!bkp) return;
 
     PLOGV << "remap " << bkp->name();
@@ -128,13 +138,21 @@ void Buffer::update() {
 
     memset( data.data(), 0, data.size() );
 
+    // each([](Member* m){ 
+
+    //     for (auto inst : m->instances) {}
+
+    //     return true;
+        
+    // });
+
     Instance(this).each([&](Instance& inst) {
 
         for (auto &x : inst.def()->instances) {
 
             if (x.get()->buff == inst.buff && x.get()->stl == inst.stl) {
 
-                 x.get()->offset = inst.stl.size()?inst.offset:inst.def()->footprint(); // dirty shity hack rigght here // also might be missing eq support
+                 x.get()->offset = inst.stl.size()?inst.offset:inst.def()->footprint(); // dirty shity hack rigght here - or is it ? // also might be missing eq support
 
             }
 

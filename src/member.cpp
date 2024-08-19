@@ -120,6 +120,7 @@ std::set<Member*> Member::getTop(bool z) {
     std::set<Member*> owners, out;
 
     for (auto x : structs) if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end()) owners.insert( x );
+    for (auto x : buffers) if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end()) owners.insert( x );
 
     if (!owners.size()) { if (!z) return {}; out.insert(this); return out; }
 
@@ -135,6 +136,19 @@ std::set<Member*> Member::getTop(bool z) {
 
 }
 
+bool Member::each(std::function<bool(Member*)> cb) {
+
+    for (auto m : members) {
+
+        if (!m->each(cb)) return false;
+
+        if (!cb(m)) return false;
+        
+    }
+
+    return true;
+
+}
 
 void Member::update() { 
     
@@ -270,7 +284,8 @@ void Member::pre_change() {
 
 void Member::post_change(std::vector<NewMember> added) {
 
-    for (auto x : getTop()) x->post_change(added);
+    for (auto x : getTop()) 
+        x->post_change(added);
 
 }
 

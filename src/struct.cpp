@@ -1,5 +1,7 @@
 #include "struct.hpp"
-#include "buffer.hpp"
+#include "instance.hpp"
+#include <algorithm>
+#include <vector>
 
 // STATIC
 Struct& Struct::create(std::string name, uint32_t quantity) { return **owned.insert(new Struct(name, quantity)).first; }
@@ -101,7 +103,22 @@ Struct& Struct::remove(Member& m) {
 
     removeHard(m);
 
+    std::vector<Instance*> delete_list;
 
+    for (auto it = m.instances.begin(); it != m.instances.end();){
+    
+        Member* owner;
+        if (it->get()->stl.size()>1) 
+            owner = it->get()->stl.back()-1;
+        else 
+            owner = it->get()->buff;
+    
+        if (owner == this) 
+            it = m.instances.erase(it);
+        else 
+            it++;
+    }
+    
     post_change();
 
     removing.erase(&m);

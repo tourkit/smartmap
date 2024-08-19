@@ -28,7 +28,16 @@ bool Instance::exist(){
 
 Instance::Instance(Buffer* buff, Member* m) : buff(buff) {
     
-    if (buff) each( [&](Instance& inst) {if (inst.def() == m) {offset = inst.offset; stl = inst.stl;} });
+    if (buff) 
+        
+        each( [&](Instance& inst) {
+            
+            if (inst.def() == m) {
+                
+                offset = inst.offset; 
+                stl = inst.stl;
+                
+                } });
 
     else {
         
@@ -101,18 +110,33 @@ Instance Instance::operator[](int id) {
     auto offset = this->offset;
     auto member = this->def();
 
-    if (id >= def()->members.size())
+    if (id >= def()->members.size()) {
+    
         PLOGE << id << " > " << def()->members.size() << " in " << def()->name();
+    
+        return *this;
+    
+    }
+
+    member = member->members[id];
+
+    if (member->instances.size()) for (auto inst : member->instances) {
+
+        auto c = inst->stl;
+        c.resize(c.size()-1);
+
+        if (c == stl) return *inst;
+        
+    }
 
     for (int i = 0 ; i < id; i ++ ){
 
-        auto &m = def()->members[i];
+        auto m = def()->members[i];
 
         offset += m->footprint_all();
 
     }
 
-    member = member->members[id];
 
     auto stl_ = stl;
     stl_.push_back(member);
@@ -231,6 +255,16 @@ std::string Instance::stl_name(std::string separator) {
 
 
 Instance& Instance::track() {
+
+    auto m = def();
+
+    for (auto inst : m->instances) {
+
+        if (inst->stl == stl) return *inst;
+        
+    }
+
+    PLOGV << (buff?buff->name()+"::":"") << stl_name();
 
     def()->instances.emplace_back(std::make_shared<Instance>(buff, offset, stl));
 

@@ -70,8 +70,17 @@ struct Instance {
     template <typename T>
     T get() { return *((T*)(data())); }
 
+    template <typename T, int U>
+    std::array<T,U> get() { return get<std::array<T,U>>(); }
+
     template <typename T>
     Instance& set(T val) { return set<T>(&val); }
+
+    template <typename T, int U>
+    Instance& set(std::array<T,U> val) { return set<std::array<T,U>>(&val); }
+
+    template <typename T, int U, typename... Args>
+    Instance& set(Args&&... args) { return set<std::array<T,U>>({std::forward<Args>(args)...}); }
 
     template <typename T>
     Instance& set(void* val) {

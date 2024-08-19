@@ -110,6 +110,8 @@ struct Member {
     uint32_t size_v = 0;
     bool is_copy = false;
 
+    bool each(std::function<bool(Member*)> cb) ;
+
 protected:
     static inline std::set<Member*> removing;
     

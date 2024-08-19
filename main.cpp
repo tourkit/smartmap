@@ -54,29 +54,46 @@ int main() {
 
     Struct rgb("RGB");
     rgb.add<float>("red").add<float>("green").add<float>("blue");
-
+    Struct didoo("didoo");
+    didoo.add<float>("dada").striding(true);
+    
     Struct sa("Sa");
     sa.add(&rgb);
-    testbuf.add(&sa);
+    auto sa_ = testbuf.add(&sa).track();
+    sa_.set<float,3>(1.0f, 2.0f, 3.0f);
 
     Struct sb("Sb");
     sb.add(&rgb);
-    testbuf.add(&sb);
+    auto sb_ = testbuf.add(&sb);
+    sb_.set<float,3>(4.0f, 5.0f, 6.0f);
 
-    Instance &inst = Instance(&testbuf).find(&sb).track();
+    auto &didoo_ = testbuf.add(&didoo).track();
+    didoo_.set<float>(69);
 
-    PLOGW << inst.offset;
+    auto &green_ = Instance(&testbuf).find(&sb)[0][1].track();
+
+    PLOGW << sa_.get<float, 3>();
+    PLOGW << green_.offset;
 
     delete rgb.members[2];
 
-    PLOGW << inst.offset;
+    testbuf.remove(sa);
 
+    auto &green2_ = Instance(&testbuf).find(&sb)[0][1].track();
+    PLOGW << green2_.offset << " " << green_.def()->name() << " "  << green_.get<float>();
+
+    PLOGW << Instance(&testbuf).find(&sb).offset << " " ;
+    PLOGW << didoo_.offset << " " ;
+    didoo_.set<float>(96);
+    PLOGW << *(std::array<float,3>*)testbuf.data.data();
+
+    
+    logger.cout(Sev::error);
     exit(0);
 
-    // try track blue before delete blue;
     // check if remap is consistent when already is a tracked
 
-    Instance(nullptr, &sa).each([&](Instance& inst) {
+    Instance(nullptr,&sa).each([&](Instance& inst) {
 
         std::string lst;
         for (auto x : inst.stl) lst += x->name() + ", ";
@@ -87,11 +104,11 @@ int main() {
     });
 
 
-    PLOGW << inst.def()->name();
+    PLOGW << green_.def()->name();
 
     // std::string stl_name = "Sb::RGB::red";
 
-    // Instance inst2(stl_name);
+    // Instance green2_(stl_name);
 
     // inst.find("Sb::RGB::red");
 

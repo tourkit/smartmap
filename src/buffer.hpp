@@ -42,6 +42,8 @@ struct Buffer : Struct {
 
     Buffer* isBuff() override { return this; }
 
+    Instance add(Member* m);
+
 private:
 
     Buffer* bkp = nullptr;
