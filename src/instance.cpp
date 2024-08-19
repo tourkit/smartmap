@@ -28,18 +28,14 @@ bool Instance::exist(){
 
 Instance::Instance(Buffer* buff, Member* m) : buff(buff) {
     
-    if (buff) 
+    if (buff) {
         
-        each( [&](Instance& inst) {
-            
-            if (inst.def() == m) {
-                
-                offset = inst.offset; 
-                stl = inst.stl;
-                
-                } });
+        offset = 0;
+        auto minst = find(m);
+        stl = minst.stl;
+        offset = minst.offset;
 
-    else {
+    }else {
         
         stl.push_back(m);
 
@@ -147,7 +143,13 @@ Instance Instance::operator[](int id) {
 
 Instance Instance::eq(int id) {
 
-    if ( id >= def()->quantity()) {PLOGE<<"Not that many quantity exist (" << id << " < " << def()->quantity() << ")" ;return *this;}
+    if ( id >= def()->quantity()) {
+        
+        PLOGE<<"Not that many quantity exist (" << id << " < " << def()->quantity() << ")" ;
+        
+        return *this;
+        
+    }
 
     uint32_t new_offset = offset + def()->footprint() * (id-eq_id);
 

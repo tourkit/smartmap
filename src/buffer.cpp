@@ -28,7 +28,7 @@ Buffer::Buffer(const Buffer& other) : Struct( other ) , data( other.data ) { }
 
 void Buffer::upload() { }
 
-void  Buffer::pre_change() { // return;
+void  Buffer::pre_change() { // return; // aka padbakeuuup
 
     if (!data.size()) return;
 
@@ -38,7 +38,7 @@ void  Buffer::pre_change() { // return;
 
 }
 
-Instance Buffer::add(Member* m) { 
+Instance Buffer::add_(Member* m) { 
     
     Struct::add(m); 
     
@@ -46,7 +46,9 @@ Instance Buffer::add(Member* m) {
     
 }
 
-void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
+void  Buffer::post_change(std::vector<NewMember> addeds) { //return; // aka padbakeuuup
+
+    update(); 
 
     for (auto added : addeds) {
 
@@ -60,45 +62,34 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
                 if (inst.def()->ref()) 
                     for (auto x : inst.stl) 
                         for (auto y : addeds) 
-                            if ( x == y.m ) { found = true; break; break; } // carnage ?
+                            if ( x == y.m ) { found = true; break; break; } 
             
 
             if (found) {
 
-                auto *m = inst.def();
-
                 int offset = inst.offset;
 
-                for (auto m_ : m->ref()?m->ref()->members:m->members) {
+                for (auto m : added.m->ref()?added.m->ref()->members:added.m->members) {
 
-                    if (m_->default_val_ptr) {
-
-                        // if (m_->type() == typeid(glm::vec2)) {
-
-                        //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val VEEEC2: " << (*(glm::vec2*) m_->default_val_ptr).x ;
-                        // }
-
-                        // if (m_->type() == typeid(float)) {
-
-                        //     PLOGD  << "NID TOU SAITE : " << m_->name() << " @ " << offset << " - val : " << *(float*) m_->default_val_ptr ;
-
-                        // }
+                    if (m->default_val_ptr) {
 
                         for (int i = inst.stl.size()-1; i>=0; i--) { // if parent q>1
 
                             auto x = inst.stl[i];
 
-                            if (x->quantity()>1) for (int todo = 0 ; todo < x->quantity(); todo++) memcpy(&data[offset+x->size()*todo], m_->default_val_ptr, m_->size());
+                            if (x->quantity()>1) 
+                                for (int todo = 0 ; todo < x->quantity(); todo++) 
+                                    memcpy(&data[offset+x->size()*todo], m->default_val_ptr, m->size());
 
 
                         }
 
-                        memcpy(&data[offset], m_->default_val_ptr, m_->size());
+                        memcpy(&data[offset], m->default_val_ptr, m->size());
 
 
                     }
 
-                    offset += m_->footprint_all();
+                    offset += m->footprint_all();
 
                 }
 
@@ -107,8 +98,6 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return;
         });
 
     }
-
-    update(); 
     
     if (!bkp) return;
 
