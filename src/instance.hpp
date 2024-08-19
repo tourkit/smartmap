@@ -61,6 +61,8 @@ struct Instance {
 
     Instance& track();
 
+    Instance* this_();
+
     char* data();
 
     uint32_t size();

@@ -86,46 +86,56 @@ int main() {
 
     logger.cout(Sev::warning);
 
-    logger.cout(Sev::verbose);
-
     Buffer testbuf("testbuf");
 
     Struct rgb("RGB");
     rgb.add<float>("red").range(0,1,1).add<float>("green").range(0,1,2).add<float>("blue").range(0,1,3);
 
     Struct didoo("didoo");
-    didoo.add<float>("dada").striding(true);
+    didoo.add<float>("didi").range(8,8,8).add<float>("dodo").range(9,9,9).striding(true);
     
     Struct sa("Sa");
     sa.add(&rgb);
     auto &sa_ = testbuf.add(&sa).track();
     
-    testbuf.add(&didoo);
+    Struct sx("Sx");
+    sx.add(&didoo);
+    auto &sx_ = testbuf.add(&sx).track();
     
-    Struct sb("Sb");
-    sb.add(&rgb);
-    auto &sb_ = testbuf.add(&sb).track();
+    
+    // Struct sb("Sb");
+    // sb.add(&rgb);
+    // auto &sb_ = testbuf.add(&sb).track();
 
-    sb_.set<float,3>(6.0f,66.0f,666.0f);
+    // sb_.set<float,3>(6.0f,66.0f,666.0f);
+
+    // PLOGW << Instance(&testbuf).get<float,37>();
+    sx.quantity(2);
+
 
     sa.quantity(10);
+    
+    
+    // Instance xb("testbuf::Sb::RGB::red");
 
-    for (int i = 0; i < 10; i++) 
-        sa_.eq(i).set<float,3>(i*1.0f,i*2.0f,i*3.0f);
 
+    // for (int i = 0; i < 10; i++) 
+    //     sa_.eq(i).set<float,3>(i*1.0f,i*2.0f,i*3.0f);
+
+
+
+    // Instance xa("testbuf::Sa[2]::RGB::green");
+
+    // xb.remap(xa);
+
+    // xb.set<float>(987);
+    // // xb.remaps[0]->update();
+
+    // PLOGW << xa.get<float>();
+    // PLOGW << xb.get<float>();
+    
     PLOGW << Instance(&testbuf).get<float,37>();
 
-
-    Instance xa("testbuf::Sa[2]::RGB::green");
-    Instance xb("testbuf::Sb::RGB::red");
-
-    // test de ref();
-
-    // xc.remap(Instance &inst)
-
-    PLOGW << xa.get<float>();
-    PLOGW << xb.get<float>();
-    
     logger.cout(Sev::error);
 
     exit(0);

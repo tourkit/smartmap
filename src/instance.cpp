@@ -115,7 +115,7 @@ Instance::Instance(std::string stl_name) {
                 if (names.size() >1 ) offset += m->footprint() * eq;
                 
                 else eq_id = eq;
-                
+
             }
             else{
                 PLOGE << eq << " > " << m->quantity();
@@ -245,11 +245,11 @@ Instance Instance::eq(int id) {
 
 }
 
-void Instance::setDefault(Member* toset, int offset) {
+void Instance::setDefault(Member* m, int offset) {
 
-    if (!toset) toset = def();
+    if (!m) m = def();
 
-    for (auto x : toset->members) {
+    for (auto x : m->members) {
 
         setDefault(x, offset);
 
@@ -257,12 +257,22 @@ void Instance::setDefault(Member* toset, int offset) {
 
     }
 
-        // PLOGD << "------------>set " << toset->name();
-    if (toset->default_val_ptr) {
-        // PLOGD << "------------>set " << toset->name() << " to default " << *(float*)toset->default_val_ptr << " @ " << offset;
+        // PLOGD << "------------>set " << m->name();
+    if (m->default_val_ptr) {
+        // PLOGD << "------------>set " << m->name() << " to default " << *(float*)m->default_val_ptr << " @ " << offset;
+
+        for (int i = stl.size()-1; i>=0; i--) { // if parent q>1
+
+            auto x = stl[i];
+
+            if (x->quantity()>1) 
+                for (int todo = 0 ; todo < x->quantity(); todo++) 
+                    memcpy(data()+(offset+x->size()*todo), m->default_val_ptr, m->size());
 
 
-        memcpy(data()+offset, toset->default_val_ptr, toset->size());
+        }
+
+        memcpy(data()+offset, m->default_val_ptr, m->size());
 
     }
 
@@ -290,10 +300,20 @@ Instance Instance::push(void* ptr, size_t size) {
 
 }
 
+Instance* Instance::this_() { 
+    
+    for (auto &x : def()->instances) if (x->stl == stl) return &(*x); 
+    
+     return this; 
+     
+}
+
 void Instance::remap(Instance& inst) {
 
+    auto this_ = this->this_();
 
-    
+    this_->remaps.push_back(new Remap(this_, &inst.track())); // waiwai .. check ~Inst :) 
+
 }
 
 Instance::Instance(const Instance& other) {
@@ -306,7 +326,15 @@ Instance::Instance(const Instance& other) {
 }
 
 
-void Instance::update() { for (auto &inst : def()->instances) for (auto r : inst.get()->remaps) r->update(); }
+void Instance::update() { 
+    
+    for (auto &inst : def()->instances) 
+    
+        for (auto r : inst.get()->remaps) 
+        
+            r->update(); 
+    
+}
 
 std::string Instance::stl_name(std::string separator) {
 

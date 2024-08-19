@@ -55,45 +55,22 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return; // aka padb
         Instance(this).each([&](Instance& inst) {
 
             bool found = false;
-
             if (inst.def() == added.m) 
                 found = true;   
             else  
                 if (inst.def()->ref()) 
-                    for (auto x : inst.stl) 
+                    for (auto x : inst.stl) {
                         for (auto y : addeds) 
-                            if ( x == y.m ) { found = true; break; break; } // carnage
-            
+                            if ( x == y.m ) { 
+                                found = true; 
+                                break; 
+                            }
+                        
+                        if (found) break;
+                    }    
 
-            if (found) {
-
-                int offset = inst.offset;
-
-                for (auto m : added.m->ref()?added.m->ref()->members:added.m->members) {
-
-                    if (m->default_val_ptr) {
-
-                        for (int i = inst.stl.size()-1; i>=0; i--) { // if parent q>1
-
-                            auto x = inst.stl[i];
-
-                            if (x->quantity()>1) 
-                                for (int todo = 0 ; todo < x->quantity(); todo++) 
-                                    memcpy(&data[offset+x->size()*todo], m->default_val_ptr, m->size());
-
-
-                        }
-
-                        memcpy(&data[offset], m->default_val_ptr, m->size());
-
-
-                    }
-
-                    offset += m->footprint_all();
-
-                }
-
-            }
+            if (found) 
+                inst.setDefault(); 
 
         });
 
