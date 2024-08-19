@@ -47,6 +47,12 @@ struct Member {
 
     uint32_t quantity();
 
+    Member* add(Member* m);
+
+
+    bool remove(Member& s) ;
+    bool removeHard(Member& s) ;
+
     uint32_t eq(int i) ;
 
     uint32_t stride();

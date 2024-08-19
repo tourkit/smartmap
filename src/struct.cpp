@@ -78,55 +78,6 @@ Struct& Struct::clear() {
 
 }
 
-Struct& Struct::removeHard(Member& m) {
-
-    auto it = std::find( members.begin(), members.end(), &m );
-
-    if (it == members.end()) { PLOGV << "no find "<< m.name(); return *this; }
-
-    size_v -= members.back()->footprint_all();
-
-    members.erase(it);
-
-    update();
-
-    return *this;
-}
-
-Struct& Struct::remove(Member& m) {
-
-    removing.insert(&m);
-
-    PLOGV << name() << " remove " << m.name();
-
-    pre_change();
-
-    removeHard(m);
-
-    std::vector<Instance*> delete_list;
-
-    for (auto it = m.instances.begin(); it != m.instances.end();){
-    
-        Member* owner;
-        if (it->get()->stl.size()>1) 
-            owner = it->get()->stl.back()-1;
-        else 
-            owner = it->get()->buff;
-    
-        if (owner == this) 
-            it = m.instances.erase(it);
-        else 
-            it++;
-    }
-    
-    post_change();
-
-    removing.erase(&m);
-
-    return *this;
-
-}
-
 static bool same_name(Member* x, Member* b) {
 
     auto name_ = x->name();
@@ -157,49 +108,7 @@ static bool same_name(Member* x, Member* b) {
 
 // }
 
-Member* Struct::add(Member* m_) {
 
-    Member &m = *m_;
-
-    PLOGV << name() << " add " << m.name();
-
-    while (true) {
-
-        bool found = false;
-
-        for (auto x : members) {
-
-            if (!strcmp( x->name().c_str(), m.name().c_str() )) {
-
-                found = true;
-
-                 PLOGW << m.name() << " already exist !";
-
-                m.name( next_name(m.name()) );
-
-                break ;
-
-            }
-
-        }
-
-        if (!found) break;
-
-    }
-
-    pre_change();
-
-    members.push_back(&m);
-
-    size_v += members.back()->footprint_all();
-
-    update();
-
-    post_change({{&m}});
-
-    return &m;
-
-}
 
 
 Struct& Struct::range(float from, float to, float def) {

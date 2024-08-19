@@ -104,6 +104,8 @@ struct Instance {
 
     void each(std::function<void(Instance&)> f);
 
+    void print();
+
 // private:
 
 

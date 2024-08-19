@@ -82,6 +82,10 @@ struct StrobeEffector : Effector {
 
 int main() {
 
+    // track could have owner list
+
+    // inst.print()
+
     engine.init();
 
     logger.cout(Sev::warning);
@@ -122,6 +126,8 @@ int main() {
     sb_[0][0].set<float>(987);
 
     PLOGW << Instance(&testbuf).get<float,41>();
+
+    Instance(&testbuf).print();
 
     logger.cout(Sev::error);
 

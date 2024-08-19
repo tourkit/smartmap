@@ -3,6 +3,9 @@
 #include "buffer.hpp"
 #include "src/utils.hpp"
 #include <cctype>
+#include <cstdint>
+#include <format>
+#include <string>
 #include <vector>
 
 
@@ -330,6 +333,36 @@ Instance::Instance(const Instance& other) {
 
 }
 
+void Instance::print() {
+
+    std::string out;
+
+    each([&](Instance inst){
+
+        auto m = inst.def();
+        if (m->isData()) {
+
+            out += inst.stl_name() + ": ";
+
+            if (m->type() == typeid(int)) out+= std::to_string((int)*inst.data());
+            else if (m->type() == typeid(float)) {
+                std::string float_ = std::to_string((float)*inst.data());
+                while(float_.back() == '0') float_.resize(float_.length()-1);
+                if(float_.back() == '.') float_.resize(float_.length()-1);
+                out+= float_;
+            }
+            else return;
+            out += ", ";
+
+        }
+
+    });
+
+    if (out.length()) out = out.substr(0,out.length()-2);
+
+    PLOGW << out;
+
+}
 
 void Instance::update() { 
     

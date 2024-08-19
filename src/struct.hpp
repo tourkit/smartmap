@@ -23,16 +23,14 @@ struct Struct : Member {
     ~Struct();
 
     // Struct& add(Member& m, std::string name = "");
+    using Member::add;
 
     template <typename T>
-    Struct& add(std::string name = "", uint32_t quantity = 1) { auto n = new Data<T>(name, quantity); add(n); return *this; }
+    Struct& add(std::string name = "", uint32_t quantity = 1) { auto n = new Data<T>(name, quantity); Member::add(n); return *this; }
 
     // Struct* add(std::string name) ;
 
     Struct& range(float from, float to, float def) ;
-
-    Struct& remove(Member& s) ;
-    Struct& removeHard(Member& s) ;
 
     Struct& clear();
 
@@ -55,8 +53,6 @@ struct Struct : Member {
     static bool removeFromOwned(std::string name) ;
 
     Struct* isStruct() override;
-
-    Member* add(Member* m);
 
 #ifdef ROCH
     std::string DEBUG_TYPE;
