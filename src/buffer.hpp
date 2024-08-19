@@ -42,7 +42,7 @@ struct Buffer : Struct {
 
     Buffer* isBuff() override { return this; }
 
-    Instance add_(Member* m);
+    Instance add(Member* m);
 
 private:
 

@@ -38,7 +38,7 @@ void  Buffer::pre_change() { // return; // aka padbakeuuup
 
 }
 
-Instance Buffer::add_(Member* m) { 
+Instance Buffer::add(Member* m) { 
     
     Struct::add(m); 
     
@@ -62,7 +62,7 @@ void  Buffer::post_change(std::vector<NewMember> addeds) { //return; // aka padb
                 if (inst.def()->ref()) 
                     for (auto x : inst.stl) 
                         for (auto y : addeds) 
-                            if ( x == y.m ) { found = true; break; break; } 
+                            if ( x == y.m ) { found = true; break; break; } // carnage
             
 
             if (found) {

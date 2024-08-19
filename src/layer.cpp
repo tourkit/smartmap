@@ -219,7 +219,7 @@ void UberLayer::calc_matrice() {
 
         Instance glsl_uberlayer(&engine.static_ubo, &uberlayer_s);
 
-        PLOGW << z << " - "  << "[ "<< y[0] << " " << y[1] << " " << y[2] << " " << y[3] << " ] - [" << w << " " << h << " " << x_ << " " << y_ << " ]";
+        // PLOGW << z << " - "  << "[ "<< y[0] << " " << y[1] << " " << y[2] << " " << y[3] << " ] - [" << w << " " << h << " " << x_ << " " << y_ << " ]";
 
         glsl_uberlayer.eq(z).set<float,8>({w, h,x_*2-1,y_*2-1, x_, y_,(float)y[0],(float)y[1]});
 

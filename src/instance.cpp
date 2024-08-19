@@ -58,6 +58,54 @@ Instance Instance::parent() {
 
 }
 
+Instance::Instance(std::string stl_name) {
+
+    auto names = split(stl_name);
+
+    if (!names.size()) return;
+
+    for (auto x : Member::buffers) 
+
+        if (x->name() == names[0]) {
+        
+            buff = x;
+            names.erase(names.begin());
+            break;    
+        }
+
+    if (!buff) { PLOGW << "no buffer " << names[0]; return; }
+
+    Member* curr = buff;
+
+    while (names.size()) {
+
+        Member* found = nullptr;
+
+        for (auto &m : curr->members) if (m->name() == names[0]){ 
+
+            found = m;
+            break;
+
+        }
+
+        if (!found) {
+
+            PLOGE << "couldnt find: " << names[0];
+            break;
+            
+        }
+
+        names.erase(names.begin());
+        stl.push_back(found);
+        curr = found;
+
+    }
+
+    // if (curr != buff && !names.size())
+
+ 
+}
+
 Instance Instance::find(Member* x) {
 
     Instance inst;
@@ -217,27 +265,6 @@ Instance::Instance(const Instance& other) {
 
 }
 
-Instance::Instance(std::string stl_name) {
-
-    auto names = split(stl_name);
-
-    if (!names.size()) return;
-
-    for (auto x : Member::buffers) if (x->name() == names[0]) buff = x;
-
-    if (!buff) { PLOGE << "no member " << names[0]; }
-
-    names.erase(names.begin());
-
-    Member* curr = buff;
-
-    for (auto name : names) {
-
-        // for (auto x : curr->members) if (x->name() == x) m = x;
-
-    }
- 
-}
 
 void Instance::update() { for (auto &inst : def()->instances) for (auto r : inst.get()->remaps) r->update(); }
 
