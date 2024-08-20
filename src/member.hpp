@@ -2,23 +2,16 @@
 
 #include <cstdint>
 #include <set>
-#include <typeindex>
 #include <functional>
 #include <string>
 #include <vector>
-#include <memory>
 #include "utils.hpp"
-
-
-
 
 // struct Instance;
 
 struct Member {
 
     static inline std::set<Member*> structs;
-
-    static inline std::set<Member*> buffers;
 
     Member(std::string name);
 

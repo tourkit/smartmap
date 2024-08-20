@@ -90,7 +90,7 @@ struct Instance {
 
                     }
                 
-                    stl.push_back({x});
+                    stl.push_back({x,name.second});
                     offset += x->footprint()*name.second;
                     names.erase(names.begin());
                     break;    
@@ -100,7 +100,7 @@ struct Instance {
             }
 
             if (!stl.size()) {
-                PLOGE << " no" << name.first << " in structs";
+                PLOGE << " no " << name.first << " in structs";
                 return;
             }
         
@@ -108,7 +108,7 @@ struct Instance {
 
         // then find each
 
-        MemberQ &curr = *stl.begin();
+        MemberQ *curr = &stl.front();
 
         while (names.size()) {
 
@@ -116,9 +116,7 @@ struct Instance {
 
             auto name = nameQ(names[0]);
 
-            curr.eq = 0;
-
-            for (auto &m : curr.m->members) 
+            for (auto &m : curr->m->members) 
             
                 if (m->name() == name.first){ 
 
@@ -127,7 +125,7 @@ struct Instance {
                         if (names.size() >1 ) 
                             offset += m->footprint() * name.second;
                         
-                        else curr.eq = name.second;
+                        else curr->eq = name.second;
 
                     } else { PLOGE << name.second << " > " << m->quantity(); }
 
@@ -149,9 +147,9 @@ struct Instance {
 
             names.erase(names.begin());
 
-            stl.push_back({found,name.second});
+            stl.emplace_back(found,name.second);
 
-            curr = stl.back();
+            curr = &stl.back();
 
         }
 
@@ -185,9 +183,6 @@ int main() {
 
     Member rgb("RGB");
     rgb.add<float>("red").range(0,1,1).add<float>("green").range(0,1,2).add<float>("blue").range(0,1,3);
-
-    Member didoo("didoo");
-    didoo.add<float>("didi").range(8,8,8).add<float>("dodo").range(9,9,9).striding(true);
     
     Member sa("Sa");
     sa.add(&rgb);
@@ -195,16 +190,18 @@ int main() {
     testbuf.add(&sa);
     sa.quantity(2);
 
-    std::string uno = "testbuf::Sa[1]::RGB::blue";
-    std::string dos = "Sa[1]::RGB::blue";
-    Instance inst(uno);
-
+    Instance isnt("testbuf::Sa[1]::RGB::blue");
     Instance testbuf_(testbuf);
-    testbuf_.find(dos);
+    testbuf_.find("Sa[1]::RGB::blue");
 
-    // Instance testbuf_(testbuf);
-    PLOGD << inst.offset;
+    PLOGD << isnt.offset;
     PLOGD << testbuf_.offset;
+
+    Instance testbuf2_("Sa[1]::RGB::red");
+    PLOGD << testbuf2_.stl_name();
+    
+    Instance testbuf3_("RGB::green");
+    PLOGD << testbuf3_.stl_name();
 
     // isnt.set<float>(123);
 
