@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <string>
 #include "log.hpp"
 
 
@@ -44,6 +45,17 @@ struct Pool {
 
 };
 
+static std::string join(std::vector<std::string> list, std::string delimiter = "::") {
+
+    std::string out;
+    for (auto x : list) 
+        out += x + delimiter;
+    if (out.length()) 
+        out = out.substr(0,out.length()-2);
+    return out;
+
+}
+
 static std::vector<std::string> split(std::string s, std::string delimiter = "::") {
 
     std::vector<std::string> out;
@@ -62,6 +74,9 @@ static std::vector<std::string> split(std::string s, std::string delimiter = "::
 }
 
 
+static int nextFactor2(int x, int factor = 4) { return ((int)((x-1)/(float)factor)+1)*factor*!!x; }
+static std::string camel(std::string str) { str[0] = std::toupper(str[0]); return str; }
+static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
 
 #include <boost/type_index.hpp>
 using TypeIndex = boost::typeindex::type_index;

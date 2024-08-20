@@ -28,44 +28,49 @@ struct Remap {
 
 struct Instance {
 
-    Buffer* buff;
-
-    std::vector<Member*> stl;
-    std::vector<Remap*> remaps;
-
-    void remap(Instance& inst);
-    void remap(std::string stl_name);
-
-    uint32_t offset = -1;
-
-    std::string stl_name(std::string separator = "::");
-
-    Member* def();
-
-    Instance(const Instance& other);
+    Instance(Member* buff = nullptr, int eq_id = 0, uint32_t offset = 0);
 
     Instance(std::string stl_name);
 
-    Instance(Buffer* buff, Member* m);
+    Instance(const Instance& other);
 
-    Instance(Buffer* buff = nullptr, uint32_t offset = 0, std::vector<Member*> stl = {}, int eq_id = 0);
+    struct MemberQ {
 
-    Instance operator[](std::string name);
+        Member* m;
+        int eq = 0;
+    
+    };
+    std::vector<MemberQ> stl;
 
-    Instance operator[](int id);
+    std::vector<Remap*> remaps;
 
-    Instance find(Member* m);
+    uint32_t offset = 0;
+
+    void remap(Instance& inst);
+
+    void remap(std::string stl_name);
+
+    std::string stl_name(std::string separator = "::");
+
+    Member* buff();
+
+    Member* def();
+
+    Instance child(std::string name);
+
+    Instance child(int id);
 
     Instance parent();
 
-    bool exist();
+    Instance find(std::string stl_name);
+
+    Instance find(std::vector<Member*> stl);
 
     Instance& track();
 
-    Instance* this_();
+    void calcOffset();
 
     char* data();
-
     uint32_t size();
 
     Instance eq(int id);

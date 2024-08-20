@@ -11,82 +11,13 @@ find_package(OpenGL REQUIRED)
 add_executable( smartmap
 
 src/log.cpp
+src/file.cpp
 
 main.cpp
 
-# src/test.cpp
-
-src/folder.cpp
-src/file.cpp
-src/json.cpp
-src/image.cpp
-
-src/thread.cpp
-src/messagequeue.cpp
-
-vendors/gl3w/src/gl3w.c
-
-src/node.cpp
-src/data.cpp
 src/member.cpp
-src/struct.cpp
-src/instance.cpp
 
-src/output.cpp
-src/window.cpp
-src/vbo.cpp
-src/ubo.cpp
-src/framebuffer.cpp
-src/texture.cpp
-src/shader.cpp
-
-src/builder.cpp
-src/buffer.cpp
-src/remap.cpp
-
-src/dmx.cpp
-src/ndi.cpp
-
-src/effector.cpp
-src/model.cpp
-
-  src/callbacks.cpp
-  src/editor.cpp
-
-
-src/engine.cpp
-src/open.cpp
-src/save.cpp
-src/layer.cpp
-src/fps.cpp
-src/drawcall.cpp
-src/atlas.cpp
-src/tree.cpp
-
-src/gui.cpp
-vendors/imgui/imgui.cpp
-vendors/imgui/imgui_tables.cpp
-vendors/imgui/imgui_widgets.cpp
-vendors/imgui/imgui_demo.cpp
-vendors/imgui/imgui_draw.cpp
-vendors/imgui/backends/imgui_impl_glfw.cpp
-vendors/imgui/backends/imgui_impl_opengl3.cpp
-vendors/ImGuiColorTextEdit/TextEditor.cpp
-
-
-src/artnet.cpp
-vendors/ofxLibArtnet/artnet/artnet.c
-vendors/ofxLibArtnet/artnet/misc.c
-vendors/ofxLibArtnet/artnet/network.c
-vendors/ofxLibArtnet/artnet/receive.c
-vendors/ofxLibArtnet/artnet/tod.c
-vendors/ofxLibArtnet/artnet/transmit.c
-vendors/ofxLibArtnet/ofxLibArtnet.cpp
-
-vendors/tinyexpr/tinyexpr.cpp
-
-vendors/RectangleBinPack/Rect.cpp
-vendors/RectangleBinPack/MaxRectsBinPack.cpp
+# src/instance.cpp
 
 )
 

@@ -1,4 +1,5 @@
 #include "instance.hpp"
+#include "member.hpp"
 #include "struct.hpp"
 #include "buffer.hpp"
 #include "src/utils.hpp"
@@ -22,44 +23,67 @@ void Remap::update() {
 }
 
 
-bool Instance::exist(){
+Instance::Instance(Member* m, int eq_id, uint32_t offset) 
 
-    if (offset == -1) return false;
-
-    return true;
-
+    : offset(offset), eq_id(eq_id) { 
+        
+        stl.push_back({m});
 }
-
-Instance::Instance(Buffer* buff, Member* m) : buff(buff) {
-    
-    if (buff) {
-        
-        offset = 0;
-        auto minst = find(m);
-        stl = minst.stl;
-        offset = minst.offset;
-
-    }else {
-        
-        stl.push_back(m);
-
-        offset = 0;
-            
-    }
-
- }
-
-Instance::Instance(Buffer* buff, uint32_t offset, std::vector<Member*> stl, int eq_id) : buff(buff), offset(offset), stl(stl), eq_id(eq_id) { }
 
 Instance Instance::parent() {
 
-    auto offset = this->offset;
-    offset-=def()->footprint();
-    auto stl_ = stl;
-    stl_.resize(stl_.size()-1);
+    Instance inst(*this);
 
-    return Instance(buff,offset,stl_);
+    inst.offset-=def()->footprint();
 
+    inst.stl.resize(inst.stl.size()-1);
+
+    return inst;
+
+}
+
+void Instance::calcOffset() {
+
+    offset = 0;
+        
+    for (int i = 0; i < stl.size()-1; i++) {
+
+        auto m = stl[i];
+
+        offset += m.m->footprint()*m.eq;
+
+    }
+
+}
+
+
+std::pair<std::string,int> nameQ(std::string name) { 
+    
+    auto inbracket = name.find("[");
+
+    int eq = 0;
+
+    if (inbracket && name.back() == ']') {
+        
+        auto bracket = name.substr(inbracket+1,name.length()-4);
+
+        bool all_digits = true;
+        for (int i = 0; i < bracket.length(); i++) 
+            if (!std::isdigit(bracket[i])) {
+                all_digits = false;  
+                break;
+            }
+        
+        if (all_digits) 
+            eq = std::stoi(bracket);
+        else {PLOGE << "WEIRDASHIZE";}
+
+        name = name.substr(0, inbracket);
+
+    }
+    
+    return {name,eq}; 
+        
 }
 
 Instance::Instance(std::string stl_name) {
@@ -68,68 +92,53 @@ Instance::Instance(std::string stl_name) {
 
     if (!names.size()) return;
 
-    for (auto x : Member::buffers) 
+    offset = 0;
 
-        if (x->name() == names[0]) {
+    for (auto x : Member::structs) {
+
+        auto name = nameQ(names[0]);
+
+        if (x->name() == name.first) {
         
-            buff = x;
+            stl.push_back({x});
+            offset += x->footprint()*name.second;
             names.erase(names.begin());
             break;    
+
         }
 
-    if (!buff) { PLOGW << "no buffer " << names[0]; return; }
+    }
 
-    Member* curr = buff;
-
-    offset = 0;
+    MemberQ &curr = *stl.begin();
 
     while (names.size()) {
 
         Member* found = nullptr;
 
-        auto name = names[0];
+        auto name = nameQ(names[0]);
 
-        auto b1 = name.find("[");
+        curr.eq = 0;
 
-        int eq = 0;
+        for (auto &m : curr.m->members) 
+        
+            if (m->name() == name.first){ 
 
-        if (b1 && name.back() == ']') {
+                if (name.second < m->quantity()) {
+
+                    if (names.size() >1 ) offset += m->footprint() * name.second;
+                    
+                    else curr.eq = name.second;
+
+                } else { PLOGE << name.second << " > " << m->quantity(); }
+
+                found = m;
+
+                break;
+
+            }else
+
+                offset += m->footprint_all();
             
-            auto bracket = name.substr(b1+1,name.length()-4);
-
-            for (int i = 0; i < bracket.length(); i++) 
-                if (!std::isdigit(bracket[i])) 
-                    return;
-
-            
-            eq = std::stoi(bracket);
-            name = name.substr(0, b1);
-
-            PLOGW << name;
-            PLOGW << eq;
-
-        }
-
-        eq_id = 0;
-
-        for (auto &m : curr->members) if (m->name() == name){ 
-            if (eq < m->quantity()) {
-
-                if (names.size() >1 ) offset += m->footprint() * eq;
-                
-                else eq_id = eq;
-
-            }
-            else{
-                PLOGE << eq << " > " << m->quantity();
-            }
-            found = m;
-            break;
-
-        }else{
-
-            offset += m->footprint_all();
-        }
 
         if (!found) {
 
@@ -139,13 +148,12 @@ Instance::Instance(std::string stl_name) {
         }
 
         names.erase(names.begin());
-        stl.push_back(found);
-        curr = found;
+
+        stl.push_back({found,name.second});
+
+        curr = stl.back();
 
     }
-
-    
-
  
 }
 
@@ -166,69 +174,39 @@ Instance Instance::find(Member* x) {
 
 }
 
-Instance Instance::operator[](std::string name) {
+Instance Instance::child(std::string name) {
 
-    auto offset = this->offset;
+    auto m = def();
 
-    Member* found = nullptr;
+    for (int i = 0; i < m->members.size(); i++) 
+        if (!(strcmp(m->members[i]->name().c_str(),name.c_str()))) return child(i);
 
-    for (auto &m : def()->members) {
+    PLOGE << "\"" << name << "\" does not exist in " << def()->name();
 
-        if (!(strcmp(m->name().c_str(),name.c_str()))) {
-
-            found = m;
-
-            break;
-
-        }
-
-        offset += m->footprint_all();
-
-    }
-
-    if (!found) PLOGE << "\"" << name << "\" does not exist in " << def()->name();
-    auto stl_ = stl;
-    stl_.push_back(found);
-    return Instance{buff,offset,stl_};
+    return *this;
 
 }
-Instance Instance::operator[](int id) {
 
-    auto offset = this->offset;
-    auto member = this->def();
+Instance Instance::child(int id) {
 
-    if (id >= def()->members.size()) {
+    auto m = this->def();
+
+    if (id >= m->members.size()) {
     
-        PLOGE << id << " > " << def()->members.size() << " in " << def()->name();
+        PLOGE << id << " > " << m->members.size() << " in " << m->name();
     
         return *this;
     
     }
 
-    member = member->members[id];
+    Instance inst(*this);
 
-    if (member->instances.size()) for (auto inst : member->instances) {
+    for (int i = 0 ; i < id; i ++ )
+        inst.offset += m->members[i]->footprint_all();
+    
+    inst.stl.push_back(m->members[id]);
 
-        auto c = inst->stl;
-        c.resize(c.size()-1);
-
-        if (c == stl) return *inst;
-        
-    }
-
-    for (int i = 0 ; i < id; i ++ ){
-
-        auto m = def()->members[i];
-
-        offset += m->footprint_all();
-
-    }
-
-
-    auto stl_ = stl;
-    stl_.push_back(member);
-
-    return Instance{buff,offset,stl_};
+    return inst;
 
 }
 
@@ -301,14 +279,6 @@ Instance Instance::push(void* ptr, size_t size) {
 
     return inst;
 
-}
-
-Instance* Instance::this_() { 
-    
-    for (auto &x : def()->instances) if (x->stl == stl) return &(*x); 
-    
-     return this; 
-     
 }
 
 void Instance::remap(std::string stl_name) { 
@@ -421,6 +391,18 @@ Instance& Instance::set(void* ptr, size_t size) {
 
     return *this;
 
+}
+
+
+
+Member* Instance::buff() { 
+    
+    if (stl.size() && stl[0]->buffering()) 
+    
+        return stl.begin(); 
+    
+    return buff; 
+    
 }
 
 
