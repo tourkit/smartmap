@@ -7,7 +7,7 @@
 #include <vector>
 #include "utils.hpp"
 
-// struct Instance;
+struct Instance;
 
 struct Member {
 
@@ -33,7 +33,7 @@ struct Member {
 
     std::string type_name() ;
 
-    Member& add(Member* m);
+    void add(Member* m);
 
     template <typename T>
     Member& add(std::string name) { 
@@ -95,7 +95,7 @@ struct Member {
     bool ref(Member*);
 
     // INSTANCEMGMT
-    // std::vector<std::shared_ptr<Instance>> instances;
+    std::vector<std::shared_ptr<Instance>> instances;
 
     bool is_copy = false;
 
@@ -134,6 +134,8 @@ struct Member {
     bool isBuff();
     bool buffering();
     void buffering(bool value);
+
+    char* data();
 
 protected:
 

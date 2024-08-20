@@ -7,203 +7,60 @@
 
 
 #include "src/member.hpp"
+#include "src/instance.hpp"
 #include "src/log.hpp"
 
-std::pair<std::string,int> nameQ(std::string name) { 
-    
-    auto inbracket = name.find("[");
-
-    int eq = 0;
-
-    if (inbracket && name.back() == ']') {
-        
-        auto bracket = name.substr(inbracket+1,name.length()-4);
-
-        bool all_digits = true;
-        for (int i = 0; i < bracket.length(); i++) 
-            if (!std::isdigit(bracket[i])) {
-                all_digits = false;  
-                break;
-            }
-        
-        if (all_digits) 
-            eq = std::stoi(bracket);
-        else {PLOGE << "WEIRDASHIZE";}
-
-        name = name.substr(0, inbracket);
-
-    }
-    
-    return {name,eq}; 
-        
-}
-
-struct Instance {
-
-    struct MemberQ {
-
-        Member* m;
-        int eq = 0;
-    
-    };
-
-    std::vector<MemberQ> stl;
-
-    uint32_t offset = 0;
 
 
-    std::string stl_name() {
 
-        std::vector<std::string> names;
-
-        for (auto x : stl)  {
-
-            auto name = x.m->name();
-            if (x.eq>0) name += "[" + std::to_string(x.eq) + "]";
-            names.push_back(name);
-            
-        }
-
-        return join(names);
-
-    }
-
-    void find(std::string stl_name) {
-
-        auto names = split(stl_name);
-        
-        if (!names.size()) return;
-
-        // if no stl find first in structs
-        if (!stl.size()) {
-            
-            auto name = nameQ(names[0]);
-
-            for (auto x : Member::structs) {
-
-                if (x->name() == name.first) {
-
-                    if (name.second > x->quantity()){
-
-                        PLOGE << name.second << " > " << x->quantity();
-                        return;
-
-                    }
-                
-                    stl.push_back({x,name.second});
-                    offset += x->footprint()*name.second;
-                    names.erase(names.begin());
-                    break;    
-
-                }
-
-            }
-
-            if (!stl.size()) {
-                PLOGE << " no " << name.first << " in structs";
-                return;
-            }
-        
-        }
-
-        // then find each
-
-        MemberQ *curr = &stl.front();
-
-        while (names.size()) {
-
-            Member* found = nullptr;
-
-            auto name = nameQ(names[0]);
-
-            for (auto &m : curr->m->members) 
-            
-                if (m->name() == name.first){ 
-
-                    if (name.second < m->quantity()) {
-
-                        if (names.size() >1 ) 
-                            offset += m->footprint() * name.second;
-                        
-                        else curr->eq = name.second;
-
-                    } else { PLOGE << name.second << " > " << m->quantity(); }
-
-                    found = m;
-
-                    break;
-
-                }else
-
-                    offset += m->footprint_all();
-                
-
-            if (!found) {
-
-                PLOGE << "couldnt find: " << names[0];
-                break;
-                
-            }
-
-            names.erase(names.begin());
-
-            stl.emplace_back(found,name.second);
-
-            curr = &stl.back();
-
-        }
-
-    }
-
-    Instance(std::string stl_name) {
-
-        find(stl_name);
-    
-    }
-
-    Instance(Member& m) {
-
-        stl.push_back({&m});
-    
-    }
-
-};
 
 int main() {
-
-    // track could have owner list
-
-    // inst.print()
-
 
     logger.cout(Sev::verbose);
 
     Member testbuf("testbuf");
-    // testbuf.buffering(true);
+    testbuf.buffering(true);
 
     Member rgb("RGB");
+
     rgb.add<float>("red").range(0,1,1).add<float>("green").range(0,1,2).add<float>("blue").range(0,1,3);
+
+    Member didoo("didoo");
+    didoo.add<float>("didi").add<float>("dodo").striding(true);
     
     Member sa("Sa");
     sa.add(&rgb);
 
+    Member sb("Sb");
+    sb.add(&rgb);
+
+    testbuf.add(&didoo);
+
     testbuf.add(&sa);
-    sa.quantity(2);
-
-    Instance isnt("testbuf::Sa[1]::RGB::blue");
-    Instance testbuf_(testbuf);
-    testbuf_.find("Sa[1]::RGB::blue");
-
-    PLOGD << isnt.offset;
-    PLOGD << testbuf_.offset;
-
-    Instance testbuf2_("Sa[1]::RGB::red");
-    PLOGD << testbuf2_.stl_name();
     
-    Instance testbuf3_("RGB::green");
-    PLOGD << testbuf3_.stl_name();
+    testbuf.add(&sb);
 
-    // isnt.set<float>(123);
+    auto sb_ = Instance("testbuf::Sb::RGB::green").track();
+
+    PLOGD << sb_.offset;
+
+    sa.quantity(10);
+
+    PLOGD << sb_.offset;
+
+    Instance testbuf_("testbuf::Sa[1]::RGB::red");
+    
+    testbuf_.track();
+
+    Instance testbuf_2(testbuf);
+    testbuf_2.loc(&sa,1);
+    testbuf_2.loc("RGB");
+    testbuf_2.loc(0);
+
+    PLOGD << testbuf_.stl.back().m->name() << " " << testbuf_.offset;
+    PLOGD << testbuf_2.stl.back().m->name() << " " << testbuf_.offset;;
+
+    
 
 
     // auto &sa_ = testbuf.add(&sa).track();
@@ -236,5 +93,7 @@ int main() {
     // Instance(&testbuf).print();
 
 
+    logger.cout(Sev::error);
 
 }
+

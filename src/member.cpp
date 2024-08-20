@@ -159,10 +159,10 @@ void Member::update() {
 
     memset( buffer_v.data(), 0, buffer_v.size() );
 
-    // INSTANCEMGMT
-    // for (auto s : structs) 
-    //     for (auto &inst : s->instances) 
-    //         inst->calcOffset();
+    for (auto s : structs) 
+        for (auto &inst : s->instances) 
+            if (inst->stl.size() && inst->stl.front().m == this)
+                inst->calcOffset();
 
  }
 
@@ -251,11 +251,9 @@ void Member::upload() {
 }
 
 
-Member& Member::add(Member* m_) {
+void Member::add(Member* m) {
 
-    Member &m = *m_;
-
-    PLOGV << name() << " add " << m.name();
+    PLOGV << name() << " add " << m->name();
 
     while (true) {
 
@@ -263,13 +261,13 @@ Member& Member::add(Member* m_) {
 
         for (auto x : members) {
 
-            if (!strcmp( x->name().c_str(), m.name().c_str() )) {
+            if (!strcmp( x->name().c_str(), m->name().c_str() )) {
 
                 found = true;
 
-                 PLOGW << m.name() << " already exist !";
+                 PLOGW << m->name() << " already exist !";
 
-                m.name( next_name(m.name()) );
+                m->name( next_name(m->name()) );
 
                 break ;
 
@@ -286,16 +284,14 @@ Member& Member::add(Member* m_) {
     for (auto x : tops)  
         pre_change();
 
-    members.push_back(&m);
+    members.push_back(m);
 
     size_v += members.back()->footprint_all();
 
     update();
 
     for (auto x : tops)  
-        post_change({{&m}});
-
-    return m;
+        post_change({{m}});
 
 }
 
@@ -453,6 +449,7 @@ void Member::pre_change() {
 
 }
 
+char* Member::data() { if (is_buffer) return buffer_v.data(); return nullptr; }
 
 bool Member::buffering() { return is_buffer; }
 
@@ -466,13 +463,11 @@ void Member::buffering(bool value) {
 
         memset(buffer_v.data(),0,buffer_v.size());
 
-        structs.erase(this);
 
     }else{
 
         buffer_v.reserve(0);
 
-        structs.insert(this);
     }
 
 }

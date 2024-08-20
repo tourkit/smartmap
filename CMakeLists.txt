@@ -17,7 +17,7 @@ main.cpp
 
 src/member.cpp
 
-# src/instance.cpp
+src/instance.cpp
 
 )
 

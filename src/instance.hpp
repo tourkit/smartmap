@@ -8,6 +8,7 @@
 
 #include "buffer.hpp"
 
+
 struct Buffer;
 struct Member;
 struct Instance;
@@ -28,94 +29,43 @@ struct Remap {
 
 struct Instance {
 
-    Instance(Member* buff = nullptr, int eq_id = 0, uint32_t offset = 0);
-
-    Instance(std::string stl_name);
-
-    Instance(const Instance& other);
-
-    struct MemberQ {
-
-        Member* m;
-        int eq = 0;
-    
-    };
+    struct MemberQ { Member* m; int eq = 0; };
     std::vector<MemberQ> stl;
-
-    std::vector<Remap*> remaps;
 
     uint32_t offset = 0;
 
-    void remap(Instance& inst);
+    std::string stl_name();
 
-    void remap(std::string stl_name);
+    void loc(int id, int eq = 0) ;
 
-    std::string stl_name(std::string separator = "::");
+    void loc(Member* m, int eq = 0);
 
-    Member* buff();
+    void loc(std::string stl_name);
 
-    Member* def();
+    Instance(std::string stl_name);
 
-    Instance child(std::string name);
-
-    Instance child(int id);
-
-    Instance parent();
-
-    Instance find(std::string stl_name);
-
-    Instance find(std::vector<Member*> stl);
+    Instance(Member& m);
 
     Instance& track();
 
-    void calcOffset();
+    Instance(const Instance& other);
+
+    int size();
 
     char* data();
-    uint32_t size();
-
-    Instance eq(int id);
 
     template <typename T>
-    T get() { return *((T*)(data())); }
+    T get() { return *(T*) data(); }
 
     template <typename T, int U>
     std::array<T,U> get() { return get<std::array<T,U>>(); }
 
-    template <typename T>
-    Instance& set(T val) { return set<T>(&val); }
+    void set(void* ptr, size_t size);
 
-    template <typename T, int U>
-    Instance& set(std::array<T,U> val) { return set<std::array<T,U>>(&val); }
+    void calcOffset();
 
-    template <typename T, int U, typename... Args>
-    Instance& set(Args&&... args) { return set<std::array<T,U>>({std::forward<Args>(args)...}); }
-
-    template <typename T>
-    Instance& set(void* val) {
-
-        // PLOGV << def()->name() ;
-
-        return set(val, sizeof(T));
-
-    }
-
-    Instance& set(void* ptr, size_t size);
-
-    void update();
-
-    void setDefault(Member* toset = nullptr, int offset = 0);
-
-    Instance push(void* ptr = nullptr, size_t size = 0);
-
-    void each(std::function<void(Instance&)> f);
-
-    void print();
-
-// private:
-
-
-    uint32_t eq_id = 0;
+    void setDefault(Member* m, int offset);
 
 };
 
-
+inline bool operator==(const Instance::MemberQ& this_, const Instance::MemberQ& other){ return (this_.m == other.m && this_.eq == other.eq); }
