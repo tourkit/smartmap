@@ -472,11 +472,11 @@ void Member::post_change(std::vector<NewMember> addeds) {
         // instances update offset
         for (auto &x : mq.m->instances) {
 
-            if (x.get()->stl.size() == inst.stl.size() && x.get()->stl.front().m == this) {
+            if (x->stl.size() == inst.stl.size() && x->stl.front().m == this) {
 
                 bool diff = false;
                 for (int i = 1; i < inst.stl.size(); i++) 
-                    if (inst.stl[i].m != x.get()->stl[i].m) {
+                    if (inst.stl[i].m != x->stl[i].m) {
 
                         diff = true;
                         break;
@@ -484,7 +484,7 @@ void Member::post_change(std::vector<NewMember> addeds) {
                     }
 
                 if (!diff) 
-                    x.get()->offset = inst.offset+mq.m->footprint()*mq.eq; 
+                    x->offset = inst.offset+mq.m->footprint()*mq.eq; 
 
             }
 

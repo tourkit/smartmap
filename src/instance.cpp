@@ -57,16 +57,38 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     }
 
+    void Instance::updateInstance() {
+
+        auto m = stl.back().m;
+        
+        if (m->instances.find(this) == m->instances.end()) {
+            
+            if (stl.size()>1)
+                
+                stl[stl.size()-2].m->instances.erase(this);
+            
+            m->instances.insert(this);
+            
+        }
+
+    }
+
     Instance& Instance::loc(int id, int eq) {
 
-        if (stl.size() && id < stl.back().m->members.size()) {
+        if (!stl.size()) return *this;
+
+        auto m = stl.back().m;
+
+        if (id < m->size()) {
 
             for (int i = 0; i < id; i++) 
                 offset += stl[i].m->footprint_all();
 
             offset+=stl[id].m->footprint()*eq;
 
-            stl.push_back({stl.back().m->members[id],eq});
+            stl.push_back({m->members[id],eq});
+            
+            updateInstance();
 
             return *this;
 
@@ -82,7 +104,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
         int offset = 0;
 
-        if (stl.size()) 
+        if (stl.size()) {
 
             for (auto x : stl.back().m->members) {
         
@@ -90,12 +112,15 @@ std::pair<std::string,int> nameQ(std::string name) {
 
                     this->offset += offset+m->footprint()*eq;
                     stl.push_back({x,eq});
+                    updateInstance();
                     return *this;
 
                 }else 
                     offset += x->footprint_all();
             }
 
+        }
+        
         PLOGE << "couldn't find " << m->name();
 
         return *this;
@@ -193,7 +218,9 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     Instance::Instance(std::string stl_name) { loc(stl_name); }
 
-    Instance::Instance(Member& m) { stl.push_back({&m}); }
+    Instance::~Instance() { stl.back().m->instances.erase(this); }
+    
+    Instance::Instance(Member& m) { stl.push_back({&m}); m.instances.insert(this); }
 
     Instance::Instance(const Instance& other) : stl(other.stl), offset(other.offset) { }
 
@@ -274,25 +301,6 @@ std::pair<std::string,int> nameQ(std::string name) {
     }
 
 
-Instance& Instance::track() {
-
-    if (!stl.size()) return *this;
-
-    auto m = stl.back().m;
-
-    // if already such instance
-    for (auto inst : m->instances) 
-        if (inst->stl == stl) 
-            return *inst;
-    
-    // else create new
-    PLOGV << stl_name();
-
-    m->instances.emplace_back(std::make_shared<Instance>(*this));
-
-    return *m->instances.back().get();
-
-}
 
 int Instance::eq() {
     return stl.size()?stl.back().eq:0;

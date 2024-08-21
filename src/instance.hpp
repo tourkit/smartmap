@@ -52,10 +52,10 @@ struct Instance {
 
     Instance(Member& m);
 
-    Instance& track();
-
     Instance(const Instance& other);
 
+    ~Instance();
+    
     int size();
 
     char* data();
@@ -84,6 +84,8 @@ struct Instance {
     void calcOffset();
 
     void setDefault(Member* m = nullptr, int offset = 0);
+
+    void updateInstance();
 
     void each(std::function<void(Instance&)> f);
     

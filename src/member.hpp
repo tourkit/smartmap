@@ -166,7 +166,7 @@ private:
 
 public:
 
-    std::vector<std::shared_ptr<Instance>> instances;
+    std::set<Instance*> instances;
 
     bool is_copy = false;
     
