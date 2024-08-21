@@ -218,11 +218,16 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     Instance::Instance(std::string stl_name) { loc(stl_name); }
 
-    Instance::~Instance() { stl.back().m->instances.erase(this); }
-    
+    Instance::~Instance() { 
+        stl.back().m->instances.erase(this); 
+    }
+
     Instance::Instance(Member& m) { stl.push_back({&m}); m.instances.insert(this); }
 
-    Instance::Instance(const Instance& other) : stl(other.stl), offset(other.offset) { }
+    Instance::Instance(const Instance& other) 
+        : stl(other.stl), offset(other.offset) { 
+            stl.back().m->instances.insert(this); 
+        }
 
     int Instance::size() { return stl.front().m->footprint_all();}
 
@@ -336,6 +341,7 @@ void Instance::each(std::function<void(Instance&)> cb) {
         Instance inst(*this);
 
         inst.stl.push_back({m});
+        inst.updateInstance();
 
         inst.offset += offset;
 

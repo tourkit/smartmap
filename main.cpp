@@ -35,27 +35,35 @@ int main() {
 
     testbuf.add(&sa);
 
-    // auto sa_ = Instance(testbuf)[&sa];
-    Instance sa_(testbuf);
+    auto sa_ = Instance(testbuf);
+
     sa_.loc(&sa);
-    // exit(0);
-
+    
+    didoo.quantity(2);
+    
     testbuf.add(&sb);
-    // auto blue_ = Instance("testbuf::Sb::RGB::blue");
-    Instance blue_("testbuf::Sb::RGB::blue");
 
+    Instance sb_(testbuf);
+
+    sb_.loc(&sb);
+    
     sa.quantity(10);
 
+
+    Instance i(testbuf);
+    i.loc(&sa,1);
+
     didoo.quantity(2);
+    
+    PLOGW << "=====================";
 
     for (int i = 0; i < sa.quantity(); i++) 
         sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);
 
-    auto i = Instance(testbuf);
-    i.loc(&sa,1);
     i.set<float>(987);
 
-    blue_.set<float>(69);
+
+    // Instance(testbuf).each([]( Instance inst){PLOGW << inst.stl_name() << " " << inst.offset; });
 
     PLOGW << Instance(testbuf).get<float,41>();
 
