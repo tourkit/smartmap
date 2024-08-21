@@ -50,9 +50,7 @@ int main() {
     sb_blue_.loc("XYZ");
     sb_blue_.loc(2);
     
-
     sa.quantity(10);
-    
 
     for (int i = 0; i < sa.quantity(); i++) 
         sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);

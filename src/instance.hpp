@@ -85,7 +85,7 @@ struct Instance {
 
     void setDefault(Member* m = nullptr, int offset = 0);
 
-    void updateInstance();
+    void stlAdd(Member* m, int eq = 0);
 
     void each(std::function<void(Instance&)> f);
     

@@ -57,10 +57,12 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     }
 
-    void Instance::updateInstance() {
+    void Instance::stlAdd(Member* m, int eq) {
 
-        auto m = stl.back().m;
-        
+        //add to stl
+        stl.emplace_back(m,eq);
+
+        // update instance
         if (m->instances.find(this) == m->instances.end()) {
             
             if (stl.size()>1)
@@ -85,10 +87,8 @@ std::pair<std::string,int> nameQ(std::string name) {
                 offset += stl[i].m->footprint_all();
 
             offset+=stl[id].m->footprint()*eq;
-
-            stl.push_back({m->members[id],eq});
             
-            updateInstance();
+            stlAdd(m->members[id],eq);
 
             return *this;
 
@@ -111,8 +111,7 @@ std::pair<std::string,int> nameQ(std::string name) {
                 if (x == m) {
 
                     this->offset += offset+m->footprint()*eq;
-                    stl.push_back({x,eq});
-                    updateInstance();
+                    stlAdd(x,eq);
                     return *this;
 
                 }else 
@@ -149,7 +148,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
                     }
                 
-                    stl.push_back({x,name.second});
+                    stlAdd(x,name.second);
                     offset += x->footprint()*name.second;
                     names.erase(names.begin());
                     break;    
@@ -206,7 +205,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
             names.erase(names.begin());
 
-            stl.emplace_back(found,name.second);
+            stlAdd(found,name.second);
 
             curr = &stl.back();
 
@@ -222,7 +221,7 @@ std::pair<std::string,int> nameQ(std::string name) {
         stl.back().m->instances.erase(this); 
     }
 
-    Instance::Instance(Member& m) { stl.push_back({&m}); m.instances.insert(this); }
+    Instance::Instance(Member& m) { stlAdd(&m); }
 
     Instance::Instance(const Instance& other) 
         : stl(other.stl), offset(other.offset) { 
@@ -339,8 +338,7 @@ void Instance::each(std::function<void(Instance&)> cb) {
 
         Instance inst(*this);
 
-        inst.stl.push_back({m});
-        inst.updateInstance();
+        inst.stlAdd(m);
 
         inst.offset += offset;
 
