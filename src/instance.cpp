@@ -57,7 +57,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     }
 
-    void Instance::loc(int id, int eq) {
+    Instance& Instance::loc(int id, int eq) {
 
         if (stl.size() && id < stl.back().m->members.size()) {
 
@@ -68,15 +68,17 @@ std::pair<std::string,int> nameQ(std::string name) {
 
             stl.push_back({stl.back().m->members[id],eq});
 
-            return;
+            return *this;
 
         }
 
         PLOGE << id << " < " << stl.size();
+        
+        return *this;
 
     }
 
-    void Instance::loc(Member* m, int eq) {
+    Instance& Instance::loc(Member* m, int eq) {
 
         int offset = 0;
 
@@ -88,7 +90,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
                     this->offset += offset+m->footprint()*eq;
                     stl.push_back({x,eq});
-                    return;
+                    return *this;
 
                 }else 
                     offset += m->footprint_all();
@@ -96,13 +98,15 @@ std::pair<std::string,int> nameQ(std::string name) {
 
         PLOGE << "couldn't find " << m->name();
 
+        return *this;
+
     }
 
-    void Instance::loc(std::string stl_name) {
+    Instance& Instance::loc(std::string stl_name) {
 
         auto names = split(stl_name);
         
-        if (!names.size()) return;
+        if (!names.size()) return *this;
 
         // if no stl find first in structs
         if (!stl.size()) {
@@ -116,7 +120,7 @@ std::pair<std::string,int> nameQ(std::string name) {
                     if (name.second > x->quantity()){
 
                         PLOGE << name.second << " > " << x->quantity();
-                        return;
+                        return *this;
 
                     }
                 
@@ -131,7 +135,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
             if (!stl.size()) {
                 PLOGE << " no " << name.first << " in structs";
-                return;
+                return *this;
             }
         
         }
@@ -152,7 +156,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
                     if (name.second < m->quantity()) {
 
-                        if (names.size() >1 ) 
+                        if (names.size() >1 || name.second ) 
                             offset += m->footprint() * name.second;
                         
                         else curr->eq = name.second;
@@ -183,6 +187,8 @@ std::pair<std::string,int> nameQ(std::string name) {
 
         }
 
+        return *this;
+
     }
 
     Instance::Instance(std::string stl_name) { loc(stl_name); }
@@ -202,7 +208,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
         char* ptr = stl.front().m->data();
 
-        return ptr ? ptr + offset : ptr;
+        return ptr ? ptr + offset : nullptr;
 
     }
 
@@ -254,9 +260,10 @@ std::pair<std::string,int> nameQ(std::string name) {
                 auto x = stl[i].m;
 
                 if (x->quantity()>1) 
-                    for (int todo = 0 ; todo < x->quantity(); todo++) 
+                    for (int todo = 0 ; todo < x->quantity(); todo++) {
                         memcpy(data()+(offset+x->size()*todo), m->def(), m->size());
-
+                        // PLOGD << *(float*)m->def();
+                    }
 
             }
 
@@ -287,9 +294,34 @@ Instance& Instance::track() {
 
 }
 
-void Instance::each(std::function<void(Instance&)> cb,int offset) { 
+int Instance::eq() {
+    return stl.size()?stl.back().eq:0;
+}
+Instance& Instance::eq(int id) {
+
+    auto &mq = stl.back();
+
+    if (id >= mq.m->quantity()) {
+
+        PLOGE << id << " > " << mq.m->quantity() << ")" ;
+    
+        return *this;
+    
+    }
+
+    offset += mq.m->footprint()*(id-mq.eq);
+
+    mq.eq = id;
+    
+    return *this;
+
+}
+
+void Instance::each(std::function<void(Instance&)> cb) { 
 
     auto x = stl.back().m;
+
+    int offset= 0;
 
     for (auto m : x->members) {
 

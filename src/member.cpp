@@ -7,6 +7,7 @@
 #include "buffer.hpp"
 #include "utils.hpp"
 #include <cstdint>
+#include <cstring>
 #include <unordered_set>
 #include <typeindex>
 #include <cstdint>
@@ -127,12 +128,8 @@ void Member::update() {
     //// BUFFER PART
 
     if (!buffering()) return;
-    
-    PLOGD << "buggerfing " ;
-    
-    if (buffering()) return;
 
-    if (buffer_v.size() > MAX_SIZE) { PLOGE << "buffer_v.size() > MAX_SIZE"; }
+    if (footprint_all() > MAX_SIZE) { PLOGE << footprint_all() << " > MAX_SIZE"; }
 
     buffer_v.resize(footprint_all());
 
@@ -258,7 +255,7 @@ void Member::add(Member* m) {
     auto tops = getTop();
 
     for (auto x : tops)  
-        pre_change();
+        x->pre_change();
 
     members.push_back(m);
 
@@ -267,39 +264,41 @@ void Member::add(Member* m) {
     update();
 
     for (auto x : tops)  
-        post_change({{m}});
+        x->post_change({{m}});
 
 }
 
 Member& Member::range(float from, float to, float def) {
 
-    auto m = members.back();
+    auto m = this;
+    if (members.size()) 
+        m = members.back();
 
     for (int i = 0; i < quantity_v; i++) {
 
         if (m->type().id == typeid(float)) {
 
-            *(m->from()+sizeof(m->type_v)*i) = from;
-            *(m->to()+sizeof(m->type_v)*i) = to;
-            *(m->def()+sizeof(m->type_v)*i) = def;
+            (float&)*m->from() = from;
+            (float&)*m->to() = to;
+            (float&)*m->def() = def;
 
         }else if (m->type().id == typeid(uint32_t)) {
 
-            *(m->from()+sizeof(m->type_v)*i) = (uint32_t) from;
-            *(m->to()+sizeof(m->type_v)*i) = (uint32_t) to;
-            *(m->def()+sizeof(m->type_v)*i) = (uint32_t) def;
+            (uint32_t&)*m->from() =  from;
+            (uint32_t&)*m->to() =  to;
+            (uint32_t&)*m->def() =  def;
 
         }else if (m->type().id == typeid(int)) {
 
-            *(m->from()+sizeof(m->type_v)*i) = (int) from;
-            *(m->to()+sizeof(m->type_v)*i) = (int) to;
-            *(m->def()+sizeof(m->type_v)*i) = (int) def;
+            (int&)*m->from() =  from;
+            (int&)*m->to() =  to;
+            (int&)*m->def() =  def;
 
         }else if (m->type().id == typeid(char)) {
 
-            *(m->from()+sizeof(m->type_v)*i) = (char) from;
-            *(m->to()+sizeof(m->type_v)*i) = (char) to;
-            *(m->def()+sizeof(m->type_v)*i) = (char) def;
+            (char&)*m->from() =  from;
+            (char&)*m->to() =  to;
+            (char&)*m->def() =  def;
 
         }
 
@@ -333,7 +332,7 @@ bool Member::remove(Member& m) {
     auto tops = getTop();
 
     for (auto x : tops)  
-        pre_change();
+        x->pre_change();
 
     removeHard(m);
 
@@ -357,7 +356,7 @@ bool Member::remove(Member& m) {
     update();
 
     for (auto x : tops)  
-        post_change();
+        x->post_change();
 
     removing.erase(&m);
 
@@ -425,7 +424,13 @@ void Member::pre_change() {
 
 }
 
-char* Member::data() { if (is_buffer) return buffer_v.data(); return nullptr; }
+char* Member::data() { 
+    if (is_buffer) {
+        char* ptr = &buffer_v[0];  
+        return ptr;
+    }
+    return nullptr; 
+}
 
 bool Member::buffering() { return is_buffer; }
 
@@ -437,7 +442,7 @@ void Member::buffering(bool value) {
 
         buffer_v.reserve(MAX_SIZE);
 
-        memset(buffer_v.data(),0,buffer_v.size());
+        memset(buffer_v.data(),0,MAX_SIZE);
 
 
     }else{
@@ -446,17 +451,17 @@ void Member::buffering(bool value) {
 
     }
 
+    update();
+
 }
 
 void Member::post_change(std::vector<NewMember> addeds) {
-
-    // go thou kids
-    //  reset offsets
 
     Instance(*this).each([&](Instance& inst) {
 
         auto &mq = inst.stl.back();
 
+        // instances update offset
         for (auto &x : mq.m->instances) {
 
             if (x.get()->stl.size() == inst.stl.size() && x.get()->stl.front().m == this) {
@@ -476,6 +481,18 @@ void Member::post_change(std::vector<NewMember> addeds) {
             }
 
         }
+
+        for (auto added : addeds) 
+            if (added.m == mq.m){
+                for (int i = 0; i < added.q; i++)  {
+
+                    inst.eq(added.eq+i);
+                    inst.setDefault();
+
+                }
+
+
+            }
 
     });
 
@@ -641,27 +658,33 @@ void Member::type(Type value) {
     DEBUG_TYPE = value.name();
 #endif
 
-    if (isData()) 
-        size_v = value.size();
+    if (!isData()) {
+        
+        size_v = 0;
 
-    else size_v = 0;
+        return;
+    
+    }
+
+    size_v = value.size();
 
     rangedef.resize(size_v*3);
 
-    if (!isData()) return;
-    
     memset(rangedef.data(),0,rangedef.size());
 
-    if (value.id == typeid(float))   *(float*)to() = 1.0f;
+    float to = 1;
 
-    else if (value.id == typeid(uint32_t))   *(uint32_t*)to() = 65535;
+    if (value.id == typeid(uint32_t)) to = 65535;
 
-    else if (value.id == typeid(uint8_t))   *(uint32_t*)to() = 255;
+    else if (value.id == typeid(uint8_t)) to = 255;
 
-    else if (value.id == typeid(char))   *(char*)to() = -1;
+    else if (value.id == typeid(char)) to = -1;
+    
+    range(0,to,0);
+
 
 }
 
-char* Member::from() { return rangedef.data(); }
-char* Member::to() { return rangedef.data()+(size_v*quantity_v); }
-char* Member::def() { return rangedef.data()+(size_v*quantity_v)*2; }
+char* Member::from() { return rangedef.size()?rangedef.data():nullptr; }
+char* Member::to() { return rangedef.size()?rangedef.data()+(size_v*quantity_v):nullptr; }
+char* Member::def() { return rangedef.size()?rangedef.data()+(size_v*quantity_v)*2:nullptr; }

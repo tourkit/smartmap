@@ -38,11 +38,15 @@ struct Instance {
 
     std::string stl_name();
 
-    void loc(int id, int eq = 0) ;
+    Instance& loc(int id, int eq = 0) ;
 
-    void loc(Member* m, int eq = 0);
+    Instance& loc(Member* m, int eq = 0);
 
-    void loc(std::string stl_name);
+    Instance& loc(std::string stl_name);
+
+    Instance& eq(int id);
+    
+    int eq();
 
     Instance(std::string stl_name);
 
@@ -62,13 +66,32 @@ struct Instance {
     template <typename T, int U>
     std::array<T,U> get() { return get<std::array<T,U>>(); }
 
+
+    template <typename T>
+    void set(T val) { set<T>(&val); }
+
+    template <typename T, int U>
+    void set(std::array<T,U> val) { set<std::array<T,U>>(&val); }
+
+    template <typename T, int U, typename... Args>
+    void set(Args&&... args) { set<std::array<T,U>>({std::forward<Args>(args)...}); }
+
+    template <typename T>
+    void set(void* val) { set(val, sizeof(T)); }
+
     void set(void* ptr, size_t size);
 
     void calcOffset();
 
-    void setDefault(Member* m, int offset);
+    void setDefault(Member* m = nullptr, int offset = 0);
 
-    void each(std::function<void(Instance&)> f, int offset = 0);
+    void each(std::function<void(Instance&)> f);
+    
+    Instance& operator[](int id)  { return loc(id); }
+
+    Instance& operator[](Member* m) { return loc(m); }
+
+    Instance& operator[](std::string stl_name) { return loc(stl_name); }
 
 };
 

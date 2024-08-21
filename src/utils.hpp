@@ -90,6 +90,18 @@ struct Type {
     std::string name() { return id.pretty_name(); }
 
     int size() { return sizes[id]; }
+
+    static Type find(std::string name) { 
+
+        for (auto x : sizes) 
+            if (x.first.pretty_name() == name) 
+                return {x.first};
+
+        PLOGE << "nofind";
+        
+        return Type();
+    
+    }
     
 };
 
