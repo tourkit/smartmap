@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <set>
-#include <functional>
 #include <string>
 #include <vector>
 #include "utils.hpp"
@@ -17,7 +16,7 @@ struct Member {
 
     Member(std::string name, int quantity);
 
-    Member(std::string name, TypeIndex type);
+    Member(std::string name, Type type);
 
     Member(const Member& other) ;
 
@@ -29,16 +28,16 @@ struct Member {
 
     std::string name();
 
-    TypeIndex type();
+    Type type();
 
     std::string type_name() ;
 
     void add(Member* m);
 
     template <typename T>
-    Member& add(std::string name) { 
-        
-        auto n = new Member(name, typeid(T)); 
+    Member& add(std::string name) {       
+
+        auto n = new Member(name, TYPE<T>()); 
         
         add(n); 
         
@@ -81,10 +80,6 @@ struct Member {
     struct NewMember{Member* m; int eq = 0, q = 1; };
     virtual void post_change(std::vector<NewMember> added = {});
 
-    bool each(std::function<bool(Member*)> cb) ;
-
-    bool each(std::function<bool(Member*,int)> cb, int offset = 0);
-
     virtual Member* copy();
 
     bool isData();
@@ -114,9 +109,9 @@ struct Member {
     //// DATA TRUCS
     
     template <typename T>
-    void type() { type(typeid(T)); }
+    void type() { type(TYPE<T>()); }
 
-    void type(TypeIndex type);
+    void type(Type type);
 
     char* from();
     char* to();
@@ -155,9 +150,11 @@ protected:
 
     std::vector<char> rangedef; 
 
-    TypeIndex type_v = typeid(Member);
+    Type type_v = TYPE<Member>();
 
     static inline std::set<Member*> removing;
+    static inline std::set<Member*> removing_;
+    static inline std::set<Member*> adding; // shd be insts ?
 
     static inline int MAX_SIZE = 10000;
 

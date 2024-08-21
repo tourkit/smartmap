@@ -34,6 +34,8 @@ struct Instance {
 
     uint32_t offset = 0;
 
+    std::vector<char> buffer_v;
+
     std::string stl_name();
 
     void loc(int id, int eq = 0) ;
@@ -65,6 +67,8 @@ struct Instance {
     void calcOffset();
 
     void setDefault(Member* m, int offset);
+
+    void each(std::function<void(Instance&)> f, int offset = 0);
 
 };
 

@@ -19,8 +19,6 @@ Member::~Member() {
     if (!is_copy) 
         {PLOGV << "~" << name()/* << " ( &" + ss.str() + " )"*/;}
 
-    removing.insert(this);
-
     // remove from other structs
     for (auto s : structs) 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) 
@@ -35,8 +33,6 @@ Member::~Member() {
         if (x->isData() )
             delete x;
 
-
-    removing.erase(this);
     
 }
 
@@ -52,7 +48,7 @@ Member::Member(std::string name) {
 
 }
 
-Member::Member(std::string name, TypeIndex type) {
+Member::Member(std::string name, Type type) {
 
     this->name(name);
     this->type(type);
@@ -114,31 +110,8 @@ std::set<Member*> Member::getTop(bool z) {
 
 }
 
-bool Member::each(std::function<bool(Member*,int)> cb, int offset) {
-
-    for (auto m : members) {
-
-        if (!m->each(cb, offset)) return false;
-
-        if (!cb(m,offset)) return false;
-
-        offset+=m->footprint_all();
-        
-    }
-
-    return true;
-
-}
-
-bool Member::each(std::function<bool(Member*)> cb) {
-
-    return each([cb](Member* m, int offset) { return cb(m); }, 0);
-
-}
 
 void Member::update() { 
-
-    PLOGV << name();
 
     for (auto a : structs) 
         for (auto &m : a->members) 
@@ -149,20 +122,21 @@ void Member::update() {
 
     for (auto &m : members) size_v += m->footprint_all();
 
+    PLOGV << name() << "[" << footprint_all() << "]";
+
     //// BUFFER PART
 
     if (!buffering()) return;
+    
+    PLOGD << "buggerfing " ;
+    
+    if (buffering()) return;
 
     if (buffer_v.size() > MAX_SIZE) { PLOGE << "buffer_v.size() > MAX_SIZE"; }
 
     buffer_v.resize(footprint_all());
 
     memset( buffer_v.data(), 0, buffer_v.size() );
-
-    for (auto s : structs) 
-        for (auto &inst : s->instances) 
-            if (inst->stl.size() && inst->stl.front().m == this)
-                inst->calcOffset();
 
  }
 
@@ -227,10 +201,12 @@ Member* Member::quantity(uint32_t quantity_v) {
 
     PLOGV << name() << " = " << quantity_v;
 
+    std::set<Member *> totops;
+
     auto tops = getTop();
 
     for (auto x : tops)  
-        pre_change();
+        x->pre_change();
 
     auto old = this->quantity_v;
 
@@ -239,7 +215,7 @@ Member* Member::quantity(uint32_t quantity_v) {
     update();
 
     for (auto x : tops)  
-        post_change({{this, old, (int)quantity_v-old}});
+        x->post_change({{this, old, (int)quantity_v-old}});
 
     return this;
 
@@ -253,7 +229,7 @@ void Member::upload() {
 
 void Member::add(Member* m) {
 
-    PLOGV << name() << " add " << m->name();
+    PLOGV << name() << "[" << footprint_all() << "] add " << m->name() << "[" << m->footprint_all() << "]";
 
     while (true) {
 
@@ -301,25 +277,25 @@ Member& Member::range(float from, float to, float def) {
 
     for (int i = 0; i < quantity_v; i++) {
 
-        if (m->type() == typeid(float)) {
+        if (m->type().id == typeid(float)) {
 
             *(m->from()+sizeof(m->type_v)*i) = from;
             *(m->to()+sizeof(m->type_v)*i) = to;
             *(m->def()+sizeof(m->type_v)*i) = def;
 
-        }else if (m->type() == typeid(uint32_t)) {
+        }else if (m->type().id == typeid(uint32_t)) {
 
             *(m->from()+sizeof(m->type_v)*i) = (uint32_t) from;
             *(m->to()+sizeof(m->type_v)*i) = (uint32_t) to;
             *(m->def()+sizeof(m->type_v)*i) = (uint32_t) def;
 
-        }else if (m->type() == typeid(int)) {
+        }else if (m->type().id == typeid(int)) {
 
             *(m->from()+sizeof(m->type_v)*i) = (int) from;
             *(m->to()+sizeof(m->type_v)*i) = (int) to;
             *(m->def()+sizeof(m->type_v)*i) = (int) def;
 
-        }else if (m->type() == typeid(char)) {
+        }else if (m->type().id == typeid(char)) {
 
             *(m->from()+sizeof(m->type_v)*i) = (char) from;
             *(m->to()+sizeof(m->type_v)*i) = (char) to;
@@ -352,7 +328,7 @@ bool Member::remove(Member& m) {
 
     removing.insert(&m);
 
-    PLOGV << name() << " remove " << m.name();
+    PLOGV << name() << "[" << footprint_all() << "] remove " << m.name() << "[" << m.footprint_all() << "]";
 
     auto tops = getTop();
 
@@ -362,7 +338,7 @@ bool Member::remove(Member& m) {
     removeHard(m);
 
     // INSTANCEMGMT
-    // std::vector<Instance*> delete_list;
+    // remove corresponding isnt in M
 
     // for (auto it = m.instances.begin(); it != m.instances.end();){
     
@@ -400,15 +376,15 @@ void Member::striding(bool is_striding){ this->striding_v = is_striding; update(
 
 bool Member::striding() { return ref()?ref()->striding_v:striding_v; }
 
-TypeIndex Member::type() { if (isData()) { for (auto x : members) return x->type(); } return typeid( *this ); }
+Type Member::type() { if (isData()) { for (auto x : members) return x->type(); } return type_v; }
 
 std::string Member::type_name() {
 
-    if (type() == typeid(Struct)) return camel(name());
+    if (type().id == typeid(Struct)) return camel(name());
 
     if (ref()) return ref()->type_name();
 
-    if (type() == typeid(float)) {
+    if (type().id == typeid(float)) {
         
         if (quantity_v == 1) return "float";
         else if (quantity_v == 2) return "vec2";
@@ -417,11 +393,11 @@ std::string Member::type_name() {
         
     }
 
-    if (type() == typeid(int)) return "int";
+    if (type().id == typeid(int)) return "int";
 
-    if (type() == typeid(uint32_t)) return "uint";
+    if (type().id == typeid(uint32_t)) return "uint";
 
-    if (type() == typeid(char)) return "char";
+    if (type().id == typeid(char)) return "char";
 
     std::string type_ = type().name();
 
@@ -433,7 +409,7 @@ std::string Member::type_name() {
 
 Member* Member::copy() { return new Member(*this); }
 
-bool Member::isData() { return type_v != typeid(Member); }
+bool Member::isData() { return type_v.id != typeid(Member); }
 
 bool Member::isBuff() { return is_buffer; }
 
@@ -473,6 +449,35 @@ void Member::buffering(bool value) {
 }
 
 void Member::post_change(std::vector<NewMember> addeds) {
+
+    // go thou kids
+    //  reset offsets
+
+    Instance(*this).each([&](Instance& inst) {
+
+        auto &mq = inst.stl.back();
+
+        for (auto &x : mq.m->instances) {
+
+            if (x.get()->stl.size() == inst.stl.size() && x.get()->stl.front().m == this) {
+
+                bool diff = false;
+                for (int i = 1; i < inst.stl.size(); i++) 
+                    if (inst.stl[i].m != x.get()->stl[i].m) {
+
+                        diff = true;
+                        break;
+
+                    }
+
+                if (!diff) 
+                    x.get()->offset = inst.offset+mq.m->footprint()*mq.eq; 
+
+            }
+
+        }
+
+    });
 
     for (auto added : addeds) {
 
@@ -580,7 +585,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
                     !strcmp(src_member_->name().c_str(), this_member_->name().c_str())
 
-                    //&& src_member_->type() == this_member_->type() // dont think thats relevent, fuxks
+                    //&& src_member_->type().id == this_member_->type() // dont think thats relevent, fuxks
 
                 ) { found = this_member_; break; }
 
@@ -629,14 +634,15 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
 /////////// DATA
 
-void Member::type(TypeIndex value) {
+void Member::type(Type value) {
 
     type_v = value;
 #ifdef ROCH
-    DEBUG_TYPE = type_v.pretty_name();
+    DEBUG_TYPE = value.name();
 #endif
 
-    if (isData()) size_v = sizeof(value);
+    if (isData()) 
+        size_v = value.size();
 
     else size_v = 0;
 
@@ -646,13 +652,13 @@ void Member::type(TypeIndex value) {
     
     memset(rangedef.data(),0,rangedef.size());
 
-    if (value == typeid(float))   *(float*)to() = 1.0f;
+    if (value.id == typeid(float))   *(float*)to() = 1.0f;
 
-    else if (value == typeid(uint32_t))   *(uint32_t*)to() = 65535;
+    else if (value.id == typeid(uint32_t))   *(uint32_t*)to() = 65535;
 
-    else if (value == typeid(uint8_t))   *(uint32_t*)to() = 255;
+    else if (value.id == typeid(uint8_t))   *(uint32_t*)to() = 255;
 
-    else if (value == typeid(char))   *(char*)to() = -1;
+    else if (value.id == typeid(char))   *(char*)to() = -1;
 
 }
 

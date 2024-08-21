@@ -286,3 +286,25 @@ Instance& Instance::track() {
     return *m->instances.back().get();
 
 }
+
+void Instance::each(std::function<void(Instance&)> cb,int offset) { 
+
+    auto x = stl.back().m;
+
+    for (auto m : x->members) {
+
+        Instance inst(*this);
+
+        inst.stl.push_back({m});
+
+        inst.offset += offset;
+
+        inst.each(cb);
+
+        cb(inst);
+
+        offset += m->footprint_all();
+
+    }
+
+}

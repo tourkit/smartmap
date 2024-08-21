@@ -9,6 +9,7 @@
 #include "src/member.hpp"
 #include "src/instance.hpp"
 #include "src/log.hpp"
+#include <cstdint>
 
 
 
@@ -18,21 +19,26 @@ int main() {
 
     logger.cout(Sev::verbose);
 
-    Member testbuf("testbuf");
-    testbuf.buffering(true);
 
     Member rgb("RGB");
 
-    rgb.add<float>("red").range(0,1,1).add<float>("green").range(0,1,2).add<float>("blue").range(0,1,3);
+    rgb.add<float>("red");
+    
+    rgb.range(0,1,1).add<float>("green").range(0,1,2).add<float>("blue").range(0,1,3);
 
     Member didoo("didoo");
     didoo.add<float>("didi").add<float>("dodo").striding(true);
     
+    PLOGD << "-->" << didoo.footprint();
+
     Member sa("Sa");
     sa.add(&rgb);
 
     Member sb("Sb");
     sb.add(&rgb);
+    
+    Member testbuf("testbuf");
+    testbuf.buffering(true);
 
     testbuf.add(&didoo);
 
@@ -40,28 +46,39 @@ int main() {
     
     testbuf.add(&sb);
 
-    auto sb_ = Instance("testbuf::Sb::RGB::green").track();
+    auto sb_ = Instance("testbuf::Sb::RGB::blue").track();
 
-    PLOGD << sb_.offset;
-
-    sa.quantity(10);
-
-    PLOGD << sb_.offset;
 
     Instance testbuf_("testbuf::Sa[1]::RGB::red");
     
-    testbuf_.track();
+    // testbuf_.track();
 
     Instance testbuf_2(testbuf);
     testbuf_2.loc(&sa,1);
     testbuf_2.loc("RGB");
     testbuf_2.loc(0);
 
+    // for (auto x : rgb.getTop())  PLOGD << x->name();
     PLOGD << testbuf_.stl.back().m->name() << " " << testbuf_.offset;
     PLOGD << testbuf_2.stl.back().m->name() << " " << testbuf_.offset;;
-
     
+    
+    PLOGD << "-------------";
 
+
+    PLOGD << sb_.offset;
+
+    sa.quantity(10);
+
+    PLOGD << sb_.offset;
+    
+    PLOGD << "-------------";
+    
+    Instance(testbuf).each([&](Instance& inst) {
+
+        PLOGD << inst.stl_name() << "[" << inst.stl.back().m->footprint_all()<< "]" << " " << inst.offset;
+
+    });
 
     // auto &sa_ = testbuf.add(&sa).track();
     

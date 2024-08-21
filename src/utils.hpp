@@ -79,4 +79,20 @@ static std::string camel(std::string str) { str[0] = std::toupper(str[0]); retur
 static std::string lower(std::string str) { str[0] = std::tolower(str[0]); return str; }
 
 #include <boost/type_index.hpp>
+#include <map>
 using TypeIndex = boost::typeindex::type_index;
+struct Type { 
+    
+    static inline std::map<TypeIndex, int> sizes;
+
+    TypeIndex id; 
+
+    std::string name() { return id.pretty_name(); }
+
+    int size() { return sizes[id]; }
+    
+};
+
+template <typename T>
+struct TYPE : Type { TYPE() { id = typeid(T); sizes[id] = {sizeof(T)}; } };
+
