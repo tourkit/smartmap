@@ -58,7 +58,7 @@ struct Instance {
     
     int size();
     
-    void print();
+    void print(bool label = false);
 
     char* data();
 

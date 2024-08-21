@@ -75,7 +75,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     }
     
-    void Instance::print() {
+    void Instance::print(bool label) {
 
         std::string out;
 
@@ -104,13 +104,18 @@ std::pair<std::string,int> nameQ(std::string name) {
                 
                 }
 
-                out += num + " , ";
+                if (label) out += inst.stl_name() + ": ";
+                out += num + (label?"\n":", ");
                 
             }
 
         });
 
-        PLOGW << (out.length()?"[ "+out.substr(0,out.length()-2)+" ]":"");
+        if (out.length()) out = out.substr(0,out.length()-(label?1:2));
+
+        if (!label) out = "[ "+out+" ]";
+
+        PLOGW << out;
 
     }
 

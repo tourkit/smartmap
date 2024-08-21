@@ -17,8 +17,6 @@ Member::~Member() {
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
 
-    if (!is_copy) 
-        {PLOGV << "~" << name()/* << " ( &" + ss.str() + " )"*/;}
 
     // remove from other structs
     for (auto s : structs) 
@@ -34,6 +32,8 @@ Member::~Member() {
         if (x->isData() )
             delete x;
 
+    if (!is_copy) 
+        {PLOGV << "~" << name()/* << " ( &" + ss.str() + " )"*/;}
     
 }
 

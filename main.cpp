@@ -54,10 +54,12 @@ int main() {
     
     // sa.quantity(10); // nogood
     
-    Instance(testbuf).print();
+    Instance(testbuf).print(true);
 
+    logger.cout(Sev::verbose);
     delete &didoo;
 
+    logger.cout(Sev::warning);
     // for (int i = 0; i < sa.quantity(); i++) 
     //     sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);
 
