@@ -19,57 +19,56 @@ int main() {
     testbuf.buffering(true);
 
     Member rgb("RGB");
-
     rgb.add<float>("red").range(0,1,1).add<float>("green").range(0,1,2).add<float>("blue").range(0,1,3);
+    Member xyz("XYZ");
+    xyz.add<float>("x").range(0,1,6).add<float>("y").range(0,1,5).add<float>("z").range(0,1,4);
 
     Member didoo("didoo");
-    didoo.add<float>("didi").range(6,666,66).add<float>("dodo").range(9,999,99).striding(true);
+    didoo.add<float>("didi").range(2,222,22).add<float>("dodo").range(8,888,88).striding(true);
 
     Member sa("Sa");
     sa.add(&rgb);
 
     Member sb("Sb");
-    sb.add(&rgb);
+    sb.add(&xyz);
     
     testbuf.add(&didoo);
 
+    Instance didoo_(testbuf);
+    didoo_.loc(&didoo);
+
     testbuf.add(&sa);
 
-    auto sa_ = Instance(testbuf);
+    auto sa_ = Instance(testbuf)[&sa];
 
-    sa_.loc(&sa);
-    
-    didoo.quantity(2);
+    // auto sa1_green_ = Instance("testbuf::Sa[1]::RGB::green");
     
     testbuf.add(&sb);
 
-    Instance sb_(testbuf);
-
-    sb_.loc(&sb);
+    Instance sb_blue_(testbuf);
+    sb_blue_.loc(&sb);
+    sb_blue_.loc("XYZ");
+    sb_blue_.loc(2);
     
+
     sa.quantity(10);
+    
+
+    for (int i = 0; i < sa.quantity(); i++) 
+        sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);
 
 
     Instance i(testbuf);
     i.loc(&sa,1);
 
+    i.set<float>(69);
+
     didoo.quantity(2);
-    
-    PLOGW << "=====================";
 
-    for (int i = 0; i < sa.quantity(); i++) 
-        sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);
+    sb_blue_.set<float>(987);
 
-    i.set<float>(987);
-
-
-    // Instance(testbuf).each([]( Instance inst){PLOGW << inst.stl_name() << " " << inst.offset; });
 
     PLOGW << Instance(testbuf).get<float,41>();
-
-    logger.cout(Sev::verbose);
-
-    logger.cout(Sev::error);
 
 }
 

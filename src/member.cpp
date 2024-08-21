@@ -205,6 +205,8 @@ uint32_t Member::stride() { return (footprint()-size()); }
 
 Member* Member::quantity(uint32_t quantity_v) {
 
+    if (quantity_v == this->quantity_v) return this;
+
     PLOGV << name() << " = " << quantity_v;
 
     std::set<Member *> totops;
@@ -308,6 +310,12 @@ Member& Member::range(float from, float to, float def) {
             (char&)*m->to() =  to;
             (char&)*m->def() =  def;
 
+        }else if (m->type().id == typeid(uint8_t)) {
+
+            (uint8_t&)*m->from() =  from;
+            (uint8_t&)*m->to() =  to;
+            (uint8_t&)*m->def() =  def;
+            
         }
 
     }

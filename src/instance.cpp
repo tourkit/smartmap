@@ -293,8 +293,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
                 if (x->quantity()>1) 
                     for (int todo = 0 ; todo < x->quantity(); todo++) {
-                        memcpy(data()+(offset+x->size()*todo), m->def(), m->size());
-                        // PLOGD << *(float*)m->def();
+                        memcpy(data()+(offset+x->footprint()*todo), m->def(), m->size());
                     }
 
             }
