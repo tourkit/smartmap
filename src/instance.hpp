@@ -57,6 +57,8 @@ struct Instance {
     ~Instance();
     
     int size();
+    
+    void print();
 
     char* data();
 

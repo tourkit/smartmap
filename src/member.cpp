@@ -315,7 +315,7 @@ Member& Member::range(float from, float to, float def) {
             (uint8_t&)*m->from() =  from;
             (uint8_t&)*m->to() =  to;
             (uint8_t&)*m->def() =  def;
-            
+
         }
 
     }
@@ -351,23 +351,6 @@ bool Member::remove(Member& m) {
         x->pre_change();
 
     removeHard(m);
-
-    // INSTANCEMGMT
-    // remove corresponding isnt in M
-
-    // for (auto it = m.instances.begin(); it != m.instances.end();){
-    
-    //     Member* owner;
-    //     if (it->get()->stl.size()>1) 
-    //         owner = it->get()->stl.back()-1;
-    //     else 
-    //         owner = it->get()->buff;
-    
-    //     if (owner == this) 
-    //         it = m.instances.erase(it);
-    //     else 
-    //         it++;
-    // }
 
     update();
 
@@ -511,33 +494,6 @@ void Member::post_change(std::vector<NewMember> addeds) {
             }
 
     });
-
-    for (auto added : addeds) {
-
-        // INSTANCEMGMT
-        // Instance(this).each([&](Instance& inst) {
-
-        //     bool found = false;
-        //     if (inst.def() == added.m) 
-        //         found = true;   
-        //     else  
-        //         if (inst.def()->ref()) 
-        //             for (auto x : inst.stl) {
-        //                 for (auto y : addeds) 
-        //                     if ( x == y.m ) { 
-        //                         found = true; 
-        //                         break; 
-        //                     }
-                        
-        //                 if (found) break;
-        //             }    
-
-        //     if (found) 
-        //         inst.setDefault(); 
-
-        // });
-
-    }
     
     if (!bkp) return;
 
@@ -618,8 +574,6 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
                     !strcmp(src_member_->name().c_str(), this_member_->name().c_str())
 
-                    //&& src_member_->type().id == this_member_->type() // dont think thats relevent, fuxks
-
                 ) { found = this_member_; break; }
 
                 else this_offset_ += this_member_->footprint_all();
@@ -631,7 +585,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
                 src_offset_ += src_member_->footprint();
 
-// #ifdef ROCH
+#ifdef ROCH
                if (![src_member_](){ // COULD BE DEBUG MODE ONLY
 
                     for (auto x : removing) if (!strcmp(x->name().c_str(),src_member_->name().c_str())) return true;
@@ -641,7 +595,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
                 }())
 
                     PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer.name();
-// #endif
+#endif
                 continue;
             }
 

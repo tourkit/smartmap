@@ -74,6 +74,45 @@ std::pair<std::string,int> nameQ(std::string name) {
         }
 
     }
+    
+    void Instance::print() {
+
+        std::string out;
+
+        each([&](Instance& inst){
+
+            Type type = inst.stl.back().m->type();
+
+            if (type.id == typeid(float))  {
+
+                std::string num = std::to_string(*(float*)inst.data());
+
+                int cut = 0;
+                if (num.length()) {
+                    
+                    while (num[num.size()-1-cut] == '0') {
+                        cut++;
+                        if (num[num.size()-2-cut] == '.'){
+
+                            cut+=2;
+                            break;
+                        }
+                    
+                    }
+                
+                    num = num.substr(0,num.length()-cut);
+                
+                }
+
+                out += num + " , ";
+                
+            }
+
+        });
+
+        PLOGW << (out.length()?"[ "+out.substr(0,out.length()-2)+" ]":"");
+
+    }
 
     Instance& Instance::loc(int id, int eq) {
 
