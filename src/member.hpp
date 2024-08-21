@@ -90,9 +90,6 @@ struct Member {
     bool ref(Member*);
 
     // INSTANCEMGMT
-    std::vector<std::shared_ptr<Instance>> instances;
-
-    bool is_copy = false;
 
     // void 
 
@@ -169,6 +166,10 @@ private:
 
 public:
 
+    std::vector<std::shared_ptr<Instance>> instances;
+
+    bool is_copy = false;
+    
     std::vector<Member*> members;
 
 };

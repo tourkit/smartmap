@@ -93,7 +93,7 @@ std::pair<std::string,int> nameQ(std::string name) {
                     return *this;
 
                 }else 
-                    offset += m->footprint_all();
+                    offset += x->footprint_all();
             }
 
         PLOGE << "couldn't find " << m->name();

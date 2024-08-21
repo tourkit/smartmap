@@ -65,6 +65,7 @@ Member::Member(const Member& other)
     members(other.members) ,
     ref_v(other.ref_v),
     type_v(other.type_v), 
+    size_v(other.size_v), 
     rangedef(other.rangedef) ,
     buffer_v(other.buffer_v),
     is_copy(true)
@@ -95,9 +96,15 @@ std::set<Member*> Member::getTop(bool z) {
 
     std::set<Member*> owners, out;
 
-    for (auto x : structs) if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end()) owners.insert( x );
+    for (auto x : structs) 
+        if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end())
+            owners.insert( x );
 
-    if (!owners.size()) { if (!z) return {}; return {this}; }
+    if (!owners.size()) { 
+        if (!z) 
+            return {}; 
+        return {this}; 
+    }
 
     for (auto owner : owners) {
 
@@ -106,6 +113,8 @@ std::set<Member*> Member::getTop(bool z) {
         out.insert(top.begin(), top.end());
 
     }
+
+    if (!out.size()) return {this};
 
     return out;
 
@@ -232,13 +241,13 @@ void Member::add(Member* m) {
 
         bool found = false;
 
-        for (auto x : members) {
+        for (auto x : members) 
 
             if (!strcmp( x->name().c_str(), m->name().c_str() )) {
 
                 found = true;
 
-                 PLOGW << m->name() << " already exist !";
+                PLOGW << m->name() << " already exist !";
 
                 m->name( next_name(m->name()) );
 
@@ -246,13 +255,12 @@ void Member::add(Member* m) {
 
             }
 
-        }
-
         if (!found) break;
 
     }
 
     auto tops = getTop();
+    if (is_buffer) tops.insert(this);
 
     for (auto x : tops)  
         x->pre_change();
@@ -592,7 +600,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
             Member* found = nullptr;
 
-            auto thiseq = this_member->eq(i);
+            uint32_t thiseq = this_member->eq(i);
 
             int this_offset_ = this_offset + thiseq;
 
@@ -633,7 +641,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
             if (found->isData()) {
 
-                // PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer.data[src_offset_] << " -> " << *(float*)&data[this_offset_];
+                PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer.buffer_v[src_offset_] << " -> " << *(float*)&buffer_v[this_offset_];
 
                 memcpy(&buffer_v[this_offset_], &src_buffer.buffer_v[src_offset_],found->size());
 
