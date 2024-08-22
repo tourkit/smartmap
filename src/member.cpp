@@ -21,7 +21,7 @@ Member::~Member() {
     // remove from other structs
     for (auto s : structs) 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) 
-            s->remove(*this);
+            s->removeHard(*this);
     
     // remove from Member::structs
     if (!isData()) 
@@ -62,8 +62,7 @@ Member::Member(const Member& other)
     striding_v(other.striding_v) ,
     quantity_v( other.quantity_v ) ,
     name_v(other.name_v) ,
-    members(other.members) ,
-    ref_v(other.ref_v),
+    members(other.members),
     type_v(other.type_v), 
     size_v(other.size_v), 
     rangedef(other.rangedef) ,
@@ -152,24 +151,10 @@ std::string Member::name() {
     if (name_v.length()) 
         return name_v; 
     
-    if (ref()) 
-        return ref()->name(); 
-    
     return "parentName" ; 
 }
 
-Member* Member::ref() { return ref_v; }
-
-bool Member::ref(Member* ref) { 
-    ref_v = ref; 
-    return true; 
-}
-
-uint32_t Member::size() {     
-    
-    auto m = ref();
-    
-    if (m) return m->size();
+uint32_t Member::size() {  
 
     return size_v;
 
@@ -333,8 +318,6 @@ bool Member::removeHard(Member& m) {
 
     members.erase(it);
 
-    update();
-
     return true;
 }
 
@@ -371,15 +354,13 @@ uint32_t Member::footprint_all() { return eq( quantity_v ); }
 
 void Member::striding(bool is_striding){ this->striding_v = is_striding; update(); }
 
-bool Member::striding() { return ref()?ref()->striding_v:striding_v; }
+bool Member::striding() { return striding_v; }
 
 Type Member::type() { if (isData()) { for (auto x : members) return x->type(); } return type_v; }
 
 std::string Member::type_name() {
 
     if (type().id == typeid(Struct)) return camel(name());
-
-    if (ref()) return ref()->type_name();
 
     if (type().id == typeid(float)) {
         
@@ -562,7 +543,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
         int src_offset_ = src_offset + src_member->eq(i);
 
-        for (auto src_member_ : src_member->ref()?src_member->ref()->members:src_member->members) {
+        for (auto src_member_ : src_member->members) {
 
             Member* found = nullptr;
 
@@ -570,7 +551,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
             int this_offset_ = this_offset + thiseq;
 
-            for (auto this_member_ : this_member->ref()?this_member->ref()->members:this_member->members) {
+            for (auto this_member_ : this_member->members) {
 
                 if (
 
@@ -605,7 +586,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
             if (found->isData()) {
 
-                PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer.buffer_v[src_offset_] << " -> " << *(float*)&buffer_v[this_offset_];
+                // PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer.buffer_v[src_offset_] << " -> " << *(float*)&buffer_v[this_offset_];
 
                 memcpy(&buffer_v[this_offset_], &src_buffer.buffer_v[src_offset_],found->size());
 

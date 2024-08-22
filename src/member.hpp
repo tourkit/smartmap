@@ -86,9 +86,6 @@ struct Member {
     
     void deleteData();
 
-    Member* ref();
-    bool ref(Member*);
-
     // INSTANCEMGMT
 
     // void 
@@ -156,8 +153,6 @@ protected:
     static inline int MAX_SIZE = 10000;
 
     bool is_buffer = false;
-    
-    Member* ref_v = nullptr;
 
 private:
 

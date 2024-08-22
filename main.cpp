@@ -13,7 +13,7 @@
 
 int main() {
 
-    logger.cout(Sev::warning);
+    logger.cout(Sev::verbose);
 
     Member testbuf("testbuf");
     testbuf.buffering(true);
@@ -65,5 +65,6 @@ int main() {
     delete &didoo;
     
     Instance(testbuf).print();
+
 }
 
