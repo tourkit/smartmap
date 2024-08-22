@@ -251,8 +251,6 @@ std::pair<std::string,int> nameQ(std::string name) {
 
                         if (names.size() >1 || name.second ) 
                             offset += m->footprint() * name.second;
-                        
-                        else curr->eq = name.second;
 
                     } else { PLOGE << name.second << " > " << m->quantity(); }
 
