@@ -473,8 +473,11 @@ void Member::post_change(std::vector<NewMember> addeds) {
 
                     }
 
-                if (!diff) 
-                    x->calcOffset(); 
+                if (!diff) {
+                    x->offset = inst.offset; 
+                    for (auto e : x->stl) x->offset += e.m->footprint()* e.eq;
+                    
+                }
 
             }
 
@@ -582,7 +585,7 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
             if (!found ) {
 
-                src_offset_ += src_member_->footprint();
+                src_offset_ += src_member_->footprint_all();
 
 #ifdef ROCH
                if (![src_member_](){ // COULD BE DEBUG MODE ONLY

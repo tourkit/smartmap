@@ -119,6 +119,10 @@ std::pair<std::string,int> nameQ(std::string name) {
         
         }
 
+        if (m->striding())
+            for (int i = 0; i < m->stride()/m->members[0]->type().size(); i++) 
+                out += " 0 ,";
+
         if (m == stl.back().m)  { PLOGW << "[ "+(out.length()?out.substr(0,out.length()-2):out)+" ]"; }
 
         return (out);

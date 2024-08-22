@@ -34,46 +34,31 @@ int main() {
     
     testbuf.add(&didoo);
 
-    Instance didoo_(testbuf);
-    didoo_.loc(&didoo);
+    // Instance didoo_(testbuf);
+    // didoo_.loc(&didoo);
 
     testbuf.add(&sa);
 
-    auto sa_ = Instance(testbuf)[&sa];
 
     testbuf.add(&sb);
 
-    Instance sb_blue_(testbuf);
-    sb_blue_.loc(&sb);
-    sb_blue_.loc("XYZ");
-    sb_blue_.loc(2);
+    // Instance sb_blue_(testbuf);
+    // sb_blue_.loc(&sb);
+    // sb_blue_.loc("XYZ");
+    // sb_blue_.loc(2);
     
+    didoo.quantity(2);
+    sa.quantity(2);
+    auto sa1_ = Instance(testbuf)[&sa].eq(1)["RGB"][1];
     sa.quantity(10);
 
-    auto sa1_green_ = Instance("testbuf::Sa[9]");
-    
-    sa.quantity(12); // nogood
-    
-    // Instance(testbuf).print(true);
-
-    delete &didoo;
-
-    logger.cout(Sev::warning);
+    auto sa_ = Instance(testbuf)[&sa];
     for (int i = 0; i < sa.quantity(); i++) 
         sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);
 
+    sa1_.set<float>(69);
 
-    // Instance i(testbuf);
-    // i.loc(&sa,1);
-
-    // i.set<float>(69);
-    
-    sa1_green_.set<float>(28);
-
-    // didoo.quantity(2);
-
-    // sb_blue_.set<float>(987);
-    // int q = testbuf.size()/4;
+    delete &didoo;
     
     Instance(testbuf).print();
 }
