@@ -4,9 +4,8 @@
 #include <vector>
 #include <functional>
 #include <cstddef>
-#include <map>
 
-#include "buffer.hpp"
+#include "member.hpp"
 
 
 struct Buffer;
@@ -29,7 +28,6 @@ struct Remap {
 
 struct Instance {
 
-    struct MemberQ { Member* m; int eq = 0; };
     std::vector<MemberQ> stl;
 
     uint32_t offset = 0;
@@ -83,8 +81,6 @@ struct Instance {
 
     void set(void* ptr, size_t size);
 
-    void calcOffset();
-
     void setDefault(Member* m = nullptr, int offset = 0);
 
     void stlAdd(Member* m, int eq = 0);
@@ -96,7 +92,9 @@ struct Instance {
     Instance& operator[](Member* m) { return loc(m); }
 
     Instance& operator[](std::string stl_name) { return loc(stl_name); }
+    
+    void pre_change();
+    
+    void post_change(std::vector<MemberQ> added = {});
 
 };
-
-inline bool operator==(const Instance::MemberQ& this_, const Instance::MemberQ& other){ return (this_.m == other.m && this_.eq == other.eq); }

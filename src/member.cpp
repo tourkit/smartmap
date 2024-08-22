@@ -3,20 +3,13 @@
 #include "instance.hpp"
 
 
-#include "log.hpp"
 #include "buffer.hpp"
 #include "utils.hpp"
 #include <cstdint>
 #include <cstring>
-#include <unordered_set>
-#include <typeindex>
 #include <cstdint>
-#include <memory>
 
 Member::~Member() {
-
-    // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
-
 
     // remove from other structs
     for (auto s : structs) 
@@ -32,8 +25,10 @@ Member::~Member() {
         if (x->isData() )
             delete x;
 
-    if (!is_copy) 
-        {PLOGV << "~" << name()/* << " ( &" + ss.str() + " )"*/;}
+    if (copy_v) return;
+
+    // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
+    PLOGV << "~" << name()/* << " ( &" + ss.str() + " )"*/;
     
 }
 
@@ -67,11 +62,11 @@ Member::Member(const Member& other)
     size_v(other.size_v), 
     rangedef(other.rangedef) ,
     buffer_v(other.buffer_v),
-    is_copy(true)
+    copy_v((Member*)&other)
 
 {
 
-    for (auto &m : members) m = m->copy();
+    for (auto &m : members) m = new Member(*m);
 
 }
 
@@ -91,41 +86,43 @@ void Member::deleteData(){
 
 }
 
-std::set<Member*> Member::getTop(bool z) {
+std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
 
-    std::set<Member*> owners, out;
+    std::set<std::shared_ptr<Instance>> owners, out;
 
     for (auto x : structs) 
         if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end())
-            owners.insert( x );
+            owners.insert( std::make_shared<Instance>(*x) );
 
     if (!owners.size()) { 
         if (!z && !is_buffer) 
             return {}; 
-        return {this}; 
+        return {std::make_shared<Instance>(*this)}; 
     }
 
     for (auto owner : owners) {
 
-        auto top = owner->getTop(true);
+        auto top = owner.get()->stl.front().m->getTop(true);
 
         out.insert(top.begin(), top.end());
 
     }
 
-    if (!out.size()) return {this};
+    if (!out.size()) return {std::make_shared<Instance>(*this)};
 
     return out;
 
 }
 
 
-void Member::update() { 
+void Member::update(std::set<std::shared_ptr<Instance>>* tops, std::vector<MemberQ> addeds) { 
 
     for (auto a : structs) 
         for (auto &m : a->members) 
             if (m == this) 
-                a->update();
+                a->update(tops,addeds);
+
+    if (isData()) return;
 
     size_v = 0;
 
@@ -143,6 +140,17 @@ void Member::update() {
 
     memset( buffer_v.data(), 0, buffer_v.size() );
 
+    if (!tops) return;
+
+    for (auto t : *tops)  {
+
+        t->post_change(addeds);
+
+        t->stl.front().m->remap();
+
+        t->stl.front().m->upload();    
+        
+    }
  }
 
 void Member::name(std::string name_v) { this->name_v = next_name(name_v); }
@@ -166,8 +174,8 @@ bool Member::clear() {
 
     auto tops = getTop();
 
-    for (auto x : tops)  
-        x->pre_change();
+    for (auto t : tops)  
+        t->stl.front().m->bkp();
 
     size_v = 0;
 
@@ -175,10 +183,7 @@ bool Member::clear() {
 
     members.clear();
 
-    update();
-
-    for (auto x : tops) 
-        x->post_change();
+    update(&tops);
 
     return true;
 
@@ -194,21 +199,16 @@ Member* Member::quantity(uint32_t quantity_v) {
 
     PLOGV << name() << " = " << quantity_v;
 
-    std::set<Member *> totops;
-
     auto tops = getTop();
 
-    for (auto x : tops)  
-        x->pre_change();
+    for (auto t : tops)  
+        t->stl.front().m->bkp();
 
     auto old = this->quantity_v;
 
     this->quantity_v = quantity_v;
 
-    update();
-
-    for (auto x : tops)  
-        x->post_change({{this, old, (int)quantity_v-old}});
+    update(&tops,{{this, old, (int)quantity_v-old}});
 
     return this;
 
@@ -248,17 +248,14 @@ void Member::add(Member* m) {
 
     auto tops = getTop();
 
-    for (auto x : tops)  
-        x->pre_change();
+    for (auto t : tops)  
+        t->stl.front().m->bkp();
 
     members.push_back(m);
 
     size_v += members.back()->footprint_all();
 
-    update();
-
-    for (auto x : tops)  
-        x->post_change({{m}});
+    update(&tops, {{m}});
 
 }
 
@@ -329,15 +326,12 @@ bool Member::remove(Member& m) {
 
     auto tops = getTop();
 
-    for (auto x : tops)  
-        x->pre_change();
+    for (auto t : tops)  
+        t->stl.front().m->bkp();
 
     removeHard(m);
 
-    update();
-
-    for (auto x : tops)  
-        x->post_change();
+    update(&tops);
 
     removing.erase(&m);
 
@@ -385,23 +379,8 @@ std::string Member::type_name() {
 
 }
 
-Member* Member::copy() { return new Member(*this); }
 
 bool Member::isData() { return type_v.id != typeid(Member); }
-
-bool Member::isBuff() { return is_buffer; }
-
-void Member::pre_change() {
-
-    if (buffering()) {
-
-        bkp = copy();
-
-        PLOGV << "bkp " << name() ;
-
-    }
-
-}
 
 char* Member::data() { 
     if (is_buffer) {
@@ -412,6 +391,16 @@ char* Member::data() {
 }
 
 bool Member::buffering() { return is_buffer; }
+
+void Member::bkp() {
+
+    if (!is_buffer) return;
+
+    bkp_v = new Member(*this);
+
+    PLOGV << "bkp " << name() ;
+
+}
 
 void Member::buffering(bool value) { 
     
@@ -434,65 +423,7 @@ void Member::buffering(bool value) {
 
 }
 
-void Member::post_change(std::vector<NewMember> addeds) {
 
-    Instance(*this).each([&](Instance& inst) {
-
-        auto &mq = inst.stl.back();
-
-        // instances update offset
-        for (auto &x : mq.m->instances) {
-
-            if (x != &inst && x->stl.size() == inst.stl.size() && x->stl.front().m == this) {
-
-                bool diff = false;
-                for (int i = 1; i < inst.stl.size(); i++) 
-                    if (inst.stl[i].m != x->stl[i].m) {
-
-                        diff = true;
-                        break;
-
-                    }
-
-                if (!diff) {
-                    x->offset = inst.offset; 
-                    for (auto e : x->stl) x->offset += e.m->footprint()* e.eq;
-                    
-                }
-
-            }
-
-        }
-
-        for (auto added : addeds) 
-            if (added.m == mq.m){
-                for (int i = 0; i < added.q; i++)  {
-
-                    inst.eq(added.eq+i);
-                    inst.setDefault();
-
-                }
-
-
-            }
-
-    });
-    
-    if (!bkp) return;
-
-    PLOGV << "remap " << bkp->name();
-
-    remap(*bkp);
-
-    bkp->deleteData();
-
-    delete bkp;
-
-    bkp = nullptr;
-
-    upload();
-
-}
 
 std::string Member::next_name( std::string name ) {
 
@@ -531,11 +462,28 @@ std::string Member::next_name( std::string name ) {
 }
 
 
-void Member::remap(Member& src_buffer, Member* src_member, Member* this_member , int src_offset, int this_offset) {
+void Member::remap(Member* src_buffer, Member* src_member, Member* this_member , int src_offset, int this_offset) {
 
-    if (!src_member) src_member = &src_buffer;
+    auto first = false;
+    if (!src_buffer) {
 
-    if (!src_buffer.buffer_v.size()) return;
+        if (!bkp_v) {
+
+            PLOGE << "no bkp";    
+            return;
+        }
+        
+        PLOGV << "remap " << bkp_v->name();
+
+        src_buffer = bkp_v;
+        first = true;
+    }
+
+    if (!src_member) 
+        src_member = src_buffer;
+
+
+    if (!src_buffer->buffer_v.size()) return;
 
     if (!this_member) this_member = this;
 
@@ -577,24 +525,42 @@ void Member::remap(Member& src_buffer, Member* src_member, Member* this_member ,
 
                 }())
 
-                    PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer.name();
+                    { PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer->name(); }
 #endif
                 continue;
             }
 
             remap(src_buffer, src_member_, found, src_offset_, this_offset_);
 
-            if (found->isData()) {
+            if (found->isData()) 
 
-                // PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset_ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset_<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer.buffer_v[src_offset_] << " -> " << *(float*)&buffer_v[this_offset_];
+                for (int i = 0; i < found->quantity(); i++) {
 
-                memcpy(&buffer_v[this_offset_], &src_buffer.buffer_v[src_offset_],found->size());
+                    int offset__ = found->footprint()*i;
+                    int src_offset__ = src_offset_+offset__;
+                    int this_offset__ = this_offset_+offset__;
 
-            }
+                    PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset__ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset__<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer->buffer_v[src_offset__] << " -> " << *(float*)&buffer_v[this_offset__];
+    
+                    memcpy(&buffer_v[this_offset__], &src_buffer->buffer_v[src_offset__],found->size());
 
+                }
+
+        
             src_offset_ += src_member_->footprint_all();
 
         }
+
+    }
+
+    if (first) {
+
+
+        bkp_v->deleteData();
+
+        delete bkp_v;
+
+        bkp_v = nullptr;
 
     }
 
@@ -608,7 +574,7 @@ void Member::type(Type value) {
 
     type_v = value;
 #ifdef ROCH
-    DEBUG_TYPE = value.name();
+    _TYPE_ = value.name();
 #endif
 
     if (!isData()) {

@@ -194,6 +194,52 @@ std::pair<std::string,int> nameQ(std::string name) {
         return *this;
 
     }
+    
+    void Instance::post_change(std::vector<MemberQ> addeds) {
+
+        each([&](Instance& inst) {
+
+            auto &mq = inst.stl.back();
+
+            // instances update offset
+            for (auto &x : mq.m->instances) {
+
+                if (x != &inst && x->stl.size() == inst.stl.size() && x->stl.front().m == stl.front().m) {
+
+                    bool diff = false;
+                    for (int i = 1; i < inst.stl.size(); i++) 
+                        if (inst.stl[i].m != x->stl[i].m) {
+
+                            diff = true;
+                            break;
+
+                        }
+
+                    if (!diff) {
+                        x->offset = inst.offset; 
+                        for (auto e : x->stl) x->offset += e.m->footprint()* e.eq;
+                        
+                    }
+
+                }
+
+            }
+
+            for (auto added : addeds) 
+                if (added.m == mq.m){
+                    for (int i = 0; i < added.q; i++)  {
+
+                        inst.eq(added.eq+i);
+                        inst.setDefault();
+
+                    }
+
+
+                }
+
+        });   
+
+    }
 
     Instance& Instance::loc(std::string stl_name) {
 
@@ -303,28 +349,8 @@ std::pair<std::string,int> nameQ(std::string name) {
 
         memcpy(data(), ptr, size);
 
-        for (auto &inst : stl.back().m->instances) {
-        
-            // for (auto r : inst.get()->remaps) 
-            
-            //     r->update(); 
-        }
-
     }
 
-    void Instance::calcOffset() {
-
-        offset = 0;
-            
-        for (int i = 0; i < stl.size()-1; i++) {
-
-            auto m = stl[i];
-
-            offset += m.m->footprint()*m.eq;
-
-        }
-
-    }
 
     void Instance::setDefault(Member* m, int offset) {
 
@@ -338,23 +364,10 @@ std::pair<std::string,int> nameQ(std::string name) {
 
         }
 
-        if (m->def()) {
-
-            for (int i = stl.size()-1; i>=0; i--) { 
-
-                auto x = stl[i].m;
-
-                if (x->quantity()>1) 
-                    for (int todo = 0 ; todo < x->quantity(); todo++) {
-                        memcpy(data()+(offset+x->footprint()*todo), m->def(), m->size());
-                    }
-
-            }
-
-            memcpy(data()+offset, m->def(), m->size());
-
-        }
-
+        if (m->def()) 
+            for (int eq = 0 ; eq < m->quantity(); eq++) 
+                memcpy(data()+(offset+m->footprint()*eq), m->def(), m->size());
+            
     }
 
 

@@ -8,6 +8,8 @@
 
 struct Instance;
 
+struct Member;
+struct MemberQ { Member* m; int eq = 0; int q = 1; };
 struct Member {
 
     static inline std::set<Member*> structs;
@@ -44,6 +46,16 @@ struct Member {
         return *this; 
         
     }
+    template <typename T,int q>
+    Member& add(std::string name) {        
+        
+        add<T>(name);
+
+        members.back()->quantity(q);
+
+        return *this; 
+        
+    }
 
     Member& range(float from, float to, float def) ;
 
@@ -69,78 +81,72 @@ struct Member {
 
     bool striding();
 
+
+    bool buffering();
+    void buffering(bool value);
+
+
     uint32_t eq(int i) ;
 
-    std::set<Member*> getTop(bool z = false);
+    std::set<std::shared_ptr<Instance>> getTop(bool z = false);
 
-    virtual void pre_change();
-
-    virtual void update() ;
-
-    struct NewMember{Member* m; int eq = 0, q = 1; };
-    virtual void post_change(std::vector<NewMember> added = {});
-
-    virtual Member* copy();
+    void update(std::set<std::shared_ptr<Instance>>* tops = nullptr, std::vector<MemberQ> addeds = {}) ;
+    
+    virtual void upload();
 
     bool isData();
     
     void deleteData();
-
-    // INSTANCEMGMT
-
-    // void 
-
-    // template <typename T>
-    // struct TypedMember : Member {
-
-    //     using Member::Member;
-
-    //     T& from() { return *(T*)from(); }
-    //     T& to() { return *(T*)to(); }
-    //     T& def() { return *(T*)def(); }
-    // };
-    
-    //// DATA TRUCS
     
     template <typename T>
     void type() { type(TYPE<T>()); }
 
     void type(Type type);
 
+
     char* from();
     char* to();
     char* def();
+
+    char* data();
+
+    void bkp();
     
 
     //// BUFFER TRUCS
 
-    void remap(Member& src_buffer, Member* src_member = nullptr, Member* this_member = nullptr, int src_offset = 0, int this_offset = 0);
-
-    virtual void upload();
+    void remap(Member* src_buffer = nullptr, Member* src_member = nullptr, Member* this_member = nullptr, int src_offset = 0, int this_offset = 0);
 
 
-
-    bool isBuff();
-    bool buffering();
-    void buffering(bool value);
-
-    char* data();
-
-protected:
+private:
 
     std::string name_v;
 
 #ifdef ROCH
-    std::string DEBUG_TYPE = "undefined";
+    std::string _TYPE_;
 #endif
 
     uint32_t size_v = 0;
 
     int32_t quantity_v = 1;
-    
-    bool striding_v = false;
 
+public:
+
+    std::vector<Member*> members;
+    
+    std::set<Instance*> instances;
+
+private:
+    
     std::vector<char> buffer_v;
+
+    Member* bkp_v = nullptr;
+
+    Member* copy_v = nullptr;
+    
+    bool is_buffer = false;
+
+    bool striding_v = false;
 
     std::vector<char> rangedef; 
 
@@ -152,19 +158,6 @@ protected:
 
     static inline int MAX_SIZE = 10000;
 
-    bool is_buffer = false;
-
-private:
-
-    Member* bkp = nullptr;
-
-
-public:
-
-    std::set<Instance*> instances;
-
-    bool is_copy = false;
-    
-    std::vector<Member*> members;
-
 };
+
+inline bool operator==(const MemberQ& this_, const MemberQ& other){ return (this_.m == other.m && this_.eq == other.eq); }
