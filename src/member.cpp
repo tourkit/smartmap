@@ -51,9 +51,8 @@ Member::Member(std::string name, Type type) {
 
 }
 
-Member::Member(const Member& other)
- :
-
+Member::Member(Member& other) :
+ 
     striding_v(other.striding_v) ,
     quantity_v( other.quantity_v ) ,
     name_v(other.name_v) ,
@@ -62,96 +61,15 @@ Member::Member(const Member& other)
     size_v(other.size_v), 
     rangedef(other.rangedef) ,
     buffer_v(other.buffer_v),
-    copy_v((Member*)&other)
+    copy_v(&other)
 
 {
 
-    for (auto &m : members) m = new Member(*m);
+    for (auto &m : members) 
+        m = new Member(*m);
 
 }
 
-void Member::deleteData(){
-
-    auto t_members = members;
-
-    for (auto m : t_members) {
-
-        
-        if (m->isData()) 
-            
-            delete m;
-
-        m->deleteData();
-    }
-
-}
-
-std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
-
-    std::set<std::shared_ptr<Instance>> owners, out;
-
-    for (auto x : structs) 
-        if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end())
-            owners.insert( std::make_shared<Instance>(*x) );
-
-    if (!owners.size()) { 
-        if (!z && !is_buffer) 
-            return {}; 
-        return {std::make_shared<Instance>(*this)}; 
-    }
-
-    for (auto owner : owners) {
-
-        auto top = owner.get()->stl.front().m->getTop(true);
-
-        out.insert(top.begin(), top.end());
-
-    }
-
-    if (!out.size()) return {std::make_shared<Instance>(*this)};
-
-    return out;
-
-}
-
-
-void Member::update(std::set<std::shared_ptr<Instance>>* tops, std::vector<MemberQ> addeds) { 
-
-    for (auto a : structs) 
-        for (auto &m : a->members) 
-            if (m == this) 
-                a->update(tops,addeds);
-
-    if (isData()) return;
-
-    size_v = 0;
-
-    for (auto &m : members) size_v += m->footprint_all();
-
-    PLOGV << name() << "[" << footprint_all() << "]";
-
-    //// BUFFER PART
-
-    if (!buffering()) return;
-
-    if (footprint_all() > MAX_SIZE) { PLOGE << footprint_all() << " > MAX_SIZE"; }
-
-    buffer_v.resize(footprint_all());
-
-    memset( buffer_v.data(), 0, buffer_v.size() );
-
-    if (!tops) return;
-
-    for (auto t : *tops)  {
-
-        t->post_change(addeds);
-
-        t->stl.front().m->remap();
-
-        t->stl.front().m->upload();    
-        
-    }
- }
 
 void Member::name(std::string name_v) { this->name_v = next_name(name_v); }
 
@@ -162,36 +80,150 @@ std::string Member::name() {
     return "parentName" ; 
 }
 
-uint32_t Member::size() {  
+std::string Member::next_name( std::string name ) {
 
-    return size_v;
+    int count = 0;
+
+    for (auto x : members) {
+
+        auto name_ = x->name();
+
+        size_t pos = name_.find("_");
+
+        int i = 1;
+
+        if (pos != std::string::npos) {
+
+            name_ = x->name().substr(0, pos);
+
+            i = std::stoi(x->name().substr(pos+1));
+
+        }
+
+        if (!strcmp(name.c_str(), name_.c_str())) {
+
+            if ( i > count) count =  i;
+
+            else count++;
+
+        }
+
+    }
+
+    if (count) name += "_" + std::to_string(count) ;
+
+    return name;
 
 }
 
-bool Member::clear() {
+std::string Member::type_name() {
 
-    PLOGV << name() ;
+    if (type().id == typeid(Struct)) return camel(name());
+
+    if (type().id == typeid(float)) {
+        
+        if (quantity_v == 1) return "float";
+        else if (quantity_v == 2) return "vec2";
+        else if (quantity_v == 3) return "vec3";
+        else if (quantity_v == 4) return "vec4";
+        
+    }
+
+    if (type().id == typeid(int)) return "int";
+
+    if (type().id == typeid(uint32_t)) return "uint";
+
+    if (type().id == typeid(char)) return "char";
+
+    std::string type_ = type().name();
+
+    if (isData()) return "datatype" + type_;
+
+    return "unknown" + type_;
+
+}
+
+void Member::bkp() {
+
+    if (!buffering_v) return;
+
+    bkp_v = new Member(*this);
+
+    PLOGV << "bkp " << name() ;
+
+}
+
+
+
+void Member::type(Type value) {
+
+    type_v = value;
+#ifdef ROCH
+    _TYPE_ = value.name();
+#endif
+
+    if (!isData()) {
+        
+        size_v = 0;
+
+        return;
+    
+    }
+
+    size_v = value.size();
+
+    rangedef.resize(size_v*3);
+
+    memset(rangedef.data(),0,rangedef.size());
+
+    float to = 1;
+
+    if (value.id == typeid(uint32_t)) to = 65535;
+
+    else if (value.id == typeid(uint8_t)) to = 255;
+
+    else if (value.id == typeid(char)) to = -1;
+    
+    range(0,to,0);
+
+
+}
+
+
+void Member::buffering(bool value) { 
+    
+    buffering_v  = value;
+
+    if (buffering_v) {
+
+        buffer_v.reserve(MAX_SIZE);
+
+        memset(buffer_v.data(),0,MAX_SIZE);
+
+
+    }else{
+
+        buffer_v.reserve(0);
+
+    }
+
+    update();
+
+}
+
+
+void Member::striding(bool is_striding){ 
 
     auto tops = getTop();
 
     for (auto t : tops)  
         t->stl.front().m->bkp();
-
-    size_v = 0;
-
-    for (auto x : members) delete x;
-
-    members.clear();
+    
+    this->striding_v = is_striding; 
 
     update(&tops);
-
-    return true;
-
+    
 }
-
-uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16);  return size(); }
-
-uint32_t Member::stride() { return (footprint()-size()); }
 
 Member* Member::quantity(uint32_t quantity_v) {
 
@@ -212,11 +244,6 @@ Member* Member::quantity(uint32_t quantity_v) {
 
     return this;
 
-}
-
-void Member::upload() { 
-
-    
 }
 
 
@@ -258,6 +285,8 @@ void Member::add(Member* m) {
     update(&tops, {{m}});
 
 }
+
+
 
 Member& Member::range(float from, float to, float def) {
 
@@ -305,19 +334,6 @@ Member& Member::range(float from, float to, float def) {
 
 }
 
-bool Member::removeHard(Member& m) {
-
-    auto it = std::find( members.begin(), members.end(), &m );
-
-    if (it == members.end()) { PLOGV << "no find "<< m.name(); return false; }
-
-    size_v -= members.back()->footprint_all();
-
-    members.erase(it);
-
-    return true;
-}
-
 bool Member::remove(Member& m) {
 
     removing.insert(&m);
@@ -339,6 +355,117 @@ bool Member::remove(Member& m) {
 
 }
 
+bool Member::removeHard(Member& m) {
+
+    auto it = std::find( members.begin(), members.end(), &m );
+
+    if (it == members.end()) { PLOGV << "no find "<< m.name(); return false; }
+
+    size_v -= members.back()->footprint_all();
+
+    members.erase(it);
+
+    return true;
+}
+
+
+bool Member::clear() {
+
+    PLOGV << name() ;
+
+    auto tops = getTop();
+
+    for (auto t : tops)  
+        t->stl.front().m->bkp();
+
+    size_v = 0;
+
+    for (auto x : members) delete x;
+
+    members.clear();
+
+    update(&tops);
+
+    return true;
+
+}
+
+void Member::update(std::set<std::shared_ptr<Instance>>* tops, std::vector<MemberQ> addeds) { 
+
+    if (!isData()){
+        
+        size_v = 0;
+
+        for (auto &m : members) 
+            size_v += m->footprint_all();
+
+    }
+
+    for (auto a : structs) 
+        for (auto &m : a->members) 
+            if (m == this) 
+                a->update(tops,addeds);
+
+    if (isData()) return;
+
+    PLOGV << name() << "[" << footprint_all() << "]";
+
+    //// BUFFER PART
+
+    if (!buffering()) return;
+
+    if (footprint_all() > MAX_SIZE) { PLOGE << footprint_all() << " > MAX_SIZE"; }
+
+    buffer_v.resize(footprint_all());
+
+    memset( buffer_v.data(), 0, buffer_v.size() );
+
+    if (!tops) return;
+
+    for (auto t : *tops)  {
+
+        t->post_change(addeds);
+
+        t->stl.front().m->remap();
+
+        t->stl.front().m->upload();    
+        
+    }
+ }
+
+ void Member::upload() { 
+
+    
+}
+
+char* Member::data() { 
+
+    if (buffering_v) {
+
+        char* ptr = &buffer_v[0];  
+        return ptr;
+        
+    }
+
+    return nullptr; 
+
+}
+
+char* Member::from() { return rangedef.size()?rangedef.data():nullptr; }
+char* Member::to() { return rangedef.size()?rangedef.data()+(size_v*quantity_v):nullptr; }
+char* Member::def() { return rangedef.size()?rangedef.data()+(size_v*quantity_v)*2:nullptr; }
+
+bool Member::buffering() { return buffering_v; }
+
+bool Member::striding() { return striding_v; }
+
+bool Member::isData() { return type_v.id != typeid(Member); }
+
+uint32_t Member::size() {  return size_v; }
+
+uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16);  return size(); }
+
+uint32_t Member::stride() { return (footprint()-size()); }
 
 uint32_t Member::quantity() { return quantity_v; }
 
@@ -346,121 +473,53 @@ uint32_t Member::eq(int i) { return i * footprint(); }
 
 uint32_t Member::footprint_all() { return eq( quantity_v ); }
 
-void Member::striding(bool is_striding){ this->striding_v = is_striding; update(); }
-
-bool Member::striding() { return striding_v; }
-
 Type Member::type() { if (isData()) { for (auto x : members) return x->type(); } return type_v; }
 
-std::string Member::type_name() {
 
-    if (type().id == typeid(Struct)) return camel(name());
 
-    if (type().id == typeid(float)) {
+void Member::deleteData(){
+
+    auto t_members = members;
+
+    for (auto m : t_members) {
+
         
-        if (quantity_v == 1) return "float";
-        else if (quantity_v == 2) return "vec2";
-        else if (quantity_v == 3) return "vec3";
-        else if (quantity_v == 4) return "vec4";
-        
+        if (m->isData()) 
+            
+            delete m;
+
+        m->deleteData();
     }
 
-    if (type().id == typeid(int)) return "int";
-
-    if (type().id == typeid(uint32_t)) return "uint";
-
-    if (type().id == typeid(char)) return "char";
-
-    std::string type_ = type().name();
-
-    if (isData()) return "datatype" + type_;
-
-    return "unknown" + type_;
-
 }
 
+std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
 
-bool Member::isData() { return type_v.id != typeid(Member); }
+    std::set<std::shared_ptr<Instance>> owners, out;
 
-char* Member::data() { 
-    if (is_buffer) {
-        char* ptr = &buffer_v[0];  
-        return ptr;
+    for (auto x : structs) 
+        if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end())
+            owners.insert( std::make_shared<Instance>(*x) );
+
+    if (!owners.size()) { 
+        if (!z && !buffering_v) 
+            return {}; 
+        return {std::make_shared<Instance>(*this)}; 
     }
-    return nullptr; 
-}
 
-bool Member::buffering() { return is_buffer; }
+    for (auto owner : owners) {
 
-void Member::bkp() {
+        auto top = owner.get()->stl.front().m->getTop(true);
 
-    if (!is_buffer) return;
-
-    bkp_v = new Member(*this);
-
-    PLOGV << "bkp " << name() ;
-
-}
-
-void Member::buffering(bool value) { 
-    
-    is_buffer  = value;
-
-    if (is_buffer) {
-
-        buffer_v.reserve(MAX_SIZE);
-
-        memset(buffer_v.data(),0,MAX_SIZE);
-
-
-    }else{
-
-        buffer_v.reserve(0);
+        out.insert(top.begin(), top.end());
 
     }
 
-    update();
+    if (!out.size()) return {std::make_shared<Instance>(*this)};
+
+    return out;
 
 }
-
-
-
-std::string Member::next_name( std::string name ) {
-
-    int count = 0;
-
-    for (auto x : members) {
-
-        auto name_ = x->name();
-
-        size_t pos = name_.find("_");
-
-        int i = 1;
-
-        if (pos != std::string::npos) {
-
-            name_ = x->name().substr(0, pos);
-
-            i = std::stoi(x->name().substr(pos+1));
-
-        }
-
-        if (!strcmp(name.c_str(), name_.c_str())) {
-
-            if ( i > count) count =  i;
-
-            else count++;
-
-        }
-
-    }
-
-    if (count) name += "_" + std::to_string(count) ;
-
-    return name;
-
-}
-
 
 void Member::remap(Member* src_buffer, Member* src_member, Member* this_member , int src_offset, int this_offset) {
 
@@ -501,35 +560,25 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
 
             for (auto this_member_ : this_member->members) {
 
-                if (
-
-                    !strcmp(src_member_->name().c_str(), this_member_->name().c_str())
-
-                ) { found = this_member_; break; }
-
-                else this_offset_ += this_member_->footprint_all();
+                if (!strcmp(src_member_->name().c_str(), this_member_->name().c_str())) { 
+                    
+                    found = this_member_; 
+                    
+                    break; 
+                    
+                } else 
+                    
+                    this_offset_ += this_member_->footprint_all();
 
             }
 
 
             if (!found ) {
 
-                src_offset_ += src_member_->footprint_all();
+                src_offset_ += src_member_->footprint();
 
-#ifdef ROCH
-               if (![src_member_](){ // COULD BE DEBUG MODE ONLY
-
-                    for (auto x : removing) if (!strcmp(x->name().c_str(),src_member_->name().c_str())) return true;
-
-                    return false;
-
-                }())
-
-                    { PLOGE << "couldnt find " << src_member_->name() << " in " << src_buffer->name(); }
-#endif
                 continue;
             }
-
             remap(src_buffer, src_member_, found, src_offset_, this_offset_);
 
             if (found->isData()) 
@@ -540,7 +589,7 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
                     int src_offset__ = src_offset_+offset__;
                     int this_offset__ = this_offset_+offset__;
 
-                    PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset__ << " -> "  << " " << this_member->name() << "::" << found->name()  << "@" <<  this_offset__<< " - " << src_member_->size() << " : " << (unsigned int)*(char*)&src_buffer->buffer_v[src_offset__] << " -> " << *(float*)&buffer_v[this_offset__];
+                    PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset__ << " -> "  << this_member->name() << "::" << found->name()  << "@" <<  this_offset__ << " : " << *(float*)&src_buffer->buffer_v[src_offset__];// << " - [" << src_member_->size() << "]";
     
                     memcpy(&buffer_v[this_offset__], &src_buffer->buffer_v[src_offset__],found->size());
 
@@ -565,45 +614,3 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
     }
 
 }
-
-
-
-/////////// DATA
-
-void Member::type(Type value) {
-
-    type_v = value;
-#ifdef ROCH
-    _TYPE_ = value.name();
-#endif
-
-    if (!isData()) {
-        
-        size_v = 0;
-
-        return;
-    
-    }
-
-    size_v = value.size();
-
-    rangedef.resize(size_v*3);
-
-    memset(rangedef.data(),0,rangedef.size());
-
-    float to = 1;
-
-    if (value.id == typeid(uint32_t)) to = 65535;
-
-    else if (value.id == typeid(uint8_t)) to = 255;
-
-    else if (value.id == typeid(char)) to = -1;
-    
-    range(0,to,0);
-
-
-}
-
-char* Member::from() { return rangedef.size()?rangedef.data():nullptr; }
-char* Member::to() { return rangedef.size()?rangedef.data()+(size_v*quantity_v):nullptr; }
-char* Member::def() { return rangedef.size()?rangedef.data()+(size_v*quantity_v)*2:nullptr; }

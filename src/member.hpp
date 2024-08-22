@@ -20,7 +20,7 @@ struct Member {
 
     Member(std::string name, Type type);
 
-    Member(const Member& other) ;
+    Member(Member& other) ;
 
     virtual ~Member();
 
@@ -46,6 +46,7 @@ struct Member {
         return *this; 
         
     }
+
     template <typename T,int q>
     Member& add(std::string name) {        
         
@@ -81,10 +82,9 @@ struct Member {
 
     bool striding();
 
-
     bool buffering();
-    void buffering(bool value);
 
+    void buffering(bool value);
 
     uint32_t eq(int i) ;
 
@@ -103,7 +103,6 @@ struct Member {
 
     void type(Type type);
 
-
     char* from();
     char* to();
     char* def();
@@ -111,12 +110,8 @@ struct Member {
     char* data();
 
     void bkp();
-    
-
-    //// BUFFER TRUCS
 
     void remap(Member* src_buffer = nullptr, Member* src_member = nullptr, Member* this_member = nullptr, int src_offset = 0, int this_offset = 0);
-
 
 private:
 
@@ -144,7 +139,7 @@ private:
 
     Member* copy_v = nullptr;
     
-    bool is_buffer = false;
+    bool buffering_v = false;
 
     bool striding_v = false;
 
