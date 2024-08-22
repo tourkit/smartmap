@@ -515,7 +515,8 @@ std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
 
     }
 
-    if (!out.size()) return {std::make_shared<Instance>(*this)};
+    if (!out.size()) 
+        return {std::make_shared<Instance>(*this)};
 
     return out;
 
@@ -523,28 +524,33 @@ std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
 
 void Member::remap(Member* src_buffer, Member* src_member, Member* this_member , int src_offset, int this_offset) {
 
-    auto first = false;
+    bool is_main = false;
+
     if (!src_buffer) {
 
         if (!bkp_v) {
 
             PLOGE << "no bkp";    
+
             return;
+        
         }
         
         PLOGV << "remap " << bkp_v->name();
 
         src_buffer = bkp_v;
-        first = true;
+
+        is_main = true;
     }
 
     if (!src_member) 
         src_member = src_buffer;
 
+    if (!src_buffer->buffer_v.size()) 
+        return;
 
-    if (!src_buffer->buffer_v.size()) return;
-
-    if (!this_member) this_member = this;
+    if (!this_member) 
+        this_member = this;
 
     for (int i = 0 ; i < ( src_member->quantity() < this_member->quantity() ? src_member->quantity() :  this_member->quantity() ); i ++) {
 
@@ -575,10 +581,11 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
 
             if (!found ) {
 
-                src_offset_ += src_member_->footprint();
+                src_offset_ += src_member_->footprint_all();
 
                 continue;
             }
+
             remap(src_buffer, src_member_, found, src_offset_, this_offset_);
 
             if (found->isData()) 
@@ -602,7 +609,7 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
 
     }
 
-    if (first) {
+    if (is_main) {
 
 
         bkp_v->deleteData();
