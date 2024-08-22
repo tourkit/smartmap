@@ -2,6 +2,7 @@
 #include "effector.hpp"
 #include "engine.hpp"
 #include "utils.hpp"
+#include "instance.hpp"
 #include "layer.hpp"
 
 
@@ -132,9 +133,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     body_vertex.clear();
 
-    for (int i = 1; i < dc->vbo.vertice.members.size(); i++) {
+    for (int i = 1; i < vbo->vertice.members.size(); i++) {
 
-        auto m = dc->vbo.vertice.members[i];
+        auto m = vbo->vertice.members[i];
         body_vertex += "\t"+m->name()+" = "+m->name()+"_;\n\n";
 
     }

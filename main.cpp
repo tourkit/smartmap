@@ -4,8 +4,7 @@
 
                                 */
 
-#include "src/engine.hpp"
-#include "src/node.hpp"
+#include "engine.hpp"
 
 // #include "src/effector.hpp"
 
@@ -40,11 +39,8 @@
 int main() {
 
     engine.init();
-
     logger.cout(Sev::warning);
-
-    // engine.open("./project.json");
-
+    engine.open("project.json");
     engine.run();
 
 }

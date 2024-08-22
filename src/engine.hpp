@@ -3,6 +3,7 @@
 #include "window.hpp"
 #include "framebuffer.hpp"
 #include "node.hpp"
+#include "globals.hpp"
 #include "ubo.hpp"
 #include "log.hpp"
 

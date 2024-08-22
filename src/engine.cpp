@@ -65,7 +65,7 @@ Engine::~Engine() {
 
 void Engine::init() {
 
-    // Callbacks::init();
+    Callbacks::init();
 
     // Editors::init();
     

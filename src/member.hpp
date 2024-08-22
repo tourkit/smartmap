@@ -86,7 +86,9 @@ struct Member {
 
     std::set<std::shared_ptr<Instance>> getTop(bool z = false);
 
-    void update(std::set<std::shared_ptr<Instance>>* tops = nullptr, std::vector<MemberQ> addeds = {}) ;
+    void update(std::set<std::shared_ptr<Instance>>* tops = nullptr, std::vector<MemberQ> addeds = {});
+    
+    // virtual void update();
     
     virtual void upload();
  

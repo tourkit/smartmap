@@ -235,7 +235,7 @@ std::pair<std::string,int> nameQ(std::string name) {
             }
 
             for (auto added : addeds) 
-                if (added.m == mq.m){
+                if (added.m == mq.m && added.m->quantity()){
                     for (int i = 0; i < added.q; i++)  {
 
                         inst.eq(added.eq+i);
@@ -391,7 +391,7 @@ Instance& Instance::eq(int id) {
 
     if (id >= mq.m->quantity()) {
 
-        PLOGE << id << " > " << mq.m->quantity() << ")" ;
+        PLOGE << id << " >= " << mq.m->quantity() ;
     
         return *this;
     

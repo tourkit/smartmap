@@ -3,6 +3,7 @@
 #include "texture.hpp"
 #include "utils.hpp"
 #include "engine.hpp"
+#include "instance.hpp"
 
 
 #include "effector.hpp"

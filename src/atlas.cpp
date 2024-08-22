@@ -40,7 +40,7 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,fa
 
 void Atlas::clear() {
 
-    m.clear();
+    m.quantity(0);
 
     binpack.Init(texture->width,texture->height, false);
 
@@ -69,7 +69,8 @@ void Atlas::fromDir(std::string path) {
         if (!img.loaded) continue;
 
         auto r = binpack.Insert(img.width, img.height, rbp::MaxRectsBinPack::RectBestShortSideFit);
-        if (!r.width) {PLOGE << img.name() << " can't fit, need more space."; continue;}
+        if (!r.width) 
+            {PLOGE << img.name() << " can't fit, need more space."; continue;}
 
         temp_list[file] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
 
@@ -79,11 +80,10 @@ void Atlas::fromDir(std::string path) {
 
     for (auto x : dir.files) {
 
-        auto m_ = this->m.members[0];
+        m.quantity(m.quantity()+1);
 
-        m_->quantity(m_->quantity()+1);
+        medias->eq(m.quantity()-1).set<std::array<float,4>>(temp_list[x]);
 
-        medias->eq(m_->quantity()-1).set<std::array<float,4>>(temp_list[x]);
     }
 
     engine.static_ubo.upload();

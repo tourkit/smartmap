@@ -6,6 +6,7 @@
 #include "shader.hpp"
 #include "texture.hpp"
 #include "effector.hpp"
+#include "instance.hpp"
 
 #include "utils.hpp"
 #include <string>

@@ -55,7 +55,7 @@ Member::Member(Member& other) :
  
     striding_v(other.striding_v) ,
     quantity_v( other.quantity_v ) ,
-    // name_v(other.name_v) , // no need
+    name_v(other.name_v) , // no need
     members(other.members),
     type_v(other.type_v), 
     size_v(other.size_v), 
@@ -380,7 +380,9 @@ bool Member::clear() {
 
     size_v = 0;
 
-    for (auto x : members) delete x;
+    for (auto x : members) 
+        if (x->isData())
+            delete x;
 
     members.clear();
 
@@ -389,6 +391,10 @@ bool Member::clear() {
     return true;
 
 }
+
+// void Member::update() { 
+//     update(nullptr);
+// }
 
 void Member::update(std::set<std::shared_ptr<Instance>>* tops, std::vector<MemberQ> addeds) { 
 

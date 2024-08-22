@@ -28,7 +28,7 @@ struct UBO : Member {
 
     void update();
 
-    void upload();
+    void upload() override;
 
     void upload(void* data, size_t size, uint32_t offset = 0);
 

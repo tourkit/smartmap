@@ -12,6 +12,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
+#include "globals.hpp"
+
 VBO::VBO(File* file) : VBO() { addFile(file); }
 
 VBO::VBO() : Member("VBO"), vertices("Vertices"), indices("Indices") {
@@ -193,13 +195,13 @@ bool VBO::addFile_noupload(File* file, int id) {
 
         vertices.quantity(vertices.quantity()+1);
 
-        auto v = Instance(*this)[&vertices][&vertice].eq(vertices.quantity()-1);
+        auto v = Instance(*this)[&vertices].eq(vertices.quantity()-1)[&vertice];
 
-        v["POSITION"].set<float, 2>({ vertex.x, vertex.y });
-        v["UV"].set<float, 2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["NORMALIZED"].set<float, 2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["OBJ"].set<float>(id);
-        v["LAYER"].set<float>(layer_id);
+        Instance(v)["POSITION"].set<float, 2>({ vertex.x, vertex.y });
+        Instance(v)["UV"].set<float, 2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
+        Instance(v)["NORMALIZED"].set<float, 2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
+        Instance(v)["OBJ"].set<float>(id);
+        Instance(v)["LAYER"].set<float>(layer_id);
 
     }
 
