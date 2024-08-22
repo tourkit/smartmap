@@ -1,11 +1,8 @@
 #include "instance.hpp"
 #include "member.hpp"
-#include "struct.hpp"
 #include "buffer.hpp"
 #include "src/utils.hpp"
 #include <cctype>
-#include <cstdint>
-#include <format>
 #include <string>
 #include <vector>
 
@@ -75,49 +72,73 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     }
     
-    void Instance::print(bool label) {
+    std::string Instance::print(bool label, Member* m, int offset) {
+
+        if (!m) m = stl.back().m;
+
+        if (offset<0) offset = this->offset;
 
         std::string out;
 
-        each([&](Instance& inst){
+        for (auto x : m->members) {
 
-            Type type = inst.stl.back().m->type();
+            for (int i = 0; i < x->quantity(); i++)
+                out += print(label,x,offset+x->footprint()*i);
 
-            if (type.id == typeid(float))  {
 
-                std::string num = std::to_string(*(float*)inst.data());
+            offset += x->footprint_all();
+        }
 
-                int cut = 0;
-                if (num.length()) {
-                    
-                    while (num[num.size()-1-cut] == '0') {
-                        cut++;
-                        if (num[num.size()-2-cut] == '.'){
+        // if (m->isData())
+        //     PLOGW << m->name() << " " << offset;
 
-                            cut+=2;
-                            break;
-                        }
-                    
+
+
+        if (m->isData()) {
+
+            std::string num = std::to_string(*(float*)(data()+offset));
+
+            int cut = 0;
+            if (num.length()) {
+                
+                while (num[num.size()-1-cut] == '0') {
+                    cut++;
+                    if (num[num.size()-2-cut] == '.'){
+
+                        cut+=2;
+                        break;
                     }
                 
-                    num = num.substr(0,num.length()-cut);
-                
                 }
-
-                if (label) out += inst.stl_name() + ": ";
-                out += num + (label?"\n":", ");
-                
+            
+                num = num.substr(0,num.length()-cut);
+            
             }
 
-        });
+            out += num + ", ";
+        
+        }
 
-        if (out.length()) out = out.substr(0,out.length()-(label?1:2));
+        if (m == stl.back().m)  { PLOGW << "[ "+(out.length()?out.substr(0,out.length()-2):out)+" ]"; }
 
-        if (!label) out = "[ "+out+" ]";
-
-        PLOGW << out;
+        return (out);
 
     }
+
+
+    Instance::Instance(std::string stl_name) { loc(stl_name); }
+
+    Instance::~Instance() { 
+        stl.back().m->instances.erase(this); 
+    }
+
+    Instance::Instance(Member& m) { stlAdd(&m); }
+
+    Instance::Instance(const Instance& other) 
+        : stl(other.stl), offset(other.offset) { 
+            
+            stl.back().m->instances.insert(this); 
+        }
 
     Instance& Instance::loc(int id, int eq) {
 
@@ -258,19 +279,6 @@ std::pair<std::string,int> nameQ(std::string name) {
         return *this;
 
     }
-
-    Instance::Instance(std::string stl_name) { loc(stl_name); }
-
-    Instance::~Instance() { 
-        stl.back().m->instances.erase(this); 
-    }
-
-    Instance::Instance(Member& m) { stlAdd(&m); }
-
-    Instance::Instance(const Instance& other) 
-        : stl(other.stl), offset(other.offset) { 
-            stl.back().m->instances.insert(this); 
-        }
 
     int Instance::size() { return stl.front().m->footprint_all();}
 

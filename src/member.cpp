@@ -101,7 +101,7 @@ std::set<Member*> Member::getTop(bool z) {
             owners.insert( x );
 
     if (!owners.size()) { 
-        if (!z) 
+        if (!z && !is_buffer) 
             return {}; 
         return {this}; 
     }
@@ -262,7 +262,6 @@ void Member::add(Member* m) {
     }
 
     auto tops = getTop();
-    if (is_buffer) tops.insert(this);
 
     for (auto x : tops)  
         x->pre_change();
@@ -463,7 +462,7 @@ void Member::post_change(std::vector<NewMember> addeds) {
         // instances update offset
         for (auto &x : mq.m->instances) {
 
-            if (x->stl.size() == inst.stl.size() && x->stl.front().m == this) {
+            if (x != &inst && x->stl.size() == inst.stl.size() && x->stl.front().m == this) {
 
                 bool diff = false;
                 for (int i = 1; i < inst.stl.size(); i++) 
@@ -475,7 +474,7 @@ void Member::post_change(std::vector<NewMember> addeds) {
                     }
 
                 if (!diff) 
-                    x->offset = inst.offset+mq.m->footprint()*mq.eq; 
+                    x->calcOffset(); 
 
             }
 

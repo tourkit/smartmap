@@ -39,29 +39,28 @@ int main() {
 
     testbuf.add(&sa);
 
-    // auto sa_ = Instance(testbuf)[&sa];
+    auto sa_ = Instance(testbuf)[&sa];
 
-    // testbuf.add(&sb);
+    testbuf.add(&sb);
 
-    // Instance sb_blue_(testbuf);
-    // sb_blue_.loc(&sb);
-    // sb_blue_.loc("XYZ");
-    // sb_blue_.loc(2);
+    Instance sb_blue_(testbuf);
+    sb_blue_.loc(&sb);
+    sb_blue_.loc("XYZ");
+    sb_blue_.loc(2);
     
-    // sa.quantity(12);
+    sa.quantity(10);
 
-    // auto sa1_green_ = Instance("testbuf::Sa[9]::RGB::green");
+    auto sa1_green_ = Instance("testbuf::Sa[9]");
     
-    // sa.quantity(10); // nogood
+    sa.quantity(12); // nogood
     
-    Instance(testbuf).print(true);
+    // Instance(testbuf).print(true);
 
-    logger.cout(Sev::verbose);
     delete &didoo;
 
     logger.cout(Sev::warning);
-    // for (int i = 0; i < sa.quantity(); i++) 
-    //     sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);
+    for (int i = 0; i < sa.quantity(); i++) 
+        sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);
 
 
     // Instance i(testbuf);
@@ -69,13 +68,13 @@ int main() {
 
     // i.set<float>(69);
     
-    // sa1_green_.set<float>(28);
+    sa1_green_.set<float>(28);
 
     // didoo.quantity(2);
 
     // sb_blue_.set<float>(987);
     // int q = testbuf.size()/4;
+    
     Instance(testbuf).print();
-
 }
 

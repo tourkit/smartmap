@@ -58,7 +58,7 @@ struct Instance {
     
     int size();
     
-    void print(bool label = false);
+    std::string print(bool label = false, Member* m = nullptr, int offset = -1);
 
     char* data();
 
