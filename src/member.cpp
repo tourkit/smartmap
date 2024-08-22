@@ -20,9 +20,9 @@ Member::~Member() {
 
     // remove from other structs
     for (auto s : structs) 
-        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) 
-            s->removeHard(*this);
-    
+        if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
+            s->remove(*this);  
+}
     // remove from Member::structs
     if (!isData()) 
         structs.erase(this);
