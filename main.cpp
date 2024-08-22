@@ -52,22 +52,21 @@ int main() {
 
     auto sa1_green_ = Instance(testbuf)[&sa].eq(1)["RGB"][1];
 
-
     sa.quantity(10);
     for (int i = 0; i < sa.quantity(); i++) 
         sa_.eq(i).set<float,3>((i?i:-1)*1.0f,(i?i:-1)*2.0f,(i?i:-1)*3.0f);
 
-    
-    rgb.striding(true);
-
-    Instance(testbuf).print();
-
     sa1_green_.set<float>(69);
+
     sb_z_.set<float>(987);
 
     diidoo.quantity(2);
 
+    Instance(testbuf).print();
+
     delete &diidoo;
+
+    rgb.striding(true);
     
     Instance(testbuf).print();
 

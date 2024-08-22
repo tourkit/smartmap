@@ -55,7 +55,7 @@ Member::Member(Member& other) :
  
     striding_v(other.striding_v) ,
     quantity_v( other.quantity_v ) ,
-    name_v(other.name_v) ,
+    // name_v(other.name_v) , // no need
     members(other.members),
     type_v(other.type_v), 
     size_v(other.size_v), 
@@ -566,7 +566,7 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
 
             for (auto this_member_ : this_member->members) {
 
-                if (!strcmp(src_member_->name().c_str(), this_member_->name().c_str())) { 
+                if (src_member_->copy_v == this_member_) { 
                     
                     found = this_member_; 
                     
