@@ -38,8 +38,10 @@ int main() {
     
     Instance(testbuf).print();
 
+    logger.cout(Sev::verbose);
     delete &diidoo;
-    
+    logger.cout(Sev::warning);
+
     Instance(testbuf).print();
 
 }
