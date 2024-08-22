@@ -13,6 +13,7 @@
 #include "save.hpp"
 
 #include "callbacks.hpp"
+#include "editors.hpp"
 
 #include <cmath>
 
@@ -67,7 +68,7 @@ void Engine::init() {
 
     Callbacks::init();
 
-    // Editors::init();
+    Editors::init();
     
 
     

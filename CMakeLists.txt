@@ -49,6 +49,7 @@ src/ndi.cpp
 
 src/callbacks.cpp
 src/editor.cpp
+src/editors.cpp
 
 
 src/effector.cpp

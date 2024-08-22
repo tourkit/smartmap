@@ -41,7 +41,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     body_fragment += "\t// "+name+"\n";
 
-    body_fragment += "\taspect_ratio = static_ubo."+ar+".dim;\n";
+    body_fragment += "\taspect_ratio = static_ubo."+ar+".uberLayers.dim;\n";
                 
 	body_fragment += "\ttic();\n";
 
@@ -49,7 +49,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     for (auto ref : effectable.effector_refs) 
 
-        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->m.name());
+        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->m.name()+"."+ref->effector->m.name());
 
 
     body_fragment+=current_model;
@@ -103,7 +103,7 @@ void Layer::ShaderProgramBuilder::build() {
                 
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->m.name()+"."+ref->m.name());
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->m.name()+"."+ref->m.name()+"."+ref->effector->m.name());
 
         
         // setup all effector_refs

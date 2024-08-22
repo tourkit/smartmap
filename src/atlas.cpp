@@ -133,8 +133,8 @@ std::string Atlas::Effector::source() {
     out += "void "+m.name()+"(float id_) {\n\n";
     out +=     "\tint id = int(id_*"+std::to_string(atlas->medias->stl.back().m->size())+");\n\n";
     out +=     "\tvec2 tuv = uv;\n\n";
-    out +=     "\ttuv *= static_ubo."+m.name()+"[id].size;\n";
-    out +=     "\ttuv += static_ubo."+m.name()+"[id].pos;\n";
+    out +=     "\ttuv *= static_ubo."+m.name()+"[id].rect.size;\n";
+    out +=     "\ttuv += static_ubo."+m.name()+"[id].rect.pos;\n";
     out +=     "\tcolor *= texture("+m.name()+"_pass, tuv);\n\n";
     out += "}\n\n\n\n";
     

@@ -152,7 +152,7 @@ std::string Builder::layout() {
 
             auto m = inst.stl.back().m;
 
-            if (m->type().id == typeid(Member))
+            if (!m->isData())
                 ADD_UNIQUE<Member*>(structs,m);
 
         });
@@ -172,8 +172,9 @@ std::string Builder::layout() {
         while (true) {
 
             for (auto &x : unique_name_list) if (x.second == name) {
-
-                name += "_";
+                
+                if (name[name.length()-1] == '_') name += "0";
+                else name += "_";
 
                 continue;
 
@@ -222,9 +223,9 @@ std::string Builder::print_struct(Member* member, std::map<Member*,std::string> 
 
         auto name = unique_name_list.find(x)!=unique_name_list.end()?unique_name_list[x]:x->type_name();
 
-        content+=tb+""+name+" "+lower(x->isData()?x->type_name():x->name());
+        content+=tb+""+name+" "+lower(x->name());
 
-        if (x->quantity()>1) content += "["+std::to_string(x->quantity())+"]";
+        if (!x->isData() && x->quantity()>1) content += "["+std::to_string(x->quantity())+"]";
 
         content += "; "+nl;
 
