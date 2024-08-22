@@ -70,11 +70,11 @@ std::string Builder::frag() {
 
     std::string ins_str;
 
-    for (int i = 1; i < vbo->vertice->members.size(); i++) {
+    for (int i = 1; i < vbo->vertice.members.size(); i++) {
 
-        auto m = vbo->vertice->members[i];
+        auto m = vbo->vertice.members[i];
 
-        ins_str += "in "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+        ins_str += "in "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
 
     } if (ins_str.length()) ins_str += "\n";
 
@@ -108,7 +108,7 @@ std::string Builder::vert() {
 
         int count = 0;
 
-        for (auto x : vbo->vertice->members)
+        for (auto x : vbo->vertice.members)
 
             vbo_layouts.push_back({count++,x->type_name(), (x->name()+(count>1?"_":""))});
 
@@ -147,12 +147,12 @@ std::string Builder::layout() {
 
     for (auto ubo : ubos)    {
 
-        Instance(ubo).each([&](Instance& inst) {
+        Instance(*ubo).each([&](Instance& inst) {
 
-            auto m = inst.def();
+            auto m = inst.stl.back().m;
 
-            if (m->type() == typeid(Struct))
-                ADD_UNIQUE<Member*>(structs,m->ref()?m->ref():m);
+            if (m->type().id == typeid(Member))
+                ADD_UNIQUE<Member*>(structs,m);
 
         });
 
@@ -215,15 +215,13 @@ std::string Builder::print_struct(Member* member, std::map<Member*,std::string> 
 
     std::string content;
 
-    for (auto x : member->ref()?member->ref()->members:member->members) {
+    for (auto x : member->members) {
 
         if (!x->size()) continue;
 
-        auto x_ = x->ref()?x->ref():x;
+        auto name = unique_name_list.find(x)!=unique_name_list.end()?unique_name_list[x]:x->type_name();
 
-        auto name = unique_name_list.find(x_)!=unique_name_list.end()?unique_name_list[x_]:x_->type_name();
-
-        content+=tb+""+name+" "+lower(x->ref()?x->type_name():x->name());
+        content+=tb+""+name+" "+lower(x->isData()?x->type_name():x->name());
 
         if (x->quantity()>1) content += "["+std::to_string(x->quantity())+"]";
 
@@ -238,7 +236,7 @@ std::string Builder::print_struct(Member* member, std::map<Member*,std::string> 
     if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
 
         out += tb;
-        out += (member->members.back()->type() == typeid(int) ? "int" : "float");
+        out += (member->members.back()->type().id == typeid(int) ? "int" : "float");
         out += " stride";
         out += std::to_string(i) + "; "+nl ;
 

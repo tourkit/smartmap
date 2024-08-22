@@ -4,11 +4,8 @@
 #include <vector>
 #include <functional>
 #include <cstddef>
+#include "utils.hpp"
 
-#include "member.hpp"
-
-
-struct Buffer;
 struct Member;
 struct Instance;
 

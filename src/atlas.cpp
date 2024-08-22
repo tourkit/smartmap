@@ -15,17 +15,19 @@
 #include <array>
 
 
-Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,false), s("atlas", 0), effector(this) {
+Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,false), m("atlas"), effector(this) {
 
-    static Struct& media_struct = Struct::create("Rect",0).add<glm::vec2>("size").add<glm::vec2>("pos");
+    static auto media_struct = Member("Rect").add<float, 2>("size").add<float, 2>("pos");
 
-    s.striding(true);
+    m.striding(true);
     
-    s.ref(&media_struct);
+    m.quantity(0);
+    
+    m.add(&media_struct);
 
-    engine.static_ubo.add(&s);
+    engine.static_ubo.add(&m);
 
-    medias = &Instance(&engine.static_ubo).find(&s).track();
+    medias = &(*new Instance(engine.static_ubo))[&m];
 
     texture = new Texture(width,height,1,1);
 
@@ -38,7 +40,7 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,fa
 
 void Atlas::clear() {
 
-    s.clear();
+    m.clear();
 
     binpack.Init(texture->width,texture->height, false);
 
@@ -76,8 +78,12 @@ void Atlas::fromDir(std::string path) {
     }
 
     for (auto x : dir.files) {
-        
-        auto m = medias->push(temp_list[x].begin());
+
+        auto m_ = this->m.members[0];
+
+        m_->quantity(m_->quantity()+1);
+
+        medias->eq(m_->quantity()-1).set<std::array<float,4>>(temp_list[x]);
     }
 
     engine.static_ubo.upload();
@@ -86,7 +92,7 @@ void Atlas::fromDir(std::string path) {
 
 void Atlas::link(ShaderProgram* shader) {
 
-    shader->sendUniform(s.name(), 1);
+    shader->sendUniform(m.name(), 1);
 
     texture->bind();
 
@@ -106,7 +112,7 @@ void Atlas::Effector::post(Builder* builder) {
 
 bool Atlas::Effector::setup(Builder* builder) { 
 
-    atlas->texture->sampler_name = s.name()+"_pass";
+    atlas->texture->sampler_name = m.name()+"_pass";
     builder->samplers[1] = atlas->texture;
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
@@ -121,23 +127,23 @@ std::string Atlas::Effector::source() {
 
     std::string out;
 
-    if (!atlas || !s.size()) return out;
+    if (!atlas || !m.size()) return out;
 
 
-    out += "void "+s.name()+"(float id_) {\n\n";
-    out +=     "\tint id = int(id_*"+std::to_string(atlas->medias->def()->size())+");\n\n";
+    out += "void "+m.name()+"(float id_) {\n\n";
+    out +=     "\tint id = int(id_*"+std::to_string(atlas->medias->stl.back().m->size())+");\n\n";
     out +=     "\tvec2 tuv = uv;\n\n";
-    out +=     "\ttuv *= static_ubo."+s.name()+"[id].size;\n";
-    out +=     "\ttuv += static_ubo."+s.name()+"[id].pos;\n";
-    out +=     "\tcolor *= texture("+s.name()+"_pass, tuv);\n\n";
+    out +=     "\ttuv *= static_ubo."+m.name()+"[id].size;\n";
+    out +=     "\ttuv += static_ubo."+m.name()+"[id].pos;\n";
+    out +=     "\tcolor *= texture("+m.name()+"_pass, tuv);\n\n";
     out += "}\n\n\n\n";
     
     return out;
 
 }
 
-Atlas::Effector::Effector(Atlas* atlas) : ::Effector(atlas->s.name()), atlas(atlas) {
+Atlas::Effector::Effector(Atlas* atlas) : ::Effector(atlas->m.name()), atlas(atlas) {
 
-    s.add<float>("id_").range(0, 1, 0);
+    m.add<float>("id_").range(0, 1, 0);
 
 }

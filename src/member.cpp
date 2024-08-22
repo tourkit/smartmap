@@ -225,9 +225,9 @@ void Member::striding(bool is_striding){
     
 }
 
-Member* Member::quantity(uint32_t quantity_v) {
+Member& Member::quantity(uint32_t quantity_v) {
 
-    if (quantity_v == this->quantity_v) return this;
+    if (quantity_v == this->quantity_v) return *this;
 
     PLOGV << name() << " = " << quantity_v;
 
@@ -242,7 +242,7 @@ Member* Member::quantity(uint32_t quantity_v) {
 
     update(&tops,{{this, old, (int)quantity_v-old}});
 
-    return this;
+    return *this;
 
 }
 

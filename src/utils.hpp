@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include <string>
 #include "log.hpp"
 
@@ -9,6 +10,18 @@ template <typename T>
 static bool ADD_UNIQUE( std::vector<T>& list, T n) {
 
     for (auto x : list) if (x == n) return false;
+
+    list.push_back(n);
+
+    return true;
+
+}
+template <typename T>
+static bool ADD_UNIQUE( std::map<int,T>& list, T n) {
+
+    for (auto x : list) 
+        if (x.second == n) 
+            return false;
 
     list.push_back(n);
 
@@ -108,3 +121,5 @@ struct Type {
 template <typename T>
 struct TYPE : Type { TYPE() { id = typeid(T); sizes[id] = {sizeof(T)}; } };
 
+struct Member;
+struct MemberQ { Member* m; int eq = 0; int q = 1; };

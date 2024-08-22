@@ -22,7 +22,7 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
             engine.static_ubo.add(&layer_def);
 
-            glsl_layers = &Instance(&engine.static_ubo, &layer_def).track();
+            glsl_layers =  &(*new Instance(engine.static_ubo))[&layer_def];
 
             init = true;
 
@@ -31,11 +31,13 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
     feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
 
-    int xxx = glsl_layers->def()->quantity();
+    int xxx = glsl_layers->stl.back().m->quantity();
 
-    vbo.layer_id = glsl_layers->def()->quantity();
+    vbo.layer_id = glsl_layers->stl.back().m->quantity();
 
-    glsl_layers->push().set<std::array<float,2>>({(float)width,(float)height});
+    glsl_layers->stl.back().m->quantity(vbo.layer_id+1);
+
+    glsl_layers->eq(vbo.layer_id).set<std::array<float,2>>({(float)width,(float)height});
 
     engine.static_ubo.upload();
 
@@ -59,7 +61,7 @@ void Layer::draw() {
 
     shader.use();
 
-    vbo.draw(models.size()==1?models[0].get()->s.quantity():1);
+    vbo.draw(models.size()==1?models[0].get()->m.quantity():1);
 
     if (feedback) { return feedback->read(fb.texture); }
 
@@ -79,7 +81,7 @@ void UberEffector::ubl(UberLayer* ubl) {
 
 }
 
-UberEffector::UberEffector(UberLayer* ubl) : Effector(ubl?ubl->s.name():"ubereffector") {  
+UberEffector::UberEffector(UberLayer* ubl) : Effector(ubl?ubl->m.name():"ubereffector") {  
 
     this->ubl(ubl);
 
@@ -88,14 +90,14 @@ UberEffector::UberEffector(UberLayer* ubl) : Effector(ubl?ubl->s.name():"ubereff
 std::string  UberEffector::source() { 
 
     std::string out;
-    std::string name = lower(ubl_v->uberlayer_s.name());
-    if (ubl_v->uberlayer_s.quantity()>1) name += "[i]";
+    std::string name = lower(ubl_v->uberlayer_m.name());
+    if (ubl_v->uberlayer_m.quantity()>1) name += "[i]";
 
-    out += "void " + ubl_v->s.name()+ "_effector() {\n\n";
+    out += "void " + ubl_v->m.name()+ "_effector() {\n\n";
 
         out +="\tvec4 color_=  vec4(0);\n\n";
         
-        out +="\tfor (int i =0; i < "+std::to_string(ubl_v->uberlayer_s.quantity())+"; i++) {\n\n";
+        out +="\tfor (int i =0; i < "+std::to_string(ubl_v->uberlayer_m.quantity())+"; i++) {\n\n";
         
             out +="\t\tvec2 tuv = uv;\n\n";
         
@@ -118,7 +120,7 @@ std::string  UberEffector::source() {
 bool UberEffector::setup(Builder* builder) { 
 
     ubl_v->fb.texture->unit = 3;
-    ubl_v->fb.texture->sampler_name = ubl_v->s.name()+"_pass";
+    ubl_v->fb.texture->sampler_name = ubl_v->m.name()+"_pass";
     builder->samplers[ubl_v->fb.texture->unit] = ubl_v->fb.texture;
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
@@ -129,7 +131,7 @@ bool UberEffector::setup(Builder* builder) {
 
 bool UberEffector::body(Builder* builder, std::string prepend) {  
     
-    builder->current_model += "\t"+ubl_v->s.name()+"_effector();\n";
+    builder->current_model += "\t"+ubl_v->m.name()+"_effector();\n";
     
     return true; }
 
@@ -139,12 +141,14 @@ bool UberEffector::body(Builder* builder, std::string prepend) {
 UberLayer::UberLayer() : 
     Layer(0,0,"UberLayer"), 
     builder(this), 
-    uberlayer_s(engine.static_ubo.next_name(s.name()),0)
+    uberlayer_m(engine.static_ubo.next_name(m.name()))
     {
 
-    uberlayer_s.ref(&uberlayer_def);
+        uberlayer_m.quantity(0);
 
-    engine.static_ubo.add(&uberlayer_s);
+    uberlayer_m.add(&uberlayer_def);
+
+    engine.static_ubo.add(&uberlayer_m);
 
     shader.builder(&builder);
 
@@ -169,7 +173,7 @@ void UberLayer::calc_matrice() {
 
     for (auto it = layers.begin(); it != layers.end(); it++ ) {
 
-        for (int i = 0 ; i < it->get()->s.quantity(); i++) {
+        for (int i = 0 ; i < it->get()->m.quantity(); i++) {
 
             matrice.back().emplace_back( std::array<int,5>{it->get()->w, it->get()->h, last_x, last_y, count} );
 
@@ -202,11 +206,10 @@ void UberLayer::calc_matrice() {
     fb.create( matrice_width, matrice_height );
     feedback->create( matrice_width, matrice_height );
 
-    uberlayer_s.quantity(count);
+    uberlayer_m.quantity(count);
 
-    auto x = vbo[0].def();
-    vbo[0].def()->quantity(0);
-    vbo[1].def()->quantity(0);
+    vbo.vertices.quantity(0);
+    vbo.indices.quantity(0);
 
     int z = 0;
 
@@ -217,7 +220,7 @@ void UberLayer::calc_matrice() {
         auto x_ = y[2] / matrice_width;
         auto y_ = y[3] / matrice_height;
 
-        Instance glsl_uberlayer(&engine.static_ubo, &uberlayer_s);
+        auto glsl_uberlayer= Instance(engine.static_ubo)[&uberlayer_m];
 
         // PLOGW << z << " - "  << "[ "<< y[0] << " " << y[1] << " " << y[2] << " " << y[3] << " ] - [" << w << " " << h << " " << x_ << " " << y_ << " ]";
 
@@ -241,7 +244,7 @@ UberLayer::VLayer& UberLayer::addLayer(int w , int h) {
 
     auto &l = *layers.back().get();
 
-    s.add(&l.s);
+    m.add(&l.m);
 
     return *layers.back().get();
 
@@ -255,9 +258,9 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     body_fragment += "\tint obj  = int(OBJ);\n\n";
 
-    std::string ar_str = lower(ubl->uberlayer_s.name())+std::string(ubl->uberlayer_s.quantity()>1?"[obj]":"");
+    std::string ar_str = lower(ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?"[obj]":"");
 
-    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->s.name()), "obj", ar_str );
+    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->m.name()), "obj", ar_str );
 
     else {
 
@@ -268,9 +271,9 @@ void UberLayer::ShaderProgramBuilder::build() {
             if (last_id) body_fragment += "\n} else ";
 
             auto l = last_id;
-            last_id += x.get()->s.quantity();
+            last_id += x.get()->m.quantity();
 
-            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->s.name()), "obj", ar_str );
+            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->m.name()), "obj", ar_str );
 
         }
 

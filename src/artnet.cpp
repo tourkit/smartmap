@@ -1,5 +1,5 @@
 #include "artnet.hpp"
-#include "log.hpp"
+#include "instance.hpp"
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
 #ifdef ISUNIX
@@ -12,9 +12,9 @@ void DMXRemap::update() {
 
   auto data = (uint8_t*)src->data()+chan;
 
-    for (int offset = 0; offset < dst->def()->quantity(); offset++) {
+    for (int offset = 0; offset < dst->stl.back().m->quantity(); offset++) {
 
-        auto size = dst->def()->size();
+        auto size = dst->stl.back().m->size();
 
         auto pos = (offset*size);
         pos /=sizeof(float);
@@ -43,23 +43,17 @@ void DMXRemap::update() {
 
 void DMXRemap::extract(Member *s) {
 
-    for (auto m : s->ref()?s->ref()->members:s->members) {
+    for (auto m : s->members) 
 
-        if (m->isData()) {
+        if (m->isData()) 
 
-            auto cc = m->count();
+            for (int i = 0 ; i < m->quantity(); i++)
 
-            for (int i = 0 ; i < cc; i++)
+                attributes.push_back({1,*(float*)m->from(),*(float*)m->to()});
 
-            attributes.push_back({1,m->range<float>()[0],m->range<float>()[1]});
-
-        }else{
+        else
 
             extract(m);
-
-        }
-
-    }
 
 }
 
@@ -67,7 +61,8 @@ DMXRemap::DMXRemap(Instance*src, Instance*dst, int chan, std::vector<DMXRemap::A
 
     : Remap(src, dst), chan(chan), attributes(attrs),quantity(quantity) {
 
-    if (!attributes.size()) extract(dst->def());
+    if (!attributes.size()) 
+        extract(dst->stl.back().m);
 
 }
 extern "C" {
@@ -78,7 +73,9 @@ extern "C" {
 
 }
 
-Artnet::Artnet(std::string ip)  {
+Artnet::Artnet(std::string ip) : Member("Artnet") {
+
+    buffering(true);
 
     if (!available_ips.size()){
 
@@ -113,9 +110,9 @@ Artnet::Artnet(std::string ip)  {
 
         auto x = universes.emplace(id, std::make_shared<Artnet::Universe>(this, id)).first->second.get();
 
-        add(x);
+        add(&x->m);
 
-        Instance{this,offset,{x}}.track();
+        // Instance{buffer,offset,{x}}.track(); // TODOTODO
 
         PLOGD << id;
 
@@ -126,9 +123,9 @@ Artnet::Artnet(std::string ip)  {
   }
 
 
-Artnet::Universe::Universe(Artnet* an, int id) : Struct(""+std::to_string(id)), an(an), id(id) {
+Artnet::Universe::Universe(Artnet* an, int id) : m(""+std::to_string(id)), an(an), id(id) {
 
-    add(&uni_s);
+    m.add(&uni_s);
 
 }
 
@@ -185,9 +182,10 @@ void Artnet::connect(std::string ip_) {
 
         int uni_id = p->data.admx.universe;
 
-        auto &u = *an->universe(uni_id).instances[0].get();
+        // TODOTODOTODO
+        // Instance *u = an->universe(uni_id).m.instances
 
-        u.set<std::array<char,512>>(p->data.admx.data);
+        // u.set<std::array<char,512>>(p->data.admx.data);
 
         return 1;
 

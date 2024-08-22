@@ -7,6 +7,19 @@
 #include <vector>
 
 
+#include "member.hpp"
+
+Remap::Remap(Instance* src , Instance* dst, int quantity) : src(src) ,dst(dst) , quantity(quantity) { }
+void Remap::update() {
+
+    int size = src->stl.back().m->size();
+
+    if (dst->stl.back().m->size()<size) size = dst->stl.back().m->size();
+
+    memcpy(dst->data(), src->data(), quantity * size);
+
+}
+
 
 std::pair<std::string,int> nameQ(std::string name) { 
     
@@ -66,6 +79,7 @@ std::pair<std::string,int> nameQ(std::string name) {
                 
                 stl[stl.size()-2].m->instances.erase(this);
             
+            // ADD_UNIQUE<Instance*>(m->instances, this);
             m->instances.insert(this);
             
         }
@@ -88,11 +102,6 @@ std::pair<std::string,int> nameQ(std::string name) {
 
             offset += x->footprint_all();
         }
-
-        // if (m->isData())
-        //     PLOGW << m->name() << " " << offset;
-
-
 
         if (m->isData()) {
 
@@ -343,14 +352,11 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     }
 
-
-
     void Instance::set(void* ptr, size_t size) {
 
         memcpy(data(), ptr, size);
 
     }
-
 
     void Instance::setDefault(Member* m, int offset) {
 
@@ -367,7 +373,7 @@ std::pair<std::string,int> nameQ(std::string name) {
         }
 
         if (m->def()) 
-        
+
             for (int eq = 0 ; eq < m->quantity(); eq++) 
 
                 memcpy(data()+(offset+m->footprint()*eq), m->def(), m->size());

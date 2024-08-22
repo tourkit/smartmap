@@ -8,15 +8,11 @@
 
 struct Instance;
 
-struct Member;
-struct MemberQ { Member* m; int eq = 0; int q = 1; };
 struct Member {
 
     static inline std::set<Member*> structs;
 
     Member(std::string name);
-
-    Member(std::string name, int quantity);
 
     Member(std::string name, Type type);
 
@@ -66,7 +62,7 @@ struct Member {
 
     bool clear();
 
-    Member* quantity(uint32_t value) ;
+    Member& quantity(uint32_t value) ;
 
     uint32_t quantity();
 
@@ -93,7 +89,7 @@ struct Member {
     void update(std::set<std::shared_ptr<Instance>>* tops = nullptr, std::vector<MemberQ> addeds = {}) ;
     
     virtual void upload();
-
+ 
     bool isData();
     
     void deleteData();
@@ -148,7 +144,6 @@ private:
     Type type_v = TYPE<Member>();
 
     static inline std::set<Member*> removing;
-    static inline std::set<Member*> removing_;
     static inline std::set<Member*> adding; // shd be insts ?
 
     static inline int MAX_SIZE = 10000;

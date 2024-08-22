@@ -159,7 +159,7 @@ void Window::draw() {
         shader = new ShaderProgram(frag,vert);
 
         vbo = new VBO();
-        vbo->add(&upside_quad);
+        vbo->addFile(&upside_quad);
 
         init = true;
 

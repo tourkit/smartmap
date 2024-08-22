@@ -7,9 +7,11 @@
 
 UBO::~UBO() { destroy(); }
 
-UBO::UBO(std::string name) : Buffer(name) {
+UBO::UBO(std::string name) : Member(name) {
 
     striding(true);
+
+    buffering(true);
 
     binding = binding_count++;
 
@@ -44,7 +46,7 @@ void UBO:: bind(ShaderProgram* shader) {
 
 }
 
-void UBO::update() { Buffer::update(); resize(footprint_all()); } // acho q melhor nao ter upload() la. obrigado
+void UBO::update() { update(); resize(footprint_all()); } // acho q melhor nao ter upload() la. obrigado
 
 void UBO::reset() {
 
@@ -56,7 +58,7 @@ void UBO::reset() {
 
 }
 
-void UBO::upload(){ upload(data.data(), data.size()); }
+void UBO::upload(){ upload(data(), footprint_all()); }
 
 void UBO::upload(void* data, size_t size, uint32_t offset){
 

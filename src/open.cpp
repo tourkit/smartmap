@@ -86,7 +86,7 @@ void Open::inputs(){
 
                 // should find (Layer/Model/Effector aka Effectable) node(aka "w" down there) (then get Member path)
 
-                Instance inst(&engine.dynamic_ubo);
+                Instance inst(engine.dynamic_ubo);
 
                 Node* n = engine.tree->child(arr[2].GetString());
 
@@ -94,28 +94,30 @@ void Open::inputs(){
                 auto vlayer = n->is_a<UberLayer::VLayer>();
                 
                 if (vlayer) 
-                    inst = inst.find(&vlayer->s);
+                    inst = inst.loc(&vlayer->m);
 
-                if (inst.def() == inst.buff) { PLOGW << json_error; continue; }
+                if (inst.stl.size() == 1) { PLOGW << json_error; continue; }
 
-                auto &uni = *an.universe(arr[0].GetInt()).instances[0].get();
+                // TODOTODO
 
-                std::vector<DMXRemap::Attribute> attrs;
-                if ( arr.Size() > 3 && arr[3].IsArray() ) for (auto &x : arr[3].GetArray()) if (x.IsInt()) attrs.push_back({x.GetInt()});
+                // auto &uni = *an.universe(arr[0].GetInt()).instances[0].get();
 
-                int q = 1;
-                if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
+                // std::vector<DMXRemap::Attribute> attrs;
+                // if ( arr.Size() > 3 && arr[3].IsArray() ) for (auto &x : arr[3].GetArray()) if (x.IsInt()) attrs.push_back({x.GetInt()});
 
-                DMXRemap* dmxremap = new DMXRemap(&uni, &inst.track(), arr[1].GetInt()-1, attrs, q);
+                // int q = 1;
+                // if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
 
-                uni.remaps.push_back( dmxremap );
+                // DMXRemap* dmxremap = new DMXRemap(&uni, &inst.track(), arr[1].GetInt()-1, attrs, q);
 
-                auto out = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
+                // uni.remaps.push_back( dmxremap );
 
-                std::string sss =arr[2].GetString() ;
-                auto w = engine.tree->child(sss);
-                if (!w) { PLOGE <<arr[2].GetString()<< " not found"; return; }
-                w->referings.insert( out );
+                // auto out = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
+
+                // std::string sss =arr[2].GetString() ;
+                // auto w = engine.tree->child(sss);
+                // if (!w) { PLOGE <<arr[2].GetString()<< " not found"; return; }
+                // w->referings.insert( out );
 
             }
 
@@ -234,7 +236,7 @@ void Open::layers(){
 
                 new_model_->name(model_def.name());
 
-                if (model_def[1].isnum()) new_model_->is_a<Model>()->s.quantity(model_def[1].num());
+                if (model_def[1].isnum()) new_model_->is_a<Model>()->m.quantity(model_def[1].num());
 
                 if (model_def[2].isobj()) addEffectors( model_def[2], new_model_ );
 
@@ -276,10 +278,10 @@ void Open::layers(){
 
                 auto &l = ubl.addLayer(width,height);
                 auto name = vlayer_def.name();
-                l.s.name(name);
+                l.m.name(name);
                 auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
                 l_->active(true);
-                l.s.quantity(count);
+                l.m.quantity(count);
 
                 addEffectors( vlayer_def[models_id], l_ );
 

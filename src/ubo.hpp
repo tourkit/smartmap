@@ -1,12 +1,10 @@
 #pragma once
 
-#include <vector>
-
-#include "buffer.hpp"
+#include "member.hpp"
 
 struct ShaderProgram;
 
-struct UBO : Buffer {
+struct UBO : Member {
 
     uint32_t id = -1;
 
@@ -28,9 +26,9 @@ struct UBO : Buffer {
 
     void resize(uint32_t size);
 
-    void update() override;
+    void update();
 
-    void upload() override;
+    void upload();
 
     void upload(void* data, size_t size, uint32_t offset = 0);
 

@@ -4,16 +4,9 @@
 #include <vector>
 #include <string>
 #include <map>
-#include <unordered_map>
-#include <set>
-#include <array>
-#include <functional>
-#include <iostream>
 #include "vendors/ofxLibArtnet/artnet/artnet.h"
 
-#include "dmx.hpp"
-#include "buffer.hpp"
-#include "struct.hpp"
+#include "member.hpp"
 #include "instance.hpp"
 
 struct DMXRemap : Remap {
@@ -34,15 +27,15 @@ struct DMXRemap : Remap {
 
 };
 
-struct Artnet : Buffer {
+struct Artnet : Member{
 
-  static inline Struct &uni_s = Struct::create("universe").add<char>("chan",512);
+  static inline auto uni_s = Member("universe").add<char,512>("chan");
 
   static inline std::vector<std::string> available_ips;
 
   artnet_node artnet = NULL;
 
-  struct Universe : Struct { Artnet* an; int id;  Universe(Artnet* an, int id); };
+  struct Universe { Member m; Artnet* an; int id;  Universe(Artnet* an, int id); };
 
   std::map<int, std::shared_ptr<Universe>> universes;
 

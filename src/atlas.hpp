@@ -14,7 +14,7 @@ struct Instance;
  
 struct Atlas {
 
-    Struct s;
+    Member m;
 
     rbp::MaxRectsBinPack binpack;
 

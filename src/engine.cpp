@@ -14,6 +14,7 @@
 
 #include "callbacks.hpp"
 
+#include <cmath>
 
 
 Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
@@ -64,9 +65,9 @@ Engine::~Engine() {
 
 void Engine::init() {
 
-    Callbacks::init();
+    // Callbacks::init();
 
-    Editors::init();
+    // Editors::init();
     
 
     
@@ -158,21 +159,21 @@ void Engine::run() {
             engine.gui->draw();
 
             static int frame = 0;
-            memcpy(engine.dynamic_ubo.data.data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
+            memcpy(engine.dynamic_ubo.data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
             int fps = std::round(ImGui::GetIO().Framerate);
-            memcpy(engine.dynamic_ubo.data.data()+4, &fps, 4); // aka engine.dynamic_ubo["ENGINE"]["fps"]
+            memcpy(engine.dynamic_ubo.data()+4, &fps, 4); // aka engine.dynamic_ubo["ENGINE"]["fps"]
             int alt = frame % 2;
-            memcpy(engine.dynamic_ubo.data.data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
+            memcpy(engine.dynamic_ubo.data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
 
             frame = (frame+1) % engine.window.displays.back().rate;
             
             int glsldatafp = engine.glsl_data.footprint();
             int dynubofp = engine.dynamic_ubo.footprint();
             
-            engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data(),alt?glsldatafp:dynubofp);
+            engine.dynamic_ubo.upload(engine.dynamic_ubo.data(),alt?glsldatafp:dynubofp);
 
             if (alt) 
-                engine.dynamic_ubo.upload(engine.dynamic_ubo.data.data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
+                engine.dynamic_ubo.upload(engine.dynamic_ubo.data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
             
             engine.tree->run();
 

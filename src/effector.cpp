@@ -10,9 +10,9 @@
 
 // Effector  ////////////////
 
-Effector::Effector(std::string name) : s(name) {
+Effector::Effector(std::string name) : m(name) {
 
-    s.striding(true);
+    m.striding(true);
 
 }
 
@@ -31,11 +31,11 @@ std::string Effector::call(std::string prepend) {
 
     std::string args;
 
-    for (auto &arg : s.members) args += prepend +"."+ arg->name()+", "; 
+    for (auto &arg : m.members) args += prepend +"."+ arg->name()+", "; 
 
     if (args.length()) args.resize(args.size()-2);
 
-    return s.name()+"("+args+");";
+    return m.name()+"("+args+");";
     
 }
 
@@ -85,7 +85,7 @@ bool FeedbackEffector::body(Builder* builder, std::string prepend) {
 
 FeedbackEffector::FeedbackEffector() : Effector("feedbackEffector") {
 
-    s.add<float>("intensity");
+    m.add<float>("intensity");
 
     
 }
@@ -117,7 +117,7 @@ void FileEffector::load(File *file) {
 
     std::regex regex; std::smatch match;
 
-    s.clear();
+    m.clear();
 
     regex = std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))");
     for (std::sregex_iterator it(source_v.begin(), source_v.end(), regex), end; it != end; ++it) {
@@ -160,21 +160,21 @@ void FileEffector::load(File *file) {
 
     // build Member
 
-    s.name( file->name() );
+    m.name( file->name() );
 
-    s.striding(true);
+    m.striding(true);
 
     for (auto arg : args) {
 
-        if (arg.first == "vec2") s.add<glm::vec2>(arg.second.c_str());
-        else if (arg.first == "vec3") s.add<glm::vec3>(arg.second.c_str());
-        else if (arg.first == "vec4") s.add<glm::vec4>(arg.second.c_str());
+        if (arg.first == "vec2") m.add<float, 2>(arg.second.c_str());
+        else if (arg.first == "vec3") m.add<float, 3>(arg.second.c_str());
+        else if (arg.first == "vec4") m.add<float, 4>(arg.second.c_str());
 
-        else if (arg.first == "int") s.add<int>(arg.second.c_str());
+        else if (arg.first == "int") m.add<int>(arg.second.c_str());
 
-        else s.add<float>(arg.second.c_str());
+        else m.add<float>(arg.second.c_str());
 
-        if (ranges.find(arg.second) != ranges.end()) s.range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+        if (ranges.find(arg.second) != ranges.end()) m.range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
 
     }
 
@@ -216,9 +216,9 @@ Wrappy::Wrappy(std::vector<Effector*> effectors, int count, std::string name) : 
 std::string Wrappy::source() {
 
     std::string args;
-    for (auto x : Effector::s.members) args += x->type_name() + " " + x->name() + ", ";
+    for (auto x : Effector::m.members) args += x->type_name() + " " + x->name() + ", ";
 
-    std::string out = "void " + Effector::s.name() + " ( " + (args.length()?args.substr(0, args.length() - 2):"") + " ) ";
+    std::string out = "void " + Effector::m.name() + " ( " + (args.length()?args.substr(0, args.length() - 2):"") + " ) ";
 
     out += "{\n\n"; 
     
@@ -227,13 +227,13 @@ std::string Wrappy::source() {
 
         std::string args;
 
-        for (int i = 0; i < x->effector->s.members.size(); i++) {
+        for (int i = 0; i < x->effector->m.members.size(); i++) {
             
-            args +=  (i<count?Effector::s.members[i+1]->name():"0") + ", ";
+            args +=  (i<count?Effector::m.members[i+1]->name():"0") + ", ";
             
         }
         
-        out += "\tif (id=="+std::to_string(id++)+") { " + x->s.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " ); return; }\n\n";
+        out += "\tif (id=="+std::to_string(id++)+") { " + x->m.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " ); return; }\n\n";
         
     }
 
@@ -252,12 +252,12 @@ void Wrappy::attrs(int count) {
 
     this->count = count;
 
-    Effector::s.clear();
+    Effector::m.clear();
 
-    Effector::s.add<int>("id").range(0,effector_refs.size()-1,0);
+    Effector::m.add<int>("id").range(0,effector_refs.size()-1,0);
 
     for (int i = 0 ; i < count; i++)
-        Effector::s.add<float>("param_"+std::to_string(i));
+        Effector::m.add<float>("param_"+std::to_string(i));
 
     update();
 
@@ -265,7 +265,7 @@ void Wrappy::attrs(int count) {
 
 bool Wrappy::setup(Builder* builder) { 
 
-    Effector::s.members[0]->range<int>(0,effector_refs.size()-1,0);
+    Effector::m.members[0]->range(0,effector_refs.size()-1,0);
     
     for (auto x : effector_refs) {
         
@@ -284,8 +284,8 @@ bool Wrappy::setup(Builder* builder) {
 // Ref  ////////////////
 // Ref  ////////////////
 
-EffectorRef::EffectorRef(std::string name, Effector* effector ) : s(name), effector(effector) {  
-    s.ref( &effector->s ); 
+EffectorRef::EffectorRef(std::string name, Effector* effector ) : m(name), effector(effector) {  
+    m.add( &effector->m ); 
     
 };
 
@@ -303,7 +303,7 @@ void EffectorRef::update() {
 
 Effectable::~Effectable() {  }
 
-Effectable::Effectable(std::string name) : s(name) {  }
+Effectable::Effectable(std::string name) : m(name) {  }
 
 bool Effectable::removeEffector(EffectorRef* effector) {
 
@@ -313,9 +313,9 @@ bool Effectable::removeEffector(EffectorRef* effector) {
 
 EffectorRef* Effectable::addEffector(Effector* def) {
 
-    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(s.next_name(def->s.name()), def)).get();
+    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(m.next_name(def->m.name()), def)).get();
 
-    s.add(&effector->s);
+    m.add(&effector->m);
 
     return effector;
 

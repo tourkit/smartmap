@@ -1,10 +1,8 @@
 #include "vbo.hpp"
-#include "ubo.hpp"
 
-#include "model.hpp"
+#include "member.hpp"
 #include "file.hpp"
 #include "instance.hpp"
-#include "log.hpp"
 #include "utils.hpp"
 
 #include <GL/gl3w.h>
@@ -14,15 +12,17 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-VBO::VBO(File* file) : VBO() { add(file); }
+VBO::VBO(File* file) : VBO() { addFile(file); }
 
-VBO::VBO() : Buffer("VBO"), vertices("Vertices", 0), indices("Indices", 0) {
+VBO::VBO() : Member("VBO"), vertices("Vertices"), indices("Indices") {
 
-    vertices.add(vertice);
-    Buffer::add(&vertices);
+    buffering(true);
 
-    indices.add(indice);
-    Buffer::add(&indices);
+    vertices.add(&vertice);
+    add(&vertices);
+
+    indices.add(&indice);
+    add(&indices);
 
     create();
 
@@ -82,21 +82,17 @@ void VBO::reset() {
 
 }
 
-void VBO::update() { Buffer::update(); }
+void VBO::update() { update(); }
 
 void VBO::upload() {
 
-    Instance inst(this);
+    auto v_size = vertices.footprint_all();
 
-    if (!inst[0].size() || !inst[1].size()) return;
-
-    auto v_size = members[0]->footprint_all();
-
-    auto i_size = members[1]->footprint_all();
+    auto i_size = indices.footprint_all();
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-    glBufferData(GL_ARRAY_BUFFER,  v_size, data.data(), GL_STATIC_DRAW );
+    glBufferData(GL_ARRAY_BUFFER,  v_size, data(), GL_STATIC_DRAW );
 
     if (!vao) {
 
@@ -105,18 +101,13 @@ void VBO::upload() {
 
         int offset = 0;
         enabled_attrs = 0;
-        for (auto & m : members[0]->members[0]->members) {
+        for (auto & m : vertice.members) {
 
             auto type = GL_FLOAT;
-            if (m->type() == typeid(int)) type = GL_INT;
-            if (m->type() == typeid(uint32_t)) type = GL_UNSIGNED_INT;
+            if (m->type().id == typeid(int)) type = GL_INT;
+            if (m->type().id == typeid(uint32_t)) type = GL_UNSIGNED_INT;
 
-            auto count = 1; // m->count(); does it
-            if (m->type() == typeid(glm::vec2)) count = 2;
-            else if (m->type() == typeid(glm::vec3)) count = 3;
-            else if (m->type() == typeid(glm::vec4)) count = 4;
-
-            glVertexAttribPointer(enabled_attrs, count, type, GL_TRUE, members[0]->footprint(), (const void*)(size_t)offset);
+            glVertexAttribPointer(enabled_attrs, m->quantity(), type, GL_TRUE, vertices.footprint(), (const void*)(size_t)offset);
 
             glEnableVertexAttribArray(enabled_attrs++);
 
@@ -128,11 +119,10 @@ void VBO::upload() {
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_size, data.data() + v_size , GL_STATIC_DRAW );
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_size, data() + v_size , GL_STATIC_DRAW );
 
-
-    std::string str;
-    for (int i = 0 ; i < this->data.size(); i++) str+= std::to_string(*(((uint8_t*)&data[0])+i)) + " ";
+    // std::string str;
+    // for (int i = 0 ; i < size(); i++) str+= std::to_string(*(((uint8_t*)data())+i)) + " ";
     // PLOGV << name() << ": " << data.size() << " - " << str;
 
 }
@@ -141,15 +131,15 @@ void VBO::draw(int count) {
 
     glBindVertexArray(vao);
 
-    glDrawElementsInstanced(GL_TRIANGLES, members[1]->footprint_all()/sizeof(int), GL_UNSIGNED_INT, 0, count);
+    glDrawElementsInstanced(GL_TRIANGLES, indices.footprint_all()/sizeof(int), GL_UNSIGNED_INT, 0, count);
 
 }
 
 void VBO::addQuad(float w, float h, float x, float y, int id) {
 
-    int o = (*this)[0].def()->quantity();
+    int o = vertices.quantity();
 
-    if (o) id = (*this)[0].eq(o-1)[0]["OBJ"].get<float>()+1;
+    if (o) id = Instance(*this)[&vertices].eq(o-1)[&vertice]["OBJ"].get<float>()+1;
 
     auto x_ = x;
     auto y_ = y;
@@ -158,21 +148,31 @@ void VBO::addQuad(float w, float h, float x, float y, int id) {
 
     struct Vec { float a,b,c,d,e,f; float g,h; };
 
-    (*this)[0].push()[0].set<Vec>({ x_*2-1 , y_*2-1 , 0, 0, x_ , y_ ,  (float)id, (float)layer_id});
-    (*this)[0].push()[0].set<Vec>({ w_*2-1 , y_*2-1 , 1, 0, w_ , y_ ,  (float)id, (float)layer_id});
-    (*this)[0].push()[0].set<Vec>({ x_*2-1 , h_*2-1 , 0, 1, x_ , h_ ,  (float)id, (float)layer_id});
-    (*this)[0].push()[0].set<Vec>({ w_*2-1 , h_*2-1 , 1, 1, w_ , h_ ,  (float)id, (float)layer_id});
 
-    (*this)[1].push()[0].set<std::array<int,3>>({o+0,o+1,o+2});
-    (*this)[1].push()[0].set<std::array<int,3>>({o+1,o+2,o+3});
+    vertices.quantity(vertices.quantity()+4);
+    auto v = Instance(*this)[&vertices][&vertice].eq(vertices.quantity()-4);
+    v.set<Vec,4>(
+        Vec{ x_*2-1 , y_*2-1 , 0, 0, x_ , y_ ,  (float)id, (float)layer_id},
+        Vec{ w_*2-1 , y_*2-1 , 1, 0, w_ , y_ ,  (float)id, (float)layer_id},
+        Vec{ x_*2-1 , h_*2-1 , 0, 1, x_ , h_ ,  (float)id, (float)layer_id},
+        Vec{ w_*2-1 , h_*2-1 , 1, 1, w_ , h_ ,  (float)id, (float)layer_id}
+    );
+
+
+    indices.quantity(indices.quantity()+2);
+    auto i = Instance(*this)[&indices][&indice].eq(indices.quantity()-2);
+    v.set<std::array<int,3>,2>({
+        std::array<int,3>{o+0,o+1,o+2},
+        std::array<int,3>{o+1,o+2,o+3}
+    });
 
     upload();
 
 }
 
-bool VBO::add(File* file, int id) { if (add_noupload(file,id)) { upload(); return true; } return false; }
+bool VBO::addFile(File* file, int id) { if (addFile_noupload(file,id)) { upload(); return true; } return false; }
 
-bool VBO::add_noupload(File* file, int id) {
+bool VBO::addFile_noupload(File* file, int id) {
 
     Assimp::Importer importer;
 
@@ -185,30 +185,32 @@ bool VBO::add_noupload(File* file, int id) {
 
     auto mesh = scene->mMeshes[0];
 
-    int next_indice =  members[0]->quantity();
+    int next_indice =  vertices.quantity();
 
     for (int i = 0; i < mesh->mNumVertices; i++) {
 
         const aiVector3D& vertex = mesh->mVertices[i];
 
-        auto v = (*this)[0].push()[0];
+        vertices.quantity(vertices.quantity()+1);
 
-        v["POSITION"].set<glm::vec2>({ vertex.x, vertex.y });
-        v["UV"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
-        v["NORMALIZED"].set<glm::vec2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
+        auto v = Instance(*this)[&vertices][&vertice].eq(vertices.quantity()-1);
+
+        v["POSITION"].set<float, 2>({ vertex.x, vertex.y });
+        v["UV"].set<float, 2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
+        v["NORMALIZED"].set<float, 2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });
         v["OBJ"].set<float>(id);
         v["LAYER"].set<float>(layer_id);
 
     }
 
+    indices.quantity(indices.quantity()+mesh->mNumFaces);
     for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
 
         const aiFace& face = mesh->mFaces[i];
-        auto indice = (*this)[1].push()[0];
 
-        indice[0].set<int>(next_indice+face.mIndices[0]);
-        indice[1].set<int>(next_indice+face.mIndices[1]);
-        indice[2].set<int>(next_indice+face.mIndices[2]);
+        auto indice = Instance(*this)[&vertices].eq(indices.quantity()-mesh->mNumFaces+i);
+
+        indice.set<int, 3>(next_indice+(int)face.mIndices[0], next_indice+(int)face.mIndices[1], next_indice+(int)face.mIndices[2]);
 
     }
 

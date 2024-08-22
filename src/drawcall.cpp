@@ -9,7 +9,7 @@ Model* DrawCall::addModel(File* f) {
 
      auto x = Modelable::addModel(f);
 
-     vbo.add(f, models.size()-1);
+     vbo.addFile(f, models.size()-1);
 
      return x;
 }
@@ -32,9 +32,9 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
 std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
 
-    auto name = lower(effectable.s.name());
+    auto name = lower(effectable.m.name());
 
-    if (effectable.s.quantity() > 1) name += "["+(dc->models.size() == 1?"ID":instance)+"]";
+    if (effectable.m.quantity() > 1) name += "["+(dc->models.size() == 1?"ID":instance)+"]";
 
     std::string body_fragment;
 
@@ -48,7 +48,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     for (auto ref : effectable.effector_refs) 
 
-        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->s.name());
+        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->m.name());
 
 
     body_fragment+=current_model;
@@ -96,13 +96,13 @@ void Layer::ShaderProgramBuilder::build() {
 
         for (auto &model : dc->models)
 
-            for (int instance = 0; instance < model.get()->s.quantity(); instance++) 
+            for (int instance = 0; instance < model.get()->m.quantity(); instance++) 
                 
-                body_fragment += print_layer(*model, lower(dc->s.name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->def()->quantity()>1?"[int(LAYER)]":""));
+                body_fragment += print_layer(*model, lower(dc->m.name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->stl.back().m->quantity()>1?"[int(LAYER)]":""));
                 
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->s.name()+"."+ref->s.name());
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->m.name()+"."+ref->m.name());
 
         
         // setup all effector_refs
@@ -120,11 +120,11 @@ void Layer::ShaderProgramBuilder::build() {
 
     header_vertex.clear();
 
-    for (int i = 1; i < vbo->vertice->members.size(); i++) {
+    for (int i = 1; i < vbo->vertice.members.size(); i++) {
 
-        auto m = vbo->vertice->members[i];
+        auto m = vbo->vertice.members[i];
 
-        header_vertex += "out "+std::string(m->type() == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+        header_vertex += "out "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
 
     }
 
@@ -132,9 +132,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     body_vertex.clear();
 
-    for (int i = 1; i < dc->vbo.vertice->members.size(); i++) {
+    for (int i = 1; i < dc->vbo.vertice.members.size(); i++) {
 
-        auto m = dc->vbo.vertice->members[i];
+        auto m = dc->vbo.vertice.members[i];
         body_vertex += "\t"+m->name()+" = "+m->name()+"_;\n\n";
 
     }
@@ -156,7 +156,7 @@ DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo.next_name(na
 
     shader.builder(&builder);
 
-    engine.dynamic_ubo.add(&s);
+    engine.dynamic_ubo.add(&m);
 
 }
 
@@ -191,7 +191,7 @@ void DrawCall::update() {
 
         vbo.reset();
 
-        for (auto &x : models) vbo.add_noupload(x.get()->file, i++) ;
+        for (auto &x : models) vbo.addFile_noupload(x.get()->file, i++) ;
 
         vbo.upload();
 

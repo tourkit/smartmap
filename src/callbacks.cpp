@@ -51,26 +51,23 @@ void Callbacks::init() {
 
     });
 
-    ////////// Struct.HPP
+    ////////// Member.HPP
 
-    NODE<Struct>::on(Node::CREATE, [](Node* node, Struct *s){ 
-        node->name_v = (s->name()); 
+    NODE<Member>::on(Node::CREATE, [](Node* node, Member *m){ 
+        node->name_v = (m->name()); 
     });
 
-    NODE<Struct>::on(Node::CHANGE, [&](Node*node, Struct* s){
-        if (s->name() != node->name())
-            s->name(node->name()); });
+    NODE<Member>::on(Node::CHANGE, [&](Node*node, Member* m){
+        if (m->name() != node->name())
+            m->name(node->name()); });
 
 
 
     ////////// ENGINE
-
-    NODE<Buffer>::on(Node::RUN, [](Node* node, Buffer *buff){ buff->upload(); });
     
-    NODE<UBO>::is_a<Buffer>();
+    NODE<Member>::on(Node::RUN, [](Node* node, Member *m){ m->upload(); });
 
-    NODE<Buffer>::is_a<Struct>();
-
+    NODE<UBO>::is_a<Member>();
 
     ////////// DRAWCALL
 
@@ -125,12 +122,12 @@ void Callbacks::init() {
 
     NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
     
-        NODE<Struct>::on_cb[Node::CREATE](node, &e->s);
+        NODE<Member>::on_cb[Node::CREATE](node, &e->m);
         
     });
     NODE<Effectable>::on(Node::CHANGE, [](Node* node, Effectable *e){ 
     
-        NODE<Struct>::on_cb[Node::CHANGE](node, &e->s);
+        NODE<Member>::on_cb[Node::CHANGE](node, &e->m);
         
     });
 
@@ -174,11 +171,11 @@ void Callbacks::init() {
 
     });
 
-    NODE<Effector>::on(Node::CREATE, [](Node*node, Effector* def){ NODE<Struct>::on_cb[Node::CREATE](node, &def->s); });
+    NODE<Effector>::on(Node::CREATE, [](Node*node, Effector* def){ NODE<Member>::on_cb[Node::CREATE](node, &def->m); });
 
-    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Struct>::on_cb[Node::CREATE](node, &fx->s); });
+    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, &fx->m); });
 
-    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* effector){ NODE<Struct>::on_cb[Node::CHANGE](node, &effector->s);  effector->update(); });
+    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* effector){ NODE<Member>::on_cb[Node::CHANGE](node, &effector->m);  effector->update(); });
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
 
@@ -217,7 +214,7 @@ void Callbacks::init() {
 
     NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){
 
-        NODE<Struct>::on_cb[Node::CHANGE](node, an);
+        NODE<Member>::on_cb[Node::CHANGE](node, an);
 
 
         // for (auto c :node->childrens) delete c;
@@ -252,8 +249,6 @@ void Callbacks::init() {
     NODE<FrameBuffer>::on(Node::CHANGE, [](Node* node, FrameBuffer *fb) { if (fb->width != fb->texture->width || fb->height != fb->texture->height) { fb->create(fb->width, fb->height); } });
 
     //////// Buffer.HPP
-
-    NODE<Buffer>::on(Node::CHANGE, [](Node* node, Buffer *buffer) { PLOGD<<"ooo"; });
 
     ////////// Folder.HPP
 

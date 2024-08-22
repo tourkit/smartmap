@@ -1,6 +1,6 @@
 #pragma once
 
-#include "struct.hpp"
+#include "member.hpp"
 
 #include <vector>
 #include <string>
@@ -10,7 +10,7 @@ struct Builder;
 
 struct Effector {
 
-    Struct s;
+    Member m;
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
@@ -64,7 +64,7 @@ struct FileEffector : Effector {
 
 struct EffectorRef  {
 
-    Struct s;
+    Member m;
 
     Effector* effector;
 
@@ -76,7 +76,7 @@ struct EffectorRef  {
 
 struct Effectable {
 
-    Struct s;
+    Member m;
 
     Effectable(std::string name = "Effectable" );
     
