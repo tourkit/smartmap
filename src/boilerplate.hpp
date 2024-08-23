@@ -123,9 +123,9 @@ struct BoilerShader {
 
     GLuint id = 0, frag_id = 0, vert_id = 0;
 
-    std::string frag = "#version 430 core \nout vec4 COLOR;\nin vec2 UV;\nvoid main() { COLOR = vec4(1,UV.x,0,1); }";
+    std::string frag = "#version 430 core \nstruct Ubo { int x,y,z,w;};\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() { COLOR = vec4(1,UV.x,float(ubo.z)/10.0f,1); }";
     
-    std::string vert = "#version 430 core\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nout vec2 UV;\nvoid main() { UV = TEXCOORD; gl_Position = vec4(POSITION.x,POSITION.y,0,1); }";
+    std::string vert = "#version 430 core\nstruct Ubo { int x,y,z,w;};\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nout vec2 UV;\nvoid main() { UV = TEXCOORD; gl_Position = vec4(POSITION.x,POSITION.y,0,1); }";
     
     BoilerShader() { create(); }
 
@@ -193,8 +193,6 @@ struct BoilerShader {
 
     void use() { glUseProgram(id); }
 
-
-    void ubo(std::string name = "ubo", int id = 0){ glUniformBlockBinding(id, glGetUniformBlockIndex(id, name.c_str()), id); }
     void texture(std::string name = "tex", int loc = 0){ auto x = glGetUniformLocation(id, name.c_str()) ; glUniform1i(x, loc); }
 
 };
@@ -202,27 +200,44 @@ struct BoilerShader {
 
 struct BoilerUBO {
 
-    std::vector<float> data = {.0,0,1,1};
+    std::vector<int> data = {1,2,10,100};
 
-    GLuint ubo;
+    int binding = 0;
+    std::string name = "ubo";
 
-    BoilerUBO(BoilerShader& shader) {
+    GLuint id;
 
-        glGenBuffers(1, &ubo);
+    BoilerUBO(GLuint shader) {
 
-        glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+        glGenBuffers(1, &id);
+
+        glBindBuffer(GL_UNIFORM_BUFFER, id);
         glBufferData(GL_UNIFORM_BUFFER, data.size()*4, NULL, GL_DYNAMIC_COPY);
 
+        bind(shader);
 
-        glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-        shader.ubo(0);
-        glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
+        upload();
+    }
 
+    void upload(){ 
 
-        glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+        std::string str;
+        for (int i = 0 ; i < data.size()*sizeof(int); i++) str+= std::to_string(*(((uint8_t*)data.data())+i)) + " ";
+        PLOGW << name << " " << id << " " << binding << ": " << data.size()*4 << " - " << str;
+
+        glBindBuffer(GL_UNIFORM_BUFFER, id);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, data.size()*4, &data[0]);
 
     }
+
+    void bind(GLuint shader){ 
+       
+        glBindBuffer(GL_UNIFORM_BUFFER, id);
+        glUniformBlockBinding(shader, glGetUniformBlockIndex(shader, name.c_str()), binding);
+        glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
+
+    }
+
 };
 
 struct BoilerWindow {
@@ -322,9 +337,6 @@ struct Boilerplate {
 
                     shader->create();
 
-                    glBindBuffer(GL_UNIFORM_BUFFER, engine.dynamic_ubo.id);
-                    glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, "dynamic_ubo_"), engine.dynamic_ubo.binding);
-                    glBindBufferBase(GL_UNIFORM_BUFFER, engine.dynamic_ubo.binding, engine.dynamic_ubo.id);
 
                 }
 
@@ -358,9 +370,6 @@ struct Boilerplate {
 
                     shader->create();
 
-                    glBindBuffer(GL_UNIFORM_BUFFER, engine.dynamic_ubo.id);
-                    glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, "dynamic_ubo_"), engine.dynamic_ubo.binding);
-                    glBindBufferBase(GL_UNIFORM_BUFFER, engine.dynamic_ubo.binding, engine.dynamic_ubo.id);
 
                 }
 

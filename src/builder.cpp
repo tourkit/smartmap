@@ -40,9 +40,11 @@ void Builder::build() {
 
     samplers.clear();
     
-    if (!shader) return;
+    if (!shader) 
+        return;
 
-    for (auto x : ubos) x->bind(shader);
+    for (auto x : ubos) 
+        x->bind(shader->id);
 
 }
 

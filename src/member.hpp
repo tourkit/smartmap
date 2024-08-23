@@ -74,7 +74,7 @@ struct Member {
 
     uint32_t stride();
     
-    void striding(bool value);
+    Member& striding(bool value);
 
     bool striding();
 
@@ -85,10 +85,8 @@ struct Member {
     uint32_t eq(int i) ;
 
     std::set<std::shared_ptr<Instance>> getTop(bool z = false);
-
-    void update(std::set<std::shared_ptr<Instance>>* tops = nullptr, std::vector<MemberQ> addeds = {});
     
-    // virtual void update();
+    virtual void update();
     
     virtual void upload();
  
@@ -146,7 +144,8 @@ private:
     Type type_v = TYPE<Member>();
 
     static inline std::set<Member*> removing;
-    static inline std::set<Member*> adding; // shd be insts ?
+    std::vector<MemberQ> adding;
+    std::set<std::shared_ptr<Instance>> tops;
 
     static inline int MAX_SIZE = 10000;
 

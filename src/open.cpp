@@ -97,7 +97,7 @@ void Open::inputs(){
                 if (!vlayer)  
                     continue;
 
-                auto inst = Instance(engine.dynamic_ubo)[&n->parent()->is_a<UberLayer>()->m][&vlayer->m];
+                auto inst = Instance(*engine.dynamic_ubo)[&n->parent()->is_a<UberLayer>()->m][&vlayer->m];
 
                 if (inst.stl.size() == 1) { PLOGW << json_error; continue; }
 

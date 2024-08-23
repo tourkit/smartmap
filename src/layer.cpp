@@ -21,9 +21,9 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
             layer_def.striding(true);
 
-            engine.static_ubo.add(&layer_def);
+            engine.static_ubo->add(&layer_def);
 
-            glsl_layers =  &(*new Instance(engine.static_ubo))[&layer_def];
+            glsl_layers =  &(*new Instance(*engine.static_ubo))[&layer_def];
 
             init = true;
 
@@ -40,7 +40,7 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
     glsl_layers->eq(vbo.layer_id).set<std::array<float,2>>({(float)width,(float)height});
 
-    engine.static_ubo.upload();
+    engine.static_ubo->upload();
 
 }
 
@@ -48,7 +48,7 @@ void Layer::update() {
 
     glsl_layers->eq(vbo.layer_id).set<std::array<float,2>>({(float)fb.width,(float)fb.height});
 
-    engine.static_ubo.upload();
+    engine.static_ubo->upload();
 
     DrawCall::update();
 
@@ -108,9 +108,9 @@ std::string  UberEffector::source() {
         
             out +="\t\tvec2 tuv = uv;\n\n";
         
-            out +="\t\ttuv *= static_ubo."+name+".uberLayers.size;\n";
+            out +="\t\ttuv *= static_ubo->"+name+".uberLayers.size;\n";
         
-            out +="\t\ttuv += static_ubo."+name+".uberLayers.norm;\n\n";
+            out +="\t\ttuv += static_ubo->"+name+".uberLayers.norm;\n\n";
         
             out +="\t\tcolor_ += texture("+ubl_v->fb.texture->sampler_name+", tuv);\n\n";
         
@@ -148,14 +148,14 @@ bool UberEffector::body(Builder* builder, std::string prepend) {
 UberLayer::UberLayer() : 
     Layer(0,0,"UberLayer"), 
     builder(this), 
-    uberlayer_m(engine.static_ubo.next_name(m.name()))
+    uberlayer_m(engine.static_ubo->next_name(m.name()))
     {
 
         uberlayer_m.quantity(0);
 
     uberlayer_m.add(&uberlayer_def);
 
-    engine.static_ubo.add(&uberlayer_m);
+    engine.static_ubo->add(&uberlayer_m);
 
     shader.builder(&builder);
 
@@ -227,7 +227,7 @@ void UberLayer::calc_matrice() {
         auto x_ = y[2] / matrice_width;
         auto y_ = y[3] / matrice_height;
 
-        auto glsl_uberlayer= Instance(engine.static_ubo)[&uberlayer_m];
+        auto glsl_uberlayer= Instance(*engine.static_ubo)[&uberlayer_m];
 
         // PLOGW << z << " - "  << "[ "<< y[0] << " " << y[1] << " " << y[2] << " " << y[3] << " ] - [" << w << " " << h << " " << x_ << " " << y_ << " ]";
 
@@ -241,7 +241,7 @@ void UberLayer::calc_matrice() {
     ((ShaderProgram*)&shader)->create();
 
 
-    engine.static_ubo.upload();
+    engine.static_ubo->upload();
 
 }
 

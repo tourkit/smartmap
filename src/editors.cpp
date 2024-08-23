@@ -274,7 +274,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
                 if (m->type().id == typeid(int)) {
 
-                    type = ImGuiDataType_U16;
+                    type = ImGuiDataType_U32;
 
                     if (m->from()) f_range_i = *(int*)m->from();
                     if (m->to()) t_range_i = *(int*)m->to();
@@ -657,9 +657,9 @@ void Editors::init() {
 
                     // engine.atlas->link(this);
 
-                    engine.dynamic_ubo.bind(shader);
+                    engine.dynamic_ubo->bind(shader->id);
 
-                    engine.static_ubo.bind(shader);
+                    engine.static_ubo->bind(shader->id);
 
                     shader->sendUniform("medias", 1);
                     shader->sendUniform("render_pass", 2);
@@ -833,7 +833,9 @@ void Editors::init() {
         // ss << m;
         // ImGui::Text(( ss.str()).c_str());
 
-        if (m->buffering() && draw_guis(m)) { m->upload();
+        if (m->buffering() && draw_guis(m)) {
+            
+            m->upload();
 
         // engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});
         // engine.stack->each<Layer>([](Node*n, Layer* layer){ layer ->fb.clear();});
@@ -881,7 +883,7 @@ void Editors::init() {
 
         if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->m.quantity(effector_currents[node]); node->update(); }
 
-        if (draw_guis(&engine.dynamic_ubo, &model->m, model->instance->offset))engine.dynamic_ubo.upload();
+        if (draw_guis(engine.dynamic_ubo, &model->m, model->instance->offset))engine.dynamic_ubo->upload();
 
     });
 

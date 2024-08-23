@@ -298,9 +298,6 @@ void Node::trig(Event e)  {
 
     while (true) {
 
-        if (on_cb.find(e) != on_cb.end()) 
-            on_cb[e](this);
-        
         auto t_ = t.name();
 
         if (ontyped[e].find(t) != ontyped[e].end()) {
@@ -311,8 +308,8 @@ void Node::trig(Event e)  {
 
         }
         
-
-        // if (on)
+        if (on_cb.find(e) != on_cb.end()) 
+            on_cb[e](this);
         
         if (Node::is_lists.find(t) == Node::is_lists.end()) break;
 

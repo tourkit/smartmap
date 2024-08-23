@@ -18,7 +18,7 @@
 #include <cmath>
 
 
-Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("dynamic_ubo"), static_ubo("static_ubo") {
+Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
 
     glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
     glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
@@ -28,15 +28,10 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), dynamic_ubo("
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
     PLOGD << "GL_MAX_TEXTURE_IMAGE_UNITS : " << gl_max_texture_image_units;
 
-    dynamic_ubo.quantity(2);
 
     glsl_data.striding(true);
 
     render_passes.reserve(10);
-
-
-    dynamic_ubo.add(&glsl_data);
-
 
     window.max_fps = 59;
 
@@ -60,6 +55,9 @@ Engine::~Engine() {
        delete x;
     }
 
+    if (dynamic_ubo) delete dynamic_ubo;
+    if (static_ubo) delete static_ubo;
+
     PLOGI << "Engine destroyed";
 
 }
@@ -70,15 +68,19 @@ void Engine::init() {
 
     Editors::init();
     
-
+    dynamic_ubo = new UBO("dynamic_ubo");
+    static_ubo = new UBO("static_ubo");
     
+    dynamic_ubo->quantity(2);
+    dynamic_ubo->add(&glsl_data);
+
     auto* debug_ = tree->addOwnr<Debug>();
     debug = debug_;
     debug->on(Node::RUN, [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(false);//->close();
-    debug->addPtr<UBO>(&static_ubo)->on(Node::CHANGE, [](Node* n) { 
+    debug->addPtr<UBO>(static_ubo)->on(Node::CHANGE, [](Node* n) { 
         n->is_a<UBO>()->upload(); 
     })->active(false);
-    debug->addPtr<UBO>(&dynamic_ubo)->active(false);
+    debug->addPtr<UBO>(dynamic_ubo)->active(false);
     
     medias = tree->addOwnr<Node>()->name("Medias")->active(false);
 
@@ -155,22 +157,25 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) {
     
-        static int frame = 0;
-        memcpy(dynamic_ubo.data(), &(frame), 4); // aka dynamic_ubo["ENGINE"]["frame"]
-        int fps = std::round(ImGui::GetIO().Framerate);
-        memcpy(dynamic_ubo.data()+4, &fps, 4); // aka dynamic_ubo["ENGINE"]["fps"]
-        int alt = frame % 2;
-        memcpy(dynamic_ubo.data()+8, &alt, 4); // aka dynamic_ubo["ENGINE"]["alt"]
+        if (dynamic_ubo) {        
+            static int frame = 0;
+            memcpy(dynamic_ubo->data(), &(frame), 4); // aka dynamic_ubo["ENGINE"]["frame"]
+            int fps = std::round(ImGui::GetIO().Framerate);
+            memcpy(dynamic_ubo->data()+4, &fps, 4); // aka dynamic_ubo["ENGINE"]["fps"]
+            int alt = frame % 2;
+            memcpy(dynamic_ubo->data()+8, &alt, 4); // aka dynamic_ubo["ENGINE"]["alt"]
 
-        frame = (frame+1) % 65536;//window.displays.back().rate;
-        
-        int glsldatafp = glsl_data.footprint();
-        int dynubofp = dynamic_ubo.footprint();
-        
-        dynamic_ubo.upload(dynamic_ubo.data(),alt?glsldatafp:dynubofp);
+            frame = (frame+1) % 65536;//window.displays.back().rate;
+            
+            int glsldatafp = glsl_data.footprint();
+            int dynubofp = dynamic_ubo->footprint();
+            
+            dynamic_ubo->upload(dynamic_ubo->data(),alt?glsldatafp:dynubofp);
 
-        if (alt) 
-            dynamic_ubo.upload(dynamic_ubo.data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
+            if (alt) 
+                dynamic_ubo->upload(dynamic_ubo->data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
+            
+        }
 
         window.render([](){
 

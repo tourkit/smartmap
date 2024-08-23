@@ -22,8 +22,8 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
     vbo = &dc->vbo;
     shader = &dc->shader;
 
-    ubos.push_back(&engine.dynamic_ubo);
-    ubos.push_back(&engine.static_ubo);
+    ubos.push_back(engine.dynamic_ubo);
+    ubos.push_back(engine.static_ubo);
 
     build();
 
@@ -41,7 +41,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     body_fragment += "\t// "+name+"\n";
 
-    body_fragment += "\taspect_ratio = static_ubo."+ar+".dim;\n";
+    body_fragment += "\taspect_ratio = static_ubo->"+ar+".dim;\n";
                 
 	body_fragment += "\ttic();\n";
 
@@ -153,11 +153,11 @@ void Layer::ShaderProgramBuilder::build() {
 
 // DRAWCALLL //////////////////////////////////////
 
-DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo.next_name(name.length()?name:"layer")), builder(this) {
+DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo->next_name(name.length()?name:"layer")), builder(this) {
 
     shader.builder(&builder);
 
-    engine.dynamic_ubo.add(&m);
+    engine.dynamic_ubo->add(&m);
 
 }
 

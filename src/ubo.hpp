@@ -8,7 +8,7 @@ struct UBO : Member {
 
     uint32_t id = -1;
 
-    uint32_t binding;
+    int binding;
 
     bool loaded = false;
 
@@ -26,12 +26,12 @@ struct UBO : Member {
 
     void resize(uint32_t size);
 
-    void update();
+    void update() override;
 
     void upload() override;
 
     void upload(void* data, size_t size, uint32_t offset = 0);
 
-    void bind(ShaderProgram* ubo);
+    void bind(uint32_t shader);
 
 };

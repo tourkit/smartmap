@@ -212,16 +212,20 @@ void Member::buffering(bool value) {
 }
 
 
-void Member::striding(bool is_striding){ 
+Member& Member::striding(bool is_striding){ 
 
-    auto tops = getTop();
+    tops = getTop();
 
     for (auto t : tops)  
         t->stl.front().m->bkp();
     
     this->striding_v = is_striding; 
 
-    update(&tops);
+    update();
+
+    tops.clear();
+
+    return *this;
     
 }
 
@@ -240,7 +244,11 @@ Member& Member::quantity(uint32_t quantity_v) {
 
     this->quantity_v = quantity_v;
 
-    update(&tops,{{this, old, (int)quantity_v-old}});
+    auto mq = adding.emplace_back(MemberQ{this, old, (int)quantity_v-old});
+    update();
+    REMOVE<MemberQ>(adding,mq);
+
+    tops.clear();
 
     return *this;
 
@@ -282,7 +290,11 @@ void Member::add(Member* m) {
 
     size_v += members.back()->footprint_all();
 
-    update(&tops, {{m}});
+    auto mq = adding.emplace_back(MemberQ{m});
+    update();
+    REMOVE<MemberQ>(adding,mq);
+
+    tops.clear();
 
 }
 
@@ -347,9 +359,11 @@ bool Member::remove(Member& m) {
 
     removeHard(m);
 
-    update(&tops);
+    update();
 
     removing.erase(&m);
+
+    tops.clear();
 
     return true;
 
@@ -386,17 +400,15 @@ bool Member::clear() {
 
     members.clear();
 
-    update(&tops);
+    update();
+
+    tops.clear();
 
     return true;
 
 }
 
-// void Member::update() { 
-//     update(nullptr);
-// }
-
-void Member::update(std::set<std::shared_ptr<Instance>>* tops, std::vector<MemberQ> addeds) { 
+void Member::update() { 
 
     if (!isData()){
         
@@ -410,7 +422,7 @@ void Member::update(std::set<std::shared_ptr<Instance>>* tops, std::vector<Membe
     for (auto a : structs) 
         for (auto &m : a->members) 
             if (m == this) 
-                a->update(tops,addeds);
+                a->update();
 
     if (isData()) return;
 
@@ -426,11 +438,9 @@ void Member::update(std::set<std::shared_ptr<Instance>>* tops, std::vector<Membe
 
     memset( buffer_v.data(), 0, buffer_v.size() );
 
-    if (!tops) return;
+    for (auto t : tops)  {
 
-    for (auto t : *tops)  {
-
-        t->post_change(addeds);
+        t->post_change(adding);
 
         t->stl.front().m->remap();
 

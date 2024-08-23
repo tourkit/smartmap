@@ -1,8 +1,7 @@
 #include "ubo.hpp"
 
+#include "member.hpp"
 #include "shader.hpp"
-#include "struct.hpp"
-#include "log.hpp"
 #include <GL/gl3w.h>
 
 UBO::~UBO() { destroy(); }
@@ -15,13 +14,18 @@ UBO::UBO(std::string name) : Member(name) {
 
     binding = binding_count++;
 
-    if (binding > 100) PLOGE << "MAX_UBO might soon be reached";// can do better ^^
+    if (binding > 100) {PLOGE << "MAX_UBO might soon be reached";}// can do better ^^
 
     create();
 
 }
 
-void UBO::destroy() { if (id<0) {glDeleteBuffers(1, &id); id = -1;} }
+void UBO::destroy() { 
+
+    if (id<0) 
+        glDeleteBuffers(1, &id); id = -1; 
+
+}
 
 void UBO::resize(uint32_t size) {
 
@@ -38,15 +42,20 @@ void UBO::create() {
 
 }
 
-void UBO:: bind(ShaderProgram* shader) {
-
+void UBO:: bind(uint32_t shader) {
     glBindBuffer(GL_UNIFORM_BUFFER, id);
-    glUniformBlockBinding(shader->id, glGetUniformBlockIndex(shader->id, name().c_str()), binding);
+    glUniformBlockBinding(shader, glGetUniformBlockIndex(shader, name().c_str()), binding);
     glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 
 }
 
-void UBO::update() { update(); resize(footprint_all()); } // acho q melhor nao ter upload() la. obrigado
+void UBO::update() { 
+
+    Member::update(); 
+    
+    resize(footprint_all()); 
+
+} 
 
 void UBO::reset() {
 
@@ -62,9 +71,10 @@ void UBO::upload(){ upload(data(), footprint_all()); }
 
 void UBO::upload(void* data, size_t size, uint32_t offset){
 
-    // std::string str;
-    // for (int i = 0 ; i < footprint(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
-    // if (binding /*aka statubo*/) PLOGW << name() << " " << binding << ": " << size << " - " << str;
+    std::string str;
+    for (int i = 0 ; i < footprint(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
+    if (name() == "ubo") {PLOGW << name() << " " << id << " " << binding << ": " << size << " - " << str;}
+
     if (!size) return;
     glBindBuffer(GL_UNIFORM_BUFFER, id);
     glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);

@@ -25,9 +25,9 @@ Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,fa
     
     m.add(&media_struct);
 
-    engine.static_ubo.add(&m);
+    engine.static_ubo->add(&m);
 
-    medias = &(*new Instance(engine.static_ubo))[&m];
+    medias = &(*new Instance(*engine.static_ubo))[&m];
 
     texture = new Texture(width,height,1,1);
 
@@ -86,7 +86,7 @@ void Atlas::fromDir(std::string path) {
 
     }
 
-    engine.static_ubo.upload();
+    engine.static_ubo->upload();
 
 }
 
@@ -133,8 +133,8 @@ std::string Atlas::Effector::source() {
     out += "void "+m.name()+"(float id_) {\n\n";
     out +=     "\tint id = int(id_*"+std::to_string(atlas->medias->stl.back().m->size())+");\n\n";
     out +=     "\tvec2 tuv = uv;\n\n";
-    out +=     "\ttuv *= static_ubo."+m.name()+"[id].rect.size;\n";
-    out +=     "\ttuv += static_ubo."+m.name()+"[id].rect.pos;\n";
+    out +=     "\ttuv *= static_ubo->"+m.name()+"[id].rect.size;\n";
+    out +=     "\ttuv += static_ubo->"+m.name()+"[id].rect.pos;\n";
     out +=     "\tcolor *= texture("+m.name()+"_pass, tuv);\n\n";
     out += "}\n\n\n\n";
     
