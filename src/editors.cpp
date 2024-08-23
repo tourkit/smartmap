@@ -284,7 +284,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
                 }
 
-                // PushID(member_count);
+                PushID(member_count);
 
                 std::string name = (m->name());
 
@@ -333,7 +333,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
                 }
 
-                // PopID();
+                PopID();
 
                 member_count++;
         }else{
@@ -510,7 +510,8 @@ void Editors::init() {
             ImGui::NewLine();
             if (draw_raw(an->data()+(*x.second->m.instances.begin())->offset, 512)) {
 
-                
+                node->update();
+
             }
             ImGui::NewLine();
 
@@ -1107,7 +1108,15 @@ void Editors::init() {
         //     engine.stack->trig(Node::CHANGE); // update all shaders
 
         // }
-
+        ImVec2 btn_size = {100,50};
+        if (ImGui::Button("smartlayer", btn_size)) {
+            node->addPtr<UberLayer::VLayer>(&ubl->addLayer(engine.window.width,engine.window.height));
+            ubl->calc_matrice();
+            engine.stack->trig(Node::CHANGE);
+            ubl->update();
+        }
+            
+        
         Editor<Layer>::cb(node, ubl);
 
     });

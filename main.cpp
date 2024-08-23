@@ -4,42 +4,12 @@
 
                                 */
 
-#include "GL/gl3w.h"
-#include "callbacks.hpp"
-#include "editors.hpp"
 #include "engine.hpp"
 
-// #include "src/effector.hpp"
-
-// maybe I need Member::Link to tell StrobeFX::static_s when StrobeFX::s has changed
-
-// check how Member::update() works 
-
-// could I use referings ?
-
-// struct StrobeEffector : Effector {
-
-//     int step = 2; 
-
-//     Member* strobe_s;
-    
-//     ~StrobeEffector() { delete strobe_s; }
-
-//     StrobeEffector() {
-
-//         strobe_s = engine.glsl_data.add<int>("strobe").members.back();
-
-//     }
-
-//     bool setup(Builder* builder) override;
-    
-//     bool body(Builder* builder, std::string prepend = "") override;
-
-
-// };
-
-
 #include "artnet.hpp"
+#include "editor.hpp"
+#include "imgui.h"
+#include "layer.hpp"
 
 int main() {
 
@@ -48,6 +18,22 @@ int main() {
     NODE<Artnet>::on(Node::CHANGE, [&](Node* n, Artnet* an) {
 
         PLOGW << "dlsdkffds";
+
+    });
+    Editor<Stack>([](Node*node,Stack* stack){
+
+
+        ImVec2 btn_size = {100,50};
+        if (ImGui::Button("layer", btn_size)) {
+            node->addOwnr<Layer>();
+            
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("uberlayer", btn_size)) {
+
+            node->addOwnr<UberLayer>();
+
+        }
 
     });
 
