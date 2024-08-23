@@ -235,7 +235,7 @@ Member& Member::quantity(uint32_t quantity_v) {
 
     PLOGV << name() << " = " << quantity_v;
 
-    auto tops = getTop();
+    tops = getTop();
 
     for (auto t : tops)  
         t->stl.front().m->bkp();
@@ -281,7 +281,7 @@ void Member::add(Member* m) {
 
     }
 
-    auto tops = getTop();
+    tops = getTop();
 
     for (auto t : tops)  
         t->stl.front().m->bkp();
@@ -352,7 +352,7 @@ bool Member::remove(Member& m) {
 
     PLOGV << name() << "[" << footprint_all() << "] remove " << m.name() << "[" << m.footprint_all() << "]";
 
-    auto tops = getTop();
+    tops = getTop();
 
     for (auto t : tops)  
         t->stl.front().m->bkp();
@@ -387,7 +387,7 @@ bool Member::clear() {
 
     PLOGV << name() ;
 
-    auto tops = getTop();
+    tops = getTop();
 
     for (auto t : tops)  
         t->stl.front().m->bkp();

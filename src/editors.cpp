@@ -592,7 +592,13 @@ void Editors::init() {
 
         static Builder builder;
 
-        if (ImGui::Button("create")) shader->create();
+        static TextEditor frageditor;
+        static TextEditor verteditor;
+        if (ImGui::Button("create")) {
+            shader->create();
+            frageditor.SetText(shader->frag.src);
+            verteditor.SetText(shader->vert.src);
+        }
         ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
 
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
@@ -600,7 +606,6 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("fragment")) {
 
-                static TextEditor frageditor;
 
                 static bool init = false;
                 if (!init){
@@ -632,7 +637,6 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("vertex")) {
 
-                static TextEditor verteditor;
 
                 static bool init = false;
                 if (!init){

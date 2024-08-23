@@ -86,7 +86,7 @@ void VBO::reset() {
 
 }
 
-void VBO::update() { update(); }
+void VBO::update() { Member::update(); }
 
 void VBO::upload() {
 

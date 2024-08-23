@@ -108,9 +108,9 @@ std::string  UberEffector::source() {
         
             out +="\t\tvec2 tuv = uv;\n\n";
         
-            out +="\t\ttuv *= static_ubo->"+name+".uberLayers.size;\n";
+            out +="\t\ttuv *= static_ubo."+name+".uberLayers.size;\n";
         
-            out +="\t\ttuv += static_ubo->"+name+".uberLayers.norm;\n\n";
+            out +="\t\ttuv += static_ubo."+name+".uberLayers.norm;\n\n";
         
             out +="\t\tcolor_ += texture("+ubl_v->fb.texture->sampler_name+", tuv);\n\n";
         
@@ -265,7 +265,7 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     body_fragment += "\tint obj  = int(OBJ);\n\n";
 
-    std::string ar_str = lower(ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?"[obj]":"");
+    std::string ar_str = lower(ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?"[obj]":"")+".uberLayers";
 
     if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->m.name()), "obj", ar_str );
 
@@ -280,7 +280,7 @@ void UberLayer::ShaderProgramBuilder::build() {
             auto l = last_id;
             last_id += x.get()->m.quantity();
 
-            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->m.name()), "obj", ar_str+".uberLayers" );
+            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->m.name()), "obj", ar_str );
 
         }
 

@@ -144,8 +144,8 @@ private:
     Type type_v = TYPE<Member>();
 
     static inline std::set<Member*> removing;
-    std::vector<MemberQ> adding;
-    std::set<std::shared_ptr<Instance>> tops;
+    static inline std::vector<MemberQ> adding;
+    static inline std::set<std::shared_ptr<Instance>> tops;
 
     static inline int MAX_SIZE = 10000;
 

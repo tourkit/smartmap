@@ -41,7 +41,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     body_fragment += "\t// "+name+"\n";
 
-    body_fragment += "\taspect_ratio = static_ubo->"+ar+".dim;\n";
+    body_fragment += "\taspect_ratio = static_ubo."+ar+".dim;\n";
                 
 	body_fragment += "\ttic();\n";
 
