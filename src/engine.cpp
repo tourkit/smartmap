@@ -156,30 +156,30 @@ void Engine::run() {
     
 
     while (!glfwWindowShouldClose(window.id)) {
-    
-        if (dynamic_ubo) {        
-            static int frame = 0;
-            memcpy(dynamic_ubo->data(), &(frame), 4); // aka dynamic_ubo["ENGINE"]["frame"]
-            int fps = std::round(ImGui::GetIO().Framerate);
-            memcpy(dynamic_ubo->data()+4, &fps, 4); // aka dynamic_ubo["ENGINE"]["fps"]
-            int alt = frame % 2;
-            memcpy(dynamic_ubo->data()+8, &alt, 4); // aka dynamic_ubo["ENGINE"]["alt"]
-
-            frame = (frame+1) % 65536;//window.displays.back().rate;
-            
-            int glsldatafp = glsl_data.footprint();
-            int dynubofp = dynamic_ubo->footprint();
-            
-            dynamic_ubo->upload(dynamic_ubo->data(),alt?glsldatafp:dynubofp);
-
-            if (alt) 
-                dynamic_ubo->upload(dynamic_ubo->data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
-            
-        }
 
         window.render([](){
 
             engine.gui->draw();
+            
+            if (engine.dynamic_ubo) {        
+                static int frame = 0;
+                memcpy(engine.dynamic_ubo->data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
+                int fps = std::round(ImGui::GetIO().Framerate);
+                memcpy(engine.dynamic_ubo->data()+4, &fps, 4); // aka engine.dynamic_ubo["ENGINE"]["fps"]
+                int alt = frame % 2;
+                memcpy(engine.dynamic_ubo->data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
+
+                frame = (frame+1) % 65536;//window.displays.back().rate;
+                
+                int glsldatafp = glsl_data.footprint();
+                int dynubofp = engine.dynamic_ubo->footprint();
+                
+                engine.dynamic_ubo->upload(engine.dynamic_ubo->data(),alt?glsldatafp:dynubofp);
+
+                if (alt) 
+                    engine.dynamic_ubo->upload(engine.dynamic_ubo->data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
+                
+            }
             
             engine.tree->run();
 
