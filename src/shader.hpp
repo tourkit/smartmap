@@ -2,7 +2,7 @@
 
 #include <cstdint>
 #include <string>
-#include <string>
+#include <chrono>
 
 struct Builder;
 struct DrawCall;
@@ -61,6 +61,8 @@ struct ShaderProgram {
   void sendUniform(const std::string& name, float f1, float f2, float f3, float f4);
 
   operator uint32_t();
+
+  std::chrono::_V2::system_clock::time_point last_change;
 
   Builder* builder();
   bool builder(Builder*);

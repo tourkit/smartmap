@@ -508,7 +508,10 @@ void Editors::init() {
             ImGui::Text(str.c_str());
 
             ImGui::NewLine();
-            draw_raw((*x.second->m.instances.begin())->stl.front().m, 512);
+            if (draw_raw(an->data()+(*x.second->m.instances.begin())->offset, 512)) {
+
+                
+            }
             ImGui::NewLine();
 
         };
@@ -619,6 +622,17 @@ void Editors::init() {
                     init = true;
                 }
 
+                static std::chrono::_V2::system_clock::time_point frag_last_change;
+                if (frag_last_change != shader->last_change) {
+
+                    auto oldPos = frageditor.GetCursorPosition();
+                    frageditor.SetText(shader->frag.src);
+	                frageditor.SetCursorPosition(oldPos);
+
+                    frag_last_change = shader->last_change;
+
+                }
+
                 frageditor.Render("frageditor");
 
                 if (frageditor.IsTextChanged()) {
@@ -649,6 +663,14 @@ void Editors::init() {
                     verteditor.SetText(shader->vert.src);
 
                     init = true;
+                }
+
+                static std::chrono::_V2::system_clock::time_point vert_last_change;
+                if (vert_last_change != shader->last_change) {
+
+                    verteditor.SetText(shader->vert.src);
+                    vert_last_change = shader->last_change;
+
                 }
                 
                 verteditor.Render("frageditor");

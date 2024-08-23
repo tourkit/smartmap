@@ -105,22 +105,22 @@ void Open::inputs(){
 
                 
 
-                // std::vector<DMXRemap::Attribute> attrs;
-                // if ( arr.Size() > 3 && arr[3].IsArray() ) for (auto &x : arr[3].GetArray()) if (x.IsInt()) attrs.push_back({x.GetInt()});
+                std::vector<DMXRemap::Attribute> attrs;
+                if ( arr.Size() > 3 && arr[3].IsArray() ) for (auto &x : arr[3].GetArray()) if (x.IsInt()) attrs.push_back({x.GetInt()});
 
-                // int q = 1;
-                // if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
+                int q = 1;
+                if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
 
-                // DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(an.universe(arr[0].GetInt()).m)), inst, arr[1].GetInt()-1, attrs, q);
+                DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(an.universe(arr[0].GetInt()).m)), inst, arr[1].GetInt()-1, attrs, q);
 
-                // dmxremap->src.remaps.push_back( dmxremap );
+                dmxremap->src.remaps.push_back( dmxremap );
 
-                // auto out = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
+                auto out = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
 
-                // std::string sss =arr[2].GetString() ;
-                // auto w = engine.tree->child(sss);
-                // if (!w) { PLOGE <<arr[2].GetString()<< " not found"; return; }
-                // w->referings.insert( out );
+                std::string sss =arr[2].GetString() ;
+                auto w = engine.tree->child(sss);
+                if (!w) { PLOGE <<arr[2].GetString()<< " not found"; return; }
+                w->referings.insert( out );
 
             }
 

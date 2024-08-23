@@ -39,9 +39,17 @@
 // };
 
 
+#include "artnet.hpp"
+
 int main() {
 
     engine.init();
+
+    NODE<Artnet>::on(Node::CHANGE, [&](Node* n, Artnet* an) {
+
+        PLOGW << "dlsdkffds";
+
+    });
 
     logger.cout(Sev::warning);
 

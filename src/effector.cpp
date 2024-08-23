@@ -203,7 +203,7 @@ FileEffector::FileEffector(File file, std::string name) : Effector(name), file(f
 
 // WrapperEffector  ////////////////
 
-Wrappy::Wrappy(std::vector<Effector*> effectors, int count, std::string name) : Effector(name), Effectable("") {
+Wrappy::Wrappy(std::vector<Effector*> effectors, int count, std::string name) : Effector(name), Effectable(name) {
 
     for (auto x : effectors) addEffector(x);
 

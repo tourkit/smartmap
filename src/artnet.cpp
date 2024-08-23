@@ -112,6 +112,7 @@ Artnet::Artnet(std::string ip) : Member("Artnet") {
         auto x = universes.emplace(id, std::make_shared<Artnet::Universe>(this, id)).first->second.get();
 
         add(&x->m);
+        x->inst = &(*new Instance(*this))[&x->m];
 
         PLOGD << id;
 
@@ -122,6 +123,9 @@ Artnet::Artnet(std::string ip) : Member("Artnet") {
   }
 
 
+Artnet::Universe::~Universe() {
+    delete inst;
+}
 Artnet::Universe::Universe(Artnet* an, int id) : m(""+std::to_string(id)), an(an), id(id) {
 
     m.add(&uni_s);

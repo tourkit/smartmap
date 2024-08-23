@@ -29,13 +29,13 @@ struct DMXRemap : Remap {
 
 struct Artnet : Member{
 
-  static inline auto uni_s = Member("universe").add<char,512>("chan");
+  static inline auto uni_s = Member("universe").add<char,512>("chan").range(0,1,0);
 
   static inline std::vector<std::string> available_ips;
 
   artnet_node artnet = NULL;
 
-  struct Universe { Member m; Artnet* an; int id;  Universe(Artnet* an, int id); };
+  struct Universe { Member m; Artnet* an; int id; Instance* inst; ~Universe(); Universe(Artnet* an, int id); };
 
   std::map<int, std::shared_ptr<Universe>> universes;
 

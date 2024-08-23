@@ -112,6 +112,11 @@ void Callbacks::init() {
         PLOGE << "no found";
  
     });
+    NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
+
+        dc->shader.create();
+ 
+    });
 
     NODE<UberLayer>::is_a<Layer>();
     NODE<Layer>::is_a<Modelable>();

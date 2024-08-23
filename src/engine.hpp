@@ -39,7 +39,7 @@ struct Engine {
 
     Window window;
 
-    GUI* gui;
+    GUI* gui; 
 
     UBO* dynamic_ubo;
     UBO* static_ubo;

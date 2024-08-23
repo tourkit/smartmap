@@ -61,6 +61,9 @@ Member::Member(Member& other) :
     size_v(other.size_v), 
     rangedef(other.rangedef) ,
     buffer_v(other.buffer_v),
+#ifdef ROCH
+    _TYPE_(other._TYPE_),
+#endif
     copy_v(&other)
 
 {
@@ -430,7 +433,7 @@ void Member::update() {
 
     //// BUFFER PART
 
-    if (!buffering()) return;
+    if (!tops.size() || !buffering()) return;
 
     if (footprint_all() > MAX_SIZE) { PLOGE << footprint_all() << " > MAX_SIZE"; }
 
