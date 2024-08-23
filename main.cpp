@@ -99,6 +99,7 @@ int main() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         shader.use();
         quad.draw();
+        ubo2.upload();
 
     });
 
