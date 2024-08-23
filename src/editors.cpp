@@ -284,7 +284,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
                 }
 
-                PushID(member_count);
+                // PushID(member_count);
 
                 std::string name = (m->name());
 
@@ -311,6 +311,8 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
                     double r = tep.evaluate(str__);
 
+                    str__.clear();
+
                     if (!std::isnan(r)){
 
                         if (type == ImGuiDataType_Float) *(float*)(buff->data()+offset+x) = r;
@@ -331,7 +333,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
                 }
 
-                PopID();
+                // PopID();
 
                 member_count++;
         }else{
@@ -626,7 +628,8 @@ void Editors::init() {
                     memset(&x[frageditor.GetText().length()],0,1);
 
                     shader->create(x,shader->vert.src);
-                    if (shader->builder()) shader->builder()->post();
+                    if (shader->builder()) 
+                        shader->builder()->post();
                     // if (node->type().id == typeid(UberLayer) || node->type().id == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
 
                 }
