@@ -31,7 +31,7 @@ struct VBO : Member {
 
     ~VBO();
 
-    void upload();
+    void upload() override;
     void update();
 
     void create();

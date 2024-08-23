@@ -5,9 +5,12 @@
 #include "model.hpp"
 #include "builder.hpp"
 
-
+struct BoilerQuad;
 
 struct DrawCall : Modelable {
+
+    
+    static inline BoilerQuad* bquad = nullptr;
 
     DrawCall(std::string name = "DrawCall");
 

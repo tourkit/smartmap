@@ -133,8 +133,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     loaded = true;
 
-    last_change = std::chrono::system_clock::now();
-
     // sendUniform("atlas_pass", 1);
 
     use();

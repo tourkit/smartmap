@@ -258,7 +258,17 @@ bool Node::remove(Node *child) {
 
 }
 
-void Node::run() { if (!is_active) return; trig(Node::RUN); for (auto x : childrens) x->run(); }
+void Node::run() { 
+    
+    if (!is_active) 
+        return; 
+
+    trig(Node::RUN); 
+
+    for (auto x : childrens) 
+        x->run(); 
+
+}
 
 uint32_t Node::index() {
 
@@ -288,6 +298,9 @@ void Node::trig(Event e)  {
 
     while (true) {
 
+        if (on_cb.find(e) != on_cb.end()) 
+            on_cb[e](this);
+        
         auto t_ = t.name();
 
         if (ontyped[e].find(t) != ontyped[e].end()) {
@@ -297,6 +310,9 @@ void Node::trig(Event e)  {
             (*(std::function<void(Node*,void*)>*) ontyped[e].at(t))(this,out);  
 
         }
+        
+
+        // if (on)
         
         if (Node::is_lists.find(t) == Node::is_lists.end()) break;
 

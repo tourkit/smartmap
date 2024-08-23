@@ -14,7 +14,7 @@
 
 Model::Model(File* f, std::string name) : Modelable(name), file(f) {  };
 
-Model::~Model() { }
+Model::~Model() { if (instance) delete instance; }
 
 void Model::convert(File* file, std::string type) {
 
@@ -49,7 +49,10 @@ Model* Modelable::addModel(File* f) {
 
     for (auto x : m.getTop()) { // should be one Top only
 
-        // Instance(x->isBuff()).each([&](Instance& inst){ if (inst.def() == &mod->m) mod->instance = &inst.track(); });
+        x->each([&](Instance& inst){ 
+            if (inst.stl.back().m == &mod->m) 
+                mod->instance = new Instance(inst); 
+        });
 
     }
 

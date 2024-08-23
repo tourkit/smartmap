@@ -111,75 +111,77 @@ void Engine::init() {
 
 void Engine::run() {
 
-    if (!engine.gui->editors.size()) engine.gui->editors.push_back(new EditorWidget());
+    if (!gui->editors.size()) gui->editors.push_back(new EditorWidget());
 
-    if (!engine.models->childrens.size()) {
+    if (models && !models->childrens.size()) {
 
-        auto quad = engine.models->addPtr<File>( &VBO::quad );
+        auto quad = models->addPtr<File>( &VBO::quad );
 
 
-    //  auto x = engine.stack->addOwnr<Layer>();
+    //  auto x = stack->addOwnr<Layer>();
         // x->add(quad);
 
     }
 
-    if (!engine.outputs->childrens.size()) {
+    if (outputs && !outputs->childrens.size()) {
         
-        auto win = engine.outputs->addPtr<Window>( &engine.window );
+        auto win = outputs->addPtr<Window>( &window );
 
-        if (engine.stack->childrens.size()) 
+        if (stack->childrens.size()) 
         
-            win->add(engine.stack->childrens[0]);
+            win->add(stack->childrens[0]);
         
-    }
-
-    for (auto output_ : engine.outputs->childrens) {
-        
-        auto output = output_->is_a<Output>();
-
-        if (output && !output->fb && engine.stack->childrens.size()) {
+        for (auto output_ : outputs->childrens) {
             
-            output->fb = &engine.stack->childrens[0]->is_a<Layer>()->fb;
+            auto output = output_->is_a<Output>();
+
+            if (output && !output->fb && stack->childrens.size()) {
+                
+                output->fb = &stack->childrens[0]->is_a<Layer>()->fb;
+                
+                stack->childrens[0]->referings.insert(output_);
             
-            engine.stack->childrens[0]->referings.insert(output_);
-        
+            }
+
         }
-
+        
     }
+
 
     if (!Node::selected) Node::selected = debug;
 
     auto &window = getInstance().window;
-
-    while (!glfwWindowShouldClose(window.id)) 
     
+
+    while (!glfwWindowShouldClose(window.id)) {
+    
+        static int frame = 0;
+        memcpy(dynamic_ubo.data(), &(frame), 4); // aka dynamic_ubo["ENGINE"]["frame"]
+        int fps = std::round(ImGui::GetIO().Framerate);
+        memcpy(dynamic_ubo.data()+4, &fps, 4); // aka dynamic_ubo["ENGINE"]["fps"]
+        int alt = frame % 2;
+        memcpy(dynamic_ubo.data()+8, &alt, 4); // aka dynamic_ubo["ENGINE"]["alt"]
+
+        frame = (frame+1) % 65536;//window.displays.back().rate;
+        
+        int glsldatafp = glsl_data.footprint();
+        int dynubofp = dynamic_ubo.footprint();
+        
+        dynamic_ubo.upload(dynamic_ubo.data(),alt?glsldatafp:dynubofp);
+
+        if (alt) 
+            dynamic_ubo.upload(dynamic_ubo.data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
+
         window.render([](){
 
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
             engine.gui->draw();
-
-            static int frame = 0;
-            memcpy(engine.dynamic_ubo.data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
-            int fps = std::round(ImGui::GetIO().Framerate);
-            memcpy(engine.dynamic_ubo.data()+4, &fps, 4); // aka engine.dynamic_ubo["ENGINE"]["fps"]
-            int alt = frame % 2;
-            memcpy(engine.dynamic_ubo.data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
-
-            frame = (frame+1) % engine.window.displays.back().rate;
-            
-            int glsldatafp = engine.glsl_data.footprint();
-            int dynubofp = engine.dynamic_ubo.footprint();
-            
-            engine.dynamic_ubo.upload(engine.dynamic_ubo.data(),alt?glsldatafp:dynubofp);
-
-            if (alt) 
-                engine.dynamic_ubo.upload(engine.dynamic_ubo.data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
             
             engine.tree->run();
 
         });
 
+    
+}
 }
 
 

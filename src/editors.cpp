@@ -612,24 +612,13 @@ void Editors::init() {
                     init = true;
                 }
 
-                static std::chrono::_V2::system_clock::time_point frag_last_change;
-                if (frag_last_change != shader->last_change) {
-
-                    auto oldPos = frageditor.GetCursorPosition();
-                    frageditor.SetText(shader->frag.src);
-	                frageditor.SetCursorPosition(oldPos);
-
-                    frag_last_change = shader->last_change;
-
-                }
-
                 frageditor.Render("frageditor");
 
                 if (frageditor.IsTextChanged()) {
 
                     auto x = frageditor.GetText();
 
-                    memset(&x[frageditor.GetText().size()-2],0,1);
+                    memset(&x[frageditor.GetText().length()],0,1);
 
                     shader->create(x,shader->vert.src);
                     if (shader->builder()) shader->builder()->post();
@@ -654,21 +643,14 @@ void Editors::init() {
 
                     init = true;
                 }
-
-                static std::chrono::_V2::system_clock::time_point vert_last_change;
-                if (vert_last_change != shader->last_change) {
-
-                    verteditor.SetText(shader->vert.src);
-                    vert_last_change = shader->last_change;
-
-                }
+                
                 verteditor.Render("frageditor");
 
                 if (verteditor.IsTextChanged()) {
 
                     auto x = verteditor.GetText();
 
-                    memset(&x[verteditor.GetText().size()],0,1);
+                    memset(&x[verteditor.GetText().length()],0,1);
 
                     shader->create(shader->frag.src,x);
                     if (shader->builder()) shader->builder()->post();
@@ -843,15 +825,15 @@ void Editors::init() {
 
     ////////// HPP
 
-    Editor<Member>([](Node* node, Member *buffer){
+    Editor<Member>([](Node* node, Member *m){
 
         ImGui::Separator();
 
         // std::stringstream ss;
-        // ss << buffer;
+        // ss << m;
         // ImGui::Text(( ss.str()).c_str());
 
-        if (draw_guis(buffer)) { buffer->upload();
+        if (m->buffering() && draw_guis(m)) { m->upload();
 
         // engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});
         // engine.stack->each<Layer>([](Node*n, Layer* layer){ layer ->fb.clear();});
@@ -862,11 +844,11 @@ void Editors::init() {
 
         ImGui::Separator();
 
-        draw_definition(buffer);
+        draw_definition(m);
 
         ImGui::Separator();
 
-        if (draw_raw(buffer->data(),buffer->footprint())) buffer->upload();
+        if (m->buffering() && draw_raw(m->data(),m->footprint())) m->upload();
 
         ImGui::Separator();
 
@@ -898,7 +880,6 @@ void Editors::init() {
        effector_currents[node] = model->m.quantity();
 
         if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->m.quantity(effector_currents[node]); node->update(); }
-
 
         if (draw_guis(&engine.dynamic_ubo, &model->m, model->instance->offset))engine.dynamic_ubo.upload();
 
@@ -943,7 +924,7 @@ void Editors::init() {
         if (atlas) Editor<Texture>::cb(node, atlas->texture);
         else PLOGE << "NONONON";
 
-        // Editor<Object>::cb(node, atlas->buffer);  // tofix
+        // Editor<Object>::cb(node, atlas->m);  // tofix
 
 
     });

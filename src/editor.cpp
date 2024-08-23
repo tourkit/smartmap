@@ -21,6 +21,7 @@ EditorWidget::~EditorWidget()  { std::erase_if(engine.gui->editors, [this](Edito
 void EditorWidget::draw() {
 
     if (!selected || !locked) selected = Node::selected;
+    if (!selected) return;
 
     std::string name = selected->name();
     // this->name = name;

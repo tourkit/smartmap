@@ -86,15 +86,18 @@ void Open::inputs(){
 
                 // should find (Layer/Model/Effector aka Effectable) node(aka "w" down there) (then get Member path)
 
-                Instance inst(engine.dynamic_ubo);
 
                 Node* n = engine.tree->child(arr[2].GetString());
 
                 if (!n) { PLOGW << arr[2].GetString() << " not found"; continue; }
+                
+                
                 auto vlayer = n->is_a<UberLayer::VLayer>();
                 
-                if (vlayer) 
-                    inst = inst.loc(&vlayer->m);
+                if (!vlayer)  
+                    continue;
+
+                auto inst = Instance(engine.dynamic_ubo)[&n->parent()->is_a<UberLayer>()->m][&vlayer->m];
 
                 if (inst.stl.size() == 1) { PLOGW << json_error; continue; }
 

@@ -24,18 +24,18 @@ struct Engine {
 
     // bool logger = Log::getInstance().cout(false);
 
-    Node* tree;
-    Node* stack;
-    Node* models;
-    Node* effectors;
-    Node* medias;
-    Node* remaps;
-    Node* inputs;
-    Node* outputs;
-    Node* timelines;
-    Node* debug;
+    Node* tree = nullptr;
+    Node* stack = nullptr;
+    Node* models = nullptr;
+    Node* effectors = nullptr;
+    Node* medias = nullptr;
+    Node* remaps = nullptr;
+    Node* inputs = nullptr;
+    Node* outputs = nullptr;
+    Node* timelines = nullptr;
+    Node* debug = nullptr;
 
-    Node* selected;
+    Node* selected = nullptr;
 
     Window window;
 

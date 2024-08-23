@@ -54,6 +54,7 @@ void Layer::update() {
 
 }
 
+#include "boilerplate.hpp"
 void Layer::draw() {
 
     if (feedback) { feedback->bind(); }
@@ -61,8 +62,13 @@ void Layer::draw() {
     fb.clear();
 
     shader.use();
+    if (bquad) {
+        bquad->draw();
+        return;
+    }
 
-    vbo.draw(models.size()==1?models[0].get()->m.quantity():1);
+    vbo.draw(1);
+        return;
 
     if (feedback) { return feedback->read(fb.texture); }
 
@@ -102,9 +108,9 @@ std::string  UberEffector::source() {
         
             out +="\t\tvec2 tuv = uv;\n\n";
         
-            out +="\t\ttuv *= static_ubo."+name+".size;\n";
+            out +="\t\ttuv *= static_ubo."+name+".uberLayers.size;\n";
         
-            out +="\t\ttuv += static_ubo."+name+".norm;\n\n";
+            out +="\t\ttuv += static_ubo."+name+".uberLayers.norm;\n\n";
         
             out +="\t\tcolor_ += texture("+ubl_v->fb.texture->sampler_name+", tuv);\n\n";
         
@@ -274,7 +280,7 @@ void UberLayer::ShaderProgramBuilder::build() {
             auto l = last_id;
             last_id += x.get()->m.quantity();
 
-            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->m.name()), "obj", ar_str );
+            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->m.name()), "obj", ar_str+".uberLayers" );
 
         }
 

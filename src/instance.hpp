@@ -29,8 +29,6 @@ struct Instance {
 
     uint32_t offset = 0;
 
-    std::vector<char> buffer_v;
-
     std::string stl_name();
 
     Instance& loc(int id, int eq = 0) ;

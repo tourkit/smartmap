@@ -252,10 +252,6 @@ void GUI::draw() {
 
   newframe();
 
-
-
-
-
   if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) engine.save();
   if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_I)) engine.gui->draw_gui = !engine.gui->draw_gui;
   if (ImGui::IsKeyPressed(ImGuiKey_Escape)) exit(0);
@@ -264,9 +260,11 @@ void GUI::draw() {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // si ca aide .. ?
 
-    for (auto window : Window::pool) { window->drawFull(); }
+    for (auto window : Window::pool) 
+      window->drawFull(); 
 
-    for (auto x : close_list) delete x;
+    for (auto x : close_list) 
+      delete x;
     close_list.resize(0);
 
   }
