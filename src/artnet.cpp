@@ -1,5 +1,6 @@
 #include "artnet.hpp"
-#include "instance.hpp"
+#include "remap.hpp"
+
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
 #ifdef ISUNIX
@@ -10,11 +11,11 @@ void DMXRemap::update() {
 
     // add striding taken care of
 
-  auto data = (uint8_t*)src->data()+chan;
+  auto data = (uint8_t*)src.data()+chan;
 
-    for (int offset = 0; offset < dst->stl.back().m->quantity(); offset++) {
+    for (int offset = 0; offset < dst.stl.back().m->quantity(); offset++) {
 
-        auto size = dst->stl.back().m->size();
+        auto size = dst.stl.back().m->size();
 
         auto pos = (offset*size);
         pos /=sizeof(float);
@@ -31,7 +32,7 @@ void DMXRemap::update() {
             else if (c==4) target = ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3])/4294967295.0f;
 
             // range remap
-            if (attributes[i].active && c > 0) *((float*)dst->data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
+            if (attributes[i].active && c > 0) *((float*)dst.data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
 
             data += c;
 
@@ -57,12 +58,12 @@ void DMXRemap::extract(Member *s) {
 
 }
 
-DMXRemap::DMXRemap(Instance*src, Instance*dst, int chan, std::vector<DMXRemap::Attribute> attrs, int quantity)
+DMXRemap::DMXRemap(Instance src, Instance dst, int chan, std::vector<DMXRemap::Attribute> attrs, int quantity)
 
     : Remap(src, dst), chan(chan), attributes(attrs),quantity(quantity) {
 
     if (!attributes.size()) 
-        extract(dst->stl.back().m);
+        extract(dst.stl.back().m);
 
 }
 extern "C" {
@@ -111,8 +112,6 @@ Artnet::Artnet(std::string ip) : Member("Artnet") {
         auto x = universes.emplace(id, std::make_shared<Artnet::Universe>(this, id)).first->second.get();
 
         add(&x->m);
-
-        // Instance{buffer,offset,{x}}.track(); // TODOTODO
 
         PLOGD << id;
 

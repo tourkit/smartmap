@@ -103,7 +103,7 @@ void Open::inputs(){
 
                 // TODOTODO
 
-                // auto &uni = *an.universe(arr[0].GetInt()).instances[0].get();
+                
 
                 // std::vector<DMXRemap::Attribute> attrs;
                 // if ( arr.Size() > 3 && arr[3].IsArray() ) for (auto &x : arr[3].GetArray()) if (x.IsInt()) attrs.push_back({x.GetInt()});
@@ -111,9 +111,9 @@ void Open::inputs(){
                 // int q = 1;
                 // if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
 
-                // DMXRemap* dmxremap = new DMXRemap(&uni, &inst.track(), arr[1].GetInt()-1, attrs, q);
+                // DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(an.universe(arr[0].GetInt()).m)), inst, arr[1].GetInt()-1, attrs, q);
 
-                // uni.remaps.push_back( dmxremap );
+                // dmxremap->src.remaps.push_back( dmxremap );
 
                 // auto out = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
 

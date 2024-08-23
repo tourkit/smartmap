@@ -55,6 +55,8 @@ src/editors.cpp
 src/effector.cpp
 src/model.cpp
 
+src/remap.cpp
+
 src/layer.cpp
 # src/fps.cpp
 src/drawcall.cpp

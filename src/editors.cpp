@@ -408,7 +408,7 @@ void Editors::init() {
 
             int member_id = 0;
 
-            Instance(*remap->dst->stl.back().m).each([&](Instance inst) {
+            Instance(*remap->dst.stl.back().m).each([&](Instance inst) {
 
                 auto *m = inst.stl.back().m;
 
@@ -460,15 +460,15 @@ void Editors::init() {
             }
 
         std::stringstream deststart;
-        deststart  <<  (void*)remap->dst->data();
-        deststart  << " - " << (void*)remap->dst->stl.front().m->data();
-        deststart  << " - " << remap->dst->offset;
+        deststart  <<  (void*)remap->dst.data();
+        deststart  << " - " << (void*)remap->dst.stl.front().m->data();
+        deststart  << " - " << remap->dst.offset;
         ImGui::Text(deststart.str().c_str()) ;
 
         std::stringstream buffa;
-        buffa << remap->src->stl.back().m->name() << " - " << remap->src;
+        buffa << remap->src.stl.back().m->name() << " - " << &remap->src;
         std::stringstream buffb;
-        buffb << remap->dst->stl.back().m->name() << " - " << remap->dst;
+        buffb << remap->dst.stl.back().m->name() << " - " << &remap->dst;
 
         ImGui::NewLine(); ImGui::SetNextItemWidth( ImGui::CalcTextSize( (char*)buffa.str().c_str() ).x); ImGui::InputText("##puppyaaa", (char*)buffa.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
 
@@ -476,7 +476,7 @@ void Editors::init() {
 
         ImGui::SameLine(); ImGui::SetNextItemWidth( ImGui::CalcTextSize( (char*)buffb.str().c_str() ).x); ImGui::InputText("##puppybbb", (char*)buffb.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
 
-        ImGui::SameLine(); ImGui::Text(("* "+std::to_string(remap->dst->stl.back().m->quantity())).c_str());
+        ImGui::SameLine(); ImGui::Text(("* "+std::to_string(remap->dst.stl.back().m->quantity())).c_str());
 
         // engine.
     });

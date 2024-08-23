@@ -7,27 +7,15 @@
 #include "utils.hpp"
 
 struct Member;
-struct Instance;
-
-
-struct Remap {
-
-    Instance *src, *dst;
-
-    virtual void update();
-
-    int quantity;
-
-    Remap(Instance* src ,Instance* dst, int quantity = 1);
-
-
-};
+struct Remap;
 
 struct Instance {
 
     std::vector<MemberQ> stl;
 
     uint32_t offset = 0;
+    
+    std::vector<Remap*> remaps;
 
     std::string stl_name();
 
