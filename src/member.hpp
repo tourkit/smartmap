@@ -92,7 +92,7 @@ struct Member {
  
     bool isData();
     
-    void deleteData();
+    void deleteData(bool recurse = true);
     
     template <typename T>
     void type() { type(TYPE<T>()); }

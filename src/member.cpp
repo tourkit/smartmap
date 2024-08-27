@@ -14,16 +14,13 @@ Member::~Member() {
     // remove from other structs
     for (auto s : structs) 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
-            s->remove(*this);  
+            s->removeHard(*this);  
 }
     // remove from Member::structs
     if (!isData()) 
         structs.erase(this);
 
-    // delete isData() a.k.a Data members
-    for (auto x : members) 
-        if (x->isData() )
-            delete x;
+    deleteData();
 
     if (copy_v) return;
 
@@ -388,6 +385,8 @@ bool Member::removeHard(Member& m) {
 
 bool Member::clear() {
 
+    removing.insert(this);
+
     PLOGV << name() ;
 
     tops = getTop();
@@ -397,15 +396,15 @@ bool Member::clear() {
 
     size_v = 0;
 
-    for (auto x : members) 
-        if (x->isData())
-            delete x;
+    deleteData();
 
     members.clear();
 
     update();
 
     tops.clear();
+
+    removing.erase(this);
 
     return true;
 
@@ -496,18 +495,17 @@ Type Member::type() { if (isData()) { for (auto x : members) return x->type(); }
 
 
 
-void Member::deleteData(){
+void Member::deleteData(bool recurse){
 
     auto t_members = members;
 
     for (auto m : t_members) {
-
         
         if (m->isData()) 
             
             delete m;
 
-        m->deleteData();
+        if (recurse) m->deleteData();
     }
 
 }
@@ -528,9 +526,26 @@ std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
 
     for (auto owner : owners) {
 
-        auto top = owner.get()->stl.front().m->getTop(true);
+        auto tops = owner.get()->stl.front().m->getTop(true);
 
-        out.insert(top.begin(), top.end());
+        bool found = false;
+
+        for (auto top : tops) {
+
+            for (auto x : out) {
+
+                if (x->stl.front().m == top->stl.front().m) {
+                    found = true;
+                    break;
+                }
+
+            }
+                
+            if (found) break;
+
+        }
+
+        if (!found) out.insert(tops.begin(), tops.end());
 
     }
 
@@ -549,7 +564,7 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
 
         if (!bkp_v) {
 
-            PLOGE << "no bkp";    
+            PLOGE << "no bkp for " << name();    
 
             return;
         
