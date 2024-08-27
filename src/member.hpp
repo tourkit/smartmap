@@ -48,7 +48,7 @@ struct Member {
         
         add<T>(name);
 
-        members.back()->quantity(q);
+        if (q != 1) members.back()->quantity(q);
 
         return *this; 
         
@@ -145,7 +145,7 @@ private:
 
     static inline std::set<Member*> removing;
     static inline std::vector<MemberQ> adding;
-    static inline std::set<std::shared_ptr<Instance>> tops;
+    std::set<std::shared_ptr<Instance>> tops;
 
     static inline int MAX_SIZE = 10000;
 

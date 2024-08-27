@@ -14,13 +14,13 @@ Member::~Member() {
     // remove from other structs
     for (auto s : structs) 
         if (std::find(s->members.begin(), s->members.end(), this) != s->members.end()) {
-            s->removeHard(*this);  
+            s->remove(*this);  
 }
     // remove from Member::structs
     if (!isData()) 
         structs.erase(this);
 
-    deleteData();
+    deleteData(false);
 
     if (copy_v) return;
 
@@ -179,6 +179,8 @@ void Member::type(Type value) {
     float to = 1;
 
     if (value.id == typeid(uint32_t)) to = 65535;
+    
+    // else if (value.id == typeid(int)) to = 65535;
 
     else if (value.id == typeid(uint8_t)) to = 255;
 
@@ -324,7 +326,7 @@ Member& Member::range(float from, float to, float def) {
 
             (int&)*m->from() =  from;
             (int&)*m->to() =  to;
-            (int&)*m->def() =  def;
+            (int&)*m->def() =  (int)def;
 
         }else if (m->type().id == typeid(char)) {
 
@@ -432,23 +434,34 @@ void Member::update() {
 
     //// BUFFER PART
 
-    if (!tops.size() || !buffering()) return;
+    if (buffering()) {
 
-    if (footprint_all() > MAX_SIZE) { PLOGE << footprint_all() << " > MAX_SIZE"; }
+        if (footprint_all() > MAX_SIZE) { PLOGE << footprint_all() << " > MAX_SIZE"; }
 
-    buffer_v.resize(footprint_all());
+        buffer_v.resize(footprint_all());
 
-    memset( buffer_v.data(), 0, buffer_v.size() );
+        memset( buffer_v.data(), 0, buffer_v.size() );
 
-    for (auto t : tops)  {
-
-        t->post_change(adding);
-
-        t->stl.front().m->remap();
-
-        t->stl.front().m->upload();    
-        
     }
+
+    bool found = false;
+    for (auto x : adding)
+        if (x.m == this) {
+            found = true;
+            break;
+        }
+
+    
+        for (auto t : tops)  {
+
+            t->post_change(adding);
+
+    // if (!found)
+            t->stl.front().m->remap();
+
+            t->stl.front().m->upload();    
+            
+        }
  }
 
  void Member::upload() { 
@@ -500,12 +513,12 @@ void Member::deleteData(bool recurse){
     auto t_members = members;
 
     for (auto m : t_members) {
+
+        if (recurse) m->deleteData();
         
         if (m->isData()) 
             
             delete m;
-
-        if (recurse) m->deleteData();
     }
 
 }

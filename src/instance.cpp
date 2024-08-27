@@ -77,7 +77,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     }
     
-    std::string Instance::print(bool label, Member* m, int offset) {
+    std::string Instance::print(bool label, Member* m, int offset, std::string prefix) {
 
         if (!m) m = stl.back().m;
 
@@ -88,7 +88,7 @@ std::pair<std::string,int> nameQ(std::string name) {
         for (auto x : m->members) {
 
             for (int i = 0; i < x->quantity(); i++)
-                out += print(label,x,offset+x->footprint()*i);
+                out += print(label,x,offset+x->footprint()*i,prefix+x->name()+"::");
 
 
             offset += x->footprint_all();
@@ -96,26 +96,38 @@ std::pair<std::string,int> nameQ(std::string name) {
 
         if (m->isData()) {
 
-            std::string num = std::to_string(*(float*)(data()+offset));
-
-            int cut = 0;
-            if (num.length()) {
+            std::string val;
+            if (m->type().id == typeid(float)) {
                 
-                while (num[num.size()-1-cut] == '0') {
-                    cut++;
-                    if (num[num.size()-2-cut] == '.'){
+                val = std::to_string(*(float*)(data()+offset));
 
-                        cut+=2;
-                        break;
+                int cut = 0;
+                if (val.length()) {
+                    
+                    while (val[val.size()-1-cut] == '0') {
+                        cut++;
+                        if (val[val.size()-2-cut] == '.'){
+
+                            cut+=2;
+                            break;
+                        }
+                    
                     }
+
+                    val = val.substr(0,val.length()-cut);
                 
                 }
             
-                num = num.substr(0,num.length()-cut);
+            } else if (m->type().id == typeid(int)) val = std::to_string(*(int*)(data()+offset));
             
-            }
+            else if (m->type().id == typeid(char)) val = std::to_string(*(char*)(data()+offset));
 
-            out += num + ", ";
+            if (label) out += prefix+m->name()+ " : ";
+            
+            out += val;
+            
+            if (label) out +=" \n";
+            else out += ", ";
         
         }
 
@@ -123,7 +135,7 @@ std::pair<std::string,int> nameQ(std::string name) {
             for (int i = 0; i < m->stride()/m->members[0]->type().size(); i++) 
                 out += "0, ";
 
-        if (m == stl.back().m)  { PLOGW << "[ "+(out.length()?out.substr(0,out.length()-2):out)+" ]"; }
+        if (m == stl.back().m)  { PLOGW << (!label?"[ ":"\n") << (out.length()?out.substr(0,out.length()-2):out) << (!label?" ]":""); }
 
         return (out);
 

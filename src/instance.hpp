@@ -39,7 +39,7 @@ struct Instance {
     
     int size();
     
-    std::string print(bool label = false, Member* m = nullptr, int offset = -1);
+    std::string print(bool label = false, Member* m = nullptr, int offset = -1, std::string prefix = "");
 
     char* data();
 
