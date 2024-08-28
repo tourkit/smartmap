@@ -57,6 +57,7 @@ Member::Member(Member& other) :
     type_v(other.type_v), 
     size_v(other.size_v), 
     rangedef(other.rangedef) ,
+    buffering_v(other.buffering_v),
     buffer_v(other.buffer_v),
 #ifdef ROCH
     _TYPE_(other._TYPE_),
@@ -344,6 +345,16 @@ Member& Member::range(float from, float to, float def) {
 
     }
 
+    for (auto s : structs) {
+
+        for (auto m : s->members) 
+            if (m == this) 
+                for (auto top : m->getTop())  
+                    top->post_change({{m,(int)(m->quantity()-1)}});
+
+    }
+
+
     return *this;
 
 }
@@ -387,8 +398,6 @@ bool Member::removeHard(Member& m) {
 
 bool Member::clear() {
 
-    removing.insert(this);
-
     PLOGV << name() ;
 
     tops = getTop();
@@ -398,37 +407,95 @@ bool Member::clear() {
 
     size_v = 0;
 
-    deleteData();
+    deleteData(false);
 
     members.clear();
 
-    update();
+    // update();
 
     tops.clear();
-
-    removing.erase(this);
 
     return true;
 
 }
 
-void Member::update() { 
+void Member::simpleupdate() { 
 
-    if (!isData()){
+
+
+
+}
+
+void remap2(Instance this_, Instance bkp) {
+
+    auto m = bkp.stl.back().m;
+    
+    // each member
+    for (auto bkp_m : m->members) {
+
+        // look for in this_
+        Member* found = nullptr;
+        for (auto _this_m : this_.stl.back().m->members) 
+            if (bkp_m->copy_v == _this_m) {
+                found = _this_m;
+                break;
+            }
+
+        if (!found) 
+            continue;
+
+        auto bkp_ = Instance(bkp)[bkp_m];
+        auto this__ = Instance(this_)[found];
+
+        int q = found->quantity()<bkp_m->quantity()?found->quantity():bkp_m->quantity();
         
-        size_v = 0;
-
-        for (auto &m : members) 
-            size_v += m->footprint_all();
+        // each eq
+        for (int i = 0; i < q; i++) 
+            remap2(this__.eq(i), bkp_.eq(i));
 
     }
+
+    if (m->isData())
+        memcpy(this_.data(), bkp.data(),m->size());
+
+    PLOGV << bkp.stl_name() << " @ " << bkp.offset << " -> " << this_.offset;
+    
+}
+
+
+void Member::update() { 
+
+
+    size_v = 0;
+
+    if (isData())
+        size_v = type_v.size();
+    else
+        for (auto &m : members) 
+            size_v += m->footprint_all();
 
     for (auto a : structs) 
         for (auto &m : a->members) 
             if (m == this) 
                 a->update();
 
-    if (isData()) return;
+    // if (isData()) {
+
+    //     bool is_adding = false;
+
+    //     for (auto x : adding) 
+    //         if (x.m == this) {
+
+    //             is_adding = true;
+
+    //             break;
+
+    //         }
+
+    //     if (!is_adding) 
+    //         return;
+
+    // }
 
     PLOGV << name() << "[" << footprint_all() << "]";
 
@@ -443,25 +510,29 @@ void Member::update() {
         memset( buffer_v.data(), 0, buffer_v.size() );
 
     }
-
-    bool found = false;
-    for (auto x : adding)
-        if (x.m == this) {
-            found = true;
-            break;
-        }
-
     
-        for (auto t : tops)  {
+    for (auto t : tops)  {
 
-            t->post_change(adding);
+        t->post_change(adding);
 
-    // if (!found)
-            t->stl.front().m->remap();
+        remap2(*t,Instance(*t->stl.front().m->bkp_v));
 
-            t->stl.front().m->upload();    
-            
+        auto bkp_v = t->stl.front().m->bkp_v;
+
+        if (bkp_v) {
+
+            bkp_v->deleteData();
+
+            delete bkp_v;
+
+            bkp_v = nullptr;
+
         }
+
+        t->stl.front().m->upload();    
+        
+    }
+
  }
 
  void Member::upload() { 
@@ -483,8 +554,15 @@ char* Member::data() {
 }
 
 char* Member::from() { return rangedef.size()?rangedef.data():nullptr; }
-char* Member::to() { return rangedef.size()?rangedef.data()+(size_v*quantity_v):nullptr; }
-char* Member::def() { return rangedef.size()?rangedef.data()+(size_v*quantity_v)*2:nullptr; }
+char* Member::to() { return rangedef.size()?rangedef.data()+(size_v):nullptr; }
+char* Member::def() { 
+    
+    if (rangedef.size())
+        return rangedef.data()+(size_v*2);
+
+    return nullptr; 
+
+}
 
 bool Member::buffering() { return buffering_v; }
 
@@ -516,9 +594,12 @@ void Member::deleteData(bool recurse){
 
         if (recurse) m->deleteData();
         
-        if (m->isData()) 
+        if (m->isData()) {
+
+            removeHard(*m);
             
-            delete m;
+            delete m;}
+            
     }
 
 }
@@ -531,11 +612,7 @@ std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
         if (std::find( x->members.begin(), x->members.end(), this ) != x->members.end())
             owners.insert( std::make_shared<Instance>(*x) );
 
-    if (!owners.size()) { 
-        if (!z && !buffering_v) 
-            return {}; 
-        return {std::make_shared<Instance>(*this)}; 
-    }
+
 
     for (auto owner : owners) {
 
@@ -562,18 +639,18 @@ std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
 
     }
 
-    if (!out.size()) 
+    if (!out.size() && buffering()) 
         return {std::make_shared<Instance>(*this)};
 
     return out;
 
 }
 
-void Member::remap(Member* src_buffer, Member* src_member, Member* this_member , int src_offset, int this_offset) {
+void Member::remap(Member* bkp_buffer, Member* bkp_member, Member* this_member , int bkp_offset, int this_offset) {
 
     bool is_main = false;
 
-    if (!src_buffer) {
+    if (!bkp_buffer) {
 
         if (!bkp_v) {
 
@@ -585,25 +662,29 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
         
         PLOGV << "remap " << bkp_v->name();
 
-        src_buffer = bkp_v;
+        bkp_buffer = bkp_v;
 
         is_main = true;
     }
 
-    if (!src_member) 
-        src_member = src_buffer;
+    if (!bkp_member) 
+        bkp_member = bkp_buffer;
 
-    if (!src_buffer->buffer_v.size()) 
+    if (!bkp_buffer->buffer_v.size()) 
         return;
 
     if (!this_member) 
         this_member = this;
 
-    for (int i = 0 ; i < ( src_member->quantity() < this_member->quantity() ? src_member->quantity() :  this_member->quantity() ); i ++) {
+    // go thru all eqs
 
-        int src_offset_ = src_offset + src_member->eq(i);
+    for (int i = 0 ; i < ( bkp_member->quantity() < this_member->quantity() ? bkp_member->quantity() :  this_member->quantity() ); i ++) {
 
-        for (auto src_member_ : src_member->members) {
+        int bkp_offset_ = bkp_offset + bkp_member->eq(i);
+
+        // go thru all bkp members
+
+        for (auto bkp_member_ : bkp_member->members) {
 
             Member* found = nullptr;
 
@@ -611,9 +692,11 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
 
             int this_offset_ = this_offset + thiseq;
 
+            // find correspond this member
+
             for (auto this_member_ : this_member->members) {
 
-                if (src_member_->copy_v == this_member_) { 
+                if (bkp_member_->copy_v == this_member_) { 
                     
                     found = this_member_; 
                     
@@ -628,29 +711,24 @@ void Member::remap(Member* src_buffer, Member* src_member, Member* this_member ,
 
             if (!found ) {
 
-                src_offset_ += src_member_->footprint_all();
+                bkp_offset_ += bkp_member_->footprint_all();
 
                 continue;
             }
 
-            remap(src_buffer, src_member_, found, src_offset_, this_offset_);
+            remap(bkp_buffer, bkp_member_, found, bkp_offset_, this_offset_);
 
-            if (found->isData()) 
+            if (found->isData())  {
 
-                for (int i = 0; i < found->quantity(); i++) {
 
-                    int offset__ = found->footprint()*i;
-                    int src_offset__ = src_offset_+offset__;
-                    int this_offset__ = this_offset_+offset__;
+                PLOGV  << bkp_member->name() << "::" << bkp_member_->name() << "@" << bkp_offset_ << " -> "  << this_member->name() << "::" << found->name()  << "@" <<  this_offset_ << " : " << *(float*)&bkp_buffer->buffer_v[bkp_offset_];// << " - [" << bkp_member_->size() << "]";
 
-                    PLOGV  << src_member->name() << "::" << src_member_->name() << "@" << src_offset__ << " -> "  << this_member->name() << "::" << found->name()  << "@" <<  this_offset__ << " : " << *(float*)&src_buffer->buffer_v[src_offset__];// << " - [" << src_member_->size() << "]";
-    
-                    memcpy(&buffer_v[this_offset__], &src_buffer->buffer_v[src_offset__],found->size());
+                memcpy(&buffer_v[this_offset_], &bkp_buffer->buffer_v[bkp_offset_],found->size());
 
-                }
+            }
 
         
-            src_offset_ += src_member_->footprint_all();
+            bkp_offset_ += bkp_member_->footprint_all();
 
         }
 

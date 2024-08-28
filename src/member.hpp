@@ -48,7 +48,8 @@ struct Member {
         
         add<T>(name);
 
-        if (q != 1) members.back()->quantity(q);
+        if (q != quantity_v) 
+            members.back()->quantity(q);
 
         return *this; 
         
@@ -86,13 +87,15 @@ struct Member {
 
     std::set<std::shared_ptr<Instance>> getTop(bool z = false);
     
+    void simpleupdate();
+    
     virtual void update();
     
     virtual void upload();
  
     bool isData();
     
-    void deleteData(bool recurse = true);
+    void deleteData(bool recurse = false);
     
     template <typename T>
     void type() { type(TYPE<T>()); }
@@ -132,8 +135,10 @@ private:
     std::vector<char> buffer_v;
 
     Member* bkp_v = nullptr;
+public:
 
     Member* copy_v = nullptr;
+private:
     
     bool buffering_v = false;
 
@@ -144,7 +149,8 @@ private:
     Type type_v = TYPE<Member>();
 
     static inline std::set<Member*> removing;
-    static inline std::vector<MemberQ> adding;
+    
+    std::vector<MemberQ> adding;
     std::set<std::shared_ptr<Instance>> tops;
 
     static inline int MAX_SIZE = 10000;

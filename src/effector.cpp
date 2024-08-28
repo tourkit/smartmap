@@ -162,8 +162,6 @@ void FileEffector::load(File *file) {
 
     m.name( file->name() );
 
-    m.striding(true);
-
     for (auto arg : args) {
 
         if (arg.first == "vec2") m.add<float, 2>(arg.second.c_str());

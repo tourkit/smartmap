@@ -131,9 +131,17 @@ std::pair<std::string,int> nameQ(std::string name) {
         
         }
 
-        if (m->striding())
-            for (int i = 0; i < m->stride()/m->members[0]->type().size(); i++) 
-                out += "0, ";
+        if (m->striding()) {
+            
+            if (label) 
+                out += prefix + "stride : " + std::to_string(m->stride()/m->members[0]->type().size())+" \n";
+            
+            else
+                for (int i = 0; i < m->stride()/m->members[0]->type().size(); i++) 
+                    out += "0, ";
+            
+        }
+
 
         if (m == stl.back().m)  { PLOGW << (!label?"[ ":"\n") << (out.length()?out.substr(0,out.length()-2):out) << (!label?" ]":""); }
 
@@ -375,11 +383,15 @@ std::pair<std::string,int> nameQ(std::string name) {
 
         }
 
+        char* mdef = m->def();
+
         if (m->def()) 
 
             for (int eq = 0 ; eq < m->quantity(); eq++) 
 
                 memcpy(data()+(offset+m->footprint()*eq), m->def(), m->size());
+
+                
             
     }
 
