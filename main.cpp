@@ -10,6 +10,7 @@
 #include "editor.hpp"
 #include "imgui.h"
 #include "layer.hpp"
+#include "member.hpp"
 
 // make dmx work 
 // many vlayers
@@ -38,6 +39,8 @@ int main() {
     logger.cout(Sev::warning);
 
     engine.open("project.json");
+
+    PLOGW << Member::structs.size() << " structs";
 
     engine.run();
 

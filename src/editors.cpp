@@ -516,19 +516,8 @@ void Editors::init() {
 
         };
 
-        // ImGui::Text( std::to_string(an->footprint_all()).c_str() );
-        // Editor<Buffer>::cb(node, an);
-
     });
 
-    ////////// STRUCT.HPP
-
-
-
-// Editor<Struct>([](Node* node, Struct* s){
-//     ImGui::Text( "/====");
-
-//      });
 
     ////////// WINDOW.HPP
 
