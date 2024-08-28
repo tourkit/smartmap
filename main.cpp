@@ -11,7 +11,6 @@
 #include "imgui.h"
 #include "layer.hpp"
 
-// restore orientation
 // make dmx work 
 // many vlayers
 
