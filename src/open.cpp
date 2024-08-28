@@ -111,7 +111,7 @@ void Open::inputs(){
                 int q = 1;
                 if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
 
-                DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(an.universe(arr[0].GetInt()).m)), inst, arr[1].GetInt()-1, attrs, q);
+                DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(an.universe(arr[0].GetInt()-1).m)), inst, arr[1].GetInt()-1, attrs, q);
 
                 dmxremap->src.remaps.push_back( dmxremap );
 

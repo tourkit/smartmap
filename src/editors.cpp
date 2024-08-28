@@ -500,11 +500,10 @@ void Editors::init() {
         for (auto x : an->universes) {
             std::string str;
 
-            if (!x.second->m.instances.size()) continue;
 
-            auto &inst = *x.second->m.instances.begin();
+            auto inst = Instance(*an)[&x.second->m];
 
-            str = "universe "+std::to_string(x.first) + " " + std::to_string(inst->offset) + " " + x.second->m.name();
+            str = "universe "+std::to_string(x.first) + " " + std::to_string(inst.offset) + " " + x.second->m.name();
             ImGui::Text(str.c_str());
 
             ImGui::NewLine();

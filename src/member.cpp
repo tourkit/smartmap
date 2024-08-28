@@ -458,7 +458,7 @@ void remap2(Instance this_, Instance bkp) {
     if (m->isData())
         memcpy(this_.data(), bkp.data(),m->size());
 
-    PLOGV << bkp.stl_name() << " @ " << bkp.offset << " -> " << this_.offset;
+    // PLOGV << bkp.stl_name() << " @ " << bkp.offset << " -> " << this_.offset;
     
 }
 
@@ -643,106 +643,5 @@ std::set<std::shared_ptr<Instance>> Member::getTop(bool z) {
         return {std::make_shared<Instance>(*this)};
 
     return out;
-
-}
-
-void Member::remap(Member* bkp_buffer, Member* bkp_member, Member* this_member , int bkp_offset, int this_offset) {
-
-    bool is_main = false;
-
-    if (!bkp_buffer) {
-
-        if (!bkp_v) {
-
-            PLOGE << "no bkp for " << name();    
-
-            return;
-        
-        }
-        
-        PLOGV << "remap " << bkp_v->name();
-
-        bkp_buffer = bkp_v;
-
-        is_main = true;
-    }
-
-    if (!bkp_member) 
-        bkp_member = bkp_buffer;
-
-    if (!bkp_buffer->buffer_v.size()) 
-        return;
-
-    if (!this_member) 
-        this_member = this;
-
-    // go thru all eqs
-
-    for (int i = 0 ; i < ( bkp_member->quantity() < this_member->quantity() ? bkp_member->quantity() :  this_member->quantity() ); i ++) {
-
-        int bkp_offset_ = bkp_offset + bkp_member->eq(i);
-
-        // go thru all bkp members
-
-        for (auto bkp_member_ : bkp_member->members) {
-
-            Member* found = nullptr;
-
-            uint32_t thiseq = this_member->eq(i);
-
-            int this_offset_ = this_offset + thiseq;
-
-            // find correspond this member
-
-            for (auto this_member_ : this_member->members) {
-
-                if (bkp_member_->copy_v == this_member_) { 
-                    
-                    found = this_member_; 
-                    
-                    break; 
-                    
-                } else 
-                    
-                    this_offset_ += this_member_->footprint_all();
-
-            }
-
-
-            if (!found ) {
-
-                bkp_offset_ += bkp_member_->footprint_all();
-
-                continue;
-            }
-
-            remap(bkp_buffer, bkp_member_, found, bkp_offset_, this_offset_);
-
-            if (found->isData())  {
-
-
-                PLOGV  << bkp_member->name() << "::" << bkp_member_->name() << "@" << bkp_offset_ << " -> "  << this_member->name() << "::" << found->name()  << "@" <<  this_offset_ << " : " << *(float*)&bkp_buffer->buffer_v[bkp_offset_];// << " - [" << bkp_member_->size() << "]";
-
-                memcpy(&buffer_v[this_offset_], &bkp_buffer->buffer_v[bkp_offset_],found->size());
-
-            }
-
-        
-            bkp_offset_ += bkp_member_->footprint_all();
-
-        }
-
-    }
-
-    if (is_main) {
-
-
-        bkp_v->deleteData();
-
-        delete bkp_v;
-
-        bkp_v = nullptr;
-
-    }
 
 }

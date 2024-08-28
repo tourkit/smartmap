@@ -1,5 +1,5 @@
 #include "artnet.hpp"
-#include "remap.hpp"
+#include "instance.hpp"
 
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
@@ -112,7 +112,6 @@ Artnet::Artnet(std::string ip) : Member("Artnet") {
         auto x = universes.emplace(id, std::make_shared<Artnet::Universe>(this, id)).first->second.get();
 
         add(&x->m);
-        x->inst = &(*new Instance(*this))[&x->m];
 
         PLOGD << id;
 
@@ -124,7 +123,7 @@ Artnet::Artnet(std::string ip) : Member("Artnet") {
 
 
 Artnet::Universe::~Universe() {
-    delete inst;
+    
 }
 Artnet::Universe::Universe(Artnet* an, int id) : m(""+std::to_string(id)), an(an), id(id) {
 
@@ -162,6 +161,8 @@ void Artnet::connect(std::string ip_) {
     }
 
     if (ip == using_ip) PLOGI << using_ip;
+    else 
+        ip = using_ip;
 
     artnet = artnet_new(using_ip.c_str(), 0); // 1 for VERBOSE
 
@@ -185,10 +186,11 @@ void Artnet::connect(std::string ip_) {
 
         int uni_id = p->data.admx.universe;
 
-        // TODOTODOTODO
-        // Instance *u = an->universe(uni_id).m.instances
+        std::string out;
 
-        // u.set<std::array<char,512>>(p->data.admx.data);
+        auto inst = Instance(*an);
+        inst.loc(&an->universe(uni_id).m);
+        inst.set<char,512>(p->data.admx.data);
 
         return 1;
 

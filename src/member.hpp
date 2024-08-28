@@ -110,8 +110,6 @@ struct Member {
 
     void bkp();
 
-    void remap(Member* src_buffer = nullptr, Member* src_member = nullptr, Member* this_member = nullptr, int src_offset = 0, int this_offset = 0);
-
 private:
 
     std::string name_v;

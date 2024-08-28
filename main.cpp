@@ -17,12 +17,7 @@
 int main() {
 
     engine.init();
-
-    NODE<Artnet>::on(Node::CHANGE, [&](Node* n, Artnet* an) {
-
-        PLOGW << "dlsdkffds";
-
-    });
+    
     Editor<Stack>([](Node*node,Stack* stack){
 
 

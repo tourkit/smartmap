@@ -21,9 +21,7 @@
     "wrapper": [ "gradient", "atlas", "flower", "burst" ]
   },
   "editors": [
-    [ 0, 0, 0, 0, "Effectors::rectangle", true ],
-    [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
-    [ 0, 0, 0, 0, "Stack::ubersmart1", true ]
+    [ 0, 0, 0, 0, "Inputs::artnet1", true ]
   ],
   "layers": {
     "ubersmart1": { "smartlayer1": [ 1920, 1080, 1, { "argb": "argb", "rectangle": "rectangle", "wrapper": "wrapper" } ], "smartlayer2": [ 400, 300, 2, { "atlas": "atlas" } ], "Vlayer2": [ 100, 100, 1, { "rectangle": "rectangle", "argb": "argb" } ] },
