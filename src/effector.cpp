@@ -219,6 +219,7 @@ std::string Wrappy::source() {
     std::string out = "void " + Effector::m.name() + " ( " + (args.length()?args.substr(0, args.length() - 2):"") + " ) ";
 
     out += "{\n\n"; 
+    out += "\tint id = int(id_*" + std::to_string(effector_refs.size()) + ");\n\n"; 
     
     int id = 0;
     for (auto x : effector_refs) {
@@ -252,7 +253,7 @@ void Wrappy::attrs(int count) {
 
     Effector::m.clear();
 
-    Effector::m.add<int>("id").range(0,effector_refs.size()-1,0);
+    Effector::m.add<float>("id_").range(0,effector_refs.size()-1,0);
 
     for (int i = 0 ; i < count; i++)
         Effector::m.add<float>("param_"+std::to_string(i));

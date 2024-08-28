@@ -9,9 +9,7 @@
 
 void DMXRemap::update() {
 
-    // add striding taken care of
-
-  auto data = (uint8_t*)src.data()+chan;
+    auto data = (uint8_t*)src.data()+chan;
 
     for (int offset = 0; offset < dst.stl.back().m->quantity(); offset++) {
 
@@ -32,7 +30,8 @@ void DMXRemap::update() {
             else if (c==4) target = ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3])/4294967295.0f;
 
             // range remap
-            if (attributes[i].active && c > 0) *((float*)dst.data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
+            if (attributes[i].active && c > 0) 
+                *((float*)dst.data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
 
             data += c;
 
@@ -99,7 +98,7 @@ Artnet::Artnet(std::string ip) : Member("Artnet") {
 
 }
 
-  Artnet::Universe& Artnet::universe(int id) {
+  Universe& Artnet::universe(int id) {
 
     if (universes.find(id) != universes.end()){ 
         
@@ -109,7 +108,7 @@ Artnet::Artnet(std::string ip) : Member("Artnet") {
 
         uint32_t offset = universes.size()*512;
 
-        auto x = universes.emplace(id, std::make_shared<Artnet::Universe>(this, id)).first->second.get();
+        auto x = universes.emplace(id, std::make_shared<Universe>(this, id)).first->second.get();
 
         add(&x->m);
 
@@ -122,10 +121,10 @@ Artnet::Artnet(std::string ip) : Member("Artnet") {
   }
 
 
-Artnet::Universe::~Universe() {
+Universe::~Universe() {
     
 }
-Artnet::Universe::Universe(Artnet* an, int id) : m(""+std::to_string(id)), an(an), id(id) {
+Universe::Universe(Artnet* an, int id) : m(""+std::to_string(id)), an(an), id(id) {
 
     m.add(&uni_s);
 

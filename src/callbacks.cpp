@@ -2,6 +2,7 @@
 
 #include "node.hpp"
 #include "file.hpp"
+#include "remap.hpp"
 #include "ubo.hpp"
 #include "struct.hpp"
 #include "model.hpp"
@@ -210,50 +211,59 @@ void Callbacks::init() {
 
         static int size = 0;
 
-        // if (an->universes.size() != size) {
-        //     size = an->universes.size();
-        //     // node->get<Artnet>()->trig(Node::CHANGE);
-        // }
+        if (an->universes.size() != size) {
+
+            auto t_childrens = node->childrens;
+            for (auto c :t_childrens) 
+                if (c->is_a_nowarning<Universe>())
+                    delete c;
+
+            for (auto &uni :an->universes) 
+
+            size = an->universes.size();
+        }
+
     });
     
-
     NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){
 
         NODE<Member>::on_cb[Node::CHANGE](node, an);
+        std::vector<Universe*> missing;
 
+        for (auto uni : an->universes) {
 
-        // for (auto c :node->childrens) delete c;
+            bool found = false;
 
-        // // for (auto &uni :an->universes) {
+            for (auto n : node->childrens) {
+                auto uni_ = n->is_a_nowarning<Universe>();
+                if (uni_ == uni.second.get()) {
+                    found = true;
+                    break;
+                }
 
-        // //     uni.second->id = uni.first;
+            }
 
-        // //     node->addPtr<Universe>(uni.second)->name("universe "+std::to_string(uni.first));
+            if (!found) 
+                missing.push_back(uni.second.get());
 
-        // // }
+        }
+
+        for (auto x : missing)
+            PLOGW << x->id;
+        
+        missing.clear();
 
     });
     //////// Remap.HPP
 
-    // NODE<DMXRemap>::on(Node::RUN, [](Node* node, DMXRemap *remap) {
+    NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { remap->update(); });
 
-    //     int count = 0;
-    //     remap->dst->def()->each([&](Instance &inst){count++;});
-    //     if (count != remap->attributes.size()) remap->attributes.resize(count);
-
-    // });
-
-
-    // NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { remap->update(); });
-    // NODE<Remap>::on(Node::CHANGE, [](Node* node, Remap *remap) { remap->reset(); });
-    // NODE<Universe::Remap>::on(Node::RUN, [](Node* node, Universe::Remap *remap) { remap->update(); });
-    // NODE<Universe::Remap>::on(Node::CHANGE, [](Node* node, Universe::Remap *remap) { remap->reset(); });
+    NODE<DMXRemap>::is_a<Remap>();
 
     //////// FrameBuffer.HPP
 
     NODE<FrameBuffer>::on(Node::CHANGE, [](Node* node, FrameBuffer *fb) { if (fb->width != fb->texture->width || fb->height != fb->texture->height) { fb->create(fb->width, fb->height); } });
 
-    //////// Buffer.HPP
 
     ////////// Folder.HPP
 
