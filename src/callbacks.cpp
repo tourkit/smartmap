@@ -124,7 +124,7 @@ void Callbacks::init() {
     NODE<Layer>::is_a<DrawCall>();
     NODE<Model>::is_a<Modelable>();
     NODE<Modelable>::is_a<Effectable>();
-    NODE<UberLayer::VLayer>::is_a<Effectable>();
+    NODE<UberLayer::VirtualLayer>::is_a<Effectable>();
 
     NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
     
@@ -188,7 +188,7 @@ void Callbacks::init() {
         auto lay = node->parent()->is_a_nowarning<Layer>();
         if (lay) lay->removeEffector(effector); 
 
-        auto ubl = node->parent()->is_a_nowarning<UberLayer::VLayer>();
+        auto ubl = node->parent()->is_a_nowarning<UberLayer::VirtualLayer>();
         if (ubl) ubl->removeEffector(effector);
 
         auto model = node->parent()->is_a_nowarning<Model>();

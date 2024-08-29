@@ -997,8 +997,23 @@ void Editors::init() {
     });
 
       ////////// Engine.HPP
+    
+    Editor<Stack>([](Node*node,Stack* stack){
 
-    Editor<Stack>([](Node* node, Stack *stack){ Editor<Log>::cb(node, &logger); });
+
+        ImVec2 btn_size = {100,50};
+        if (ImGui::Button("layer", btn_size)) {
+            node->addOwnr<Layer>();
+            
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("uberlayer", btn_size)) {
+
+            node->addOwnr<UberLayer>();
+
+        }
+
+    });
 
     Editor<Debug>([](Node* node, Debug *debug){
 
@@ -1115,7 +1130,7 @@ void Editors::init() {
         // }
         ImVec2 btn_size = {100,50};
         if (ImGui::Button("smartlayer", btn_size)) {
-            node->addPtr<UberLayer::VLayer>(&ubl->addLayer(engine.window.width,engine.window.height));
+            node->addPtr<UberLayer::VirtualLayer>(&ubl->addLayer(engine.window.width,engine.window.height));
             ubl->calc_matrice();
             engine.stack->trig(Node::CHANGE);
             ubl->update();

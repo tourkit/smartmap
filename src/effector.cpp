@@ -45,6 +45,8 @@ std::string Effector::call(std::string prepend) {
 bool FeedbackEffector::setup(Builder* builder) { 
 
     
+    // ->texture->sampler_name = "feedback_pass";
+    // builder->samplers[1] = atlas->texture;
     
     return true; 
     

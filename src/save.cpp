@@ -88,7 +88,7 @@ void Save::layers(){
             auto  ubl_ = rapidjson::Value(rapidjson::kObjectType);
 
 
-            node->each<UberLayer::VLayer>([&](Node* node_, UberLayer::VLayer* layer){
+            node->each<UberLayer::VirtualLayer>([&](Node* node_, UberLayer::VirtualLayer* layer){
 
                 auto  layer_ = rapidjson::Value(rapidjson::kArrayType);
 

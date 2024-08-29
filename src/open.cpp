@@ -80,7 +80,7 @@ void Open::inputs(){
                 if (!n) { PLOGW << arr[2].GetString() << " not found"; continue; }
                 
                 
-                auto vlayer = n->is_a<UberLayer::VLayer>();
+                auto vlayer = n->is_a<UberLayer::VirtualLayer>();
                 
                 if (!vlayer)  
                     continue;
@@ -171,6 +171,8 @@ void Open::outputs(){
 
             if (layer) 
                 layer->referings.insert( n );
+
+            n->active(true);
 
         }
 
@@ -306,7 +308,7 @@ void Open::layers(){
                 auto &l = ubl.addLayer(width,height);
                 auto name = vlayer_def.name();
                 l.m.name(name);
-                auto l_ = ubl_->addPtr<UberLayer::VLayer>(&l);
+                auto l_ = ubl_->addPtr<UberLayer::VirtualLayer>(&l);
                 l_->active(true);
                 l.m.quantity(count);
 

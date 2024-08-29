@@ -10,6 +10,20 @@
 
 struct Layer : DrawCall {
 
+    struct FeedbackEffector : Effector {
+
+        Layer* layer;
+
+        FeedbackEffector(Layer* layer = nullptr);
+
+        bool setup(Builder* builder) override;
+        
+        void post(Builder* builder) override;
+
+        std::string source() override;
+
+    };
+
     FrameBuffer fb;
 
     Texture* feedback = nullptr;
@@ -46,9 +60,9 @@ struct UberEffector : Effector {
 
 struct UberLayer : Layer {
 
-    struct VLayer : Effectable {
+    struct VirtualLayer : Effectable {
 
-        VLayer(int w, int h, int id = 0) : Effectable("Vlayer"+std::to_string(id)), w(w), h(h), id(id) {  }
+        VirtualLayer(int w, int h, int id = 0) : Effectable("Vlayer"+std::to_string(id)), w(w), h(h), id(id) {  }
 
         int w ;
         int h;
@@ -58,7 +72,7 @@ struct UberLayer : Layer {
 
     static inline auto uberlayer_def = Member("UberLayers").add<float, 2>("size").add<float, 2>("pos").add<float, 2>("norm").add<float, 2>("dim");
 
-    std::vector<std::shared_ptr<VLayer>> layers;
+    std::vector<std::shared_ptr<VirtualLayer>> layers;
 
     Member uberlayer_m;
 
@@ -68,7 +82,7 @@ struct UberLayer : Layer {
 
     void calc_matrice() ;
 
-    VLayer& addLayer(int w , int h) ; // kinda ctor for VLaye
+    VirtualLayer& addLayer(int w , int h) ; // kinda ctor for VLaye
 
     struct ShaderProgramBuilder : DrawCall::ShaderProgramBuilder {
 
