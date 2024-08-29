@@ -92,9 +92,6 @@ void Engine::init() {
 
     effectors = tree->addOwnr<Node>()->name("Effectors")->active(false);
 
-    auto feedbackeffector = new FeedbackEffector();
-    engine.effectors->addPtr<Effector>(feedbackeffector);
-
     // effectors = tree->addFolder<File>("Effectors", "assets/effectors/");
 
     // timelines = tree->addOwnr<Node>()->name("Timelines");

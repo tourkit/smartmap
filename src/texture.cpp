@@ -11,7 +11,7 @@ Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum i
 }
 
 void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
-    destroy();
+
     this->unit = unit;
     this->informat = informat;
     this->outformat = outformat;
@@ -21,7 +21,9 @@ void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLen
 
 void Texture::reset() { destroy();create( width, height); }
 void Texture::create(GLuint width, GLuint height) {
-
+    
+    destroy();
+    
     this->width = width;
     this->height = height;
 

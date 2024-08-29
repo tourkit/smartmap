@@ -31,72 +31,23 @@ std::string Effector::call(std::string prepend) {
 
     std::string args;
 
-    for (auto &arg : m.members) args += prepend +"."+ arg->name()+", "; 
+    for (auto &arg : m.members) 
+        args += prepend +"."+ arg->name()+", "; 
 
-    if (args.length()) args.resize(args.size()-2);
+    if (args.length()) 
+        args.resize(args.size()-2);
 
     return m.name()+"("+args+");";
     
 }
 
 
-// FeedbackEffector  ////////////////
-
-bool FeedbackEffector::setup(Builder* builder) { 
-
-    
-    // ->texture->sampler_name = "feedback_pass";
-    // builder->samplers[1] = atlas->texture;
-    
-    return true; 
-    
-}
-
-bool FeedbackEffector::body(Builder* builder, std::string prepend) { 
-
-    std::string current;
-    
-    current += "//\tfloat steps = 5;\n";
-    current += "//\tfloat smoothing = .8;\n";
-    current += "//\tif (dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].feedback.intensity != 0) for (float i = 1; i < steps; i++) {\n\n";
-    current += "//\t\tif (abs(COLOR)!=vec4(0)) break;\n\n";
-    current += "//\t\tfloat angle = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.orientation;\n";
-    current += "//\t\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.size;\n";
-    current += "//\t\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.pos;\n\n";
-    current += "//\t\tvec2 pos2 = dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.pos;\n\n";
-    current += "//\t\tfloat step = i/steps;\n";
-    current += "//\t\t\n\t\t// // 3.14159265359 // 6.2831853072\n";
-    current += "//\t\tfloat angle2 = dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.orientation;\n";
-    current += "//\t\tfloat diff = abs(angle-angle2);\n";
-    current += "//\t\tif (diff>.75)  if (angle2>angle) angle2 = -1+angle2; else angle2 = 1+angle2;\n";
-    current += "//\t\tif (abs(angle-angle2)<.25) angle = mix(angle,angle2,step);\n";
-    current += "//\t\tif (abs(size.x-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.size.x)<.015 && abs(size.y-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size.y)<.015) size = mix(size,dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size,step);\n";
-    current += "//\t\tif (abs(pos.x-pos2.x)<.12 && abs(pos.y-pos2.y)<.12) pos = mix(pos,pos2,step);\n\n";
-    current += "//\t\ttic();\n\n";
-    current += builder->current_layer+"\n\n";
-    current += "//\t\tcolor *= ((steps-i)/steps)*(1-smoothing)+smoothing;\n\n";
-    current += "//\t\ttac();\n\t\t\n";
-    current += "//\t}\n\n";
-
-    builder->current_layer = current;
-
-    return true;
-
-}
-
-
-FeedbackEffector::FeedbackEffector() : Effector("feedbackEffector") {
-
-    m.add<float>("intensity");
-
-    
-}
-
 
 // FileEffector  ////////////////
 
 bool FileEffector::body(Builder* builder, std::string prepend) {
-Effector::body( builder,  prepend) ;
+    
+    Effector::body( builder,  prepend) ;
 
     return true;
 }

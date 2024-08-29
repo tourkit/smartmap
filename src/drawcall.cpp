@@ -96,11 +96,8 @@ void Layer::ShaderProgramBuilder::build() {
         // do all body 
 
         for (auto &model : dc->models)
-
             for (int instance = 0; instance < model.get()->m.quantity(); instance++) 
-                
                 body_fragment += print_layer(*model, lower(dc->m.name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->stl.back().m->quantity()>1?"[int(LAYER)]":""));
-                
 
         for (auto ref : dc->effector_refs) 
             ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->m.name()+"."+ref->m.name()+"."+ref->effector->m.name());
@@ -108,12 +105,16 @@ void Layer::ShaderProgramBuilder::build() {
         
         // setup all effector_refs
 
-        for (auto &model : dc->models) for (auto x : model->effector_refs) x.get()->effector->setup(this);
+        for (auto &model : dc->models) 
+            for (auto x : model->effector_refs) 
+                x.get()->effector->setup(this);
         
-        for (auto x : dc->effector_refs) x.get()->effector->setup(this);
+        for (auto x : dc->effector_refs) 
+            x.get()->effector->setup(this);
 
 
-        if (dc->effector_refs.size()) body_fragment += "\ttac();\n\n";
+        if (dc->effector_refs.size()) 
+            body_fragment += "\ttac();\n\n";
 
     }
 

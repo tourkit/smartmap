@@ -34,15 +34,6 @@ struct Effector {
 
 };
 
-struct FeedbackEffector : Effector {
-
-    FeedbackEffector();
-
-    bool setup(Builder* builder) override;
-    
-    bool body(Builder* builder, std::string prepend = "") override;
-
-};
 
 struct FileEffector : Effector {
 

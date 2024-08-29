@@ -3,18 +3,20 @@
 #include <memory>
 
 #include "effector.hpp"
-#include "struct.hpp"
+#include "texture.hpp"
 #include "framebuffer.hpp"
 #include "shader.hpp"
 #include "drawcall.hpp"
 
 struct Layer : DrawCall {
 
-    struct FeedbackEffector : Effector {
+    struct Feedback : Effector {
 
         Layer* layer;
 
-        FeedbackEffector(Layer* layer = nullptr);
+        Texture texture;
+
+        Feedback(Layer* layer);
 
         bool setup(Builder* builder) override;
         
@@ -26,7 +28,7 @@ struct Layer : DrawCall {
 
     FrameBuffer fb;
 
-    Texture* feedback = nullptr;
+    Feedback* feedback = nullptr;
 
     Layer(uint16_t width = 0, uint16_t height = 0, std::string name = "");
 

@@ -1,5 +1,6 @@
 #include "editors.hpp"
 
+#include "imgui.h"
 #include "vendors/imgui/imgui_internal.h"
 
 #include "editor.hpp"
@@ -638,7 +639,8 @@ void Editors::init() {
                     frag_last_change = shader->last_change;
 
                 }
-
+                
+                
                 frageditor.Render("frageditor");
 
                 if (frageditor.IsTextChanged()) {
@@ -730,7 +732,7 @@ void Editors::init() {
 
         static float *curr = &info.x;
 
-        ImGui::SameLine();if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
+        if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
         ImGui::SameLine();if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
         ImGui::SameLine();if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }
         ImGui::SameLine();if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }
@@ -848,8 +850,16 @@ void Editors::init() {
 
         // if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) ) { texture->create( texture->width, texture->height, texture->unit, texture->mipmaps, texture->informat, texture->outformat ); }
         Layer* layer = node->is_a_nowarning<Layer>();
-        if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) && layer) { layer->fb.create( texture->width, texture->height); layer->feedback->create(texture->width, texture->height); node->update(); }
+        if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) && layer) { 
 
+            layer->fb.create( texture->width, texture->height); 
+            
+            if (layer->feedback)
+                layer->feedback->texture.create(texture->width, texture->height); 
+            
+            node->update(); 
+        
+        }
 
         float ratio = texture->height/(float)texture->width;
         auto nw = std::min(texture->width,(GLuint)512);
@@ -990,7 +1000,7 @@ void Editors::init() {
 
     Editor<FrameBuffer>([](Node* node, FrameBuffer *fb ){
 
-        ImGui::Text(("attachment "+std::to_string(fb->attachments)).c_str());
+        // ImGui::Text(("attachment "+std::to_string(fb->attachments)).c_str());
 
         Editor<Texture>::cb(node, fb->texture);
 
@@ -1017,10 +1027,21 @@ void Editors::init() {
 
     Editor<Debug>([](Node* node, Debug *debug){
 
-        static std::vector<GLenum> enums = {GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, GL_SRC_ALPHA_SATURATE, GL_SRC1_COLOR, GL_ONE_MINUS_SRC1_COLOR, GL_SRC1_ALPHA, GL_ONE_MINUS_SRC1_ALPHA};
-        static int blendin = 1, blendout = 3;
-        if (ImGui::SliderInt2( "blend", &blendin, 0, enums.size()-1)) glBlendFunc(enums[blendin],enums[blendout]);
+        // Separator();
 
+        // static std::vector<GLenum> enums = {GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA, GL_SRC_ALPHA_SATURATE, GL_SRC1_COLOR, GL_ONE_MINUS_SRC1_COLOR, GL_SRC1_ALPHA, GL_ONE_MINUS_SRC1_ALPHA};
+        // static int blendin = 1, blendout = 3;
+        // if (ImGui::SliderInt2( "blend", &blendin, 0, enums.size()-1)) glBlendFunc(enums[blendin],enums[blendout]);
+
+        SameLine();
+
+        auto curs = GetCursorPosX();
+
+        SetCursorPosX(GetWindowSize().x-100);
+
+        Text((std::to_string(Member::structs.size())+" struct"+(Member::structs.size()>1?"s":"")).c_str());
+        SameLine();
+        SetCursorPosX(curs);
         Editor<Log>::cb(node, &logger);
 
     });
@@ -1143,31 +1164,32 @@ void Editors::init() {
 
     Editor<Layer>([](Node* node, Layer *layer){
 
+        SameLine();
         ImGui::Text(("FB "+std::to_string(layer->fb.id)).c_str());
-
-        ImGui::SliderFloat4("clear_color", &layer->fb.clear_color[0], 0, 1);
 
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
 
             if (ImGui::BeginTabItem("main")) {
+                    
+                    ImGui::SliderFloat4("clear_color", &layer->fb.clear_color[0], 0, 1);
 
                     Editor<FrameBuffer>::cb(node, &layer->fb);
 
                 ImGui::EndTabItem();
 
             }
-        //     for (auto x : layer->shader.builder()->samplers) {
+            for (auto x : layer->shader.builder()->samplers) {
                 
-        //         if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
+                if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
 
-        //             Editor<Texture>::cb(node, x.second);
+                    Editor<Texture>::cb(node, x.second);
 
-        //             ImGui::EndTabItem();
+                    ImGui::EndTabItem();
 
-        //         }
+                }
 
-        //     }
+            }
 
             ImGui::EndTabBar();
 

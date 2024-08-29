@@ -30,8 +30,6 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
         }
 
 
-    feedback = new Texture(fb.width,fb.height,2,1, GL_RGB8);
-
     int xxx = glsl_layers->stl.back().m->quantity();
 
     vbo.layer_id = glsl_layers->stl.back().m->quantity();
@@ -54,81 +52,60 @@ void Layer::update() {
 
 }
 
-#include "boilerplate.hpp"
 void Layer::draw() {
 
-    if (feedback) { feedback->bind(); }
+    if (feedback) 
+        feedback->texture.bind(); 
 
     fb.clear();
 
     shader.use();
-    if (bquad) {
-        bquad->draw();
-        return;
-    }
 
-    vbo.draw(1);
-        return;
+    vbo.draw();
 
-    if (feedback) { return feedback->read(fb.texture); }
+    if (feedback) 
+        return feedback->texture.read(fb.texture); 
 
 }
-
-
 
 // FeedbackEffector  ////////////////
 
-void Layer::FeedbackEffector::post(Builder* builder) { 
+void Layer::Feedback::post(Builder* builder) { 
 
-
+    builder->body_fragment += "\tCOLOR += texture(feedback_pass, uv);\n";
 
 }
 
-bool Layer::FeedbackEffector::setup(Builder* builder) { 
+bool Layer::Feedback::setup(Builder* builder) { 
 
-    
     layer->fb.texture->sampler_name = "feedback_pass";
-    builder->samplers[1] = layer->fb.texture;
+    builder->samplers[0] = layer->fb.texture;
+
+    ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
     return true; 
     
 }
 
-std::string Layer::FeedbackEffector::source() {
+std::string Layer::Feedback::source() {
 
     std::string current;
-    
-    current += "//\tfloat steps = 5;\n";
-    current += "//\tfloat smoothing = .8;\n";
-    current += "//\tif (dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].feedback.intensity != 0) for (float i = 1; i < steps; i++) {\n\n";
-    current += "//\t\tif (abs(COLOR)!=vec4(0)) break;\n\n";
-    current += "//\t\tfloat angle = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.orientation;\n";
-    current += "//\t\tvec2 size = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.size;\n";
-    current += "//\t\tvec2 pos = dynamic_ubo[curr].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.pos;\n\n";
-    current += "//\t\tvec2 pos2 = dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.pos;\n\n";
-    current += "//\t\tfloat step = i/steps;\n";
-    current += "//\t\t\n\t\t// // 3.14159265359 // 6.2831853072\n";
-    current += "//\t\tfloat angle2 = dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.orientation;\n";
-    current += "//\t\tfloat diff = abs(angle-angle2);\n";
-    current += "//\t\tif (diff>.75)  if (angle2>angle) angle2 = -1+angle2; else angle2 = 1+angle2;\n";
-    current += "//\t\tif (abs(angle-angle2)<.25) angle = mix(angle,angle2,step);\n";
-    current += "//\t\tif (abs(size.x-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.rectangle.size.x)<.015 && abs(size.y-dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size.y)<.015) size = mix(size,dynamic_ubo[last].uberLayer1.smartLayer1[int(OBJ)].rectangle.size,step);\n";
-    current += "//\t\tif (abs(pos.x-pos2.x)<.12 && abs(pos.y-pos2.y)<.12) pos = mix(pos,pos2,step);\n\n";
-    current += "//\t\ttic();\n\n";
-    // current += builder->current_layer+"\n\n";
-    current += "//\t\tcolor *= ((steps-i)/steps)*(1-smoothing)+smoothing;\n\n";
-    current += "//\t\ttac();\n\t\t\n";
-    current += "//\t}\n\n";
 
-    // builder->current_layer = current;
-
+    current += "void feedback() {\n";
+    current += "\tcolor += texture(feedback_pass, uv);\n";
+    current += "}\n";
     return current;
 
 }
 
 
-Layer::FeedbackEffector::FeedbackEffector(Layer* layer) : 
-    Effector("feedbackEffector"), layer(layer) {
+Layer::Feedback::Feedback(Layer* layer) : 
+
+    Effector("feedback"), 
+    texture(layer->fb.width,layer->fb.height,2,1, GL_RGB8), 
+    layer(layer) 
+
+    {
 
     m.add<float>("intensity");
     
@@ -272,7 +249,8 @@ void UberLayer::calc_matrice() {
     float matrice_width = matrice[0].back()[0]+matrice[0].back()[2];
 
     fb.create( matrice_width, matrice_height );
-    feedback->create( matrice_width, matrice_height );
+    if (feedback)
+        feedback->texture.create( matrice_width, matrice_height );
 
     uberlayer_m.quantity(count);
 
