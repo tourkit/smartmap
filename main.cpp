@@ -4,18 +4,10 @@
 
                                 */
 
-#include "engine.hpp"
+#include "boilerplate.hpp"
 
 int main() {
 
-    engine.init();
-
-    logger.cout(Sev::warning);
-
-    engine.open("project.json");
-
-    PLOGW << Member::structs.size() << " structs";
-
-    engine.run();
+    Boilerplate::Init();
 
 }

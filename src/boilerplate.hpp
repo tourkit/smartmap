@@ -8,11 +8,7 @@
 // static unsigned int pos_y = 0;
 
 
-#include <chrono>
-#include <thread>
-#include <iostream>
 #include <vector>
-#include <fstream>
 #include <cmath>
 
 #include <GL/gl3w.h>
@@ -25,6 +21,65 @@
 
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
+
+#include <iostream>
+#include <cstring>
+#include <string>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+
+
+struct BoilerArtnet {
+
+    int sockfd;
+    struct sockaddr_in servaddr, cliaddr;
+    char buffer[1024];
+    int universe = 0;
+
+    BoilerArtnet() {
+
+        if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
+            std::cerr << "Socket creation failed" << std::endl;
+            return;
+        }
+
+        memset(&servaddr, 0, sizeof(servaddr));
+        memset(&cliaddr, 0, sizeof(cliaddr));
+
+        servaddr.sin_family = AF_INET;
+        servaddr.sin_addr.s_addr = inet_addr("0.0.0.0");
+        servaddr.sin_port = htons(6454);
+
+        if (bind(sockfd, (const struct sockaddr *)&servaddr, sizeof(servaddr)) < 0) {
+            std::cerr << "Bind failed" << std::endl;
+            return;
+        }
+
+        std::cout << "UDP listener running on 2.0.0.111:6454" << std::endl;
+    }
+
+    ~BoilerArtnet() {
+        close(sockfd);
+    }
+
+    char* receive() {
+
+        socklen_t len = sizeof(cliaddr);
+        int n = recvfrom(sockfd, (char *)buffer, 1024, MSG_WAITALL, 
+                        (struct sockaddr *)&cliaddr, &len);
+        buffer[n] = '\0';
+
+        if (buffer[9] == 80 && buffer[13] == universe)
+            return &buffer[18];
+
+        return nullptr;
+
+    }
+
+};
+
 
 struct BoilerQuad {
 
@@ -249,6 +304,8 @@ struct BoilerWindow {
 
     GLFWwindow* window;
 
+    float clear_color[4] = {0,0,0,1};
+
     BoilerWindow() {
 
         glfwInit();
@@ -273,7 +330,7 @@ struct BoilerWindow {
                 lastTime = glfwGetTime();
 
 
-                glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // BG COLOR
+                glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]); // BG COLOR
                 glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
                 cb();
@@ -387,47 +444,24 @@ struct Boilerplate {
 
     static void Init(bool run = true) {
 
+        BoilerArtnet artnet;
+
         BoilerWindow window;
 
-        {BoilerQuad quadq;}
-        BoilerQuad quad;
+        window.run([&](){
 
-        BoilerShader shader;
+            char* buffer = artnet.receive();
 
-        // BoilerUBO ubo(shader);
+            if (buffer) {
 
-        // BoilerTexture texture;
-        // shader.texture();
+                if (buffer[0]) 
+                    window.clear_color[0] = 0;
+                else
+                    window.clear_color[0] = 1;
+                
+            }
 
-        // BoilerGUI gui(window);
-
-        // RENDER
-
-        if (run)
-
-            window.run([&](){
-
-                quad.draw();
-
-                // ImGui_ImplOpenGL3_NewFrame();
-                // ImGui_ImplGlfw_NewFrame();
-                // ImGui::NewFrame();
-
-                // ImGui::Begin("yellop");
-
-                // float ratio = texture.image.height/(float)texture.image.width;
-                // auto nw = std::min(texture.image.width,512);
-
-                // ImGui::Image(&texture.texture, ImVec2(nw,nw*ratio));
-
-                // ImGui::ShowDemoWindow();
-
-                // ImGui::End();
-
-                // ImGui::Render();
-                // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-            });
+        });
 
     }
 };
