@@ -612,6 +612,11 @@ void Editors::init() {
             verteditor.SetText(shader->vert.src);
         }
         ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
+        ImGui::SameLine(); if (ImGui::Button("samplers connect")) { 
+
+            auto builder = shader->builder();
+            builder->post();
+         }
 
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
@@ -653,7 +658,7 @@ void Editors::init() {
                     if (shader->builder()) 
                         shader->builder()->post();
                     // if (node->type().id == typeid(UberLayer) || node->type().id == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
-
+                    // node->update();
                 }
 
                 ImGui::EndTabItem();

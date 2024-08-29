@@ -99,9 +99,13 @@ void Layer::ShaderProgramBuilder::build() {
             for (int instance = 0; instance < model.get()->m.quantity(); instance++) 
                 body_fragment += print_layer(*model, lower(dc->m.name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->stl.back().m->quantity()>1?"[int(LAYER)]":""));
 
-        for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+dc->m.name()+"."+ref->m.name()+"."+ref->effector->m.name());
 
+        current_model.clear();
+
+        for (auto ref : dc->effector_refs) 
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->m.name())+"."+lower(ref->m.name())+"."+lower(ref->effector->m.name()));
+
+        body_fragment+=current_model;
         
         // setup all effector_refs
 

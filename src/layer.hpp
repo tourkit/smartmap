@@ -24,6 +24,8 @@ struct Layer : DrawCall {
 
         std::string source() override;
 
+        bool body(Builder* builder, std::string prepend = "") override;
+
     };
 
     FrameBuffer fb;
@@ -61,6 +63,14 @@ struct UberEffector : Effector {
 };
 
 struct UberLayer : Layer {
+
+    struct Feedback : Layer::Feedback {
+
+        using Layer::Feedback::Feedback;
+
+        std::string  source() override;
+
+    };
 
     struct VirtualLayer : Effectable {
 

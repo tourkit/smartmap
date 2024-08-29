@@ -271,7 +271,29 @@ void Callbacks::init() {
     
     NODE<Output>::onadd<Layer>([](Node* _this, Node *node) {
 
-        _this->is_a<Output>()->fb = &node->is_a<Layer>()->fb;
+        auto output = _this->is_a<Output>();
+
+        if (output->fb) {
+
+            Node* found = nullptr;
+
+            engine.stack->each<Layer>([&](Node* node, Layer* layer) {
+
+                if (&layer->fb == output->fb)
+                    found = node;
+
+            });
+
+            if (found)
+                _this->referings.erase(found);
+            else
+                PLOGW << "unknown fb owner";
+        
+        }
+       
+        output->fb = &node->is_a<Layer>()->fb;
+        
+        _this->referings.insert(node);
 
         return _this;
 

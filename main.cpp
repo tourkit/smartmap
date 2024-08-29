@@ -15,6 +15,12 @@
 
 // freetype
 
+
+// ----
+
+// quest ce quio updqte les tex dans editor::effector qui supdate pas dans editor::shaderpprogram
+
+
 #include "effector.hpp"
 #include "engine.hpp"
 #include "layer.hpp"
@@ -27,16 +33,19 @@ int main() {
 
     engine.open("project.json");
 
-    auto lay_ = engine.stack->childrens[1];
-    auto &lay = *lay_->is_a<Layer>();
-
-    lay.feedback = new Layer::Feedback(&lay);
+    auto uber_ = engine.stack->childrens[0];
+    auto &uber = *uber_->is_a<UberLayer>();
+    uber.feedback = new UberLayer::Feedback(&uber);
     
-    auto ref = lay.addEffector(lay.feedback);
+    auto vlay_ = engine.stack->childrens[0]->childrens[0];
+    auto &vlay = *vlay_->is_a<UberLayer::VirtualLayer>();
 
-    lay_->addPtr<EffectorRef>(ref);
+    
+    auto ref = vlay.addEffector(uber.feedback);
+    // lay.builder.build();
 
-    PLOGW << lay.shader.frag.src;
+    vlay_->addPtr<EffectorRef>(ref);
+    // PLOGW << lay.shader.frag.src;
 
     engine.run();
 

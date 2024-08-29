@@ -128,21 +128,15 @@ void Engine::run() {
 
         if (stack->childrens.size()) 
         
-            win->add(stack->childrens[0]);
-        
-        for (auto output_ : outputs->childrens) {
-            
-            auto output = output_->is_a<Output>();
+            for (auto output_ : outputs->childrens) {
+                
+                auto output = output_->is_a<Output>();
 
-            if (output && !output->fb && stack->childrens.size()) {
-                
-                output->fb = &stack->childrens[0]->is_a<Layer>()->fb;
-                
-                stack->childrens[0]->referings.insert(output_);
-            
+                if (output && !output->fb) 
+
+                    win->add(stack->childrens[0]);
+
             }
-
-        }
         
     }
 

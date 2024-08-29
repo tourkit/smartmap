@@ -72,14 +72,13 @@ void Layer::draw() {
 
 void Layer::Feedback::post(Builder* builder) { 
 
-    builder->body_fragment += "\tCOLOR += texture(feedback_pass, uv);\n";
 
 }
 
 bool Layer::Feedback::setup(Builder* builder) { 
 
     layer->fb.texture->sampler_name = "feedback_pass";
-    builder->samplers[0] = layer->fb.texture;
+    builder->samplers[layer->fb.texture->unit] = layer->fb.texture;
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
@@ -87,12 +86,32 @@ bool Layer::Feedback::setup(Builder* builder) {
     
 }
 
+bool Layer::Feedback::body(Builder* builder, std::string prepend) {  
+    
+    Effector::body(builder, prepend);
+    
+    return true; 
+    
+}
+
+
 std::string Layer::Feedback::source() {
 
     std::string current;
 
-    current += "void feedback() {\n";
-    current += "\tcolor += texture(feedback_pass, uv);\n";
+    current += "void feedback(float intensity) {\n";
+    current += "\tcolor += ( texture( feedback_pass, UV) - .002 ) * intensity;\n",
+    current += "}\n";
+    return current;
+
+}
+
+std::string UberLayer::Feedback::source() {
+
+    std::string current;
+
+    current += "void feedback(float intensity) { // washington\n";
+    current += "\tcolor += ( texture( feedback_pass, UV) - .002 ) * intensity;\n",
     current += "}\n";
     return current;
 
@@ -121,8 +140,6 @@ void UberEffector::ubl(UberLayer* ubl) {
     ubl_v = ubl;
 
     if (!ubl) return;
-
-    // s.ref(&ubl->s);
 
 }
 
@@ -164,7 +181,7 @@ std::string  UberEffector::source() {
 
 bool UberEffector::setup(Builder* builder) { 
 
-    ubl_v->fb.texture->unit = 3;
+    ubl_v->fb.texture->unit = 2;
     ubl_v->fb.texture->sampler_name = ubl_v->m.name()+"_pass";
     builder->samplers[ubl_v->fb.texture->unit] = ubl_v->fb.texture;
 
