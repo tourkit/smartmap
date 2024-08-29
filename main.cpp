@@ -12,8 +12,12 @@
 #include "layer.hpp"
 #include "member.hpp"
 
-// make dmx work 
+
 // many vlayers
+
+// delete vlayer should remove corresponding models
+
+// ndi
 
 int main() {
 

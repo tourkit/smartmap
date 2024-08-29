@@ -2,6 +2,7 @@
 #include "engine.hpp"
 #include "atlas.hpp"
 #include "json.hpp"
+#include "rapidjson/document.h"
 #include "texture.hpp"
 #include "file.hpp"
 #include "effector.hpp"
@@ -15,19 +16,6 @@ static std::string json_error = "JSON error";
 
 
 
-bool isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>& x) {
-
-    if (!x.name.IsString() || !x.value.IsArray()) return false;
-
-    auto arr = x.value.GetArray();
-
-    if (arr.Size() < 4 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsInt() || !arr[3].IsInt() ) return false;
-
-    if (arr.Size() > 4 && !arr[4].IsString() ) return false;
-
-    return true;
-
-}
 
 void Open::medias(){
 
@@ -110,12 +98,16 @@ void Open::inputs(){
 
                 int q = 1;
                 if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
+                
+                auto &uni = an.universe(arr[0].GetInt()-1);
 
-                DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(an.universe(arr[0].GetInt()-1).m)), inst, arr[1].GetInt()-1, attrs, q);
+                an_->trig(Node::RUN);
+
+                DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, arr[1].GetInt()-1, attrs, q);
 
                 dmxremap->src.remaps.push_back( dmxremap );
 
-                auto out = an_->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
+                auto out = an_->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
 
                 std::string sss =arr[2].GetString() ;
                 auto w = engine.tree->child(sss);
@@ -130,6 +122,35 @@ void Open::inputs(){
 
 }
 
+struct JSONOutput { int rect[4] = {1,1,0,0}; std::string name, src;};
+
+JSONOutput isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>& x) {
+
+    JSONOutput out;
+
+    if (!x.name.IsString() || !x.value.IsArray()) { 
+
+        PLOGW << json_error; 
+
+        return out; 
+    }
+
+    out.name = x.name.GetString();
+
+    auto arr = x.value.GetArray();
+
+    int rect_count = 0;
+    for (auto &x : arr) 
+        if (x.IsInt() && rect_count < 4)
+            out.rect[rect_count++] = x.GetInt();
+        else 
+            if (x.IsString()) 
+                out.src = x.GetString();
+    
+    return out;
+
+}
+
 void Open::outputs(){
 
     JSON::if_obj_in("outputs", json_v.document, [&](auto &m) {
@@ -138,37 +159,40 @@ void Open::outputs(){
 
         if (!strcmp(m.name.GetString(),"ndi")) for (auto &x : m.value.GetObj()) {
 
-            if (!isOutput(x))  { PLOGW << json_error; return; }
-
-            auto arr = x.value.GetArray();
-            if (arr.Size() < 5) { PLOGW << json_error; return; }
-            // if (arr.Size() == 4) { PLOGW << json_error; return; }
-
+            auto output = isOutput(x);
 
             Node* layer = nullptr;
-            if (arr.Size()>4) layer = engine.stack->child(arr[4].GetString());
+            layer = engine.stack->child(output.src);
 
-            Node* n = engine.outputs->addOwnr<NDI::Sender>( arr[0].GetInt() , arr[1].GetInt(), x.name.GetString(), (layer?&layer->is_a<Layer>()->fb:nullptr))->active(false);
+            Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], x.name.GetString(), (layer?&layer->is_a<Layer>()->fb:nullptr))->active(false);
 
-            if (layer) layer->referings.insert( n );
+            if (output.name.length())
+                n->name(output.name);
+
+            if (layer) 
+                layer->referings.insert( n );
 
         }
 
         if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
 
-            if (!isOutput(x))  { PLOGW << json_error; return; }
+            auto output = isOutput(x);
 
-            auto arr = x.value.GetArray();
-
-            Node* layer = nullptr;
-            if (arr.Size()>4) layer = engine.stack->child(arr[4].GetString());
             auto window = engine.outputs->addPtr<Window>( &engine.window );
 
-            window->name(x.name.GetString());
-            window->add(layer);
+            engine.window.size( output.rect[0] , output.rect[1] );
+            engine.window.pos(  output.rect[2] , output.rect[3] );
 
-            engine.window.size( arr[0].GetInt() , arr[1].GetInt() );
-            engine.window.pos( arr[2].GetInt() , arr[3].GetInt() );
+
+            Node* layer = nullptr;
+            layer = engine.stack->child(output.src);
+
+
+            if (output.name.length())
+                window->name(output.name);
+
+            if (layer) 
+                window->add(layer);
 
             break; // only one alloweed for nowe
 

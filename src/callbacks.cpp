@@ -213,47 +213,43 @@ void Callbacks::init() {
 
         if (an->universes.size() != size) {
 
-            auto t_childrens = node->childrens;
-            for (auto c :t_childrens) 
-                if (c->is_a_nowarning<Universe>())
-                    delete c;
+            std::vector<Universe*> missing;
 
-            for (auto &uni :an->universes) 
+            for (auto uni : an->universes) {
+
+                bool found = false;
+                for (auto n : node->childrens) {
+                    auto uni_ = n->is_a_nowarning<Universe>();
+                    if (uni_ == uni.second.get()) {
+                        found = true;
+                        break;
+                    }
+
+                }
+
+                if (!found) 
+                    missing.push_back(uni.second.get());
+
+            }
+
+            for (auto x : missing)
+                node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id));
+            
+        
+            missing.clear();
 
             size = an->universes.size();
         }
 
     });
     
+    // NODE<Artnet>::is_a<Member>();
+
     NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){
 
-        NODE<Member>::on_cb[Node::CHANGE](node, an);
-        std::vector<Universe*> missing;
-
-        for (auto uni : an->universes) {
-
-            bool found = false;
-
-            for (auto n : node->childrens) {
-                auto uni_ = n->is_a_nowarning<Universe>();
-                if (uni_ == uni.second.get()) {
-                    found = true;
-                    break;
-                }
-
-            }
-
-            if (!found) 
-                missing.push_back(uni.second.get());
-
-        }
-
-        for (auto x : missing)
-            PLOGW << x->id;
-        
-        missing.clear();
 
     });
+
     //////// Remap.HPP
 
     NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { remap->update(); });

@@ -96,6 +96,8 @@ Node* Node::child(std::vector<std::string> names) {
 
 Node* Node::child(std::string  name) {
 
+    if (!name.length()) return nullptr;
+
     return child(split(name));
 
 }
