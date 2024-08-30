@@ -22,12 +22,12 @@
   },
   "editors": [
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
-    [ 0, 0, 0, 0, "Layer2", true ]
+    [ 0, 0, 0, 0, "Stack::Layer2", true ]
   ],
   "layers": {
-    "ubersmart1": { "smartlayer1": [ 640, 360, 10, { "argb": "argb", "rectangle": "rectangle", "wrapper": "wrapper", "strobe": "strobe" } ] },
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "rectangle": "rectangle" } ] }, { } ],
-    "Layer2": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "ubersmart1": "ubersmart1" } ] }, { } ]
+    "ubersmart1": { "smartlayer1": [ 640, 360, 10, [ "argb", "rectangle", "wrapper", "strobe" ] ] },
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "rectangle" ] ] }, [] ],
+    "Layer2": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "ubereffector" ] ] }, [] ]
   },
   "remaps": {
     "remap1": [ [ "ubersmart1::smartlayer1[4]::argb::argb" ], [ "b " ], "( 1 - $0::g ) * $0::b" ],

@@ -207,9 +207,15 @@ void Open::outputs(){
 
 static void addEffectors(JSONVal v, Node* node) {
 
+    if (!v.isarr()) {
+        PLOGW << "not an array";
+        return;
+    }
+
      for (auto effector_def : v) {
 
-        if (!effector_def.name().c_str() || !effector_def.str().c_str()) { PLOGW << v.stringify(); continue; }
+        if (!effector_def.str().c_str()) 
+            { PLOGW << v.stringify(); continue; }
 
         Node* effector_;
         effector_ = engine.effectors->child(effector_def.str());
@@ -217,8 +223,6 @@ static void addEffectors(JSONVal v, Node* node) {
         if (! effector_)   { PLOGW << "not an FX : " << effector_def.str(); continue; }
         
         auto new_ = node->add(effector_);
-        // if (new_) 
-        //     new_->name(effector_def.name()); 
      
      }
 
@@ -268,11 +272,11 @@ void Open::layers(){
 
                 if (model_def[1].isnum()) new_model_->is_a<Model>()->m.quantity(model_def[1].num());
 
-                if (model_def[2].isobj()) addEffectors( model_def[2], new_model_ );
+                addEffectors( model_def[2], new_model_ );
 
             }
             
-            if (layer_def[models_id+1].isobj()) addEffectors( layer_def[models_id+1], new_layer );
+            addEffectors( layer_def[models_id+1], new_layer );
 
         }else{ // uberlayer
 

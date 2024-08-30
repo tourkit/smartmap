@@ -96,9 +96,9 @@ void Save::layers(){
                 layer_.PushBack(layer->h, allocator);
                 layer_.PushBack(layer->m.quantity(), allocator);
 
-                auto  effectors_ = rapidjson::Value(rapidjson::kObjectType);
+                auto  effectors_ = rapidjson::Value(rapidjson::kArrayType);
 
-                for (auto ref : layer->effector_refs) effectors_.AddMember( rapidjson::Value(ref->m.name().c_str(), allocator), rapidjson::Value(ref->effector->m.name().c_str(), allocator), allocator );
+                for (auto ref : layer->effector_refs) effectors_.PushBack(  rapidjson::Value(ref->effector->m.name().c_str(), allocator), allocator );
 
                 layer_.PushBack(effectors_, allocator);
 
@@ -127,7 +127,7 @@ void Save::layers(){
 
             new_model.PushBack(model.get()->m.quantity(),allocator);
 
-            auto effects = rapidjson::Value(rapidjson::kObjectType);
+            auto effects = rapidjson::Value(rapidjson::kArrayType);
             for (auto e : model.get()->effector_refs) {
 
                 std::string name = e.get()->m.name();
@@ -138,7 +138,7 @@ void Save::layers(){
                 // else 
                 value = effector->m.name();
               
-                effects.AddMember( rapidjson::Value(name.c_str(), allocator), rapidjson::Value(value.c_str(), allocator), allocator ); // TODOTODO
+                effects.PushBack(rapidjson::Value(value.c_str(), allocator), allocator ); // TODOTODO
 
             }
             new_model.PushBack( effects, allocator );
@@ -149,8 +149,9 @@ void Save::layers(){
 
         lay.PushBack(models, allocator);
 
-        auto effects = rapidjson::Value(rapidjson::kObjectType);
-        for (auto e : layer->effector_refs) effects.AddMember( rapidjson::Value(e.get()->m.name().c_str(), allocator), rapidjson::Value(e.get()->m.name().c_str(), allocator), allocator );// TODOTODO
+        auto effects = rapidjson::Value(rapidjson::kArrayType);
+        for (auto e : layer->effector_refs) 
+            effects.PushBack( rapidjson::Value(e.get()->m.name().c_str(), allocator), allocator );// TODOTODO
         lay.PushBack( effects, allocator );
 
         arr.AddMember( rapidjson::Value(node->name().c_str(), allocator)  , lay, allocator );
