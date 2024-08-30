@@ -27,6 +27,10 @@
 
 // check if and wich tex units binds on layer1 dc 
 
+// why / how same name  in uniquelist
+
+// trye 2 layers
+
 
 #include "effector.hpp"
 #include "engine.hpp"
@@ -51,8 +55,6 @@ int main() {
     auto vref = vlay.addEffector(uber.feedback);
 
     vlay_->addPtr<EffectorRef>(vref);
-    
-
 
     auto lay_ = engine.stack->childrens[1];
     auto &lay = *lay_->is_a<Layer>();
@@ -61,9 +63,18 @@ int main() {
     lay.feedback = new Layer::Feedback(&lay);
     
     auto ref = lay.addEffector(lay.feedback);
-    PLOGW << lay.shader.frag.src;
 
     lay_->addPtr<EffectorRef>(ref);
+
+    auto lay2_ = engine.stack->childrens[2];
+    auto &lay2 = *lay2_->is_a<Layer>();
+    lay.m.name("testfb");
+
+    lay2.feedback = new Layer::Feedback(&lay2);
+    
+    auto ref2 = lay2.addEffector(lay2.feedback);
+
+    lay2_->addPtr<EffectorRef>(ref2);
 
 
     engine.run();

@@ -4,35 +4,32 @@
 // #include "freetype.hpp"
 
 
-Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) 
+:
+    unit(unit),
+    informat(informat),
+    outformat(outformat),
+    mipmaps(mipmaps)
 
-    create(width,height,unit,mipmaps,informat,outformat);
+{
+     
+    create(width,height);
 
     ADD_UNIQUE<Texture*>(pool, this);
 
 }
 
-Texture::Texture(void* data, GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+Texture::Texture(void* data, GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) :
 
-    create(width,height,unit,mipmaps,informat,outformat);
+    Texture(width, height, unit, mipmaps, informat, outformat) {
 
-    write(data, width, height, 0, 0, unit, 1, informat, outformat);
-
-    ADD_UNIQUE<Texture*>(pool, this);
+    write(data, width, height, 0, 0);
 
 }
 
 Texture::Texture(std::string path)   {
 
-    Image img(path);
-
-    if (!img.width) { PLOGE << "error in Texture creation" ; return; }
-
-    create(img.width, img.height,0,1,GL_RGB8,GL_RGB);
-
-    write(&img.
-
-    data[0], img.width, img.height,0, 0,0,1,GL_RGB8,GL_RGB);
+    addImage(path);
 
     ADD_UNIQUE<Texture*>(pool, this);
 
@@ -46,15 +43,6 @@ Texture::~Texture() {
 
 }
 
-void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
-
-    this->unit = unit;
-    this->informat = informat;
-    this->outformat = outformat;
-    this->mipmaps = mipmaps;
-    create( width, height);
-};
-
 void Texture::reset() { create( width, height); }
 
 void Texture::create(GLuint width, GLuint height) {
@@ -63,6 +51,8 @@ void Texture::create(GLuint width, GLuint height) {
     
     this->width = width;
     this->height = height;
+
+    if (!width || !height) return;
 
     glGenTextures(1, &id);
 
@@ -95,16 +85,24 @@ void Texture::addImage(std::string path, GLuint offset_x, GLuint offset_y) {
 
     Image img(path);
 
-    if (img.width) write(&img.data[0], img.width, img.height,offset_x, offset_y,0,1,GL_RGB8,GL_RGB);
+    if (img.width) {
+    
+        if (width< img.width+offset_x || height < img.height+offset_y) 
+            create(img.width, img.height);
+
+        write(&img.data[0], img.width, img.height,offset_x, offset_y);
+    
+    }
 
 }
-
 
 void Texture::destroy() {
 
     glActiveTexture(GL_TEXTURE0+unit);
 
     if (id) glDeleteTextures(1, &id);
+
+    glActiveTexture(GL_TEXTURE0);
 
 }
 
@@ -114,9 +112,12 @@ void Texture::bind(int unit) {
 
 void Texture::bind() { bind(unit); }
 
-Texture::operator GLuint() { return id; }
+void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y) {
 
-void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GLuint offset_y, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+    if (!width)
+        width = this->width;
+    if (!height)
+        height = this->height;
 
     glActiveTexture(GL_TEXTURE0+unit);
 
@@ -146,6 +147,6 @@ void Texture::clear() {
 
     black.resize(width*height*4);
 
-    write(&black[0], width, height, 0,0,mipmaps,unit,informat,outformat);
+    write(&black[0], width, height, 0,0);
 
 }

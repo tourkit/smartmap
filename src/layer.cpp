@@ -125,7 +125,7 @@ std::string UberLayer::Feedback::source() {
 
     current += "void uberfeedback(float intensity) { // washington\n";
     current += "int obj = int(OBJ);\n";
-    current += "\tcolor += ( texture( uberfeedback_pass, UV) - .002 ) * intensity;\n",
+    current += "\tcolor += ( texture( uberfeedback_pass, UV*static_ubo.uberLayer[obj].uberLayers.size+static_ubo.uberLayer[obj].uberLayers.norm) - .002 ) * intensity;\n",
     current += "}\n";
     return current;
 

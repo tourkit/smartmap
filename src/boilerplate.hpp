@@ -178,7 +178,7 @@ struct BoilerShader {
 
     GLuint id = 0, frag_id = 0, vert_id = 0;
 
-    std::string frag = "#version 430 core \nstruct Ubo { int x,y,z,w;};\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() { COLOR = vec4(1,UV.x,float(ubo.z)/10.0f,1); }";
+    std::string frag =  "#version 430 core \nstruct Ubo { int x,y,z,w;};\nuniform sampler2D meskine;\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() {\n COLOR = texture(meskine,UV);\n COLOR += vec4(0,UV.x,float(ubo.z)/10.0f,1);\n}";
     
     std::string vert = "#version 430 core\nstruct Ubo { int x,y,z,w;};\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nout vec2 UV;\nvoid main() { UV = TEXCOORD; gl_Position = vec4(POSITION.x,POSITION.y,0,1); }";
     
@@ -246,6 +246,11 @@ struct BoilerShader {
 
     }
 
+
+    int loc(std::string name) { return glGetUniformLocation(id, name.c_str()); }
+
+    void set(std::string name, int i1) { glProgramUniform1i(id, loc(name), i1); }
+
     void use() { glUseProgram(id); }
 
     void texture(std::string name = "tex", int loc = 0){ auto x = glGetUniformLocation(id, name.c_str()) ; glUniform1i(x, loc); }
@@ -297,8 +302,7 @@ struct BoilerUBO {
 
 struct BoilerWindow {
 
-    GLuint width = 400, height = 300;
-    GLuint pos_x = 0, pos_y = 0;
+    GLuint width , height ,pos_x , pos_y ;
 
     double lastTime = glfwGetTime();
 
@@ -306,7 +310,8 @@ struct BoilerWindow {
 
     float clear_color[4] = {0,0,0,1};
 
-    BoilerWindow() {
+    BoilerWindow(GLuint width = 400, GLuint height = 300, GLuint pos_x = 400, GLuint pos_y = 300) : 
+        width(width), height(height), pos_x(pos_x), pos_y(pos_y) {
 
         glfwInit();
 
@@ -355,90 +360,90 @@ struct BoilerGUI {
 
     }
 };
-#include "editor.hpp"
-#include "engine.hpp"
+// #include "editor.hpp"
+// #include "engine.hpp"
 
 struct Boilerplate {
 
     static void Editors() {
 
-        Editor<BoilerShader>([](Node* node, BoilerShader *shader){
+    //     Editor<BoilerShader>([](Node* node, BoilerShader *shader){
 
-         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+    //      ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
-        if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
+    //     if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
-            if (ImGui::BeginTabItem("fragment")) {
+    //         if (ImGui::BeginTabItem("fragment")) {
 
-                static TextEditor frageditor;
+    //             static TextEditor frageditor;
 
-                static bool init = false;
-                if (!init){
+    //             static bool init = false;
+    //             if (!init){
 
-                    frageditor.SetShowWhitespaces(false);
-                    frageditor.SetReadOnly(false);
-                    frageditor.SetText(shader->frag.c_str());
+    //                 frageditor.SetShowWhitespaces(false);
+    //                 frageditor.SetReadOnly(false);
+    //                 frageditor.SetText(shader->frag.c_str());
 
-                    init = true;
-                }
+    //                 init = true;
+    //             }
 
-                frageditor.Render("frageditor");
+    //             frageditor.Render("frageditor");
 
-                if (frageditor.IsTextChanged()) {
+    //             if (frageditor.IsTextChanged()) {
 
-                    auto x = frageditor.GetText();
+    //                 auto x = frageditor.GetText();
 
-                    memset(&x[frageditor.GetText().length()],0,1);
+    //                 memset(&x[frageditor.GetText().length()],0,1);
 
-                    shader->frag  = x;
+    //                 shader->frag  = x;
 
-                    shader->create();
-
-
-                }
-
-                ImGui::EndTabItem();
-
-            }
-
-            if (ImGui::BeginTabItem("vertex")) {
-
-                static TextEditor verteditor;
-
-                static bool init = false;
-                if (!init){
-
-                    verteditor.SetShowWhitespaces(false);
-                    verteditor.SetReadOnly(false);
-                    verteditor.SetText(shader->vert.c_str());
-
-                    init = true;
-                }
-
-                verteditor.Render("frageditor");
-
-                if (verteditor.IsTextChanged()) {
-
-                    auto x = verteditor.GetText();
-
-                    memset(&x[verteditor.GetText().length()],0,1);
-
-                    shader->vert  = x;
-
-                    shader->create();
+    //                 shader->create();
 
 
-                }
+    //             }
 
-                ImGui::EndTabItem();
+    //             ImGui::EndTabItem();
 
-            }
+    //         }
 
-            ImGui::EndTabBar();
+    //         if (ImGui::BeginTabItem("vertex")) {
 
-        }
+    //             static TextEditor verteditor;
 
-    });
+    //             static bool init = false;
+    //             if (!init){
+
+    //                 verteditor.SetShowWhitespaces(false);
+    //                 verteditor.SetReadOnly(false);
+    //                 verteditor.SetText(shader->vert.c_str());
+
+    //                 init = true;
+    //             }
+
+    //             verteditor.Render("frageditor");
+
+    //             if (verteditor.IsTextChanged()) {
+
+    //                 auto x = verteditor.GetText();
+
+    //                 memset(&x[verteditor.GetText().length()],0,1);
+
+    //                 shader->vert  = x;
+
+    //                 shader->create();
+
+
+    //             }
+
+    //             ImGui::EndTabItem();
+
+    //         }
+
+    //         ImGui::EndTabBar();
+
+    //     }
+
+    // });
 
     }
 

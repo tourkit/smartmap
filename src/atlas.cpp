@@ -74,7 +74,7 @@ void Atlas::fromDir(std::string path) {
 
         temp_list[file] = {r.width/(float)this->texture->width, r.height/(float)this->texture->height, r.x/(float)this->texture->width, r.y/(float)this->texture->height};
 
-        texture->write(&img.data[0],r.width,r.height,r.x,r.y,1,1);
+        texture->write(&img.data[0],r.width,r.height,r.x,r.y);
 
     }
 
