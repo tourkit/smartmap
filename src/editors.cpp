@@ -67,9 +67,7 @@ using namespace ImGui;
 
 void draw_definition(Member *member_, int offset, int depth) {
 
-    auto member = member_;
-
-    // if (member->ref()) member = member->ref();
+    auto member = member_->ref();
 
     std::vector<float> range;
 
@@ -102,7 +100,7 @@ void draw_definition(Member *member_, int offset, int depth) {
 
     }
 
-    ImGui::TextX(std::string(!member->isData() ? "struct" : member->type_name()) + " " + member_->name(), offset, member->footprint(), depth,range);
+    ImGui::TextX(std::string(!member->isData() ? "struct" : member->type_name()) + " " + member->name(), offset, member->footprint(), depth,range);
 
     for (auto m : member->members) {
 
@@ -245,6 +243,8 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
     }
 
+    member = member->ref();
+
     bool has_changed = false;
 
     // if (member->ref()) member = member->ref();
@@ -340,7 +340,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
                 member_count++;
         }else{
 
-            std::string septxt  = m->name();
+            std::string septxt  = m->ref()->name();
 
             septxt+= "(" + std::to_string(m->quantity()) + ")";
 

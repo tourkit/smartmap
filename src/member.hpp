@@ -95,6 +95,8 @@ struct Member {
  
     bool isData();
     
+    Member* ref();
+    
     void deleteData(bool recurse = false);
     
     template <typename T>

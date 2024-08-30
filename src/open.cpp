@@ -217,7 +217,8 @@ static void addEffectors(JSONVal v, Node* node) {
         if (! effector_)   { PLOGW << "not an FX : " << effector_def.str(); continue; }
         
         auto new_ = node->add(effector_);
-        if (new_) new_->name(effector_def.name()); 
+        // if (new_) 
+        //     new_->name(effector_def.name()); 
      
      }
 

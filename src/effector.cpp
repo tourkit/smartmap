@@ -185,7 +185,7 @@ std::string Wrappy::source() {
             
         }
         
-        out += "\tif (id=="+std::to_string(id++)+") { " + x->m.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " ); return; }\n\n";
+        out += "\tif (id=="+std::to_string(id++)+") { " + x.get()->effector->m.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " ); return; }\n\n";
         
     }
 
@@ -236,7 +236,7 @@ bool Wrappy::setup(Builder* builder) {
 // Ref  ////////////////
 // Ref  ////////////////
 
-EffectorRef::EffectorRef(std::string name, Effector* effector ) : m(name), effector(effector) {  
+EffectorRef::EffectorRef(std::string name, Effector* effector ) : m(""), effector(effector) {  
     m.add( &effector->m ); 
     
 };

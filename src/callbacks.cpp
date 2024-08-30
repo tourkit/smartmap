@@ -60,7 +60,7 @@ void Callbacks::init() {
 
     NODE<Member>::on(Node::CHANGE, [&](Node*node, Member* m){
         if (m->name() != node->name())
-            m->name(node->name()); });
+            m->ref()->name(node->name()); });
 
 
 

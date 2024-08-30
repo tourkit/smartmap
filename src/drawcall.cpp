@@ -49,7 +49,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     for (auto ref : effectable.effector_refs) 
 
-        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->m.name()+"."+ref->effector->m.name());
+        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->m.name());
 
 
     body_fragment+=current_model;
@@ -103,7 +103,7 @@ void Layer::ShaderProgramBuilder::build() {
         current_model.clear();
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->m.name())+"."+lower(ref->m.name())+"."+lower(ref->effector->m.name()));
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->m.name())+"."+lower(ref->m.name()));
 
         body_fragment+=current_model;
         

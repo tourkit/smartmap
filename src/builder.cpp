@@ -169,7 +169,12 @@ std::string Builder::layout() {
 
     for (auto m : structs) {
 
-        auto name = camel(m->name());
+        auto name = m->name();
+        
+        if (!name.length())
+            continue;
+
+        name = camel(name);
 
         while (true) {
 
@@ -231,15 +236,21 @@ std::string Builder::print_struct(Member* member, std::map<Member*,std::string> 
 
     std::string content;
 
+
+    if (member->ref() != member)
+        return out;
+
     for (auto x : member->members) {
 
         if (!x->size()) continue;
+        
+        auto ref = x->ref();   
 
-        auto name = unique_name_list.find(x)!=unique_name_list.end()?unique_name_list[x]:x->type_name();
+        auto name = unique_name_list.find(ref)!=unique_name_list.end()?unique_name_list[ref]:ref->type_name();
 
-        content+=tb+""+name+" "+lower(x->name());
+        content+=tb+""+name+" "+lower(ref->name());
 
-        if (!x->isData() && x->quantity()>1) content += "["+std::to_string(x->quantity())+"]";
+        if (!ref->isData() && ref->quantity()>1) content += "["+std::to_string(ref->quantity())+"]";
 
         content += "; "+nl;
 

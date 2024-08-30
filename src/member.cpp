@@ -72,16 +72,22 @@ Member::Member(Member& other) :
 }
 
 
-void Member::name(std::string name_v) { this->name_v = next_name(name_v); }
+void Member::name(std::string name_v) { 
+    this->name_v = next_name(name_v); 
+        
+}
 
 std::string Member::name() { 
     if (name_v.length()) 
         return name_v; 
     
-    return "parentName" ; 
+    return "" ; 
 }
 
 std::string Member::next_name( std::string name ) {
+
+    if (!name.length())
+        return name;
 
     int count = 0;
 
@@ -111,7 +117,8 @@ std::string Member::next_name( std::string name ) {
 
     }
 
-    if (count) name += "_" + std::to_string(count) ;
+    if (count) 
+        name += "_" + std::to_string(count) ;
 
     return name;
 
@@ -262,27 +269,28 @@ void Member::add(Member* m) {
 
     PLOGV << name() << "[" << footprint_all() << "] add " << m->name() << "[" << m->footprint_all() << "]";
 
-    while (true) {
+    if (m == m->ref())
+        while (true) {
 
-        bool found = false;
+            bool found = false;
 
-        for (auto x : members) 
+            for (auto x : members) 
 
-            if (!strcmp( x->name().c_str(), m->name().c_str() )) {
+                if (!strcmp( x->name().c_str(), m->name().c_str() )) {
 
-                found = true;
+                    found = true;
 
-                PLOGW << m->name() << " already exist !";
+                    PLOGW << m->name() << " already exist !";
 
-                m->name( next_name(m->name()) );
+                    m->name( next_name(m->name()) );
 
-                break ;
+                    break ;
 
-            }
+                }
 
-        if (!found) break;
+            if (!found) break;
 
-    }
+        }
 
     tops = getTop();
 
@@ -569,6 +577,8 @@ bool Member::buffering() { return buffering_v; }
 bool Member::striding() { return striding_v; }
 
 bool Member::isData() { return type_v.id != typeid(Member); }
+
+Member* Member::ref() { return name_v.length()?this:members[0]; }
 
 uint32_t Member::size() {  return size_v; }
 
