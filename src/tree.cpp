@@ -19,7 +19,7 @@ TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected)
 static bool demodemo = false;
 
 void TreeWidget::draw()  {
-
+ 
 if (demodemo) ImGui::ShowDemoWindow();
 
 
@@ -34,32 +34,49 @@ if (demodemo) ImGui::ShowDemoWindow();
     else name = "Tree";
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 24);
-    ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str), ImGuiInputTextFlags_EnterReturnsTrue);
-    ImGui::SameLine();
+    
 
-    if (ImGui::IsItemHovered()) {
+    
+    ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str));
 
-        if (!strcmp(&search_str[0], &filter_str[0])) {
 
-            memset( &search_str[0], 0, sizeof(filter_str) );
+    if (ImGui::IsItemActivated()) {
 
-            filtering = true;
+        memset( &search_str[0], 0, sizeof(search_str) );
 
-        }
-
-    }else{
-
-        if (!strlen(search_str)) {
-
-             memset( &search_str[0], 0, sizeof(search_str) );
-
-            strncpy( &search_str[0], &filter_str[0], sizeof(filter_str) );
-
-            filtering = false;
-
-        }
+        // c bo
+        if(ImGuiInputTextState* state { ImGui::GetInputTextState(ImGui::GetItemID()) })
+            state->ClearText();
+    
+        filtering  = true;        
 
     }
+
+    if (ImGui::IsItemDeactivated()) {
+
+        memset( &search_str[0], 0, sizeof(search_str) );
+
+        strncpy( &search_str[0], &filter_str[0], sizeof(filter_str) );
+
+        filtering = false;
+    
+    }
+
+    if (ImGui::IsKeyDown(ImGuiKey_Slash)) {
+    
+        ImGui::SetKeyboardFocusHere(-1);
+    
+    }
+    
+    if (ImGui::IsKeyDown(ImGuiKey_Escape)) {
+
+        filtering = false;
+    
+    }
+
+
+    ImGui::SameLine();
+
     if (ImGui::Button("+")) engine.gui->editors.push_back(new EditorWidget());
 
 
@@ -267,10 +284,10 @@ void TreeWidget::drawNode(Node* node) {
     if (node->hidden) return;
 
     std::regex pattern; bool pattern_error = false;
-    try { pattern.assign(search_str, std::regex_constants::icase); }
+    try { pattern.assign(&search_str[0], std::regex_constants::icase); }
     catch (const std::regex_error& e) {  pattern_error = true; }
 
-    if (!filtering || !strlen(search_str) || (!pattern_error && std::regex_search(node->name().c_str(), pattern))) {
+    if (!filtering || !strlen(&search_str[0]) || (!pattern_error && std::regex_search(node->name().c_str(), pattern))) {
 
         ImGui::TableNextRow();
 
@@ -314,7 +331,8 @@ void TreeWidget::drawNode(Node* node) {
 
                     if (ImGui::BeginDragDropTarget()) {
 
-                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE"))PLOGI << "TODO MOVE NODE";
+                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) 
+                            {PLOGI << "TODO MOVE NODE";}
 
                         ImGui::EndDragDropTarget();
                     }
@@ -338,6 +356,8 @@ void TreeWidget::drawNode(Node* node) {
 
         }
 
-    }else{ if (filtering && search_str) drawChildrens(node); }
+    }else
+        if (filtering && search_str[0]) 
+            drawChildrens(node); 
 
 }

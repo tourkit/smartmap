@@ -21,7 +21,7 @@ struct TreeWidget : GUI::Window {
 
     std::string filter_str = "filter";
 
-    char search_str[100];
+    std::array<char,100> search_str;
 
     bool filtering = false;
 

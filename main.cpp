@@ -29,7 +29,7 @@
 
 // why / how same name  in uniquelist
 
-// trye 2 layers
+// slah to filter
 
 
 #include "effector.hpp"

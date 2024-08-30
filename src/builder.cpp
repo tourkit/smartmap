@@ -171,8 +171,6 @@ std::string Builder::layout() {
 
         auto name = camel(m->name());
 
-        int x_count = 0;
-
         while (true) {
 
             for (auto &x : unique_name_list) 
@@ -180,10 +178,6 @@ std::string Builder::layout() {
                 if (x.second == name) {
                     
                     name += "0";
-
-                    if (name == "Feedback0"){
-                        PLOGI << "1";
-                    }
 
                     continue;
 

@@ -77,7 +77,6 @@ void Layer::Feedback::post(Builder* builder) {
 
 bool UberLayer::Feedback::setup(Builder* builder) { 
 
-    // layer->fb.texture.unit = 2;
     layer->fb.texture.sampler_name = "uberfeedback_pass";
     builder->samplers[4] = &layer->fb.texture;
 
@@ -89,7 +88,6 @@ bool UberLayer::Feedback::setup(Builder* builder) {
 
 bool Layer::Feedback::setup(Builder* builder) { 
 
-    // layer->fb.texture.unit = 2;
     layer->fb.texture.sampler_name = "feedback_pass";
     builder->samplers[3] = &layer->fb.texture;
 
@@ -152,9 +150,6 @@ UberLayer::Feedback::Feedback(UberLayer* layer) :
     {
 
     m.name("uberfeedback");
-
-    texture.unit = 4;
-    texture.reset();
     
 }
 
@@ -209,7 +204,6 @@ std::string  UberEffector::source() {
 
 bool UberEffector::setup(Builder* builder) { 
 
-    // ubl_v->fb.texture.unit = 2;
     ubl_v->fb.texture.sampler_name = ubl_v->m.name()+"_pass";
     builder->samplers[2] = &ubl_v->fb.texture;
 
@@ -229,15 +223,14 @@ bool UberEffector::body(Builder* builder, std::string prepend) {
 ///////// UBERLAYER ////
 
 UberLayer::UberLayer() : 
+
     Layer(0,0,"UberLayer"), 
     builder(this), 
-    uberlayer_m(engine.static_ubo->next_name(m.name()))
-    {
+    uberlayer_m(engine.static_ubo->next_name(m.name())) 
 
-        // fb.texture.unit = 2;
-        // fb.texture.reset();
+{
 
-        uberlayer_m.quantity(0);
+    uberlayer_m.quantity(0);
 
     uberlayer_m.add(&uberlayer_def);
 

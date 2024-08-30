@@ -254,7 +254,7 @@ void GUI::draw() {
 
   if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) engine.save();
   if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_I)) engine.gui->draw_gui = !engine.gui->draw_gui;
-  if (ImGui::IsKeyPressed(ImGuiKey_Escape)) exit(0);
+  if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_Escape)) exit(0);
 
   if (draw_gui) {
 
