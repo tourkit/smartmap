@@ -41,4 +41,6 @@ struct Texture {
 
     operator GLuint();
 
+    static inline std::vector<Texture*> pool;
+
 };

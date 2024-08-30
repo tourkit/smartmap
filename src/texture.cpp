@@ -1,12 +1,48 @@
 #include "texture.hpp"
 #include "image.hpp"
-#include "log.hpp"
+#include "utils.hpp"
 // #include "freetype.hpp"
 
 
 Texture::Texture(GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
 
     create(width,height,unit,mipmaps,informat,outformat);
+
+    ADD_UNIQUE<Texture*>(pool, this);
+
+}
+
+Texture::Texture(void* data, GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
+
+    create(width,height,unit,mipmaps,informat,outformat);
+
+    write(data, width, height, 0, 0, unit, 1, informat, outformat);
+
+    ADD_UNIQUE<Texture*>(pool, this);
+
+}
+
+Texture::Texture(std::string path)   {
+
+    Image img(path);
+
+    if (!img.width) { PLOGE << "error in Texture creation" ; return; }
+
+    create(img.width, img.height,0,1,GL_RGB8,GL_RGB);
+
+    write(&img.
+
+    data[0], img.width, img.height,0, 0,0,1,GL_RGB8,GL_RGB);
+
+    ADD_UNIQUE<Texture*>(pool, this);
+
+ }
+
+Texture::~Texture() { 
+    
+    destroy(); 
+
+    REMOVE<Texture*>(pool, this);
 
 }
 
@@ -29,7 +65,7 @@ void Texture::create(GLuint width, GLuint height) {
 
     glGenTextures(1, &id);
 
-    PLOGD << width << " x " << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
+    PLOGW << width << " x " << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
 
     glActiveTexture(GL_TEXTURE0+unit);
 
@@ -45,28 +81,6 @@ void Texture::create(GLuint width, GLuint height) {
     glActiveTexture(GL_TEXTURE0);
 
 }
-
-Texture::Texture(void* data, GLuint width, GLuint height, GLuint unit, int mipmaps, GLenum informat, GLenum outformat) {
-
-        create(width,height,unit,mipmaps,informat,outformat);
-
-        write(data, width, height, 0, 0, unit, 1, informat, outformat);
-
-}
-
-Texture::Texture(std::string path)   {
-
-    Image img(path);
-
-    if (!img.width) { PLOGE << "error in Texture creation" ; return; }
-
-    create(img.width, img.height,0,1,GL_RGB8,GL_RGB);
-
-    write(&img.
-
-    data[0], img.width, img.height,0, 0,0,1,GL_RGB8,GL_RGB);
-
- }
 
 void Texture::addChar(const char* chr,  int size, GLuint offset_x, GLuint offset_y) {
 
@@ -84,7 +98,6 @@ void Texture::addImage(std::string path, GLuint offset_x, GLuint offset_y) {
 
 }
 
-Texture::~Texture() { destroy(); }
 
 void Texture::destroy() {
 

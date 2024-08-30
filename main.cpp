@@ -20,6 +20,8 @@
 
 // quest ce quio updqte les tex dans editor::effector qui supdate pas dans editor::shaderpprogram
 
+// cb de fois run feedback::body dans le shader
+
 
 #include "effector.hpp"
 #include "engine.hpp"

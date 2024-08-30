@@ -112,6 +112,8 @@ void Atlas::Effector::post(Builder* builder) {
 
 bool Atlas::Effector::setup(Builder* builder) { 
 
+    
+    atlas->texture->unit = 1;
     atlas->texture->sampler_name = m.name()+"_pass";
     builder->samplers[1] = atlas->texture;
 

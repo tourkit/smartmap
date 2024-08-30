@@ -28,6 +28,7 @@
 #include <map>
 
 #include <format>
+#include <string>
 
 static int hovered_offset = -1;
 static int hovered_size = -1;
@@ -1154,6 +1155,7 @@ void Editors::init() {
         //     engine.stack->trig(Node::CHANGE); // update all shaders
 
         // }
+
         ImVec2 btn_size = {100,50};
         if (ImGui::Button("smartlayer", btn_size)) {
             node->addPtr<UberLayer::VirtualLayer>(&ubl->addLayer(engine.window.width,engine.window.height));
