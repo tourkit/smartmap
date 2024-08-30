@@ -55,7 +55,8 @@ void Texture::create(GLuint width, GLuint height, GLuint unit, int mipmaps, GLen
     create( width, height);
 };
 
-void Texture::reset() { destroy();create( width, height); }
+void Texture::reset() { create( width, height); }
+
 void Texture::create(GLuint width, GLuint height) {
     
     destroy();
@@ -65,7 +66,7 @@ void Texture::create(GLuint width, GLuint height) {
 
     glGenTextures(1, &id);
 
-    PLOGW << width << " x " << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
+    PLOGD << width << " x " << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
 
     glActiveTexture(GL_TEXTURE0+unit);
 

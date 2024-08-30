@@ -25,7 +25,7 @@
     [ 0, 0, 0, 0, "Stack::ubersmart1", true ]
   ],
   "layers": {
-    "ubersmart1": { "smartlayer1": [ 640, 360, 10, { "argb": "argb", "rectangle": "rectangle", "wrapper": "wrapper", "strobe": "strobe", "feedback": "feedback" } ] },
+    "ubersmart1": { "smartlayer1": [ 640, 360, 10, { "argb": "argb", "rectangle": "rectangle", "wrapper": "wrapper", "strobe": "strobe" } ] },
     "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, { "ubersmart1": "ubersmart1" } ] }, { } ]
   },
   "remaps": {

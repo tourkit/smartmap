@@ -170,7 +170,7 @@ void Window::draw() {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glViewport(0, 0, width, height);
 
-        fb->texture->bind(0);
+        fb->texture.bind(0);
         shader->use();
         vbo->draw();
 

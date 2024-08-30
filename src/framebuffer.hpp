@@ -5,15 +5,14 @@
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 #include <vector>
-#include <string>
+#include "texture.hpp"
 
-struct Texture;
 
 struct FrameBuffer {
 
     uint32_t id = 0, width = 0, height = 0, attachments = 0;
 
-    Texture *texture = nullptr;
+    Texture texture;
 
     float clear_color[4] = {0,0,0,0};
 

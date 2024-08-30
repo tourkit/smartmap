@@ -23,6 +23,9 @@
 // cb de fois run feedback::body dans le shader
 
 
+// noname effectorrefs
+
+
 #include "effector.hpp"
 #include "engine.hpp"
 #include "layer.hpp"
@@ -35,19 +38,31 @@ int main() {
 
     engine.open("project.json");
 
-    auto uber_ = engine.stack->childrens[0];
-    auto &uber = *uber_->is_a<UberLayer>();
-    uber.feedback = new UberLayer::Feedback(&uber);
+    // auto uber_ = engine.stack->childrens[0];
+    // auto &uber = *uber_->is_a<UberLayer>();
+    // uber.feedback = new UberLayer::Feedback(&uber);
     
-    auto vlay_ = engine.stack->childrens[0]->childrens[0];
-    auto &vlay = *vlay_->is_a<UberLayer::VirtualLayer>();
+    // auto vlay_ = engine.stack->childrens[0]->childrens[0];
+    // auto &vlay = *vlay_->is_a<UberLayer::VirtualLayer>();
 
     
-    auto ref = vlay.addEffector(uber.feedback);
-    // lay.builder.build();
+    // auto vref = vlay.addEffector(uber.feedback);
 
-    vlay_->addPtr<EffectorRef>(ref);
-    // PLOGW << lay.shader.frag.src;
+    // vlay_->addPtr<EffectorRef>(vref);
+    
+
+
+    auto lay_ = engine.stack->childrens[1];
+    auto &lay = *lay_->is_a<Layer>();
+    lay.m.name("testfb");
+
+    lay.feedback = new Layer::Feedback(&lay);
+    
+    auto ref = lay.addEffector(lay.feedback);
+    PLOGW << lay.shader.frag.src;
+
+    lay_->addPtr<EffectorRef>(ref);
+
 
     engine.run();
 

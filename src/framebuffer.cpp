@@ -34,13 +34,15 @@ void FrameBuffer::create(GLuint width, GLuint height){
     this->width = width;
     this->height = height;
 
-    texture = new Texture(width,height, 0,1,GL_RGB8 );
+    texture.informat = GL_RGB8;;
+    texture.create(width,height);
+    // texture = new Texture(width,height, 0,1,GL_RGB8 );
 
     glGenFramebuffers(1, &id);
 
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments), GL_TEXTURE_2D, texture->id, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments), GL_TEXTURE_2D, texture.id, 0);
 
     std::vector<GLuint> drawBuffers;
     for (size_t i = 0; i < attachments+1; i++) drawBuffers.push_back( GL_COLOR_ATTACHMENT0+i);
@@ -56,7 +58,7 @@ bool FrameBuffer::destroy() {
 
     if (id) { glDeleteFramebuffers(1, &id); verif = true; }
 
-    if (texture) { delete texture; }
+    // if (texture) { delete texture; }
 
     return verif;
 

@@ -139,6 +139,7 @@ void Callbacks::init() {
 
     NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
         layer->update();
+        layer->fb.texture.sampler_name = node->name()+"__pass";
     });
 
     NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 
@@ -258,7 +259,7 @@ void Callbacks::init() {
 
     //////// FrameBuffer.HPP
 
-    NODE<FrameBuffer>::on(Node::CHANGE, [](Node* node, FrameBuffer *fb) { if (fb->width != fb->texture->width || fb->height != fb->texture->height) { fb->create(fb->width, fb->height); } });
+    NODE<FrameBuffer>::on(Node::CHANGE, [](Node* node, FrameBuffer *fb) { if (fb->width != fb->texture.width || fb->height != fb->texture.height) { fb->create(fb->width, fb->height); } });
 
 
     ////////// Folder.HPP

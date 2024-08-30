@@ -704,12 +704,6 @@ void Editors::init() {
 
                     engine.static_ubo->bind(shader->id);
 
-                    shader->sendUniform("medias", 1);
-                    shader->sendUniform("render_pass", 2);
-                    shader->sendUniform("uberlayer", 3);
-
-                    // if (node->type().id == typeid(UberLayer) || node->type().id == typeid(Layer)) ((Layer*)node->ptr)->fb.clear();
-
                 }
 
                 ImGui::EndTabItem();
@@ -1008,7 +1002,7 @@ void Editors::init() {
 
         // ImGui::Text(("attachment "+std::to_string(fb->attachments)).c_str());
 
-        Editor<Texture>::cb(node, fb->texture);
+        Editor<Texture>::cb(node, &fb->texture);
 
     });
 
@@ -1156,6 +1150,12 @@ void Editors::init() {
 
         // }
 
+        static uint32_t min = 0, max = 10;;
+
+        for (auto tex : Texture::pool) 
+            if (ImGui::SliderScalar(("unit"+std::to_string(tex->id)+" "+tex->sampler_name).c_str(), ImGuiDataType_U32, &tex->unit, &min, &max)) {
+                tex->bind();
+            }
         ImVec2 btn_size = {100,50};
         if (ImGui::Button("smartlayer", btn_size)) {
             node->addPtr<UberLayer::VirtualLayer>(&ubl->addLayer(engine.window.width,engine.window.height));
