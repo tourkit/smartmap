@@ -139,7 +139,6 @@ void Callbacks::init() {
 
     NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
         layer->update();
-        layer->fb.texture.sampler_name = node->name()+"__pass";
     });
 
     NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 

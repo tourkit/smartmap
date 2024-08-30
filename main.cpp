@@ -76,7 +76,6 @@ int main() {
 
     lay2_->addPtr<EffectorRef>(ref2);
 
-
     engine.run();
 
 }

@@ -205,7 +205,6 @@ void DrawCall::update() {
 
     }
 
-    builder.build();
-    ((ShaderProgram*)&shader)->create();
+    shader.create();
 
 }

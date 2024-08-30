@@ -173,17 +173,20 @@ std::string Builder::layout() {
 
         while (true) {
 
+            bool found = false;
+
             for (auto &x : unique_name_list) 
                 
                 if (x.second == name) {
-                    
+            
                     name += "0";
-
-                    continue;
+                    found = true;
+                    break;
 
                 }
-
-            break;
+            
+            if (!found)
+                break;
 
         }
 
