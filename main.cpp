@@ -23,13 +23,6 @@
 // cb de fois run feedback::body dans le shader
 
 
-// noname effectorrefs
-
-// check if and wich tex units binds on layer1 dc 
-
-// why / how same name  in uniquelist
-
-// slah to filter
 
 
 #include "effector.hpp"
@@ -44,37 +37,37 @@ int main() {
 
     engine.open("project.json");
 
-    // auto uber_ = engine.stack->childrens[0];
-    // auto &uber = *uber_->is_a<UberLayer>();
-    // uber.feedback = new UberLayer::Feedback(&uber);
+    auto uber_ = engine.stack->childrens[0];
+    auto &uber = *uber_->is_a<UberLayer>();
+    uber.feedback = new UberLayer::Feedback(&uber);
     
-    // auto vlay_ = engine.stack->childrens[0]->childrens[0];
-    // auto &vlay = *vlay_->is_a<UberLayer::VirtualLayer>();
+    auto vlay_ = engine.stack->childrens[0]->childrens[0];
+    auto &vlay = *vlay_->is_a<UberLayer::VirtualLayer>();
 
     
-    // auto vref = vlay.addEffector(uber.feedback);
+    auto vref = vlay.addEffector(uber.feedback);
 
-    // vlay_->addPtr<EffectorRef>(vref);
+    vlay_->addPtr<EffectorRef>(vref);
 
-    // auto lay_ = engine.stack->childrens[1];
-    // auto &lay = *lay_->is_a<Layer>();
-    // lay.m.name("testfb");
+    auto lay_ = engine.stack->childrens[1];
+    auto &lay = *lay_->is_a<Layer>();
+    lay.m.name("testfb");
 
-    // lay.feedback = new Layer::Feedback(&lay);
+    lay.feedback = new Layer::Feedback(&lay);
     
-    // auto ref = lay.addEffector(lay.feedback);
+    auto ref = lay.addEffector(lay.feedback);
 
-    // lay_->addPtr<EffectorRef>(ref);
+    lay_->addPtr<EffectorRef>(ref);
 
-    // auto lay2_ = engine.stack->childrens[2];
-    // auto &lay2 = *lay2_->is_a<Layer>();
-    // lay.m.name("testfb");
+    auto lay2_ = engine.stack->childrens[2];
+    auto &lay2 = *lay2_->is_a<Layer>();
+    lay2.m.name("testfb2");
 
-    // lay2.feedback = new Layer::Feedback(&lay2);
+    lay2.feedback = new Layer::Feedback(&lay2);
     
-    // auto ref2 = lay2.addEffector(lay2.feedback);
+    auto ref2 = lay2.addEffector(lay2.feedback);
 
-    // lay2_->addPtr<EffectorRef>(ref2);
+    lay2_->addPtr<EffectorRef>(ref2);
 
     engine.run();
 
