@@ -25,6 +25,8 @@
 
 // noname effectorrefs
 
+// check if and wich tex units binds on layer1 dc 
+
 
 #include "effector.hpp"
 #include "engine.hpp"
@@ -38,17 +40,17 @@ int main() {
 
     engine.open("project.json");
 
-    // auto uber_ = engine.stack->childrens[0];
-    // auto &uber = *uber_->is_a<UberLayer>();
-    // uber.feedback = new UberLayer::Feedback(&uber);
+    auto uber_ = engine.stack->childrens[0];
+    auto &uber = *uber_->is_a<UberLayer>();
+    uber.feedback = new UberLayer::Feedback(&uber);
     
-    // auto vlay_ = engine.stack->childrens[0]->childrens[0];
-    // auto &vlay = *vlay_->is_a<UberLayer::VirtualLayer>();
+    auto vlay_ = engine.stack->childrens[0]->childrens[0];
+    auto &vlay = *vlay_->is_a<UberLayer::VirtualLayer>();
 
     
-    // auto vref = vlay.addEffector(uber.feedback);
+    auto vref = vlay.addEffector(uber.feedback);
 
-    // vlay_->addPtr<EffectorRef>(vref);
+    vlay_->addPtr<EffectorRef>(vref);
     
 
 

@@ -171,26 +171,41 @@ std::string Builder::layout() {
 
         auto name = camel(m->name());
 
+        int x_count = 0;
+
         while (true) {
 
-            for (auto &x : unique_name_list) if (x.second == name) {
+            for (auto &x : unique_name_list) 
                 
-                if (name[name.length()-1] == '_') name += "0";
-                else name += "_";
+                if (x.second == name) {
+                    
+                    name += "0";
 
-                continue;
+                    if (name == "Feedback0"){
+                        PLOGI << "1";
+                    }
 
-            }
+                    continue;
+
+                }
 
             break;
 
         }
 
+
         unique_name_list[m] = name;
 
     }
 
-    for (auto x : structs) { auto def = print_struct(x,unique_name_list); if (def.length()) def+=";\n\n"; out += def; }
+    for (auto x : structs) { 
+
+        auto def = print_struct(x,unique_name_list); 
+        
+        if (def.length()) 
+            def+=";\n\n"; out += def; 
+
+    }
 
     for (auto ubo : ubos) {
 
