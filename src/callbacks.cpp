@@ -55,7 +55,7 @@ void Callbacks::init() {
     ////////// Member.HPP
 
     NODE<Member>::on(Node::CREATE, [](Node* node, Member *m){ 
-        node->name_v = (m->name()); 
+        node->name_v = (m->ref()->name()); 
     });
 
     NODE<Member>::on(Node::CHANGE, [&](Node*node, Member* m){
@@ -166,6 +166,7 @@ void Callbacks::init() {
 
     ////////// Effector.HPP
 
+    // NODE<UberEffector>::is_a<Effector>();
     NODE<FileEffector>::is_a<Effector>();
     NODE<Wrappy>::is_a<Effector>();
 
@@ -181,7 +182,10 @@ void Callbacks::init() {
 
     NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, &fx->m); });
 
-    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* effector){ NODE<Member>::on_cb[Node::CHANGE](node, &effector->m);  effector->update(); });
+    // NODE<Effector>::on(Node::CHANGE, [&](Node*node, Effector* effector){ NODE<Member>::on_cb[Node::CHANGE](node, &effector->m);  });
+
+    NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector.m);   });
+    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){ NODE<Member>::on_cb[Node::CHANGE](node, &ref->m);  ref->update(); });
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
 
