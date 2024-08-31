@@ -107,6 +107,7 @@ void Texture::destroy() {
 }
 
 void Texture::bind(int unit) { 
+    // PLOGW << "bind text - id:" << id << " unit:" << unit << " ,sampler_name: " << sampler_name;
     glActiveTexture(GL_TEXTURE0+unit); glBindTexture(GL_TEXTURE_2D, id); glActiveTexture(GL_TEXTURE0);  
 }
 

@@ -29,7 +29,6 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
         }
 
-
     int xxx = glsl_layers->stl.back().m->quantity();
 
     vbo.layer_id = glsl_layers->stl.back().m->quantity();
@@ -77,8 +76,8 @@ void Layer::Feedback::post(Builder* builder) {
 
 bool UberLayer::Feedback::setup(Builder* builder) { 
 
-    layer->fb.texture.sampler_name = "uberfeedback_pass";
-    builder->samplers[4] = &layer->fb.texture;
+    layer->feedback->texture.sampler_name = "uberfeedback_pass";
+    builder->samplers[4] = &layer->feedback->texture;
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
@@ -88,8 +87,8 @@ bool UberLayer::Feedback::setup(Builder* builder) {
 
 bool Layer::Feedback::setup(Builder* builder) { 
 
-    layer->fb.texture.sampler_name = "feedback_pass";
-    builder->samplers[3] = &layer->fb.texture;
+    layer->feedback->texture.sampler_name = "feedback_pass";
+    builder->samplers[3] = &layer->feedback->texture;
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
@@ -133,7 +132,7 @@ std::string UberLayer::Feedback::source() {
 Layer::Feedback::Feedback(Layer* layer) : 
 
     Effector("feedback"), 
-    texture(layer->fb.width,layer->fb.height,3,1, GL_RGB8), 
+    texture(layer->fb.width,layer->fb.height), 
     layer(layer) 
 
     {
@@ -151,9 +150,6 @@ UberLayer::Feedback::Feedback(UberLayer* layer) :
 
     m.name("uberfeedback");
     
-    texture.unit = 4;
-    texture.reset();
-
 }
 
 

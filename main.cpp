@@ -71,4 +71,5 @@ int main() {
 
     engine.run();
 
+    logger.cout(Sev::error);
 }

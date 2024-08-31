@@ -118,8 +118,6 @@ bool Atlas::Effector::setup(Builder* builder) {
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
-    atlas->texture->bind();
-    
     return true; 
     
 }

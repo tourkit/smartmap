@@ -1140,22 +1140,11 @@ void Editors::init() {
 
     Editor<UberLayer>([](Node* node, UberLayer *ubl){
 
-        // if (ubl->layers.size()) if (ImGui::SliderInt("quantitay##dsf",&ubl->layers[0]->m.quantity_v, 1, 10)) {
-
-        //     ubl->layers[0].get()->m.quantity(ubl->layers[0]->m.quantity_v); // for some callback (updates dynUBO)
-
-        //     ubl->calc_matrice();
-
-        //     engine.stack->trig(Node::CHANGE); // update all shaders
-
-        // }
-
-        static uint32_t min = 0, max = 10;;
-
-        for (auto tex : Texture::pool) 
-            if (ImGui::SliderScalar(("unit"+std::to_string(tex->id)+" "+tex->sampler_name).c_str(), ImGuiDataType_U32, &tex->unit, &min, &max)) {
-                tex->bind();
-            }
+        // static uint32_t min = 0, max = 10;;
+        // for (auto tex : Texture::pool) 
+        //     if (ImGui::SliderScalar(("unit"+std::to_string(tex->id)+" "+tex->sampler_name).c_str(), ImGuiDataType_U32, &tex->unit, &min, &max)) 
+        //         tex->bind();
+            
         ImVec2 btn_size = {100,50};
         if (ImGui::Button("smartlayer", btn_size)) {
             node->addPtr<UberLayer::VirtualLayer>(&ubl->addLayer(engine.window.width,engine.window.height));
