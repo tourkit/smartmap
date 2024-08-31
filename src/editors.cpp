@@ -228,16 +228,24 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
     static  int member_count = 0;
     
-    if (!member) {member = buff; member_count = 2550;}
+    if (!member) {
+        
+        member = buff; member_count = 2550;
+        
+        
+        }
+
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
     int &elem_current = elem_currents[member].val;
 
+    if (member->quantity() > 1 && member != buff) {
 
-    if (member->quantity() > 1 ) {
+        SameLine();
 
-        if (ImGui::SliderInt(("instance##current"+member->name()).c_str(), &elem_current, 0, member->quantity()-1)) { }
+        SetNextItemWidth(-FLT_MIN);
+        if (ImGui::SliderInt(("##current"+member->name()).c_str(), &elem_current, 0, member->quantity()-1)) { }
 
         offset += member->footprint()*elem_current;
 
@@ -296,9 +304,20 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
                 int q = m->quantity();
 
-                auto x = ImGui::SliderScalarN(name.c_str(), type, buff->data()+offset, q, range_from, range_to,NULL,0,
-                ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
 
+                // SetCursorPosX(85-CalcTextSize(name.c_str()).x);
+                SetCursorPosX(5);
+
+        SetNextItemWidth(-FLT_MIN-90);
+        PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
+                auto x = ImGui::SliderScalarN(("##"+name).c_str(), type, buff->data()+offset, q, range_from, range_to,NULL,0,
+                ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
+                SameLine(); 
+        SetNextItemWidth(85);
+        PushStyleColor(ImGuiCol_Text, ImVec4(0.78f, 0.78f, 0.78f, 1.0f));
+                Text(name.c_str());
+
+        PopStyleColor(2);
                 if (x>=0) {
 
                     x*=4;
@@ -344,7 +363,10 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
             septxt+= "(" + std::to_string(m->quantity()) + ")";
 
+
+        PushStyleColor(ImGuiCol_Text, ImVec4(0.6, 0.6, 0.6, 1.0f));
             ImGui::SeparatorText(septxt.c_str());
+        PopStyleColor(1);
 
             if (draw_guis(buff, m, offset)) has_changed = true;
 
@@ -359,6 +381,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
         offset+=m->footprint_all();
 
     }
+
 
     return has_changed;
 
@@ -872,32 +895,49 @@ void Editors::init() {
 
     Editor<Member>([](Node* node, Member *m){
 
-        ImGui::Separator();
 
         // std::stringstream ss;
         // ss << m;
         // ImGui::Text(( ss.str()).c_str());
+         if (ImGui::BeginTabBar("def", ImGuiTabBarFlags_None)) {
 
-        if (m->buffering() && draw_guis(m)) {
+
+            if (ImGui::BeginTabItem("programmer")) {
+                
+                if (m->buffering() && draw_guis(m)) {
             
-            m->upload();
+                    m->upload();
 
-        // engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});
-        // engine.stack->each<Layer>([](Node*n, Layer* layer){ layer ->fb.clear();});
+                    // engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});
+                    // engine.stack->each<Layer>([](Node*n, Layer* layer){ layer ->fb.clear();});
 
-        // engine.stack->each([](Node* node){ if (node->type().id == typeid(UberLayer) || node->type().id == typeid(Layer)) ((Layer*)node->ptr)->fb.clear(); });
+                    // engine.stack->each([](Node* node){ if (node->type().id == typeid(UberLayer) || node->type().id == typeid(Layer)) ((Layer*)node->ptr)->fb.clear(); });
+
+                }
+
+                ImGui::EndTabItem();
+
+            }
+            if (ImGui::BeginTabItem("definition")) {
+                
+
+                draw_definition(m);
+
+                ImGui::Separator();
+
+                if (m->buffering() && draw_raw(m->data(),m->footprint())) m->upload();
+
+                ImGui::Separator();
+
+                ImGui::EndTabItem();
+
+            }
+                
+            ImGui::EndTabBar();
 
         }
 
-        ImGui::Separator();
 
-        draw_definition(m);
-
-        ImGui::Separator();
-
-        if (m->buffering() && draw_raw(m->data(),m->footprint())) m->upload();
-
-        ImGui::Separator();
 
     });
 
