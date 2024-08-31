@@ -53,8 +53,10 @@ void Layer::update() {
 
 void Layer::draw() {
 
-    if (feedback) 
-        feedback->texture.bind(); 
+    // if (feedback) 
+    //     feedback->texture.bind(); 
+
+    builder.post();
 
     fb.clear();
 
