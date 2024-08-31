@@ -30,7 +30,9 @@ struct Layer : DrawCall {
 
     FrameBuffer fb;
 
-    Feedback* feedback = nullptr;
+    Feedback* feedback_v = nullptr;
+    
+    virtual Feedback* feedback();
 
     Layer(uint16_t width = 0, uint16_t height = 0, std::string name = "");
 
@@ -108,5 +110,7 @@ struct UberLayer : Layer {
     } builder;
 
     UberEffector effector;
+    
+    Layer::Feedback* feedback() override;
 
 };

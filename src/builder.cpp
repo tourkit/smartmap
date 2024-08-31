@@ -141,6 +141,27 @@ std::string Builder::vert() {
 
 }
 
+int Builder::addSampler(Texture* tex, std::string name) {
+    
+        int i = 1;
+
+        for (auto x : samplers) {
+            
+            if (x.second == tex)
+                return x.first;
+            
+            if (x.first > i)
+                i = x.first+1;  
+        
+        }
+
+        samplers[i] = tex;
+
+        tex->sampler_name = name+"_pass";
+
+        return i;
+}
+
 
 bool Builder::add(UBO* ubo) { return true; }
 

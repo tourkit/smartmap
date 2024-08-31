@@ -21,12 +21,15 @@ void Open::medias(){
 
     JSON::if_obj_in("medias", json_v.document, [&](auto &m) {
 
-        if (!m.name.IsString() || !m.value.IsString()) return;
-        if (strcmp(m.name.GetString(), "atlas") ) return;
+        if (!m.name.IsString() || !m.value.IsString()) 
+            return;
 
-        auto atlas = new Atlas(4096, 4096, m.value.GetString());
+        if (strcmp(m.name.GetString(), "atlas") ) 
+            return;
     
-        engine.medias->addPtr<Atlas>(atlas)->owned = true;
+        Node* atlas_ = engine.medias->addOwnr<Atlas>(4096, 4096, m.value.GetString());
+
+        auto atlas = atlas_->is_a<Atlas>();
 
         engine.effectors->addPtr<Effector>(&atlas->effector);
 
@@ -205,7 +208,7 @@ void Open::outputs(){
 }
 
 
-static void addEffectors(JSONVal v, Node* node) {
+static void addEffectors(JSONVal v, Node* layer) {
 
     if (!v.isarr()) {
         PLOGW << "not an array";
@@ -218,15 +221,34 @@ static void addEffectors(JSONVal v, Node* node) {
             { PLOGW << v.stringify(); continue; }
 
         Node* effector_;
+
         effector_ = engine.effectors->child(effector_def.str());
-        if (! effector_)   effector_ = engine.stack->child(effector_def.str());
+
+        if (! effector_)   
+            effector_ = engine.stack->child(effector_def.str());
+
+        if (! effector_)   
+            if (effector_def.str() == "feedback") {
+
+                // auto lay = layer->is_a_nowarning<Layer>();
+                // if (!lay) 
+                //     lay = layer->parent()->is_a_nowarning<Layer>();
+
+                // if (lay)
+                //     layer->addPtr<EffectorRef>(lay->addEffector(lay->feedback()));
+                
+                // continue;
+
+
+            }
+        
         if (! effector_)   { PLOGW << "not an FX : " << effector_def.str(); continue; }
         
-        auto new_ = node->add(effector_);
+        auto new_ = layer->add(effector_);
      
      }
 
-     if (v.size()) node->update();
+     if (v.size()) layer->update();
 
 }
 

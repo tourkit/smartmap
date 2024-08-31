@@ -361,7 +361,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
             std::string septxt  = m->ref()->name();
 
-            septxt+= "(" + std::to_string(m->quantity()) + ")";
+            // sezptxt+= "(" + std::to_string(m->quantity()) + ")";
 
 
         PushStyleColor(ImGuiCol_Text, ImVec4(0.6, 0.6, 0.6, 1.0f));
@@ -630,17 +630,17 @@ void Editors::init() {
 
         static TextEditor frageditor;
         static TextEditor verteditor;
-        if (ImGui::Button("create")) {
-            shader->create();
-            frageditor.SetText(shader->frag.src);
-            verteditor.SetText(shader->vert.src);
-        }
-        ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
-        ImGui::SameLine(); if (ImGui::Button("samplers connect")) { 
+        // if (ImGui::Button("create")) {
+        //     shader->create();
+        //     frageditor.SetText(shader->frag.src);
+        //     verteditor.SetText(shader->vert.src);
+        // }
+        // ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
+        // ImGui::SameLine(); if (ImGui::Button("samplers connect")) { 
 
-            auto builder = shader->builder();
-            builder->post();
-         }
+        //     auto builder = shader->builder();
+        //     builder->post();
+        //  }
 
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
@@ -877,8 +877,8 @@ void Editors::init() {
 
             layer->fb.create( texture->width, texture->height); 
             
-            if (layer->feedback)
-                layer->feedback->texture.create(texture->width, texture->height); 
+            if (layer->feedback_v)
+                layer->feedback_v->texture.create(texture->width, texture->height); 
             
             node->update(); 
         
@@ -1185,13 +1185,13 @@ void Editors::init() {
         //     if (ImGui::SliderScalar(("unit"+std::to_string(tex->id)+" "+tex->sampler_name).c_str(), ImGuiDataType_U32, &tex->unit, &min, &max)) 
         //         tex->bind();
             
-        ImVec2 btn_size = {100,50};
-        if (ImGui::Button("smartlayer", btn_size)) {
-            node->addPtr<UberLayer::VirtualLayer>(&ubl->addLayer(engine.window.width,engine.window.height));
-            ubl->calc_matrice();
-            engine.stack->trig(Node::CHANGE);
-            ubl->update();
-        }
+        // ImVec2 btn_size = {100,50};
+        // if (ImGui::Button("smartlayer", btn_size)) {
+        //     node->addPtr<UberLayer::VirtualLayer>(&ubl->addLayer(engine.window.width,engine.window.height));
+        //     ubl->calc_matrice();
+        //     engine.stack->trig(Node::CHANGE);
+        //     ubl->update();
+        // }
             
         
         Editor<Layer>::cb(node, ubl);

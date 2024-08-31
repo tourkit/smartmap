@@ -29,7 +29,7 @@ struct Builder {
 
     std::map<int,Texture*> samplers;
 
-    void addSampler(std::string name);
+    int addSampler(Texture* tex, std::string name = "");
 
     virtual void build();
     

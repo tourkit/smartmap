@@ -34,13 +34,12 @@ int main() {
 
     auto uber_ = engine.stack->childrens[0];
     auto &uber = *uber_->is_a<UberLayer>();
-    uber.feedback = new UberLayer::Feedback(&uber);
     
     auto vlay_ = engine.stack->childrens[0]->childrens[0];
     auto &vlay = *vlay_->is_a<UberLayer::VirtualLayer>();
 
     
-    auto vref = vlay.addEffector(uber.feedback);
+    auto vref = vlay.addEffector(uber.feedback());
 
     vlay_->addPtr<EffectorRef>(vref);
 
@@ -48,9 +47,8 @@ int main() {
     auto &lay = *lay_->is_a<Layer>();
     lay.m.name("testfb");
 
-    lay.feedback = new Layer::Feedback(&lay);
     
-    auto ref = lay.addEffector(lay.feedback);
+    auto ref = lay.addEffector(lay.feedback());
 
     lay_->addPtr<EffectorRef>(ref);
 
@@ -58,9 +56,8 @@ int main() {
     auto &lay2 = *lay2_->is_a<Layer>();
     lay2.m.name("testfb2");
 
-    lay2.feedback = new Layer::Feedback(&lay2);
     
-    auto ref2 = lay2.addEffector(lay2.feedback);
+    auto ref2 = lay2.addEffector(lay2.feedback());
 
     lay2_->addPtr<EffectorRef>(ref2);
 

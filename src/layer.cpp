@@ -51,10 +51,24 @@ void Layer::update() {
 
 }
 
-void Layer::draw() {
+Layer::Feedback* UberLayer::feedback() {  
 
-    // if (feedback) 
-    //     feedback->texture.bind(); 
+    if (!feedback_v) 
+        feedback_v = new UberLayer::Feedback(this);
+
+    return feedback_v; 
+    
+}
+Layer::Feedback* Layer::feedback() { 
+
+    if (!feedback_v) 
+        feedback_v = new Layer::Feedback(this);
+    
+    return feedback_v; 
+    
+}
+
+void Layer::draw() {
 
     builder.post();
 
@@ -64,8 +78,8 @@ void Layer::draw() {
 
     vbo.draw();
 
-    if (feedback) 
-        return feedback->texture.read(&fb.texture); 
+    if (feedback_v) 
+        return feedback_v->texture.read(&fb.texture); 
 
 }
 
@@ -77,20 +91,14 @@ void Layer::Feedback::post(Builder* builder) {
 }
 
 bool UberLayer::Feedback::setup(Builder* builder) { 
-
-    layer->feedback->texture.sampler_name = "uberfeedback_pass";
-    builder->samplers[4] = &layer->feedback->texture;
-
-    ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
-    return true; 
+    return Layer::Feedback::setup(builder); 
     
 }
 
 bool Layer::Feedback::setup(Builder* builder) { 
 
-    layer->feedback->texture.sampler_name = "feedback_pass";
-    builder->samplers[3] = &layer->feedback->texture;
+    builder->addSampler(&layer->feedback()->texture, "feedback");
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
@@ -122,9 +130,9 @@ std::string UberLayer::Feedback::source() {
 
     std::string current;
 
-    current += "void uberfeedback(float intensity) { // washington\n";
+    current += "void feedback(float intensity) { // washington\n";
     current += "int obj = int(OBJ);\n";
-    current += "\tcolor += ( texture( uberfeedback_pass, UV*static_ubo.uberLayer[obj].uberLayers.size+static_ubo.uberLayer[obj].uberLayers.norm) - .002 ) * intensity;\n",
+    current += "\tcolor += ( texture( feedback_pass, UV*static_ubo.uberLayer[obj].uberLayers.size+static_ubo.uberLayer[obj].uberLayers.norm) - .002 ) * intensity;\n",
     current += "}\n";
     return current;
 
@@ -149,8 +157,6 @@ UberLayer::Feedback::Feedback(UberLayer* layer) :
     Layer::Feedback(layer)
 
     {
-
-    m.name("uberfeedback");
     
 }
 
@@ -205,8 +211,7 @@ std::string  UberEffector::source() {
 
 bool UberEffector::setup(Builder* builder) { 
 
-    ubl_v->fb.texture.sampler_name = ubl_v->m.name()+"_pass";
-    builder->samplers[2] = &ubl_v->fb.texture;
+    builder->addSampler(&ubl_v->fb.texture, ubl_v->m.name());
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
 
@@ -291,8 +296,8 @@ void UberLayer::calc_matrice() {
     float matrice_width = matrice[0].back()[0]+matrice[0].back()[2];
 
     fb.create( matrice_width, matrice_height );
-    if (feedback)
-        feedback->texture.create( matrice_width, matrice_height );
+    if (feedback_v)
+        feedback_v->texture.create( matrice_width, matrice_height );
 
     uberlayer_m.quantity(count);
 

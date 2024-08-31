@@ -44,8 +44,6 @@ struct Engine {
     UBO* dynamic_ubo;
     UBO* static_ubo;
 
-    Atlas *atlas;
-
     void init();
 
     void reset();

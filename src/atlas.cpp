@@ -112,9 +112,7 @@ void Atlas::Effector::post(Builder* builder) {
 
 bool Atlas::Effector::setup(Builder* builder) { 
 
-
-    atlas->texture->sampler_name = m.name()+"_pass";
-    builder->samplers[1] = atlas->texture;
+    builder->addSampler(atlas->texture, m.name());
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
