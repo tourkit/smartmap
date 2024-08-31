@@ -1,11 +1,8 @@
-# SmartMap :) 
+# smartmap 
 
-minimalist multi-purpose realtime engine w/ GUIs
+minimalist multi-purpose realtime engine ;)
 
-- advanced shader builder
-- optimized memory management 
+![image](https://github.com/user-attachments/assets/5b0b0b27-0c83-4739-ae35-20d03507f739)
 
-dependencies : imgui, glm, glfw, gl3w, freetype, assimp, ndi, plog, rapidjson, ...
 
-![image](https://github.com/user-attachments/assets/c9ee3249-0c9d-406c-afee-8dc25c16a90d)
-
+*dependencies : imgui, glm, glfw, gl3w, freetype, assimp, ndi, libartnet, plog, rapidjson, ...*
