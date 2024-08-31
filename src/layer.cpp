@@ -133,7 +133,7 @@ std::string UberLayer::Feedback::source() {
 Layer::Feedback::Feedback(Layer* layer) : 
 
     Effector("feedback"), 
-    texture(layer->fb.width,layer->fb.height,0,1, GL_RGB8), 
+    texture(layer->fb.width,layer->fb.height,3,1, GL_RGB8), 
     layer(layer) 
 
     {
@@ -151,6 +151,9 @@ UberLayer::Feedback::Feedback(UberLayer* layer) :
 
     m.name("uberfeedback");
     
+    texture.unit = 4;
+    texture.reset();
+
 }
 
 
