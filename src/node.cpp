@@ -55,7 +55,8 @@ Node::~Node() {
 
     trig(Event::DESTROY);
 
-    if (owned) delete_lists[stored_type](void_ptr);
+    if (owned) 
+        deletetyped_cb[stored_type](void_ptr);
 
     PLOGV << "~" << name();
 
@@ -109,6 +110,30 @@ Node* Node::top() { auto top = this; while(top->parent()) { top = top->parent();
 
 void Node::addList(std::vector<Node*> *nodes) { for (auto n : *nodes) add(n); }
 
+
+
+Node* Node::add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* ptr) {
+
+    std::string t_NAME = t.pretty_name();
+
+    if (is_lists.find(t) != is_lists.end()) 
+
+        for (auto t_ : is_lists[t]) 
+
+            add_typed(t_.first, u, to_add, t_.second(ptr));
+
+    if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) {
+
+        auto out =  onaddtyped_cb[t][u](this,to_add);    
+
+        return out == this ? nullptr : out;
+        
+    }
+
+    return to_add;
+
+}
+
 Node* Node::add(void* node_v)  {
 
     auto n = (Node*)node_v;
@@ -116,48 +141,22 @@ Node* Node::add(void* node_v)  {
     if (!n || n == this || n->parent() == this) return nullptr;
 
     PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
-
-    bool found = false;
-
-    TypeIndex t = type();
     
-    while (true) { // find all derived onadds
-    
-        TypeIndex u = n->type();
-        
-        while (true) { // find all derived onadds
-    
-            std::string _t = t.name();
-            std::string _u = u.name();
+    auto out_typed = add_typed(type(), n->type(), n, void_ptr);
 
-            if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) { found = true;
-                
-                n = onaddtyped_cb[t][u](this,n);
+    if (!out_typed)
+        return nullptr;
 
-                if (n == this) return nullptr;
-
-            }
-            
-            if (Node::is_lists.find(u) == Node::is_lists.end()) break;
-
-            u = Node::is_lists.at(u);
-
-        }
-        
-        if (Node::is_lists.find(t) == Node::is_lists.end()) break;
-
-        t = Node::is_lists.at(t);
-
-    }
-    
-    // if (!found) return nullptr; // test for no auto add
+    n = out_typed;
 
     if (onadd_cb.find(n->type()) != onadd_cb.end()) {
+
         n = onadd_cb[n->type()](this,n);
 
-        if (n == this) return nullptr;
+        if (n == this) 
+            return nullptr;
 
-    } 
+    }
 
     n->parent(this);
 
@@ -292,36 +291,30 @@ static std::string event_name(Node::Event event){
     return "UNKNOWN";
 }
 
+void Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
+
+#ifdef ROCH
+    std::string t_NAME = t.pretty_name();
+#endif
+
+    if (is_lists.find(t) != is_lists.end()) 
+        for (auto t_ : is_lists[t]) 
+            trig_typed(e, t_.first, t_.second(out));
+
+    if (ontyped_cb[e].find(t) != ontyped_cb[e].end()) 
+        (*(std::function<void(Node*,void*)>*) ontyped_cb[e].at(t))(this,out);  
+
+}
+
 void Node::trig(Event e)  { 
-        
-    auto t = stored_type;
 
-    void* out = void_ptr;
+    trig_typed(e, type(), void_ptr);
 
-    while (true) {
-
-        auto t_ = t.name();
-
-        if (ontyped[e].find(t) != ontyped[e].end()) {
-            
-            // PLOGV << event_name(e) << " : " << name() << " is " << type_name() << " as " << t_ ;
-        
-            (*(std::function<void(Node*,void*)>*) ontyped[e].at(t))(this,out);  
-
-        }
-        
-        if (on_cb.find(e) != on_cb.end()) 
-            on_cb[e](this);
-        
-        if (Node::is_lists.find(t) == Node::is_lists.end()) break;
-
-        out = upcast_lists[t](out);
-
-        t = Node::is_lists.at(t);
-    
-    }
+    if (on_cb.find(e) != on_cb.end()) 
+        on_cb[e](this);
     
 }
+
 
 void Node::editor() { 
 
@@ -331,30 +324,21 @@ void Node::editor() {
 
 }
 
-void Node::up() {
+void* Node::is_a_untyped(TypeIndex t, TypeIndex u, void* out) {
 
-    if (!parent_node) return;
+    if (is_lists.find(t) != is_lists.end()) 
 
-    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
-    int index = std::distance(parent_node->childrens.begin(), it);
+        for (auto t_ : is_lists[t]) {
 
-    if(index<1) return;
+            if (t_.first == u) 
+                return t_.second(out);
 
-    parent_node->childrens.erase(it);
-    parent_node->childrens.insert(parent_node->childrens.begin() + index - 1, this);
+            else
+                if (auto result = is_a_untyped(t_.first,u, t_.second(out))) 
+                    return result;
 
-}
+        }
 
-void Node::down() {
-
-    if (!parent_node) return;
-
-    auto it = std::find(parent_node->childrens.begin(), parent_node->childrens.end(), this);
-    int index = std::distance(parent_node->childrens.begin(), it);
-
-    if(index > parent_node->childrens.size()-2) return;
-
-    parent_node->childrens.erase(it);
-    parent_node->childrens.insert(parent_node->childrens.begin() + index + 1, this);
+    return nullptr;
 
 }

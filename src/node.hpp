@@ -63,6 +63,7 @@ struct Node {
     Node* parent();
 
     Node* child(std::string  name);
+    Node* child_nowarning(std::string  name);
     Node* child(std::vector<std::string> names);
 
     uint32_t index();
@@ -96,9 +97,6 @@ struct Node {
 
     Node* top();
 
-    void up();
-
-    void down();
     void run();
 
     std::string nameSTL();
@@ -114,12 +112,14 @@ struct Node {
 
 
     std::map<Event,std::function<void(Node*)>> on_cb;
+    static inline std::map<Event, std::map<TypeIndex, void*>> ontyped_cb;
+
     std::map<TypeIndex, std::function<Node*(Node*,Node*)>> onadd_cb;
-    static inline std::map<Event, std::map<TypeIndex, void*>> ontyped;
     static inline std::map<TypeIndex, std::map<TypeIndex, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
-    static inline std::map<TypeIndex, std::function<void*(void*)>> upcast_lists;
-    static inline std::map<TypeIndex, std::function<void(void*)>> delete_lists;
-    static inline std::map<TypeIndex, TypeIndex> is_lists;
+
+    static inline std::map<TypeIndex, std::function<void(void*)>> deletetyped_cb;
+    
+    static inline std::map<TypeIndex, std::map<TypeIndex, std::function<void*(void*)>>> is_lists;
 
     Node* operator[](int id);
     Node* operator[](std::string name);
@@ -145,7 +145,7 @@ struct Node {
     template <typename U, typename... Args>
     Node* addOwnr(Args&&... args) {
 
-        if (delete_lists.find(typeid(U)) == delete_lists.end()) delete_lists.emplace(typeid(U),[&](void* t){ delete (U*)t; });
+        if (deletetyped_cb.find(typeid(U)) == deletetyped_cb.end()) deletetyped_cb.emplace(typeid(U),[&](void* t){ delete (U*)t; });
         
         auto ptr = new U(std::forward<Args>(args)...);
 
@@ -178,35 +178,16 @@ struct Node {
 
     }
 
+    void* is_a_untyped(TypeIndex t, TypeIndex u, void* out);
+
     template <typename U>
-    U* is_a_nowarning() {
-
-        TypeIndex t = stored_type;
-
-        std::string t_ = stored_type.pretty_name();
-
-        void* out = void_ptr ;
-
-        while (true) {
-
-            std::string t_ = stored_type.pretty_name();
-
-            if (typeid(U) == t || is_lists.find(t) == is_lists.end()) break;
-
-            out = upcast_lists[t](void_ptr);
-
-            t = is_lists.at(t);
-        
-        }
-
-        if (typeid(U) != t) return nullptr;
-        
-        return (U*)out; 
-        
-    }
+    U* is_a_nowarning() { return (U*)is_a_untyped(typeid(U),typeid(U),void_ptr); }
     
 private:
 
+    Node* add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* out);
+    void trig_typed(Event event, TypeIndex type, void* out);
+    
     Node* parent_node = nullptr;
 
     bool has_changed = false;
@@ -222,10 +203,8 @@ struct NODE {
 
     template <typename U>
     static inline void  is_a() { 
-        
-        Node::is_lists.emplace(typeid(T),typeid(U));
 
-        Node::upcast_lists.emplace(typeid(T),[&](void* t){ return (U*)(T*)t; });
+        Node::is_lists[typeid(T)].emplace(typeid(U),[&](void* t){ return (U*)(T*)t; });
         
     }
 
@@ -239,6 +218,6 @@ struct NODE {
     template <typename U>
     static void onadd(std::function<Node*(Node*,Node*)> cb) { Node::onaddtyped_cb[typeid(T)][typeid(U)] = cb;  }
 
-    static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped[event][typeid(T)] = &on_cb[event]; }
+    static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
 
 };

@@ -222,33 +222,30 @@ static void addEffectors(JSONVal v, Node* layer) {
 
         Node* effector_;
 
-        effector_ = engine.effectors->child(effector_def.str());
+        if (effector_def.str() == "feedback") {
 
-        if (! effector_)   
-            effector_ = engine.stack->child(effector_def.str());
+            // auto lay = layer->is_a_nowarning<Layer>();
+            // if (!lay) 
+            //     lay = layer->parent()->is_a_nowarning<Layer>();
 
-        if (! effector_)   
-            if (effector_def.str() == "feedback") {
-
-                // auto lay = layer->is_a_nowarning<Layer>();
-                // if (!lay) 
-                //     lay = layer->parent()->is_a_nowarning<Layer>();
-
-                // if (lay)
-                //     layer->addPtr<EffectorRef>(lay->addEffector(lay->feedback()));
-                
-                // continue;
+            // if (lay)
+            //     layer->addPtr<EffectorRef>(lay->addEffector(lay->feedback()));
+            
+            continue;
 
 
-            }
+        }
+
+        effector_ = engine.tree->child(effector_def.str());
         
-        if (! effector_)   { PLOGW << "not an FX : " << effector_def.str(); continue; }
+        if (! effector_) 
+            continue; 
         
         auto new_ = layer->add(effector_);
      
-     }
+    }
 
-     if (v.size()) layer->update();
+    if (v.size()) layer->update();
 
 }
 

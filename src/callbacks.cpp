@@ -113,10 +113,11 @@ void Callbacks::init() {
         PLOGE << "no found";
  
     });
+
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
-        dc->shader.create();
- 
+        dc->update();
+
     });
 
     NODE<UberLayer>::is_a<Layer>();
@@ -126,26 +127,32 @@ void Callbacks::init() {
     NODE<Modelable>::is_a<Effectable>();
     NODE<UberLayer::VirtualLayer>::is_a<Effectable>();
 
+    NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 
+
+        layer->draw(); 
+        
+    });
+
+    NODE<DrawCall>::on(Node::RUN, [](Node* node, DrawCall *dc) { 
+
+        dc->draw(); 
+        
+    });
+
     NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
     
         NODE<Member>::on_cb[Node::CREATE](node, &e->m);
         
     });
+
     NODE<Effectable>::on(Node::CHANGE, [](Node* node, Effectable *e){ 
     
         NODE<Member>::on_cb[Node::CHANGE](node, &e->m);
         
     });
 
-    NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
-        layer->update();
-    });
 
-    NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 
 
-        layer->draw(); 
-        
-    });
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
 

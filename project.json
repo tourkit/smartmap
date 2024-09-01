@@ -1,12 +1,9 @@
 {
-  "medias": {
-    "atlas": "assets/medias/"
-  },
   "inputs": {
     "artnet": { "artnet1": [ "1.2.3.4", { "remap1": [ 1, 1, "ubersmart1::smartlayer1", [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 ] ] } ] }
   },
   "outputs": {
-    "monitor": { "Window": [ 1175, 985, 0, 0, "Layer2" ] }
+    "monitor": { "Window": [ 100, 100, 0, 0, "Layer1" ] }
   },
   "models": {
     "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
@@ -28,9 +25,8 @@
     [ 0, 0, 0, 0, "universe 0::remap1" ]
   ],
   "layers": {
-    "ubersmart1": { "smartlayer1": [ 640, 360, 5, [ "argb", "rectangle", "wrapper", "strobe", "feedback" ] ] },
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "rectangle", "ubersmart1" ] ] }, [ "feedback" ] ],
-    "Layer2": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "ubersmart1" ] ] }, [ "feedback" ] ]
+    "ubersmart1": { "smartlayer1": [ 640, 360, 5, [ ] ] },
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "ubersmart1" ] ] }, [ ] ]
   },
   "remaps": {
     "remap1": [ [ "ubersmart1::smartlayer1[4]::argb" ], [ "b " ], "( 1 - $0::g ) * $0::b" ]
