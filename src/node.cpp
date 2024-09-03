@@ -62,7 +62,7 @@ Node::~Node() {
 
 }
 
-Node* Node::child(std::vector<std::string> names) {
+Node* Node::find(std::vector<std::string> names) {
 
     auto traget = names.back();
 
@@ -84,7 +84,7 @@ Node* Node::child(std::vector<std::string> names) {
 
     if (names.size()) for (auto c : childrens) {
 
-        auto x = c->child(names);
+        auto x = c->find(names);
 
         if (x) return x;
 
@@ -95,11 +95,11 @@ Node* Node::child(std::vector<std::string> names) {
 }
 
 
-Node* Node::child(std::string  name) {
+Node* Node::find(std::string  name) {
 
     if (!name.length()) return nullptr;
 
-    return child(split(name));
+    return find(split(name));
 
 }
 
@@ -115,22 +115,31 @@ void Node::addList(std::vector<Node*> *nodes) { for (auto n : *nodes) add(n); }
 Node* Node::add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* ptr) {
 
     std::string t_NAME = t.pretty_name();
+    std::string u_NAME = u.pretty_name();
+
+    if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) 
+        return  onaddtyped_cb[t][u](this,to_add);    
 
     if (is_lists.find(t) != is_lists.end()) 
+        for (auto t_ : is_lists[t])  {
+    
+            t_NAME = t_.first.pretty_name();
 
-        for (auto t_ : is_lists[t]) 
+            if (is_lists.find(u) != is_lists.end()) 
+                for (auto u_ : is_lists[u])  {
 
-            add_typed(t_.first, u, to_add, t_.second(ptr));
+                    u_NAME = u_.first.pretty_name();
 
-    if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) {
+                    to_add = add_typed(t_.first, u_.first, to_add, nullptr);
+                    
+                    if (!to_add)
+                        return nullptr;
+                       
+                }
 
-        auto out =  onaddtyped_cb[t][u](this,to_add);    
+        }
 
-        return out == this ? nullptr : out;
-        
-    }
-
-    return to_add;
+    return this;
 
 }
 
@@ -141,28 +150,24 @@ Node* Node::add(void* node_v)  {
     if (!n || n == this || n->parent() == this) return nullptr;
 
     PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
+
+    n = add_typed(type(), n->type(), n, void_ptr);
     
-    auto out_typed = add_typed(type(), n->type(), n, void_ptr);
+    if (n)
+        n = add_typed(type(), typeid(AnyType), n, void_ptr);
 
-    if (!out_typed)
-        return nullptr;
-
-    n = out_typed;
-
-    if (onadd_cb.find(n->type()) != onadd_cb.end()) {
-
+    if (n && onadd_cb.find(n->type()) != onadd_cb.end()) 
         n = onadd_cb[n->type()](this,n);
 
-        if (n == this) 
-            return nullptr;
+    if (!n)
+        { PLOGE << "couldnt add " << ((Node*)node_v)->name(); }
 
-    }
-
+    if (n != node_v) 
+        return n;
+    
     n->parent(this);
 
     update();
-    
-    if (n != node_v) ((Node*)node_v)->referings.insert(n);
 
     return n;
 
@@ -209,7 +214,7 @@ Node* Node::hide() {
 
 }
 
-Node* Node::operator[](std::string name) { return child(name); }
+Node* Node::operator[](std::string name) { return find(name); }
 
 Node* Node::operator[](int id) { return childrens[id]; }
 
@@ -229,10 +234,10 @@ void Node::update() {
 }
 
 
-void Node::each_(std::function<void(Node*)> cb) { 
+void Node::each_untyped(std::function<void(Node*)> cb) { 
     
     for (auto c : childrens) 
-        c->each_(cb); 
+        c->each_untyped(cb); 
     
     cb(this);  
 
@@ -325,6 +330,14 @@ void Node::editor() {
 }
 
 void* Node::is_a_untyped(TypeIndex t, TypeIndex u, void* out) {
+
+#ifdef ROCH
+    std::string t_NAME = t.pretty_name();
+    std::string u_NAME = u.pretty_name();
+#endif
+
+    if (t == u) 
+        return out;
 
     if (is_lists.find(t) != is_lists.end()) 
 

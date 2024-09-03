@@ -152,8 +152,6 @@ void Callbacks::init() {
     });
 
 
-
-
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
 
         return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( node->is_a<File>() ));
@@ -165,6 +163,7 @@ void Callbacks::init() {
         return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ));
         
     });
+
     NODE<Effectable>::onadd<UberLayer>([](Node*_this,Node*node){ 
         
         return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector(&node->is_a<UberLayer>()->effector));
@@ -179,9 +178,7 @@ void Callbacks::init() {
 
     NODE<Wrappy>::onadd<Effector>([](Node* _this, Node *node) {
 
-        _this->is_a<Wrappy>()->addEffector(node->is_a<Effector>());
-
-        return _this;
+        return _this->addPtr<Wrappy>( _this->is_a<Wrappy>()->addEffector(node->is_a<Effector>()) );
 
     });
 

@@ -1,37 +1,17 @@
-/*
-
-   SMARTMAP ( v 1.3.1.2 beta ) 
-
-                                */
-
-
-// many vlayers
-
-// delete vlayer should remove corresponding models
-
-// wrapper in layer def
-
-// feedback in layer def
-
-// freetype
-
-
-// ----
-
-
-
-#include "effector.hpp"
 #include "engine.hpp"
-#include "layer.hpp"
+#include "utils.hpp"
+
+struct Foo{};
 
 int main() {
 
-    engine.init();
+    Node n;
 
-    logger.cout(Sev::warning);
+    NODE<Node>::onadd<AnyType>([](Node*_this,Node*node){ return node; });
+    
+    auto x = n.addOwnr<Foo>();
 
-    engine.open("project.json");
-
-    engine.run();
+    PLOGE << x->name();
     
 }
+

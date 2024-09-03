@@ -44,6 +44,9 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     // window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
 
     tree = new Node("tree");
+
+    NODE<Node>::onadd<AnyType>([](Node*_this,Node*node){ return node; });
+
     tree->active(1);
 
 

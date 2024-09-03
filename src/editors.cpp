@@ -244,7 +244,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
         SameLine();
 
-        SetNextItemWidth(-FLT_MIN);
+        SetNextItemWidth(-FLT_MIN-10);
         if (ImGui::SliderInt(("##current"+member->name()).c_str(), &elem_current, 0, member->quantity()-1)) { }
 
         offset += member->footprint()*elem_current;

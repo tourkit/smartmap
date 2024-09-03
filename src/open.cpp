@@ -78,7 +78,7 @@ void Open::inputs(){
                 // should find (Layer/Model/Effector aka Effectable) node(aka "w" down there) (then get Member path)
 
 
-                Node* n = engine.tree->child(arr[2].GetString());
+                Node* n = engine.tree->find(arr[2].GetString());
 
                 if (!n) { PLOGW << arr[2].GetString() << " not found"; continue; }
                 
@@ -113,7 +113,7 @@ void Open::inputs(){
                 auto out = an_->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
 
                 std::string sss =arr[2].GetString() ;
-                auto w = engine.tree->child(sss);
+                auto w = engine.tree->find(sss);
                 if (!w) { PLOGE <<arr[2].GetString()<< " not found"; return; }
                 w->referings.insert( out );
 
@@ -165,7 +165,7 @@ void Open::outputs(){
             auto output = isOutput(x);
 
             Node* layer = nullptr;
-            layer = engine.stack->child(output.src);
+            layer = engine.stack->find(output.src);
 
             Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], x.name.GetString(), (layer?&layer->is_a<Layer>()->fb:nullptr))->active(false);
 
@@ -190,7 +190,7 @@ void Open::outputs(){
 
 
             Node* layer = nullptr;
-            layer = engine.stack->child(output.src);
+            layer = engine.stack->find(output.src);
 
 
             if (output.name.length())
@@ -236,7 +236,7 @@ static void addEffectors(JSONVal v, Node* layer) {
 
         }
 
-        effector_ = engine.tree->child(effector_def.str());
+        effector_ = engine.tree->find(effector_def.str());
         
         if (! effector_) 
             continue; 
@@ -289,7 +289,8 @@ void Open::layers(){
 
                 new_model_->name(model_def.name());
 
-                if (model_def[1].isnum()) new_model_->is_a<Model>()->m.quantity(model_def[1].num());
+                if (model_def[1].isnum()) 
+                    new_model_->is_a<Model>()->m.quantity(model_def[1].num());
 
                 addEffectors( model_def[2], new_model_ );
 
@@ -373,9 +374,6 @@ void Open::effectors(){
 
         auto  wrap_ = engine.effectors->addOwnr<Wrappy>(std::vector<Effector*>{},3,x.name_v);
 
-        wrap_->owned=true;
-        wrap_->name(x.name_v);
-        
         auto wrap = wrap_->is_a<Wrappy>();
 
         for (auto sub : x) 
@@ -409,7 +407,7 @@ void Open::editors(){
 
 
             Node* n = nullptr;
-            if (e[4].IsString()) n = engine.tree->child(e[4].GetString());
+            if (e[4].IsString()) n = engine.tree->find(e[4].GetString());
             if (n) {
 
                 engine.gui->editors.back()->selected = n;
