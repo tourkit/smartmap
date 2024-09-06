@@ -115,6 +115,8 @@ struct Node {
     
     static inline std::map<TypeIndex, std::map<TypeIndex, std::function<void*(void*)>>> is_lists;
 
+    static std::vector<TypeIndex> isList(TypeIndex t);
+
     Node* operator[](int id);
     Node* operator[](std::string name);
 

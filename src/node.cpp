@@ -1,4 +1,5 @@
 #include "node.hpp"
+#include "effector.hpp"
 #include "log.hpp"
 #include "buffer.hpp"
 #include "ubo.hpp"
@@ -110,36 +111,38 @@ Node* Node::top() { auto top = this; while(top->parent()) { top = top->parent();
 
 void Node::addList(std::vector<Node*> *nodes) { for (auto n : *nodes) add(n); }
 
+std::vector<TypeIndex> Node::isList(TypeIndex t) {
 
+    std::vector<TypeIndex> types = {t};
+
+    auto &is_lists = Node::is_lists;
+
+    if (is_lists.find(t) != is_lists.end()) 
+        for (auto t : is_lists[t])  
+            for (auto x : isList(t.first) )
+                types.push_back(x);
+
+    return types;
+
+}
 
 Node* Node::add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* ptr) {
 
-    std::string t_NAME = t.pretty_name();
-    std::string u_NAME = u.pretty_name();
+    auto is_t = isList(t);
+    auto is_u = isList(u);
 
-    if (onaddtyped_cb.find(t) != onaddtyped_cb.end() && onaddtyped_cb.at(t).find(u) != onaddtyped_cb.at(t).end()) 
-        return  onaddtyped_cb[t][u](this,to_add);    
+    for (auto t_ : is_t)
+        for (auto u_ : is_u){
 
-    if (is_lists.find(t) != is_lists.end()) 
-        for (auto t_ : is_lists[t])  {
-    
-            t_NAME = t_.first.pretty_name();
+            std::string t_NAME = t_.pretty_name();
+            std::string u_NAME = u_.pretty_name();
 
-            if (is_lists.find(u) != is_lists.end()) 
-                for (auto u_ : is_lists[u])  {
-
-                    u_NAME = u_.first.pretty_name();
-
-                    to_add = add_typed(t_.first, u_.first, to_add, nullptr);
-                    
-                    if (!to_add)
-                        return nullptr;
-                       
-                }
-
+            if (onaddtyped_cb.find(t_) != onaddtyped_cb.end() && onaddtyped_cb.at(t_).find(u_) != onaddtyped_cb.at(t_).end()) 
+                return  onaddtyped_cb[t_][u_](this,to_add);    
+            
         }
 
-    return this;
+    return to_add;
 
 }
 
@@ -159,10 +162,7 @@ Node* Node::add(void* node_v)  {
     if (n && onadd_cb.find(n->type()) != onadd_cb.end()) 
         n = onadd_cb[n->type()](this,n);
 
-    if (!n)
-        { PLOGE << "couldnt add " << ((Node*)node_v)->name(); }
-
-    if (n != node_v) 
+    if (!n || n != node_v) 
         return n;
     
     n->parent(this);
@@ -300,11 +300,15 @@ void Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
 
 #ifdef ROCH
     std::string t_NAME = t.pretty_name();
+    Wrappy* ww = (Wrappy*)out;
 #endif
 
     if (is_lists.find(t) != is_lists.end()) 
-        for (auto t_ : is_lists[t]) 
-            trig_typed(e, t_.first, t_.second(out));
+        for (auto is : is_lists[t]) {
+
+            std::string is_NAME = is.first.pretty_name();
+            trig_typed(e, is.first, is.second(out));
+        }
 
     if (ontyped_cb[e].find(t) != ontyped_cb[e].end()) 
         (*(std::function<void(Node*,void*)>*) ontyped_cb[e].at(t))(this,out);  

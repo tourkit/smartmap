@@ -62,7 +62,7 @@ if (demodemo) ImGui::ShowDemoWindow();
     
     }
 
-    if (ImGui::IsKeyDown(ImGuiKey_Slash)) {
+    if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl) || ImGui::IsKeyDown(ImGuiKey_LeftShift)) && ImGui::IsKeyDown(ImGuiKey_Slash)) {
     
         ImGui::SetKeyboardFocusHere(-1);
     

@@ -121,7 +121,7 @@ void Callbacks::init() {
     });
 
     NODE<UberLayer>::is_a<Layer>();
-    NODE<Layer>::is_a<Modelable>();
+    NODE<DrawCall>::is_a<Modelable>();
     NODE<Layer>::is_a<DrawCall>();
     NODE<Model>::is_a<Modelable>();
     NODE<Modelable>::is_a<Effectable>();
@@ -141,13 +141,13 @@ void Callbacks::init() {
 
     NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
     
-        NODE<Member>::on_cb[Node::CREATE](node, &e->m);
+        NODE<Member>::on_cb[Node::CREATE](node, &e->Effectable::m);
         
     });
 
     NODE<Effectable>::on(Node::CHANGE, [](Node* node, Effectable *e){ 
     
-        NODE<Member>::on_cb[Node::CHANGE](node, &e->m);
+        NODE<Member>::on_cb[Node::CHANGE](node, &e->Effectable::m);
         
     });
 
@@ -175,21 +175,26 @@ void Callbacks::init() {
     // NODE<UberEffector>::is_a<Effector>();
     NODE<FileEffector>::is_a<Effector>();
     NODE<Wrappy>::is_a<Effector>();
+    NODE<Wrappy>::is_a<Effectable>();
 
     NODE<Wrappy>::onadd<Effector>([](Node* _this, Node *node) {
 
-        return _this->addPtr<Wrappy>( _this->is_a<Wrappy>()->addEffector(node->is_a<Effector>()) );
+        _this->is_a<Wrappy>()->addEffector(node->is_a<Effector>());
+        
+        return nullptr;
 
     });
 
     NODE<Effector>::on(Node::CREATE, [](Node*node, Effector* def){ NODE<Member>::on_cb[Node::CREATE](node, &def->m); });
 
-    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, &fx->m); });
 
     // NODE<Effector>::on(Node::CHANGE, [&](Node*node, Effector* effector){ NODE<Member>::on_cb[Node::CHANGE](node, &effector->m);  });
 
     NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector.m);   });
-    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){ NODE<Member>::on_cb[Node::CHANGE](node, &ref->m);  ref->update(); });
+
+    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){  });
+    
+    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){  ref->update(); });
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
 

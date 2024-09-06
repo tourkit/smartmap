@@ -30,5 +30,6 @@
   },
   "remaps": {
     "remap1": [ [ "ubersmart1::smartlayer1[4]::argb" ], [ "b " ], "( 1 - $0::g ) * $0::b" ]
-  }
+
+ }
 }

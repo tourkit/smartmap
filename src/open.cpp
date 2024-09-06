@@ -382,7 +382,8 @@ void Open::effectors(){
 
                 Node* n = (*engine.effectors)[sub.str()];
 
-                if (n && n->is_a<Effector>())  wrap_->add(n);  
+                if (n && n->is_a<Effector>())  
+                    wrap_->add(n);  
 
             }
 

@@ -1096,6 +1096,13 @@ void Editors::init() {
 
     // });
 
+    Editor<Wrappy>([](Node* node, Wrappy *wrap){
+        
+
+        for (auto x : wrap->effector_refs) 
+            Text(x->effector->m.name().c_str());
+
+    });
     Editor<Effector>([](Node* node, Effector *def){
         
         auto wrap_ = dynamic_cast<Wrappy*>(def);
