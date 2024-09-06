@@ -335,10 +335,10 @@ void Open::layers(){
                 l.m.name(name);
                 auto l_ = ubl_->addPtr<UberLayer::VirtualLayer>(&l);
                 l_->active(true);
-                l.m.quantity(count);
 
                 addEffectors( vlayer_def[models_id], l_ );
 
+                l.m.quantity(count);
                 
             }
 

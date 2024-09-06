@@ -192,7 +192,7 @@ void Callbacks::init() {
 
     NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector.m);   });
 
-    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){  });
+    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, fx->m.ref());  });
     
     NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){  ref->update(); });
 

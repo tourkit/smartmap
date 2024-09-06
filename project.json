@@ -25,9 +25,10 @@
     [ 0, 0, 0, 0, "universe 0::remap1" ]
   ],
   "layers": {
-    "ubersmart1": { "smartlayer1": [ 640, 360, 5, [ ] ] },
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "ubersmart1" ] ] }, [ ] ]
-  },
+    "ubersmart1": { "smartlayer1": [ 640, 360, 10, [ "argb", "rectangle", "wrapper", "strobe" ] ] },
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "rectangle" , "ubersmart1" ] ] }, [] ],
+    "Layer2": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "ubersmart1" ] ] }, [] ]
+ },
   "remaps": {
     "remap1": [ [ "ubersmart1::smartlayer1[4]::argb" ], [ "b " ], "( 1 - $0::g ) * $0::b" ]
 
