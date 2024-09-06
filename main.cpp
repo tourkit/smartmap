@@ -4,7 +4,20 @@
 
                                 */
 
+
+// many vlayers
+
+// delete vlayer should remove corresponding models
+
+// wrapper in layer def
+
+// feedback in layer def
+
+// freetype
+
+
 // ----
+
 
 #include "engine.hpp"
 

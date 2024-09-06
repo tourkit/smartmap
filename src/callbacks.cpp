@@ -159,8 +159,12 @@ void Callbacks::init() {
     });
 
     NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
+
+        auto x = _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ));
+
+        // node->referings.insert(x);
         
-        return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ));
+        return x;
         
     });
 
@@ -181,7 +185,7 @@ void Callbacks::init() {
 
         _this->is_a<Wrappy>()->addEffector(node->is_a<Effector>());
         
-        return nullptr;
+        return _this;
 
     });
 

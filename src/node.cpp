@@ -162,8 +162,11 @@ Node* Node::add(void* node_v)  {
     if (n && onadd_cb.find(n->type()) != onadd_cb.end()) 
         n = onadd_cb[n->type()](this,n);
 
-    if (!n || n != node_v) 
+    if (n != node_v) {
+        if (n) 
+            ((Node*)node_v)->referings.insert(n);
         return n;
+    }
     
     n->parent(this);
 
