@@ -20,14 +20,14 @@
   },
   "editors": [
     [ 0, 0, 0, 0, "Debug::dynamic_ubo", true ],
-    [ 0, 0, 0, 0, "Effectors::grid", true ],
+    [ 0, 0, 0, 0, "tree::Texture" ],
     [ 0, 0, 0, 0, "tree::Debug", true ],
     [ 0, 0, 0, 0, "Inputs::artnet1", true ],
     [ 0, 0, 0, 0, "Outputs::Window", true ]
   ],
   "layers": {
     "ubersmart1": { "smartlayer1": [ 640, 360, 10, [ "argb", "rectangle", "wrapper", "strobe" ] ] },
-    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "rectangle" , "ubersmart1" ] ] }, [] ],
+    "Layer1": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "rectangle", "ubersmart1" ] ] }, [] ],
     "Layer2": [ 1920, 1080, { "quad1": [ "quad.obj", 1, [ "grid" ] ] }, [] ]
   },
   "remaps": {

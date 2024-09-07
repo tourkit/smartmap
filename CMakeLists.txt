@@ -89,8 +89,51 @@ vendors/tinyexpr/tinyexpr.cpp
 vendors/RectangleBinPack/Rect.cpp
 vendors/RectangleBinPack/MaxRectsBinPack.cpp
 
-)
 
+vendors/ft/builds/windows/ftdebug.c
+vendors/ft/builds/windows/ftsystem.c
+vendors/ft/src/base/ftver.rc
+vendors/ft/src/autofit/autofit.c
+vendors/ft/src/base/ftbase.c
+vendors/ft/src/base/ftbbox.c
+vendors/ft/src/base/ftbdf.c
+vendors/ft/src/base/ftbitmap.c
+vendors/ft/src/base/ftcid.c
+vendors/ft/src/base/ftfstype.c
+vendors/ft/src/base/ftgasp.c
+vendors/ft/src/base/ftglyph.c
+vendors/ft/src/base/ftgxval.c
+vendors/ft/src/base/ftinit.c
+vendors/ft/src/base/ftmm.c
+vendors/ft/src/base/ftotval.c
+vendors/ft/src/base/ftpatent.c
+vendors/ft/src/base/ftpfr.c
+vendors/ft/src/base/ftstroke.c
+vendors/ft/src/base/ftsynth.c
+vendors/ft/src/base/fttype1.c
+vendors/ft/src/base/ftwinfnt.c
+vendors/ft/src/bdf/bdf.c
+vendors/ft/src/bzip2/ftbzip2.c
+vendors/ft/src/cache/ftcache.c
+vendors/ft/src/cff/cff.c
+vendors/ft/src/cid/type1cid.c
+vendors/ft/src/gzip/ftgzip.c
+vendors/ft/src/lzw/ftlzw.c
+vendors/ft/src/pcf/pcf.c
+vendors/ft/src/pfr/pfr.c
+vendors/ft/src/psaux/psaux.c
+vendors/ft/src/pshinter/pshinter.c
+vendors/ft/src/psnames/psnames.c
+vendors/ft/src/raster/raster.c
+vendors/ft/src/sdf/sdf.c
+vendors/ft/src/sfnt/sfnt.c
+vendors/ft/src/smooth/smooth.c
+vendors/ft/src/svg/svg.c
+vendors/ft/src/truetype/truetype.c
+vendors/ft/src/type1/type1.c
+vendors/ft/src/type42/type42.c
+vendors/ft/src/winfonts/winfnt.c
+)
 target_compile_features(smartmap PUBLIC cxx_std_20)
 set_target_properties(smartmap PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(
@@ -107,14 +150,15 @@ find_package(Boost REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 # include_directories(${})
 include_directories(${CMAKE_SOURCE_DIR}/vendors)
-
+add_definitions(-DFT2_BUILD_LIBRARY)
 target_include_directories(
   smartmap
   PRIVATE .
           src
           vendors/imgui/
           vendors/gl3w/include/
-          vendorss/glm/
+          vendors/glm/
+          vendors/ft/include/
           # ${FREETYPE_INCLUDE_DIRS}
 
 )
