@@ -24,10 +24,16 @@
 
 
 #include "engine.hpp"
+#include "src/freetype.hpp"
+#include "texture.hpp"
 
 int main() {
 
     engine.init();
+
+    Freetype ft("c", 200);
+
+    engine.tree->addOwnr<Texture>(ft.buffer, ft.width, ft.height, 0, 1, GL_RGB8,GL_RGBA);
 
     logger.cout(Sev::warning);
 
