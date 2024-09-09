@@ -153,7 +153,6 @@ struct Node {
 
         if (!add(n)) { 
             
-            delete ptr; 
             delete n; 
             return nullptr; 
         
@@ -170,6 +169,16 @@ struct Node {
             if (isa) 
                 cb(n,isa); 
         }); 
+    }
+
+    static inline std::function<Node*(Node*,Node*)> any_cb = [](Node*_this,Node*node){ return node; };
+
+    template <typename U>
+    Node* allow() { 
+        
+        Node::onadd_cb[typeid(U)] = any_cb;
+
+        return this;
     }
 
     template <typename U>
@@ -217,7 +226,7 @@ struct NODE {
     template <typename U>
     static void allow() { 
 
-        NODE<T>::onadd<U>([](Node*_this,Node*node){ return node; }); 
+        NODE<T>::onadd<U>(Node::any_cb); 
 
     }
 
@@ -225,5 +234,9 @@ struct NODE {
     static void onadd(std::function<Node*(Node*,Node*)> cb) { Node::onaddtyped_cb[typeid(T)][typeid(U)] = cb;  }
 
     static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
+
+};
+
+struct AnyNode {
 
 };

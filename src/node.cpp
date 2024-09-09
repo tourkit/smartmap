@@ -137,7 +137,8 @@ Node* Node::add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* ptr) {
 
 Node* Node::add(void* node_v)  {
 
-    auto n = (Node*)node_v;
+    auto og = (Node*)node_v;
+    auto n = og;
 
     if (!n || n == this || n->parent() == this) return nullptr;
 
@@ -145,9 +146,15 @@ Node* Node::add(void* node_v)  {
 
     bool callback_ = false;
 
-    if (onadd_cb.find(n->type()) != onadd_cb.end()) {
-        n = onadd_cb[n->type()](this,n);
-        callback_ = true;
+    auto is_u = isList(n->type());
+    is_u.push_back(typeid(AnyNode));
+
+    for (auto u_ : is_u) {
+        std::string u_NAME = u_.pretty_name();
+        if (onadd_cb.find(u_) != onadd_cb.end()) {
+            n = onadd_cb[u_](this,n);
+            callback_ = true;
+        }
     }
 
     if (!n) { 
@@ -155,8 +162,6 @@ Node* Node::add(void* node_v)  {
     }
 
     auto is_t = isList(type());
-    auto is_u = isList(n->type());
-    is_u.push_back(typeid(AnyType));
 
     for (auto t_ : is_t){
 
@@ -181,16 +186,16 @@ Node* Node::add(void* node_v)  {
 
     if (!callback_){
         
-        PLOGW << "cant add " << ((Node*)node_v)->name(); 
+        PLOGW << "no cb for " << og->name() << " ("<<  og->type_name() << ") in " << name() << " (" << type_name() << ")"; 
         return nullptr;
     
     }
 
     if (n != node_v) {
         if (n) 
-            ((Node*)node_v)->referings.insert(n);
+            og->referings.insert(n);
         else
-            { PLOGW << "cant add " << ((Node*)node_v)->name(); }
+            { PLOGW << name() << " can't add " << og->name(); }
         return n;
     }
     
