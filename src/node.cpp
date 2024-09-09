@@ -129,19 +129,7 @@ std::vector<TypeIndex> Node::isList(TypeIndex t) {
 
 Node* Node::add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* ptr) {
 
-    auto is_t = isList(t);
-    auto is_u = isList(u);
 
-    for (auto t_ : is_t)
-        for (auto u_ : is_u){
-
-            std::string t_NAME = t_.pretty_name();
-            std::string u_NAME = u_.pretty_name();
-
-            if (onaddtyped_cb.find(t_) != onaddtyped_cb.end() && onaddtyped_cb.at(t_).find(u_) != onaddtyped_cb.at(t_).end()) 
-                return  onaddtyped_cb[t_][u_](this,to_add);    
-            
-        }
 
     return to_add;
 
@@ -155,17 +143,54 @@ Node* Node::add(void* node_v)  {
 
     PLOGV << type_name() << "::" << name() << " add " << n->type_name() << "::" << n->name();
 
-    n = add_typed(type(), n->type(), n, void_ptr);
-    
-    if (n)
-        n = add_typed(type(), typeid(AnyType), n, void_ptr);
+    bool callback_ = false;
 
-    if (n && onadd_cb.find(n->type()) != onadd_cb.end()) 
+    if (onadd_cb.find(n->type()) != onadd_cb.end()) {
         n = onadd_cb[n->type()](this,n);
+        callback_ = true;
+    }
+
+    if (!n) { 
+        return nullptr;
+    }
+
+    auto is_t = isList(type());
+    auto is_u = isList(n->type());
+    is_u.push_back(typeid(AnyType));
+
+    for (auto t_ : is_t){
+
+        bool break_ = false;
+        for (auto u_ : is_u){
+
+            std::string t_NAME = t_.pretty_name();
+            std::string u_NAME = u_.pretty_name();
+
+            if (onaddtyped_cb.find(t_) != onaddtyped_cb.end() && onaddtyped_cb.at(t_).find(u_) != onaddtyped_cb.at(t_).end()) {
+                n = onaddtyped_cb[t_][u_](this,n);    
+                break_ = true;
+                callback_ = true;
+                break;
+            }
+        }
+
+        if (break_)
+            break;
+    
+    }
+
+    if (!callback_){
+        
+        PLOGW << "cant add " << ((Node*)node_v)->name(); 
+        return nullptr;
+    
+    }
 
     if (n != node_v) {
         if (n) 
             ((Node*)node_v)->referings.insert(n);
+        else
+            { PLOGW << "cant add " << ((Node*)node_v)->name(); }
         return n;
     }
     
