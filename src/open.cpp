@@ -168,12 +168,12 @@ static void addEffectors(JSONVal v, Node* layer) {
 
         if (effector_def.str() == "feedback") {
 
-            // auto lay = layer->is_a_nowarning<Layer>();
-            // if (!lay) 
-            //     lay = layer->parent()->is_a_nowarning<Layer>();
+            auto lay = layer->is_a_nowarning<Layer>();
+            if (!lay) 
+                lay = layer->parent()->is_a_nowarning<Layer>();
 
-            // if (lay)
-            //     layer->addPtr<EffectorRef>(lay->addEffector(lay->feedback()));
+            if (lay)
+                layer->addPtr<EffectorRef>(lay->addEffector(lay->feedback()));
             
             continue;
 

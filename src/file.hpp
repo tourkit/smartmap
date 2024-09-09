@@ -49,7 +49,7 @@ struct File {
     bool hasChanged();
 
     #ifdef ISUNIX
-    static inline const char* REPO_DIR = "./";
+    static inline const char* REPO_DIR = "";
     #else
     static inline const char* REPO_DIR = "C:/users/root/cpp/smartmap/";
     #endif
