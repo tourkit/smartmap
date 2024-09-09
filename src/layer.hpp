@@ -68,7 +68,9 @@ struct UberLayer : Layer {
 
     struct Feedback : Layer::Feedback {
 
-        Feedback(UberLayer* layer);
+        UberLayer* ubl;
+        
+        Feedback(UberLayer* ubl);
 
         std::string  source() override;
         bool setup(Builder* builder) override;

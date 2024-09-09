@@ -131,8 +131,17 @@ std::string UberLayer::Feedback::source() {
     std::string current;
 
     current += "void feedback(float intensity) { // washington\n";
-    current += "int obj = int(OBJ);\n";
-    current += "\tcolor += ( texture( feedback_pass, UV*static_ubo.uberLayer[obj].uberLayers.size+static_ubo.uberLayer[obj].uberLayers.norm) - .002 ) * intensity;\n",
+    std::string name = lower(ubl->uberlayer_m.name());
+
+    if (ubl->uberlayer_m.quantity()>1) {
+    
+        name += "[obj]";
+    
+        current += "int obj = int(OBJ);\n";
+    
+    }
+    
+    current += "\tcolor += ( texture( feedback_pass, UV*static_ubo."+name+".uberLayers.size+static_ubo."+name+".uberLayers.norm) - .002 ) * intensity;\n",
     current += "}\n";
     return current;
 
@@ -152,11 +161,13 @@ Layer::Feedback::Feedback(Layer* layer) :
 }
 
 
-UberLayer::Feedback::Feedback(UberLayer* layer) : 
+UberLayer::Feedback::Feedback(UberLayer* ubl) : 
 
-    Layer::Feedback(layer)
+    Layer::Feedback(ubl)
 
     {
+
+        this->ubl = ubl;
     
 }
 
