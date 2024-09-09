@@ -27,7 +27,7 @@ int main() {
 
     engine.init();
 
-    Freetype ft("c", 200);
+    Freetype ft("c", 100);
 
     engine.tree->addOwnr<Texture>(ft.buffer, ft.width, ft.height, 0, 1, GL_RGB8,GL_RGBA);
 
