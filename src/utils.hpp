@@ -124,5 +124,3 @@ struct TYPE : Type { TYPE() { id = typeid(T); sizes[id] = {sizeof(T)}; } };
 struct Member;
 struct MemberQ { Member* m; int eq = 0; int q = 1; };
 
-struct AnyType {};
-struct Any {};

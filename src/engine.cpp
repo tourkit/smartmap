@@ -1,4 +1,5 @@
 #include "engine.hpp"
+#include "drawcall.hpp"
 #include "layer.hpp"
 #include "struct.hpp"
 #include "effector.hpp"
@@ -7,6 +8,7 @@
 #include "gui.hpp"
 #include "ubo.hpp"
 #include "node.hpp"
+#include "utils.hpp"
 #include "vbo.hpp"
 #include "instance.hpp"
 #include "open.hpp"
@@ -45,7 +47,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
 
     tree = new Node("tree");
 
-    NODE<Node>::onadd<AnyType>([](Node*_this,Node*node){ return node; });
+    NODE<Node>::onadd<AnyNode>([](Node*_this,Node*node){ return node; });
 
     tree->active(1);
 
@@ -77,7 +79,7 @@ void Engine::init() {
     dynamic_ubo->quantity(2);
     dynamic_ubo->add(&glsl_data);
 
-    auto* debug_ = tree->addOwnr<Debug>();
+    auto* debug_ = tree->addOwnr<Debug>()->allow<AnyNode>();
     debug = debug_;
     debug->on(Node::RUN, [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(false);//->close();
     debug->addPtr<UBO>(static_ubo)->on(Node::CHANGE, [](Node* n) { 
@@ -103,7 +105,7 @@ void Engine::init() {
 
     inputs = tree->addOwnr<Node>()->name("Inputs")->active(1);
 
-    stack = tree->addOwnr<Stack>()->active(1);
+    stack = tree->addOwnr<Stack>()->active(1)->allow<DrawCall>();
 
     outputs = tree->addOwnr<Node>()->name("Outputs")->active(true);
 

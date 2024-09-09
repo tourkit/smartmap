@@ -90,8 +90,6 @@ vendors/RectangleBinPack/Rect.cpp
 vendors/RectangleBinPack/MaxRectsBinPack.cpp
 
 
-vendors/ft/builds/windows/ftdebug.c
-vendors/ft/builds/windows/ftsystem.c
 vendors/ft/src/base/ftver.rc
 vendors/ft/src/autofit/autofit.c
 vendors/ft/src/base/ftbase.c
@@ -133,6 +131,15 @@ vendors/ft/src/truetype/truetype.c
 vendors/ft/src/type1/type1.c
 vendors/ft/src/type42/type42.c
 vendors/ft/src/winfonts/winfnt.c
+
+
+vendors/ft/src/base/ftdebug.c
+vendors/ft/src/base/ftsystem.c
+
+# vendors/ft/builds/windows/ftdebug.c
+# vendors/ft/builds/windows/ftsystem.c
+
+
 )
 target_compile_features(smartmap PUBLIC cxx_std_20)
 set_target_properties(smartmap PROPERTIES CXX_EXTENSIONS OFF)

@@ -120,12 +120,17 @@ void Callbacks::init() {
 
     });
 
+    NODE<UberLayer>::allow<UberLayer::VirtualLayer>();
+    NODE<Effectable>::allow<EffectorRef>();
+    NODE<Modelable>::allow<Model>();
+    NODE<Artnet>::allow<Universe>();
+    NODE<Universe>::allow<DMXRemap>();
     NODE<UberLayer>::is_a<Layer>();
     NODE<DrawCall>::is_a<Modelable>();
     NODE<Layer>::is_a<DrawCall>();
     NODE<Model>::is_a<Modelable>();
-    NODE<Modelable>::is_a<Effectable>();
     NODE<UberLayer::VirtualLayer>::is_a<Effectable>();
+    NODE<Modelable>::is_a<Effectable>();
 
     NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 
 

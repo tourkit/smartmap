@@ -25,13 +25,13 @@
 
 int main() {
 
+    logger.cout(Sev::warning);
+
     engine.init();
 
     Freetype ft("c", 100);
 
     engine.tree->addOwnr<Texture>(ft.buffer, ft.width, ft.height, 0, 1, GL_RGB8,GL_RGBA);
-
-    logger.cout(Sev::warning);
 
     engine.open("project.json");
 
