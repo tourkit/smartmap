@@ -24,10 +24,10 @@ struct File;
         ~JSONVal() ;
 
 
-        JSONVal operator[](std::string name) ;
+        JSONVal operator[](std::string name, bool warn = false) ;
 
 
-        JSONVal operator[](int id) ;
+        JSONVal operator[](int id, bool warn = false) ;
         
 
         auto begin() { 
@@ -44,12 +44,12 @@ struct File;
 
         std::string name();
 
-        std::string str();
+        std::string str(std::string def = "");
         
         bool isnum();
         bool isarr();
         bool isobj();
-        float num();
+        float num(float def = 0);
         size_t size();
 
         std::string stringify();

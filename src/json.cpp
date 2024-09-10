@@ -98,12 +98,15 @@ std::string JSONVal::stringify() {
 JSONVal::~JSONVal() { }
 
 static rapidjson::Value null_val;
+static rapidjson::Document null_doc;
+static auto null_obj = null_doc.SetObject().GetObject();
 
-JSONVal JSONVal::operator[](std::string name) { 
+JSONVal JSONVal::operator[](std::string name, bool warn) { 
 
 
     if (!value.HasMember(name.c_str())) {
-        PLOGW << "no " << name;
+        if (warn)
+            {PLOGW << "no " << name;}
         return JSONVal(null_val);
     }
     
@@ -112,11 +115,12 @@ JSONVal JSONVal::operator[](std::string name) {
 }
 
 
-JSONVal JSONVal::operator[](int id) { 
+JSONVal JSONVal::operator[](int id, bool warn) { 
 
     if (value.IsArray() && id < value.GetArray().Size()) return JSONVal(value.GetArray()[id]);
     
-    PLOGW << "no " << id;
+    if (warn)
+        {PLOGW << "no " << id;}
 
     return JSONVal(null_val);
     
@@ -158,20 +162,20 @@ size_t JSONVal::size() {
 
 }
 
-float JSONVal::num() { 
+float JSONVal::num(float def) { 
     
     if (value.IsFloat()) return value.GetFloat();
 
     if (value.IsInt()) return value.GetInt();
     
-    return 0; 
+    return def; 
     
 }
 
-std::string JSONVal::str() { 
+std::string JSONVal::str(std::string def) { 
     
     if (value.IsString()) return value.GetString();  
     
-    return ""; 
+    return def; 
     
 }

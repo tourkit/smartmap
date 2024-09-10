@@ -44,8 +44,12 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
 
 
     }
-    PLOGI  << " Display @ " << displays.back().rate << "Hz " << displays.back().width << "x" << displays.back().height;
 
+    if (displays.size())
+        {PLOGI  << " Display @ " << displays.back().rate << "Hz " << displays.back().width << "x" << displays.back().height;}
+    else
+        {PLOGE  << " NO MONITOR"; }
+        
     if (fullscreen)
     {
         auto monitor = glfwGetPrimaryMonitor();

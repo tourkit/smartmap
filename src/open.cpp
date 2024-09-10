@@ -3,6 +3,7 @@
 #include "atlas.hpp"
 #include "json.hpp"
 #include "rapidjson/document.h"
+#include "rapidjson/rapidjson.h"
 #include "texture.hpp"
 #include "file.hpp"
 #include "effector.hpp"
@@ -39,116 +40,71 @@ void Open::medias(){
 
 }
 
+
 void Open::inputs(){
 
-    JSON::if_obj_in("inputs", json_v.document, [&](auto &m) {
+    for (auto &artnet : json_v["inputs"]["artnet"]) {
 
-        if (!m.name.IsString() || !m.value.IsObject()) { PLOGW << json_error; return; }
+        Node* n = engine.inputs->addOwnr<Artnet>( artnet["ip", true].str() ) ;
 
-        if (!strcmp(m.name.GetString(),"artnet")) for (auto &x : m.value.GetObj()) {
+        n->active(1)->name( artnet.name() );
 
-            if (!x.name.IsString()) { PLOGW << json_error; continue; }
+        for (auto &remap : artnet["remaps"]) {
 
-            if (x.value.IsString()) engine.inputs->addOwnr<Artnet>( x.value.IsString() ? x.value.GetString() : "" )->active(1)->name( x.name.GetString() );
+            Node* dest = engine.tree->find(remap["destination", true].str());
 
-            if (!x.value.IsArray()) { PLOGW << json_error; continue; }
+            if (!dest) 
+                continue; 
+            
+            auto vlayer = dest->is_a<UberLayer::VirtualLayer>();
+            
+            if (!vlayer)  
+                continue;
 
-            auto arr = x.value.GetArray();
+            auto inst = Instance(*engine.dynamic_ubo)[&dest->parent()->is_a<UberLayer>()->m][&vlayer->m];
 
-            if (!arr.Size()) { PLOGW << json_error; continue; }
+            if (inst.stl.size() == 1) 
+                { PLOGW << json_error; continue; }
 
-            Node* an_ = engine.inputs->addOwnr<Artnet>( arr[0].IsString() ? arr[0].GetString() : "" );
+            std::vector<DMXRemap::Attribute> attrs;
+            for (auto &x : remap["patch"])
+                if (x.isnum()) 
+                    attrs.push_back({(int)x.num(1)});
 
-            an_->active(1)->name( x.name.GetString() );
+            auto &an = *n->is_a<Artnet>();
+            
+            auto &uni = an.universe(remap["universe", true].num(1)-1);
 
-            auto &an = *an_->is_a<Artnet>();
+            n->trig(Node::RUN);
 
-            if (arr.Size() < 2) continue;
-            if (!arr[1].IsObject()) { PLOGW << json_error; continue; }
+            DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap["channel", true].num(1)-1, attrs, remap["quantity"].num(1));
 
-            for (auto &remap : arr[1].GetObj()) {
+            dmxremap->src.remaps.push_back( dmxremap );
 
-                if (!remap.name.IsString() || !remap.value.IsArray()) { PLOGW << json_error; continue; }
+            auto out = n->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(remap.name());
 
-                auto arr = remap.value.GetArray();
-                int x = arr.Size();
-
-                if (arr.Size() < 3 || !arr[0].IsInt() || !arr[1].IsInt() || !arr[2].IsString()) { PLOGW << json_error; continue; }
-
-                // should find (Layer/Model/Effector aka Effectable) node(aka "w" down there) (then get Member path)
-
-
-                Node* n = engine.tree->find(arr[2].GetString());
-
-                if (!n) { PLOGW << arr[2].GetString() << " not found"; continue; }
-                
-                
-                auto vlayer = n->is_a<UberLayer::VirtualLayer>();
-                
-                if (!vlayer)  
-                    continue;
-
-                auto inst = Instance(*engine.dynamic_ubo)[&n->parent()->is_a<UberLayer>()->m][&vlayer->m];
-
-                if (inst.stl.size() == 1) { PLOGW << json_error; continue; }
-
-                // TODOTODO
-
-                
-
-                std::vector<DMXRemap::Attribute> attrs;
-                if ( arr.Size() > 3 && arr[3].IsArray() ) for (auto &x : arr[3].GetArray()) if (x.IsInt()) attrs.push_back({x.GetInt()});
-
-                int q = 1;
-                if ( arr.Size() > 4 && arr[4].IsInt() ) q = arr[4].GetInt();
-                
-                auto &uni = an.universe(arr[0].GetInt()-1);
-
-                an_->trig(Node::RUN);
-
-                DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, arr[1].GetInt()-1, attrs, q);
-
-                dmxremap->src.remaps.push_back( dmxremap );
-
-                auto out = an_->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(remap.name.GetString());
-
-                std::string sss =arr[2].GetString() ;
-                auto w = engine.tree->find(sss);
-                if (!w) { PLOGE <<arr[2].GetString()<< " not found"; return; }
-                w->referings.insert( out );
-
-            }
+            dest->referings.insert( out );
 
         }
 
-    });
+    }
 
 }
 
 struct JSONOutput { int rect[4] = {1,1,0,0}; std::string name, src;};
 
-JSONOutput isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator>>& x) {
+JSONOutput isOutput(JSONVal& output) {
 
     JSONOutput out;
 
-    if (!x.name.IsString() || !x.value.IsArray()) { 
+    out.name = output.name();
 
-        PLOGW << json_error; 
+    auto dim = output["dimensions", true];
 
-        return out; 
-    }
+    out.rect[0] = dim[0].num(1);
+    out.rect[1] = dim[1].num(1);
 
-    out.name = x.name.GetString();
-
-    auto arr = x.value.GetArray();
-
-    int rect_count = 0;
-    for (auto &x : arr) 
-        if (x.IsInt() && rect_count < 4)
-            out.rect[rect_count++] = x.GetInt();
-        else 
-            if (x.IsString()) 
-                out.src = x.GetString();
+    out.src = output["source", true].str();
     
     return out;
 
@@ -156,54 +112,51 @@ JSONOutput isOutput(rapidjson::GenericMember<rapidjson::UTF8<>, rapidjson::Memor
 
 void Open::outputs(){
 
-    JSON::if_obj_in("outputs", json_v.document, [&](auto &m) {
+    auto outputs = json_v["outputs"];
 
-        if (!m.name.IsString() || !m.value.IsObject()) { PLOGW << json_error; return; }
+    for (auto &monitor : outputs["monitor"]) {
 
-        if (!strcmp(m.name.GetString(),"ndi")) for (auto &x : m.value.GetObj()) {
+        auto output = isOutput(monitor);
 
-            auto output = isOutput(x);
+        auto window = engine.outputs->addPtr<Window>( &engine.window );
 
-            Node* layer = nullptr;
-            layer = engine.stack->find(output.src);
-
-            Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], x.name.GetString(), (layer?&layer->is_a<Layer>()->fb:nullptr))->active(false);
-
-            if (output.name.length())
-                n->name(output.name);
-
-            if (layer) 
-                layer->referings.insert( n );
-
-            n->active(true);
-
-        }
-
-        if (!strcmp(m.name.GetString(),"monitor")) for (auto &x : m.value.GetObj()) {
-
-            auto output = isOutput(x);
-
-            auto window = engine.outputs->addPtr<Window>( &engine.window );
-
-            engine.window.size( output.rect[0] , output.rect[1] );
-            engine.window.pos(  output.rect[2] , output.rect[3] );
+        engine.window.size( output.rect[0] , output.rect[1] );
+        engine.window.pos(  output.rect[2] , output.rect[3] );
 
 
-            Node* layer = nullptr;
-            layer = engine.stack->find(output.src);
+        Node* layer = nullptr;
+        layer = engine.stack->find(output.src);
 
 
-            if (output.name.length())
-                window->name(output.name);
+        if (output.name.length())
+            window->name(output.name);
 
-            if (layer) 
-                window->add(layer);
+        if (layer) 
+            window->add(layer);
 
-            break; // only one alloweed for nowe
+        break; // only one alloweed for nowe
+        
+    }
 
-        }
+    for (auto &ndi : outputs["ndi"]) {
 
-    });
+        auto output = isOutput(ndi);
+
+        Node* layer = nullptr;
+        layer = engine.stack->find(output.src);
+
+        Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], ndi.name(), (layer?&layer->is_a<Layer>()->fb:nullptr))->active(false);
+
+        if (output.name.length())
+            n->name(output.name);
+
+        if (layer) 
+            layer->referings.insert( n );
+
+        n->active(true);
+
+    }
+
 
 }
 
@@ -255,52 +208,42 @@ void Open::layers(){
 
         if (!layer_def.name().data()) { PLOGW << layer_def.stringify(); continue; }
 
-        int width = engine.window.width, height = engine.window.height;
+        auto dim = layer_def["dimensions"];
+        int width = engine.window.width; 
+        int height = engine.window.height;
 
-        int models_id = 0;
-
-        if (layer_def.isarr())  {  
-
-            if (layer_def[0].isnum() && layer_def[1].isnum()) {
-
-                width = layer_def[0].num(); height = layer_def[1].num();
-
-                models_id = 2;
-
-            }
-
-            if (!layer_def[models_id].isobj()) { PLOGW << layer_def.stringify(); continue; }
+        if (dim.size() == 2)  { // HARD CHECK FOR TYPE BETWEEN VIRTUALLAYER AND LAYER
+         
+            width = dim[0].num(1); 
+            height = dim[1].num(1);
 
             Node* new_layer = engine.stack->addOwnr<Layer>(width,height,layer_def.name());
             
-            for (auto model_def : layer_def[models_id]) {
+            for (auto model_def : layer_def["models"]) {
 
                 Node* model_file = nullptr;
 
                 engine.models->each<File>([&](Node* n, File* file) {
 
-                    if (file->filename() == model_def[0].str()) model_file = n;
+                    if (file->filename() == model_def["model"].str()) model_file = n;
 
                 });
 
-                if (!model_file) { PLOGW << "no model " << model_def[0].str(); continue; }
+                if (!model_file) { PLOGW << "no model " << model_def["model"].str(); continue; }
 
                 auto new_model_ = new_layer->add(model_file);
 
                 new_model_->name(model_def.name());
 
-                if (model_def[1].isnum()) 
-                    new_model_->is_a<Model>()->m.quantity(model_def[1].num());
+                new_model_->is_a<Model>()->m.quantity(model_def["quantity"].num(1));
 
-                addEffectors( model_def[2], new_model_ );
+                addEffectors( model_def["effectors"], new_model_ );
 
             }
             
-            addEffectors( layer_def[models_id+1], new_layer );
+            addEffectors( layer_def["effectors"], new_layer );
 
         }else{ // uberlayer
-
-            if (!layer_def.name().data()) continue;
 
             auto ubl_ = engine.stack->addOwnr<UberLayer>();
             auto &ubl = *ubl_->is_a<UberLayer>();
@@ -309,26 +252,18 @@ void Open::layers(){
 
             for (auto vlayer_def : layer_def) {
 
-                if (!vlayer_def.name().data()) continue;
+                if (!vlayer_def.name().data()) 
+                    { PLOGW << vlayer_def.stringify(); continue; }
 
                 int count = 1;
 
-                if (vlayer_def[0].isnum() && vlayer_def[1].isnum()) {
+                auto dim = vlayer_def["dimensions", true];
 
-                    models_id = 2;
+                width = dim[0].num(1);
+                height = dim[1].num(1);
 
-                    width = vlayer_def[0].num();
-                    height = vlayer_def[1].num();
+                count = vlayer_def["quantity", true].num(1);
 
-                    if (vlayer_def[2].isnum()) {
-
-                        models_id = 3;
-
-                        count = vlayer_def[2].num();
-
-                    }
-
-                }
 
                 auto &l = ubl.addLayer(width,height);
                 auto name = vlayer_def.name();
@@ -336,7 +271,7 @@ void Open::layers(){
                 auto l_ = ubl_->addPtr<UberLayer::VirtualLayer>(&l);
                 l_->active(true);
 
-                addEffectors( vlayer_def[models_id], l_ );
+                addEffectors( vlayer_def["effectors"], l_ );
 
                 l.m.quantity(count);
                 

@@ -8,7 +8,7 @@
             "remaps": {
                 "remap1": {
                     "universe": 1,
-                    "address": 1,
+                    "channel": 1,
                     "destination": "virtuallayers1::layer1",
                     "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 ]
                 }
@@ -19,9 +19,8 @@
   "outputs": {
     "monitor": {
         "Window": {
-            "definition": [969, 807],
-            "offset": [0, 0],
-            "layer": "Layer1"
+            "dimensions": [969, 807],
+            "source": "layer1"
         }
     },
     "ndi": {}
@@ -42,7 +41,7 @@
   "layers": {
     "virtuallayers1": {
         "layer1": {
-            "dimension": [640, 360],
+            "dimensions": [640, 360],
             "offset": [2,2],
             "quantity": 10,
             "effectors": ["argb", "rectangle", "wrapper", "strobe"],
@@ -50,12 +49,12 @@
         }
     },
     "layer1": {
-        "dimension": [1920, 1080],
+        "dimensions": [1920, 1080],
         "models": {
             "quad1": {
                 "model": "quad.obj",
                 "quantity": 1,
-                "effectors": [ "virtuallayers1::layer1" ]
+                "effectors": [ "virtuallayers1" ]
             }
         },
         "effectors": []
