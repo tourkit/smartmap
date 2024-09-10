@@ -106,7 +106,7 @@ JSONVal JSONVal::operator[](std::string name, bool warn) {
 
     if (!value.HasMember(name.c_str())) {
         if (warn)
-            {PLOGW << "no " << name;}
+            {PLOGW << "no " << name << " in " << this->name() << " (" << str() << ")";}
         return JSONVal(null_val);
     }
     
