@@ -155,7 +155,7 @@ void Open::outputs(){
 static void addEffectors(JSONVal v, Node* layer) {
 
     if (!v.isarr()) {
-        PLOGW << v.name() << " is not an array";
+        PLOGW << layer->name() << " a.k.a. \"" <<v.name() << "\" is not an array";
         return;
     }
 
