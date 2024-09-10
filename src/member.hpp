@@ -25,6 +25,7 @@ struct Member {
     std::string next_name(std::string name);
 
     std::string name();
+    std::string _name();
 
     Type type();
 

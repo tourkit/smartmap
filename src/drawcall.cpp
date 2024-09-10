@@ -33,7 +33,7 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
 std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
 
-    auto name = lower(effectable.m.name());
+    auto name = lower(effectable.m._name());
 
     if (effectable.m.quantity() > 1) name += "["+(dc->models.size() == 1?"ID":instance)+"]";
 
@@ -49,7 +49,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     for (auto ref : effectable.effector_refs) 
 
-        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->m.name());
+        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->m._name());
 
 
     body_fragment+=current_model;
@@ -97,13 +97,13 @@ void Layer::ShaderProgramBuilder::build() {
 
         for (auto &model : dc->models)
             for (int instance = 0; instance < model.get()->m.quantity(); instance++) 
-                body_fragment += print_layer(*model, lower(dc->m.name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->stl.back().m->quantity()>1?"[int(LAYER)]":""));
+                body_fragment += print_layer(*model, lower(dc->m._name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->stl.back().m->quantity()>1?"[int(LAYER)]":""));
 
 
         current_model.clear();
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->m.name())+"."+lower(ref->m.ref()->name()));
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->m._name())+"."+lower(ref->m.ref()->_name()));
 
         body_fragment+=current_model;
         
@@ -130,7 +130,7 @@ void Layer::ShaderProgramBuilder::build() {
 
         auto m = vbo->vertice.members[i];
 
-        header_vertex += "out "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+        header_vertex += "out "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->_name()+";\n";
 
     }
 
@@ -141,7 +141,7 @@ void Layer::ShaderProgramBuilder::build() {
     for (int i = 1; i < vbo->vertice.members.size(); i++) {
 
         auto m = vbo->vertice.members[i];
-        body_vertex += "\t"+m->name()+" = "+m->name()+"_;\n\n";
+        body_vertex += "\t"+m->_name()+" = "+m->_name()+"_;\n\n";
 
     }
 

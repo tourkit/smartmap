@@ -77,7 +77,7 @@ std::string Builder::frag() {
 
         auto m = vbo->vertice.members[i];
 
-        ins_str += "in "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->name()+";\n";
+        ins_str += "in "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->_name()+";\n";
 
     } if (ins_str.length()) ins_str += "\n";
 
@@ -113,7 +113,7 @@ std::string Builder::vert() {
 
         for (auto x : vbo->vertice.members)
 
-            vbo_layouts.push_back({count++,x->type_name(), (x->name()+(count>1?"_":""))});
+            vbo_layouts.push_back({count++,x->type_name(), (x->_name()+(count>1?"_":""))});
 
     }
 
@@ -190,7 +190,7 @@ std::string Builder::layout() {
 
     for (auto m : structs) {
 
-        auto name = m->name();
+        auto name = m->_name();
         
         if (!name.length())
             continue;
@@ -232,9 +232,9 @@ std::string Builder::layout() {
 
     for (auto ubo : ubos) {
 
-        out += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->name() + "_ ";
+        out += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->_name() + "_ ";
 
-        out += " { " + camel(ubo->name()) + " " + lower(ubo->name());
+        out += " { " + camel(ubo->_name()) + " " + lower(ubo->_name());
 
         if (ubo->quantity()>1) out += "["+std::to_string(ubo->quantity())+"]";
 
@@ -269,7 +269,7 @@ std::string Builder::print_struct(Member* member, std::map<Member*,std::string> 
 
         auto name = unique_name_list.find(ref)!=unique_name_list.end()?unique_name_list[ref]:ref->type_name();
 
-        content+=tb+""+name+" "+lower(ref->name());
+        content+=tb+""+name+" "+lower(ref->_name());
 
         if (!ref->isData() && ref->quantity()>1) content += "["+std::to_string(ref->quantity())+"]";
 

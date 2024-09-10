@@ -77,6 +77,15 @@ void Member::name(std::string name_v) {
         
 }
 
+std::string Member::_name() { 
+
+    std::string name = this->name();
+
+    std::replace( name.begin(), name.end(), ' ', '_');
+
+    return name;
+}
+
 std::string Member::name() { 
     if (name_v.length()) 
         return name_v; 
