@@ -61,6 +61,8 @@ void Open::inputs(){
             if (!vlayer)  
                 continue;
 
+            auto xx = dest->parent();
+
             auto inst = Instance(*engine.dynamic_ubo)[&dest->parent()->is_a<UberLayer>()->m][&vlayer->m];
 
             if (inst.stl.size() == 1) 
@@ -123,16 +125,10 @@ void Open::outputs(){
         engine.window.size( output.rect[0] , output.rect[1] );
         engine.window.pos(  output.rect[2] , output.rect[3] );
 
-
-        Node* layer = nullptr;
-        layer = engine.stack->find(output.src);
-
-
         if (output.name.length())
             window->name(output.name);
 
-        if (layer) 
-            window->add(layer);
+        outputs_src[window] = output.src;
 
         break; // only one alloweed for nowe
         
@@ -142,21 +138,16 @@ void Open::outputs(){
 
         auto output = isOutput(ndi);
 
-        Node* layer = nullptr;
-        layer = engine.stack->find(output.src);
-
-        Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], ndi.name(), (layer?&layer->is_a<Layer>()->fb:nullptr))->active(false);
+        Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], ndi.name())->active(false);
 
         if (output.name.length())
             n->name(output.name);
 
-        if (layer) 
-            layer->referings.insert( n );
+        outputs_src[n] = output.src;
 
         n->active(true);
 
     }
-
 
 }
 
@@ -209,13 +200,16 @@ void Open::layers(){
         if (!layer_def.name().data()) { PLOGW << layer_def.stringify(); continue; }
 
         auto dim = layer_def["dimensions"];
-        int width = engine.window.width; 
-        int height = engine.window.height;
+        int width; 
+        int height;
 
         if (dim.size() == 2)  { // HARD CHECK FOR TYPE BETWEEN VIRTUALLAYER AND LAYER
          
-            width = dim[0].num(1); 
-            height = dim[1].num(1);
+            width = dim[0].num(); 
+            height = dim[1].num();
+
+            if (!width) width = engine.window.width;
+            if (!height) height = engine.window.height;
 
             Node* new_layer = engine.stack->addOwnr<Layer>(width,height,layer_def.name());
             
@@ -259,10 +253,11 @@ void Open::layers(){
 
                 auto dim = vlayer_def["dimensions", true];
 
-                width = dim[0].num(1);
-                height = dim[1].num(1);
+                width = dim[0].num();
+                height = dim[1].num();
 
-                count = vlayer_def["quantity", true].num(1);
+                if (!width) width = engine.window.width;
+                if (!height) height = engine.window.height;
 
 
                 auto &l = ubl.addLayer(width,height);
@@ -273,7 +268,7 @@ void Open::layers(){
 
                 addEffectors( vlayer_def["effectors"], l_ );
 
-                l.m.quantity(count);
+                l.m.quantity(vlayer_def["quantity", true].num(1));
                 
             }
 
@@ -403,18 +398,22 @@ void Open::json(std::string path) {
     models();
 
     effectors();
+
+    outputs();
     
     layers();
     
-    outputs();
-
     inputs();
 
     editors();
 
+    for (auto x : outputs_src){ 
+        Node* layer = engine.stack->find(x.second);
+        if (layer)
+            x.first->add(layer);
+    }
 
 
-
-
+    outputs_src.clear();
 
 }

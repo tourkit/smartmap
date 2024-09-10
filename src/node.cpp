@@ -43,7 +43,8 @@ Node* Node::name(std::string value) { name_v = value; update();  return this;}
 Node::~Node() {
 
     auto t_childrens = childrens;
-    for (auto c : childrens) delete c;
+    for (auto c : t_childrens) 
+        delete c;
 
     t_childrens = hidden_childrens;
     for (auto c : t_childrens) delete c;

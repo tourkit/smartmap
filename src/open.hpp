@@ -1,8 +1,10 @@
 
 #include <cstring>
+#include <map>
 
 #include "json.hpp"
 
+struct Node;
 struct Open{
 
     void json(std::string path);
@@ -17,5 +19,8 @@ struct Open{
     void models();
     void outputs();
     void editors();
+
+    std::map<Node*,std::string> outputs_src;
+
     
 };
