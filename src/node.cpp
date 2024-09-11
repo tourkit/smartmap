@@ -195,6 +195,9 @@ Node* Node::add(void* node_v)  {
     
     }
 
+    if (n == &no_worry_node) 
+        return nullptr;
+
     if (n != node_v) {
         if (n) 
             og->referings.insert(n);

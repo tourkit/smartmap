@@ -326,7 +326,7 @@ void Callbacks::init() {
         
         _this->referings.insert(node);
 
-        return nullptr;
+        return &no_worry_node;
 
     });
 

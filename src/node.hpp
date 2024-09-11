@@ -237,6 +237,8 @@ struct NODE {
 
 };
 
+static Node no_worry_node;
+
 struct AnyNode {
 
 };
