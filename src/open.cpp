@@ -23,7 +23,7 @@ void Open::medias(){
 
     for (auto &media : json_v["medias"]) {
 
-        if (!media.name().c_str() || !media.str().c_str()) 
+        if (!media.name().length() || !media.str().length()) 
             return;
 
         if (media.name() != "atlas") // temporary only name allowed
@@ -151,7 +151,7 @@ void Open::outputs(){
 static void addEffectors(JSONVal v, Node* layer) {
 
     if (!v.isarr()) {
-        PLOGW << layer->name() << " a.k.a. \"" <<v.name() << "\" is not an array";
+        PLOGW << layer->name() << " is not an effector";
         return;
     }
 
@@ -258,8 +258,8 @@ void Open::layers(){
 
 
                 auto &l = ubl.addLayer(width,height);
-                auto name = vlayer_def.name();
-                l.m.name(name);
+                if (vlayer_def.name().length())
+                    l.m.name(vlayer_def.name());
                 auto l_ = ubl_->addPtr<UberLayer::VirtualLayer>(&l);
                 l_->active(true);
 
