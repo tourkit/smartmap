@@ -14,14 +14,8 @@
                     },
                     "remap2": {
                         "universe": 1,
-                        "channel": 1,
+                        "channel": 96,
                         "destination": "virtuallayers1::Free Layer 3",
-                        "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 ]
-                    },
-                    "remap3": {
-                        "universe": 1,
-                        "channel": 1,
-                        "destination": "virtuallayers1::Free Layer 4",
                         "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 ]
                     }
                 }
@@ -31,23 +25,16 @@
     "layers": {
         "virtuallayers1": {
             "Free Layer 2": {
-                "dimensions": [ 0, 0 ],
+                "dimensions": [ 400, 300 ],
                 "offset": [ 0, 0 ],
-                "quantity": 1,
+                "quantity": 5,
                 "effectors": [ "argb", "rectangle", "wrapper", "strobe" ],
                 "blending": "Additive"
             },
             "Free Layer 3": {
                 "dimensions": [ 0, 0 ],
                 "offset": [ 0, 0 ],
-                "quantity": 3,
-                "effectors": [ "argb", "rectangle", "wrapper", "strobe" ],
-                "blending": "Additive"
-            },
-            "Free Layer 4": {
-                "dimensions": [ 0, 0 ],
-                "offset": [ 0, 0 ],
-                "quantity": 1,
+                "quantity": 5,
                 "effectors": [ "argb", "rectangle", "wrapper", "strobe" ],
                 "blending": "Additive"
             }
@@ -60,9 +47,20 @@
                     "quantity": 1,
                     "effectors": [
                         "blank",
-                        "virtuallayers1::Free Layer 2",
-                        "virtuallayers1::Free Layer 3",
-                        "virtuallayers1::Free Layer 4"
+                        "virtuallayers1::Free Layer 2"
+                    ]
+                }
+            }
+        },
+        "outputlayer2": {
+            "dimensions": [ 1920, 1080 ],
+            "models": {
+                "quad1": {
+                    "model": "quad.obj",
+                    "quantity": 1,
+                    "effectors": [
+                        "blank",
+                        "virtuallayers1::Free Layer 3"
                     ]
                 }
             }
@@ -85,6 +83,12 @@
     "outputs": {
         "monitor": {
             "HDMI 1": {
+                "dimensions": [ 100, 100 ],
+                "source": "outputlayer2"
+            }
+        },
+        "ndi": {
+            "SMARTmoup": {
                 "dimensions": [ 100, 100 ],
                 "source": "outputlayer1"
             }
