@@ -20,7 +20,8 @@ struct Open{
     void outputs();
     void editors();
 
-    std::map<Node*,std::string> outputs_src;
+    struct JSONOutput { int rect[4] = {1,1,0,0}; std::string name, src;};
+    std::map<Node*,JSONOutput> outputs_src;
 
     
 };

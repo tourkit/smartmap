@@ -23,6 +23,8 @@
 // ----
 
 
+// Model shouldnt allow Vlayer
+
 #include "engine.hpp"
 #include "src/freetype.hpp"
 #include "texture.hpp"

@@ -62,6 +62,8 @@ void Open::inputs(){
                 continue;
 
             auto xx = dest->parent();
+            // if (!xx || !xx->is_a<UberLayer>())
+            //     continue;
 
             auto inst = Instance(*engine.dynamic_ubo)[&dest->parent()->is_a<UberLayer>()->m][&vlayer->m];
 
@@ -93,11 +95,10 @@ void Open::inputs(){
 
 }
 
-struct JSONOutput { int rect[4] = {1,1,0,0}; std::string name, src;};
 
-JSONOutput isOutput(JSONVal& output) {
+Open::JSONOutput isOutput(JSONVal& output) {
 
-    JSONOutput out;
+    Open::JSONOutput out;
 
     out.name = output.name();
 
@@ -125,10 +126,7 @@ void Open::outputs(){
         engine.window.size( output.rect[0] , output.rect[1] );
         engine.window.pos(  output.rect[2] , output.rect[3] );
 
-        if (output.name.length())
-            window->name(output.name);
-
-        outputs_src[window] = output.src;
+        outputs_src[window] = output;
 
         break; // only one alloweed for nowe
         
@@ -140,10 +138,7 @@ void Open::outputs(){
 
         Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], ndi.name())->active(false);
 
-        if (output.name.length())
-            n->name(output.name);
-
-        outputs_src[n] = output.src;
+        outputs_src[n] = output;
 
         n->active(true);
 
@@ -408,9 +403,14 @@ void Open::json(std::string path) {
     editors();
 
     for (auto x : outputs_src){ 
-        Node* layer = engine.stack->find(x.second);
-        if (layer)
-            x.first->add(layer);
+        Node* output = engine.stack->find(x.second.src);
+        if (!output)
+            continue;
+        
+        x.first->add(output);
+
+        if (x.second.name.length())
+            output->name(x.second.name);
     }
 
 
