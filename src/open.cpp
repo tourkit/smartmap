@@ -97,9 +97,9 @@ void Open::inputs(){
 }
 
 
-Open::JSONOutput isOutput(JSONVal& output) {
+Open::Output isOutput(JSONVal& output) {
 
-    Open::JSONOutput out;
+    Open::Output out;
 
     out.name = output.name();
 
@@ -122,12 +122,12 @@ void Open::outputs(){
 
         auto output = isOutput(monitor);
 
-        auto window = engine.outputs->addPtr<Window>( &engine.window );
+        auto n = engine.outputs->addPtr<Window>( &engine.window );
 
         engine.window.size( output.rect[0] , output.rect[1] );
         engine.window.pos(  output.rect[2] , output.rect[3] );
 
-        outputs_src[window] = output;
+        outputs_src[n] = output;
 
         break; // only one alloweed for nowe
         
@@ -231,7 +231,8 @@ void Open::layers(){
 
             }
             
-            addEffectors( layer_def["effectors"], new_layer );
+            if (layer_def["effectors"].size())
+                addEffectors( layer_def["effectors"], new_layer );
 
         }else{ // uberlayer
 
@@ -411,7 +412,7 @@ void Open::json(std::string path) {
         x.first->add(output);
 
         if (x.second.name.length())
-            output->name(x.second.name);
+            x.first->name(x.second.name);
     }
 
 

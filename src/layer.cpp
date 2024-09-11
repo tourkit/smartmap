@@ -198,8 +198,6 @@ std::string  UberEffector::source() {
     if (ubl_v->uberlayer_m.quantity()>1) name += "[i]";
 
     out += "void " + ubl_v->m.name()+ "_effector(int from, int to) {\n\n";
-
-        out +="\tvec4 color_=  vec4(0);\n\n";
         
         out +="\tfor (int i = from; i < to; i++) {\n\n";
         
@@ -209,11 +207,10 @@ std::string  UberEffector::source() {
         
             out +="\t\ttuv += static_ubo."+name+".uberLayers.norm;\n\n";
         
-            out +="\t\tcolor_ += texture("+ubl_v->fb.texture.sampler_name+", tuv);\n\n";
+            out +="\t\tcolor += texture("+ubl_v->fb.texture.sampler_name+", tuv);\n\n";
         
         out +="\t}\n\n";
         
-        out +="\tcolor *= color_;\n\n";
     
     out +="};\n";
 
@@ -255,10 +252,10 @@ bool UberLayer::VirtualLayer::Effector::body(Builder* builder, std::string prepe
             broke = true;
             break;
         }else 
-            offset += vlayer->m.footprint_all();
+            offset += vlayer->m.quantity();
         
     
-    builder->current_model += "\t"+vlayer->ubl->m.name()+"_effector("+std::to_string(offset)+", "+std::to_string(offset+1)+");\n";
+    builder->current_model += "\t"+vlayer->ubl->m.name()+"_effector("+std::to_string(offset)+", "+std::to_string(offset+vlayer->m.quantity())+");\n";
     
     return true; 
     
