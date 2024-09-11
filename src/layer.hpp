@@ -81,18 +81,19 @@ struct UberLayer : Layer {
 
     struct VirtualLayer : Effectable {
 
-        VirtualLayer(int w, int h, int id = 0) : Effectable("Vlayer"+std::to_string(id)), w(w), h(h), id(id) {  }
+        VirtualLayer(int w, int h, int id = 0) : Effectable("Vlayer"+std::to_string(id)), w(w), h(h), id(id), effector(this) {  }
 
         int w ;
         int h;
         int id;
 
+        UberLayer* ubl;
 
         struct Effector : ::Effector {
 
-            VirtualLayer* vlayer;
+            Effector(VirtualLayer* vlayer);
 
-            UberEffector* ubereffector;
+            VirtualLayer* vlayer;
 
             bool setup(Builder* builder) override;
             

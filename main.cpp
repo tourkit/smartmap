@@ -20,14 +20,8 @@
 // grid / quantity 
 
 
-
-// HDMI 1 shuoldnt be refering WINDOW
-
-
 // ----
 
-
-// Model shouldnt allow Vlayer
 
 #include "engine.hpp"
 #include "src/freetype.hpp"

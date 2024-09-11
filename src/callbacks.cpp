@@ -178,6 +178,15 @@ void Callbacks::init() {
         return _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector(&node->is_a<UberLayer>()->effector));
         
     });
+    NODE<Effectable>::onadd<UberLayer::VirtualLayer>([](Node*_this,Node*node){ 
+        
+        auto out = _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector(&node->is_a<UberLayer::VirtualLayer>()->effector));
+
+        out->name(node->name());
+        
+        return out;
+        
+    });
 
     ////////// Effector.HPP
 
