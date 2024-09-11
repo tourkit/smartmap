@@ -20,15 +20,16 @@ static std::string json_error = "JSON error";
 
 void Open::medias(){
 
-    JSON::if_obj_in("medias", json_v.document, [&](auto &m) {
 
-        if (!m.name.IsString() || !m.value.IsString()) 
+    for (auto &media : json_v["medias"]) {
+
+        if (!media.name().c_str() || !media.str().c_str()) 
             return;
 
-        if (strcmp(m.name.GetString(), "atlas") ) 
+        if (media.name() != "atlas") // temporary only name allowed
             return;
     
-        Node* atlas_ = engine.medias->addOwnr<Atlas>(4096, 4096, m.value.GetString());
+        Node* atlas_ = engine.medias->addOwnr<Atlas>(4096, 4096, media.str());
 
         auto atlas = atlas_->is_a<Atlas>();
 
@@ -36,7 +37,7 @@ void Open::medias(){
 
         atlas->texture->bind();
 
-    });
+    };
 
 }
 

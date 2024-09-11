@@ -38,7 +38,11 @@ void Node::init() {
 
 const std::string& Node::name() { return name_v; }
 
-Node* Node::name(std::string value) { name_v = value; update();  return this;}
+Node* Node::name(std::string value) { 
+    name_v = value; 
+    update();  
+    return this;
+}
 
 Node::~Node() {
 

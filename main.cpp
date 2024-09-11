@@ -20,6 +20,10 @@
 // grid / quantity 
 
 
+
+// HDMI 1 shuoldnt be refering WINDOW
+
+
 // ----
 
 

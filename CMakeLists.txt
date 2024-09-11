@@ -141,7 +141,7 @@ vendors/ft/src/base/ftsystem.c
 
 
 )
-target_compile_features(smartmap PUBLIC cxx_std_20)
+target_compile_features(smartmap PUBLIC cxx_std_23)
 set_target_properties(smartmap PROPERTIES CXX_EXTENSIONS OFF)
 set_target_properties(
   smartmap PROPERTIES COMPILE_FLAGS
