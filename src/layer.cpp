@@ -176,6 +176,7 @@ void UberEffector::ubl(UberLayer* ubl) {
 UberEffector::UberEffector(UberLayer* ubl) : Effector(ubl?ubl->m.name():"ubereffector") {  
 
     this->ubl(ubl);
+    
 
 }
 
@@ -185,11 +186,11 @@ std::string  UberEffector::source() {
     std::string name = lower(ubl_v->uberlayer_m.name());
     if (ubl_v->uberlayer_m.quantity()>1) name += "[i]";
 
-    out += "void " + ubl_v->m.name()+ "_effector() {\n\n";
+    out += "void " + ubl_v->m.name()+ "_effector(int from, int to) {\n\n";
 
         out +="\tvec4 color_=  vec4(0);\n\n";
         
-        out +="\tfor (int i =0; i < "+std::to_string(ubl_v->uberlayer_m.quantity())+"; i++) {\n\n";
+        out +="\tfor (int i = from, i < to; i++) {\n\n";
         
             out +="\t\tvec2 tuv = uv;\n\n";
         
@@ -218,12 +219,42 @@ bool UberEffector::setup(Builder* builder) {
     return true; 
     
 }
+bool UberLayer::VirtualLayer::Effector::setup(Builder* builder) { 
+
+    ubereffector->setup(builder);
+
+    return true; 
+    
+}
+bool UberLayer::VirtualLayer::Effector::body(Builder* builder, std::string prepend) {  
+
+    int offset = 0, to = 0;
+
+    bool broke = false;
+
+    for (auto vlayer : ubereffector->ubl_v->layers) 
+        if (vlayer.get() == this->vlayer) {
+
+            broke = true;
+            break;
+        }else 
+            offset += vlayer->m.footprint_all();
+        
+    
+    builder->current_model += "\t"+ubereffector->ubl_v->m.name()+"_effector("+std::to_string(offset)+", "+std::to_string(offset+1)+");\n";
+    
+    return true; 
+    
+}
 
 bool UberEffector::body(Builder* builder, std::string prepend) {  
     
-    builder->current_model += "\t"+ubl_v->m.name()+"_effector();\n";
+    builder->current_model += "\t"+ubl_v->m.name()+"_effector(0, "+std::to_string(ubl_v->uberlayer_m.quantity())+");\n";
     
-    return true; }
+    return true; 
+    
+}
+
 
 
 ///////// UBERLAYER ////

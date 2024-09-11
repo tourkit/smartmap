@@ -52,6 +52,8 @@ struct UberEffector : Effector {
 
     UberLayer *ubl_v;
 
+    uint32_t range[2] = {0,0};
+
     UberEffector(UberLayer* ubl = nullptr);
     
     void ubl(UberLayer* ubl);
@@ -82,6 +84,21 @@ struct UberLayer : Layer {
         int w ;
         int h;
         int id;
+
+
+        struct Effector : ::Effector {
+
+            VirtualLayer* vlayer;
+
+            UberEffector* ubereffector;
+
+            bool setup(Builder* builder) override;
+            
+            bool body(Builder* builder, std::string prepend = "") override;
+
+        };
+        
+        Effector effector;
 
     };
 
