@@ -3,9 +3,6 @@
 #include "editor.hpp"
 #include "imgui.h"
 #include "tree.hpp"
-#include "layer.hpp"
-#include "vbo.hpp"
-#include "engine.hpp"
 
 
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -225,9 +222,9 @@ GUI::GUI(GLFWwindow* window) {
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
 
-trees.push_back(new TreeWidget());
+  trees.push_back(new TreeWidget(this));
 
-    ImGui::GetIO().FontAllowUserScaling = true;
+  ImGui::GetIO().FontAllowUserScaling = true;
 
 }
 
@@ -254,15 +251,15 @@ void GUI::draw() {
 
   newframe();
 
-  if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) engine.save();
-  if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_I)) engine.gui->draw_gui = !engine.gui->draw_gui;
-  if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl) || ImGui::IsKeyDown(ImGuiKey_LeftShift)) && ImGui::IsKeyPressed(ImGuiKey_Escape)) exit(0);
+  // if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) engine.save();
+  // if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_I)) engine.gui->draw_gui = !engine.gui->draw_gui;
+  // if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl) || ImGui::IsKeyDown(ImGuiKey_LeftShift)) && ImGui::IsKeyPressed(ImGuiKey_Escape)) exit(0);
 
   if (draw_gui) {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // si ca aide .. ?
 
-    for (auto window : Window::pool) 
+    for (auto window : GUI::Window::pool) 
       window->drawFull(); 
 
     for (auto x : close_list) 
@@ -287,21 +284,22 @@ void GUI::draw() {
 
             auto parent = x->parent();
 
-            for (auto editor : engine.gui->editors) {
+            for (auto editor : editors) {
 
               bool found = false;
 
-              auto is = editor->selected;
+              auto selected = editor->selected;
 
-              if (is) {
+              if (selected) {
 
-                if (is == x) found = true;
+                if (selected == x) found = true;
 
-                is = is->parent();
+                selected = selected->parent();
 
               }
 
-              if (found) editor->selected = engine.tree->childrens[0];
+              if (found) 
+                editor->selected = nullptr;
 
             }
 

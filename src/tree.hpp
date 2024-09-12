@@ -4,9 +4,9 @@
 
 struct TreeWidget : GUI::Window {
 
-    Node* selected;
+    Node* selected = nullptr;
 
-    TreeWidget(Node* selected = nullptr);
+    TreeWidget(GUI* gui = nullptr);
 
     void draw() override;
 

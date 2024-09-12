@@ -316,7 +316,7 @@ void Open::editors(){
 
         if (e.Size()<5) { PLOGW << json_error; continue; }
 
-        engine.gui->editors.push_back(new EditorWidget());
+        engine.gui->editors.push_back(new EditorWidget(engine.gui));
 
 
             Node* n = nullptr;
@@ -357,9 +357,9 @@ void Open::json(std::string path) {
 
     if (!json_v.loaded) {
 
-        engine.gui->editors.push_back(new EditorWidget());
+        engine.gui->editors.push_back(new EditorWidget(engine.gui));
 
-        engine.gui->editors.push_back(new EditorWidget());
+        engine.gui->editors.push_back(new EditorWidget(engine.gui));
 
         engine.gui->editors.back()->selected = engine.debug;
 
@@ -369,7 +369,7 @@ void Open::json(std::string path) {
 
         f->on(Node::CHANGE, [&](Node* n) { engine.open(path.c_str()); });
 
-        f->select();
+        engine.gui->selected = f;
 
         return;
 

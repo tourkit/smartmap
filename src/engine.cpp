@@ -16,6 +16,7 @@
 
 #include "callbacks.hpp"
 #include "editors.hpp"
+#include "tree.hpp"
 
 #include <cmath>
 
@@ -46,6 +47,8 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     // window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
 
     tree = new Node("tree");
+
+    gui->trees[0]->selected = tree;
 
     NODE<Node>::onadd<AnyNode>([](Node*_this,Node*node){ return node; });
 
@@ -115,7 +118,8 @@ void Engine::init() {
 
 void Engine::run() {
 
-    if (!gui->editors.size()) gui->editors.push_back(new EditorWidget());
+    if (!gui->editors.size()) 
+        gui->editors.push_back(new EditorWidget(gui));
 
     if (models && !models->childrens.size()) {
 
@@ -146,7 +150,8 @@ void Engine::run() {
     }
 
 
-    if (!Node::selected) Node::selected = debug;
+    if (!gui->selected) 
+        gui->selected = debug;
 
     auto &window = getInstance().window;
     

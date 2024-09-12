@@ -75,8 +75,6 @@ struct Node {
 
     Node* active(bool value);
 
-    Node* select();
-
     bool remove(Node *child);
 
     TypeIndex type() { return stored_type; }
@@ -119,8 +117,6 @@ struct Node {
 
     Node* operator[](int id);
     Node* operator[](std::string name);
-
-    static inline Node* selected = nullptr;
 
     TypeIndex stored_type = typeid(Node);
 

@@ -2,10 +2,9 @@
 #include "imgui.h"
 #include "node.hpp"
 #include "editor.hpp"
-#include "engine.hpp"
 #include "imgui_internal.h"
 
-TreeWidget::TreeWidget(Node* selected) : GUI::Window("Tree"), selected(selected) {
+TreeWidget::TreeWidget(GUI* gui) : GUI::Window("Tree", gui) {
 
     memset( &search_str[0], 0, sizeof(search_str) );
 
@@ -23,15 +22,7 @@ void TreeWidget::draw()  {
 if (demodemo) ImGui::ShowDemoWindow();
 
 
-
-
-  ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
-
-
-    if (!selected) selected = engine.tree;
-
-    if (selected != engine.tree) name = selected->name();
-    else name = "Tree";
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 24);
     
@@ -77,7 +68,7 @@ if (demodemo) ImGui::ShowDemoWindow();
 
     ImGui::SameLine();
 
-    if (ImGui::Button("+")) engine.gui->editors.push_back(new EditorWidget());
+    if (ImGui::Button("+")) gui->editors.push_back(new EditorWidget(gui));
 
 
     ImGui::PopItemWidth();
@@ -88,7 +79,8 @@ if (demodemo) ImGui::ShowDemoWindow();
 
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 
-        drawChildrens(selected);
+        if (selected)
+            drawChildrens(selected);
 
         ImGui::EndTable();
     }
@@ -133,11 +125,11 @@ using namespace ImGui;
 
     ImVec4 node_color = *(ImVec4*)&node->color;
 
-    if(Node::selected != node) {
+    if(selected != node) {
 
         if (hovered) node_color = ImVec4(1, .4, 0, 1);
 
-        else if (Node::selected) node_color.w = .65;
+        else if (selected) node_color.w = .65;
 
     }
 
@@ -156,7 +148,7 @@ using namespace ImGui;
 // PLOGE<<"coc";
         if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
-            engine.gui->rename_list[node] = &renaming_name[0];
+            gui->rename_list[node] = &renaming_name[0];
 
             is_renaming = nullptr;
 
@@ -181,7 +173,7 @@ using namespace ImGui;
             if(ImGui::MenuItem("Sure ?")){
 
                 is_deleting = false;
-                engine.gui->delete_list.push_back(node);
+                gui->delete_list.push_back(node);
 
             }
 
@@ -207,15 +199,18 @@ using namespace ImGui;
             ImGui::EndMenu();
         }
 
-        if(ImGui::MenuItem("zoom")) engine.gui->trees[0]->selected = node;
+        if(ImGui::MenuItem("zoom")) gui->trees[0]->selected = node;
 
-        if(ImGui::MenuItem("pop")) engine.gui->trees.push_back(new TreeWidget(node));
+        if(ImGui::MenuItem("pop")) {
+            gui->trees.push_back(new TreeWidget(gui));
+            gui->trees.back()->selected = node;
+        }
 
         if (ImGui::MenuItem("editor")) {
 
-            engine.gui->editors.push_back(new EditorWidget());
-            engine.gui->editors.back()->selected = node;
-            engine.gui->editors.back()->locked = true;
+            gui->editors.push_back(new EditorWidget(gui));
+            gui->editors.back()->selected = node;
+            gui->editors.back()->locked = true;
 
         }
 
@@ -249,7 +244,7 @@ using namespace ImGui;
 
         if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
 
-        if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) Node::selected = s;
+        if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) selected = s;
 
         if (ImGui::IsMouseReleased(0)) mouse_down = false;
 

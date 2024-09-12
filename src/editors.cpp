@@ -574,7 +574,7 @@ void Editors::init() {
 
         int i = 0;
 
-        for (auto &display : engine.window.displays) {
+        for (auto &display : Window::displays) {
 
             if (Button( ("fit display "+std::to_string(i++)).c_str())) {
 

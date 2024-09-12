@@ -3,7 +3,6 @@
 #include "imgui.h"
 #include "node.hpp"
 #include "gui.hpp"
-#include "engine.hpp"
 
 #include <ctime>
 #include <cstring>
@@ -13,14 +12,14 @@
 
 /////// EditorWidget.hpp
 
-EditorWidget::EditorWidget() : GUI::Window("Editor")  {  }
+EditorWidget::EditorWidget(GUI* gui) : GUI::Window("Editor", gui)  {  }
 
-EditorWidget::~EditorWidget()  { std::erase_if(engine.gui->editors, [this](EditorWidget* e) { return e == this; }); }
+EditorWidget::~EditorWidget()  { std::erase_if(gui->editors, [this](EditorWidget* e) { return e == this; }); }
 
 
 void EditorWidget::draw() {
 
-    if (!selected || !locked) selected = Node::selected;
+    if (!selected || !locked) selected = gui->selected;
     if (!selected) return;
 
     std::string name = selected->name();

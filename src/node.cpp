@@ -218,8 +218,6 @@ std::string Node::nameSTL(){ if (parent()) { return parent()->name() + "::" + na
 
 Node *Node::parent() { return parent_node; }
 
-Node* Node::select(){ selected = this; return this;  }
-
 void Node::parent(Node* parent_node) {
 
     if (this->parent_node == parent_node) return;

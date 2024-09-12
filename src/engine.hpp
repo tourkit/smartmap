@@ -33,8 +33,6 @@ struct Engine {
     Node* timelines = nullptr;
     Node* debug = nullptr;
 
-    Node* selected = nullptr;
-
     Window window;
 
     GUI* gui; 

@@ -79,13 +79,13 @@
     "outputs": {
         "monitor": {
             "HDMI 1": {
-                "dimensions": [ 1920, 1080 ],
+                "dimensions": [ 100, 100 ],
                 "source": "outputlayer2"
             }
         },
         "ndi": {
             "SMARTmoup": {
-                "dimensions": [ 1920, 1080 ],
+                "dimensions": [ 100, 100 ],
                 "source": "outputlayer1"
             }
         }

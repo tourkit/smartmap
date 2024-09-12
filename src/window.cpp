@@ -34,6 +34,8 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
     GLFWmonitor** monitors = glfwGetMonitors(&count);
     int t_offset_x = 0;
 
+    displays.clear();
+
     for (int i = 0 ; i < count; i++) {
 
         const GLFWvidmode* mode = glfwGetVideoMode(monitors[i]);

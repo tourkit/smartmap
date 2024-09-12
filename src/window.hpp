@@ -2,7 +2,6 @@
 #define __ENGINE_GL_WINDOW_HPP__
 
 #include <cstring>
-#include <iostream>
 #include <vector>
 #include <functional>
 
@@ -20,7 +19,7 @@ struct Window : Output {
 
     struct Display { uint32_t width, height, rate, x, y; };
 
-    std::vector<Display> displays;
+    static inline std::vector<Display> displays;
 
     GLFWwindow *id;
 

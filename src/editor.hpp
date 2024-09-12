@@ -38,7 +38,7 @@ struct EditorWidget : GUI::Window {
 
     bool locked = false;
 
-    EditorWidget();
+    EditorWidget(GUI* gui);
     ~EditorWidget();
 
     void draw() override;

@@ -69,6 +69,8 @@ struct GUI {
 
   void *dragging = nullptr;
 
+  Node* selected = nullptr;
+
   bool draw_gui = true;
 
   GUI(GLFWwindow* window);
@@ -89,14 +91,14 @@ struct GUI {
 
   struct Window {
 
-    static inline std::vector<Window*> pool;
+    static inline std::vector<Window*> pool; 
 
     std::string name;
     std::string uid;
     bool active = true;
 
 
-    Window(std::string name) : name(name), uid(("window"+std::to_string(pool.size()))) { if(!pool.size()) pool.reserve(20); else if (pool.size()>20) PLOGW << "viens on en parle"; pool.push_back(this); }
+    Window(std::string name, GUI* gui) : name(name), uid(("window"+std::to_string(pool.size()))), gui(gui) { if(!pool.size()) pool.reserve(20); else if (pool.size()>20) PLOGW << "viens on en parle"; pool.push_back(this); }
     virtual  ~Window() { std::erase_if(pool, [this](Window* w) { return w == this; }); }
     void drawFull();
 
@@ -105,6 +107,9 @@ struct GUI {
     virtual void draw() {}
     virtual void drawTree() { draw(); }
     virtual void drawEditor() {}
+
+    GUI* gui = nullptr;
+
   };
 
 private:
