@@ -29,14 +29,14 @@
               "blending": "Additive"
           },
           "Free Layer 2": {
-            "dimensions": [ 100, 100 ],
+            "dimensions": [ 1920, 1080 ],
               "quantity": 5,
               "effectors": [ "argb", "rectangle", "wrapper", "strobe", "feedback" ],
               "blending": "Additive"
           }
       },
       "Free Layer 1": {
-        "dimensions": [ 1920, 1080 ],
+        "dimensions": [ 100,100 ],
           "models": {
               "quad1": {
                   "model": "quad.obj",
@@ -48,7 +48,7 @@
           }
       },
       "Free Layer 2": {
-        "dimensions": [ 100, 100 ],
+        "dimensions": [ 1920, 1080 ],
           "models": {
               "quad1": {
                   "model": "quad.obj",
@@ -79,12 +79,6 @@
           "HDMI 1": {
               "dimensions": [ 100, 100 ],
               "source": "Free Layer 2"
-          }
-      },
-      "ndi": {
-          "SMARTmoup": {
-              "dimensions": [ 1920, 1080 ],
-              "source": "Free Layer 1"
           }
       }
   }

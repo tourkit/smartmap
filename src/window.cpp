@@ -135,28 +135,30 @@ void Window::keypress() {
         if (keys_down.size()){
             for (auto x : _this->keypress_cbs) 
                 if (x.first == keys_down) 
-                    x.second();PLOGW << key;}
-
-    });
-
-    glfwSetCursorPosCallback(id, [](GLFWwindow* id, double mouse_x, double mouse_y) {
-        
-        void* void_ptr = glfwGetWindowUserPointer(id);
-        if (!void_ptr) 
-            return;
-        auto _this = (Window*)void_ptr;
-        _this->mouse_x = mouse_x;
-        _this->mouse_y = mouse_y;
-    });
-    glfwSetMouseButtonCallback(id, [](GLFWwindow* id, int button, int action, int mods) {
-        (void)button;
-        (void)mods;
-        auto _this = (Window*)glfwGetWindowUserPointer(id);
-        if (action == GLFW_PRESS) {
-            // mouse click
-            //  _this->clickCallBack();
+                    x.second();
         }
+
+        PLOGW << key;
     });
+
+    // glfwSetCursorPosCallback(id, [](GLFWwindow* id, double mouse_x, double mouse_y) {
+        
+    //     void* void_ptr = glfwGetWindowUserPointer(id);
+    //     if (!void_ptr) 
+    //         return;
+    //     auto _this = (Window*)void_ptr;
+    //     _this->mouse_x = mouse_x;
+    //     _this->mouse_y = mouse_y;
+    // });
+    // glfwSetMouseButtonCallback(id, [](GLFWwindow* id, int button, int action, int mods) {
+    //     (void)button;
+    //     (void)mods;
+    //     auto _this = (Window*)glfwGetWindowUserPointer(id);
+    //     if (action == GLFW_PRESS) {
+    //         // mouse click
+    //         //  _this->clickCallBack();
+    //     }
+    // });
 }
 
 

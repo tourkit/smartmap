@@ -39,34 +39,32 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
 
     window.max_fps = 59;
 
-    window.keypress();
-    gui(true);
+    // window.keypress();
+    // gui(true);
     
 
-    static auto exit_cb = []() { exit(0); };
+    // static auto exit_cb = []() { exit(0); };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
+    // window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
+    // window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
+    // window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
+    // window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
 
-    static auto save_cb = [&]() { save(); };
+    // static auto save_cb = [&]() { save(); };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_S}] = save_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_S}] = save_cb;
-    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_S}] = save_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_S}] = save_cb;
+    // window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_S}] = save_cb;
+    // window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_S}] = save_cb;
+    // window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_S}] = save_cb;
+    // window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_S}] = save_cb;
 
-    static auto guiact_cb = [&]() { engine.gui(!engine.gui_v->draw_gui); };
+    // static auto guiact_cb = [&]() { engine.gui(!engine.gui_v->draw_gui); };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_I}] = guiact_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_I}] = guiact_cb;
-    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_I}] = guiact_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_I}] = guiact_cb;
+    // window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_I}] = guiact_cb;
+    // window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_I}] = guiact_cb;
+    // window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_I}] = guiact_cb;
+    // window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_I}] = guiact_cb;
 
     tree = new Node("tree");
-
-    gui_v->trees[0]->selected = tree;
 
     NODE<Node>::onadd<AnyNode>([](Node*_this,Node*node){ return node; });
 
@@ -151,16 +149,21 @@ void Engine::gui(bool active) {
 
 void Engine::run() {
 
-    if (!gui_v->editors.size()) 
-        gui_v->editors.push_back(new EditorWidget(gui_v));
 
-    if (models && !models->childrens.size()) {
+    if (gui_v) {
+        
+        gui_v->trees[0]->selected = tree;
 
-        auto quad = models->addPtr<File>( &VBO::quad );
+        if (!gui_v->editors.size()) 
+            gui_v->editors.push_back(new EditorWidget(gui_v));
 
+        if (models && !models->childrens.size()) {
 
-    //  auto x = stack->addOwnr<Layer>();
-        // x->add(quad);
+            auto quad = models->addPtr<File>( &VBO::quad );
+        }
+
+        //  auto x = stack->addOwnr<Layer>();
+            // x->add(quad);
 
     }
 
@@ -184,13 +187,18 @@ void Engine::run() {
 
     window.render([&](){
 
-        if (gui_v)
+        int fps = 0;
+        
+        if (gui_v){
+        
+            fps = std::round(ImGui::GetIO().Framerate);
             gui_v->draw();
+        
+        }
         
         if (dynamic_ubo) {        
             static int frame = 0;
             memcpy(dynamic_ubo->data(), &(frame), 4); // aka dynamic_ubo["ENGINE"]["frame"]
-            int fps = std::round(ImGui::GetIO().Framerate);
             memcpy(dynamic_ubo->data()+4, &fps, 4); // aka dynamic_ubo["ENGINE"]["fps"]
             int alt = frame % 2;
             memcpy(dynamic_ubo->data()+8, &alt, 4); // aka dynamic_ubo["ENGINE"]["alt"]
@@ -218,7 +226,7 @@ void Engine::run() {
 
 void Engine::reset() {
 
-    for (auto x : gui_v->editors) delete x; gui_v->editors.resize(0);
+    gui(false);
     for (auto x : stack->childrens) delete x;
     for (auto x : outputs->childrens) delete x;
     for (auto x : inputs->childrens) delete x;
