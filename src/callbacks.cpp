@@ -132,11 +132,6 @@ void Callbacks::init() {
     NODE<UberLayer::VirtualLayer>::is_a<Effectable>();
     NODE<Modelable>::is_a<Effectable>();
 
-    NODE<Layer>::on(Node::RUN, [](Node* node, Layer *layer){ 
-
-        layer->draw(); 
-        
-    });
 
     NODE<DrawCall>::on(Node::RUN, [](Node* node, DrawCall *dc) { 
 

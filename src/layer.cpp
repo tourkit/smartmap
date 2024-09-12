@@ -390,6 +390,17 @@ UberLayer::VirtualLayer& UberLayer::addLayer(int w , int h) {
 
 }
 
+UberLayer::VirtualLayer::VirtualLayer(int w, int h, int id) : 
+
+    Effectable("Vlayer"+std::to_string(id)), 
+    w(w?w:engine.window.width), 
+    h(h?h:engine.window.height), 
+    id(id), effector(this) 
+        
+{ 
+
+}
+
 UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : Layer::ShaderProgramBuilder(ubl), ubl(ubl) {  }
 
 void UberLayer::ShaderProgramBuilder::build() {

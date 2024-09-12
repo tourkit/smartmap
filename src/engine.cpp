@@ -153,6 +153,8 @@ void Engine::run() {
 
     while (!glfwWindowShouldClose(window.id)) {
 
+    // PLOGW << "begin frame";
+
         window.render([](){
 
             engine.gui->draw();
@@ -182,6 +184,7 @@ void Engine::run() {
         });
 
     
+    // PLOGW << "begin frame";
 }
 }
 

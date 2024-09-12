@@ -1,14 +1,64 @@
 {
     "inputs": {
+        "artnet": {
+            "artnet1": {
+                "ip": "2.0.0.102",
+                "subnet": 8,
+                "dhcp": "Static only",
+                "remaps": {
+                    "remap1": {
+                        "universe": 1,
+                        "channel": 1,
+                        "destination": "virtuallayers1::Free Layer 2",
+                        "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 ]
+                    },
+                    "remap2": {
+                        "universe": 1,
+                        "channel": 96,
+                        "destination": "virtuallayers1::Free Layer 3",
+                        "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 ]
+                    }
+                }
+            }
+        }
     },
     "layers": {
         "virtuallayers1": {
             "Free Layer 2": {
-                "dimensions": [ 1920, 1080 ],
                 "offset": [ 0, 0 ],
-                "quantity": 10,
-                "effectors": [ "argb", "rectangle", "wrapper", "feedback" ],
+                "quantity": 5,
+                "effectors": [ "argb", "rectangle", "wrapper", "strobe" ],
                 "blending": "Additive"
+            },
+            "Free Layer 3": {
+                "offset": [ 0, 0 ],
+                "quantity": 5,
+                "effectors": [ "argb", "rectangle", "wrapper", "strobe" ],
+                "blending": "Additive"
+            }
+        },
+        "outputlayer1": {
+            "models": {
+                "quad1": {
+                    "model": "quad.obj",
+                    "quantity": 1,
+                    "effectors": [
+                        "blank",
+                        "virtuallayers1::Free Layer 2"
+                    ]
+                }
+            }
+        },
+        "outputlayer2": {
+            "models": {
+                "quad1": {
+                    "model": "quad.obj",
+                    "quantity": 1,
+                    "effectors": [
+                        "blank",
+                        "virtuallayers1::Free Layer 3"
+                    ]
+                }
             }
         }
     },
@@ -24,14 +74,19 @@
         "strobe": "//intensity(0,1,0)\n\nvoid strobe(float intensity) {\n\n\tcolor *= min(1,floor(mod(dynamic_ubo[0].eNGINE.frame,intensity*dynamic_ubo[0].eNGINE.fps)));\n\n}",
         "grid": "// columns(0,1,.1)\n// rows(0,1,.1)\n// thickness(0,1,.5)\n\nvoid grid(float columns, float rows, float thickness) {\n\n\t\n\tcolumns = clamp(columns*10., 0.5, 100.);\n\trows = clamp(rows*10., 0.5, 100.);\n\n\tcolumns = 1./(columns+(thickness*.5));\n\trows = 1./(rows+thickness*.5);\n\tfloat ar = aspect_ratio.x/aspect_ratio.y;\n\tfloat tx = thickness*min((rows/columns)/ar,1.);\n\tfloat ty = thickness*min((columns/rows)*ar,1.); \n\t\n\t\n\tuv = 1.-abs(uv-.5)*2.;\n\t\n\tfloat o = 1.;\n\n\to -= step(mod(uv.x,columns)/columns,tx);\n\to -= step(mod(uv.y,rows)/rows,ty);\n\t\n\tcolor -= vec4(o) ;\n\t\n\n}\n\n\n\n\n",
         "blank": "void blank() { color = vec4(0); }",
-        "white": "void white() { color = vec4(1); }",
-        "wrapper": [ "white", "gradient" ]
+        "wrapper": [ "gradient", "flower", "burst" ]
     },
     "outputs": {
         "monitor": {
             "HDMI 1": {
-                "dimensions": [ 100,100 ],
-                "source": "virtuallayers1"
+                "dimensions": [ 1920, 1080 ],
+                "source": "outputlayer2"
+            }
+        },
+        "ndi": {
+            "SMARTmoup": {
+                "dimensions": [ 1920, 1080 ],
+                "source": "outputlayer1"
             }
         }
     }

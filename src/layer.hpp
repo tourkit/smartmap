@@ -81,7 +81,7 @@ struct UberLayer : Layer {
 
     struct VirtualLayer : Effectable {
 
-        VirtualLayer(int w, int h, int id = 0) : Effectable("Vlayer"+std::to_string(id)), w(w), h(h), id(id), effector(this) {  }
+        VirtualLayer(int w = 0, int h = 0, int id = 0);
 
         int w ;
         int h;

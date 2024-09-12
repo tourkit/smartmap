@@ -195,19 +195,11 @@ void Open::layers(){
 
         if (!layer_def.name().data()) { PLOGW << layer_def.stringify(); continue; }
 
-        auto dim = layer_def["dimensions"];
-        int width; 
-        int height;
-
-        if (dim.size() == 2)  { // HARD CHECK FOR TYPE BETWEEN VIRTUALLAYER AND LAYER
+        if (layer_def.value.HasMember("models") && layer_def.value.IsObject())  { // HARD CHECK FOR TYPE BETWEEN VIRTUALLAYER AND LAYER
          
-            width = dim[0].num(); 
-            height = dim[1].num();
+            auto dim = layer_def["dimensions"];
 
-            if (!width) width = engine.window.width;
-            if (!height) height = engine.window.height;
-
-            Node* new_layer = engine.stack->addOwnr<Layer>(width,height,layer_def.name());
+            Node* new_layer = engine.stack->addOwnr<Layer>(dim[0].num(),dim[1].num(),layer_def.name());
             
             for (auto model_def : layer_def["models"]) {
 
@@ -248,16 +240,9 @@ void Open::layers(){
 
                 int count = 1;
 
-                auto dim = vlayer_def["dimensions", true];
+                auto dim = vlayer_def["dimensions"];
 
-                width = dim[0].num();
-                height = dim[1].num();
-
-                if (!width) width = engine.window.width;
-                if (!height) height = engine.window.height;
-
-
-                auto &l = ubl.addLayer(width,height);
+                auto &l = ubl.addLayer(dim[0].num(),dim[1].num());
                 if (vlayer_def.name().length())
                     l.m.name(vlayer_def.name());
                 auto l_ = ubl_->addPtr<UberLayer::VirtualLayer>(&l);
@@ -265,7 +250,7 @@ void Open::layers(){
 
                 addEffectors( vlayer_def["effectors"], l_ );
 
-                l.m.quantity(vlayer_def["quantity", true].num(1));
+                l.m.quantity(vlayer_def["quantity"].num(1));
                 
             }
 

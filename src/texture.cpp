@@ -136,6 +136,8 @@ void Texture::write(void* data, GLuint width, GLuint height, GLuint offset_x, GL
 
 void Texture::read(const Texture* texture, GLuint offset_x, GLuint offset_y) {
 
+    // PLOGW << "read tex " << sampler_name << " width: " << texture->width << " height: " << texture->height << " offset_x: " << offset_x << " offset_y: " << offset_y;
+
     glCopyImageSubData(texture->id, GL_TEXTURE_2D, 0, 0,0, 0, id, GL_TEXTURE_2D, 0, offset_x, offset_y, 0, texture->width,texture->height, 1);
 
     // GL_ERROR();
