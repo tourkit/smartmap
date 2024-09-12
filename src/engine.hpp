@@ -8,8 +8,6 @@
 #include "log.hpp"
 
 
-struct Stack {  };
-
 struct Debug {};
 
 struct GUI;

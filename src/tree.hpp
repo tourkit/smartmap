@@ -1,9 +1,6 @@
 #pragma once
 #include "gui.hpp"
 #include "node.hpp"
-#include "engine.hpp"
-
-#include <vector>
 
 struct TreeWidget : GUI::Window {
 

@@ -5,6 +5,7 @@
 #include "tree.hpp"
 #include "layer.hpp"
 #include "vbo.hpp"
+#include "engine.hpp"
 
 
 #include "imgui/backends/imgui_impl_glfw.h"

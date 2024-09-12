@@ -4,17 +4,15 @@
 #include "file.hpp"
 #include "remap.hpp"
 #include "ubo.hpp"
-#include "struct.hpp"
 #include "model.hpp"
 #include "effector.hpp"
 #include "folder.hpp"
 #include "drawcall.hpp"
-#include "engine.hpp"
 #include "artnet.hpp"
 #include "ndi.hpp"
 #include "atlas.hpp"
 #include "json.hpp"
-#include "buffer.hpp"
+#include "window.hpp"
 #include "framebuffer.hpp"
 #include "layer.hpp"
 #include "texture.hpp"
@@ -63,8 +61,6 @@ void Callbacks::init() {
             m->ref()->name(node->name()); });
 
 
-
-    ////////// ENGINE
     
     NODE<Member>::on(Node::RUN, [](Node* node, Member *m){ m->upload(); });
 
@@ -303,12 +299,19 @@ void Callbacks::init() {
 
             Node* found = nullptr;
 
-            engine.stack->each<Layer>([&](Node* node, Layer* layer) {
+            for (auto r : _this->referings) {
 
-                if (&layer->fb == output->fb)
+                auto layer = r->is_a<Layer>();
+                
+                if (layer && &layer->fb == output->fb) {
+
                     found = node;
 
-            });
+                    break;
+
+                }
+
+            }
 
             if (found)
                 _this->referings.erase(found);
