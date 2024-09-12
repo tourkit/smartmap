@@ -234,6 +234,13 @@ ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
 
 GUI::~GUI() {
 
+  auto trees_t = trees;
+  for (auto x : trees_t) 
+    delete x;
+  auto editors_t = editors;
+  for (auto x : editors_t) 
+    delete x;
+
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
 
@@ -250,25 +257,13 @@ void GUI::newframe() {
 }
 
 
-static bool isKeyDown(ImGuiKey key) { 
-  
-  if (ImGui::IsKeyDown(key))
-    return true; 
 
-  return false;
-}
 void GUI::draw() {
 
+  if (!draw_gui)
+    return;
+
   newframe();
-
-  // if (ImGui::)
-  // if (isKeyDown(ImGuiKey_LeftCtrl)) {
-
-  // }
-  // if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) engine.save();
-  // if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_I)) engine.gui->draw_gui = !engine.gui->draw_gui;
-  // if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl) || ImGui::IsKeyDown(ImGuiKey_LeftShift)) && ImGui::IsKeyPressed(ImGuiKey_Escape)) exit(0);
-
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // si ca aide .. ?
 

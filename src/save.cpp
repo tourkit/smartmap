@@ -193,7 +193,7 @@ void Save::editors(){
 
     json_v.document["editors"].Clear();
 
-    for (auto e : engine.gui->editors) {
+    for (auto e : engine.gui_v->editors) {
 
         auto v = rapidjson::Value(rapidjson::kArrayType);
 

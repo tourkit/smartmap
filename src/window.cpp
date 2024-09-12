@@ -197,15 +197,25 @@ void Window::draw() {
 
 void Window::render(std::function<void()> callback) {
 
-    glfwPollEvents();
+    while (!glfwWindowShouldClose(id)) {
 
-    // fps.run(max_fps);
+        // PLOGW << "begin frame";
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // BG COLOR
-    glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
+        glfwPollEvents();
 
-    callback();
+        // fps.run(max_fps);
 
-    glfwSwapBuffers(id);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // BG COLOR
+        glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
+
+        callback();
+
+        glfwSwapBuffers(id);
+
+    
+        // PLOGW << "begin frame";
+
+    }
+
 }

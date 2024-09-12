@@ -35,7 +35,7 @@ struct Engine {
 
     Window window;
 
-    GUI* gui; 
+    GUI* gui_v; 
 
     UBO* dynamic_ubo;
     UBO* static_ubo;
@@ -46,6 +46,8 @@ struct Engine {
     void open(const char* filepath);
     void save(const char* filepath);
     void save();
+
+    void gui(bool active);
 
     static Engine& getInstance() { static Engine instance;  return instance; }
 

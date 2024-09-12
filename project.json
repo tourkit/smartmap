@@ -3,20 +3,18 @@
       "artnet": {
           "artnet1": {
               "ip": "2.0.0.102",
-              "subnet": 8,
-              "dhcp": "Static only",
               "remaps": {
                   "remap1": {
                       "universe": 1,
                       "channel": 1,
-                      "destination": "virtuallayers1::Free Layer 2",
-                      "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 ]
+                      "destination": "virtuallayers1::Free Layer 1",
+                      "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 , 1, 0, 0, 0 ]
                   },
                   "remap2": {
                       "universe": 1,
-                      "channel": 96,
-                      "destination": "virtuallayers1::Free Layer 3",
-                      "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 ]
+                      "channel": 101,
+                      "destination": "virtuallayers1::Free Layer 2",
+                      "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 , 1, 0, 0, 0 ]
                   }
               }
           }
@@ -24,39 +22,39 @@
   },
   "layers": {
       "virtuallayers1": {
-          "Free Layer 2": {
-              "offset": [ 0, 0 ],
+          "Free Layer 1": {
+            "dimensions": [ 1920, 1080 ],
               "quantity": 5,
-              "effectors": [ "argb", "rectangle", "wrapper", "strobe" ],
+              "effectors": [ "argb", "rectangle", "wrapper", "strobe", "feedback" ],
               "blending": "Additive"
           },
-          "Free Layer 3": {
-              "offset": [ 0, 0 ],
+          "Free Layer 2": {
+            "dimensions": [ 100, 100 ],
               "quantity": 5,
-              "effectors": [ "argb", "rectangle", "wrapper", "strobe" ],
+              "effectors": [ "argb", "rectangle", "wrapper", "strobe", "feedback" ],
               "blending": "Additive"
           }
       },
-      "outputlayer1": {
+      "Free Layer 1": {
+        "dimensions": [ 1920, 1080 ],
           "models": {
               "quad1": {
                   "model": "quad.obj",
-                  "quantity": 1,
                   "effectors": [
                       "blank",
-                      "virtuallayers1::Free Layer 2"
+                      "virtuallayers1::Free Layer 1"
                   ]
               }
           }
       },
-      "outputlayer2": {
+      "Free Layer 2": {
+        "dimensions": [ 100, 100 ],
           "models": {
               "quad1": {
                   "model": "quad.obj",
-                  "quantity": 1,
                   "effectors": [
                       "blank",
-                      "virtuallayers1::Free Layer 3"
+                      "virtuallayers1::Free Layer 2"
                   ]
               }
           }
@@ -80,13 +78,13 @@
       "monitor": {
           "HDMI 1": {
               "dimensions": [ 100, 100 ],
-              "source": "outputlayer2"
+              "source": "Free Layer 2"
           }
       },
       "ndi": {
           "SMARTmoup": {
               "dimensions": [ 1920, 1080 ],
-              "source": "outputlayer1"
+              "source": "Free Layer 1"
           }
       }
   }

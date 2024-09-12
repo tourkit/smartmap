@@ -40,7 +40,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     window.max_fps = 59;
 
     window.keypress();
-    gui = new GUI(&window);
+    gui(true);
     
 
     static auto exit_cb = []() { exit(0); };
@@ -50,13 +50,23 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
     window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
 
-    window.keypress_cbs[{GLFW_KEY_S}] = []() { engine.save(); };
+    static auto save_cb = [&]() { save(); };
 
-    window.keypress_cbs[{GLFW_KEY_I}] = []() { engine.gui->draw_gui = !engine.gui->draw_gui; };
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_S}] = save_cb;
+    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_S}] = save_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_S}] = save_cb;
+    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_S}] = save_cb;
+
+    static auto guiact_cb = [&]() { engine.gui(!engine.gui_v->draw_gui); };
+
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_I}] = guiact_cb;
+    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_I}] = guiact_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_I}] = guiact_cb;
+    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_I}] = guiact_cb;
 
     tree = new Node("tree");
 
-    gui->trees[0]->selected = tree;
+    gui_v->trees[0]->selected = tree;
 
     NODE<Node>::onadd<AnyNode>([](Node*_this,Node*node){ return node; });
 
@@ -123,11 +133,26 @@ void Engine::init() {
     PLOGI << "Engine initialized";
 
 }
+void Engine::gui(bool active) {
+
+    if (gui_v && !active) {
+
+        auto gui_v_ = gui_v;
+        gui_v = nullptr;
+        delete gui_v_;
+
+    }else if (!gui_v && active) {
+
+        gui_v = new GUI(&window);
+
+    }
+
+}
 
 void Engine::run() {
 
-    if (!gui->editors.size()) 
-        gui->editors.push_back(new EditorWidget(gui));
+    if (!gui_v->editors.size()) 
+        gui_v->editors.push_back(new EditorWidget(gui_v));
 
     if (models && !models->childrens.size()) {
 
@@ -157,48 +182,35 @@ void Engine::run() {
         
     }
 
+    window.render([&](){
 
-    if (!gui->selected) 
-        gui->selected = debug;
+        if (gui_v)
+            gui_v->draw();
+        
+        if (dynamic_ubo) {        
+            static int frame = 0;
+            memcpy(dynamic_ubo->data(), &(frame), 4); // aka dynamic_ubo["ENGINE"]["frame"]
+            int fps = std::round(ImGui::GetIO().Framerate);
+            memcpy(dynamic_ubo->data()+4, &fps, 4); // aka dynamic_ubo["ENGINE"]["fps"]
+            int alt = frame % 2;
+            memcpy(dynamic_ubo->data()+8, &alt, 4); // aka dynamic_ubo["ENGINE"]["alt"]
 
-    auto &window = getInstance().window;
-    
-
-    while (!glfwWindowShouldClose(window.id)) {
-
-    // PLOGW << "begin frame";
-
-        window.render([](){
-
-            engine.gui->draw();
+            frame = (frame+1) % 65536;//window.displays.back().rate;
             
-            if (engine.dynamic_ubo) {        
-                static int frame = 0;
-                memcpy(engine.dynamic_ubo->data(), &(frame), 4); // aka engine.dynamic_ubo["ENGINE"]["frame"]
-                int fps = std::round(ImGui::GetIO().Framerate);
-                memcpy(engine.dynamic_ubo->data()+4, &fps, 4); // aka engine.dynamic_ubo["ENGINE"]["fps"]
-                int alt = frame % 2;
-                memcpy(engine.dynamic_ubo->data()+8, &alt, 4); // aka engine.dynamic_ubo["ENGINE"]["alt"]
-
-                frame = (frame+1) % 65536;//window.displays.back().rate;
-                
-                int glsldatafp = glsl_data.footprint();
-                int dynubofp = engine.dynamic_ubo->footprint();
-                
-                engine.dynamic_ubo->upload(engine.dynamic_ubo->data(),alt?glsldatafp:dynubofp);
-
-                if (alt) 
-                    engine.dynamic_ubo->upload(engine.dynamic_ubo->data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
-                
-            }
+            int glsldatafp = glsl_data.footprint();
+            int dynubofp = dynamic_ubo->footprint();
             
-            engine.tree->run();
+            dynamic_ubo->upload(dynamic_ubo->data(),alt?glsldatafp:dynubofp);
 
-        });
+            if (alt) 
+                dynamic_ubo->upload(dynamic_ubo->data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
+            
+        }
+        
+        tree->run();
 
-    
-    // PLOGW << "begin frame";
-}
+    });
+
 }
 
 
@@ -206,7 +218,7 @@ void Engine::run() {
 
 void Engine::reset() {
 
-    for (auto x : gui->editors) delete x; gui->editors.resize(0);
+    for (auto x : gui_v->editors) delete x; gui_v->editors.resize(0);
     for (auto x : stack->childrens) delete x;
     for (auto x : outputs->childrens) delete x;
     for (auto x : inputs->childrens) delete x;

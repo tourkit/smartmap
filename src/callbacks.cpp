@@ -340,7 +340,10 @@ void Callbacks::init() {
 
         if (!sender->fb) return;
 
-        if (sender->fb->width != sender->width || sender->fb->height != sender->height) { sender->size(sender->fb->width, sender->fb->height); }
+        if (sender->fb->width != sender->width || sender->fb->height != sender->height) { 
+            sender->size(sender->fb->width, sender->fb->height); 
+            PLOGE << "Salut Karl Tremblay !";
+        }
 
       });
 

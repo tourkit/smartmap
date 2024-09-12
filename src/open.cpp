@@ -139,6 +139,8 @@ void Open::outputs(){
 
         Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], ndi.name())->active(false);
 
+        // NDI::Sender& sender = *n->is_a<NDI::Sender>();
+
         outputs_src[n] = output;
 
         n->active(true);
@@ -316,16 +318,16 @@ void Open::editors(){
 
         if (e.Size()<5) { PLOGW << json_error; continue; }
 
-        engine.gui->editors.push_back(new EditorWidget(engine.gui));
+        engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v));
 
 
             Node* n = nullptr;
             if (e[4].IsString()) n = engine.tree->find(e[4].GetString());
             if (n) {
 
-                engine.gui->editors.back()->selected = n;
+                engine.gui_v->editors.back()->selected = n;
 
-                engine.gui->editors.back()->locked = true;
+                engine.gui_v->editors.back()->locked = true;
 
             }else PLOGW << "no \"" << e[4].GetString() << "\" found";
 
@@ -357,19 +359,19 @@ void Open::json(std::string path) {
 
     if (!json_v.loaded) {
 
-        engine.gui->editors.push_back(new EditorWidget(engine.gui));
+        engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v));
 
-        engine.gui->editors.push_back(new EditorWidget(engine.gui));
+        engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v));
 
-        engine.gui->editors.back()->selected = engine.debug;
+        engine.gui_v->editors.back()->selected = engine.debug;
 
-        engine.gui->editors.back()->locked = true;
+        engine.gui_v->editors.back()->locked = true;
 
         auto f = engine.debug->addOwnr<File>(path);
 
         f->on(Node::CHANGE, [&](Node* n) { engine.open(path.c_str()); });
 
-        engine.gui->selected = f;
+        engine.gui_v->selected = f;
 
         return;
 
