@@ -244,7 +244,7 @@ using namespace ImGui;
 
         if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
 
-        if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) selected = s;
+        if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) gui->selected = s;
 
         if (ImGui::IsMouseReleased(0)) mouse_down = false;
 
