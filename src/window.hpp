@@ -3,7 +3,9 @@
 
 #include <cstring>
 #include <vector>
+#include <set>
 #include <functional>
+#include <map>
 
 #include "vendors/gl3w/include/GL/gl3w.h"
 #include <GLFW/glfw3.h>
@@ -46,8 +48,10 @@ struct Window : Output {
     void keypress();
 
     std::function<void()> clickCallBack = []() { /*  PLOGD << "click"; */ };
+  
+    static inline std::set<int> keys_down;
 
-    std::unordered_map<int, std::function<void(int)>> keypress_cbs;
+    static inline std::map<std::set<int>, std::function<void()>> keypress_cbs;
     
     static inline ShaderProgram *shader = nullptr;
 

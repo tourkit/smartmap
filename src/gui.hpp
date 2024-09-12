@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
+#include <set>
 
 #include "log.hpp"
 
@@ -64,6 +65,7 @@ struct GLFWwindow;
 
 
 struct Node;
+struct Window;
 
 struct GUI {
 
@@ -73,7 +75,7 @@ struct GUI {
 
   bool draw_gui = true;
 
-  GUI(GLFWwindow* window);
+  GUI(::Window* window);
 
   ~GUI();
 
@@ -109,6 +111,7 @@ struct GUI {
     virtual void drawEditor() {}
 
     GUI* gui = nullptr;
+
 
   };
 

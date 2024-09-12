@@ -1,6 +1,5 @@
 #include "window.hpp"
 #include "framebuffer.hpp"
-#include "log.hpp"
 #include "gui.hpp"
 
 #include "shader.hpp"
@@ -79,7 +78,7 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
 #endif
 #endif
     if (uid_callbacks) {
-        keypress();
+        // keypress();
     }
 
     glfwMakeContextCurrent(id);
@@ -121,20 +120,31 @@ void Window::size(uint32_t width, uint32_t height) {
 Window::~Window() { glfwTerminate(); }
 
 void Window::keypress() {
+
     glfwSetKeyCallback(id, [](GLFWwindow* id, int key, int scancode, int action, int mode) {
         (void)scancode;
         (void)mode;
         auto _this = (Window*)glfwGetWindowUserPointer(id);
-        if (action == GLFW_PRESS) {
 
-            if (_this->keypress_cbs.find(key) != _this->keypress_cbs.end()) return _this->keypress_cbs[key](key);
+        if (action == GLFW_PRESS) 
+            keys_down.insert(key);
 
-            PLOGD << "key " << (int)key ;
+        if (action == GLFW_RELEASE) 
+            keys_down.erase(key);
 
-        }
+        if (keys_down.size()){
+            for (auto x : _this->keypress_cbs) 
+                if (x.first == keys_down) 
+                    x.second();PLOGW << key;}
+
     });
+
     glfwSetCursorPosCallback(id, [](GLFWwindow* id, double mouse_x, double mouse_y) {
-        auto _this = (Window*)glfwGetWindowUserPointer(id);
+        
+        void* void_ptr = glfwGetWindowUserPointer(id);
+        if (!void_ptr) 
+            return;
+        auto _this = (Window*)void_ptr;
         _this->mouse_x = mouse_x;
         _this->mouse_y = mouse_y;
     });
@@ -144,7 +154,7 @@ void Window::keypress() {
         auto _this = (Window*)glfwGetWindowUserPointer(id);
         if (action == GLFW_PRESS) {
             // mouse click
-             _this->clickCallBack();
+            //  _this->clickCallBack();
         }
     });
 }

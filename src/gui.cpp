@@ -3,14 +3,13 @@
 #include "editor.hpp"
 #include "imgui.h"
 #include "tree.hpp"
+#include "window.hpp"
 
 
 #include "imgui/backends/imgui_impl_glfw.h"
 #include "imgui/backends/imgui_impl_opengl3.h"
 
 
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
 
 #include "imgui/imgui_internal.h"
 
@@ -171,15 +170,18 @@ void GUI::Window::drawFull() { {
 ///// GUIGUIGUIGUIGUIG
 
 
-GUI::GUI(GLFWwindow* window) {
+GUI::GUI(::Window* window) {
 
   ImGui::CreateContext();
 
   ImGuiIO& io = ImGui::GetIO(); (void)io;
   io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
   io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+  io.WantCaptureKeyboard = false;
 
-  ImGui_ImplGlfw_InitForOpenGL(window, true);
+  ImGui_ImplGlfw_InitForOpenGL(window->id, false);
+ImGui_ImplGlfw_InstallCallbacks(window->id);
+ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
 
   const char* glsl_version = "#version 430";
   ImGui_ImplOpenGL3_Init(glsl_version);
@@ -247,15 +249,26 @@ void GUI::newframe() {
 
 }
 
+
+static bool isKeyDown(ImGuiKey key) { 
+  
+  if (ImGui::IsKeyDown(key))
+    return true; 
+
+  return false;
+}
 void GUI::draw() {
 
   newframe();
 
+  // if (ImGui::)
+  // if (isKeyDown(ImGuiKey_LeftCtrl)) {
+
+  // }
   // if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S)) engine.save();
   // if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_I)) engine.gui->draw_gui = !engine.gui->draw_gui;
   // if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl) || ImGui::IsKeyDown(ImGuiKey_LeftShift)) && ImGui::IsKeyPressed(ImGuiKey_Escape)) exit(0);
 
-  if (draw_gui) {
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0); // si ca aide .. ?
 
@@ -266,7 +279,6 @@ void GUI::draw() {
       delete x;
     close_list.resize(0);
 
-  }
 
   render();
 

@@ -156,6 +156,7 @@ struct ImGui_ImplGlfw_Data
     GLFWkeyfun              PrevUserCallbackKey;
     GLFWcharfun             PrevUserCallbackChar;
     GLFWmonitorfun          PrevUserCallbackMonitor;
+    void*                   PrevUserCallbackUserPointer;
 #ifdef _WIN32
     WNDPROC                 GlfwWndProc;
 #endif
@@ -385,8 +386,10 @@ static int ImGui_ImplGlfw_TranslateUntranslatedKey(int key, int scancode)
 void ImGui_ImplGlfw_KeyCallback(GLFWwindow* window, int keycode, int scancode, int action, int mods)
 {
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
-    if (bd->PrevUserCallbackKey != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
+    if (bd->PrevUserCallbackKey != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window)){
+        glfwSetWindowUserPointer(window, bd->PrevUserCallbackUserPointer);
         bd->PrevUserCallbackKey(window, keycode, scancode, action, mods);
+    }
 
     if (action != GLFW_PRESS && action != GLFW_RELEASE)
         return;
@@ -417,8 +420,11 @@ void ImGui_ImplGlfw_WindowFocusCallback(GLFWwindow* window, int focused)
 void ImGui_ImplGlfw_CursorPosCallback(GLFWwindow* window, double x, double y)
 {
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
-    if (bd->PrevUserCallbackCursorPos != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window))
+    if (bd->PrevUserCallbackCursorPos != nullptr && ImGui_ImplGlfw_ShouldChainCallback(window)){
+        glfwSetWindowUserPointer(window, bd->PrevUserCallbackUserPointer);
         bd->PrevUserCallbackCursorPos(window, x, y);
+
+    }
     if (glfwGetInputMode(window, GLFW_CURSOR) == GLFW_CURSOR_DISABLED)
         return;
 
@@ -542,7 +548,8 @@ void ImGui_ImplGlfw_InstallCallbacks(GLFWwindow* window)
     ImGui_ImplGlfw_Data* bd = ImGui_ImplGlfw_GetBackendData();
     IM_ASSERT(bd->InstalledCallbacks == false && "Callbacks already installed!");
     IM_ASSERT(bd->Window == window);
-
+    
+    bd->PrevUserCallbackUserPointer = glfwGetWindowUserPointer(window);
     bd->PrevUserCallbackWindowFocus = glfwSetWindowFocusCallback(window, ImGui_ImplGlfw_WindowFocusCallback);
     bd->PrevUserCallbackCursorEnter = glfwSetCursorEnterCallback(window, ImGui_ImplGlfw_CursorEnterCallback);
     bd->PrevUserCallbackCursorPos = glfwSetCursorPosCallback(window, ImGui_ImplGlfw_CursorPosCallback);
@@ -560,6 +567,7 @@ void ImGui_ImplGlfw_RestoreCallbacks(GLFWwindow* window)
     IM_ASSERT(bd->InstalledCallbacks == true && "Callbacks not installed!");
     IM_ASSERT(bd->Window == window);
 
+    glfwSetWindowUserPointer(window, bd->PrevUserCallbackUserPointer);
     glfwSetWindowFocusCallback(window, bd->PrevUserCallbackWindowFocus);
     glfwSetCursorEnterCallback(window, bd->PrevUserCallbackCursorEnter);
     glfwSetCursorPosCallback(window, bd->PrevUserCallbackCursorPos);
@@ -569,6 +577,7 @@ void ImGui_ImplGlfw_RestoreCallbacks(GLFWwindow* window)
     glfwSetCharCallback(window, bd->PrevUserCallbackChar);
     glfwSetMonitorCallback(bd->PrevUserCallbackMonitor);
     bd->InstalledCallbacks = false;
+    bd->PrevUserCallbackUserPointer = nullptr;
     bd->PrevUserCallbackWindowFocus = nullptr;
     bd->PrevUserCallbackCursorEnter = nullptr;
     bd->PrevUserCallbackCursorPos = nullptr;

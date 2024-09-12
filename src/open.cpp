@@ -195,7 +195,7 @@ void Open::layers(){
 
         if (!layer_def.name().data()) { PLOGW << layer_def.stringify(); continue; }
 
-        if (layer_def.value.HasMember("models") && layer_def.value.IsObject())  { // HARD CHECK FOR TYPE BETWEEN VIRTUALLAYER AND LAYER
+        if (layer_def["models"].isobj())  { // HARD CHECK FOR TYPE BETWEEN VIRTUALLAYER AND LAYER
          
             auto dim = layer_def["dimensions"];
 

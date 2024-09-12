@@ -18,6 +18,7 @@
 #include "editors.hpp"
 #include "tree.hpp"
 
+#include <GLFW/glfw3.h>
 #include <cmath>
 
 
@@ -38,13 +39,20 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
 
     window.max_fps = 59;
 
-    gui = new GUI(window.id);
+    window.keypress();
+    gui = new GUI(&window);
+    
 
-    // window.keypress_cbs[GLFW_KEY_ESCAPE] = [](int key) { exit(0); };
+    static auto exit_cb = []() { exit(0); };
 
-    // window.keypress_cbs[GLFW_KEY_S] = [](int key) { engine.save(); };
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
+    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
+    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
 
-    // window.keypress_cbs[GLFW_KEY_I] = [](int key) { engine.gui->draw_gui = !engine.gui->draw_gui; };
+    window.keypress_cbs[{GLFW_KEY_S}] = []() { engine.save(); };
+
+    window.keypress_cbs[{GLFW_KEY_I}] = []() { engine.gui->draw_gui = !engine.gui->draw_gui; };
 
     tree = new Node("tree");
 
