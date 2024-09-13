@@ -244,7 +244,15 @@ using namespace ImGui;
 
         if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
 
-        if (mouse_down) if (ImGui::IsMouseReleased(0) && !holding) gui->selected = s;
+        if (mouse_down) 
+            if (ImGui::IsMouseReleased(0) && !holding) {
+                
+                gui->selected = s;
+
+                if (!gui->editors.size()) 
+                    gui->editors.emplace_back(new EditorWidget(gui));
+                
+            }
 
         if (ImGui::IsMouseReleased(0)) mouse_down = false;
 

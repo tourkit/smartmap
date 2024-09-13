@@ -96,7 +96,8 @@ void File::read(std::string path, bool binary){
         file.seekg(0, std::ios::end);
         std::streamsize size = file.tellg();
 
-        if (!size) {PLOGE << "FAIL"; return;}
+        if (!size) 
+            return;
 
         file.seekg(0, std::ios::beg);
 

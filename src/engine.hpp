@@ -29,6 +29,7 @@ struct Engine {
     Node* models = nullptr;
     Node* effectors = nullptr;
     Node* medias = nullptr;
+    Node* structs = nullptr;
     Node* remaps = nullptr;
     Node* inputs = nullptr;
     Node* outputs = nullptr;

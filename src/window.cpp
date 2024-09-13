@@ -136,10 +136,8 @@ void Window::keypress() {
             for (auto x : _this->keypress_cbs) 
                 if (x.first == _this->keys_down) 
                     x.second();
-            PLOGW << _this->keys_down;
+            // PLOGW << _this->keys_down;
         }
-
-        PLOGW << key;
     });
 
     glfwSetCursorPosCallback(id, [](GLFWwindow* id, double mouse_x, double mouse_y) {
@@ -216,7 +214,7 @@ void Window::render(std::function<void()> callback) {
 
         glfwSwapBuffers(id);
     
-        // PLOGW << "begin frame";
+        // PLOGW << "end frame";
 
     }
 

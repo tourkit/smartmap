@@ -216,6 +216,17 @@ Node* Node::add(void* node_v)  {
 
 std::string Node::nameSTL(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
 
+Node *Node::top_parent() { 
+    
+    Node* top_parent = this;
+    
+    while (top_parent->parent()) 
+        top_parent = top_parent->parent(); 
+
+    return top_parent; 
+
+}
+
 Node *Node::parent() { return parent_node; }
 
 void Node::parent(Node* parent_node) {

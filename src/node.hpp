@@ -60,6 +60,7 @@ struct Node {
     void parent(Node* parent_node);
 
     Node* parent();
+    Node* top_parent();
 
     Node* find(std::string  name);
     Node* find_nowarning(std::string  name);

@@ -1,5 +1,6 @@
 #include "callbacks.hpp"
 
+#include "member.hpp"
 #include "node.hpp"
 #include "file.hpp"
 #include "remap.hpp"
@@ -58,7 +59,8 @@ void Callbacks::init() {
 
     NODE<Member>::on(Node::CHANGE, [&](Node*node, Member* m){
         if (m->name() != node->name())
-            m->ref()->name(node->name()); });
+            m->ref()->name(node->name()); 
+    });
 
 
     

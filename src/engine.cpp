@@ -116,19 +116,11 @@ void Engine::init() {
     
     medias = tree->addOwnr<Node>()->name("Medias")->active(false);
 
-    // auto comps = debug->addOwnr<Node>()->name("Components")->close();
-    // for (auto c : Component::pool) comps->addPtr<Component>(c); // tofix
+    structs = tree->addOwnr<Node>()->name("Structs")->close();
 
     models = tree->addOwnr<Node>()->name("Models")->active(false);
-    // models = tree->addFolder<File>("Models", "assets/models/");
 
     effectors = tree->addOwnr<Node>()->name("Effectors")->active(false);
-
-    // effectors = tree->addFolder<File>("Effectors", "assets/effectors/");
-
-    // timelines = tree->addOwnr<Node>()->name("Timelines");
-
-    // remaps = tree->addOwnr<Node>()->name("Remaps");
 
     inputs = tree->addOwnr<Node>()->name("Inputs")->active(1);
 
@@ -158,8 +150,6 @@ void Engine::gui(bool active) {
 
 void Engine::run() {
 
-    if (gui_v &&!gui_v->editors.size()) 
-        gui_v->editors.push_back(new EditorWidget(gui_v));
 
     if (gui_v) {
         
@@ -168,13 +158,8 @@ void Engine::run() {
         if (!gui_v->editors.size()) 
             gui_v->editors.push_back(new EditorWidget(gui_v));
 
-        if (models && !models->childrens.size()) {
-
+        if (models && !models->childrens.size()) 
             auto quad = models->addPtr<File>( &VBO::quad );
-        }
-
-        //  auto x = stack->addOwnr<Layer>();
-            // x->add(quad);
 
     }
 

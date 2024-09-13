@@ -359,6 +359,8 @@ void Open::json(std::string path) {
 
     if (!json_v.loaded) {
 
+        engine.gui(true);
+
         engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v));
 
         engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v));
