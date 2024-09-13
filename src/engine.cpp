@@ -150,7 +150,7 @@ void Engine::gui(bool active) {
     }else if (!gui_v && active) {
 
         gui_v = new GUI(&window);
-        // gui_v->trees.emplace_back(new TreeWidget(gui_v))->selected = engine.tree;
+        gui_v->trees[0]->selected= engine.tree;
 
     }
 
