@@ -72,8 +72,8 @@ void UBO::upload(){ upload(data(), footprint_all()); }
 void UBO::upload(void* data, size_t size, uint32_t offset){
 
     // std::string str;
-    // for (int i = 0 ; i < footprint(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
-    // if (name() == "ubo") {PLOGW << name() << " " << id << " " << binding << ": " << size << " - " << str;}
+    // for (int i = footprint() ; i < footprint(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
+    // if (name() == "dynamic_ubo") {PLOGW << name() << " " << id << " " << binding << ": " << size << " - " << str;}
 
     if (!size) return;
     glBindBuffer(GL_UNIFORM_BUFFER, id);

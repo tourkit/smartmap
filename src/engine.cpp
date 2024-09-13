@@ -57,7 +57,11 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
 
     static auto guiact_cb = [&]() { 
 
-        end_of_render_cbs.emplace_back(std::make_shared<std::function<void()>>([&]() { engine.gui(!engine.gui_v);  }));
+        window.end_of_render_cbs.emplace_back(std::pair<void*,std::shared_ptr<std::function<void(void*)>>>{nullptr, std::make_shared<std::function<void(void*)>>([&](void* ptr) { 
+            
+            engine.gui(!engine.gui_v);  
+            
+        })});
         
     };
 
@@ -65,6 +69,12 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_I}] = guiact_cb;
     window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_I}] = guiact_cb;
     window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_I}] = guiact_cb;
+    window.mousedown_cb = [](int button) { 
+        
+        if (button == GLFW_MOUSE_BUTTON_LEFT) engine.gui(true); 
+        else if (button == GLFW_MOUSE_BUTTON_RIGHT) exit_cb();
+        
+    };
 
     tree = new Node("tree");
 

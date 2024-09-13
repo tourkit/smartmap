@@ -170,7 +170,7 @@ void GUI::Window::drawFull() { {
 ///// GUIGUIGUIGUIGUIG
 
 
-GUI::GUI(::Window* window) {
+GUI::GUI(::Window* window) : window(window) {
 
   ImGui::CreateContext();
 

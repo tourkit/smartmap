@@ -151,24 +151,33 @@ void Window::keypress() {
             // PLOGW << _this->keys_down;
         }
     });
-
     glfwSetCursorPosCallback(id, [](GLFWwindow* id, double mouse_x, double mouse_y) {
         
         void* void_ptr = glfwGetWindowUserPointer(id);
+
         if (!void_ptr) 
             return;
-        auto _this = (Window*)void_ptr;
-        _this->mouse_x = mouse_x;
-        _this->mouse_y = mouse_y;
+
+        auto win = (Window*)void_ptr;
+
+        if (win->mousemove_cb)
+            win->mousemove_cb(mouse_x, mouse_y);
+
     });
+
     glfwSetMouseButtonCallback(id, [](GLFWwindow* id, int button, int action, int mods) {
         (void)button;
         (void)mods;
-        auto _this = (Window*)glfwGetWindowUserPointer(id);
-        if (action == GLFW_PRESS) {
-            // mouse click
-            //  _this->clickCallBack();
-        }
+        void* void_ptr = glfwGetWindowUserPointer(id);
+
+        if (!void_ptr) 
+            return;
+
+        auto win = (Window*)void_ptr;
+
+        if (win->mousedown_cb && action == GLFW_PRESS) 
+            win->mousedown_cb(button);
+
     });
 }
 

@@ -72,6 +72,8 @@ struct GUI {
   void *dragging = nullptr;
 
   Node* selected = nullptr;
+  
+  ::Window* window = nullptr;
 
   bool draw_gui = true;
 

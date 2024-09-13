@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "node.hpp"
 #include "editor.hpp"
+#include "window.hpp"
 #include "imgui_internal.h"
 
 TreeWidget::TreeWidget(GUI* gui) : GUI::Window("Tree", gui) {
@@ -174,6 +175,12 @@ using namespace ImGui;
 
                 is_deleting = false;
                 gui->delete_list.push_back(node);
+
+        gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::shared_ptr<std::function<void(void*)>>>{nullptr, std::make_shared<std::function<void(void*)>>([&](void* ptr) { 
+            
+            delete (Node*)ptr;
+            
+        })});
 
             }
 

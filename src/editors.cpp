@@ -925,7 +925,7 @@ void Editors::init() {
 
                 ImGui::Separator();
 
-                if (m->buffering() && draw_raw(m->data(),m->footprint())) m->upload();
+                if (m->buffering() && draw_raw(m->data(),m->footprint_all())) m->upload();
 
                 ImGui::Separator();
 

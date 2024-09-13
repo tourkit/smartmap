@@ -31,6 +31,8 @@
 int main() {
 
 
+    logger.cout(Sev::warning);
+
     engine.init();
 
     Freetype ft("c", 100);
@@ -38,29 +40,8 @@ int main() {
     engine.tree->addOwnr<Texture>(ft.buffer, ft.width, ft.height, 0, 1, GL_RGB8,GL_RGBA);
 
     engine.open("project.json");
+    auto check_referimgs = engine.tree->find("Free Layer 1");
 
-    logger.cout(Sev::warning);
-
-    auto argb = engine.tree->find("argb");
-    auto quad1 = engine.tree->find("quad1");
-
-        // auto effectable =  quad1->is_a<Effectable>();
-        // auto effector =  argb->is_a<Effector>();
-
-        // auto x = effectable->addEffector( effector );
-
-        // auto n = quad1->addPtr<EffectorRef>(x);
-
-        // node->referings.insert(n);
-
-    quad1->add(argb);
-
-    // freelayer need to be updated
-
-    auto lst = Builder::unique_name({engine.dynamic_ubo});
-
-    for (auto x : lst) 
-        PLOGW << Builder::print_struct(x.first, lst);
 
 
     engine.run();
