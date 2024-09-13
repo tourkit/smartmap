@@ -179,6 +179,8 @@ void DrawCall::update() {
 
 
 
+    Member::update();
+
         int i = 0;
 
         vbo.reset();

@@ -90,6 +90,7 @@ struct Member {
     
     void simpleupdate();
     
+    void calc_size();
     virtual void update();
     
     virtual void upload();

@@ -630,17 +630,17 @@ void Editors::init() {
 
         static TextEditor frageditor;
         static TextEditor verteditor;
-        // if (ImGui::Button("create")) {
-        //     shader->create();
-        //     frageditor.SetText(shader->frag.src);
-        //     verteditor.SetText(shader->vert.src);
-        // }
-        // ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
-        // ImGui::SameLine(); if (ImGui::Button("samplers connect")) { 
+        if (ImGui::Button("create")) {
+            shader->create();
+            frageditor.SetText(shader->frag.src);
+            verteditor.SetText(shader->vert.src);
+        }
+        ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
+        ImGui::SameLine(); if (ImGui::Button("samplers connect")) { 
 
-        //     auto builder = shader->builder();
-        //     builder->post();
-        //  }
+            auto builder = shader->builder();
+            builder->post();
+         }
 
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 

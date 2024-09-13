@@ -112,24 +112,21 @@ void Callbacks::init() {
  
     });
 
-    NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
-
-        dc->update();
-
-    });
-
     NODE<UberLayer>::allow<UberLayer::VirtualLayer>();
     NODE<Effectable>::allow<EffectorRef>();
     NODE<Modelable>::allow<Model>();
     NODE<Artnet>::allow<Universe>();
     NODE<Universe>::allow<DMXRemap>();
     NODE<UberLayer>::is_a<Layer>();
-    NODE<DrawCall>::is_a<Modelable>();
     NODE<Layer>::is_a<DrawCall>();
     NODE<Model>::is_a<Modelable>();
     NODE<UberLayer::VirtualLayer>::is_a<Effectable>();
+    NODE<Effectable>::is_a<Member>();
+    NODE<Effector>::is_a<Member>();
+
     NODE<Modelable>::is_a<Effectable>();
 
+    NODE<DrawCall>::is_a<Modelable>();
 
     NODE<DrawCall>::on(Node::RUN, [](Node* node, DrawCall *dc) { 
 
@@ -137,17 +134,12 @@ void Callbacks::init() {
         
     });
 
-    // NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
-    
-    //     NODE<Member>::on_cb[Node::CREATE](node, e);
-        
-    // });
+    NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
-    // NODE<Effectable>::on(Node::CHANGE, [](Node* node, Effectable *e){ 
-    
-    //     NODE<Member>::on_cb[Node::CHANGE](node, e);
-        
-    // });
+        dc->update();
+
+    });
+
 
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
@@ -159,12 +151,11 @@ void Callbacks::init() {
     NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
 
         auto effectable =  _this->is_a<Effectable>();
-        auto x = effectable->addEffector( node->is_a<Effector>() );
+        auto effector =  node->is_a<Effector>();
+        auto x = effectable->addEffector( effector );
         auto n = _this->addPtr<EffectorRef>(x);
-
-        node->referings.insert(n);
         
-        return &no_worry_node;
+        return n;
         
     });
 
@@ -197,11 +188,6 @@ void Callbacks::init() {
         return _this;
 
     });
-
-    NODE<Effector>::on(Node::CREATE, [](Node*node, Effector* def){ NODE<Member>::on_cb[Node::CREATE](node, def); });
-
-
-    // NODE<Effector>::on(Node::CHANGE, [&](Node*node, Effector* effector){ NODE<Member>::on_cb[Node::CHANGE](node, &effector->m);  });
 
     NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
 
@@ -294,6 +280,20 @@ void Callbacks::init() {
     ////////// Output
 
     NODE<Output>::on(Node::RUN, [](Node* node, Output *output){ output->draw(); });
+
+
+    NODE<Output>::on(Node::CHANGE, [](Node* node, Output *output){
+
+        if (!output->fb) return;
+
+        if (output->fb->width != output->width || output->fb->height != output->height) { 
+
+            PLOGE << "resize " << node->name() << " from " << output->width << " x " << output->height << " to " << output->fb->width << " x " << output->fb->height;
+
+            output->size(output->fb->width, output->fb->height); 
+        }
+
+      });
     
     NODE<Output>::onadd<Layer>([](Node* _this, Node *node) {
 
@@ -339,19 +339,6 @@ void Callbacks::init() {
     ////////// NDI
 
     NODE<NDI::Sender>::on(Node::CREATE, [](Node* node, NDI::Sender *sender){ node->name(sender->name);  });
-
-    NODE<Output>::on(Node::CHANGE, [](Node* node, Output *output){
-
-        if (!output->fb) return;
-
-        if (output->fb->width != output->width || output->fb->height != output->height) { 
-
-            PLOGE << "resize " << node->name() << " from " << output->width << " x " << output->height << " to " << output->fb->width << " x " << output->fb->height;
-
-            output->size(output->fb->width, output->fb->height); 
-        }
-
-      });
 
     ////////// JSON.HPP
 

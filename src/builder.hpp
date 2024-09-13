@@ -53,8 +53,7 @@ struct Builder {
 
     std::map<Member*,std::string> list; // toremove
 
-private:
-
-    std::string print_struct(Member* member, std::map<Member*,std::string> &unique_name_list);
+    static std::vector<std::pair<Member*,std::string>> unique_name(std::vector<UBO*> ubos);
+    static std::string print_struct(Member* member, std::vector<std::pair<Member*,std::string>>& list);
 
   };

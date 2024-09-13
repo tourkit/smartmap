@@ -154,9 +154,9 @@ std::string Member::type_name() {
 
     std::string type_ = type().name();
 
-    if (isData()) return "datatype" + type_;
+    if (isData()) return "datatype " + type_;
 
-    return "unknown" + type_;
+    return "unknown " + type_;
 
 }
 
@@ -480,8 +480,7 @@ void remap2(Instance this_, Instance bkp) {
 }
 
 
-void Member::update() { 
-
+void Member::calc_size() { 
 
     size_v = 0;
 
@@ -490,6 +489,12 @@ void Member::update() {
     else
         for (auto &m : members) 
             size_v += m->footprint_all();
+
+}
+
+void Member::update() { 
+
+    calc_size();
 
     for (auto a : structs) 
         for (auto &m : a->members) 

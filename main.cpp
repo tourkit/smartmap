@@ -23,10 +23,13 @@
 #include "engine.hpp"
 #include "src/freetype.hpp"
 #include "texture.hpp"
+#include "builder.hpp"
+#include "instance.hpp"
+#include "effector.hpp"
+
 
 int main() {
 
-    logger.cout(Sev::warning);
 
     engine.init();
 
@@ -36,9 +39,29 @@ int main() {
 
     engine.open("project.json");
 
+    logger.cout(Sev::warning);
+
     auto argb = engine.tree->find("argb");
     auto quad1 = engine.tree->find("quad1");
+
+        // auto effectable =  quad1->is_a<Effectable>();
+        // auto effector =  argb->is_a<Effector>();
+
+        // auto x = effectable->addEffector( effector );
+
+        // auto n = quad1->addPtr<EffectorRef>(x);
+
+        // node->referings.insert(n);
+
     quad1->add(argb);
+
+    // freelayer need to be updated
+
+    auto lst = Builder::unique_name({engine.dynamic_ubo});
+
+    for (auto x : lst) 
+        PLOGW << Builder::print_struct(x.first, lst);
+
 
     engine.run();
 

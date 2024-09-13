@@ -165,28 +165,28 @@ int Builder::addSampler(Texture* tex, std::string name) {
 
 bool Builder::add(UBO* ubo) { return true; }
 
-std::string Builder::layout() {
+
+static void small_first(Member* m, std::vector<Member*>& list ) {
+
+    auto ref = m->ref();
+    if (m == ref)
+        for (auto m_ : m->members) 
+            small_first(m_, list);
+    
+    if (!m->isData())
+        list.push_back(ref);
+
+}
+
+std::vector<std::pair<Member*,std::string>> Builder::unique_name(std::vector<UBO*> ubos) {
 
     std::vector<Member*> structs;
 
-    for (auto ubo : ubos)    {
+    for (auto ubo : ubos)    
 
-        Instance(*ubo).each([&](Instance& inst) {
+        small_first(ubo, structs);
 
-            auto m = inst.stl.back().m;
-
-            if (!m->isData())
-                ADD_UNIQUE<Member*>(structs,m);
-
-        });
-
-        ADD_UNIQUE<Member*>(structs,ubo);
-
-    }
-
-    std::string out;
-
-    std::map<Member*,std::string> unique_name_list;
+    std::vector<std::pair<Member*,std::string>> unique_name_list;
 
     for (auto m : structs) {
 
@@ -216,14 +216,22 @@ std::string Builder::layout() {
 
         }
 
-
-        unique_name_list[m] = name;
+        unique_name_list.push_back(std::pair<Member*,std::string>{m, name});
 
     }
 
+    return unique_name_list;
+
+}
+std::string Builder::layout() {
+
+    auto structs = unique_name(ubos);
+
+    std::string out;
+
     for (auto x : structs) { 
 
-        auto def = print_struct(x,unique_name_list); 
+        auto def = print_struct(x.first,structs); 
         
         if (def.length()) 
             def+=";\n\n"; out += def; 
@@ -246,7 +254,7 @@ std::string Builder::layout() {
 
 }
 
-std::string Builder::print_struct(Member* member, std::map<Member*,std::string> &unique_name_list) {
+std::string Builder::print_struct(Member* member, std::vector<std::pair<Member*,std::string>> &unique_name_list) {
 
     if (!member->size()) return "";
 
@@ -267,7 +275,12 @@ std::string Builder::print_struct(Member* member, std::map<Member*,std::string> 
         
         auto ref = x->ref();   
 
-        auto name = unique_name_list.find(ref)!=unique_name_list.end()?unique_name_list[ref]:ref->type_name();
+        std::string name;
+        for (auto x : unique_name_list) 
+            if (x.first == ref) 
+                name = x.second;
+        if (!name.length())
+            name = ref->type_name();
 
         content+=tb+""+name+" "+lower(ref->_name());
 
@@ -278,8 +291,11 @@ std::string Builder::print_struct(Member* member, std::map<Member*,std::string> 
     }
 
     if (!content.length()) return "";
-
-    out+="struct "+unique_name_list[member]+" { "+nl+nl+content;
+        std::string name;
+        for (auto x : unique_name_list) 
+            if (x.first == member) 
+                name = x.second;
+    out+="struct "+name+" { "+nl+nl+content;
 
     if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
 
