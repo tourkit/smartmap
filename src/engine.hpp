@@ -6,6 +6,8 @@
 #include "globals.hpp"
 #include "ubo.hpp"
 #include "log.hpp"
+#include <memory>
+#include <vector>
 
 
 struct Debug {};
@@ -46,6 +48,8 @@ struct Engine {
     void open(const char* filepath);
     void save(const char* filepath);
     void save();
+
+    std::vector<std::shared_ptr<std::function<void()>>> end_of_render_cbs;
 
     void gui(bool active);
 

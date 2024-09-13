@@ -39,8 +39,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
 
     window.max_fps = 59;
 
-    // window.keypress();
-    // gui(true);
     
 
     static auto exit_cb = []() { exit(0); };
@@ -57,7 +55,11 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_S}] = save_cb;
     window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_S}] = save_cb;
 
-    static auto guiact_cb = [&]() { engine.gui(!engine.gui_v->draw_gui); };
+    static auto guiact_cb = [&]() { 
+
+        end_of_render_cbs.emplace_back(std::make_shared<std::function<void()>>([&]() { engine.gui(!engine.gui_v);  }));
+        
+    };
 
     window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_I}] = guiact_cb;
     window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_I}] = guiact_cb;
@@ -66,10 +68,16 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
 
     tree = new Node("tree");
 
+    window.keypress();
+    // gui(true);
+
+    // gui(false);
+    // gui(true);
+
+    // gui(false);
     NODE<Node>::onadd<AnyNode>([](Node*_this,Node*node){ return node; });
 
     tree->active(1);
-
 
 }
 
@@ -142,6 +150,7 @@ void Engine::gui(bool active) {
     }else if (!gui_v && active) {
 
         gui_v = new GUI(&window);
+        // gui_v->trees.emplace_back(new TreeWidget(gui_v))->selected = engine.tree;
 
     }
 
@@ -149,6 +158,8 @@ void Engine::gui(bool active) {
 
 void Engine::run() {
 
+    if (gui_v &&!gui_v->editors.size()) 
+        gui_v->editors.push_back(new EditorWidget(gui_v));
 
     if (gui_v) {
         
@@ -185,17 +196,17 @@ void Engine::run() {
         
     }
 
+
     window.render([&](){
 
         int fps = 0;
-        
         if (gui_v){
-        
-            fps = std::round(ImGui::GetIO().Framerate);
+
             gui_v->draw();
+            
+            fps = std::round(ImGui::GetIO().Framerate);
         
         }
-        
         if (dynamic_ubo) {        
             static int frame = 0;
             memcpy(dynamic_ubo->data(), &(frame), 4); // aka dynamic_ubo["ENGINE"]["frame"]
@@ -216,6 +227,11 @@ void Engine::run() {
         }
         
         tree->run();
+
+        for (auto cb : end_of_render_cbs)
+            (*cb.get())();
+
+        end_of_render_cbs.clear();
 
     });
 

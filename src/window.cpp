@@ -127,15 +127,16 @@ void Window::keypress() {
         auto _this = (Window*)glfwGetWindowUserPointer(id);
 
         if (action == GLFW_PRESS) 
-            keys_down.insert(key);
+            _this->keys_down.insert(key);
 
         if (action == GLFW_RELEASE) 
-            keys_down.erase(key);
+            _this->keys_down.erase(key);
 
-        if (keys_down.size()){
+        if (_this->keys_down.size()){
             for (auto x : _this->keypress_cbs) 
-                if (x.first == keys_down) 
+                if (x.first == _this->keys_down) 
                     x.second();
+            PLOGW << _this->keys_down;
         }
 
         PLOGW << key;
@@ -214,7 +215,6 @@ void Window::render(std::function<void()> callback) {
         callback();
 
         glfwSwapBuffers(id);
-
     
         // PLOGW << "begin frame";
 

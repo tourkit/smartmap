@@ -6,6 +6,7 @@
 #include <set>
 #include <functional>
 #include <map>
+#include <memory>
 
 #include "vendors/gl3w/include/GL/gl3w.h"
 #include <GLFW/glfw3.h>
@@ -49,9 +50,9 @@ struct Window : Output {
 
     std::function<void()> clickCallBack = []() { /*  PLOGD << "click"; */ };
   
-    static inline std::set<int> keys_down;
+    std::set<int> keys_down;
 
-    static inline std::map<std::set<int>, std::function<void()>> keypress_cbs;
+    std::map<std::set<int>, std::function<void()>> keypress_cbs;
     
     static inline ShaderProgram *shader = nullptr;
 
