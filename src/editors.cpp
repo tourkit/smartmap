@@ -1108,7 +1108,7 @@ void Editors::init() {
         auto wrap_ = dynamic_cast<Wrappy*>(def);
         if (wrap_) {
             
-            for (auto x : wrap_->effector_refs) ImGui::Text(x->m.name().c_str());
+            for (auto x : wrap_->effector_refs) ImGui::Text(x->wizdom.name().c_str());
 
             return;
             

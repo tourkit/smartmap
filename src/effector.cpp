@@ -236,8 +236,8 @@ bool Wrappy::setup(Builder* builder) {
 // Ref  ////////////////
 // Ref  ////////////////
 
-EffectorRef::EffectorRef(std::string name, Effector* effector ) : m(""), effector(effector) {  
-    m.add( &effector->cucurbitassai ); 
+EffectorRef::EffectorRef(std::string name, Effector* effector ) : wizdom(""), effector(effector) {  
+    wizdom.add( &effector->cucurbitassai ); 
     
 };
 
@@ -267,7 +267,7 @@ EffectorRef* Effectable::addEffector(Effector* def) {
 
     auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(kikoo.next_name(def->cucurbitassai.name()), def)).get();
 
-    kikoo.add(&effector->m);
+    kikoo.add(&effector->wizdom);
 
     return effector;
 

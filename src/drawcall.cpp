@@ -103,7 +103,7 @@ void Layer::ShaderProgramBuilder::build() {
         current_model.clear();
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->kikoo._name())+"."+lower(ref->m.ref()->_name()));
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->kikoo._name())+"."+lower(ref->wizdom.ref()->_name()));
 
         body_fragment+=current_model;
         

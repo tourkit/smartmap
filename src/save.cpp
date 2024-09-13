@@ -130,7 +130,7 @@ void Save::layers(){
             auto effects = rapidjson::Value(rapidjson::kArrayType);
             for (auto e : model.get()->effector_refs) {
 
-                std::string name = e.get()->m.name();
+                std::string name = e.get()->wizdom.name();
 
                 std::string value;
                 auto effector = e.get()->effector;
@@ -151,7 +151,7 @@ void Save::layers(){
 
         auto effects = rapidjson::Value(rapidjson::kArrayType);
         for (auto e : layer->effector_refs) 
-            effects.PushBack( rapidjson::Value(e.get()->m.name().c_str(), allocator), allocator );// TODOTODO
+            effects.PushBack( rapidjson::Value(e.get()->wizdom.name().c_str(), allocator), allocator );// TODOTODO
         lay.PushBack( effects, allocator );
 
         arr.AddMember( rapidjson::Value(node->name().c_str(), allocator)  , lay, allocator );

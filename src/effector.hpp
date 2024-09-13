@@ -55,7 +55,7 @@ struct FileEffector : Effector {
 
 struct EffectorRef  {
 
-    Member m;
+    Member wizdom;
 
     Effector* effector;
 
