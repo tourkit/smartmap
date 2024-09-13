@@ -10,7 +10,7 @@ struct Builder;
 
 struct Effector {
 
-    Member m;
+    Member cucurbitassai;
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 

@@ -112,7 +112,7 @@ void Atlas::Effector::post(Builder* builder) {
 
 bool Atlas::Effector::setup(Builder* builder) { 
 
-    builder->addSampler(atlas->texture, m.name());
+    builder->addSampler(atlas->texture, cucurbitassai.name());
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
     
@@ -124,15 +124,15 @@ std::string Atlas::Effector::source() {
 
     std::string out;
 
-    if (!atlas || !m.size()) return out;
+    if (!atlas || !cucurbitassai.size()) return out;
 
 
-    out += "void "+m.name()+"(float id_) {\n\n";
+    out += "void "+cucurbitassai.name()+"(float id_) {\n\n";
     out +=     "\tint id = int(id_*"+std::to_string(atlas->medias->stl.back().m->size())+");\n\n";
     out +=     "\tvec2 tuv = uv;\n\n";
-    out +=     "\ttuv *= static_ubo."+m.name()+"[id].rect.size;\n";
-    out +=     "\ttuv += static_ubo."+m.name()+"[id].rect.pos;\n";
-    out +=     "\tcolor *= texture("+m.name()+"_pass, tuv);\n\n";
+    out +=     "\ttuv *= static_ubo."+cucurbitassai.name()+"[id].rect.size;\n";
+    out +=     "\ttuv += static_ubo."+cucurbitassai.name()+"[id].rect.pos;\n";
+    out +=     "\tcolor *= texture("+cucurbitassai.name()+"_pass, tuv);\n\n";
     out += "}\n\n\n\n";
     
     return out;
@@ -141,6 +141,6 @@ std::string Atlas::Effector::source() {
 
 Atlas::Effector::Effector(Atlas* atlas) : ::Effector(atlas->m.name()), atlas(atlas) {
 
-    m.add<float>("id_").range(0, 1, 0);
+    cucurbitassai.add<float>("id_").range(0, 1, 0);
 
 }

@@ -1100,7 +1100,7 @@ void Editors::init() {
         
 
         for (auto x : wrap->effector_refs) 
-            Text(x->effector->m.name().c_str());
+            Text(x->effector->cucurbitassai.name().c_str());
 
     });
     Editor<Effector>([](Node* node, Effector *def){
@@ -1142,7 +1142,7 @@ void Editors::init() {
             
         }
 
-        draw_definition(&def->m);
+        draw_definition(&def->cucurbitassai);
 
     });
 

@@ -156,7 +156,7 @@ Layer::Feedback::Feedback(Layer* layer) :
 
     {
 
-    m.add<float>("intensity");
+    cucurbitassai.add<float>("intensity");
     
 }
 

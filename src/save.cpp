@@ -98,7 +98,7 @@ void Save::layers(){
 
                 auto  effectors_ = rapidjson::Value(rapidjson::kArrayType);
 
-                for (auto ref : layer->effector_refs) effectors_.PushBack(  rapidjson::Value(ref->effector->m.name().c_str(), allocator), allocator );
+                for (auto ref : layer->effector_refs) effectors_.PushBack(  rapidjson::Value(ref->effector->cucurbitassai.name().c_str(), allocator), allocator );
 
                 layer_.PushBack(effectors_, allocator);
 
@@ -136,7 +136,7 @@ void Save::layers(){
                 auto effector = e.get()->effector;
                 // if (effector->m.ref()) value = effector->m.ref()->name();
                 // else 
-                value = effector->m.name();
+                value = effector->cucurbitassai.name();
               
                 effects.PushBack(rapidjson::Value(value.c_str(), allocator), allocator ); // TODOTODO
 
@@ -177,9 +177,9 @@ void Save::effectors(){
             
             auto effects = rapidjson::Value(rapidjson::kArrayType);
 
-            for (auto e : wrap->effector_refs) effects.PushBack(rapidjson::Value(e->effector->m.name().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
+            for (auto e : wrap->effector_refs) effects.PushBack(rapidjson::Value(e->effector->cucurbitassai.name().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
 
-            json_v.document["effectors"].AddMember(rapidjson::Value(wrap->Effector::m.name().c_str(), json_v.document.GetAllocator()), effects, json_v.document.GetAllocator());
+            json_v.document["effectors"].AddMember(rapidjson::Value(wrap->Effector::cucurbitassai.name().c_str(), json_v.document.GetAllocator()), effects, json_v.document.GetAllocator());
             
             
         }

@@ -49,7 +49,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     for (auto ref : effectable.effector_refs) 
 
-        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->m._name());
+        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->cucurbitassai._name());
 
 
     body_fragment+=current_model;
