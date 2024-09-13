@@ -33,9 +33,9 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
 std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
 
-    auto name = lower(effectable.m._name());
+    auto name = lower(effectable.kikoo._name());
 
-    if (effectable.m.quantity() > 1) name += "["+(dc->models.size() == 1?"ID":instance)+"]";
+    if (effectable.kikoo.quantity() > 1) name += "["+(dc->models.size() == 1?"ID":instance)+"]";
 
     std::string body_fragment;
 
@@ -96,14 +96,14 @@ void Layer::ShaderProgramBuilder::build() {
         // do all body 
 
         for (auto &model : dc->models)
-            for (int instance = 0; instance < model.get()->m.quantity(); instance++) 
-                body_fragment += print_layer(*model, lower(dc->m._name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->stl.back().m->quantity()>1?"[int(LAYER)]":""));
+            for (int instance = 0; instance < model.get()->kikoo.quantity(); instance++) 
+                body_fragment += print_layer(*model, lower(dc->kikoo._name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->stl.back().m->quantity()>1?"[int(LAYER)]":""));
 
 
         current_model.clear();
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->m._name())+"."+lower(ref->m.ref()->_name()));
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->kikoo._name())+"."+lower(ref->m.ref()->_name()));
 
         body_fragment+=current_model;
         
@@ -162,7 +162,7 @@ DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo->next_name(n
 
     shader.builder(&builder);
 
-    engine.dynamic_ubo->add(&m);
+    engine.dynamic_ubo->add(&kikoo);
 
 }
 

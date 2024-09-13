@@ -46,7 +46,7 @@ void Save::outputs(){
 
             engine.stack->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
 
-            outputarr.PushBack( rapidjson::Value(lay->m.name().c_str(), allocator ), allocator );
+            outputarr.PushBack( rapidjson::Value(lay->kikoo.name().c_str(), allocator ), allocator );
 
         }
 
@@ -94,7 +94,7 @@ void Save::layers(){
 
                 layer_.PushBack(layer->w, allocator);
                 layer_.PushBack(layer->h, allocator);
-                layer_.PushBack(layer->m.quantity(), allocator);
+                layer_.PushBack(layer->kikoo.quantity(), allocator);
 
                 auto  effectors_ = rapidjson::Value(rapidjson::kArrayType);
 
@@ -125,7 +125,7 @@ void Save::layers(){
 
             new_model.PushBack(rapidjson::Value(model.get()->file->filename().c_str(), allocator), allocator);
 
-            new_model.PushBack(model.get()->m.quantity(),allocator);
+            new_model.PushBack(model.get()->kikoo.quantity(),allocator);
 
             auto effects = rapidjson::Value(rapidjson::kArrayType);
             for (auto e : model.get()->effector_refs) {
@@ -143,7 +143,7 @@ void Save::layers(){
             }
             new_model.PushBack( effects, allocator );
 
-            models.AddMember(rapidjson::Value(model.get()->m.name().c_str(), allocator), new_model, allocator);
+            models.AddMember(rapidjson::Value(model.get()->kikoo.name().c_str(), allocator), new_model, allocator);
 
         }
 

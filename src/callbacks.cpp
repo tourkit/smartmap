@@ -139,13 +139,13 @@ void Callbacks::init() {
 
     NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
     
-        NODE<Member>::on_cb[Node::CREATE](node, &e->Effectable::m);
+        NODE<Member>::on_cb[Node::CREATE](node, &e->Effectable::kikoo);
         
     });
 
     NODE<Effectable>::on(Node::CHANGE, [](Node* node, Effectable *e){ 
     
-        NODE<Member>::on_cb[Node::CHANGE](node, &e->Effectable::m);
+        NODE<Member>::on_cb[Node::CHANGE](node, &e->Effectable::kikoo);
         
     });
 
