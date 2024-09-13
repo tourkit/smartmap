@@ -14,6 +14,7 @@
 #include <regex>
 
 #include <set>
+#include <string>
 #include "struct.hpp"
 #include "texture.hpp"
 
@@ -24,6 +25,19 @@ Shader::Shader() { }
 Shader::~Shader() { if (id > -1) glDeleteShader(id);  }
 
 Shader::Shader(std::string src, uint8_t type)  { create(src,type); }
+
+
+struct ShaderError {
+
+    std::vector<int> coords  = {0,0,0};
+    std::string val;
+
+    bool operator==(ShaderError& other) { 
+
+        return val == other.val && coords[0] == other.coords[0] && coords[1] == other.coords[1] && coords[2] == other.coords[2];
+    }
+
+};
 
 bool Shader::create(std::string src, uint8_t type)  {
 
@@ -54,45 +68,76 @@ bool Shader::create(std::string src, uint8_t type)  {
         glGetShaderInfoLog(id, 512, NULL, &infoLog[0]);
 
         std::string line = infoLog;
-        // std::string output;;
+        std::vector<ShaderError> errors;
+    
+        std::istringstream iss(infoLog);
 
-        // std::istringstream iss(infoLog);
-
-        // for (std::string line; std::getline(iss, line); ) {
+        for (std::string line; std::getline(iss, line); ) {
             
-        //     // std::smatch match;
-        //     // int coords[3] = {0,0,0};
-        //     // std::string val;
-        //     // std::regex color_regex(".+([0-9]+):([0-9]+):([0-9]+|(\\([0-9]+\\))):( error:)? (.+)");
-        //     // if (std::regex_search(line, match, color_regex)) {
+            std::smatch match;
+            std::regex color_regex(".?([0-9]+):([0-9]+)(\\(([0-9]+)\\): error)?: (.+)", std::regex_constants::icase);
+            ShaderError error;
 
-        //     //     coords[0] = std::stoi(match[1].str());
-        //     //     coords[1] = std::stoi(match[2].str());
-        //     //     if (match.size()>2)
-        //     //         coords[2] = std::stoi(match[3].str());
-        //     //     if (match.size()>5)
-        //     //         val = match[6].str();
-        //     // }
+            if (std::regex_search(line, match, color_regex)) {
 
-        //     // output += ">> " + line + "\n";
+                ShaderError error;
+
+                error.coords[0] = std::stoi(match[1].str());
+                error.coords[1] = std::stoi(match[2].str());
+                if (match.size()>4)
+                    error.coords[2] = std::stoi(match[4].str());
+                if (match.size()>5)
+                    error.val = match[5].str();
+                
+                bool found = false;
+                for (auto e : errors) 
+                    if (e == error) {
+                        found = true;
+                        break;
+                    }
+
+                if (found)
+                    break;
+                else
+                    errors.push_back(error);
+
+            }
             
 
 
-        // }
+        }
 
-        // PLOGW << output;;
+        for (auto &e : errors) 
+            for (auto &e_ : errors) 
+                if (&e != &e_ && e.coords == e_.coords) {
+                    if (e.val.length())
+                        e.val+= ", ";
+                    e.val += e_.val;
+                    e_.val.clear();
+                    break;
+                }
 
+        std::string output;
 
-        auto first_line_break = line.find('\n');
+        if (type == FRAGMENT) output += "[fragment] ";
+        else if (type == VERTEX) output += "[vertex] ";
+        else if (type == COMPUTE) output += "[compute] ";
+        output += "";
 
-        if (first_line_break)
-            line[first_line_break] = ' ';
+        for (auto error : errors)
 
-        auto second_line_break = line.find('\n');
-        if (second_line_break)
-            line = line.substr(0,second_line_break);
+            if (error.val.length()) {
 
-        PLOGE << (type==1?"vertex: ":"fragment: ") << line;
+                output += std::to_string(error.coords[0]) + ":" + std::to_string(error.coords[1]);
+                
+                if (error.coords[2])
+                    output += "("+std::to_string(error.coords[2])+")";
+
+                output += ": " + error.val + " && ";
+
+            }
+
+        PLOGE << (output.length()?output.substr(0,output.length()-4):"");
         PLOGV <<source;
 
     }
