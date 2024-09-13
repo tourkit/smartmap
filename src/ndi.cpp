@@ -24,7 +24,7 @@ void Sender::draw(){
 
     if (!fb) return;
     int size = data.size();
-    fb->read(&data[0], GL_BGRA);
+    fb->read(&data[0], GL_BGRA, fb->width/2, fb->height/2, fb->width/2, fb->height/2);
 
     send();
 

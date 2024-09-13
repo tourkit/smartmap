@@ -20,8 +20,7 @@ struct File;
         std::vector<JSONVal> childrens; 
 
         JSONVal(rapidjson::Value &value, std::string name = "");
-        
-        JSONVal(const JSONVal& other);
+    
 
         ~JSONVal() ;
 

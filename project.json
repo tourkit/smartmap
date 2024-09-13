@@ -10,24 +10,24 @@
   },
   "layers": {
       "virtuallayers1": {
-          "Free Layer 1": {
+          "Fixture Cluster 1": {
             "dimensions": [ 1920, 1080 ],
-              "quantity": 8,
-              "effectors": [ "argb", "rectangle" ],
-              "blending": "Additive"
+            "quantity": 8,
+            "effectors": [ "argb", "rectangle" ],
+            "blending": "Additive"
           }
       },
       "Free Layer 1": {
-        "dimensions": [ 100,100 ],
-          "models": {
-              "quad1": {
-                  "model": "quad.obj",
-                  "effectors": [
-                      "blank",
-                      "virtuallayers1::Free Layer 1"
-                  ]
-              }
-          }
+            "dimensions": [ 100,100 ],
+            "models": {
+                "quad1": {
+                    "model": "quad.obj",
+                    "effectors": [
+                        "blank",
+                        "Fixture Cluster 1"
+                    ]
+                }
+            }
       }
   },
   "models": {
@@ -46,11 +46,17 @@
       "wrapper": [ "white", "gradient", "flower", "burst" ]
   },
   "outputs": {
-      "monitor": {
-          "HDMI 1": {
-              "dimensions": [ 100, 100 ],
-              "source": "Free Layer 1"
-          }
-      }
+    "monitor": {
+        "HDMI 1": {
+            "dimensions": [ 100, 100 ],
+            "source": "Free Layer 1"
+        }
+    },
+    "ndi": {
+        "HDMI 1": {
+            "dimensions": [ 100, 100 ],
+            "source": "Free Layer 1"
+        }
+    }
   }
 }
