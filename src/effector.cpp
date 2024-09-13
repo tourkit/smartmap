@@ -194,11 +194,7 @@ std::string Wrappy::source() {
     return out;
 
 }
-void Wrappy::update() {
 
-
-
-}
 
 void Wrappy::attrs(int count) {
 
@@ -211,7 +207,6 @@ void Wrappy::attrs(int count) {
     for (int i = 0 ; i < count; i++)
         Effector::cucurbitassai.add<float>("param_"+std::to_string(i));
 
-    update();
 
 }
 
@@ -241,12 +236,6 @@ EffectorRef::EffectorRef(std::string name, Effector* effector ) : wizdom(""), ef
     
 };
 
-void EffectorRef::update() {
-
-
-
-
-};
 
 // Effectable  ////////////////
 // Effectable  ////////////////

@@ -22,8 +22,6 @@ struct Effector {
     
     virtual void post(Builder* builder) {};
 
-    virtual void update() {}
-
     std::string call(std::string prepend="");
 
     std::string source_v;
@@ -61,8 +59,6 @@ struct EffectorRef  {
 
     EffectorRef(std::string name, Effector* effector);
 
-    void update();
-
 };
 
 struct Effectable {
@@ -89,8 +85,6 @@ struct Wrappy : Effector, Effectable {
     int count;
 
     void attrs(int count);
-
-    void update() override;
 
     std::string source() override;
 

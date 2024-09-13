@@ -205,7 +205,7 @@ void Callbacks::init() {
 
     NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, fx->wizdom.ref());  });
     
-    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){  ref->update(); });
+    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){   });
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
 
