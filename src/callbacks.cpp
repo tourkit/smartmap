@@ -80,9 +80,9 @@ void Callbacks::init() {
     
     NODE<Stack>::on(Node::CHANGE, [](Node*node, Stack* stack){
 
-        node->each<Layer>([](Node*n, Layer* layer){ 
+        node->each<DrawCall>([](Node*n, DrawCall* dc){ 
 
-            layer->shader.create(); 
+            dc->shader.create(); 
 
         });
         
@@ -114,7 +114,7 @@ void Callbacks::init() {
 
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
-        dc->update();
+        // dc->update(); // already in stack each<DC> : dc.update()
 
     });
 
@@ -137,17 +137,17 @@ void Callbacks::init() {
         
     });
 
-    NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
+    // NODE<Effectable>::on(Node::CREATE, [](Node* node, Effectable *e){ 
     
-        NODE<Member>::on_cb[Node::CREATE](node, &e->Effectable::kikoo);
+    //     NODE<Member>::on_cb[Node::CREATE](node, e);
         
-    });
+    // });
 
-    NODE<Effectable>::on(Node::CHANGE, [](Node* node, Effectable *e){ 
+    // NODE<Effectable>::on(Node::CHANGE, [](Node* node, Effectable *e){ 
     
-        NODE<Member>::on_cb[Node::CHANGE](node, &e->Effectable::kikoo);
+    //     NODE<Member>::on_cb[Node::CHANGE](node, e);
         
-    });
+    // });
 
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
@@ -158,11 +158,12 @@ void Callbacks::init() {
 
     NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
 
-        auto x = _this->addPtr<EffectorRef>( _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() ));
+        auto x =  _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() );
+        auto n = _this->addPtr<EffectorRef>(x);
 
-        // node->referings.insert(x);
+        node->referings.insert(n);
         
-        return x;
+        return &no_worry_node;
         
     });
 

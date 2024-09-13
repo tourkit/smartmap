@@ -208,8 +208,6 @@ Node* Node::add(void* node_v)  {
     
     n->parent(this);
 
-    update();
-
     return n;
 
 }

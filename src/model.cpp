@@ -43,14 +43,14 @@ if (x)
 
 Model* Modelable::addModel(File* f) {
 
-    auto mod = models.emplace_back(std::make_shared<Model>(f, kikoo.next_name(f->name()))).get();
+    auto mod = models.emplace_back(std::make_shared<Model>(f, next_name(f->name()))).get();
 
-    kikoo.add(&mod->kikoo);
+    add(mod);
 
-    for (auto x : kikoo.getTop()) { // should be one Top only
+    for (auto x : getTop()) { // should be one Top only
 
         x->each([&](Instance& inst){ 
-            if (inst.stl.back().m == &mod->kikoo) 
+            if (inst.stl.back().m == mod) 
                 mod->instance = new Instance(inst); 
         });
 

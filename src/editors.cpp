@@ -964,11 +964,11 @@ void Editors::init() {
 
         static std::map<Node*,int> effector_currents;
 
-       effector_currents[node] = model->kikoo.quantity();
+       effector_currents[node] = model->quantity();
 
-        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->kikoo.quantity(effector_currents[node]); node->update(); }
+        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->quantity(effector_currents[node]); node->update(); }
 
-        if (draw_guis(engine.dynamic_ubo, &model->kikoo, model->instance->offset))engine.dynamic_ubo->upload();
+        if (draw_guis(engine.dynamic_ubo, model, model->instance->offset))engine.dynamic_ubo->upload();
 
     });
 

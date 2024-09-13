@@ -244,7 +244,7 @@ EffectorRef::EffectorRef(std::string name, Effector* effector ) : wizdom(""), ef
 
 Effectable::~Effectable() {  }
 
-Effectable::Effectable(std::string name) : kikoo(name) {  }
+Effectable::Effectable(std::string name) : Member(name) {  }
 
 bool Effectable::removeEffector(EffectorRef* effector) {
 
@@ -254,9 +254,9 @@ bool Effectable::removeEffector(EffectorRef* effector) {
 
 EffectorRef* Effectable::addEffector(Effector* def) {
 
-    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(kikoo.next_name(def->cucurbitassai.name()), def)).get();
+    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(next_name(def->cucurbitassai.name()), def)).get();
 
-    kikoo.add(&effector->wizdom);
+    add(&effector->wizdom);
 
     return effector;
 

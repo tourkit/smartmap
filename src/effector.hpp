@@ -61,9 +61,7 @@ struct EffectorRef  {
 
 };
 
-struct Effectable {
-
-    Member kikoo;
+struct Effectable : Member {
 
     Effectable(std::string name = "Effectable" );
     

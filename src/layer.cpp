@@ -184,7 +184,7 @@ void UberEffector::ubl(UberLayer* ubl) {
 
 }
 
-UberEffector::UberEffector(UberLayer* ubl) : Effector(ubl?ubl->kikoo.name():"ubereffector") {  
+UberEffector::UberEffector(UberLayer* ubl) : Effector(ubl?ubl->name():"ubereffector") {  
 
     this->ubl(ubl);
     
@@ -197,7 +197,7 @@ std::string  UberEffector::source() {
     std::string name = lower(ubl_v->uberlayer_m.name());
     if (ubl_v->uberlayer_m.quantity()>1) name += "[i]";
 
-    out += "void " + ubl_v->kikoo.name()+ "_effector(int from, int to) {\n\n";
+    out += "void " + ubl_v->name()+ "_effector(int from, int to) {\n\n";
         
         out +="\tfor (int i = from; i < to; i++) {\n\n";
         
@@ -220,7 +220,7 @@ std::string  UberEffector::source() {
 
 bool UberEffector::setup(Builder* builder) { 
 
-    builder->addSampler(&ubl_v->fb.texture, ubl_v->kikoo.name());
+    builder->addSampler(&ubl_v->fb.texture, ubl_v->name());
 
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
 
@@ -228,7 +228,7 @@ bool UberEffector::setup(Builder* builder) {
     
 }
 
-UberLayer::VirtualLayer::Effector::Effector(VirtualLayer* vlayer) : ::Effector(vlayer?vlayer->kikoo.name():"vlayereffector"), vlayer(vlayer) {
+UberLayer::VirtualLayer::Effector::Effector(VirtualLayer* vlayer) : ::Effector(vlayer?vlayer->name():"vlayereffector"), vlayer(vlayer) {
 
 
 }
@@ -252,10 +252,10 @@ bool UberLayer::VirtualLayer::Effector::body(Builder* builder, std::string prepe
             broke = true;
             break;
         }else 
-            offset += vlayer->kikoo.quantity();
+            offset += vlayer->quantity();
         
     
-    builder->current_model += "\t"+vlayer->ubl->kikoo.name()+"_effector("+std::to_string(offset)+", "+std::to_string(offset+vlayer->kikoo.quantity())+");\n";
+    builder->current_model += "\t"+vlayer->ubl->name()+"_effector("+std::to_string(offset)+", "+std::to_string(offset+vlayer->quantity())+");\n";
     
     return true; 
     
@@ -263,7 +263,7 @@ bool UberLayer::VirtualLayer::Effector::body(Builder* builder, std::string prepe
 
 bool UberEffector::body(Builder* builder, std::string prepend) {  
     
-    builder->current_model += "\t"+ubl_v->kikoo.name()+"_effector(0, "+std::to_string(ubl_v->uberlayer_m.quantity())+");\n";
+    builder->current_model += "\t"+ubl_v->name()+"_effector(0, "+std::to_string(ubl_v->uberlayer_m.quantity())+");\n";
     
     return true; 
     
@@ -277,7 +277,7 @@ UberLayer::UberLayer() :
 
     Layer(0,0,"UberLayer"), 
     builder(this), 
-    uberlayer_m(engine.static_ubo->next_name(kikoo.name())) 
+    uberlayer_m(engine.static_ubo->next_name(name())) 
 
 {
 
@@ -310,7 +310,7 @@ void UberLayer::calc_matrice() {
 
     for (auto it = layers.begin(); it != layers.end(); it++ ) {
 
-        for (int i = 0 ; i < it->get()->kikoo.quantity(); i++) {
+        for (int i = 0 ; i < it->get()->quantity(); i++) {
 
             matrice.back().emplace_back( std::array<int,5>{it->get()->w, it->get()->h, last_x, last_y, count} );
 
@@ -380,11 +380,7 @@ UberLayer::VirtualLayer& UberLayer::addLayer(int w , int h) {
 
     layers.emplace_back(std::make_shared<UberLayer::VirtualLayer>(w,h,layers.size()));
 
-    auto &l = *layers.back().get();
-
-    l.ubl = this;
-
-    kikoo.add(&l.kikoo);
+    add(layers.back().get());
 
     return *layers.back().get();
 
@@ -411,7 +407,7 @@ void UberLayer::ShaderProgramBuilder::build() {
 
     std::string ar_str = lower(ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?"[obj]":"")+".uberLayers";
 
-    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->kikoo.name()), "obj", ar_str );
+    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->name()), "obj", ar_str );
 
     else {
 
@@ -422,9 +418,9 @@ void UberLayer::ShaderProgramBuilder::build() {
             if (last_id) body_fragment += "\n} else ";
 
             auto l = last_id;
-            last_id += x.get()->kikoo.quantity();
+            last_id += x.get()->quantity();
 
-            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->kikoo.name()), "obj", ar_str );
+            body_fragment += "if (obj < "+std::to_string(last_id)+" ){ "+(l?"obj -= "+std::to_string(l)+";":"")+"\n\n" + print_layer( *x.get(), lower(dc->name()), "obj", ar_str );
 
         }
 

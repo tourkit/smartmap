@@ -66,7 +66,7 @@ void Open::inputs(){
             // if (!xx || !xx->is_a<UberLayer>())
             //     continue;
 
-            auto inst = Instance(*engine.dynamic_ubo)[&dest->parent()->is_a<UberLayer>()->kikoo][&vlayer->kikoo];
+            auto inst = Instance(*engine.dynamic_ubo)[dest->parent()->is_a<UberLayer>()][vlayer];
 
             if (inst.stl.size() == 1) 
                 { PLOGW << json_error; continue; }
@@ -199,7 +199,7 @@ void Open::layers(){
 
                 new_model_->name(model_def.name());
 
-                new_model_->is_a<Model>()->kikoo.quantity(model_def["quantity"].num(1));
+                new_model_->is_a<Model>()->quantity(model_def["quantity"].num(1));
 
                 addEffectors( model_def["effectors"], new_model_ );
 
@@ -226,13 +226,13 @@ void Open::layers(){
 
                 auto &l = ubl.addLayer(dim[0].num(),dim[1].num());
                 if (vlayer_def.name().length())
-                    l.kikoo.name(vlayer_def.name());
+                    l.name(vlayer_def.name());
                 auto l_ = ubl_->addPtr<UberLayer::VirtualLayer>(&l);
                 l_->active(true);
 
                 addEffectors( vlayer_def["effectors"], l_ );
 
-                l.kikoo.quantity(vlayer_def["quantity"].num(1));
+                l.quantity(vlayer_def["quantity"].num(1));
                 
             }
 
