@@ -96,38 +96,22 @@ void Open::inputs(){
 
 }
 
-
-Open::Output isOutput(JSONVal& output) {
-
-    Open::Output out;
-
-    out.name = output.name();
-
-    auto dim = output["dimensions", true];
-
-    out.rect[0] = dim[0].num(1);
-    out.rect[1] = dim[1].num(1);
-
-    out.src = output["source", true].str();
-    
-    return out;
-
-}
-
 void Open::outputs(){
 
     auto outputs = json_v["outputs"];
 
     for (auto &monitor : outputs["monitor"]) {
 
-        auto output = isOutput(monitor);
-
         auto n = engine.outputs->addPtr<Window>( &engine.window );
 
-        engine.window.size( output.rect[0] , output.rect[1] );
-        engine.window.pos(  output.rect[2] , output.rect[3] );
+        auto dim = monitor["dimensions"];
+        if (dim[0].num() && dim[1].num())
+            engine.window.size( dim[0].num(), dim[1].num());
 
-        outputs_src[n] = output;
+        auto offset = monitor["offset"];
+        engine.window.pos( offset[0].num(), offset[1].num());
+
+        outputs_src.emplace(n,monitor);
 
         break; // only one alloweed for nowe
         
@@ -135,15 +119,11 @@ void Open::outputs(){
 
     for (auto &ndi : outputs["ndi"]) {
 
-        auto output = isOutput(ndi);
+        auto dim = ndi["dimensions"];
 
-        Node* n = engine.outputs->addOwnr<NDI::Sender>( output.rect[0], output.rect[1], ndi.name())->active(false);
+        Node* n = engine.outputs->addOwnr<NDI::Sender>( dim[0].num(1), dim[1].num(1), ndi.name());
 
-        // NDI::Sender& sender = *n->is_a<NDI::Sender>();
-
-        outputs_src[n] = output;
-
-        n->active(true);
+        outputs_src.emplace(n,ndi);
 
     }
 
@@ -394,14 +374,14 @@ void Open::json(std::string path) {
     editors();
 
     for (auto x : outputs_src){ 
-        Node* output = engine.stack->find(x.second.src);
+        Node* output = engine.stack->find(x.second["source"].str());
         if (!output)
             continue;
         
         x.first->add(output);
 
-        if (x.second.name.length())
-            x.first->name(x.second.name);
+        if (x.second.name().length())
+            x.first->name(x.second.name());
     }
 
 

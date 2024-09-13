@@ -29,6 +29,19 @@
 
 int main() {
 
+        // const char* zzz = "dsd\nfh\njk";
+
+        // auto start = zzz;
+
+        // while (const char * xxxxx = std::find(start, zzz+9, '\n')) {
+
+        //     PLOGW << start;
+
+        //     start = xxxxx;
+
+        // }
+
+
     logger.cout(Sev::warning);
 
     engine.init();

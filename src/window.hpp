@@ -13,7 +13,7 @@
 
 
 #include "output.hpp"
-// #include "fps.hpp"
+#include "fps.hpp"
 
 // #include "drawcall.hpp"
 struct ShaderProgram; struct VBO; struct Texture;
@@ -26,7 +26,7 @@ struct Window : Output {
 
     GLFWwindow *id;
 
-    // FPS fps;
+    FPS fps;
 
     bool fullscreen;
 
@@ -45,6 +45,8 @@ struct Window : Output {
     void render(std::function<void()> callback = [](){});
 
     void draw() override;
+
+    void fit();
 
     void keypress();
 

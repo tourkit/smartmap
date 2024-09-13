@@ -57,6 +57,13 @@ void JSON::if_obj_in(std::string name, rapidjson::Value &in, std::function<void(
 
 }
 
+JSONVal::JSONVal(const JSONVal& other) : JSONVal(other.value, other.name_v) {
+
+    for (auto x : other.childrens) 
+        childrens.emplace_back(JSONVal(x));
+       
+}
+
 
 std::string JSONVal::stringify() {
 

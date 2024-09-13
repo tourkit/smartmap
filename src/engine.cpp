@@ -116,8 +116,6 @@ void Engine::init() {
     
     medias = tree->addOwnr<Node>()->name("Medias")->active(false);
 
-    structs = tree->addOwnr<Node>()->name("Structs")->close();
-
     models = tree->addOwnr<Node>()->name("Models")->active(false);
 
     effectors = tree->addOwnr<Node>()->name("Effectors")->active(false);
@@ -150,18 +148,8 @@ void Engine::gui(bool active) {
 
 void Engine::run() {
 
-
-    if (gui_v) {
-        
-        gui_v->trees[0]->selected = tree;
-
-        if (!gui_v->editors.size()) 
-            gui_v->editors.push_back(new EditorWidget(gui_v));
-
-        if (models && !models->childrens.size()) 
-            auto quad = models->addPtr<File>( &VBO::quad );
-
-    }
+    if (models && !models->childrens.size()) 
+        auto quad = models->addPtr<File>( &VBO::quad );
 
     if (outputs && !outputs->childrens.size()) {
         
@@ -181,33 +169,34 @@ void Engine::run() {
         
     }
 
+    window.fit();
+    window.size(50,50);
 
     window.render([&](){
 
-        int fps = 0;
-        if (gui_v){
-
+        if (gui_v)
             gui_v->draw();
-            
-            fps = std::round(ImGui::GetIO().Framerate);
         
-        }
-        if (dynamic_ubo) {        
+        if (dynamic_ubo) {   
+            
             static int frame = 0;
             memcpy(dynamic_ubo->data(), &(frame), 4); // aka dynamic_ubo["ENGINE"]["frame"]
+            int fps = std::ceil(window.fps.fps);
             memcpy(dynamic_ubo->data()+4, &fps, 4); // aka dynamic_ubo["ENGINE"]["fps"]
             int alt = frame % 2;
             memcpy(dynamic_ubo->data()+8, &alt, 4); // aka dynamic_ubo["ENGINE"]["alt"]
 
-            frame = (frame+1) % 65536;//window.displays.back().rate;
+            frame++;
             
-            int glsldatafp = glsl_data.footprint();
             int dynubofp = dynamic_ubo->footprint();
-            
-            dynamic_ubo->upload(dynamic_ubo->data(),alt?glsldatafp:dynubofp);
 
-            if (alt) 
-                dynamic_ubo->upload(dynamic_ubo->data()+glsldatafp,dynubofp-glsldatafp,dynubofp+glsldatafp);
+            int from = alt ? dynubofp : 0 ;
+
+            int size = dynubofp;
+
+            int to = from+size;
+            
+            dynamic_ubo->upload(dynamic_ubo->data()+from, to, size);
             
         }
         

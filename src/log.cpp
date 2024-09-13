@@ -22,7 +22,8 @@ void Log::Appender::write(const plog::Record& record) {
     std::ifstream ifile(File::loc()+"build/logs/logs.txt");
     std::stringstream buffer;
     buffer << plog::FuncMessageFormatter::format(record);
-    if (cmd) if (record.getSeverity() <= max_severity) std::cout << plog::FuncMessageFormatter::format(record);
+    if (cmd) if (record.getSeverity() <= max_severity) 
+        std::cout << plog::FuncMessageFormatter::format(record);
     buffer << ifile.rdbuf();
     ifile.close();
 

@@ -100,6 +100,9 @@ static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { g
 
 void Window::pos(uint32_t offset_x, uint32_t offset_y) {
 
+    if (offset_x == this->offset_x && offset_y == this->offset_y)
+        return;
+    
     Output::pos( offset_x, offset_y);
 
     glfwSetWindowPos(id, offset_x, offset_y);
@@ -118,6 +121,15 @@ void Window::size(uint32_t width, uint32_t height) {
 
 
 Window::~Window() { glfwTerminate(); }
+
+void Window::fit() {
+
+    if (!displays.size())
+        return;
+
+    size(displays[0].width, displays[0].height);
+
+}
 
 void Window::keypress() {
 
@@ -202,9 +214,9 @@ void Window::render(std::function<void()> callback) {
 
         // PLOGW << "begin frame";
 
-        glfwPollEvents();
+        fps.run();
 
-        // fps.run(max_fps);
+        glfwPollEvents();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // BG COLOR

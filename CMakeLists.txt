@@ -58,7 +58,7 @@ src/model.cpp
 src/remap.cpp
 
 src/layer.cpp
-# src/fps.cpp
+src/fps.cpp
 src/drawcall.cpp
 src/atlas.cpp
 

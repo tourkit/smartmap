@@ -9,7 +9,9 @@
 #include "utils.hpp"
 
 #include <GL/gl3w.h>
+#include <algorithm>
 #include <chrono>
+#include <regex>
 
 #include <set>
 #include "struct.hpp"
@@ -49,10 +51,48 @@ bool Shader::create(std::string src, uint8_t type)  {
 
     if (!success) {
 
-        glGetShaderInfoLog(id, 512, NULL, infoLog);
-        auto nl = std::strchr(infoLog, '\n');
-        if (nl) std::memset(nl, 0, 1);
-        PLOGE << (type==1?"vertex: ":"fragment: ") << &infoLog[7];
+        glGetShaderInfoLog(id, 512, NULL, &infoLog[0]);
+
+        std::string line = infoLog;
+        // std::string output;;
+
+        // std::istringstream iss(infoLog);
+
+        // for (std::string line; std::getline(iss, line); ) {
+            
+        //     // std::smatch match;
+        //     // int coords[3] = {0,0,0};
+        //     // std::string val;
+        //     // std::regex color_regex(".+([0-9]+):([0-9]+):([0-9]+|(\\([0-9]+\\))):( error:)? (.+)");
+        //     // if (std::regex_search(line, match, color_regex)) {
+
+        //     //     coords[0] = std::stoi(match[1].str());
+        //     //     coords[1] = std::stoi(match[2].str());
+        //     //     if (match.size()>2)
+        //     //         coords[2] = std::stoi(match[3].str());
+        //     //     if (match.size()>5)
+        //     //         val = match[6].str();
+        //     // }
+
+        //     // output += ">> " + line + "\n";
+            
+
+
+        // }
+
+        // PLOGW << output;;
+
+
+        auto first_line_break = line.find('\n');
+
+        if (first_line_break)
+            line[first_line_break] = ' ';
+
+        auto second_line_break = line.find('\n');
+        if (second_line_break)
+            line = line.substr(0,second_line_break);
+
+        PLOGE << (type==1?"vertex: ":"fragment: ") << line;
         PLOGV <<source;
 
     }

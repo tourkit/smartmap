@@ -338,13 +338,15 @@ void Callbacks::init() {
 
     NODE<NDI::Sender>::on(Node::CREATE, [](Node* node, NDI::Sender *sender){ node->name(sender->name);  });
 
-    NODE<NDI::Sender>::on(Node::CHANGE, [](Node* node, NDI::Sender *sender){
+    NODE<Output>::on(Node::CHANGE, [](Node* node, Output *output){
 
-        if (!sender->fb) return;
+        if (!output->fb) return;
 
-        if (sender->fb->width != sender->width || sender->fb->height != sender->height) { 
-            sender->size(sender->fb->width, sender->fb->height); 
-            PLOGE << "Salut Karl Tremblay !";
+        if (output->fb->width != output->width || output->fb->height != output->height) { 
+
+            PLOGE << "resize " << node->name() << " from " << output->width << " x " << output->height << " to " << output->fb->width << " x " << output->fb->height;
+
+            output->size(output->fb->width, output->fb->height); 
         }
 
       });

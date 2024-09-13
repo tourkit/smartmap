@@ -33,7 +33,8 @@ void Sender::draw(){
 
 void Sender::size(uint32_t width, uint32_t height) {
 
-    if(_keepRunning) stop();
+    if(_keepRunning) 
+        stop();
 
     Output::size(width, height);
 
