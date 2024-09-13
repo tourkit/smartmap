@@ -19,16 +19,23 @@
 
 Shader::Shader() { }
 
-Shader::~Shader() { if (id > -1) glDeleteShader(id);  }
+Shader::~Shader() {destroy();  }
 
 Shader::Shader(std::string src, uint8_t type)  { create(src,type); }
 
+void Shader::destroy() {
+
+    if (id > -1) glDeleteShader(id);
+
+}
+
 bool Shader::create(std::string src, uint8_t type)  {
+
+    destroy();
 
     this->src = src;
 
     auto gl_type = GL_FRAGMENT_SHADER;
-
     if (type == 1) gl_type = GL_VERTEX_SHADER;
     if (type == 2) gl_type = GL_COMPUTE_SHADER;
 
@@ -52,7 +59,10 @@ bool Shader::create(std::string src, uint8_t type)  {
         glGetShaderInfoLog(id, 512, NULL, infoLog);
         auto nl = std::strchr(infoLog, '\n');
         if (nl) std::memset(nl, 0, 1);
-        PLOGE << (type==1?"vertex: ":"fragment: ") << &infoLog[7];
+        std::string type_name = "fragment";
+        if (type == 1) type_name = "vertex";
+        else if (type == 2) type_name = "compute";
+        PLOGE << type_name << &infoLog[7];
         PLOGV <<source;
 
     }
@@ -61,7 +71,6 @@ bool Shader::create(std::string src, uint8_t type)  {
 
 }
 
-Shader::operator GLuint() { return id; }
 
 ShaderProgram::~ShaderProgram() { destroy();
 
@@ -134,8 +143,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
     loaded = true;
 
     last_change = std::chrono::system_clock::now();
-
-    // sendUniform("atlas_pass", 1);
 
     use();
 

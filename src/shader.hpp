@@ -20,13 +20,11 @@ struct Shader {
 
   Shader(std::string src, uint8_t type = 0);
 
+  void destroy();
+
   bool create(std::string src, uint8_t type);
 
   ~Shader();
-
-  void compile();
-
-  operator uint32_t();
 
   char infoLog[512];
 
