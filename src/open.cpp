@@ -121,7 +121,7 @@ void Open::outputs(){
 
         auto dim = ndi["dimensions"];
 
-        Node* n = engine.outputs->addOwnr<NDI::Sender>( dim[0].num(1), dim[1].num(1), ndi.name());
+        Node* n = engine.outputs->addOwnr<NDI::Sender>( dim[0].num(engine.window.width), dim[1].num(engine.window.height), ndi.name());
 
         outputs_src.emplace(n,ndi);
 

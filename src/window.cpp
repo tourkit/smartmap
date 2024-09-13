@@ -210,6 +210,8 @@ void Window::draw() {
 
 void Window::render(std::function<void()> callback) {
 
+    PLOGV << "========================================";
+
     while (!glfwWindowShouldClose(id)) {
 
         // PLOGW << "begin frame";

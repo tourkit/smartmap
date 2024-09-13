@@ -19,8 +19,7 @@ struct Open{
     void models();
     void outputs();
     void editors();
-
-    struct Output { int rect[4] = {1,1,0,0}; std::string name, src;};
+    
     std::map<Node*,JSONVal> outputs_src;
 
     

@@ -127,6 +127,7 @@ void Engine::init() {
     outputs = tree->addOwnr<Node>()->name("Outputs")->active(true);
 
     PLOGI << "Engine initialized";
+    PLOGV << "===========================";
 
 }
 void Engine::gui(bool active) {
@@ -175,6 +176,7 @@ void Engine::run() {
     window.render([&](){
 
         if (gui_v)
+        
             gui_v->draw();
         
         if (dynamic_ubo) {   

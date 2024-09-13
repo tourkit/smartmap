@@ -4,12 +4,13 @@
 
 #include <GL/gl3w.h>
 #include <algorithm>
+#include <boost/algorithm/string/trim.hpp>
 #include <chrono>
 #include <regex>
 
 #include <string>
 
-
+#include <boost/algorithm/string.hpp>
 
 Shader::Shader() { }
 
@@ -135,6 +136,7 @@ bool Shader::create(std::string src, uint8_t type)  {
                 int count = 0;
                 for (std::string line; std::getline(iss, line); ) {
                     if (count++ == error.coords[1]-1) {
+                        boost::trim_left(line);
                         error_str += " : " + line;    
                         break;
                         
@@ -148,8 +150,10 @@ bool Shader::create(std::string src, uint8_t type)  {
 
 
         PLOGE << output;
+        PLOGV << "\n" << source;
+        return success;
         iss = std::istringstream (source);
-        int count = 0;
+        int count = 1;
 
         for (std::string line; std::getline(iss, line); ) {
 
