@@ -1,22 +1,13 @@
 #include "shader.hpp"
-#include "log.hpp"
-#include "instance.hpp"
-#include "model.hpp"
 #include "atlas.hpp"
 #include "builder.hpp"
-
-
-#include "utils.hpp"
 
 #include <GL/gl3w.h>
 #include <algorithm>
 #include <chrono>
 #include <regex>
 
-#include <set>
 #include <string>
-#include "struct.hpp"
-#include "texture.hpp"
 
 
 
@@ -102,8 +93,6 @@ bool Shader::create(std::string src, uint8_t type)  {
                     errors.push_back(error);
 
             }
-            
-
 
         }
 
@@ -128,17 +117,45 @@ bool Shader::create(std::string src, uint8_t type)  {
 
             if (error.val.length()) {
 
-                output += std::to_string(error.coords[0]) + ":" + std::to_string(error.coords[1]);
+                std::string error_str;
+
+                error_str += std::to_string(error.coords[0]) + ":" + std::to_string(error.coords[1]);
                 
                 if (error.coords[2])
-                    output += "("+std::to_string(error.coords[2])+")";
+                    error_str += "("+std::to_string(error.coords[2])+")";
 
-                output += ": " + error.val + " && ";
+                error_str += ": " + error.val + " && ";
 
+                if (error_str.length())
+                    error_str = error_str.substr(0,error_str.length()-4);
+
+                
+                iss = std::istringstream (src);
+
+                int count = 0;
+                for (std::string line; std::getline(iss, line); ) {
+                    if (count++ == error.coords[1]-1) {
+                        error_str += " : " + line;    
+                        break;
+                        
+                    }
+                }
+
+                output += error_str;
+                    
             }
 
-        PLOGE << (output.length()?output.substr(0,output.length()-4):"");
-        PLOGV <<source;
+
+
+        PLOGE << output;
+        iss = std::istringstream (source);
+        int count = 0;
+
+        for (std::string line; std::getline(iss, line); ) {
+
+            PLOGV << count++ << ": " << line;
+
+        }
 
     }
 
