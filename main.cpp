@@ -36,6 +36,10 @@ int main() {
 
     engine.open("project.json");
 
+    auto argb = engine.tree->find("argb");
+    auto quad1 = engine.tree->find("quad1");
+    quad1->add(argb);
+
     engine.run();
 
 }

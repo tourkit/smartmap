@@ -1100,7 +1100,7 @@ void Editors::init() {
         
 
         for (auto x : wrap->effector_refs) 
-            Text(x->effector->cucurbitassai.name().c_str());
+            Text(x->effector->name().c_str());
 
     });
     Editor<Effector>([](Node* node, Effector *def){
@@ -1108,7 +1108,7 @@ void Editors::init() {
         auto wrap_ = dynamic_cast<Wrappy*>(def);
         if (wrap_) {
             
-            for (auto x : wrap_->effector_refs) ImGui::Text(x->wizdom.name().c_str());
+            for (auto x : wrap_->effector_refs) ImGui::Text(x->name().c_str());
 
             return;
             
@@ -1142,7 +1142,7 @@ void Editors::init() {
             
         }
 
-        draw_definition(&def->cucurbitassai);
+        draw_definition(def);
 
     });
 

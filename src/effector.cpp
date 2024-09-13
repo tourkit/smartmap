@@ -10,9 +10,9 @@
 
 // Effector  ////////////////
 
-Effector::Effector(std::string name) : cucurbitassai(name) {
+Effector::Effector(std::string name) : Member(name) {
 
-    cucurbitassai.striding(true);
+    striding(true);
 
 }
 
@@ -31,13 +31,13 @@ std::string Effector::call(std::string prepend) {
 
     std::string args;
 
-    for (auto &arg : cucurbitassai.members) 
+    for (auto &arg : members) 
         args += prepend +"."+ arg->name()+", "; 
 
     if (args.length()) 
         args.resize(args.size()-2);
 
-    return cucurbitassai.name()+"("+args+");";
+    return name()+"("+args+");";
     
 }
 
@@ -70,7 +70,7 @@ void FileEffector::load(File *file) {
 
     std::regex regex; std::smatch match;
 
-    cucurbitassai.clear();
+    clear();
 
     regex = std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))");
     for (std::sregex_iterator it(source_v.begin(), source_v.end(), regex), end; it != end; ++it) {
@@ -113,19 +113,19 @@ void FileEffector::load(File *file) {
 
     // build Member
 
-    cucurbitassai.name( file->name() );
+    name( file->name() );
 
     for (auto arg : args) {
 
-        if (arg.first == "vec2") cucurbitassai.add<float, 2>(arg.second.c_str());
-        else if (arg.first == "vec3") cucurbitassai.add<float, 3>(arg.second.c_str());
-        else if (arg.first == "vec4") cucurbitassai.add<float, 4>(arg.second.c_str());
+        if (arg.first == "vec2") add<float, 2>(arg.second.c_str());
+        else if (arg.first == "vec3") add<float, 3>(arg.second.c_str());
+        else if (arg.first == "vec4") add<float, 4>(arg.second.c_str());
 
-        else if (arg.first == "int") cucurbitassai.add<int>(arg.second.c_str());
+        else if (arg.first == "int") add<int>(arg.second.c_str());
 
-        else cucurbitassai.add<float>(arg.second.c_str());
+        else add<float>(arg.second.c_str());
 
-        if (ranges.find(arg.second) != ranges.end()) cucurbitassai.range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+        if (ranges.find(arg.second) != ranges.end()) range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
 
     }
 
@@ -167,9 +167,9 @@ Wrappy::Wrappy(std::vector<Effector*> effectors, int count, std::string name) : 
 std::string Wrappy::source() {
 
     std::string args;
-    for (auto x : Effector::cucurbitassai.members) args += x->type_name() + " " + x->name() + ", ";
+    for (auto x : Effector::members) args += x->type_name() + " " + x->name() + ", ";
 
-    std::string out = "void " + Effector::cucurbitassai.name() + " ( " + (args.length()?args.substr(0, args.length() - 2):"") + " ) ";
+    std::string out = "void " + Effector::name() + " ( " + (args.length()?args.substr(0, args.length() - 2):"") + " ) ";
 
     out += "{\n\n"; 
     out += "\tint id = int(id_*" + std::to_string(effector_refs.size()) + ");\n\n"; 
@@ -179,13 +179,13 @@ std::string Wrappy::source() {
 
         std::string args;
 
-        for (int i = 0; i < x->effector->cucurbitassai.members.size(); i++) {
+        for (int i = 0; i < x->effector->members.size(); i++) {
             
-            args +=  (i<count?Effector::cucurbitassai.members[i+1]->name():"0") + ", ";
+            args +=  (i<count?Effector::members[i+1]->name():"0") + ", ";
             
         }
         
-        out += "\tif (id=="+std::to_string(id++)+") { " + x.get()->effector->cucurbitassai.name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " ); return; }\n\n";
+        out += "\tif (id=="+std::to_string(id++)+") { " + x.get()->effector->name() + "( " + (args.length()?args.substr(0, args.length() - 2):"") + " ); return; }\n\n";
         
     }
 
@@ -200,19 +200,19 @@ void Wrappy::attrs(int count) {
 
     this->count = count;
 
-    Effector::cucurbitassai.clear();
+    Effector::clear();
 
-    Effector::cucurbitassai.add<float>("id_").range(0,effector_refs.size()-1,0);
+    Effector::add<float>("id_").range(0,effector_refs.size()-1,0);
 
     for (int i = 0 ; i < count; i++)
-        Effector::cucurbitassai.add<float>("param_"+std::to_string(i));
+        Effector::add<float>("param_"+std::to_string(i));
 
 
 }
 
 bool Wrappy::setup(Builder* builder) { 
 
-    Effector::cucurbitassai.members[0]->range(0,effector_refs.size()-1,0);
+    Effector::members[0]->range(0,effector_refs.size()-1,0);
     
     for (auto x : effector_refs) {
         
@@ -231,8 +231,8 @@ bool Wrappy::setup(Builder* builder) {
 // Ref  ////////////////
 // Ref  ////////////////
 
-EffectorRef::EffectorRef(std::string name, Effector* effector ) : wizdom(""), effector(effector) {  
-    wizdom.add( &effector->cucurbitassai ); 
+EffectorRef::EffectorRef(std::string name, Effector* effector ) : Member(""), effector(effector) {  
+    add( effector ); 
     
 };
 
@@ -254,9 +254,9 @@ bool Effectable::removeEffector(EffectorRef* effector) {
 
 EffectorRef* Effectable::addEffector(Effector* def) {
 
-    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(next_name(def->cucurbitassai.name()), def)).get();
+    auto effector = effector_refs.emplace_back(std::make_shared<EffectorRef>(next_name(def->name()), def)).get();
 
-    add(&effector->wizdom);
+    add(effector);
 
     return effector;
 

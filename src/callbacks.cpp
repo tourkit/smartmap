@@ -114,7 +114,7 @@ void Callbacks::init() {
 
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
-        // dc->update(); // already in stack each<DC> : dc.update()
+        dc->update();
 
     });
 
@@ -158,7 +158,8 @@ void Callbacks::init() {
 
     NODE<Effectable>::onadd<Effector>([](Node*_this,Node*node){ 
 
-        auto x =  _this->is_a<Effectable>()->addEffector( node->is_a<Effector>() );
+        auto effectable =  _this->is_a<Effectable>();
+        auto x = effectable->addEffector( node->is_a<Effector>() );
         auto n = _this->addPtr<EffectorRef>(x);
 
         node->referings.insert(n);
@@ -197,14 +198,14 @@ void Callbacks::init() {
 
     });
 
-    NODE<Effector>::on(Node::CREATE, [](Node*node, Effector* def){ NODE<Member>::on_cb[Node::CREATE](node, &def->cucurbitassai); });
+    NODE<Effector>::on(Node::CREATE, [](Node*node, Effector* def){ NODE<Member>::on_cb[Node::CREATE](node, def); });
 
 
     // NODE<Effector>::on(Node::CHANGE, [&](Node*node, Effector* effector){ NODE<Member>::on_cb[Node::CHANGE](node, &effector->m);  });
 
-    NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector.cucurbitassai);   });
+    NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
 
-    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, fx->wizdom.ref());  });
+    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, fx->ref());  });
     
     NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){   });
 

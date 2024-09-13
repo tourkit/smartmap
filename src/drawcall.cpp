@@ -49,7 +49,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
     for (auto ref : effectable.effector_refs) 
 
-        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->cucurbitassai._name());
+        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->_name());
 
 
     body_fragment+=current_model;
@@ -103,7 +103,7 @@ void Layer::ShaderProgramBuilder::build() {
         current_model.clear();
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->_name())+"."+lower(ref->wizdom.ref()->_name()));
+            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->_name())+"."+lower(ref->ref()->_name()));
 
         body_fragment+=current_model;
         
@@ -177,21 +177,7 @@ void DrawCall::draw() {
 
 void DrawCall::update() {
 
-    static std::filesystem::file_time_type last_modified = std::chrono::file_clock::now();
 
-    static bool has_changed = false;
-
-    for (auto x : models) { // rien a foutre la
-
-        if (x.get()->file->owned) continue;
-
-        auto last_ = std::filesystem::last_write_time(std::filesystem::path(File::loc()) / x.get()->file->path_v);
-
-        if (last_modified  < last_) { last_modified = last_; has_changed = true; }
-
-    } /// ???
-
-    if (has_changed) {
 
         int i = 0;
 
@@ -201,9 +187,8 @@ void DrawCall::update() {
 
         vbo.upload();
 
-        has_changed = false;
 
-    }
+    
 
     shader.create();
 

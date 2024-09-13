@@ -8,9 +8,7 @@
 struct File;
 struct Builder;
 
-struct Effector {
-
-    Member cucurbitassai;
+struct Effector : Member {
 
     enum Type { FRAGMENT, VERTEX, COMPUTE } type;
 
@@ -51,9 +49,7 @@ struct FileEffector : Effector {
 
 
 
-struct EffectorRef  {
-
-    Member wizdom;
+struct EffectorRef : Member  {
 
     Effector* effector;
 

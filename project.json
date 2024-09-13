@@ -16,7 +16,6 @@
                 "quad1": {
                     "model": "quad.obj",
                     "effectors": [
-                        "argb"
                     ]
                 }
             }
