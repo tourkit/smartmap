@@ -1323,22 +1323,27 @@ void Editors::init() {
     });
 
     Editor<Layer>([](Node* node, Layer *layer){
-
-        SameLine();
-        ImGui::Text(("FB "+std::to_string(layer->fb.id)).c_str());
-
+        
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
-
             if (ImGui::BeginTabItem("main")) {
-                    
-                    ImGui::SliderFloat4("clear_color", &layer->fb.clear_color[0], 0, 1);
+                            
+                if (ImGui::BeginPopupContextItem()){
+                        
+                    ImGui::Text(("FB "+std::to_string(layer->fb.id)).c_str());
 
-                    Editor<FrameBuffer>::cb(node, &layer->fb);
+                    ImGui::SliderFloat4("clear_color", &layer->fb.clear_color[0], 0, 1);
+                    
+                    EndPopup();
+                
+                }
+
+                Editor<FrameBuffer>::cb(node, &layer->fb);
 
                 ImGui::EndTabItem();
 
             }
+
             for (auto x : layer->shader.builder()->samplers) {
                 
                 if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
