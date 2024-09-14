@@ -959,9 +959,6 @@ void Editors::init() {
 
     Editor<Model>([](Node* node, Model *model){
 
-
-        ImGui::Text(("effectorz : " + std::to_string(model->effector_refs.size())+ " .").c_str());
-
         static std::map<Node*,int> effector_currents;
 
        effector_currents[node] = model->quantity();
@@ -1162,6 +1159,16 @@ void Editors::init() {
     Editor<DrawCall>([](Node* node, DrawCall *dc){
 
         if (ImGui::BeginTabBar("dctqb", ImGuiTabBarFlags_None)) {
+
+            if (ImGui::BeginTabItem("Attribtues")) {
+
+                for (auto model : dc->models) {
+                    ImGui::SeparatorText(model->name().c_str());
+                    Editor<Model>::cb(node, model.get());
+                }
+                ImGui::EndTabItem();
+
+            }
 
             if (ImGui::BeginTabItem("ShaderProgram")) {
 

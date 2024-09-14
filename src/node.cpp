@@ -201,8 +201,8 @@ Node* Node::add(void* node_v)  {
     if (n != node_v) {
         if (n) 
             og->referings.insert(n);
-        else
-            { PLOGW << name() << " can't add " << og->name(); }
+        // else
+        //     { PLOGW << name() << " can't add " << og->name(); }
         return n;
     }
     
@@ -240,6 +240,8 @@ void Node::parent(Node* parent_node) {
     is_active = parent_node->is_active;
 
     parent_node->childrens.push_back(this);
+
+    update();
 
 }
 

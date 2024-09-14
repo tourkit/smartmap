@@ -40,11 +40,8 @@ int main() {
     engine.open("project.json");
 
     auto dc = engine.tree->find("Stack")->childrens[0]->is_a<DrawCall>();
-;
-    // dc->shader.sendUniform()
+
     engine.dynamic_ubo->bind(dc->shader);
 
-    logger.cout(Sev::verbose);
     engine.run();
-    logger.cout(Sev::warning);
 }
