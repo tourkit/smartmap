@@ -202,7 +202,7 @@ void Engine::run() {
             
             int dynubofp = dynamic_ubo->footprint();
 
-            int from = alt ? dynubofp : 0 ;
+            int from = 0;//alt ? dynubofp : 0 ;
 
             int size = dynubofp;
 

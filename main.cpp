@@ -24,11 +24,7 @@
 
 #include "drawcall.hpp"
 #include "engine.hpp"
-#include "src/freetype.hpp"
-#include "texture.hpp"
 #include "builder.hpp"
-#include "instance.hpp"
-#include "buffer.hpp"
 
 
 int main() {

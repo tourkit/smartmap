@@ -166,11 +166,7 @@ static void addEffectors(JSONVal v, Node* effectable) {
         auto new_ = effectable->add(effector_);
      
     }
-
-    if (v.size()) /// PEUT ETRE PAS BNESOINM
-        effectable->update();
-
-    Instance(*engine.dynamic_ubo).print();
+    
 }
 
 void Open::layers(){
@@ -205,7 +201,7 @@ void Open::layers(){
 
                 addEffectors( model_def["effectors"], new_model_ );
 
-                Instance(*engine.dynamic_ubo).print();
+                // Instance(*engine.dynamic_ubo).print();
 
 
             }

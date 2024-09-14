@@ -224,17 +224,13 @@ static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
 }
 
-static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 0) {
+static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 0, int member_count = 2550) {
 
-    static  int member_count = 0;
     
-    if (!member) {
+    if (!member)
         
-        member = buff; member_count = 2550;
-        
-        
-        }
-
+        member = buff; 
+    
 
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
@@ -293,8 +289,8 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
                     range_from = &f_range_i;
 
                 }
-
-                PushID(member_count);
+member_count++;
+                // PushID();
 
                 std::string name = (m->name());
 
@@ -310,7 +306,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
         SetNextItemWidth(-FLT_MIN-90);
         PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-                auto x = ImGui::SliderScalarN(("##"+name).c_str(), type, buff->data()+offset, q, range_from, range_to,NULL,0,
+                auto x = ImGui::SliderScalarN((std::to_string(member_count)+"###"+name+std::to_string(member_count)).c_str(), type, buff->data()+offset, q, range_from, range_to,NULL,0,
                 ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
                 SameLine(); 
         SetNextItemWidth(85);
@@ -354,9 +350,8 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
 
                 }
 
-                PopID();
+                // PopID();
 
-                member_count++;
         }else{
 
             std::string septxt  = m->ref()->name();
@@ -368,7 +363,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
             ImGui::SeparatorText(septxt.c_str());
         PopStyleColor(1);
 
-            if (draw_guis(buff, m, offset)) has_changed = true;
+            if (draw_guis(buff, m, offset, member_count++)) has_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
@@ -959,13 +954,21 @@ void Editors::init() {
 
     Editor<Model>([](Node* node, Model *model){
 
-        static std::map<Node*,int> effector_currents;
+        static std::map<Model*,int> effector_currents;
 
-       effector_currents[node] = model->quantity();
+       effector_currents[model] = model->quantity();
 
-        if (ImGui::InputInt("quantity##qqqqlalal" , &effector_currents[node])) { model->quantity(effector_currents[node]); node->update(); }
+        SetNextItemWidth(150);
+        if (ImGui::InputInt(("quantity##qqqqlalal"+model->name()).c_str() , &effector_currents[model])) { 
+        
+            model->quantity(effector_currents[model]); 
+        
+            node->update(); 
+        
+        }
 
-        if (draw_guis(engine.dynamic_ubo, model, model->instance->offset))engine.dynamic_ubo->upload();
+        if (draw_guis(engine.dynamic_ubo, model, model->instance->offset, *(int*)model))
+            engine.dynamic_ubo->upload();
 
     });
 
