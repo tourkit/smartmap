@@ -409,10 +409,7 @@ static bool IntButtons(int* p_data ) {
         SameLine(0, style.ItemInnerSpacing.x);
 
         static std::set<int*> deletings;
-
         bool deleting = deletings.find(p_data)!=deletings.end();
-
-
         if (ButtonEx(deleting?"?":"-", ImVec2(button_size, button_size), button_flags)) {
             
             if (*p_data == 1 && !deleting) 
@@ -434,6 +431,7 @@ static bool IntButtons(int* p_data ) {
         SameLine(0, style.ItemInnerSpacing.x);
         if (ButtonEx("+", ImVec2(button_size, button_size), button_flags))
         {
+            deletings.erase(p_data);
             DataTypeApplyOp(ImGuiDataType_S32, '+', p_data, p_data, io.KeyCtrl && p_step_fast ? p_step_fast : p_step);
             value_changed = true;
         }
