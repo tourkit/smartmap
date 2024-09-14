@@ -337,6 +337,8 @@ void Open::json(std::string path) {
 
     json_v.load(File(path).data.data());
 
+    if (json_v["gui"].num())
+        engine.gui(true);
 
     if (!json_v.loaded) {
 

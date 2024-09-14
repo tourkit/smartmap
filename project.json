@@ -1,4 +1,5 @@
 {
+  "gui": 1,
   "inputs": {
       "artnet": {
           "artnet1": {

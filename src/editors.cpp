@@ -224,14 +224,12 @@ static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
 }
 
-static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 0, int member_count = 2550) {
+static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member_count) {
 
     
     if (!member)
-        
         member = buff; 
     
-
     struct int_ { int val = 0; };
     static std::map<Member*,int_> elem_currents;
     int &elem_current = elem_currents[member].val;
@@ -241,7 +239,7 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
         SameLine();
 
         SetNextItemWidth(-FLT_MIN-10);
-        if (ImGui::SliderInt(("##current"+member->name()).c_str(), &elem_current, 0, member->quantity()-1)) { }
+        if (ImGui::SliderInt(("##"+std::to_string(member_count++)).c_str(), &elem_current, 0, member->quantity()-1)) { }
 
         offset += member->footprint()*elem_current;
 
@@ -289,8 +287,6 @@ static bool draw_guis(Member* buff, Member* member = nullptr, uint32_t offset = 
                     range_from = &f_range_i;
 
                 }
-member_count++;
-                // PushID();
 
                 std::string name = (m->name());
 
@@ -306,7 +302,7 @@ member_count++;
 
         SetNextItemWidth(-FLT_MIN-90);
         PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-                auto x = ImGui::SliderScalarN((std::to_string(member_count)+"###"+name+std::to_string(member_count)).c_str(), type, buff->data()+offset, q, range_from, range_to,NULL,0,
+                auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, range_from, range_to,NULL,0,
                 ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
                 SameLine(); 
         SetNextItemWidth(85);
@@ -363,7 +359,7 @@ member_count++;
             ImGui::SeparatorText(septxt.c_str());
         PopStyleColor(1);
 
-            if (draw_guis(buff, m, offset, member_count++)) has_changed = true;
+            if (draw_guis(buff, m, offset, member_count)) has_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
@@ -383,6 +379,55 @@ member_count++;
  }
 
 
+
+static bool IntButtons(int* p_data) {
+
+        bool value_changed = false;
+
+        int p_step_ = 1;
+        int p_step_fast_ = 100;
+        void* p_step = (void*)&p_step_;
+        void* p_step_fast = (void*)&p_step_fast_;
+
+        const float button_size = GetFrameHeight();
+        auto style = ImGui::GetStyle();
+      BeginGroup(); // The only purpose of the group here is to allow the caller to query item data e.g. IsItemActive()
+        PushID(engine.gui_v->member_count++);
+        SetNextItemWidth(ImMax(1.0f, CalcItemWidth() - (button_size + style.ItemInnerSpacing.x) * 2));
+        
+
+        auto io = ImGui::GetIO();
+
+        ImGuiInputTextFlags flags;
+        
+        const ImVec2 backup_frame_padding = style.FramePadding;
+        style.FramePadding.x = style.FramePadding.y;
+        ImGuiButtonFlags button_flags = ImGuiButtonFlags_Repeat | ImGuiButtonFlags_DontClosePopups;
+        if (flags & ImGuiInputTextFlags_ReadOnly)
+            BeginDisabled();
+        SameLine(0, style.ItemInnerSpacing.x);
+        if (ButtonEx("-", ImVec2(button_size, button_size), button_flags))
+        {
+            DataTypeApplyOp(ImGuiDataType_S32, '-', p_data, p_data, io.KeyCtrl && p_step_fast ? p_step_fast : p_step);
+            value_changed = true;
+        }
+        SameLine(0, style.ItemInnerSpacing.x);
+        if (ButtonEx("+", ImVec2(button_size, button_size), button_flags))
+        {
+            DataTypeApplyOp(ImGuiDataType_S32, '+', p_data, p_data, io.KeyCtrl && p_step_fast ? p_step_fast : p_step);
+            value_changed = true;
+        }
+        if (flags & ImGuiInputTextFlags_ReadOnly)
+            EndDisabled();
+
+        style.FramePadding = backup_frame_padding;
+
+        PopID();
+        EndGroup();
+
+        return value_changed;
+
+}
 
 
 void Editors::init() {
@@ -899,7 +944,7 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("programmer")) {
                 
-                if (m->buffering() && draw_guis(m)) {
+                if (m->buffering() && draw_guis(m,nullptr,0,engine.gui_v->member_count)) {
             
                     m->upload();
 
@@ -959,7 +1004,7 @@ void Editors::init() {
        effector_currents[model] = model->quantity();
 
         SetNextItemWidth(150);
-        if (ImGui::InputInt(("quantity##qqqqlalal"+model->name()).c_str() , &effector_currents[model])) { 
+        if (IntButtons(&effector_currents[model])) { 
         
             model->quantity(effector_currents[model]); 
         
@@ -967,7 +1012,7 @@ void Editors::init() {
         
         }
 
-        if (draw_guis(engine.dynamic_ubo, model, model->instance->offset, *(int*)model))
+        if (draw_guis(engine.dynamic_ubo, model, model->instance->offset,engine.gui_v->member_count))
             engine.dynamic_ubo->upload();
 
     });
@@ -1167,6 +1212,7 @@ void Editors::init() {
 
                 for (auto model : dc->models) {
                     ImGui::SeparatorText(model->name().c_str());
+                    SameLine();
                     Editor<Model>::cb(node, model.get());
                 }
                 ImGui::EndTabItem();

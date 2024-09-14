@@ -88,7 +88,7 @@ struct GUI {
 
   std::vector<EditorWidget*> editors;
   std::vector<TreeWidget*> trees;
-
+  int member_count = 0;
 
   static inline std::vector<Node*> delete_list;
   static inline std::map<Node*,std::string> rename_list;
