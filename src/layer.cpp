@@ -41,14 +41,6 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
 }
 
-void Layer::updateDC() {
-
-    glsl_layers->eq(vbo.layer_id).set<std::array<float,2>>({(float)fb.width,(float)fb.height});
-
-    DrawCall::updateDC();
-
-}
-
 Layer::Feedback* UberLayer::feedback() {  
 
     if (!feedback_v) 

@@ -35,6 +35,8 @@ void Builder::post() {
 }
 void Builder::build() {
 
+    PLOGV << "build";
+    
     header_common = version;
     header_common += layout();
 

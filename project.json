@@ -18,13 +18,6 @@
                 "quad1": {
                     "model": "quad.obj",
                     "effectors": [
-                        "argb"
-                    ]
-                },
-                "quad2": {
-                    "model": "quad.obj",
-                    "effectors": [
-                        "argb"
                     ]
                 }
             }

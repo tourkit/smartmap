@@ -80,12 +80,14 @@ void Callbacks::init() {
     
     NODE<Stack>::on(Node::CHANGE, [](Node*node, Stack* stack){
 
-        node->each<DrawCall>([](Node*n, DrawCall* dc){ 
 
-            dc->shader.create(); 
-
-        });
         
+    });
+
+    NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
+
+        layer->glsl_layers->eq(layer->vbo.layer_id).set<std::array<float,2>>({(float)layer->fb.width,(float)layer->fb.height});
+
     });
 
     NODE<Layer>::on(Node::DESTROY, [](Node* node, Layer *layer){ 
@@ -136,10 +138,15 @@ void Callbacks::init() {
 
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
-        dc->updateDC();
+        node->each<DrawCall>([](Node*n, DrawCall* dc){ 
+
+            dc->shader.create(); 
+
+        });
+
+        dc->vbo.upload();
 
     });
-
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
 

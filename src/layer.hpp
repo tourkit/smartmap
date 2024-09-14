@@ -42,8 +42,6 @@ struct Layer : DrawCall {
 
     static inline Instance* glsl_layers;
 
-    void updateDC() override;
-
 };
 
 struct UberLayer;

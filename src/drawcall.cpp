@@ -174,18 +174,3 @@ void DrawCall::draw() {
 
 }
 
-
-void DrawCall::updateDC() {
-
-    // int i = 0;
-
-    // vbo.reset();
-
-    // for (auto &x : models) vbo.addFile_noupload(x.get()->file, i++) ;
-
-    vbo.upload();
-
-
-    shader.create();
-
-}
