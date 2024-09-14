@@ -381,7 +381,7 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
 
 
 
-static bool IntButtons(int* p_data) {
+static bool IntButtons(int* p_data ) {
 
         bool value_changed = false;
 
@@ -407,11 +407,30 @@ static bool IntButtons(int* p_data) {
         if (flags & ImGuiInputTextFlags_ReadOnly)
             BeginDisabled();
         SameLine(0, style.ItemInnerSpacing.x);
-        if (ButtonEx("-", ImVec2(button_size, button_size), button_flags))
-        {
-            DataTypeApplyOp(ImGuiDataType_S32, '-', p_data, p_data, io.KeyCtrl && p_step_fast ? p_step_fast : p_step);
-            value_changed = true;
+
+        static std::set<int*> deletings;
+
+        bool deleting = deletings.find(p_data)!=deletings.end();
+
+
+        if (ButtonEx(deleting?"?":"-", ImVec2(button_size, button_size), button_flags)) {
+            
+            if (*p_data == 1 && !deleting) 
+                deletings.insert(p_data);
+                    
+            else{
+
+                deletings.erase(p_data);
+
+                DataTypeApplyOp(ImGuiDataType_S32, '-', p_data, p_data, io.KeyCtrl && p_step_fast ? p_step_fast : p_step);
+            
+                value_changed = true;
+                
+            }
+            
         }
+
+        
         SameLine(0, style.ItemInnerSpacing.x);
         if (ButtonEx("+", ImVec2(button_size, button_size), button_flags))
         {
@@ -1006,11 +1025,23 @@ void Editors::init() {
 
         SetNextItemWidth(150);
         if (IntButtons(&effector_currents[model])) { 
-        
-            model->quantity(effector_currents[model]); 
-        
-            node->update(); 
-        
+
+            if (!effector_currents[model]) {
+               
+                engine.window.end_of_render_cbs.push_back(std::pair<void*, std::shared_ptr<std::function<void(void*)>>>{node, std::make_shared<std::function<void(void*)>>([&](void* ptr){ 
+                    
+                    delete (Node*)ptr; 
+
+                })});
+                
+            }else{
+    
+                model->quantity(effector_currents[model]); 
+            
+                node->update(); 
+            
+            }
+
         }
 
         if (draw_guis(engine.dynamic_ubo, model, model->instance->offset,engine.gui_v->member_count))
@@ -1211,10 +1242,13 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("Attribtues")) {
 
-                for (auto model : dc->models) {
+                for (auto c : node->childrens) {
+                    auto model = c->is_a<Model>();
+                    if (!model) 
+                        continue;
                     ImGui::SeparatorText(model->name().c_str());
                     SameLine();
-                    Editor<Model>::cb(node, model.get());
+                    Editor<Model>::cb(c, model);
                 }
                 ImGui::EndTabItem();
 
