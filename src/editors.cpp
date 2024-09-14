@@ -688,29 +688,44 @@ void Editors::init() {
 
     Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){
 
-         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
         static Builder builder;
 
         static TextEditor frageditor;
         static TextEditor verteditor;
-        if (ImGui::Button("create")) {
-            shader->create();
-            frageditor.SetText(shader->frag.src);
-            verteditor.SetText(shader->vert.src);
-        }
-        ImGui::SameLine(); if (ImGui::Button("empty")) { Layer* lay = node->is_a<Layer>(); if (lay) builder.vbo = &lay->vbo; shader->create(&builder); }
-        ImGui::SameLine(); if (ImGui::Button("samplers connect")) { 
 
-            auto builder = shader->builder();
-            builder->post();
-         }
+        if (ImGui::BeginPopupContextItem()){
+
+            if (ImGui::Button("create")) {
+                shader->create();
+                frageditor.SetText(shader->frag.src);
+                verteditor.SetText(shader->vert.src);
+            }
+            if (ImGui::Button("empty")) { 
+                Layer* lay = node->is_a<Layer>(); 
+                if (lay) 
+                    builder.vbo = &lay->vbo; 
+                shader->create(&builder); 
+            }
+            if (ImGui::Button("samplers connect")) { 
+
+                auto builder = shader->builder();
+                builder->post();
+            }
+            
+            EndPopup();
+        
+        }
+
+         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+
+
+
 
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
 
             if (ImGui::BeginTabItem("fragment")) {
-
 
                 static bool init = false;
                 if (!init){
@@ -1068,15 +1083,22 @@ void Editors::init() {
 
     Editor<VBO>([](Node*node,VBO*vbo){
 
-        std::ostringstream address;
-        address << (void const *)vbo;
-        ImGui::Text(("VBO " + std::to_string(vbo->vbo) + " - IBO " + std::to_string(vbo->ibo) + " - VAO " + std::to_string(vbo->vao) + " - " +  address.str()).c_str());
 
-        if (ImGui::Button("destroy")) vbo->deleteData();
-        ImGui::SameLine(); if (ImGui::Button("create")) vbo->create();
-        ImGui::SameLine(); if (ImGui::Button("reset")) vbo->reset();
-        ImGui::SameLine(); if (ImGui::Button("addQuad")) vbo->addQuad();
-        ImGui::SameLine(); if (ImGui::Button("glDeleteVertexArrays")) glDeleteVertexArrays(1, &vbo->vao);
+        if (ImGui::BeginPopupContextItem()){
+
+            std::ostringstream address;
+            address << (void const *)vbo;
+            ImGui::Text(("VBO " + std::to_string(vbo->vbo) + " - IBO " + std::to_string(vbo->ibo) + " - VAO " + std::to_string(vbo->vao) + " - " +  address.str()).c_str());
+
+            if (ImGui::Button("destroy")) vbo->deleteData();
+            if (ImGui::Button("create")) vbo->create();
+            if (ImGui::Button("reset")) vbo->reset();
+            if (ImGui::Button("addQuad")) vbo->addQuad();
+            if (ImGui::Button("glDeleteVertexArrays")) glDeleteVertexArrays(1, &vbo->vao);
+            
+            EndPopup();
+        
+        }
 
         Editor<Member>::cb(node, vbo);
 
