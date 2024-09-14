@@ -300,13 +300,14 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
                 // SetCursorPosX(85-CalcTextSize(name.c_str()).x);
                 SetCursorPosX(5);
 
-        SetNextItemWidth(-FLT_MIN-90);
+        SetNextItemWidth(-FLT_MIN-6);
         PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
                 auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, range_from, range_to,NULL,0,
                 ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
                 SameLine(); 
         SetNextItemWidth(85);
-        PushStyleColor(ImGuiCol_Text, ImVec4(0.78f, 0.78f, 0.78f, 1.0f));
+        PushStyleColor(ImGuiCol_Text, ImVec4(1.0, 1.0, 1.0, .65f));
+                ImGui::SetCursorPosX(11);
                 Text(name.c_str());
 
         PopStyleColor(2);
