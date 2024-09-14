@@ -255,84 +255,93 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
 
         if (m->isData()) {
 
+            auto type = ImGuiDataType_Float;
+
+            if (m->type().id == typeid(int)) 
+                type = ImGuiDataType_U32;
+
+            std::string name = (m->name());
 
 
-                auto type = ImGuiDataType_Float;
+            static std::string str__;
+            static std::string last_value;
 
-                if (m->type().id == typeid(int)) 
-                    type = ImGuiDataType_U32;
-
-                std::string name = (m->name());
+            int q = m->quantity();
 
 
-                static std::string str__;
-                static std::string last_value;
+            // SetCursorPosX(85-CalcTextSize(name.c_str()).x);
+            SetCursorPosX(5);
 
-                int q = m->quantity();
+            SetNextItemWidth(-FLT_MIN-6);
+            PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
+            bool dis = false;
+            if (*(int*)m->to() == 0){
+                ImGui::BeginDisabled();
+                dis = true;
+            }
 
-                // SetCursorPosX(85-CalcTextSize(name.c_str()).x);
-                SetCursorPosX(5);
+            auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
+            ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
 
-        SetNextItemWidth(-FLT_MIN-6);
-        PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-                auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
-                ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
-                SameLine(); 
-        SetNextItemWidth(85);
-        PushStyleColor(ImGuiCol_Text, ImVec4(1.0, 1.0, 1.0, .65f));
-                ImGui::SetCursorPosX(11);
-                Text(name.c_str());
+            if (dis)
+                ImGui::EndDisabled();
 
-        PopStyleColor(2);
-                if (x>=0) {
+            SameLine(); 
+            SetNextItemWidth(85);
+            PushStyleColor(ImGuiCol_Text, ImVec4(1.0, 1.0, 1.0, .65f));
 
-                    x*=4;
+            ImGui::SetCursorPosX(11);
 
-                    static te_parser tep;
-                    if (str__.length() && !isdigit(str__.at(0)) && str__.at(0) != 46) {
+            Text(name.c_str());
 
-                        if (last_value.length())str__=last_value+str__;
+            PopStyleColor(2);
 
-                        last_value = "";
-                    }
+            if (x>=0) {
 
-                    double r = tep.evaluate(str__);
+                x*=4;
 
-                    str__.clear();
+                static te_parser tep;
+                if (str__.length() && !isdigit(str__.at(0)) && str__.at(0) != 46) {
 
-                    if (!std::isnan(r)){
+                    if (last_value.length())str__=last_value+str__;
 
-                        if (type == ImGuiDataType_Float) *(float*)(buff->data()+offset+x) = r;
-                        else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data()+offset+x) = r;
-                        else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data()+offset+x) = r;
-
-                    }
-
-                    has_changed = true;
+                    last_value = "";
                 }
 
+                double r = tep.evaluate(str__);
 
-                if (ImGui::IsItemClicked()) {
+                str__.clear();
 
-                        if (type == ImGuiDataType_Float) last_value = std::to_string(*(float*)(buff->data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
-                        else if (type == ImGuiDataType_S16) last_value = std::to_string(*(int16_t*)(buff->data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
-                        else if (type == ImGuiDataType_U16) last_value = std::to_string(*(uint16_t*)(buff->data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
+                if (!std::isnan(r)){
+
+                    if (type == ImGuiDataType_Float) *(float*)(buff->data()+offset+x) = r;
+                    else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data()+offset+x) = r;
+                    else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data()+offset+x) = r;
 
                 }
 
-                // PopID();
+                has_changed = true;
+            }
+
+
+            if (ImGui::IsItemClicked()) {
+
+                    if (type == ImGuiDataType_Float) last_value = std::to_string(*(float*)(buff->data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
+                    else if (type == ImGuiDataType_S16) last_value = std::to_string(*(int16_t*)(buff->data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
+                    else if (type == ImGuiDataType_U16) last_value = std::to_string(*(uint16_t*)(buff->data()+offset+(int)std::floor( ( ImGui::GetMousePos().x - ImGui::GetWindowPos().x ) / ImGui::GetItemRectSize().x * q )*4));
+
+            }
+
 
         }else{
 
             std::string septxt  = m->ref()->name();
 
-            // sezptxt+= "(" + std::to_string(m->quantity()) + ")";
 
-
-        PushStyleColor(ImGuiCol_Text, ImVec4(0.6, 0.6, 0.6, 1.0f));
+            PushStyleColor(ImGuiCol_Text, ImVec4(0.6, 0.6, 0.6, 1.0f));
             ImGui::SeparatorText(septxt.c_str());
-        PopStyleColor(1);
+            PopStyleColor(1);
 
             if (draw_guis(buff, m, offset, member_count)) has_changed = true;
 
