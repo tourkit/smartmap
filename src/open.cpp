@@ -82,7 +82,7 @@ void Open::inputs(){
 
             n->trig(Node::RUN);
 
-            DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap["channel", true].num(1)-1, attrs, remap["quantity"].num(1));
+            DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap["channel", true].num(1)-1, attrs, remap["quantity|q"].num(1));
 
             dmxremap->src.remaps.push_back( dmxremap );
 
@@ -104,7 +104,7 @@ void Open::outputs(){
 
         auto n = engine.outputs->addPtr<Window>( &engine.window );
 
-        auto dim = monitor["dimensions"];
+        auto dim = monitor["dimensions|dim|dimension"];
         if (dim[0].num() && dim[1].num())
             engine.window.size( dim[0].num(), dim[1].num());
 
@@ -119,7 +119,7 @@ void Open::outputs(){
 
     for (auto &ndi : outputs["ndi"]) {
 
-        auto dim = ndi["dimensions"];
+        auto dim = ndi["dimensions|dim|dimension"];
 
         Node* n = engine.outputs->addOwnr<NDI::Sender>( dim[0].num(engine.window.width), dim[1].num(engine.window.height), ndi.name());
 
@@ -177,7 +177,7 @@ void Open::layers(){
 
         if (layer_def["models"].isobj())  { // HARD CHECK FOR TYPE BETWEEN VIRTUALLAYER AND LAYER
          
-            auto dim = layer_def["dimensions"];
+            auto dim = layer_def["dimensions|dim|dimension"];
 
             Node* new_layer = engine.stack->addOwnr<Layer>(dim[0].num(),dim[1].num(),layer_def.name());
             
@@ -199,7 +199,7 @@ void Open::layers(){
 
                 new_model_->close();
 
-                new_model_->is_a<Model>()->quantity(model_def["quantity"].num(1));
+                new_model_->is_a<Model>()->quantity(model_def["quantity|q"].num(1));
 
                 addEffectors( model_def["effectors"], new_model_ );
 
@@ -225,7 +225,7 @@ void Open::layers(){
 
                 int count = 1;
 
-                auto dim = vlayer_def["dimensions"];
+                auto dim = vlayer_def["dimensions|dim|dimension"];
 
                 auto &l = ubl.addLayer(dim[0].num(),dim[1].num());
                 if (vlayer_def.name().length())
@@ -235,7 +235,7 @@ void Open::layers(){
 
                 addEffectors( vlayer_def["effectors"], l_ );
 
-                l.quantity(vlayer_def["quantity"].num(1));
+                l.quantity(vlayer_def["quantity|q"].num(1));
                 
             }
 

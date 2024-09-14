@@ -1,7 +1,7 @@
 #include "json.hpp"
 
 #include "file.hpp"
-#include "log.hpp"
+#include "utils.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/error/en.h"
 #include <cstddef>
@@ -105,14 +105,14 @@ static auto null_obj = null_doc.SetObject().GetObject();
 
 JSONVal JSONVal::operator[](std::string name, bool warn) { 
 
-
-    if (!value.IsObject() || !value.HasMember(name.c_str())) {
-        if (warn)
-            {PLOGW << "no " << name << " in " << this->name() << " (" << str() << ")";}
-        return JSONVal(null_val);
-    }
+    for (auto x : split(name, "|")) 
+        if (value.IsObject() && value.HasMember(x.c_str())) 
+            return JSONVal(value[x.c_str()], x);
     
-    return JSONVal(value[name.c_str()], name);
+    if (warn)
+        {PLOGW << "no " << name << " in " << this->name() << " (" << str() << ")";}
+        
+    return JSONVal(null_val);
     
 }
 
