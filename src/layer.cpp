@@ -68,9 +68,6 @@ void Layer::draw() {
 
     vbo.draw();
 
-    if (feedback_v) 
-        return feedback_v->texture.read(&fb.texture); 
-
 }
 
 // FeedbackEffector  ////////////////

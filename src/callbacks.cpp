@@ -119,6 +119,7 @@ void Callbacks::init() {
     NODE<Modelable>::allow<Model>();
     NODE<Artnet>::allow<Universe>();
     NODE<Universe>::allow<DMXRemap>();
+    
     NODE<UberLayer>::is_a<Layer>();
     NODE<Layer>::is_a<DrawCall>();
     NODE<Model>::is_a<Modelable>();

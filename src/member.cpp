@@ -201,7 +201,7 @@ void Member::type(Type value) {
 
     if (value.id == typeid(uint32_t)) to = 65535;
     
-    // else if (value.id == typeid(int)) to = 65535;
+    else if (value.id == typeid(int)) to = 0;
 
     else if (value.id == typeid(uint8_t)) to = 255;
 

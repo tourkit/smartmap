@@ -255,38 +255,12 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
 
         if (m->isData()) {
 
-                static int t_range_i = 65535;
-                static float t_range_f = 1.0f;
-                static int f_range_i = 0;
-                static float f_range_f = 0;
-
-                void* range_from;
-                if (m->from()) range_from = m->from();
-                else range_from = &f_range_f;
-                range_from = &f_range_f;
-
-                void* range_to;
-                if (m->to()) range_to = m->to();
-                else range_to = &t_range_f;
-                range_to = &t_range_f;
-
-                if (m->from()) range_from = m->from();
-                if (m->to()) range_to = m->to();
 
 
                 auto type = ImGuiDataType_Float;
 
-                if (m->type().id == typeid(int)) {
-
+                if (m->type().id == typeid(int)) 
                     type = ImGuiDataType_U32;
-
-                    if (m->from()) f_range_i = *(int*)m->from();
-                    if (m->to()) t_range_i = *(int*)m->to();
-
-                    range_to = &t_range_i;
-                    range_from = &f_range_i;
-
-                }
 
                 std::string name = (m->name());
 
@@ -302,7 +276,7 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
 
         SetNextItemWidth(-FLT_MIN-6);
         PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
-                auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, range_from, range_to,NULL,0,
+                auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
                 ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
                 SameLine(); 
         SetNextItemWidth(85);
