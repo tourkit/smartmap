@@ -38,7 +38,7 @@ struct Layer : DrawCall {
 
     void draw() override;
 
-    static inline auto layer_def = Member("Layers").quantity(0).add<float, 2>("dim");
+    static inline auto layer_def = Member("Layers").quantity(0).add<float, 2>("dim").range(0, 0, 0);
 
     static inline Instance* glsl_layers;
 

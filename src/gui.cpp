@@ -223,6 +223,7 @@ ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
 
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
+  ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding,2);
 
   trees.push_back(new TreeWidget(this));
 
@@ -240,6 +241,8 @@ GUI::~GUI() {
   auto editors_t = editors;
   for (auto x : editors_t) 
     delete x;
+
+  ImGui::PopStyleVar(3);
 
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();

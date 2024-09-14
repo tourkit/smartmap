@@ -276,7 +276,7 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
             PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
             bool dis = false;
-            if (*(int*)m->to() == 0){
+            if (*(float*)m->to() == 0){
                 ImGui::BeginDisabled();
                 dis = true;
             }

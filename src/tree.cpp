@@ -25,10 +25,11 @@ if (demodemo) ImGui::ShowDemoWindow();
 
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
 
-    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 24);
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 26);
     
 
     
+    ImGui::SetCursorPosX(5);
     ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str));
 
 
@@ -68,7 +69,7 @@ if (demodemo) ImGui::ShowDemoWindow();
 
 
     ImGui::SameLine();
-
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX()-6);
     if (ImGui::Button("+")) gui->editors.push_back(new EditorWidget(gui));
 
 
@@ -112,7 +113,7 @@ using namespace ImGui;
 
     auto t_pos = GetCursorPosX();
 
-    SetCursorPosX(GetWindowWidth()-30);
+    SetCursorPosX(GetWindowWidth()-19);
 
     std::string str = "##active"+std::to_string(node->uid);
     Checkbox(str.c_str(), &node->is_active);
@@ -139,14 +140,18 @@ using namespace ImGui;
     SetCursorPosX(GetCursorPosX()-1);
     bool x = false;
 
-    if (is_renaming != node) {x = TreeNodeEx(node->name().c_str(), flags);
-        if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0)) {is_renaming = node;
-        memset(&renaming_name[0],0,612);
-        memcpy(&renaming_name[0], node->name().c_str(), node->name().length());}
-    }
-    else {
+    if (is_renaming != node) {
+        
+        x = TreeNodeEx(node->name().c_str(), flags);
 
-// PLOGE<<"coc";
+        if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0)) {
+            is_renaming = node;
+            memset(&renaming_name[0],0,612);
+            memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
+        }
+
+    } else {
+
         if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
             gui->rename_list[node] = &renaming_name[0];
@@ -155,13 +160,16 @@ using namespace ImGui;
 
         }
     }
-           if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
-    {
-        if (ImGui::BeginMenu("add"))
-        {
+
+    if (ImGui::BeginPopupContextItem()) {
+
+        if (ImGui::BeginMenu("add")) {
+
             if (ImGui::MenuItem("New")) {}
+
             ImGui::EndMenu();
         }
+
         bool will_exit = false;
         if (!is_deleting) {
 
@@ -176,28 +184,31 @@ using namespace ImGui;
                 is_deleting = false;
                 gui->delete_list.push_back(node);
 
-        gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::shared_ptr<std::function<void(void*)>>>{nullptr, std::make_shared<std::function<void(void*)>>([&](void* ptr) { 
-            
-            delete (Node*)ptr;
-            
-        })});
+                gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::shared_ptr<std::function<void(void*)>>>{nullptr, std::make_shared<std::function<void(void*)>>([&](void* ptr) { 
+
+                    delete (Node*)ptr;
+
+                })});
 
             }
 
         }
 
-        if (!ImGui::IsItemHovered()) is_deleting = false;
+        if (!ImGui::IsItemHovered()) 
+            is_deleting = false;
 
         if(ImGui::MenuItem("rename")) {
 
             is_renaming = node;
 
-        memset(&renaming_name[0],0,612);
-        memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
+            memset(&renaming_name[0],0,612);
+            memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
 
         }
 
-        if(ImGui::MenuItem("update")) node->update();
+        if(ImGui::MenuItem("update")) 
+            node->update();
+
         if (ImGui::BeginMenu("trig")) {
             
             if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
@@ -206,7 +217,8 @@ using namespace ImGui;
             ImGui::EndMenu();
         }
 
-        if(ImGui::MenuItem("zoom")) gui->trees[0]->selected = node;
+        if(ImGui::MenuItem("zoom")) 
+            gui->trees[0]->selected = node;
 
         if(ImGui::MenuItem("pop")) {
             gui->trees.push_back(new TreeWidget(gui));
@@ -229,6 +241,7 @@ using namespace ImGui;
 
         ImGui::EndPopup();
     }
+
     PopStyleColor();
 
     static bool holding = false;
