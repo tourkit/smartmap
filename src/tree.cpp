@@ -127,11 +127,11 @@ using namespace ImGui;
 
     ImVec4 node_color = *(ImVec4*)&node->color;
 
-    if(selected != node) {
+    if(gui->selected != node) {
 
         if (hovered) node_color = ImVec4(1, .4, 0, 1);
 
-        else if (selected) node_color.w = .65;
+        else node_color.w = .65;
 
     }
 
