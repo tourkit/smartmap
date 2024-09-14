@@ -112,7 +112,7 @@ JSONVal JSONVal::operator[](std::string name, bool warn) {
         return JSONVal(null_val);
     }
     
-    return JSONVal(value[name.c_str()]);
+    return JSONVal(value[name.c_str()], name);
     
 }
 

@@ -289,32 +289,33 @@ void Open::effectors(){
 
 void Open::editors(){
 
+    auto editors = json_v["editors"];
 
-
-    if (json_v.document.HasMember("editors") && json_v.document["editors"].IsArray()) for (auto &e : json_v.document["editors"].GetArray()) {
-
-        if (!e.IsArray()) { PLOGW << json_error; continue; }
-
-        auto x = e.GetArray();
-
-        if (e.Size()<5) { PLOGW << json_error; continue; }
+    if (editors.name().length())
+        engine.gui(true);
+    
+    for (auto &e : editors) {
 
         engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v));
 
-
             Node* n = nullptr;
-            if (e[4].IsString()) n = engine.tree->find(e[4].GetString());
-            if (n) {
 
-                engine.gui_v->editors.back()->selected = n;
+            if (e[0].str().length()) {
 
-                engine.gui_v->editors.back()->locked = true;
+                n = engine.tree->find(e[0].str());
+                
+                if (!n)      
 
-            }else PLOGW << "no \"" << e[4].GetString() << "\" found";
+                    {PLOGW << "no \"" << e[0].str() << "\" found";}
 
+                else {
 
-            // if (e.Size() > 5 && e[5].IsBool() ) engine.gui->editors.back()->locked = e[5].GetBool();
+                    engine.gui_v->editors.back()->selected = n;
 
+                    engine.gui_v->editors.back()->locked = true;
+                }
+
+            }   
 
     }
 
@@ -337,8 +338,6 @@ void Open::json(std::string path) {
 
     json_v.load(File(path).data.data());
 
-    if (json_v["gui"].num())
-        engine.gui(true);
 
     if (!json_v.loaded) {
 

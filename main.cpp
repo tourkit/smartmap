@@ -39,5 +39,7 @@ int main() {
 
     engine.dynamic_ubo->bind(dc->shader);
 
+    logger.cout(Sev::verbose);
     engine.run();
+    logger.cout(Sev::warning);
 }

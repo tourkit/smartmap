@@ -1,5 +1,7 @@
 {
-  "gui": 1,
+  "editors": [
+    ["Free Layer 1"]
+  ],
   "inputs": {
       "artnet": {
           "artnet1": {
