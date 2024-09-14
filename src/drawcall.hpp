@@ -16,7 +16,7 @@ struct DrawCall : Modelable {
 
     ShaderProgram shader;
 
-    virtual void update();
+    virtual void updateDC();
 
     virtual void draw();
 

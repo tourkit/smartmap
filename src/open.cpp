@@ -130,10 +130,10 @@ void Open::outputs(){
 }
 
 
-static void addEffectors(JSONVal v, Node* layer) {
+static void addEffectors(JSONVal v, Node* effectable) {
 
     if (!v.isarr()) {
-        PLOGW << layer->name() << " is not an effector";
+        PLOGW << v.name() << " is not an effector";
         return;
     }
 
@@ -146,12 +146,12 @@ static void addEffectors(JSONVal v, Node* layer) {
 
         if (effector_def.str() == "feedback") {
 
-            auto lay = layer->is_a_nowarning<Layer>();
+            auto lay = effectable->is_a_nowarning<Layer>();
             if (!lay) 
-                lay = layer->parent()->is_a_nowarning<Layer>();
+                lay = effectable->parent()->is_a_nowarning<Layer>();
 
             if (lay)
-                layer->addPtr<EffectorRef>(lay->addEffector(lay->feedback()));
+                effectable->addPtr<EffectorRef>(lay->addEffector(lay->feedback()));
             
             continue;
 
@@ -163,12 +163,14 @@ static void addEffectors(JSONVal v, Node* layer) {
         if (! effector_) 
             continue; 
         
-        auto new_ = layer->add(effector_);
+        auto new_ = effectable->add(effector_);
      
     }
 
-    if (v.size()) layer->update();
+    if (v.size()) /// PEUT ETRE PAS BNESOINM
+        effectable->update();
 
+    Instance(*engine.dynamic_ubo).print();
 }
 
 void Open::layers(){
@@ -202,6 +204,9 @@ void Open::layers(){
                 new_model_->is_a<Model>()->quantity(model_def["quantity"].num(1));
 
                 addEffectors( model_def["effectors"], new_model_ );
+
+                Instance(*engine.dynamic_ubo).print();
+
 
             }
             
@@ -240,7 +245,7 @@ void Open::layers(){
 
             engine.stack->trig(Node::CHANGE);
 
-            ubl.update();         
+            ubl.updateDC();         
         
         }
     }

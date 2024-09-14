@@ -234,8 +234,6 @@ struct NODE {
 
 };
 
-static Node no_worry_node("NoWorry");
-
 struct AnyNode {
 
 };

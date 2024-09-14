@@ -49,12 +49,12 @@ void UBO:: bind(uint32_t shader) {
 
 }
 
-void UBO::update() { 
+void UBO::update_pv() { 
 
-    Member::update(); 
-    
     resize(footprint_all()); 
 
+    Member::update_pv(); 
+    
 } 
 
 void UBO::reset() {
@@ -71,9 +71,16 @@ void UBO::upload(){ upload(data(), footprint_all()); }
 
 void UBO::upload(void* data, size_t size, uint32_t offset){
 
-    // std::string str;
-    // for (int i = footprint() ; i < footprint(); i++) str+= std::to_string(*(((uint8_t*)data)+i)) + " ";
-    // if (name() == "dynamic_ubo") {PLOGW << name() << " " << id << " " << binding << ": " << size << " - " << str;}
+    // if (name() == "dynamic_ubo") {  
+    
+    //     std::string str;
+
+    //     for (int i = 0 ; i < footprint(); i++) 
+    //         str+= std::to_string(*(((uint8_t*)data)+i)) + ", ";
+
+    //     {PLOGW << name() << " " << id << " " << binding << ": " << size << " - " << str;}
+    
+    // }
 
     if (!size) return;
     glBindBuffer(GL_UNIFORM_BUFFER, id);

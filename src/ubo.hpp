@@ -26,7 +26,7 @@ struct UBO : Member {
 
     void resize(uint32_t size);
 
-    void update() override;
+    void update_pv() override;
 
     void upload() override;
 

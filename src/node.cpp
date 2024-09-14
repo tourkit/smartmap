@@ -142,7 +142,7 @@ Node* Node::add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* ptr) {
 Node* Node::add(void* node_v)  {
 
     auto og = (Node*)node_v;
-    auto n = og;
+    Node* n = og;
 
     if (!n || n == this || n->parent() == this) return nullptr;
 
@@ -176,6 +176,9 @@ Node* Node::add(void* node_v)  {
             std::string u_NAME = u_.pretty_name();
 
             if (onaddtyped_cb.find(t_) != onaddtyped_cb.end() && onaddtyped_cb.at(t_).find(u_) != onaddtyped_cb.at(t_).end()) {
+
+                PLOGV << t_.pretty_name() << "::" << name() << " ONADD " << u_.pretty_name() << "::" << n->name();
+
                 n = onaddtyped_cb[t_][u_](this,n);    
                 break_ = true;
                 callback_ = true;
@@ -194,9 +197,6 @@ Node* Node::add(void* node_v)  {
         return nullptr;
     
     }
-
-    if (n == &no_worry_node) 
-        return nullptr;
 
     if (n != node_v) {
         if (n) 
@@ -272,7 +272,8 @@ void Node::update() {
 
     trig(Event::CHANGE);
 
-    if (parent_node) parent_node->update();
+    if (parent_node) 
+        parent_node->update();
 
     if (referings.size() && *referings.begin())
         for (auto x : referings)
@@ -346,10 +347,7 @@ static std::string event_name(Node::Event event){
 
 void Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
 
-#ifdef ROCH
     std::string t_NAME = t.pretty_name();
-    Wrappy* ww = (Wrappy*)out;
-#endif
 
     if (is_lists.find(t) != is_lists.end()) 
         for (auto is : is_lists[t]) {
@@ -358,8 +356,14 @@ void Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
             trig_typed(e, is.first, is.second(out));
         }
 
-    if (ontyped_cb[e].find(t) != ontyped_cb[e].end()) 
+    if (ontyped_cb[e].find(t) != ontyped_cb[e].end()) {
+        
+        if (e != RUN)
+            { PLOGV << event_name(e)  << " " << t.pretty_name() << "::" << name(); }
+
         (*(std::function<void(Node*,void*)>*) ontyped_cb[e].at(t))(this,out);  
+        
+    }
 
 }
 

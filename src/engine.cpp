@@ -71,7 +71,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_I}] = guiact_cb;
     window.mousedown_cb = [](int button) { 
         
-        if (button == GLFW_MOUSE_BUTTON_LEFT) engine.gui(true); 
+        if (button == GLFW_MOUSE_BUTTON_LEFT) guiact_cb(); 
         else if (button == GLFW_MOUSE_BUTTON_RIGHT) exit_cb();
         
     };

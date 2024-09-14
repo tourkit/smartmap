@@ -112,7 +112,11 @@ std::string Member::next_name( std::string name ) {
 
             name_ = x->name().substr(0, pos);
 
-            i = std::stoi(x->name().substr(pos+1));
+            auto numstr = x->name().substr(pos+1);
+
+            if (numstr.length() && std::all_of(numstr.begin(), numstr.end(), ::isdigit))
+
+                i = std::stoi(numstr);
 
         }
 
@@ -166,7 +170,7 @@ void Member::bkp() {
 
     bkp_v = new Member(*this);
 
-    PLOGV << "bkp " << name() ;
+    PLOGV << "bkp " << name() << " [" << footprint_all() << "]" ;
 
 }
 
@@ -226,7 +230,7 @@ void Member::buffering(bool value) {
 
     }
 
-    update();
+    update_pv();
 
 }
 
@@ -240,7 +244,7 @@ Member& Member::striding(bool is_striding){
     
     this->striding_v = is_striding; 
 
-    update();
+    update_pv();
 
     tops.clear();
 
@@ -264,7 +268,7 @@ Member& Member::quantity(uint32_t quantity_v) {
     this->quantity_v = quantity_v;
 
     auto mq = adding.emplace_back(MemberQ{this, old, (int)quantity_v-old});
-    update();
+    update_pv();
     REMOVE<MemberQ>(adding,mq);
 
     tops.clear();
@@ -278,28 +282,21 @@ void Member::add(Member* m) {
 
     PLOGV << name() << "[" << footprint_all() << "] add " << m->name() << "[" << m->footprint_all() << "]";
 
-    if (m == m->ref())
-        while (true) {
+    if (m == m->ref()) {
 
-            bool found = false;
+        auto new_mame = next_name(m->name());
 
-            for (auto x : members) 
+        while (m->name_v != new_mame) {
 
-                if (!strcmp( x->name().c_str(), m->name().c_str() )) {
+            PLOGW << m->name() << " already exist in " << name() << " !";
 
-                    found = true;
+            new_mame = next_name(new_mame);
 
-                    PLOGW << m->name() << " already exist !";
-
-                    m->name( next_name(m->name()) );
-
-                    break ;
-
-                }
-
-            if (!found) break;
+            m->name( new_mame );
 
         }
+
+    }
 
     tops = getTop();
 
@@ -311,7 +308,7 @@ void Member::add(Member* m) {
     size_v += members.back()->footprint_all();
 
     auto mq = adding.emplace_back(MemberQ{m});
-    update();
+    update_pv();
     REMOVE<MemberQ>(adding,mq);
 
     tops.clear();
@@ -389,7 +386,7 @@ bool Member::remove(Member& m) {
 
     removeHard(m);
 
-    update();
+    update_pv();
 
     removing.erase(&m);
 
@@ -492,38 +489,20 @@ void Member::calc_size() {
 
 }
 
-void Member::update() { 
+void Member::update_pv() { 
 
     calc_size();
 
     for (auto a : structs) 
         for (auto &m : a->members) 
             if (m == this) 
-                a->update();
-
-    // if (isData()) {
-
-    //     bool is_adding = false;
-
-    //     for (auto x : adding) 
-    //         if (x.m == this) {
-
-    //             is_adding = true;
-
-    //             break;
-
-    //         }
-
-    //     if (!is_adding) 
-    //         return;
-
-    // }
+                a->update_pv();
 
     PLOGV << name() << "[" << footprint_all() << "]";
 
     //// BUFFER PART
 
-    if (buffering()) {
+    if (bkp_v) {
 
         if (footprint_all() > MAX_SIZE) { PLOGE << footprint_all() << " > MAX_SIZE"; }
 
@@ -532,28 +511,28 @@ void Member::update() {
         memset( buffer_v.data(), 0, buffer_v.size() );
 
     }
-    
-    for (auto t : tops)  {
+        for (auto t : tops)  {
 
-        t->post_change(adding);
+            t->post_change(adding);
 
-        remap2(*t,Instance(*t->stl.front().m->bkp_v));
+            remap2(*t,Instance(*t->stl.front().m->bkp_v));
 
-        auto bkp_v = t->stl.front().m->bkp_v;
+            auto bkp_v = t->stl.front().m->bkp_v;
 
-        if (bkp_v) {
+            if (bkp_v) {
 
-            bkp_v->deleteData();
+                bkp_v->deleteData();
 
-            delete bkp_v;
+                delete bkp_v;
 
-            bkp_v = nullptr;
+                bkp_v = nullptr;
 
+            }
+
+            t->stl.front().m->upload();    
+            
         }
-
-        t->stl.front().m->upload();    
-        
-    }
+    
 
  }
 

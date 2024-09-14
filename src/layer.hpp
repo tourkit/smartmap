@@ -42,7 +42,7 @@ struct Layer : DrawCall {
 
     static inline Instance* glsl_layers;
 
-    void update() override;
+    void updateDC() override;
 
 };
 

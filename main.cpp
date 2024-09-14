@@ -1,3 +1,5 @@
+
+
 /*
 
    SMARTMAP ( v 1.3.1.2 beta ) 
@@ -20,30 +22,29 @@
 // ----
 
 
+#include "drawcall.hpp"
 #include "engine.hpp"
 #include "src/freetype.hpp"
 #include "texture.hpp"
 #include "builder.hpp"
 #include "instance.hpp"
-#include "effector.hpp"
+#include "buffer.hpp"
 
 
 int main() {
 
-
     logger.cout(Sev::warning);
 
+
     engine.init();
-
-    Freetype ft("c", 100);
-
-    engine.tree->addOwnr<Texture>(ft.buffer, ft.width, ft.height, 0, 1, GL_RGB8,GL_RGBA);
-
     engine.open("project.json");
-    auto check_referimgs = engine.tree->find("Free Layer 1");
 
+    auto dc = engine.tree->find("Stack")->childrens[0]->is_a<DrawCall>();
+;
+    // dc->shader.sendUniform()
+    engine.dynamic_ubo->bind(dc->shader);
 
-
+    logger.cout(Sev::verbose);
     engine.run();
-
+    logger.cout(Sev::warning);
 }

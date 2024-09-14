@@ -136,10 +136,9 @@ void Callbacks::init() {
 
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
-        dc->update();
+        dc->updateDC();
 
     });
-
 
 
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
@@ -328,7 +327,7 @@ void Callbacks::init() {
         
         _this->referings.insert(node);
 
-        return &no_worry_node;
+        return nullptr;
 
     });
 

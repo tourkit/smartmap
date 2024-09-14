@@ -91,8 +91,9 @@ struct Member {
     void simpleupdate();
     
     void calc_size();
-    virtual void update();
-    
+
+    virtual void update_pv();
+
     virtual void upload();
  
     bool isData();

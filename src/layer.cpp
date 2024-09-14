@@ -41,13 +41,11 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
 }
 
-void Layer::update() {
+void Layer::updateDC() {
 
     glsl_layers->eq(vbo.layer_id).set<std::array<float,2>>({(float)fb.width,(float)fb.height});
 
-    engine.static_ubo->upload();
-
-    DrawCall::update();
+    DrawCall::updateDC();
 
 }
 
