@@ -197,6 +197,8 @@ void Open::layers(){
 
                 new_model_->name(model_def.name());
 
+                new_model_->close();
+
                 new_model_->is_a<Model>()->quantity(model_def["quantity"].num(1));
 
                 addEffectors( model_def["effectors"], new_model_ );

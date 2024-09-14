@@ -418,7 +418,7 @@ static bool IntButtons(int* p_data ) {
             else{
 
                 deletings.erase(p_data);
-
+            
                 DataTypeApplyOp(ImGuiDataType_S32, '-', p_data, p_data, io.KeyCtrl && p_step_fast ? p_step_fast : p_step);
             
                 value_changed = true;
@@ -432,8 +432,14 @@ static bool IntButtons(int* p_data ) {
         if (ButtonEx("+", ImVec2(button_size, button_size), button_flags))
         {
             deletings.erase(p_data);
-            DataTypeApplyOp(ImGuiDataType_S32, '+', p_data, p_data, io.KeyCtrl && p_step_fast ? p_step_fast : p_step);
-            value_changed = true;
+            
+            if (!deleting){
+                
+                DataTypeApplyOp(ImGuiDataType_S32, '+', p_data, p_data, io.KeyCtrl && p_step_fast ? p_step_fast : p_step);
+                
+                value_changed = true;
+            
+            }
         }
         if (flags & ImGuiInputTextFlags_ReadOnly)
             EndDisabled();
@@ -983,7 +989,7 @@ void Editors::init() {
 
                 ImGui::Separator();
 
-                if (m->buffering() && draw_raw(m->data(),m->footprint_all())) m->upload();
+                if (m->buffering() && draw_raw(m->data(),m->footprint())) m->upload();
 
                 ImGui::Separator();
 
