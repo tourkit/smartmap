@@ -169,10 +169,10 @@ bool Shader::create(std::string src, uint8_t type)  {
 
 Shader::operator GLuint() { return id; }
 
-ShaderProgram::~ShaderProgram() { destroy();
+ShaderProgram::~ShaderProgram() { 
+    
+    destroy();
 
-    if (owned)
-        delete builder_v;
 
 }
 
@@ -189,39 +189,6 @@ void ShaderProgram::destroy() {
 }
 
 
-Builder* ShaderProgram::builder() {
-
-    if (!builder_v) {
-
-        builder_v = new Builder();
-
-        owned = true;
-
-    }
-
-    return builder_v;
-
-}
-
-bool ShaderProgram::builder(Builder* builder) {
-
-    if (owned)
-        delete builder_v;
-
-    builder_v = builder; owned = false;
-
-    return true;
-
-}
-
-void  ShaderProgram::create() {
-
-        if (builder_v)
-        create(builder_v);
-
-}
-
-void  ShaderProgram::create(Builder* builder) { builder->build(); create(builder->frag(), builder->vert()); builder->post(); }
 
 void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
@@ -239,8 +206,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     loaded = true;
 
-    last_change = std::chrono::system_clock::now();
-
     // sendUniform("atlas_pass", 1);
 
     use();
@@ -250,8 +215,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 void ShaderProgram::use() {  glUseProgram(id); }
 
 void ShaderProgram::use(uint32_t x, uint32_t y, uint32_t z) {  glUseProgram(id); glDispatchCompute(x,y,z); }
-
-ShaderProgram::operator uint32_t() { return id; }
 
 int ShaderProgram::getLoc(const std::string& name) { return glGetUniformLocation(id, name.c_str()); }
 

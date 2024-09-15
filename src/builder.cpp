@@ -23,11 +23,11 @@ void Builder::post() {
     for (auto s : samplers) {
         
         if (s.first > id) {
-            // for ( int i = id; i < s.first; i++) shader->sendUniform("randi"+std::to_string(i), i);
+            // for ( int i = id; i < s.first; i++) program.sendUniform("randi"+std::to_string(i), i);
             id = s.first;
         }
         s.second->bind(s.first);
-        shader->sendUniform(s.second->sampler_name, s.first);
+        program.sendUniform(s.second->sampler_name, s.first);
         
         id++;
     }
@@ -41,12 +41,9 @@ void Builder::build() {
     header_common += layout();
 
     samplers.clear();
-    
-    if (!shader) 
-        return;
 
     for (auto x : ubos) 
-        x->bind(shader->id);
+        x->bind(program.id);
 
 }
 

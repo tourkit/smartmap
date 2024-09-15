@@ -384,11 +384,11 @@ UberLayer::VirtualLayer::VirtualLayer(int w, int h, int id) :
 
 }
 
-UberLayer::ShaderProgramBuilder::ShaderProgramBuilder(UberLayer* ubl) : Layer::ShaderProgramBuilder(ubl), ubl(ubl) {  }
+UberLayer::Builder::Builder(UberLayer* ubl) : Layer::Builder(ubl), ubl(ubl) {  }
 
-void UberLayer::ShaderProgramBuilder::build() {
+void UberLayer::Builder::build() {
 
-    DrawCall::ShaderProgramBuilder::build();
+    DrawCall::Builder::build();
 
     body_fragment += "\tint obj  = int(OBJ);\n\n";
 

@@ -3,15 +3,17 @@
 #include <string>
 #include <map>
 #include <vector>
+#include "shader.hpp"
 
 struct Member;
 struct UBO;
 struct VBO;
-struct ShaderProgram;
 struct Texture;
 struct Effector;
 
 struct Builder {
+
+    ShaderProgram program;
 
     static inline std::string struct_taber = "";//\t";
 
@@ -44,8 +46,6 @@ struct Builder {
     bool add(UBO* ubo);
 
     VBO* vbo = nullptr;
-
-    ShaderProgram* shader = nullptr;
 
     struct VBOLayout { int loc; std::string type,name;};
 

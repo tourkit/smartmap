@@ -5,7 +5,6 @@
 #include <chrono>
 
 struct Builder;
-struct DrawCall;
 struct Member;
 
 struct Shader {
@@ -51,6 +50,7 @@ struct ShaderProgram {
   void use(uint32_t x, uint32_t y = 1, uint32_t z = 1);
 
   void destroy();
+  
   virtual void create(std::string frag, std::string vert);
 
   int getLoc(const std::string& name);
@@ -59,18 +59,5 @@ struct ShaderProgram {
   void sendUniform(const std::string& name, float f1, float f2);
   void sendUniform(const std::string& name, float f1, float f2, float f3);
   void sendUniform(const std::string& name, float f1, float f2, float f3, float f4);
-
-  operator uint32_t();
-
-  std::chrono::_V2::system_clock::time_point last_change;
-
-  Builder* builder();
-  bool builder(Builder*);
-  bool owned = false;
-  Builder* builder_v = nullptr;
-
-  void create();
-
-  void create(Builder* builder);
 
 };

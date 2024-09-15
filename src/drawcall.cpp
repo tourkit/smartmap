@@ -17,10 +17,9 @@ Model* DrawCall::addModel(File* f) {
 
 ///////// LayerBuilder ////
 
-Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
+DrawCall::Builder::Builder(DrawCall* dc) : dc(dc) {
 
     vbo = &dc->vbo;
-    shader = &dc->shader;
 
     ubos.push_back(engine.dynamic_ubo);
     ubos.push_back(engine.static_ubo);
@@ -31,7 +30,7 @@ Layer::ShaderProgramBuilder::ShaderProgramBuilder(DrawCall* dc) : dc(dc) {
 
 
 
-std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
+std::string DrawCall::Builder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
 
     auto name = lower(effectable._name());
 
@@ -66,7 +65,7 @@ std::string Layer::ShaderProgramBuilder::print_layer(Effectable &effectable, std
 
 }
 
-void Layer::ShaderProgramBuilder::build() {
+void DrawCall::Builder::build() {
 
    
     Builder::build();
@@ -97,7 +96,7 @@ void Layer::ShaderProgramBuilder::build() {
 
         for (auto &model : dc->models)
             for (int instance = 0; instance < model.get()->quantity(); instance++) 
-                body_fragment += print_layer(*model, lower(dc->_name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->stl.back().m->quantity()>1?"[int(LAYER)]":""));
+                body_fragment += print_layer(*model, lower(dc->_name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->m()->quantity()>1?"[int(LAYER)]":""));
 
 
         current_model.clear();
@@ -158,9 +157,7 @@ void Layer::ShaderProgramBuilder::build() {
 
 // DRAWCALLL //////////////////////////////////////
 
-DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo->next_name(name.length()?name:"layer")), builder(this) {
-
-    shader.builder(&builder);
+DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo->next_name(name.length()?name:"layer")) {
 
     engine.dynamic_ubo->add(this);
 
@@ -168,7 +165,7 @@ DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo->next_name(n
 
 void DrawCall::draw() {
 
-    shader.use();
+    builder.program.use();
 
     vbo.draw();
 

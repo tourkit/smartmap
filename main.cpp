@@ -22,7 +22,7 @@
 // ----
 
 
-#include "drawcall.hpp"
+#include "boilerplate.hpp"
 #include "engine.hpp"
 #include "builder.hpp"
 #include "instance.hpp"
@@ -35,6 +35,15 @@
 
 // check if member::add::adding has eq
 int main() {
+
+    BoilerWindow window;
+    
+    Builder builder;
+
+    window.run([](){
+
+
+    });
 
 
     logger.cout(Sev::warning);

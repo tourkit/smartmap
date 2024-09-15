@@ -18,13 +18,13 @@ struct Layer : DrawCall {
 
         Feedback(Layer* layer);
 
-        bool setup(Builder* builder) override;
+        bool setup(::Builder* builder) override;
         
-        void post(Builder* builder) override;
+        void post(::Builder* builder) override;
 
         std::string source() override;
 
-        bool body(Builder* builder, std::string prepend = "") override;
+        bool body(::Builder* builder, std::string prepend = "") override;
 
     };
 
@@ -71,7 +71,7 @@ struct UberLayer : Layer {
         Feedback(UberLayer* ubl);
 
         std::string  source() override;
-        bool setup(Builder* builder) override;
+        bool setup(::Builder* builder) override;
 
     };
 
@@ -91,9 +91,9 @@ struct UberLayer : Layer {
 
             VirtualLayer* vlayer;
 
-            bool setup(Builder* builder) override;
+            bool setup(::Builder* builder) override;
             
-            bool body(Builder* builder, std::string prepend = "") override;
+            bool body(::Builder* builder, std::string prepend = "") override;
 
         };
         
@@ -113,13 +113,13 @@ struct UberLayer : Layer {
 
     VirtualLayer& addLayer(int w , int h) ; // kinda ctor for VLaye
 
-    struct ShaderProgramBuilder : DrawCall::ShaderProgramBuilder {
+    struct Builder : DrawCall::Builder {
 
         void build() override;
 
         UberLayer* ubl;
 
-        ShaderProgramBuilder(UberLayer* ubl);
+        Builder(UberLayer* ubl);
 
     } builder;
 
