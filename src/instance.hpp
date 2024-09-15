@@ -19,6 +19,8 @@ struct Instance {
 
     std::string stl_name();
 
+    Instance& parent() ;
+
     Instance& loc(int id, int eq = 0) ;
 
     Instance& loc(Member* m, int eq = 0);

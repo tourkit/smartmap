@@ -309,7 +309,7 @@ void Member::add(Member* m) {
 
     size_v += members.back()->footprint_all();
 
-    auto mq = adding.emplace_back(MemberQ{m,0,quantity()});
+    auto mq = adding.emplace_back(MemberQ{m,0,m->quantity()});
     update_pv();
     REMOVE<MemberQ>(adding,mq);
 

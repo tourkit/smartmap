@@ -164,9 +164,20 @@ std::pair<std::string,int> nameQ(std::string name) {
             stl.back().m->instances.insert(this); 
         }
 
+    Instance& Instance::parent() {
+
+        offset -= m()->footprint()*stl.back().eq;
+        stl.pop_back();
+        return *this;
+    }
+
     Instance& Instance::loc(int id, int eq) {
 
-        if (!stl.size()) return *this;
+        if (id < 0)
+            return parent();
+
+        if (!stl.size()) 
+            return *this;
 
         auto m = stl.back().m;
 
@@ -218,6 +229,20 @@ std::pair<std::string,int> nameQ(std::string name) {
     Member* Instance::m() { if (stl.size()) return stl.back().m; return nullptr; }
 
     Member* Instance::buff() { if (stl.size()) return stl.front().m; return nullptr; }
+
+
+void branchSTL(std::vector<MemberQ>& stl,  int pos=0) {
+  
+    for (int i = 0; i < stl[pos].m->quantity(); i++){
+
+        if (pos <  stl.size()-1)
+            branchSTL(stl, pos+1);
+        else
+            // if (pos==stl.size()-1)
+                std::cout << stl[pos].m->name() << "\n";
+    }
+}
+
 
     void Instance::post_change(std::vector<MemberQ> adding_list) {
 
