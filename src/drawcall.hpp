@@ -19,15 +19,19 @@ struct DrawCall : Modelable {
 
     struct Builder : ::Builder {
 
-        void build() override;
+        void setup() override;
+
+        void use(DrawCall* dc = nullptr, int stride_count = 0);
 
         DrawCall* dc;
 
-        Builder(DrawCall* dc = nullptr);
-
-        int stride_count = 0;
+        int stride_count;
 
         std::string print_layer(Effectable &effectable,std::string prepend ,std::string instance, std::string ar = "");
 
-    } builder;
+    };
+
+    static inline Builder builder;
+
+    ShaderProgram shader;
 };

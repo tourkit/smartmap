@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <set>
 #include "shader.hpp"
 
 struct Member;
@@ -13,8 +14,6 @@ struct Effector;
 
 struct Builder {
 
-    ShaderProgram program;
-
     Builder();
 
     static inline std::string struct_taber = "";//\t";
@@ -23,27 +22,32 @@ struct Builder {
 
     static inline std::string comment_line  = "///////////////////////////////////////////\n\n";
 
-    static inline std::string version = "#version 430 core\n\n";
 
-    std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex, effectors_vertex_str , current_model, current_layer;
+    std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex , current_layer;
 
     std::vector<Effector*> effectors_fragment, effectors_vertex;
 
-    std::vector<UBO*> ubos;
+    std::set<UBO*> ubos;
 
     std::map<int,Texture*> samplers;
 
     int addSampler(Texture* tex, std::string name = "");
 
-    virtual void build();
+    std::string unique(Member* m);
+
+    void build();
     
-    virtual void post();
+    void build(ShaderProgram* dst);
+    
+    virtual void setup();
 
     std::string frag();
 
     std::string vert();
 
     std::string layout();
+    
+    std::string ubo();
 
     bool add(UBO* ubo);
 
@@ -53,9 +57,8 @@ struct Builder {
 
     std::vector<VBOLayout> vbo_layouts;
 
-    std::map<Member*,std::string> list; // toremove
+    std::vector<Member*> definitions;
 
-    static std::vector<std::pair<Member*,std::string>> unique_name(std::vector<UBO*> ubos);
-    static std::string print_struct(Member* member, std::vector<std::pair<Member*,std::string>>& list);
+    std::map<Member*,std::string> unique_names;
 
   };

@@ -20,9 +20,9 @@ struct EDITOR  {
 template <typename T>
 struct Editor  {
 
-    static inline std::function<void(EditorWidget*,Node*,T*)> cb = nullptr;
+    static inline std::function<void(Node*,T*)> cb = nullptr;
 
-    Editor(std::function<void(EditorWidget*,Node*,T*)> cb) { 
+    Editor(std::function<void(Node*,T*)> cb) { 
         
         Editor<T>::cb = cb; 
 

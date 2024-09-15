@@ -5,8 +5,8 @@
 #include "globals.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
-#include "effector.hpp"
 #include "instance.hpp"
+#include "effector.hpp"
 
 #include "utils.hpp"
 #include <string>
@@ -15,43 +15,102 @@ Builder::Builder() {
 
     build();
 
-    program.create(frag(), vert());
+}
+
+
+void Builder::setup() {
+
 
 }
 
-void Builder::post() {
+std::string Builder::unique(Member* m ) {
 
-    for (auto x : effectors_fragment) x->post(this);
+    auto name = m->_name();
 
-    for (auto x : effectors_vertex) x->post(this);
+    while (true) {
 
-    int id = 0;
-    
+        bool found = false;
 
+        for (auto &x : unique_names) 
+            
+            if (x.second == name) {
+        
+                name += "0";
+                found = true;
+                break;
+
+            }
+        
+        if (!found)
+            break;
+
+    }
+
+    return name;
+
+}
+
+static void addSmallerFirst(Member* m, std::vector<Member*>& v) {
+
+    m = m->ref();
+
+    if (m->isData())
+        return;
+
+    for (auto x : m->members) 
+        addSmallerFirst(x->ref(), v);
+
+    ADD_UNIQUE<Member*>(v, m);
+
+}
+
+void Builder::build(ShaderProgram* shader) {
+
+    build();
+
+    shader->create(frag(), vert());
+
+    for (auto ubo : ubos) 
+        ubo->bind(shader->id);
+
+    int sampler_id = 0;
     for (auto s : samplers) {
-        
-        if (s.first > id) {
-            // for ( int i = id; i < s.first; i++) program.sendUniform("randi"+std::to_string(i), i);
-            id = s.first;
+    
+        if (s.first > sampler_id) {
+            // for ( int i = sampler_id; i < s.first; i++) program.sendUniform("randi"+std::to_string(i), i);
+            sampler_id = s.first;
         }
+
         s.second->bind(s.first);
-        program.sendUniform(s.second->sampler_name, s.first);
+        shader->sendUniform(s.second->sampler_name, s.first);
         
-        id++;
+        sampler_id++;
     }
 
 }
+
 void Builder::build() {
 
     PLOGV << "build";
-    
-    header_common = version;
-    header_common += layout();
 
     samplers.clear();
+    definitions.clear();
+    unique_names.clear();
+    ubos.clear();
 
-    for (auto x : ubos) 
-        x->bind(program.id);
+    setup();
+
+    for (auto m : ubos) 
+        addSmallerFirst(m, definitions);
+
+    for (auto m : definitions) 
+        unique_names[m] = unique(m);
+    
+    header_common = "#version 430 core\n\n";
+    
+    header_common += layout();
+
+    header_common += ubo();
 
 }
 
@@ -76,7 +135,7 @@ std::string Builder::frag() {
     if (samplers.size()) samplers_str += "\n";
     
 
-    std::string effectors_str; for (auto x : effectors_fragment)  effectors_str += x->source()+"\n\n";
+    std::string effectors_str; for (auto x : effectors_fragment)  effectors_str += x->header()+"\n\n";
 
     std::string ins_str;
 
@@ -128,7 +187,7 @@ std::string Builder::vert() {
 
     std::string layouts_str; for (auto l : vbo_layouts) layouts_str += "layout (location = "+std::to_string(l.loc)+") in "+l.type+" "+l.name+";\n"; if (samplers.size()) layouts_str += "\n";
 
-    std::string effectors_str; for (auto x : effectors_vertex)  effectors_str += x->source()+"\n\n";
+    std::string effectors_str; for (auto x : effectors_vertex)  effectors_str += x->header()+"\n\n";
 
     return
 
@@ -173,79 +232,16 @@ int Builder::addSampler(Texture* tex, std::string name) {
 bool Builder::add(UBO* ubo) { return true; }
 
 
-static void small_first(Member* m, std::vector<Member*>& list ) {
 
-    auto ref = m->ref();
-    if (m == ref)
-        for (auto m_ : m->members) 
-            small_first(m_, list);
-    
-    if (!m->isData())
-        list.push_back(ref);
 
-}
-
-std::vector<std::pair<Member*,std::string>> Builder::unique_name(std::vector<UBO*> ubos) {
-
-    std::vector<Member*> structs;
-
-    for (auto ubo : ubos)    
-
-        small_first(ubo, structs);
-
-    std::vector<std::pair<Member*,std::string>> unique_name_list;
-
-    for (auto m : structs) {
-
-        auto name = m->_name();
-        
-        if (!name.length())
-            continue;
-
-        name = camel(name);
-
-        while (true) {
-
-            bool found = false;
-
-            for (auto &x : unique_name_list) 
-                
-                if (x.second == name) {
-            
-                    name += "0";
-                    found = true;
-                    break;
-
-                }
-            
-            if (!found)
-                break;
-
-        }
-
-        unique_name_list.push_back(std::pair<Member*,std::string>{m, name});
-
-    }
-
-    return unique_name_list;
-
-}
-std::string Builder::layout() {
-
-    auto structs = unique_name(ubos);
+std::string Builder::ubo() {
 
     std::string out;
 
-    for (auto x : structs) { 
-
-        auto def = print_struct(x.first,structs); 
-        
-        if (def.length()) 
-            def+=";\n\n"; out += def; 
-
-    }
-
     for (auto ubo : ubos) {
+
+        if (!ubo->footprint())  
+            continue;
 
         out += "layout (binding = " + std::to_string(ubo->binding) + ", std140) uniform " + ubo->_name() + "_ ";
 
@@ -261,59 +257,63 @@ std::string Builder::layout() {
 
 }
 
-std::string Builder::print_struct(Member* member, std::vector<std::pair<Member*,std::string>> &unique_name_list) {
-
-    if (!member->size()) return "";
+std::string Builder::layout() {
 
     std::string out;
-    std::string nl = "";
-    std::string tb = "";
-    // if (member->members.size() == 1) nl = "";
 
-    std::string content;
+    for (auto member : definitions) { 
+
+        if (!member->size()) continue;
+
+        std::string line;
+        std::string nl = "";
+        std::string tb = "";
+        // if (member->members.size() == 1) nl = "";
+
+        std::string content;
+
+        if (member->ref() != member)
+            return line;
+
+        auto name = camel(unique_names[member]);
+
+        for (auto x : member->members) {
+
+            if (!x->size()) continue;
+            
+            auto ref = x->ref();   
 
 
-    if (member->ref() != member)
-        return out;
+            content+=tb+""+(x->isData()?x->type_name():camel(unique_names[ref]))+" "+lower(ref->_name());
 
-    for (auto x : member->members) {
+            if (!ref->isData() && ref->quantity()>1) content += "["+std::to_string(ref->quantity())+"]";
 
-        if (!x->size()) continue;
-        
-        auto ref = x->ref();   
+            content += "; "+nl;
 
-        std::string name;
-        for (auto x : unique_name_list) 
-            if (x.first == ref) 
-                name = x.second;
-        if (!name.length())
-            name = ref->type_name();
+        }
 
-        content+=tb+""+name+" "+lower(ref->_name());
+        if (content.length()) 
 
-        if (!ref->isData() && ref->quantity()>1) content += "["+std::to_string(ref->quantity())+"]";
+            line+="struct "+name+" { "+nl+nl+content;
 
-        content += "; "+nl;
+        if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
+
+            line += tb;
+            line += (member->members.back()->type().id == typeid(int) ? "int" : "float");
+            line += " stride";
+            line += std::to_string(i) + "; "+nl ;
+
+        }
+
+        line+=nl+"}";
+        if (line.length()) 
+            line+=";\n\n"; 
+        out+=line;
 
     }
 
-    if (!content.length()) return "";
-        std::string name;
-        for (auto x : unique_name_list) 
-            if (x.first == member) 
-                name = x.second;
-    out+="struct "+name+" { "+nl+nl+content;
-
-    if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
-
-        out += tb;
-        out += (member->members.back()->type().id == typeid(int) ? "int" : "float");
-        out += " stride";
-        out += std::to_string(i) + "; "+nl ;
-
-    }
-
-    out+=nl+"}";
     return out;
 
 }
+
+

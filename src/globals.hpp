@@ -13,7 +13,7 @@ static struct Globals {
         
         universe("Universe"),
         rect("Rect"),
-        layer("Dim"),
+        layer("Layer"),
         ubl("UBL"),
         vertice("Vertice"),
         indice("Indice")

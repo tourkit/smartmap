@@ -14,22 +14,17 @@ struct Effector : Member {
 
     virtual bool setup(Builder* builder) = 0;
 
-    virtual bool body(Builder* builder, std::string prepend = "");
+    virtual std::string body(Builder* builder, std::string prepend = "");
 
-    virtual bool header(Builder* builder, Instance isnt);
-    
-    virtual void post(Builder* builder) {};
+    virtual std::string header() { return source_v; }
 
     std::string call(std::string prepend="");
 
     std::string source_v;
 
-    virtual std::string source() { return source_v; }
-
     Effector(std::string name = "effector");
 
 };
-
 
 struct FileEffector : Effector {
 
@@ -42,12 +37,8 @@ struct FileEffector : Effector {
     void load(File* file);
 
     bool setup(Builder* builder) override;
-    
-    bool body(Builder* builder, std::string prepend = "") override;
 
 };
-
-
 
 struct EffectorRef : Member  {
 
@@ -80,12 +71,6 @@ struct Wrappy : Effector, Effectable {
 
     void attrs(int count);
 
-    std::string source() override;
+    std::string header() override;
 
 };
-
-// struct Feedback : Wrappy {
-
-//     bool setup(ShaderProgram* shader) override;
-
-// };

@@ -463,17 +463,17 @@ void Editors::init() {
 
     // ////////// xxx.HPP
 
-    // Editor<xxx>([](EditorWidget* widget, Node* node, xxx *x){ });
+    // Editor<xxx>([](Node* node, xxx *x){ });
 
     ////////// Artnet.HPP
 
 
 
-    Editor<NDI::Sender>([](EditorWidget* widget, Node*node, NDI::Sender* sender){
+    Editor<NDI::Sender>([](Node*node, NDI::Sender* sender){
 
 
 
-        Editor<Output>::cb(widget, node, sender);
+        Editor<Output>::cb( node, sender);
 
 
             ImGui::NewLine();
@@ -484,7 +484,7 @@ void Editors::init() {
 
     });
 
-    Editor<DMXRemap>([](EditorWidget* widget, Node*node, DMXRemap* remap){
+    Editor<DMXRemap>([](Node*node, DMXRemap* remap){
 
 
         ImGui::SetNextItemWidth(100);
@@ -594,7 +594,7 @@ void Editors::init() {
         // engine.
     });
 
-    Editor<Artnet>([](EditorWidget* widget, Node*node,Artnet* an){
+    Editor<Artnet>([](Node*node,Artnet* an){
 
         ImGui::Text(an->name().c_str());
 
@@ -632,11 +632,11 @@ void Editors::init() {
 
     ////////// WINDOW.HPP
 
-    Editor<Window>([](EditorWidget* widget, Node* node, Window *window){
+    Editor<Window>([](Node* node, Window *window){
 
         using namespace ImGui;
 
-        Editor<Output>::cb(widget, node, window);
+        Editor<Output>::cb( node, window);
 
 
         NewLine();
@@ -657,13 +657,13 @@ void Editors::init() {
         NewLine();
 
 
-        if (window->shader) Editor<ShaderProgram>::cb(widget, node, window->shader);
+        if (window->shader) Editor<ShaderProgram>::cb( node, window->shader);
 
     });
 
     ////////// OUTPUT.HPP
 
-    Editor<Output>([](EditorWidget* widget, Node* node, Output *output){
+    Editor<Output>([](Node* node, Output *output){
 
         static std::map<Output*,int> output_currents; static uint32_t min = 0; ImGuiTextBuffer tbuff;
 
@@ -691,71 +691,72 @@ void Editors::init() {
 
     ////////// SHADER.HPP
 
-    Editor<Builder>([](EditorWidget* widget, Node* node, Builder *builder){
 
-        static Builder BUILDER;
+    Editor<ShaderProgram>([](Node* node, ShaderProgram *shader){
 
         if (ImGui::BeginPopupContextItem()){
 
             if (ImGui::Button("create")) {
-                builder->build();
-                builder->program.create(builder->frag(), builder->vert());
-                NODE<ShaderProgram>::tick = true;
+                // builder->build();
+                // shader.create(builder->frag(), builder->vert());
+                node->update();
             }
             if (ImGui::Button("empty")) { 
+
+                static Builder BUILDER;
                 Layer* lay = node->is_a<Layer>(); 
                 if (lay) 
                     BUILDER.vbo = &lay->vbo; 
                 BUILDER.build();
-                builder->program.create(BUILDER.frag(), BUILDER.vert()); 
-                NODE<ShaderProgram>::tick = true;
-            }
-            if (ImGui::Button("samplers connect")) { 
-
-                builder->post();
+                shader->create(BUILDER.frag(), BUILDER.vert()); 
             }
             
             EndPopup();
         
         }
 
-        Editor<ShaderProgram>::cb(widget, node, &builder->program);
-
-    });
-    Editor<ShaderProgram>([](EditorWidget* widget, Node* node, ShaderProgram *shader){
-
-         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
+        ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
 
+        static TextEditor editor;
+
+        static bool init = false;
+
+
+        if (!init){
+
+            editor.SetShowWhitespaces(false);
+            editor.SetReadOnly(false);
+
+            init = true;
+        }
+        
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
             if (ImGui::BeginTabItem("fragment")) {
 
-                static TextEditor frageditor;
-                static bool init = false;
-                if (!init){
-
-                    frageditor.SetShowWhitespaces(false);
-                    frageditor.SetReadOnly(false);
-
-                    init = true;
-                }
-
-                if ( NODE<ShaderProgram>::tick ) {
-                    frageditor.SetText(shader->frag.src);
-                }
+                if (editor.GetText().length() != shader->frag.src.length() || editor.GetText() != shader->frag.src) 
+                    editor.SetText(shader->frag.src);
                 
-                frageditor.Render("frageditor");
-                if (frageditor.IsTextChanged()) {
+                editor.Render("fragment");
 
+                if (editor.IsTextChanged()) 
+                    shader->create(editor.GetText(),shader->vert.src);
+                
 
-                    auto x = frageditor.GetText();
+                ImGui::EndTabItem();
 
-                    memset(&x[frageditor.GetText().length()],0,1);
+            }
+            if (ImGui::BeginTabItem("vertex")) {
 
-                    shader->create(x,shader->vert.src);
+                if (editor.GetText().length() != shader->vert.src.length() || editor.GetText() != shader->vert.src) 
+                    editor.SetText(shader->vert.src);
+              
+                editor.Render("vertex");
 
-                }
+                if (editor.IsTextChanged()) 
+                    shader->create(shader->frag.src,editor.GetText());
+
 
                 ImGui::EndTabItem();
 
@@ -765,13 +766,11 @@ void Editors::init() {
 
         }
 
-        NODE<ShaderProgram>::tick = false;
-
     });
 
     ////////// Log.HPP
 
-    Editor<Log>([](EditorWidget* widget, Node* node, Log *log_n){
+    Editor<Log>([](Node* node, Log *log_n){
 
 
         static bool is_verbose = false;
@@ -840,7 +839,7 @@ void Editors::init() {
 
     ////////// File.HPP
 
-    Editor<File>([](EditorWidget* widget, Node* node, File *file){
+    Editor<File>([](Node* node, File *file){
 
         if (file->extension == "obj") {
 
@@ -898,7 +897,7 @@ void Editors::init() {
 
     ////////// Texture.HPP
 
-    Editor<Texture>([](EditorWidget* widget, Node* node, Texture *texture){
+    Editor<Texture>([](Node* node, Texture *texture){
 
         // if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) ) { texture->create( texture->width, texture->height, texture->unit, texture->mipmaps, texture->informat, texture->outformat ); }
         Layer* layer = node->is_a_nowarning<Layer>();
@@ -922,7 +921,7 @@ void Editors::init() {
 
     ////////// HPP
 
-    Editor<Member>([](EditorWidget* widget, Node* node, Member *m){
+    Editor<Member>([](Node* node, Member *m){
 
 
         // std::stringstream ss;
@@ -937,8 +936,8 @@ void Editors::init() {
             
                     m->upload();
 
-                    // engine.stack->each<UberLayer>([](EditorWidget* widget, Node*n, UberLayer* ubl){ ubl ->fb.clear();});
-                    // engine.stack->each<Layer>([](EditorWidget* widget, Node*n, Layer* layer){ layer ->fb.clear();});
+                    // engine.stack->each<UberLayer>([](Node*n, UberLayer* ubl){ ubl ->fb.clear();});
+                    // engine.stack->each<Layer>([](Node*n, Layer* layer){ layer ->fb.clear();});
 
                     // engine.stack->each([](Node* node){ if (node->type().id == typeid(UberLayer) || node->type().id == typeid(Layer)) ((Layer*)node->ptr)->fb.clear(); });
 
@@ -973,20 +972,20 @@ void Editors::init() {
 
     ////////// UBO.HPP
 
-    Editor<UBO>([](EditorWidget* widget, Node* node, UBO *ubo){
+    Editor<UBO>([](Node* node, UBO *ubo){
 
         // std::string subs_str = "data[" + std::to_string(ubo->data.size())+"]";
         // std::string subs_str = std::to_string(ubo->subscribers.size())+" sub(s):";
         // for (auto s: ubo->subscribers) subs_str += " #"+std::to_string(s->id);
         // ImGui::Text(subs_str.c_str());
 
-        Editor<Member>::cb(widget, node, ubo);
+        Editor<Member>::cb( node, ubo);
 
     });
 
     ////////// MODEL.HPP
 
-    Editor<Model>([](EditorWidget* widget, Node* node, Model *model){
+    Editor<Model>([](Node* node, Model *model){
 
         static std::map<Model*,int> effector_currents;
 
@@ -1027,17 +1026,17 @@ void Editors::init() {
     ////////// Artnet.HPP
     ////////// Artnet.HPP
 
-    // Editor<Universe>([](EditorWidget* widget, Node*node,Universe* dmx){
+    // Editor<Universe>([](Node*node,Universe* dmx){
 
 
 
-    //     for (auto &r : dmx->remaps) Editor<Universe::Remap>::cb(widget, node, &r);
+    //     for (auto &r : dmx->remaps) Editor<Universe::Remap>::cb( node, &r);
 
     // });
 
     ////////// VBO.HPP
 
-    Editor<VBO>([](EditorWidget* widget, Node*node,VBO*vbo){
+    Editor<VBO>([](Node*node,VBO*vbo){
 
 
         if (ImGui::BeginPopupContextItem()){
@@ -1056,7 +1055,7 @@ void Editors::init() {
         
         }
 
-        Editor<Member>::cb(widget, node, vbo);
+        Editor<Member>::cb( node, vbo);
 
     });
 
@@ -1065,19 +1064,19 @@ void Editors::init() {
 
     ////////// Atlas.HPP
 
-    Editor<Atlas>([](EditorWidget* widget, Node* node, Atlas *atlas){
+    Editor<Atlas>([](Node* node, Atlas *atlas){
 
-        if (atlas) Editor<Texture>::cb(widget, node, atlas->texture);
+        if (atlas) Editor<Texture>::cb( node, atlas->texture);
         else PLOGE << "NONONON";
 
-        // Editor<Object>::cb(widget, node, atlas->m);  // tofix
+        // Editor<Object>::cb( node, atlas->m);  // tofix
 
 
     });
 
     ////////// Component.HPP
 
-    // Editor<Component>([](EditorWidget* widget, Node* node, Component *comp){
+    // Editor<Component>([](Node* node, Component *comp){
 
     //     for (auto &m : comp->members) {
 
@@ -1089,7 +1088,7 @@ void Editors::init() {
     // });
     ////////// JSON.HPP
 
-    Editor<JSON>([](EditorWidget* widget, Node* node, JSON *json){
+    Editor<JSON>([](Node* node, JSON *json){
 
         JSON::if_obj_in("models",json->document, [&](auto &m) { ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString()); });
         JSON::if_obj_in("effectors",json->document, [&](auto &m) { ImGui::Text(m.name.GetString());ImGui::SameLine();ImGui::Text(m.value.GetString()); });
@@ -1097,17 +1096,17 @@ void Editors::init() {
     });
     ////////// FRAMEHPP
 
-    Editor<FrameBuffer>([](EditorWidget* widget, Node* node, FrameBuffer *fb ){
+    Editor<FrameBuffer>([](Node* node, FrameBuffer *fb ){
 
         // ImGui::Text(("attachment "+std::to_string(fb->attachments)).c_str());
 
-        Editor<Texture>::cb(widget, node, &fb->texture);
+        Editor<Texture>::cb( node, &fb->texture);
 
     });
 
       ////////// Engine.HPP
     
-    Editor<Stack>([](EditorWidget* widget, Node*node,Stack* stack){
+    Editor<Stack>([](Node*node,Stack* stack){
 
 
         ImVec2 btn_size = {100,50};
@@ -1124,7 +1123,7 @@ void Editors::init() {
 
     });
 
-    Editor<Debug>([](EditorWidget* widget, Node* node, Debug *debug){
+    Editor<Debug>([](Node* node, Debug *debug){
 
         // Separator();
 
@@ -1141,28 +1140,28 @@ void Editors::init() {
         Text((std::to_string(Member::structs.size())+" struct"+(Member::structs.size()>1?"s":"")).c_str());
         SameLine();
         SetCursorPosX(curs);
-        Editor<Log>::cb(widget, node, &logger);
+        Editor<Log>::cb( node, &logger);
 
     });
   
     ////////// Effector.HPP
 
-    // Editor<EffectorRef>([](EditorWidget* widget, Node* node, EffectorRef *effector){
+    // Editor<EffectorRef>([](Node* node, EffectorRef *effector){
 
     //     if (InputInt("wrap", &effector->wrap)) node->update();
 
-    //     for (auto def : effector->definitions) Editor<Effector>::cb(widget, node, def);
+    //     for (auto def : effector->definitions) Editor<Effector>::cb( node, def);
 
     // });
 
-    Editor<Wrappy>([](EditorWidget* widget, Node* node, Wrappy *wrap){
+    Editor<Wrappy>([](Node* node, Wrappy *wrap){
         
 
         for (auto x : wrap->effector_refs) 
             Text(x->effector->name().c_str());
 
     });
-    Editor<Effector>([](EditorWidget* widget, Node* node, Effector *def){
+    Editor<Effector>([](Node* node, Effector *def){
         
         auto wrap_ = dynamic_cast<Wrappy*>(def);
         if (wrap_) {
@@ -1205,12 +1204,12 @@ void Editors::init() {
 
     });
 
-    Editor<FileEffector>([](EditorWidget* widget, Node* node, FileEffector *e){ Editor<Effector>::cb(widget, node, e); });
+    Editor<FileEffector>([](Node* node, FileEffector *e){ Editor<Effector>::cb( node, e); });
 
 
     // REMAP.HPP
 
-    // Editor<Universe::Remap>([](EditorWidget* widget, Node*node, Universe::Remap* remap){ Editor<Remap>::cb(widget, node, remap); });
+    // Editor<Universe::Remap>([](Node*node, Universe::Remap* remap){ Editor<Remap>::cb( node, remap); });
 
 
 
@@ -1218,7 +1217,7 @@ void Editors::init() {
 
     ////////// DRAWCALL.HPP
 
-    Editor<DrawCall>([](EditorWidget* widget, Node* node, DrawCall *dc){
+    Editor<DrawCall>([](Node* node, DrawCall *dc){
 
         if (ImGui::BeginTabBar("dctqb", ImGuiTabBarFlags_None)) {
 
@@ -1228,7 +1227,7 @@ void Editors::init() {
                     auto model = c->is_a<Model>();
                     if (!model) 
                         continue;
-                    Editor<Model>::cb(widget, c, model);
+                    Editor<Model>::cb( c, model);
                 }
                 ImGui::EndTabItem();
 
@@ -1236,7 +1235,7 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("ShaderProgram")) {
 
-                Editor<Builder>::cb(widget, node, &dc->builder);
+                Editor<ShaderProgram>::cb( node, &dc->shader);
 
                 ImGui::EndTabItem();
 
@@ -1244,7 +1243,7 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("VBO")) {
 
-                Editor<VBO>::cb(widget, node, &dc->vbo);
+                Editor<VBO>::cb( node, &dc->vbo);
 
                 ImGui::EndTabItem();
 
@@ -1256,7 +1255,7 @@ void Editors::init() {
     });
 
 
-    Editor<UberLayer>([](EditorWidget* widget, Node* node, UberLayer *ubl){
+    Editor<UberLayer>([](Node* node, UberLayer *ubl){
 
         // static uint32_t min = 0, max = 10;;
         // for (auto tex : Texture::pool) 
@@ -1272,11 +1271,11 @@ void Editors::init() {
         // }
             
         
-        Editor<Layer>::cb(widget, node, ubl);
+        Editor<Layer>::cb( node, ubl);
 
     });
 
-    Editor<Layer>([](EditorWidget* widget, Node* node, Layer *layer){
+    Editor<Layer>([](Node* node, Layer *layer){
         
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
@@ -1292,7 +1291,7 @@ void Editors::init() {
                 
                 }
 
-                Editor<FrameBuffer>::cb(widget, node, &layer->fb);
+                Editor<FrameBuffer>::cb( node, &layer->fb);
 
                 ImGui::EndTabItem();
 
@@ -1302,7 +1301,7 @@ void Editors::init() {
                 
                 if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
 
-                    Editor<Texture>::cb(widget, node, x.second);
+                    Editor<Texture>::cb( node, x.second);
 
                     ImGui::EndTabItem();
 
@@ -1315,7 +1314,7 @@ void Editors::init() {
         }
 
 
-        Editor<DrawCall>::cb(widget, node, layer);
+        Editor<DrawCall>::cb( node, layer);
 
     });
 

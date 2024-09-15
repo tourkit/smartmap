@@ -60,11 +60,9 @@ Layer::Feedback* Layer::feedback() {
 
 void Layer::draw() {
 
-    builder.post();
-
     fb.clear();
 
-    builder.program.use();
+    shader.use();
 
     vbo.draw();
 
@@ -72,16 +70,7 @@ void Layer::draw() {
 
 // FeedbackEffector  ////////////////
 
-void Layer::Feedback::post(::Builder* builder) { 
 
-
-}
-
-bool UberLayer::Feedback::setup(::Builder* builder) { 
-    
-    return Layer::Feedback::setup(builder); 
-    
-}
 
 bool Layer::Feedback::setup(::Builder* builder) { 
 
@@ -93,16 +82,9 @@ bool Layer::Feedback::setup(::Builder* builder) {
     
 }
 
-bool Layer::Feedback::body(::Builder* builder, std::string prepend) {  
-    
-    Effector::body(builder, prepend);
-    
-    return true; 
-    
-}
 
 
-std::string Layer::Feedback::source() {
+std::string Layer::Feedback::header() {
 
     std::string current;
 
@@ -113,7 +95,7 @@ std::string Layer::Feedback::source() {
 
 }
 
-std::string UberLayer::Feedback::source() {
+std::string UberLayer::Feedback::header() {
 
     std::string current;
 
@@ -161,6 +143,8 @@ UberLayer::Feedback::Feedback(UberLayer* ubl) :
 
 
 
+
+
 ///////// UBEREFFECTOR //// 
 
 void UberEffector::ubl(UberLayer* ubl) {
@@ -178,7 +162,7 @@ UberEffector::UberEffector(UberLayer* ubl) : Effector(ubl?ubl->name():"ubereffec
 
 }
 
-std::string  UberEffector::source() { 
+std::string  UberEffector::header() { 
 
     std::string out;
     std::string name = lower(ubl_v->uberlayer_m.name());
@@ -215,7 +199,13 @@ bool UberEffector::setup(::Builder* builder) {
     
 }
 
-UberLayer::VirtualLayer::Effector::Effector(VirtualLayer* vlayer) : ::Effector(vlayer?vlayer->name():"vlayereffector"), vlayer(vlayer) {
+UberLayer::VirtualLayer::Effector::Effector(VirtualLayer* vlayer) : 
+
+    ::Effector(vlayer?vlayer->name():"vlayereffector"), 
+
+    vlayer(vlayer) 
+    
+{
 
 
 }
@@ -227,7 +217,7 @@ bool UberLayer::VirtualLayer::Effector::setup(::Builder* builder) {
     return true; 
     
 }
-bool UberLayer::VirtualLayer::Effector::body(::Builder* builder, std::string prepend) {  
+std::string UberLayer::VirtualLayer::Effector::body(::Builder* builder, std::string prepend) {  
 
     int offset = 0, to = 0;
 
@@ -242,17 +232,14 @@ bool UberLayer::VirtualLayer::Effector::body(::Builder* builder, std::string pre
             offset += vlayer->quantity();
         
     
-    builder->current_model += "\t"+vlayer->ubl->name()+"_effector("+std::to_string(offset)+", "+std::to_string(offset+vlayer->quantity())+");\n";
+    return "\t"+vlayer->ubl->name()+"_effector("+std::to_string(offset)+", "+std::to_string(offset+vlayer->quantity())+");\n";
     
-    return true; 
     
 }
 
-bool UberEffector::body(::Builder* builder, std::string prepend) {  
+std::string UberEffector::body(::Builder* builder, std::string prepend) {  
     
-    builder->current_model += "\t"+ubl_v->name()+"_effector(0, "+std::to_string(ubl_v->uberlayer_m.quantity())+");\n";
-    
-    return true; 
+    return "\t"+ubl_v->name()+"_effector(0, "+std::to_string(ubl_v->uberlayer_m.quantity())+");\n";
     
 }
 
@@ -381,11 +368,11 @@ UberLayer::VirtualLayer::VirtualLayer(int w, int h, int id) :
 
 }
 
-UberLayer::Builder::Builder(UberLayer* ubl) : Layer::Builder(ubl), ubl(ubl) {  }
+UberLayer::Builder::Builder(UberLayer* ubl) : ubl(ubl) {  }
 
-void UberLayer::Builder::build() {
+void UberLayer::Builder::setup() {
 
-    DrawCall::Builder::build();
+    DrawCall::Builder::setup();
 
     body_fragment += "\tint obj  = int(OBJ);\n\n";
 

@@ -102,12 +102,6 @@ void Atlas::link(ShaderProgram* shader) {
 // AtlasEffector  ////////////////
 
 
-void Atlas::Effector::post(Builder* builder) { 
-
-
-
-}
-
 bool Atlas::Effector::setup(Builder* builder) { 
 
     builder->addSampler(atlas->texture, name());
@@ -118,7 +112,7 @@ bool Atlas::Effector::setup(Builder* builder) {
     
 }
 
-std::string Atlas::Effector::source() {
+std::string Atlas::Effector::header() {
 
     std::string out;
 

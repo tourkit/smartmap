@@ -49,7 +49,7 @@ void EditorWidget::draw() {
 
     if(EDITOR::ptr.find(selected->stored_type) != EDITOR::ptr.end()) 
 
-        (*(std::function<void(EditorWidget*,Node*,void*)>*)EDITOR::ptr[selected->stored_type])(this, selected,selected->void_ptr);
+        (*(std::function<void(Node*,void*)>*)EDITOR::ptr[selected->stored_type])(selected,selected->void_ptr);
 
 
 }

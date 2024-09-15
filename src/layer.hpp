@@ -19,12 +19,8 @@ struct Layer : DrawCall {
         Feedback(Layer* layer);
 
         bool setup(::Builder* builder) override;
-        
-        void post(::Builder* builder) override;
 
-        std::string source() override;
-
-        bool body(::Builder* builder, std::string prepend = "") override;
+        std::string header() override;
 
     };
 
@@ -54,11 +50,11 @@ struct UberEffector : Effector {
     
     void ubl(UberLayer* ubl);
 
-    std::string  source() override;
+    std::string  header() override;
 
     bool setup(Builder* builder) override;
     
-    bool body(Builder* builder, std::string prepend = "") override;
+    std::string body(Builder* builder, std::string prepend = "") override;
 
 };
 
@@ -70,8 +66,7 @@ struct UberLayer : Layer {
         
         Feedback(UberLayer* ubl);
 
-        std::string  source() override;
-        bool setup(::Builder* builder) override;
+        std::string  header() override;
 
     };
 
@@ -93,7 +88,7 @@ struct UberLayer : Layer {
 
             bool setup(::Builder* builder) override;
             
-            bool body(::Builder* builder, std::string prepend = "") override;
+            std::string body(::Builder* builder, std::string prepend = "") override;
 
         };
         
@@ -115,7 +110,7 @@ struct UberLayer : Layer {
 
     struct Builder : DrawCall::Builder {
 
-        void build() override;
+        void setup() override;
 
         UberLayer* ubl;
 

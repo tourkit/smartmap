@@ -1,6 +1,7 @@
 #include "shader.hpp"
 #include "atlas.hpp"
 #include "builder.hpp"
+#include "texture.hpp"
 
 #include <GL/gl3w.h>
 #include <algorithm>

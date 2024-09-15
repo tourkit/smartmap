@@ -230,8 +230,6 @@ struct NODE {
     static void onadd(std::function<Node*(Node*,Node*)> cb) { Node::onaddtyped_cb[typeid(T)][typeid(U)] = cb;  }
 
     static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
-
-    static inline bool tick = false;
     
 };
 

@@ -138,15 +138,20 @@ void Callbacks::init() {
         
     });
 
+    NODE<DrawCall>::on(Node::CREATE, [](Node* node, DrawCall *dc) {
+
+
+    });
+
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
         node->each<DrawCall>([](Node*n, DrawCall* dc){ 
+            
+            dc->builder.use(dc,0) ;
 
-            dc->builder.build(); 
+            dc->builder.build(&dc->shader);
 
         });
-
-        NODE<ShaderProgram>::tick = true;
 
         dc->vbo.upload();
 

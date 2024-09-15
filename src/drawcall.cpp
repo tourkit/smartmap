@@ -17,18 +17,6 @@ Model* DrawCall::addModel(File* f) {
 
 ///////// LayerBuilder ////
 
-DrawCall::Builder::Builder(DrawCall* dc) : dc(dc) {
-
-    vbo = &dc->vbo;
-
-    ubos.push_back(engine.dynamic_ubo);
-    ubos.push_back(engine.static_ubo);
-
-    build();
-
-}
-
-
 
 std::string DrawCall::Builder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
 
@@ -44,31 +32,34 @@ std::string DrawCall::Builder::print_layer(Effectable &effectable, std::string p
                 
 	body_fragment += "\ttic();\n";
 
-    current_model.clear();
-
     for (auto ref : effectable.effector_refs) 
 
-        ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->_name());
+        body_fragment+=ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->_name());
 
-
-    body_fragment+=current_model;
 
 	body_fragment += "\ttac();\n";
-
-    for (auto ref : effectable.effector_refs) {
-
-        ref->effector->setup(this);
-
-    }
 
     return body_fragment;
 
 }
 
-void DrawCall::Builder::build() {
+void DrawCall::Builder::use(DrawCall* dc, int stride_count) {
 
-   
-    ::Builder::build();
+    this->dc = dc;
+    this->stride_count = stride_count;
+
+}
+
+void DrawCall::Builder::setup() {
+
+    vbo = &dc->vbo;
+
+    ubos.insert(engine.dynamic_ubo);
+    ubos.insert(engine.static_ubo);
+
+    for (auto x : effectors_fragment) x->setup(this);
+
+    for (auto x : effectors_vertex) x->setup(this);
 
     // FRAGMENT ////////////////
 
@@ -96,15 +87,11 @@ void DrawCall::Builder::build() {
 
         for (auto &model : dc->models)
             for (int instance = 0; instance < model.get()->quantity(); instance++) 
-                body_fragment += print_layer(*model, lower(dc->_name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->m()->quantity()>1?"[int(LAYER)]":""));
+                body_fragment += print_layer(*model, lower(dc->_name()), std::to_string(instance), "layer"+std::string(Layer::glsl_layers->m()->quantity()>1?"[int(LAYER)]":""));
 
-
-        current_model.clear();
 
         for (auto ref : dc->effector_refs) 
-            ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->_name())+"."+lower(ref->ref()->_name()));
-
-        body_fragment+=current_model;
+            body_fragment += ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->_name())+"."+lower(ref->ref()->_name()));
         
         // setup all effector_refs
 
@@ -165,7 +152,7 @@ DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo->next_name(n
 
 void DrawCall::draw() {
 
-    builder.program.use();
+    shader.use();
 
     vbo.draw();
 

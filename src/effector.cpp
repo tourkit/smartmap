@@ -16,14 +16,12 @@ Effector::Effector(std::string name) : Member(name) {
 
 }
 
-bool Effector::header(Builder* builder, Instance isnt) { return true; }
+
+std::string Effector::body(Builder* builder, std::string prepend) {
+
+    return "\t"+call(prepend)+"\n";
 
 
-bool Effector::body(Builder* builder, std::string prepend) {
-
-    builder->current_model += "\t"+call(prepend)+"\n";
-
-    return true;
 }
 
 
@@ -45,12 +43,6 @@ std::string Effector::call(std::string prepend) {
 
 // FileEffector  ////////////////
 
-bool FileEffector::body(Builder* builder, std::string prepend) {
-    
-    Effector::body( builder,  prepend) ;
-
-    return true;
-}
 
 bool FileEffector::setup(Builder* builder) { 
 
@@ -164,7 +156,7 @@ Wrappy::Wrappy(std::vector<Effector*> effectors, int count, std::string name) : 
 
 
 // static 
-std::string Wrappy::source() {
+std::string Wrappy::header() {
 
     std::string args;
     for (auto x : Effector::members) args += x->type_name() + " " + x->name() + ", ";
