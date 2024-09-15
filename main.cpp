@@ -25,6 +25,7 @@
 #include "drawcall.hpp"
 #include "engine.hpp"
 #include "builder.hpp"
+#include "instance.hpp"
 
 
 
@@ -43,10 +44,16 @@ int main() {
     engine.open("project.json");
 
     auto dc = engine.tree->find("Stack")->childrens[0]->is_a<DrawCall>();
+    auto quad1 = engine.tree->find("quad1");
+    auto argb = engine.tree->find("argb");
+    
+    quad1->add(argb);
 
     engine.dynamic_ubo->bind(dc->shader);
 
     logger.cout(Sev::verbose);
-    engine.run();
+    Instance(*engine.dynamic_ubo).print();
+
     logger.cout(Sev::warning);
+    engine.run();
 }

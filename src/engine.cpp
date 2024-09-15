@@ -43,10 +43,11 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
 
     static auto exit_cb = []() { exit(0); };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
+    window.keypress_cbs[{GLFW_KEY_ESCAPE}] = exit_cb;
+    // window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
+    // window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
+    // window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
+    // window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
 
     static auto save_cb = [&]() { save(); };
 
@@ -54,6 +55,11 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_S}] = save_cb;
     window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_S}] = save_cb;
     window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_S}] = save_cb;
+
+    
+    static auto demo_cb = [&]() { engine.gui_v->show_demo = !engine.gui_v->show_demo; };
+
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_D}] = demo_cb;
 
     static auto guiact_cb = [&]() { 
 

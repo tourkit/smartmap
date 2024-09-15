@@ -16,22 +16,19 @@ TreeWidget::TreeWidget(GUI* gui) : GUI::Window("Tree", gui) {
 
 
 
-static bool demodemo = false;
 
 void TreeWidget::draw()  {
  
-if (demodemo) ImGui::ShowDemoWindow();
+    if (gui->show_demo) ImGui::ShowDemoWindow();
 
 
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 26);
     
-
-    
     ImGui::SetCursorPosX(5);
-    ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str));
 
+    ImGui::InputText("###filtersearch", &search_str[0], sizeof(search_str));
 
     if (ImGui::IsItemActivated()) {
 
@@ -92,7 +89,12 @@ if (demodemo) ImGui::ShowDemoWindow();
     ImGui::PopStyleVar(1);
 }
 
-void TreeWidget::drawChildrens(Node* node) { for (auto child : node->childrens) drawNode(child); }
+void TreeWidget::drawChildrens(Node* node) { 
+    
+    for (auto child : node->childrens) 
+        drawNode(child); 
+
+}
 
 
 
@@ -163,12 +165,12 @@ using namespace ImGui;
 
     if (ImGui::BeginPopupContextItem()) {
 
-        if (ImGui::BeginMenu("add")) {
+        // if (ImGui::BeginMenu("add")) {
 
-            if (ImGui::MenuItem("New")) {}
+        //     if (ImGui::MenuItem("New")) {}
 
-            ImGui::EndMenu();
-        }
+        //     ImGui::EndMenu();
+        // }
 
         bool will_exit = false;
         if (!is_deleting) {
@@ -197,17 +199,17 @@ using namespace ImGui;
         if (!ImGui::IsItemHovered()) 
             is_deleting = false;
 
-        if(ImGui::MenuItem("rename")) {
+        // if(ImGui::MenuItem("rename")) {
 
-            is_renaming = node;
+        //     is_renaming = node;
 
-            memset(&renaming_name[0],0,612);
-            memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
+        //     memset(&renaming_name[0],0,612);
+        //     memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
 
-        }
+        // }
 
-        if(ImGui::MenuItem("update")) 
-            node->update();
+        // if(ImGui::MenuItem("update")) 
+        //     node->update();
 
         if (ImGui::BeginMenu("trig")) {
             
@@ -216,24 +218,6 @@ using namespace ImGui;
 
             ImGui::EndMenu();
         }
-
-        if(ImGui::MenuItem("zoom")) 
-            gui->trees[0]->selected = node;
-
-        if(ImGui::MenuItem("pop")) {
-            gui->trees.push_back(new TreeWidget(gui));
-            gui->trees.back()->selected = node;
-        }
-
-        if (ImGui::MenuItem("editor")) {
-
-            gui->editors.push_back(new EditorWidget(gui));
-            gui->editors.back()->selected = node;
-            gui->editors.back()->locked = true;
-
-        }
-
-        ImGui::Checkbox("demo", &demodemo);
 
         Separator();
 

@@ -117,6 +117,8 @@ struct GUI {
 
   };
 
+  bool show_demo = false;
+  
 private:
     static inline std::vector<Window*> close_list;
 };

@@ -1023,7 +1023,13 @@ void Editors::init() {
 
         static std::map<Model*,int> effector_currents;
 
-       effector_currents[model] = model->quantity();
+        effector_currents[model] = model->quantity();
+
+        // Separator();
+
+        ImGui::SeparatorText(model->name().c_str());
+
+        SameLine();
 
         SetNextItemWidth(150);
         if (IntButtons(&effector_currents[model])) { 
@@ -1255,8 +1261,6 @@ void Editors::init() {
                     auto model = c->is_a<Model>();
                     if (!model) 
                         continue;
-                    ImGui::SeparatorText(model->name().c_str());
-                    SameLine();
                     Editor<Model>::cb(c, model);
                 }
                 ImGui::EndTabItem();

@@ -13,13 +13,12 @@
   },
   "layers": {
       "Free Layer 1": {
-            "dimensions": [ 100,100 ],
+            "dim": [ 100,100 ],
             "models": {
                 "quad1": {
                     "q": 2,
                     "model": "quad.obj",
                     "effectors": [
-                        "argb"
                     ]
                 }
             }
