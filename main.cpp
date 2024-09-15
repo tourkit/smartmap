@@ -28,13 +28,12 @@
 #include "instance.hpp"
 
 
-
-
 // fix dynubo && statubo ..
 
+// fix Member::adding all occurence set default  ..
 
 
-
+// check if member::add::adding has eq
 int main() {
 
 
@@ -44,7 +43,7 @@ int main() {
     buff.buffering(true);
 
     Member layer("layer");
-    layer.quantity(2);
+    layer.quantity(3);
     buff.add(&layer);
 
     Member quad("quad");
@@ -53,17 +52,22 @@ int main() {
 
     Member argb("argb");
     argb.add<char>("ch").range(0,1,2); 
+    Member otro("otro");
+    otro.add<float>("ch").range(0,1,3); 
 
     Member ref("ref");
     ref.add(&argb);
     quad.add(&ref);
 
+    Member otroref("otroref");
+    otroref.add(&otro);
+    quad.add(&otroref);
+
     Instance inst(buff);
 
     Instance refinst(inst);
-    refinst[&layer][&quad][&ref].parent();
+    refinst[&layer][&quad][&ref];//.parent();
 
-    // branchSTL (refinst.stl);
 
     inst.print();
 

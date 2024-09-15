@@ -235,11 +235,12 @@ void branchSTL(std::vector<MemberQ>& stl,  int pos=0) {
   
     for (int i = 0; i < stl[pos].m->quantity(); i++){
 
-        if (pos <  stl.size()-1)
+        if (pos <  stl.size()-1){
+            std::cout << pos ;
             branchSTL(stl, pos+1);
-        else
+       } else
             // if (pos==stl.size()-1)
-                std::cout << stl[pos].m->name() << "\n";
+                std::cout << pos << stl[pos].m->name() << "\n";
     }
 }
 
