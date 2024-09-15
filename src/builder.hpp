@@ -15,6 +15,8 @@ struct Builder {
 
     ShaderProgram program;
 
+    Builder();
+
     static inline std::string struct_taber = "";//\t";
 
     static inline std::string struct_spacer = " ";//\n\n";

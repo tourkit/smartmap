@@ -64,7 +64,7 @@ void Layer::draw() {
 
     fb.clear();
 
-    shader.use();
+    builder.program.use();
 
     vbo.draw();
 
@@ -72,18 +72,18 @@ void Layer::draw() {
 
 // FeedbackEffector  ////////////////
 
-void Layer::Feedback::post(Builder* builder) { 
+void Layer::Feedback::post(::Builder* builder) { 
 
 
 }
 
-bool UberLayer::Feedback::setup(Builder* builder) { 
+bool UberLayer::Feedback::setup(::Builder* builder) { 
     
     return Layer::Feedback::setup(builder); 
     
 }
 
-bool Layer::Feedback::setup(Builder* builder) { 
+bool Layer::Feedback::setup(::Builder* builder) { 
 
     builder->addSampler(&layer->feedback()->texture, "feedback");
 
@@ -93,7 +93,7 @@ bool Layer::Feedback::setup(Builder* builder) {
     
 }
 
-bool Layer::Feedback::body(Builder* builder, std::string prepend) {  
+bool Layer::Feedback::body(::Builder* builder, std::string prepend) {  
     
     Effector::body(builder, prepend);
     
@@ -205,7 +205,7 @@ std::string  UberEffector::source() {
 
 }
 
-bool UberEffector::setup(Builder* builder) { 
+bool UberEffector::setup(::Builder* builder) { 
 
     builder->addSampler(&ubl_v->fb.texture, ubl_v->name());
 
@@ -220,14 +220,14 @@ UberLayer::VirtualLayer::Effector::Effector(VirtualLayer* vlayer) : ::Effector(v
 
 }
 
-bool UberLayer::VirtualLayer::Effector::setup(Builder* builder) { 
+bool UberLayer::VirtualLayer::Effector::setup(::Builder* builder) { 
 
     vlayer->ubl->effector.setup(builder);
 
     return true; 
     
 }
-bool UberLayer::VirtualLayer::Effector::body(Builder* builder, std::string prepend) {  
+bool UberLayer::VirtualLayer::Effector::body(::Builder* builder, std::string prepend) {  
 
     int offset = 0, to = 0;
 
@@ -248,7 +248,7 @@ bool UberLayer::VirtualLayer::Effector::body(Builder* builder, std::string prepe
     
 }
 
-bool UberEffector::body(Builder* builder, std::string prepend) {  
+bool UberEffector::body(::Builder* builder, std::string prepend) {  
     
     builder->current_model += "\t"+ubl_v->name()+"_effector(0, "+std::to_string(ubl_v->uberlayer_m.quantity())+");\n";
     
@@ -273,8 +273,6 @@ UberLayer::UberLayer() :
     uberlayer_m.add(&globals.ubl);
 
     engine.static_ubo->add(&uberlayer_m);
-
-    shader.builder(&builder);
 
     effector.ubl(this);
     
@@ -356,8 +354,7 @@ void UberLayer::calc_matrice() {
         z++;
     }
 
-    ((ShaderProgram*)&shader)->create();
-
+    builder.build();
 
     engine.static_ubo->upload();
 

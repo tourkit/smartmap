@@ -36,6 +36,10 @@
 // check if member::add::adding has eq
 int main() {
 
+    engine.init();
+    engine.open("project.json");
+    engine.run();
+
     BoilerWindow window;
     
     Builder builder;

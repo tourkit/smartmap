@@ -175,8 +175,11 @@ ShaderProgram::~ShaderProgram() {
 
 
 }
+ShaderProgram::ShaderProgram() { 
+    
 
-ShaderProgram::ShaderProgram() { Builder builder; builder.build(); create(builder.frag(),builder.vert()); builder.post(); }
+
+}
 
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 

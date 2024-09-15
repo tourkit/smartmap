@@ -11,6 +11,14 @@
 #include "utils.hpp"
 #include <string>
 
+Builder::Builder() {
+
+    build();
+
+    program.create(frag(), vert());
+
+}
+
 void Builder::post() {
 
     for (auto x : effectors_fragment) x->post(this);

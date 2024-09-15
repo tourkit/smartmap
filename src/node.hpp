@@ -11,6 +11,7 @@
 
 #include "imgui/imgui.h"
 
+
 struct Node {
 
     enum Event {
@@ -50,8 +51,6 @@ struct Node {
     const std::string& name();
 
     Node* name(std::string value);
-
-    void editor();
 
     virtual void update();
 
@@ -232,6 +231,8 @@ struct NODE {
 
     static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
 
+    static inline bool tick = false;
+    
 };
 
 struct AnyNode {

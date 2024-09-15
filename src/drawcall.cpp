@@ -68,7 +68,7 @@ std::string DrawCall::Builder::print_layer(Effectable &effectable, std::string p
 void DrawCall::Builder::build() {
 
    
-    Builder::build();
+    ::Builder::build();
 
     // FRAGMENT ////////////////
 

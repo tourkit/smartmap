@@ -46,6 +46,10 @@ void EditorWidget::draw() {
         ImGui::SameLine(); ImGui::Text(str.c_str()); }
     ImGui::PopStyleColor(1);
 
-    selected->editor();
+
+    if(EDITOR::ptr.find(selected->stored_type) != EDITOR::ptr.end()) 
+
+        (*(std::function<void(EditorWidget*,Node*,void*)>*)EDITOR::ptr[selected->stored_type])(this, selected,selected->void_ptr);
+
 
 }

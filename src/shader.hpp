@@ -40,7 +40,7 @@ struct ShaderProgram {
   bool loaded = false;
 
   ~ShaderProgram();
-
+  
   ShaderProgram();
 
   ShaderProgram(std::string frag, std::string vert);

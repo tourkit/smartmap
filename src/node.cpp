@@ -1,8 +1,4 @@
 #include "node.hpp"
-#include "effector.hpp"
-#include "log.hpp"
-#include "buffer.hpp"
-#include "ubo.hpp"
 #include "utils.hpp"
 
 #include "editor.hpp"
@@ -378,14 +374,6 @@ void Node::trig(Event e)  {
     
 }
 
-
-void Node::editor() { 
-
-    if(EDITOR::ptr.find(stored_type) != EDITOR::ptr.end()) 
-
-        (*(std::function<void(Node*,void*)>*)EDITOR::ptr[stored_type])(this,this->void_ptr);
-
-}
 
 void* Node::is_a_untyped(TypeIndex t, TypeIndex u, void* out) {
 

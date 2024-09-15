@@ -4,6 +4,7 @@
 #include "node.hpp"
 #include "file.hpp"
 #include "remap.hpp"
+#include "shader.hpp"
 #include "ubo.hpp"
 #include "model.hpp"
 #include "effector.hpp"
@@ -141,9 +142,11 @@ void Callbacks::init() {
 
         node->each<DrawCall>([](Node*n, DrawCall* dc){ 
 
-            dc->shader.create(); 
+            dc->builder.build(); 
 
         });
+
+        NODE<ShaderProgram>::tick = true;
 
         dc->vbo.upload();
 
