@@ -248,6 +248,10 @@ std::pair<std::string,int> nameQ(std::string name) {
             for (auto added : addeds) 
                 if (added.m == mq.m && added.m->quantity()){
 
+
+
+                    // auto parent = inst.parent();
+
                     // while(parent) // do to them too
                     for (int i = 0; i < added.q; i++)  {
 

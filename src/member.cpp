@@ -213,7 +213,7 @@ void Member::type(Type value) {
 }
 
 
-void Member::buffering(bool value) { 
+Member& Member::buffering(bool value) { 
     
     buffering_v  = value;
 
@@ -231,6 +231,8 @@ void Member::buffering(bool value) {
     }
 
     update_pv();
+
+    return *this;
 
 }
 
@@ -307,10 +309,7 @@ void Member::add(Member* m) {
 
     size_v += members.back()->footprint_all();
 
-    uint32_t q = 1;
-    if (quantity_v>1 && !buffering_v) // "&& !buffering_v" can jarte when double buffering is handled thx
-        q = quantity_v;
-    auto mq = adding.emplace_back(MemberQ{m,0,q});
+    auto mq = adding.emplace_back(MemberQ{m,0,quantity()});
     update_pv();
     REMOVE<MemberQ>(adding,mq);
 
@@ -382,7 +381,8 @@ bool Member::remove(Member& m) {
 
     PLOGV << name() << "[" << footprint_all() << "] remove " << m.name() << "[" << m.footprint_all() << "]";
 
-    tops = getTop();
+    if (!buffering_v)
+        tops = getTop();
 
     for (auto t : tops)  
         t->stl.front().m->bkp();
@@ -589,13 +589,15 @@ void Member::deleteData(bool recurse){
 
     for (auto m : t_members) {
 
-        if (recurse) m->deleteData();
+        if (recurse) 
+            m->deleteData();
         
         if (m->isData()) {
 
             removeHard(*m);
             
-            delete m;}
+            delete m;
+        }
             
     }
 

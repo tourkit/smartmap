@@ -32,26 +32,40 @@
 
 // fix dynubo && statubo ..
 
+void setDefaultToMemberInSTLChain(Member* m, std::vector<MemberQ>& stl, int offset = 0) {
+
+    for (auto curr : stl) {
+            
+        for (int e = 0; e < curr.eq; e++) {
+
+            
+        }
+
+    }
+
+}
+// how the fuck 
 int main() {
 
     logger.cout(Sev::warning);
 
+    auto buff = Member("buff");
+    buff.buffering(true);
 
-    engine.init();
+    auto layer = Member("layer").quantity(2);
 
-    engine.open("project.json");
+    buff.add(&layer);
 
-    auto dc = engine.tree->find("Stack")->childrens[0]->is_a<DrawCall>();
-    auto quad1 = engine.tree->find("quad1");
-    auto argb = engine.tree->find("argb");
-    
-    quad1->add(argb);
+    auto quad = Member("quad").quantity(2); 
 
-    engine.dynamic_ubo->bind(dc->shader);
+    layer.add(&quad);
 
-    logger.cout(Sev::verbose);
-    Instance(*engine.dynamic_ubo).print();
+    auto argb = Member("argb").add<char>("ch").range(0,1,2); 
 
-    logger.cout(Sev::warning);
-    engine.run();
+    quad.add(&argb);
+
+    Instance inst(buff);
+
+    inst.print();
+
 }

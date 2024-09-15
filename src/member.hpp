@@ -82,7 +82,7 @@ struct Member {
 
     bool buffering();
 
-    void buffering(bool value);
+    Member& buffering(bool value);
 
     uint32_t eq(int i) ;
 
