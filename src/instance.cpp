@@ -61,7 +61,7 @@ std::pair<std::string,int> nameQ(std::string name) {
     void Instance::stlAdd(Member* m, int eq) {
 
         //add to stl
-        stl.emplace_back(m,eq);
+        stl.emplace_back(m,eq, m->quantity());
 
         // update instance
         if (m->instances.find(this) == m->instances.end()) {
@@ -247,6 +247,8 @@ std::pair<std::string,int> nameQ(std::string name) {
 
             for (auto added : addeds) 
                 if (added.m == mq.m && added.m->quantity()){
+
+                    // while(parent) // do to them too
                     for (int i = 0; i < added.q; i++)  {
 
                         inst.eq(added.eq+i);

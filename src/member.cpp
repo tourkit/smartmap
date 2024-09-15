@@ -267,7 +267,7 @@ Member& Member::quantity(uint32_t quantity_v) {
 
     this->quantity_v = quantity_v;
 
-    auto mq = adding.emplace_back(MemberQ{this, old, (int)quantity_v-old});
+    auto mq = adding.emplace_back(MemberQ{this, old, quantity_v-old});
     update_pv();
     REMOVE<MemberQ>(adding,mq);
 
@@ -307,7 +307,10 @@ void Member::add(Member* m) {
 
     size_v += members.back()->footprint_all();
 
-    auto mq = adding.emplace_back(MemberQ{m});
+    uint32_t q = 1;
+    if (quantity_v>1 && !buffering_v) // "&& !buffering_v" can jarte when double buffering is handled thx
+        q = quantity_v;
+    auto mq = adding.emplace_back(MemberQ{m,0,q});
     update_pv();
     REMOVE<MemberQ>(adding,mq);
 
@@ -364,7 +367,7 @@ Member& Member::range(float from, float to, float def) {
         for (auto m : s->members) 
             if (m == this) 
                 for (auto top : m->getTop())  
-                    top->post_change({{m,(int)(m->quantity()-1)}});
+                    top->post_change({{m,m->quantity()-1}});
 
     }
 
@@ -556,14 +559,7 @@ char* Member::data() {
 
 char* Member::from() { return rangedef.size()?rangedef.data():nullptr; }
 char* Member::to() { return rangedef.size()?rangedef.data()+(size_v):nullptr; }
-char* Member::def() { 
-    
-    if (rangedef.size())
-        return rangedef.data()+(size_v*2);
-
-    return nullptr; 
-
-}
+char* Member::def() { if (rangedef.size()) return rangedef.data()+(size_v*2); return nullptr; }
 
 bool Member::buffering() { return buffering_v; }
 
@@ -575,7 +571,7 @@ Member* Member::ref() { return name_v.length()?this:members[0]; }
 
 uint32_t Member::size() {  return size_v; }
 
-uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16);  return size(); }
+uint32_t Member::footprint() { if (striding()) return nextFactor2(size(),16); return size(); }
 
 uint32_t Member::stride() { return (footprint()-size()); }
 
@@ -585,9 +581,7 @@ uint32_t Member::eq(int i) { return i * footprint(); }
 
 uint32_t Member::footprint_all() { return eq( quantity_v ); }
 
-Type Member::type() { if (isData()) { for (auto x : members) return x->type(); } return type_v; }
-
-
+Type Member::type() { return type_v; }
 
 void Member::deleteData(bool recurse){
 

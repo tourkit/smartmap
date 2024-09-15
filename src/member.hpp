@@ -125,7 +125,7 @@ private:
 
     uint32_t size_v = 0;
 
-    int32_t quantity_v = 1;
+    uint32_t quantity_v = 1;
 
 public:
 
