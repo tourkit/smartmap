@@ -44,10 +44,10 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     static auto exit_cb = []() { exit(0); };
 
     window.keypress_cbs[{GLFW_KEY_ESCAPE}] = exit_cb;
-    // window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
-    // window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
-    // window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
-    // window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
+    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
+    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
 
     static auto save_cb = [&]() { save(); };
 
@@ -59,11 +59,11 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
     
     static auto demo_cb = [&]() { engine.gui_v->show_demo = !engine.gui_v->show_demo; };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_D}] = demo_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_EQUAL}] = demo_cb;
 
     static auto guiact_cb = [&]() { 
 
-        window.end_of_render_cbs.emplace_back(std::pair<void*,std::shared_ptr<std::function<void(void*)>>>{nullptr, std::make_shared<std::function<void(void*)>>([&](void* ptr) { 
+        window.end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>{nullptr, std::function<void(void*)>([&](void* ptr) { 
             
             engine.gui(!engine.gui_v);  
             
@@ -219,11 +219,6 @@ void Engine::run() {
         }
         
         tree->run();
-
-        for (auto cb : end_of_render_cbs)
-            (*cb.get())();
-
-        end_of_render_cbs.clear();
 
     });
 

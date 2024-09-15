@@ -186,7 +186,7 @@ using namespace ImGui;
                 is_deleting = false;
                 gui->delete_list.push_back(node);
 
-                gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::shared_ptr<std::function<void(void*)>>>{nullptr, std::make_shared<std::function<void(void*)>>([&](void* ptr) { 
+                gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>{nullptr, std::function<void(void*)>([&](void* ptr) { 
 
                     delete (Node*)ptr;
 

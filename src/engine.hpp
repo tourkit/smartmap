@@ -50,7 +50,7 @@ struct Engine {
     void save(const char* filepath);
     void save();
 
-    std::vector<std::shared_ptr<std::function<void()>>> end_of_render_cbs;
+    std::vector<std::function<void()>> end_of_render_cbs;
 
     void gui(bool active);
 

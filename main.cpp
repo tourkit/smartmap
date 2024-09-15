@@ -32,8 +32,6 @@
 
 // fix dynubo && statubo ..
 
-// count Shader::create per NODE<Effectable>::add<Effector>
-
 int main() {
 
     logger.cout(Sev::warning);

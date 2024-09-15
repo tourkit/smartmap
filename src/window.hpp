@@ -58,7 +58,7 @@ struct Window : Output {
     
     static inline ShaderProgram *shader = nullptr;
 
-    std::vector<std::pair<void*,std::shared_ptr<std::function<void(void*)>>>> end_of_render_cbs;
+    std::vector<std::pair<void*,std::function<void(void*)>>> end_of_render_cbs;
     std::function<void(double,double)> mousemove_cb = nullptr;
     std::function<void(int)> mousedown_cb = nullptr;
 

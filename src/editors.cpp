@@ -1036,7 +1036,7 @@ void Editors::init() {
 
             if (!effector_currents[model]) {
                
-                engine.window.end_of_render_cbs.push_back(std::pair<void*, std::shared_ptr<std::function<void(void*)>>>{node, std::make_shared<std::function<void(void*)>>([&](void* ptr){ 
+                engine.window.end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{node, std::function<void(void*)>([&](void* ptr){ 
                     
                     delete (Node*)ptr; 
 

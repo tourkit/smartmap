@@ -238,7 +238,7 @@ void Window::render(std::function<void()> callback) {
         glfwSwapBuffers(id);
 
         for (auto cb : end_of_render_cbs)
-            (*cb.second.get())(cb.first);
+            cb.second(cb.first);
 
         end_of_render_cbs.clear();
     
