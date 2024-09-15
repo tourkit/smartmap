@@ -45,22 +45,30 @@ void setDefaultToMemberInSTLChain(Member* m, std::vector<MemberQ>& stl, int offs
 
 }
 // how the fuck 
+
+struct Foo{ Foo* cp = nullptr; Foo(Foo& other) : cp(&other) {} Foo() { PLOGE << "Foo"; } Foo& test() { return *this; }};
 int main() {
+
+    auto foo = Foo();
+    foo.test();
 
     logger.cout(Sev::warning);
 
     auto buff = Member("buff");
     buff.buffering(true);
 
-    auto layer = Member("layer").quantity(2);
+    auto layer = Member("layer");
+    layer.quantity(2);
 
     buff.add(&layer);
 
-    auto quad = Member("quad").quantity(2); 
+    auto quad = Member("quad");
+    quad.quantity(2); 
 
     layer.add(&quad);
 
-    auto argb = Member("argb").add<char>("ch").range(0,1,2); 
+    auto argb = Member("argb");
+    argb.add<char>("ch").range(0,1,2); 
 
     quad.add(&argb);
 

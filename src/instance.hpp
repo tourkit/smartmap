@@ -29,6 +29,9 @@ struct Instance {
     
     int eq();
 
+    Member* m();
+    Member* buff();
+
     Instance(std::string stl_name);
 
     Instance(Member& m);

@@ -38,8 +38,6 @@ struct Layer : DrawCall {
 
     void draw() override;
 
-    static inline auto layer_def = Member("Layers").quantity(0).add<float, 2>("dim").range(0, 0, 0);
-
     static inline Instance* glsl_layers;
 
 };
@@ -102,8 +100,6 @@ struct UberLayer : Layer {
         Effector effector;
 
     };
-
-    static inline auto uberlayer_def = Member("UberLayers").add<float, 2>("size").add<float, 2>("pos").add<float, 2>("norm").add<float, 2>("dim");
 
     std::vector<std::shared_ptr<VirtualLayer>> layers;
 

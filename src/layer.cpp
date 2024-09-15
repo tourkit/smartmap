@@ -19,11 +19,11 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name)
 
         if (!init) {
 
-            layer_def.striding(true);
+            globals.layer.striding(true);
 
-            engine.static_ubo->add(&layer_def);
+            engine.static_ubo->add(&globals.layer);
 
-            glsl_layers =  &(*new Instance(*engine.static_ubo))[&layer_def];
+            glsl_layers =  &(*new Instance(*engine.static_ubo))[&globals.layer];
 
             init = true;
 
@@ -270,7 +270,7 @@ UberLayer::UberLayer() :
 
     uberlayer_m.quantity(0);
 
-    uberlayer_m.add(&uberlayer_def);
+    uberlayer_m.add(&globals.ubl);
 
     engine.static_ubo->add(&uberlayer_m);
 

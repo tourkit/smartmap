@@ -7,10 +7,6 @@
 struct File;
 
 struct VBO : Member {
-    
-    static inline auto vertice = Member("Vertice").add<float,2>("POSITION").range(-1,1,0).add<float,2>("UV").add<float,2>("NORMALIZED").add<float>("OBJ").add<float>("LAYER");
-
-    static inline auto indice = Member("Indice").add<int>("vert1").add<int>( "vert2").add<int>("vert3");
 
     static inline struct Quad : File { Quad() : File("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1\n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4") { } } quad;
 

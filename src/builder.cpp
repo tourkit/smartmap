@@ -2,7 +2,7 @@
 
 
 #include "ubo.hpp"
-#include "vbo.hpp"
+#include "globals.hpp"
 #include "shader.hpp"
 #include "texture.hpp"
 #include "effector.hpp"
@@ -75,9 +75,9 @@ std::string Builder::frag() {
 
     std::string ins_str;
 
-    for (int i = 1; i < vbo->vertice.members.size(); i++) {
+    for (int i = 1; i < globals.vertice.members.size(); i++) {
 
-        auto m = vbo->vertice.members[i];
+        auto m = globals.vertice.members[i];
 
         ins_str += "in "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->_name()+";\n";
 
@@ -113,7 +113,7 @@ std::string Builder::vert() {
 
         int count = 0;
 
-        for (auto x : vbo->vertice.members)
+        for (auto x : globals.vertice.members)
 
             vbo_layouts.push_back({count++,x->type_name(), (x->_name()+(count>1?"_":""))});
 

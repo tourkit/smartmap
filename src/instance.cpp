@@ -215,16 +215,18 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     }
     
-    void Instance::post_change(std::vector<MemberQ> addeds) {
+    Member* Instance::m() { if (stl.size()) return stl.back().m; return nullptr; }
+
+    Member* Instance::buff() { if (stl.size()) return stl.front().m; return nullptr; }
+
+    void Instance::post_change(std::vector<MemberQ> adding_list) {
 
         each([&](Instance& inst) {
 
-            auto &mq = inst.stl.back();
-
             // instances update offset
-            for (auto &x : mq.m->instances) {
+            for (auto &x : inst.m()->instances) {
 
-                if (x != &inst && x->stl.size() == inst.stl.size() && x->stl.front().m == stl.front().m) {
+                if (x != &inst && x->stl.size() == inst.stl.size() && x->buff() == buff()) {
 
                     bool diff = false;
                     for (int i = 1; i < inst.stl.size(); i++) 
@@ -245,17 +247,17 @@ std::pair<std::string,int> nameQ(std::string name) {
 
             }
 
-            for (auto added : addeds) 
-                if (added.m == mq.m && added.m->quantity()){
+            for (auto adding : adding_list) 
+                if (adding.m == inst.m() && adding.m->quantity()){
 
 
 
                     // auto parent = inst.parent();
 
                     // while(parent) // do to them too
-                    for (int i = 0; i < added.q; i++)  {
+                    for (int i = 0; i < adding.q; i++)  {
 
-                        inst.eq(added.eq+i);
+                        inst.eq(adding.eq+i);
                         inst.setDefault();
 
                     }
@@ -377,7 +379,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     void Instance::setDefault(Member* m, int offset) {
 
-        if (!m) m = stl.back().m;
+        if (!m) m = this->m();
 
         for (auto x : m->members) {
 

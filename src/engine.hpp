@@ -62,7 +62,7 @@ struct Engine {
 
     std::string project_filepath;
 
-    static inline auto glsl_data = Member("ENGINE").add<int>("frame").add<int>("fps").add<int>("alt");
+    Member glsl_data;
 
     GLint gl_max_texture_size,gl_max_texture_image_units, gl_major_version, gl_minor_version;
 

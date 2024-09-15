@@ -29,7 +29,6 @@ struct DMXRemap : Remap {
 
 struct Artnet;
 struct Universe { 
-  static inline auto uni_s = Member("universe").add<char,512>("chan").range(0,1,0);
   
   Member m; Artnet* an; int id; Instance* inst; ~Universe(); Universe(Artnet* an, int id); 
 };

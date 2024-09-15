@@ -20,11 +20,11 @@ VBO::VBO() : Member("VBO"), vertices("Vertices"), indices("Indices") {
 
     buffering(true);
 
-    vertices.add(&vertice);
+    vertices.add(&globals.vertice);
     vertices.quantity(0);
     add(&vertices);
 
-    indices.add(&indice);
+    indices.add(&globals.indice);
     indices.quantity(0);
     add(&indices);
 
@@ -107,13 +107,13 @@ void VBO::upload() {
 
         int offset = 0;
         enabled_attrs = 0;
-        for (auto & m : vertice.members) {
+        for (auto & m : globals.vertice.members) {
 
             auto type = GL_FLOAT;
             if (m->type().id == typeid(int)) type = GL_INT;
             if (m->type().id == typeid(uint32_t)) type = GL_UNSIGNED_INT;
 
-            glVertexAttribPointer(enabled_attrs, m->quantity(), type, GL_TRUE, vertice.footprint_all(), (const void*)(size_t)offset);
+            glVertexAttribPointer(enabled_attrs, m->quantity(), type, GL_TRUE, globals.vertice.footprint_all(), (const void*)(size_t)offset);
 
             glEnableVertexAttribArray(enabled_attrs++);
 
@@ -145,7 +145,7 @@ void VBO::addQuad(float w, float h, float x, float y, int id) {
 
     int o = vertices.quantity();
 
-    if (o) id = Instance(*this)[&vertices].eq(o-1)[&vertice]["OBJ"].get<float>()+1;
+    if (o) id = Instance(*this)[&vertices].eq(o-1)[&globals.vertice]["OBJ"].get<float>()+1;
 
     auto x_ = x;
     auto y_ = y;
@@ -196,7 +196,7 @@ bool VBO::addFile_noupload(File* file, int id) {
 
         vertices.quantity(vertices.quantity()+1);
 
-        auto v = Instance(*this)[&vertices].eq(vertices.quantity()-1)[&vertice];
+        auto v = Instance(*this)[&vertices].eq(vertices.quantity()-1)[&globals.vertice];
 
         Instance(v)["POSITION"].set<float, 2>({ vertex.x, vertex.y });
         Instance(v)["UV"].set<float, 2>({ mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y });

@@ -126,9 +126,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     header_vertex.clear();
 
-    for (int i = 1; i < vbo->vertice.members.size(); i++) {
+    for (int i = 1; i < globals.vertice.members.size(); i++) {
 
-        auto m = vbo->vertice.members[i];
+        auto m = globals.vertice.members[i];
 
         header_vertex += "out "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->_name()+";\n";
 
@@ -138,9 +138,9 @@ void Layer::ShaderProgramBuilder::build() {
 
     body_vertex.clear();
 
-    for (int i = 1; i < vbo->vertice.members.size(); i++) {
+    for (int i = 1; i < globals.vertice.members.size(); i++) {
 
-        auto m = vbo->vertice.members[i];
+        auto m = globals.vertice.members[i];
         body_vertex += "\t"+m->_name()+" = "+m->_name()+"_;\n\n";
 
     }

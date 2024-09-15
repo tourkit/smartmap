@@ -115,6 +115,8 @@ struct Member {
 
     void bkp();
 
+    uint32_t factor = 1;
+
 private:
 
     std::string name_v;

@@ -1,5 +1,6 @@
 #include "artnet.hpp"
 #include "instance.hpp"
+#include "globals.hpp"
 
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
@@ -126,7 +127,7 @@ Universe::~Universe() {
 }
 Universe::Universe(Artnet* an, int id) : m(""+std::to_string(id)), an(an), id(id) {
 
-    m.add(&uni_s);
+    m.add(&globals.universe);
 
 }
 

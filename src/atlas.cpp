@@ -17,13 +17,11 @@
 
 Atlas::Atlas(int width, int height, std::string path)  : binpack(width,height,false), m("atlas"), effector(this) {
 
-    static auto media_struct = Member("Rect").add<float, 2>("size").add<float, 2>("pos");
-
     m.striding(true);
     
     m.quantity(0);
     
-    m.add(&media_struct);
+    m.add(&globals.rect);
 
     engine.static_ubo->add(&m);
 

@@ -22,7 +22,9 @@
 #include <cmath>
 
 
-Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0) {
+Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("ENGINE") {
+
+    glsl_data.add<int>("frame").add<int>("fps").add<int>("alt");
 
     glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
     glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);

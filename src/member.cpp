@@ -52,7 +52,7 @@ Member::Member(Member& other) :
  
     striding_v(other.striding_v) ,
     quantity_v( other.quantity_v ) ,
-    name_v(other.name_v) , // no need
+    name_v(other.name_v) , // could no need by no use in bkpremap ? 
     members(other.members),
     type_v(other.type_v), 
     size_v(other.size_v), 
