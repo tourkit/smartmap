@@ -265,15 +265,19 @@ Member& Member::quantity(uint32_t quantity_v) {
     for (auto t : tops)  
         t->stl.front().m->bkp();
 
-    uint32_t old = this->quantity_v;
+    int old = this->quantity_v;
 
     this->quantity_v = quantity_v;
 
-    uint32_t nxxx = quantity_v-old;
+    old = quantity_v-old;
 
-    auto mq = adding.emplace_back(MemberQ{this, old, nxxx});
+    MemberQ  mq;
+    
+    if (old>0)
+        mq = adding.emplace_back(MemberQ{this, (uint32_t)old, quantity_v-old});
     update_pv();
-    REMOVE<MemberQ>(adding,mq);
+    if (old>0)
+        REMOVE<MemberQ>(adding,mq);
 
     tops.clear();
 

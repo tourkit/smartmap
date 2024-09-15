@@ -299,7 +299,7 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
 
             bool dis = false;
             if (*(float*)m->to() == 0){
-                ImGui::BeginDisabled();
+                ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(1.0f, 0.0f, 0.0f, 0.0f));
                 dis = true;
             }
 
@@ -307,7 +307,7 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
             ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
 
             if (dis)
-                ImGui::EndDisabled();
+                ImGui::PopStyleColor(1);
 
             SameLine(); 
             SetNextItemWidth(85);
