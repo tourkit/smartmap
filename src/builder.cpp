@@ -89,7 +89,7 @@ void Builder::build(ShaderProgram* shader) {
 
 }
 
-void Builder::build() {
+void Builder::build(std::function<void()> setup_cb) {
 
     PLOGV << "build";
 
@@ -99,6 +99,8 @@ void Builder::build() {
     ubos.clear();
 
     setup();
+    if (setup_cb)
+        setup_cb();
 
     for (auto m : ubos) 
         addSmallerFirst(m, definitions);

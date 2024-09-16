@@ -33,55 +33,53 @@
 // fix Member::adding all occurence set default  ..
 
 
-// check if member::add::adding has eq
+
+
 int main() {
 
-    engine.init();
-    engine.open("project.json");
-    engine.run();
-
-    BoilerWindow window;
+    Boilerplate::Init();
     
-    Builder builder;
-
-    window.run([](){
-
-
-    });
-
-
     logger.cout(Sev::warning);
 
-    Member buff("buff");
-    buff.buffering(true);
+    engine.init();
 
-    Member layer("layer");
-    layer.quantity(3);
-    buff.add(&layer);
+    engine.open("project.json");
 
-    Member quad("quad");
-    quad.quantity(2); 
-    layer.add(&quad);
-
-    Member argb("argb");
-    argb.add<char>("ch").range(0,1,2); 
-    Member otro("otro");
-    otro.add<float>("ch").range(0,1,3); 
-
-    Member ref("ref");
-    ref.add(&argb);
-    quad.add(&ref);
-
-    Member otroref("otroref");
-    otroref.add(&otro);
-    quad.add(&otroref);
-
-    Instance inst(buff);
-
-    Instance refinst(inst);
-    refinst[&layer][&quad][&ref];//.parent();
+    engine.run();
 
 
-    inst.print();
+
+
+    // Member buff("buff");
+    // buff.buffering(true);
+
+    // Member layer("layer");
+    // layer.quantity(3);
+    // buff.add(&layer);
+
+    // Member quad("quad");
+    // quad.quantity(2); 
+    // layer.add(&quad);
+
+    // Member argb("argb");
+    // argb.add<char>("ch").range(0,1,2); 
+    // Member otro("otro");
+    // otro.add<float>("ch").range(0,1,3); 
+
+    // Member ref("ref");
+    // ref.add(&argb);
+    // quad.add(&ref);
+
+    // Member otroref("otroref");
+    // otroref.add(&otro);
+    // quad.add(&otroref);
+
+    // Instance inst(buff);
+
+    // Instance refinst(inst);
+    // refinst[&layer][&quad][&ref];//.parent();
+
+
+    // inst.print();
 
 }

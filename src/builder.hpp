@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <functional>
 #include <set>
 #include "shader.hpp"
 
@@ -35,7 +36,7 @@ struct Builder {
 
     std::string unique(Member* m);
 
-    void build();
+    void build(std::function<void()> setup_cb = nullptr);
     
     void build(ShaderProgram* dst);
     
