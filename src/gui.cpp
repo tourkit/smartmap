@@ -294,30 +294,19 @@ void GUI::draw() {
 
         for (auto x : delete_list) {
 
-            auto parent = x->parent();
+            if (selected == x)
+              selected = x->parent();
 
-            for (auto editor : editors) {
+            for (auto e : editors) 
+              if (e->selected == x)
+                e->selected = nullptr;
 
-              bool found = false;
+            window->end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{x, std::function<void(void*)>([&](void* ptr){ 
+                
+                auto n = (Node*)ptr;
+                delete n; 
 
-              auto selected = editor->selected;
-
-              if (selected) {
-
-                if (selected == x) found = true;
-
-                selected = selected->parent();
-
-              }
-
-              if (found) 
-                editor->selected = nullptr;
-
-            }
-
-            delete x;
-
-            if (parent) parent->update(); // useless cause already in Node::Dtor na ?
+            })});
         }
 
         delete_list.clear();

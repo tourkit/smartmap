@@ -402,7 +402,7 @@ static bool IntButtons(int* p_data ) {
 
         const float button_size = GetFrameHeight();
         auto style = ImGui::GetStyle();
-      BeginGroup(); // The only purpose of the group here is to allow the caller to query item data e.g. IsItemActive()
+        BeginGroup(); // The only purpose of the group here is to allow the caller to query item data e.g. IsItemActive()
         PushID(engine.gui_v->member_count++);
         SetNextItemWidth(ImMax(1.0f, CalcItemWidth() - (button_size + style.ItemInnerSpacing.x) * 2));
         
@@ -414,11 +414,7 @@ static bool IntButtons(int* p_data ) {
         const ImVec2 backup_frame_padding = style.FramePadding;
         style.FramePadding.x = style.FramePadding.y;
         ImGuiButtonFlags button_flags = ImGuiButtonFlags_Repeat | ImGuiButtonFlags_DontClosePopups;
-        bool dis = false;
-        if (flags & ImGuiInputTextFlags_ReadOnly){
-            BeginDisabled();
-            dis = true;
-        }
+
         SameLine(0, style.ItemInnerSpacing.x);
 
         static std::set<int*> deletings;
@@ -439,8 +435,6 @@ static bool IntButtons(int* p_data ) {
             }
             
         }
-        if (dis)
-            EndDisabled();
 
         
         SameLine(0, style.ItemInnerSpacing.x);
@@ -1026,11 +1020,8 @@ void Editors::init() {
 
             if (!effector_currents[model]) {
                
-                engine.window.end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{node, std::function<void(void*)>([&](void* ptr){ 
-                    
-                    delete (Node*)ptr; 
-
-                })});
+               engine.gui_v->delete_list.push_back(node);
+               
                 
             }else{
     
