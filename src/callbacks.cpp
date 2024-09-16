@@ -303,7 +303,7 @@ void Callbacks::init() {
 
         if (output->fb->width != output->width || output->fb->height != output->height) { 
 
-            PLOGE << "resize " << node->name() << " from " << output->width << " x " << output->height << " to " << output->fb->width << " x " << output->fb->height;
+            PLOGE << "resize " << node->name() << " from " << output->width << "x" << output->height << " to " << output->fb->width << "x" << output->fb->height;
 
             output->size(output->fb->width, output->fb->height); 
         }

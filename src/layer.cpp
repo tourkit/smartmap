@@ -1,5 +1,6 @@
 
 #include "layer.hpp"
+#include "drawcall.hpp"
 #include "texture.hpp"
 #include "utils.hpp"
 #include "engine.hpp"
@@ -62,10 +63,8 @@ void Layer::draw() {
 
     fb.clear();
 
-    shader.use();
-
-    vbo.draw();
-
+    DrawCall::draw();
+    
 }
 
 // FeedbackEffector  ////////////////

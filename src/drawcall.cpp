@@ -154,7 +154,7 @@ void DrawCall::draw() {
 
     shader.use();
 
-    vbo.draw();
+    vbo.draw((models.size() == 1 ? models[0]->quantity():1));
 
 }
 
