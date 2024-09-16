@@ -745,15 +745,20 @@ void Editors::init() {
             if (ImGui::BeginTabItem("fragment")) {
 
 
-                if (editor.GetText().length() != shader->frag.src.length()+1 || editor.GetText() != shader->frag.src) 
+                if (editor.GetText().length() != shader->frag.src.length()+1) 
                     editor.SetText(shader->frag.src);
 
                 
-                
                 editor.Render("fragment");
 
-                if (editor.IsTextChanged()) 
-                    shader->create(editor.GetText(),shader->vert.src);
+                if (editor.IsTextChanged()) {
+                    
+                    std::string x = editor.GetText();
+
+                    memset(&x[x.length()-1],0,1); // against new line everytime dafuk
+
+                    shader->create(x,shader->vert.src);
+                }
                 
 
                 ImGui::EndTabItem();
@@ -761,13 +766,20 @@ void Editors::init() {
             }
             if (ImGui::BeginTabItem("vertex")) {
 
-                if (editor.GetText().length() != shader->vert.src.length()+1 || editor.GetText() != shader->vert.src) 
+                if (editor.GetText().length() != shader->vert.src.length()+1) 
                     editor.SetText(shader->vert.src);
               
                 editor.Render("vertex");
 
-                if (editor.IsTextChanged()) 
-                    shader->create(shader->frag.src,editor.GetText());
+                if (editor.IsTextChanged()) {
+
+                    std::string x = editor.GetText();
+
+                    memset(&x[x.length()-1],0,1); // against new line everytime dafuk
+
+                    shader->create(shader->frag.src,x);
+                    
+                }
 
 
                 ImGui::EndTabItem();
