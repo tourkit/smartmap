@@ -60,6 +60,17 @@ struct ImEditor {
 
 };
 
+
+namespace ImGui {
+
+
+    void CustomSliderScalarN(){
+
+
+    }
+
+
+};
 namespace ImGui {
 
     static void TextX(std::string label, int offset, int size, int depth, std::vector<float> range = {}) {
@@ -307,8 +318,11 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
                 dis = true;
             }
 
-            auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
+
+            std::string label = std::to_string(member_count++);
+            auto x = ImGui::SliderScalarN(("###"+label).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
             ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
+            
 
             if (dis){
                 ImGui::EndDisabled();
@@ -316,15 +330,21 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
                 dis = false;
             }
 
+
+    
+            
+            
+            if (!(IsItemActive() && ImGui::TempInputIsActive(ImGui::GetCurrentContext()->LastItemData.ID))){
+            
             SameLine(); 
             SetNextItemWidth(85);
             PushStyleColor(ImGuiCol_Text, ImVec4(1.0, 1.0, 1.0, .65f));
-
-            ImGui::SetCursorPosX(11);
-
-            Text(name.c_str());
-
-            PopStyleColor(2);
+                ImGui::SetCursorPosX(11);
+                Text(name.c_str());
+            
+            PopStyleColor();
+            }
+            PopStyleColor();
 
             if (x>=0) {
 
@@ -1005,29 +1025,32 @@ void Editors::init() {
 
     ////////// MODEL.HPP
 
-    Editor<Model>([](Node* node, Model *model){
+    Editor<Effectable>([](Node* node, Effectable *effectable){
 
-        static std::map<Model*,int> effector_currents;
+        static std::map<Effectable*,int> effector_currents;
 
-        effector_currents[model] = model->quantity();
+        if (!effectable->instance)
+            return;
+
+        effector_currents[effectable] = effectable->quantity();
 
         // Separator();
 
-        ImGui::SeparatorText(model->name().c_str());
+        ImGui::SeparatorText(effectable->name().c_str());
 
         SameLine();
 
         SetNextItemWidth(150);
-        if (IntButtons(&effector_currents[model])) { 
+        if (IntButtons(&effector_currents[effectable])) { 
 
-            if (!effector_currents[model]) {
+            if (!effector_currents[effectable]) {
                
                engine.gui_v->delete_list.push_back(node);
                
                 
             }else{
     
-                model->quantity(effector_currents[model]); 
+                effectable->quantity(effector_currents[effectable]); 
             
                 node->update(); 
             
@@ -1035,7 +1058,7 @@ void Editors::init() {
 
         }
 
-        if (draw_guis(engine.dynamic_ubo, model, model->instance->offset,engine.gui_v->member_count))
+        if (draw_guis(engine.dynamic_ubo, effectable, effectable->instance->offset,engine.gui_v->member_count))
             engine.dynamic_ubo->upload();
 
     });
@@ -1236,49 +1259,53 @@ void Editors::init() {
 
     Editor<DrawCall>([](Node* node, DrawCall *dc){
 
-        if (BeginPopupContextWindow()) {
-
-
-            static std::vector<std::string> BLEND_NAMES = {
-                "GL_ZERO",
-                "GL_ONE",
-                "GL_SRC_COLOR",
-                "GL_ONE_MINUS_SRC_COLOR",
-                "GL_DST_COLOR",
-                "GL_ONE_MINUS_DST_COLOR",
-                "GL_SRC_ALPHA",
-                "GL_ONE_MINUS_SRC_ALPHA",
-                "GL_DST_ALPHA",
-                "GL_ONE_MINUS_DST_ALPHA",
-                "GL_CONSTANT_COLOR",
-                "GL_ONE_MINUS_CONSTANT_COLOR",
-                "GL_CONSTANT_ALPHA",
-                "GL_ONE_MINUS_CONSTANT_ALPHA",
-                "GL_SRC_ALPHA_SATURATE",
-                "GL_SRC1_COLOR",
-                "GL_ONE_MINUS_SRC1_COLOR",
-                "GL_SRC1_ALPHA",
-                "GL_ONE_MINUS_SRC1_ALPHA"
-
-            };
-
-
-            SliderInt(("IN: "+BLEND_NAMES[dc->GL_BLEND_MODE_IN]).c_str(), &dc->GL_BLEND_MODE_IN, 0, BLEND_NAMES.size()-1);
-            SliderInt(("OUT: "+BLEND_NAMES[dc->GL_BLEND_MODE_OUT]).c_str(), &dc->GL_BLEND_MODE_OUT, 0, BLEND_NAMES.size()-1);
-
-            EndPopup();
-        }
 
         if (ImGui::BeginTabBar("dctqb", ImGuiTabBarFlags_None)) {
 
             if (ImGui::BeginTabItem("Attribtues")) {
 
-                for (auto c : node->childrens) {
-                    auto model = c->is_a<Model>();
-                    if (!model) 
-                        continue;
-                    Editor<Model>::cb( c, model);
+                if (BeginPopupContextItem()) {
+                    
+                    static std::vector<std::string> BLEND_NAMES = {
+                        "GL_ZERO",
+                        "GL_ONE",
+                        "GL_SRC_COLOR",
+                        "GL_ONE_MINUS_SRC_COLOR",
+                        "GL_DST_COLOR",
+                        "GL_ONE_MINUS_DST_COLOR",
+                        "GL_SRC_ALPHA",
+                        "GL_ONE_MINUS_SRC_ALPHA",
+                        "GL_DST_ALPHA",
+                        "GL_ONE_MINUS_DST_ALPHA",
+                        "GL_CONSTANT_COLOR",
+                        "GL_ONE_MINUS_CONSTANT_COLOR",
+                        "GL_CONSTANT_ALPHA",
+                        "GL_ONE_MINUS_CONSTANT_ALPHA",
+                        "GL_SRC_ALPHA_SATURATE",
+                        "GL_SRC1_COLOR",
+                        "GL_ONE_MINUS_SRC1_COLOR",
+                        "GL_SRC1_ALPHA",
+                        "GL_ONE_MINUS_SRC1_ALPHA"
+
+                    };
+
+
+                    SliderInt(("IN: "+BLEND_NAMES[dc->GL_BLEND_MODE_IN]).c_str(), &dc->GL_BLEND_MODE_IN, 0, BLEND_NAMES.size()-1);
+                    SliderInt(("OUT: "+BLEND_NAMES[dc->GL_BLEND_MODE_OUT]).c_str(), &dc->GL_BLEND_MODE_OUT, 0, BLEND_NAMES.size()-1);
+
+                    Text(("instances: " + std::to_string((dc->models.size() == 1 ? dc->models[0]->quantity():1))).c_str());
+
+                    EndPopup();
                 }
+                for (auto c : node->childrens) {
+                    auto effectable = c->is_a_nowarning<Effectable>();
+                    if (!effectable) 
+                        continue;
+                    Editor<Effectable>::cb(c, effectable);
+                }
+                
+                Editor<Effectable>::cb(node, dc);
+
                 ImGui::EndTabItem();
 
             }

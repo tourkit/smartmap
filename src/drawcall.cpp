@@ -72,10 +72,13 @@ void DrawCall::Builder::setup() {
 
     header_fragment += "vec2 uv = UV;\n";
     header_fragment += "vec4 color = vec4(0);\n";
+    header_fragment += "vec2 base_uv = uv;\n";
+    header_fragment += "vec4 base_color = vec4(1);\n";
     header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
 
-    header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
-    header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
+    header_fragment += "void tic() { COLOR += color; uv = base_uv; color = base_color; }\n";
+    header_fragment += "void tac() { COLOR += color; uv = base_uv; color = vec4(0); }\n\n";
+    header_fragment += "void base() { base_uv = uv; base_color = color; color = vec4(0); }\n\n";
     header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
     header_fragment += "int last = abs(curr-1);\n\n";
 

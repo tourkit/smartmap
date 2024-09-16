@@ -21,8 +21,6 @@ struct Model : Modelable {
 
     File* file;
 
-    Instance* instance = nullptr;
-
     Model(File* f, std::string name);
 
     ~Model();

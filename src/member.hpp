@@ -143,6 +143,9 @@ private:
 public:
 
     Member* copy_v = nullptr;
+
+    Instance* instance = nullptr;
+    
 private:
     
     bool buffering_v = false;

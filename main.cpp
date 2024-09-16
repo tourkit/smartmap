@@ -23,11 +23,13 @@
 
 
 #include "boilerplate.hpp"
+#include "drawcall.hpp"
 #include "editor.hpp"
 #include "engine.hpp"
 #include "builder.hpp"
 #include "layer.hpp"
 #include "gui.hpp"
+#include "member.hpp"
 
 
 
@@ -43,6 +45,8 @@ int main() {
     engine.init();
 
     engine.open("project.json");
+
+    // auto lay = engine.stack->childrens[0]->is_a<Member>()->instance;
 
     engine.run();
 
