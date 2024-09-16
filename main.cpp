@@ -30,11 +30,8 @@
 #include "gui.hpp"
 
 
-// fix dynubo && statubo ..
 
 // fix Member::adding all occurence set default  ..
-
-
 
 
 int main() {
@@ -47,10 +44,9 @@ int main() {
 
     engine.open("project.json");
 
-   
     engine.run();
 
-
+    logger.cout(Sev::warning);
 
 
     // Member buff("buff");

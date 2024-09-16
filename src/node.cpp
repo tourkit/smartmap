@@ -42,6 +42,8 @@ Node* Node::name(std::string value) {
 
 Node::~Node() {
 
+    trig(Event::DESTROY);
+
     auto t_childrens = childrens;
     for (auto c : t_childrens) 
         delete c;
@@ -54,8 +56,6 @@ Node::~Node() {
     if (parent_node) parent_node->remove(this);
 
     pool.erase(this);
-
-    trig(Event::DESTROY);
 
     if (owned) 
         deletetyped_cb[stored_type](void_ptr);
@@ -305,7 +305,7 @@ bool Node::remove(Node *child) {
 
     childrens.erase(it);
 
-    if (parent()) parent()->update();
+    update();
 
     return true;
 
