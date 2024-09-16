@@ -460,13 +460,15 @@ struct Boilerplate {
         builder.header_vertex += "layout (binding = 0, std140) uniform uboss { vec4 xx; };\n";
 
         builder.body_fragment += "\tCOLOR = xx;\n";
-
-        BoilerShader shader(builder.frag(),builder.vert());
-        BoilerUBO ubo;
-        ubo.bind(shader.id);
-        BoilerQuad quad;
         
         // PLOGW << builder.frag();
+
+        BoilerShader shader(builder.frag(),builder.vert());
+        
+        BoilerUBO ubo;
+        ubo.bind(shader.id);
+        
+        BoilerQuad quad;
 
         window.run([&](){
             
