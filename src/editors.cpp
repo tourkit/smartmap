@@ -796,6 +796,8 @@ void Editors::init() {
                     memset(&x[x.length()-1],0,1); // against new line everytime dafuk
 
                     shader->create(shader->frag.src,x);
+
+                    editor.SetErrorMarkers(shader->vert.errors);
                     
                 }
 
