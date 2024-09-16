@@ -194,7 +194,7 @@ ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
   auto color_lightgrey   = ImVec4(.25,.25,.25,1);
   auto color_lightergrey   = ImVec4(.4,.4,.4,1);
 
-  ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt,ImVec4(.4,.4,.4,.15));
+  ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt,ImVec4(1,1,1,.022));
   ImGui::PushStyleColor(ImGuiCol_TableBorderLight,color_darkergrey);
   ImGui::PushStyleColor(ImGuiCol_TableBorderStrong,color_darkergrey);
   ImGui::PushStyleColor(ImGuiCol_CheckMark,color_white);
@@ -213,6 +213,8 @@ ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
   ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive,color_lightgrey);
   ImGui::PushStyleColor(ImGuiCol_SliderGrab,color_lightergrey);
   ImGui::PushStyleColor(ImGuiCol_SliderGrabActive,color_orange);
+  ImGui::PushStyleColor(ImGuiCol_WindowBg,ImVec4(.1,.1,.1,1));
+  ImGui::PushStyleColor(ImGuiCol_TableBorderLight,ImVec4(0,0,0,0));
   ImGui::PushStyleColor(ImGuiCol_Button,color_lightgrey);
   ImGui::PushStyleColor(ImGuiCol_ButtonHovered,color_orange);
   ImGui::PushStyleColor(ImGuiCol_TabHovered,color_orange);

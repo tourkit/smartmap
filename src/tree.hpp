@@ -10,10 +10,7 @@ struct TreeWidget : GUI::Window {
 
     void draw() override;
 
-    void drawNode(Node* node);
-    void drawChildrens(Node* node);
-
-    bool TreeViewNode(Node* node);
+    bool TreeViewNode(Node* node, int depth = 0);
 
 
     std::string filter_str = "filter";
@@ -23,6 +20,8 @@ struct TreeWidget : GUI::Window {
     bool filtering = false;
 
 private:
+
+std::regex pattern; bool pattern_error = false;
 
 bool is_deleting = false;
 

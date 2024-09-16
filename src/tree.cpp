@@ -52,11 +52,21 @@ void TreeWidget::draw()  {
     
     }
 
-    if ((ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl) || ImGui::IsKeyDown(ImGuiKey_LeftShift)) && ImGui::IsKeyDown(ImGuiKey_Slash)) {
-    
-        ImGui::SetKeyboardFocusHere(-1);
-    
+    static bool slashdown = false;
+
+    if (!slashdown && ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyDown(ImGuiKey_Slash)) {
+
+        slashdown = true;
+
+        if (ImGui::IsItemFocused())
+            ImGui::SetKeyboardFocusHere(1);
+        else 
+            ImGui::SetKeyboardFocusHere(-1);
+        
     }
+    
+    if (slashdown && ImGui::IsKeyReleased(ImGuiKey_Slash)) 
+            slashdown = false;
     
     if (ImGui::IsKeyDown(ImGuiKey_Escape)) {
 
@@ -74,12 +84,20 @@ void TreeWidget::draw()  {
 
     ImGui::BeginChild("envoisinduvenin");
 
+
+
+    
+    try { pattern.assign(&search_str[0], std::regex_constants::icase); }
+    catch (const std::regex_error& e) {  pattern_error = true; }
+
+
     // Create the table
 
     if (ImGui::BeginTable("TreeTable", 1, ImGuiTableFlags_RowBg | ImGuiTableFlags_Borders)) {
 
         if (selected)
-            drawChildrens(selected);
+            for (auto child : selected->childrens) 
+                TreeViewNode(child);
 
         ImGui::EndTable();
     }
@@ -89,299 +107,164 @@ void TreeWidget::draw()  {
     ImGui::PopStyleVar(1);
 }
 
-void TreeWidget::drawChildrens(Node* node) { 
+
+
+
+
+bool TreeWidget::TreeViewNode(Node* node, int depth) {
+
+    ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
     
-    for (auto child : node->childrens) 
-        drawNode(child); 
+    using namespace ImGui;
 
-}
-
-
-
-bool TreeWidget::TreeViewNode(Node* node) {
-using namespace ImGui;
-
-            ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
-
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick ;
-
-    // if (!node->childrens.size()) 
-    flags |= ImGuiTreeNodeFlags_Leaf;
-    
-    flags |= ImGuiTreeNodeFlags_OpenOnArrow;
-
-    if (node->open) flags |= ImGuiTreeNodeFlags_DefaultOpen;
-
-    ImGuiContext& g = *GImGui;
-    ImGuiWindow* window = GetCurrentWindow();
-    if (window->SkipItems) return 0;
-
-    const ImVec2 curr_pos = ImVec2(0,GetCursorPos().y);
-
-    auto t_pos = GetCursorPosX()-9;
-
-    SetCursorPosX(GetWindowWidth()-19);
-
-    std::string str = "##active"+std::to_string(node->uid);
-    Checkbox(str.c_str(), &node->is_active);
-    SameLine();
-
-    bool hovered = false;
-
-    if (ImGui::GetMousePos().y > curr_pos.y+ImGui::GetWindowPos().y && ImGui::GetMousePos().y < curr_pos.y+ImGui::GetWindowPos().y+ImGui::GetTextLineHeight()) hovered = true;
-
-
-    ImVec4 node_color = *(ImVec4*)&node->color;
-
-    if(gui->selected != node) {
-
-        if (hovered) node_color = ImVec4(1, .4, 0, 1);
-
-        else node_color.w = .65;
-
-    }
-
-    if(node->error) 
-        node_color = ImVec4(1, 0, 0, 1);
-
-    ImGui::PushStyleColor(ImGuiCol_Text, node_color);
-    
-    if (node->childrens.size()) {    
-        SetCursorPosX(t_pos+10);
-        Text("+");
-        if (IsItemClicked(0)) {
-            node->open = !node->open;
-        }
-        SameLine();
-    }
-    SetCursorPosX(t_pos);
-
-
-    const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
-
-    ImDrawList* drawList = ImGui::GetWindowDrawList();
-
-    static TestWin testwin("test", gui);
-
-    verticalLineStart.x+=3;
-    verticalLineStart.y+=-10;
-    ImVec2 verticalLineEnd = verticalLineStart;
-
-    verticalLineEnd.y+=18;
-    ImVec2 verticalLineEnd2 = verticalLineEnd;
-    verticalLineEnd2.x+=7;//Engine::getInstance().blank[8];
-
-
-
-    if (GetCursorPosX() > 3)
-        drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(200,200,200,55));
-    
-    drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(200,200,200,55));
-
-    bool x = false;
-
-    if (is_renaming != node) {
-        
-        x = TreeNodeEx(node->name().c_str(), flags);
-
-        if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0)) {
-            is_renaming = node;
-            memset(&renaming_name[0],0,612);
-            memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
-        }
-
-    } else {
-    SetCursorPosX(t_pos + 17 );
-        ;
-        if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
-
-            gui->rename_list[node] = &renaming_name[0];
-
-            is_renaming = nullptr;
-
-        }
-    }
-
-    if (ImGui::BeginPopupContextItem()) {
-
-        // if (ImGui::BeginMenu("add")) {
-
-        //     if (ImGui::MenuItem("New")) {}
-
-        //     ImGui::EndMenu();
-        // }
-
-        bool will_exit = false;
-        if (!is_deleting) {
-
-            ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
-            if(ImGui::MenuItem("delete")){ is_deleting = true; }
-            ImGui::PopItemFlag();
-
-        }else {
-
-            if(ImGui::MenuItem("Sure ?")){
-
-                is_deleting = false;
-                
-
-                gui->delete_list.push_back(node);
-
-            }
-
-        }
-
-        if (!ImGui::IsItemHovered()) 
-            is_deleting = false;
-
-        // if(ImGui::MenuItem("rename")) {
-
-        //     is_renaming = node;
-
-        //     memset(&renaming_name[0],0,612);
-        //     memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
-
-        // }
-
-        // if(ImGui::MenuItem("update")) 
-        //     node->update();
-
-        if (ImGui::BeginMenu("trig")) {
-            
-            if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
-            if (ImGui::MenuItem("CREATE")) node->trig(Node::CREATE);
-
-            ImGui::EndMenu();
-        }
-
-        Separator();
-
-        ImGui::Text(node->type_name().c_str());
-
-        ImGui::EndPopup();
-    }
-
-    PopStyleColor();
-
-    static bool holding = false;
-
-    if (ImGui::BeginDragDropSource()) {
-
-        auto ptr = (uint64_t)node;
-        ImGui::SetDragDropPayload("_TREENONODE", &(ptr), sizeof(uint64_t));
-
-        holding = true;
-
-        ImGui::Text(node->name().c_str());
-        ImGui::EndDragDropSource();
-
-    }else {
-
-        static bool mouse_down = false;
-
-        static Node* s = nullptr;
-
-        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(0)) { mouse_down = true; s = node; }
-
-        if (mouse_down) 
-            if (ImGui::IsMouseReleased(0) && !holding) {
-                
-                gui->selected = s;
-
-                if (!gui->editors.size()) 
-                    gui->editors.emplace_back(new EditorWidget(gui));
-                
-            }
-
-        if (ImGui::IsMouseReleased(0)) mouse_down = false;
-
-    }
-
-    if (ImGui::BeginDragDropTarget()) {
-
-        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) {
-
-            auto n = (Node*)(*(uint64_t*)payload->Data);
-
-            node->add(n);
-
-            if (holding) 
-                holding = false;
-
-        }
-
-        ImGui::EndDragDropTarget();
-
-    }
-
-    if (ImGui::IsDragDropActive()) {
-
-        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
-        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
-
-        ImVec2 dropperline;
-        dropperline.x = ImGui::GetWindowPos().x;
-        dropperline.y = ImGui::GetCursorScreenPos().y;
-        dropperline.y += 3;
-
-        ImVec2 dropperline2 = dropperline;
-        dropperline2.x += ImGui::GetWindowWidth();
-        dropperline2.y -= 4;
-
-        if (ImGui::BeginDragDropTarget()) {
-
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) 
-                {PLOGI << "TODO MOVE NODE";}
-
-            ImGui::EndDragDropTarget();
-        }
-        ImGui::SameLine();
-        ImGui::PushID(6969);
-        ImGui::BeginGroup();
-        drawList->AddRectFilled(dropperline, dropperline2, IM_COL32(255,255,0,40));
-        ImGui::EndGroup();
-        ImGui::PopID();
-
-
-        ImGui::PopStyleVar(2);
-
-    }
-
-    return x;
-}
-
-
-void TreeWidget::drawNode(Node* node) {
-
-    if (node->hidden) return;
-
-    std::regex pattern; bool pattern_error = false;
-    try { pattern.assign(&search_str[0], std::regex_constants::icase); }
-    catch (const std::regex_error& e) {  pattern_error = true; }
 
     if (!filtering || !strlen(&search_str[0]) || (!pattern_error && std::regex_search(node->name().c_str(), pattern))) {
+    ImVec2 t_pos = GetCursorPos();
+    t_pos.x = depth*8;
 
-        ImGui::TableNextRow();
+    ImGui::TableNextRow();
 
-        if (ImGui::TableNextColumn()) {
+    if (ImGui::TableNextColumn()) {
 
 
-            bool recurse = TreeViewNode(node);
 
-        // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
+        ////////////////////
+        // checkbox
+        ////////////////////
 
-            if (recurse) {
+        SetCursorPosX(GetWindowWidth()-19);
 
-                drawChildrens(node);
+        Checkbox(("##active"+std::to_string(node->uid)).c_str(), &node->is_active);
 
-                ImGui::TreePop();
+        SameLine();
+        
+        ////////////////////
+        // + for open 
+        ////////////////////
 
-            }
+        if (node->childrens.size()) {    
+
+            SetCursorPosX(t_pos.x+10);
+
+            Text("+");
+
+            if (IsItemClicked(0)) 
+                node->open = !node->open;
+            
+            SameLine();
 
         }
 
-    }else
-        if (filtering && search_str[0]) 
-            drawChildrens(node); 
+        ImGui::SetCursorPosX(t_pos.x+21);
+
+        ////////////////////
+        // connection lines
+        ////////////////////
+
+        const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+        static TestWin testwin("test", gui);
+        testwin.floats.resize(10);
+
+        verticalLineStart.x+=(depth*8)+testwin.floats[0];//21
+        verticalLineStart.y+=-10+testwin.floats[1];
+        ImVec2 verticalLineEnd = verticalLineStart;
+
+        verticalLineEnd.y+=18+testwin.floats[2];
+        ImVec2 verticalLineEnd2 = verticalLineEnd;
+        verticalLineEnd2.x+=12+testwin.floats[3];//Engine::getInstance().blank[8];
+
+        if (ImGui::GetCursorPosX() > 25+testwin.floats[4]) {
+            drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(200,200,200,50));
+            
+            verticalLineEnd.x = std::max(verticalLineEnd.x+10, ImGui::GetWindowPos().x+20+testwin.floats[5])-10;
+            drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(200,200,200,50));
+
+        }
+
+
+        ////////////////////
+        //draw name
+        ////////////////////
+
+        bool hovered = false;
+
+        if (ImGui::GetMousePos().y > t_pos.y+ImGui::GetWindowPos().y && ImGui::GetMousePos().y < t_pos.y+ImGui::GetWindowPos().y+ImGui::GetTextLineHeight()) hovered = true;
+
+        ImVec4 node_color = *(ImVec4*)&node->color;
+
+        if(gui->selected != node) {
+
+            if (hovered) node_color = ImVec4(1, .4, 0, 1);
+
+            else node_color.w = .65;
+
+        }
+
+        if(node->error) 
+            node_color = ImVec4(1, 0, 0, 1);
+
+
+        if (is_renaming != node) {
+        ImGui::PushStyleColor(ImGuiCol_Text, node_color);
+            
+            ImGui::SetCursorPosX(t_pos.x+21);
+            Text(node->name().c_str());
+
+
+
+            if (ImGui::IsItemClicked()){
+                if (ImGui::IsMouseDoubleClicked(0)) {
+                    is_renaming = node;
+                    memset(&renaming_name[0],0,612);
+                    memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
+                }else{
+                    if (IsMouseDown(0))
+                        gui->selected = node;
+                    // else if (IsMouseDown(1))
+               }
+            }
+
+            PopStyleColor();
+
+
+
+
+        } else {
+
+            SetCursorPosX(t_pos.x + 17 );
+            
+            if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
+
+                gui->rename_list[node] = &renaming_name[0];
+
+                is_renaming = nullptr;
+
+            }
+        }
+
+
+    }
+
+
+                //     if (ImGui::BeginPopupContextItem()) {
+
+                // bool will_exit = false;
+
+
+                // ImGui::EndPopup();
+            // }
+}
+    if (node->open || filtering)
+        for (auto child : node->childrens) 
+            TreeViewNode(child, depth+1); 
+
+    return true;
 
 }
+
+    
+    // if (!filtering || !strlen(&search_str[0]) || (!pattern_error && std::regex_search(node->name().c_str(), pattern))) {
+
