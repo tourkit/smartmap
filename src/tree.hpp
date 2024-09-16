@@ -5,6 +5,7 @@
 struct TreeWidget : GUI::Window {
 
     Node* selected = nullptr;
+    std::vector<Node*> visible_list;
 
     TreeWidget(GUI* gui = nullptr);
 

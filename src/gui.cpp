@@ -188,7 +188,7 @@ ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
 
 
   auto color_white      = ImVec4(1,1,1,1);
-  auto color_orange      = ImVec4(1,.4,0,1);
+  auto color_orange      = ImVec4(.845,.420,0.098,1);
   auto color_darkergrey  = ImVec4(.1,.1,.1,1);
   auto color_darkgrey  = ImVec4(.2,.2,.2,1);
   auto color_lightgrey   = ImVec4(.25,.25,.25,1);
@@ -222,6 +222,9 @@ ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
   ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Darker border color
   ImGui::PushStyleColor(ImGuiCol_HeaderHovered,ImVec4(0,0,0,0));
   ImGui::PushStyleColor(ImGuiCol_HeaderActive,ImVec4(0,0,0,0));
+  ImGui::PushStyleColor(ImGuiCol_HeaderHovered,ImVec4(1,1,1,0.333));
+  ImGui::PushStyleColor(ImGuiCol_PopupBg,ImVec4(.254,.254,.254,1));
+  ImGui::PushStyleColor(ImGuiCol_Text,ImVec4(.939,.939,.939,1));
 
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
