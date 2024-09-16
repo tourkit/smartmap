@@ -2,6 +2,7 @@
 
 #include "ImGuiColorTextEdit/TextEditor.h"
 #include "imgui.h"
+#include "rapidjson/stringbuffer.h"
 #include "vendors/imgui/imgui_internal.h"
 
 #include "editor.hpp"
@@ -29,6 +30,7 @@
 #include <map>
 
 #include <format>
+#include <sstream>
 #include <string>
 
 static int hovered_offset = -1;
@@ -1233,6 +1235,39 @@ void Editors::init() {
     ////////// DRAWCALL.HPP
 
     Editor<DrawCall>([](Node* node, DrawCall *dc){
+
+        if (BeginPopupContextWindow()) {
+
+
+            static std::vector<std::string> BLEND_NAMES = {
+                "GL_ZERO",
+                "GL_ONE",
+                "GL_SRC_COLOR",
+                "GL_ONE_MINUS_SRC_COLOR",
+                "GL_DST_COLOR",
+                "GL_ONE_MINUS_DST_COLOR",
+                "GL_SRC_ALPHA",
+                "GL_ONE_MINUS_SRC_ALPHA",
+                "GL_DST_ALPHA",
+                "GL_ONE_MINUS_DST_ALPHA",
+                "GL_CONSTANT_COLOR",
+                "GL_ONE_MINUS_CONSTANT_COLOR",
+                "GL_CONSTANT_ALPHA",
+                "GL_ONE_MINUS_CONSTANT_ALPHA",
+                "GL_SRC_ALPHA_SATURATE",
+                "GL_SRC1_COLOR",
+                "GL_ONE_MINUS_SRC1_COLOR",
+                "GL_SRC1_ALPHA",
+                "GL_ONE_MINUS_SRC1_ALPHA"
+
+            };
+
+
+            SliderInt(("IN: "+BLEND_NAMES[dc->GL_BLEND_MODE_IN]).c_str(), &dc->GL_BLEND_MODE_IN, 0, BLEND_NAMES.size()-1);
+            SliderInt(("OUT: "+BLEND_NAMES[dc->GL_BLEND_MODE_OUT]).c_str(), &dc->GL_BLEND_MODE_OUT, 0, BLEND_NAMES.size()-1);
+
+            EndPopup();
+        }
 
         if (ImGui::BeginTabBar("dctqb", ImGuiTabBarFlags_None)) {
 

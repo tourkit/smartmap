@@ -55,8 +55,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
 
     window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_S}] = save_cb;
     window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_S}] = save_cb;
-    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_S}] = save_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_S}] = save_cb;
 
     
     static auto demo_cb = [&]() { engine.gui_v->show_demo = !engine.gui_v->show_demo; };
@@ -75,8 +73,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
 
     window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_I}] = guiact_cb;
     window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_I}] = guiact_cb;
-    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_I}] = guiact_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_I}] = guiact_cb;
     window.mousedown_cb = [](int button) { 
         
         if (button == GLFW_MOUSE_BUTTON_LEFT) guiact_cb(); 
