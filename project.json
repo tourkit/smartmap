@@ -12,6 +12,9 @@
       }
   },
   "layers": {
+    "virtuallayers1": {
+
+    },
       "Free Layer 1": {
             "dim": [ 100,100 ],
             "models": {

@@ -338,3 +338,16 @@ void GUI::render() {
 
 
 }
+
+
+
+
+void TestWin::draw() {
+
+    for (int i = 0; i < floats.size(); i++) 
+        ImGui::SliderFloat(("float "+std::to_string(i)).c_str(), &floats[i], -30, 30);
+      
+    for (int i = 0; i < ints.size(); i++) 
+        ImGui::SliderInt(("int "+std::to_string(i)).c_str(), &ints[i], -30, 30);
+
+}

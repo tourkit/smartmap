@@ -122,3 +122,14 @@ struct GUI {
 private:
     static inline std::vector<Window*> close_list;
 };
+
+struct TestWin : GUI::Window {
+
+      std::vector<float> floats;
+      std::vector<int> ints;
+
+      using GUI::Window::Window;
+
+      void draw();
+
+};

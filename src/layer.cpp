@@ -64,7 +64,7 @@ void Layer::draw() {
     fb.clear();
 
     DrawCall::draw();
-    
+
 }
 
 // FeedbackEffector  ////////////////
@@ -305,13 +305,17 @@ void UberLayer::calc_matrice() {
         }
     }
 
-    if (!matrice.size()) return;
-    if (!matrice.back().size()) matrice.resize(matrice.size()-1);
+    if (matrice.size()<2) 
+        return;
+
+    if (!matrice.back().size()) 
+        matrice.resize(matrice.size()-1);
 
     float matrice_height = matrice.back()[0][1]+matrice.back()[0][3];
     float matrice_width = matrice[0].back()[0]+matrice[0].back()[2];
 
     fb.create( matrice_width, matrice_height );
+
     if (feedback_v)
         feedback_v->texture.create( matrice_width, matrice_height );
 

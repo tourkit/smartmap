@@ -101,10 +101,15 @@ void TreeWidget::drawChildrens(Node* node) {
 bool TreeWidget::TreeViewNode(Node* node) {
 using namespace ImGui;
 
+            ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
 
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick ;
 
-    if (!node->childrens.size()) flags |= ImGuiTreeNodeFlags_Leaf;
+    // if (!node->childrens.size()) 
+    flags |= ImGuiTreeNodeFlags_Leaf;
+    
+    flags |= ImGuiTreeNodeFlags_OpenOnArrow;
+
     if (node->open) flags |= ImGuiTreeNodeFlags_DefaultOpen;
 
     ImGuiContext& g = *GImGui;
@@ -113,14 +118,13 @@ using namespace ImGui;
 
     const ImVec2 curr_pos = ImVec2(0,GetCursorPos().y);
 
-    auto t_pos = GetCursorPosX();
+    auto t_pos = GetCursorPosX()-9;
 
     SetCursorPosX(GetWindowWidth()-19);
 
     std::string str = "##active"+std::to_string(node->uid);
     Checkbox(str.c_str(), &node->is_active);
     SameLine();
-    SetCursorPosX(t_pos);
 
     bool hovered = false;
 
@@ -137,9 +141,43 @@ using namespace ImGui;
 
     }
 
-    ImGui::PushStyleColor(ImGuiCol_Text, node_color);
+    if(node->error) 
+        node_color = ImVec4(1, 0, 0, 1);
 
-    SetCursorPosX(GetCursorPosX()-1);
+    ImGui::PushStyleColor(ImGuiCol_Text, node_color);
+    
+    if (node->childrens.size()) {    
+        SetCursorPosX(t_pos+10);
+        Text("+");
+        if (IsItemClicked(0)) {
+            node->open = !node->open;
+        }
+        SameLine();
+    }
+    SetCursorPosX(t_pos);
+
+
+    const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+    static TestWin testwin("test", gui);
+
+    verticalLineStart.x+=3;
+    verticalLineStart.y+=-10;
+    ImVec2 verticalLineEnd = verticalLineStart;
+
+    verticalLineEnd.y+=18;
+    ImVec2 verticalLineEnd2 = verticalLineEnd;
+    verticalLineEnd2.x+=7;//Engine::getInstance().blank[8];
+
+
+
+    if (GetCursorPosX() > 3)
+        drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(200,200,200,55));
+    
+    drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(200,200,200,55));
+
     bool x = false;
 
     if (is_renaming != node) {
@@ -153,7 +191,8 @@ using namespace ImGui;
         }
 
     } else {
-
+    SetCursorPosX(t_pos + 17 );
+        ;
         if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
             gui->rename_list[node] = &renaming_name[0];
@@ -187,11 +226,6 @@ using namespace ImGui;
                 
 
                 gui->delete_list.push_back(node);
-                // gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>{nullptr, std::function<void(void*)>([&](void* ptr) { 
-
-                //     delete (Node*)ptr;
-
-                // })});
 
             }
 
@@ -280,10 +314,40 @@ using namespace ImGui;
 
     }
 
+    if (ImGui::IsDragDropActive()) {
 
+        ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
+
+        ImVec2 dropperline;
+        dropperline.x = ImGui::GetWindowPos().x;
+        dropperline.y = ImGui::GetCursorScreenPos().y;
+        dropperline.y += 3;
+
+        ImVec2 dropperline2 = dropperline;
+        dropperline2.x += ImGui::GetWindowWidth();
+        dropperline2.y -= 4;
+
+        if (ImGui::BeginDragDropTarget()) {
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) 
+                {PLOGI << "TODO MOVE NODE";}
+
+            ImGui::EndDragDropTarget();
+        }
+        ImGui::SameLine();
+        ImGui::PushID(6969);
+        ImGui::BeginGroup();
+        drawList->AddRectFilled(dropperline, dropperline2, IM_COL32(255,255,0,40));
+        ImGui::EndGroup();
+        ImGui::PopID();
+
+
+        ImGui::PopStyleVar(2);
+
+    }
 
     return x;
-
 }
 
 
@@ -301,60 +365,12 @@ void TreeWidget::drawNode(Node* node) {
 
         if (ImGui::TableNextColumn()) {
 
-            ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
 
             bool recurse = TreeViewNode(node);
 
         // if(!ImGui::IsPopupOpen("#popup")){is_deleting = false;}
 
-            const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
-
             if (recurse) {
-
-
-                ImDrawList* drawList = ImGui::GetWindowDrawList();
-                verticalLineStart.x+=7;
-                verticalLineStart.y+=-7;
-                ImVec2 verticalLineEnd = verticalLineStart;
-
-                verticalLineEnd.y+=14;
-                ImVec2 verticalLineEnd2 = verticalLineEnd;
-                verticalLineEnd2.x+=10;//Engine::getInstance().blank[8];
-                drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(122,122,122,122));
-                drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(122,122,122,122));
-
-                if (ImGui::IsDragDropActive()) {
-
-                    ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
-                    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));
-
-                    ImVec2 dropperline;
-                    dropperline.x = ImGui::GetWindowPos().x;
-                    dropperline.y = ImGui::GetCursorScreenPos().y;
-                    dropperline.y += 3;
-
-                    ImVec2 dropperline2 = dropperline;
-                    dropperline2.x += ImGui::GetWindowWidth();
-                    dropperline2.y -= 4;
-
-                    if (ImGui::BeginDragDropTarget()) {
-
-                        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) 
-                            {PLOGI << "TODO MOVE NODE";}
-
-                        ImGui::EndDragDropTarget();
-                    }
-                    ImGui::SameLine();
-                    ImGui::PushID(6969);
-                    ImGui::BeginGroup();
-                    drawList->AddRectFilled(dropperline, dropperline2, IM_COL32(255,255,0,40));
-                    ImGui::EndGroup();
-                    ImGui::PopID();
-
-
-                    ImGui::PopStyleVar(2);
-
-                }
 
                 drawChildrens(node);
 

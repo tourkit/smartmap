@@ -765,6 +765,7 @@ void Editors::init() {
                     
                     editor.SetText(shader->frag.src);
                     editor.SetErrorMarkers(shader->frag.errors);
+                    node->error = shader->frag.errors.size();
 
                 }
 
@@ -780,6 +781,9 @@ void Editors::init() {
                     shader->create(x,shader->vert.src);
 
                     editor.SetErrorMarkers(shader->frag.errors);
+                    node->error = shader->frag.errors.size();
+
+                    
 
                 }
                 
@@ -793,6 +797,7 @@ void Editors::init() {
                 
                     editor.SetText(shader->vert.src);
                     editor.SetErrorMarkers(shader->vert.errors);
+                    node->error = shader->vert.errors.size();
               
                 }
 
@@ -807,6 +812,7 @@ void Editors::init() {
                     shader->create(shader->frag.src,x);
 
                     editor.SetErrorMarkers(shader->vert.errors);
+                    node->error = shader->vert.errors.size();
                     
                 }
 
@@ -1303,8 +1309,8 @@ void Editors::init() {
                     };
 
 
-                    SliderInt(("IN: "+BLEND_NAMES[dc->GL_BLEND_MODE_IN]).c_str(), &dc->GL_BLEND_MODE_IN, 0, BLEND_NAMES.size()-1);
-                    SliderInt(("OUT: "+BLEND_NAMES[dc->GL_BLEND_MODE_OUT]).c_str(), &dc->GL_BLEND_MODE_OUT, 0, BLEND_NAMES.size()-1);
+                    SliderInt(("IN: "+BLEND_NAMES[dc->GL_BLEND_MODE_IN]+"###"+std::to_string(engine.gui_v->member_count++)).c_str(), &dc->GL_BLEND_MODE_IN, 0, BLEND_NAMES.size()-1);
+                    SliderInt(("OUT: "+BLEND_NAMES[dc->GL_BLEND_MODE_OUT]+"###"+std::to_string(engine.gui_v->member_count++)).c_str(), &dc->GL_BLEND_MODE_OUT, 0, BLEND_NAMES.size()-1);
 
                     Text(("instances: " + std::to_string((dc->models.size() == 1 ? dc->models[0]->quantity():1))).c_str());
 

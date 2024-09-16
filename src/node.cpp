@@ -268,6 +268,8 @@ void Node::update() {
 
     PLOGV << type_name() << "::" << name();
 
+    error = false;
+
     trig(Event::CHANGE);
 
     if (parent_node) 

@@ -27,9 +27,12 @@
 #include "editor.hpp"
 #include "engine.hpp"
 #include "builder.hpp"
+#include "imgui.h"
 #include "layer.hpp"
 #include "gui.hpp"
 #include "member.hpp"
+#include <string>
+#include <vector>
 
 
 
