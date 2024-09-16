@@ -446,8 +446,6 @@ struct Boilerplate {
 
         logger.cout(Sev::warning);
 
-        logger.cout(Sev::warning);
-
         BoilerWindow window;
         BoilerGUI gui(window);
 
