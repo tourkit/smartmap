@@ -1,5 +1,6 @@
 #include "editors.hpp"
 
+#include "ImGuiColorTextEdit/TextEditor.h"
 #include "imgui.h"
 #include "vendors/imgui/imgui_internal.h"
 
@@ -297,8 +298,9 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
             SetNextItemWidth(-FLT_MIN-6);
             PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-            bool dis = false;
+            static bool dis = false;
             if (*(float*)m->to() == 0){
+                ImGui::BeginDisabled();
                 ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(1.0f, 0.0f, 0.0f, 0.0f));
                 dis = true;
             }
@@ -306,8 +308,11 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
             auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
             ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
 
-            if (dis)
+            if (dis){
+                ImGui::EndDisabled();
                 ImGui::PopStyleColor(1);
+                dis = false;
+            }
 
             SameLine(); 
             SetNextItemWidth(85);
@@ -409,8 +414,11 @@ static bool IntButtons(int* p_data ) {
         const ImVec2 backup_frame_padding = style.FramePadding;
         style.FramePadding.x = style.FramePadding.y;
         ImGuiButtonFlags button_flags = ImGuiButtonFlags_Repeat | ImGuiButtonFlags_DontClosePopups;
-        if (flags & ImGuiInputTextFlags_ReadOnly)
+        bool dis = false;
+        if (flags & ImGuiInputTextFlags_ReadOnly){
             BeginDisabled();
+            dis = true;
+        }
         SameLine(0, style.ItemInnerSpacing.x);
 
         static std::set<int*> deletings;
@@ -431,6 +439,8 @@ static bool IntButtons(int* p_data ) {
             }
             
         }
+        if (dis)
+            EndDisabled();
 
         
         SameLine(0, style.ItemInnerSpacing.x);
@@ -446,8 +456,6 @@ static bool IntButtons(int* p_data ) {
             
             }
         }
-        if (flags & ImGuiInputTextFlags_ReadOnly)
-            EndDisabled();
 
         style.FramePadding = backup_frame_padding;
 
@@ -726,8 +734,9 @@ void Editors::init() {
         if (!init){
 
             editor.SetShowWhitespaces(false);
-            editor.SetReadOnly(false);
 
+            editor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
+            editor.SetReadOnly(false);
             init = true;
         }
         
@@ -735,8 +744,11 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("fragment")) {
 
-                if (editor.GetText().length() != shader->frag.src.length() || editor.GetText() != shader->frag.src) 
+
+                if (editor.GetText().length() != shader->frag.src.length()+1 || editor.GetText() != shader->frag.src) 
                     editor.SetText(shader->frag.src);
+
+                
                 
                 editor.Render("fragment");
 
@@ -749,7 +761,7 @@ void Editors::init() {
             }
             if (ImGui::BeginTabItem("vertex")) {
 
-                if (editor.GetText().length() != shader->vert.src.length() || editor.GetText() != shader->vert.src) 
+                if (editor.GetText().length() != shader->vert.src.length()+1 || editor.GetText() != shader->vert.src) 
                     editor.SetText(shader->vert.src);
               
                 editor.Render("vertex");
