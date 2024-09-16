@@ -49,13 +49,12 @@ bool Shader::create(std::string src, uint8_t type)  {
 
         glGetShaderInfoLog(id, 512, NULL, &infoLog[0]);
 
-        std::string line = infoLog;
+        auto lines = split(infoLog, "\n");
     
-        std::istringstream iss(infoLog);
 
         std::map<int, std::vector<std::string>> split_errors;
 
-        for (std::string line; std::getline(iss, line); ) {
+        for (auto line : lines) {
             
             std::smatch match;
             std::regex color_regex(".?([0-9]+):([0-9]+)(\\(([0-9]+)\\): error)?: (.+)", std::regex_constants::icase);
@@ -107,10 +106,9 @@ bool Shader::create(std::string src, uint8_t type)  {
 
             error_str = error_str.substr(0,error_str.length()-4);
 
-            iss = std::istringstream (src);
 
             int count = 0;
-            for (std::string line; std::getline(iss, line); ) {
+            for (std::string line : split(src, "\n") ) {
                 if (count++ == error.first-1) {
                     boost::trim_left(line);
                     error_str += " : " + line;    
@@ -127,10 +125,9 @@ bool Shader::create(std::string src, uint8_t type)  {
         PLOGE << output;
         PLOGV << "\n" << source;
         return success;
-        iss = std::istringstream (source);
         int count = 1;
 
-        for (std::string line; std::getline(iss, line); ) {
+        for (std::string line: split(source, "\n") ) {
 
             PLOGV << count++ << ": " << line;
 
