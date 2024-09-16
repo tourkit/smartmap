@@ -7,30 +7,18 @@
 // static unsigned int pos_x = 0;
 // static unsigned int pos_y = 0;
 
-
-#include <vector>
-#include <cmath>
-
-#include <GL/gl3w.h>
-#include <GLFW/glfw3.h>
-
-
-#include "image.hpp"
-#include "imgui.h"
 #include "log.hpp"
-
-
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
 
 #include <iostream>
 #include <cstring>
 #include <string>
+#include <unistd.h>
+#include <vector>
+#include <cmath>
+
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-
 
 struct BoilerArtnet {
 
@@ -77,6 +65,61 @@ struct BoilerArtnet {
 
         return nullptr;
 
+    }
+
+};
+
+
+
+#include <GL/gl3w.h>
+#include <GLFW/glfw3.h>
+
+
+struct BoilerWindow {
+
+    GLuint width , height ,pos_x , pos_y ;
+
+    double lastTime = glfwGetTime();
+
+    GLFWwindow* window;
+
+    float clear_color[4] = {0,0,0.1,1};
+
+    BoilerWindow(GLuint width = 400, GLuint height = 300, GLuint pos_x = 400, GLuint pos_y = 300) : 
+        width(width), height(height), pos_x(pos_x), pos_y(pos_y) {
+
+        glfwInit();
+
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        window = glfwCreateWindow(width, height, "OUTPUT", nullptr, nullptr);
+
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(0);
+
+        gl3wInit();
+
+    }
+
+    void run(std::function<void()> cb) {
+
+            while (!glfwWindowShouldClose(window)) {
+
+                lastTime = glfwGetTime();
+
+
+                glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]); // BG COLOR
+                glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
+
+                cb();
+
+                glfwPollEvents();
+
+                glfwSwapBuffers(window);
+
+            }
     }
 
 };
@@ -146,6 +189,8 @@ struct BoilerQuad {
 };
 
 
+#include "image.hpp"
+
 struct BoilerTexture {
 
     Image image;
@@ -183,7 +228,7 @@ struct BoilerShader {
     
     BoilerShader(
 
-        std::string frag = "#version 430 core \nstruct Ubo { float x,y,z,w;};\nuniform sampler2D meskine;\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() {\n COLOR = texture(meskine,UV);\n COLOR += vec4(0,UV.x,ubo.z,1);\n}",
+        std::string frag = "#version 430 core \n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() {\n COLOR = vec4(UV.x);\n}",
         std::string vert = "#version 430 core \n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nout vec2 UV;\nvoid main() { UV = TEXCOORD; gl_Position = vec4(POSITION.x,POSITION.y,0,1); }"
 
     ) : frag(frag), vert(vert) { create(); }
@@ -308,54 +353,12 @@ struct BoilerUBO {
 
 };
 
-struct BoilerWindow {
-
-    GLuint width , height ,pos_x , pos_y ;
-
-    double lastTime = glfwGetTime();
-
-    GLFWwindow* window;
-
-    float clear_color[4] = {0,0,0.1,1};
-
-    BoilerWindow(GLuint width = 400, GLuint height = 300, GLuint pos_x = 400, GLuint pos_y = 300) : 
-        width(width), height(height), pos_x(pos_x), pos_y(pos_y) {
-
-        glfwInit();
-
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-        window = glfwCreateWindow(width, height, "OUTPUT", nullptr, nullptr);
-
-        glfwMakeContextCurrent(window);
-        glfwSwapInterval(0);
-
-        gl3wInit();
-
-    }
-
-    void run(std::function<void()> cb) {
-
-            while (!glfwWindowShouldClose(window)) {
-
-                lastTime = glfwGetTime();
 
 
-                glClearColor(clear_color[0], clear_color[1], clear_color[2], clear_color[3]); // BG COLOR
-                glClear(GL_COLOR_BUFFER_BIT); //|GL_STENCIL_BUFFER_BIT); ??
 
-                cb();
-
-                glfwPollEvents();
-
-                glfwSwapBuffers(window);
-
-            }
-    }
-
-};
+#include "imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
 
 struct BoilerGUI {
 
@@ -435,26 +438,43 @@ struct BoilerGUI {
 // #include "editor.hpp"
 // #include "engine.hpp"
 
+#include "builder.hpp"
+
 struct Boilerplate {
 
     static void Init(bool run = true) {
 
-        BoilerArtnet artnet;
+        logger.cout(Sev::warning);
+
+        logger.cout(Sev::warning);
 
         BoilerWindow window;
+        BoilerGUI gui(window);
+
+        // BoilerArtnet artnet;
+
+        Builder builder;
+        builder.build();
+
+        builder.header_fragment += "layout (binding = 0, std140) uniform uboss { vec4 xx; };\n";
+        builder.header_vertex += "layout (binding = 0, std140) uniform uboss { vec4 xx; };\n";
+
+        builder.body_fragment += "\tCOLOR = xx;\n";
+
+        BoilerShader shader(builder.frag(),builder.vert());
+        BoilerUBO ubo;
+        ubo.bind(shader.id);
+        BoilerQuad quad;
+        
+        // PLOGW << builder.frag();
 
         window.run([&](){
+            
+            shader.use();
+            quad.draw();
 
-            char* buffer = artnet.receive();
-
-            if (buffer) {
-
-                if (buffer[0]) 
-                    window.clear_color[0] = 0;
-                else
-                    window.clear_color[0] = 1;
-                
-            }
+            if (gui.draw(&ubo.data[0], 4))
+                ubo.upload();
 
         });
 
