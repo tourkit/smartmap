@@ -754,14 +754,19 @@ void Editors::init() {
             
             init = true;
         }
-        
+
+
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
             if (ImGui::BeginTabItem("fragment")) {
 
 
-                if (editor.GetText().length() != shader->frag.src.length()+1) 
+                if (editor.GetText().length() != shader->frag.src.length()+1) {
+                    
                     editor.SetText(shader->frag.src);
+                    editor.SetErrorMarkers(shader->frag.errors);
+
+                }
 
                 
                 editor.Render("fragment");
@@ -784,9 +789,13 @@ void Editors::init() {
             }
             if (ImGui::BeginTabItem("vertex")) {
 
-                if (editor.GetText().length() != shader->vert.src.length()+1) 
+                if (editor.GetText().length() != shader->vert.src.length()+1) {
+                
                     editor.SetText(shader->vert.src);
+                    editor.SetErrorMarkers(shader->vert.errors);
               
+                }
+
                 editor.Render("vertex");
 
                 if (editor.IsTextChanged()) {
