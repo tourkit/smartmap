@@ -16,6 +16,7 @@
 
 
 #include "image.hpp"
+#include "imgui.h"
 #include "log.hpp"
 
 
@@ -182,7 +183,7 @@ struct BoilerShader {
     
     BoilerShader(
 
-        std::string frag = "#version 430 core \nstruct Ubo { int x,y,z,w;};\nuniform sampler2D meskine;\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() {\n COLOR = texture(meskine,UV);\n COLOR += vec4(0,UV.x,float(ubo.z)/10.0f,1);\n}",
+        std::string frag = "#version 430 core \nstruct Ubo { float x,y,z,w;};\nuniform sampler2D meskine;\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() {\n COLOR = texture(meskine,UV);\n COLOR += vec4(0,UV.x,ubo.z,1);\n}",
         std::string vert = "#version 430 core \n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nout vec2 UV;\nvoid main() { UV = TEXCOORD; gl_Position = vec4(POSITION.x,POSITION.y,0,1); }"
 
     ) : frag(frag), vert(vert) { create(); }
@@ -268,42 +269,41 @@ struct BoilerShader {
 
 struct BoilerUBO {
 
-    std::vector<int> data = {1,2,10,100};
+    std::vector<float> data = {1,2,10,100};
 
     int binding = 0;
     std::string name = "ubo";
 
     GLuint id;
 
-    BoilerUBO(GLuint shader) {
+    BoilerUBO() {
 
         glGenBuffers(1, &id);
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         glBufferData(GL_UNIFORM_BUFFER, data.size()*4, NULL, GL_DYNAMIC_COPY);
-
-        bind(shader);
-
-        upload();
     }
 
     void upload(){ 
 
-        std::string str;
-        for (int i = 0 ; i < data.size()*sizeof(int); i++) str+= std::to_string(*(((uint8_t*)data.data())+i)) + " ";
-        PLOGW << name << " " << id << " " << binding << ": " << data.size()*4 << " - " << str;
+        // std::string str;
+        // for (int i = 0 ; i < data.size()*sizeof(int); i++) str+= std::to_string(*(((uint8_t*)data.data())+i)) + " ";
+        // PLOGW << name << " " << id << " " << binding << ": " << data.size()*4 << " - " << str;
 
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         glBufferSubData(GL_UNIFORM_BUFFER, 0, data.size()*4, &data[0]);
 
     }
 
-    void bind(GLuint shader){ 
+    void bind(GLuint shader, int binding = 0){ 
+
+        this->binding = binding;
        
         glBindBuffer(GL_UNIFORM_BUFFER, id);
         glUniformBlockBinding(shader, glGetUniformBlockIndex(shader, name.c_str()), binding);
         glBindBufferBase(GL_UNIFORM_BUFFER, binding, id);
 
+        upload();
     }
 
 };
@@ -361,10 +361,74 @@ struct BoilerGUI {
 
     BoilerGUI(BoilerWindow& window) {
 
-        ImGui::CreateContext();
-        ImGui_ImplGlfw_InitForOpenGL(window.window, true);
-        ImGui_ImplOpenGL3_Init("#version 430");
+        create(window);
+    }
 
+    void newframe() {
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+    }
+
+    void render() {
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
+        }
+
+    }
+    void destroy() {
+
+
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+
+        ImGui::DestroyContext();
+
+
+    }
+    void create(BoilerWindow& window) {
+
+        ImGui::CreateContext();
+
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+        io.WantCaptureKeyboard = false;
+
+        ImGui_ImplGlfw_InitForOpenGL(window.window, false);
+        ImGui_ImplGlfw_InstallCallbacks(window.window);
+        ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
+
+        const char* glsl_version = "#version 430";
+        ImGui_ImplOpenGL3_Init(glsl_version);
+
+    }
+
+    bool draw(float* ptr, int q) {
+
+        bool has_changed = false;
+
+        newframe();
+        ImGui::Begin("GUI");
+
+        for (int i = 0; i < q; i++) 
+            if (ImGui::SliderFloat(("f"+std::to_string(i)).c_str(), ptr+i,0,1))
+                has_changed = true;
+            
+        ImGui::End();
+        render();
+
+        return has_changed;
 
     }
 };
