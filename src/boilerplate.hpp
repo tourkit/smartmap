@@ -178,11 +178,14 @@ struct BoilerShader {
 
     GLuint id = 0, frag_id = 0, vert_id = 0;
 
-    std::string frag =  "#version 430 core \nstruct Ubo { int x,y,z,w;};\nuniform sampler2D meskine;\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() {\n COLOR = texture(meskine,UV);\n COLOR += vec4(0,UV.x,float(ubo.z)/10.0f,1);\n}";
+    std::string frag,vert;
     
-    std::string vert = "#version 430 core\nstruct Ubo { int x,y,z,w;};\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nout vec2 UV;\nvoid main() { UV = TEXCOORD; gl_Position = vec4(POSITION.x,POSITION.y,0,1); }";
-    
-    BoilerShader() { create(); }
+    BoilerShader(
+
+        std::string frag = "#version 430 core \nstruct Ubo { int x,y,z,w;};\nuniform sampler2D meskine;\nlayout (binding = 0, std140) uniform ubo_  { Ubo ubo;  };\n\nout vec4 COLOR;\nin vec2 UV;\nvoid main() {\n COLOR = texture(meskine,UV);\n COLOR += vec4(0,UV.x,float(ubo.z)/10.0f,1);\n}",
+        std::string vert = "#version 430 core \n\nlayout (location = 0) in vec2 POSITION;\nlayout (location = 1) in vec2 TEXCOORD;\nout vec2 UV;\nvoid main() { UV = TEXCOORD; gl_Position = vec4(POSITION.x,POSITION.y,0,1); }"
+
+    ) : frag(frag), vert(vert) { create(); }
 
     void destroy() {
 
@@ -194,7 +197,12 @@ struct BoilerShader {
 
     }
 
-    void create() {
+    void create(std::string new_frag="", std::string new_vert="") {
+
+        if (new_frag.length() && new_vert.length()){
+            frag =new_frag;
+            vert =new_vert;
+        }
 
         destroy();
 
@@ -308,7 +316,7 @@ struct BoilerWindow {
 
     GLFWwindow* window;
 
-    float clear_color[4] = {0,0,0,1};
+    float clear_color[4] = {0,0,0.1,1};
 
     BoilerWindow(GLuint width = 400, GLuint height = 300, GLuint pos_x = 400, GLuint pos_y = 300) : 
         width(width), height(height), pos_x(pos_x), pos_y(pos_y) {
@@ -364,88 +372,6 @@ struct BoilerGUI {
 // #include "engine.hpp"
 
 struct Boilerplate {
-
-    static void Editors() {
-
-    //     Editor<BoilerShader>([](Node* node, BoilerShader *shader){
-
-    //      ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
-
-    //     if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
-
-    //         if (ImGui::BeginTabItem("fragment")) {
-
-    //             static TextEditor frageditor;
-
-    //             static bool init = false;
-    //             if (!init){
-
-    //                 frageditor.SetShowWhitespaces(false);
-    //                 frageditor.SetReadOnly(false);
-    //                 frageditor.SetText(shader->frag.c_str());
-
-    //                 init = true;
-    //             }
-
-    //             frageditor.Render("frageditor");
-
-    //             if (frageditor.IsTextChanged()) {
-
-    //                 auto x = frageditor.GetText();
-
-    //                 memset(&x[frageditor.GetText().length()],0,1);
-
-    //                 shader->frag  = x;
-
-    //                 shader->create();
-
-
-    //             }
-
-    //             ImGui::EndTabItem();
-
-    //         }
-
-    //         if (ImGui::BeginTabItem("vertex")) {
-
-    //             static TextEditor verteditor;
-
-    //             static bool init = false;
-    //             if (!init){
-
-    //                 verteditor.SetShowWhitespaces(false);
-    //                 verteditor.SetReadOnly(false);
-    //                 verteditor.SetText(shader->vert.c_str());
-
-    //                 init = true;
-    //             }
-
-    //             verteditor.Render("frageditor");
-
-    //             if (verteditor.IsTextChanged()) {
-
-    //                 auto x = verteditor.GetText();
-
-    //                 memset(&x[verteditor.GetText().length()],0,1);
-
-    //                 shader->vert  = x;
-
-    //                 shader->create();
-
-
-    //             }
-
-    //             ImGui::EndTabItem();
-
-    //         }
-
-    //         ImGui::EndTabBar();
-
-    //     }
-
-    // });
-
-    }
 
     static void Init(bool run = true) {
 
