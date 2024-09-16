@@ -58,7 +58,7 @@ struct Engine {
 
     std::vector<FrameBuffer> render_passes;
 
-    void run();
+    void run(std::function<void()> cb = [](){});
 
     std::string project_filepath;
 

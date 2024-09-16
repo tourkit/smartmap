@@ -362,12 +362,21 @@ struct BoilerUBO {
 
 struct BoilerGUI {
 
-    BoilerGUI(BoilerWindow& window) {
+    GLFWwindow* window = nullptr;
+
+    BoilerGUI(GLFWwindow* window) {
 
         create(window);
     }
+    
+    BoilerGUI() {
+
+    }
 
     void newframe() {
+
+        if (!window)
+            return;
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -377,6 +386,8 @@ struct BoilerGUI {
 
     void render() {
 
+        if (!window)
+            return;
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -399,7 +410,9 @@ struct BoilerGUI {
 
 
     }
-    void create(BoilerWindow& window) {
+    void create(GLFWwindow* window) {
+
+        this->window = window;
 
         ImGui::CreateContext();
 
@@ -408,8 +421,8 @@ struct BoilerGUI {
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
         io.WantCaptureKeyboard = false;
 
-        ImGui_ImplGlfw_InitForOpenGL(window.window, false);
-        ImGui_ImplGlfw_InstallCallbacks(window.window);
+        ImGui_ImplGlfw_InitForOpenGL(window, false);
+        ImGui_ImplGlfw_InstallCallbacks(window);
         ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
 
         const char* glsl_version = "#version 430";
@@ -447,7 +460,7 @@ struct Boilerplate {
         logger.cout(Sev::warning);
 
         BoilerWindow window;
-        BoilerGUI gui(window);
+        BoilerGUI gui(window.window);
 
         // BoilerArtnet artnet;
 

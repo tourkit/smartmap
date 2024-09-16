@@ -165,7 +165,7 @@ void Engine::gui(bool active) {
 
 }
 
-void Engine::run() {
+void Engine::run(std::function<void()> cb) {
 
     if (models && !models->childrens.size()) 
         auto quad = models->addPtr<File>( &VBO::quad );
@@ -221,6 +221,8 @@ void Engine::run() {
         }
         
         tree->run();
+
+        cb();
 
     });
 
