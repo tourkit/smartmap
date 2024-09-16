@@ -34,7 +34,7 @@ struct Member {
     void add(Member* m);
 
     template <typename T>
-    Member& add(std::string name) {       
+    Member& add(std::string name) {
 
         auto n = new Member(name, TYPE<T>()); 
         
@@ -45,12 +45,15 @@ struct Member {
     }
 
     template <typename T,int q>
-    Member& add(std::string name) {        
+    Member& add(std::string name, T from = 0, T to = 0, T def = 0) {        
         
         add<T>(name);
 
         if (q != quantity_v) 
             members.back()->quantity(q);
+
+        if (to)
+            range(from, to, def);
 
         return *this; 
         

@@ -2,12 +2,16 @@
 
 #include <cstdint>
 #include <string>
-#include <chrono>
+#include <map>
+#include <vector>
 
 struct Builder;
 struct Member;
 
+
 struct Shader {
+
+  typedef std::map<int, std::string> Errors;
 
   uint32_t id = -1;
 
@@ -28,6 +32,8 @@ struct Shader {
   operator uint32_t();
 
   char infoLog[512];
+
+  Errors errors;
 
 };
 

@@ -311,39 +311,37 @@ static bool draw_guis(Member* buff, Member* member, uint32_t offset, int& member
             SetNextItemWidth(-FLT_MIN-6);
             PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 
-            static bool dis = false;
+            bool dis = false;
+            bool blo = false;
             if (*(float*)m->to() == 0){
                 ImGui::BeginDisabled();
+                blo = true;
+            }
+            if (*(float*)m->to() == *(float*)m->from()){
                 ImGui::PushStyleColor(ImGuiCol_SliderGrab, ImVec4(1.0f, 0.0f, 0.0f, 0.0f));
                 dis = true;
             }
 
-
-            std::string label = std::to_string(member_count++);
-            auto x = ImGui::SliderScalarN(("###"+label).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
+            auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
             ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
             
-
-            if (dis){
-                ImGui::EndDisabled();
+            if (dis)
                 ImGui::PopStyleColor(1);
-                dis = false;
-            }
 
+            if (blo)
+                ImGui::EndDisabled();
 
-    
-            
-            
             if (!(IsItemActive() && ImGui::TempInputIsActive(ImGui::GetCurrentContext()->LastItemData.ID))){
-            
-            SameLine(); 
-            SetNextItemWidth(85);
-            PushStyleColor(ImGuiCol_Text, ImVec4(1.0, 1.0, 1.0, .65f));
+                
+                SameLine(); 
+                SetNextItemWidth(85);
+                PushStyleColor(ImGuiCol_Text, ImVec4(1.0, 1.0, 1.0, .65f));
                 ImGui::SetCursorPosX(11);
                 Text(name.c_str());
-            
-            PopStyleColor();
+                PopStyleColor();
+                
             }
+
             PopStyleColor();
 
             if (x>=0) {
@@ -753,6 +751,7 @@ void Editors::init() {
 
             editor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
             editor.SetReadOnly(false);
+            
             init = true;
         }
         
@@ -774,6 +773,9 @@ void Editors::init() {
                     memset(&x[x.length()-1],0,1); // against new line everytime dafuk
 
                     shader->create(x,shader->vert.src);
+
+                    editor.SetErrorMarkers(shader->frag.errors);
+
                 }
                 
 

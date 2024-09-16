@@ -20,18 +20,6 @@ Shader::~Shader() { if (id > -1) glDeleteShader(id);  }
 Shader::Shader(std::string src, uint8_t type)  { create(src,type); }
 
 
-struct ShaderError {
-
-    std::vector<int> coords  = {0,0,0};
-    std::string val;
-
-    bool operator==(ShaderError& other) { 
-
-        return val == other.val && coords[0] == other.coords[0] && coords[1] == other.coords[1] && coords[2] == other.coords[2];
-    }
-
-};
-
 bool Shader::create(std::string src, uint8_t type)  {
 
     this->src = src;
@@ -56,35 +44,38 @@ bool Shader::create(std::string src, uint8_t type)  {
 
     glGetShaderiv(id, GL_COMPILE_STATUS, &success);
 
+    errors.clear(); 
     if (!success) {
 
         glGetShaderInfoLog(id, 512, NULL, &infoLog[0]);
 
         std::string line = infoLog;
-        std::vector<ShaderError> errors;
     
         std::istringstream iss(infoLog);
+
+        std::map<int, std::vector<std::string>> split_errors;
 
         for (std::string line; std::getline(iss, line); ) {
             
             std::smatch match;
             std::regex color_regex(".?([0-9]+):([0-9]+)(\\(([0-9]+)\\): error)?: (.+)", std::regex_constants::icase);
-            ShaderError error;
 
             if (std::regex_search(line, match, color_regex)) {
 
-                ShaderError error;
+                if (match.size()<5)
+                    continue;
 
-                error.coords[0] = std::stoi(match[1].str());
-                error.coords[1] = std::stoi(match[2].str());
-                if (match.size()>4)
-                    error.coords[2] = std::stoi(match[4].str());
-                if (match.size()>5)
-                    error.val = match[5].str();
+                int lineid = std::stoi(match[2].str());
+                auto str = match[5].str();
+
+                if (!lineid || !str.length())
+                    continue;
+                
+                auto& error_strs = split_errors[std::stoi(match[2].str())];
                 
                 bool found = false;
-                for (auto e : errors) 
-                    if (e == error) {
+                for (auto e : error_strs) 
+                    if (e == str) {
                         found = true;
                         break;
                     }
@@ -92,21 +83,14 @@ bool Shader::create(std::string src, uint8_t type)  {
                 if (found)
                     break;
                 else
-                    errors.push_back(error);
+                    error_strs.push_back(str);
 
             }
 
         }
-
-        for (auto &e : errors) 
-            for (auto &e_ : errors) 
-                if (&e != &e_ && e.coords == e_.coords) {
-                    if (e.val.length())
-                        e.val+= ", ";
-                    e.val += e_.val;
-                    e_.val.clear();
-                    break;
-                }
+        
+        for (auto &e : split_errors) 
+            errors[e.first] = join(e.second, " && ");
 
         std::string output;
 
@@ -115,39 +99,29 @@ bool Shader::create(std::string src, uint8_t type)  {
         else if (type == COMPUTE) output += "[compute] ";
         output += "";
 
-        for (auto error : errors)
+        for (auto error : errors) {
 
-            if (error.val.length()) {
+            std::string error_str = std::to_string(error.first);
 
-                std::string error_str;
+            error_str += ": " + error.second + " && ";
 
-                error_str += std::to_string(error.coords[0]) + ":" + std::to_string(error.coords[1]);
-                
-                if (error.coords[2])
-                    error_str += "("+std::to_string(error.coords[2])+")";
+            error_str = error_str.substr(0,error_str.length()-4);
 
-                error_str += ": " + error.val + " && ";
+            iss = std::istringstream (src);
 
-                if (error_str.length())
-                    error_str = error_str.substr(0,error_str.length()-4);
-
-                
-                iss = std::istringstream (src);
-
-                int count = 0;
-                for (std::string line; std::getline(iss, line); ) {
-                    if (count++ == error.coords[1]-1) {
-                        boost::trim_left(line);
-                        error_str += " : " + line;    
-                        break;
-                        
-                    }
-                }
-
-                output += error_str;
+            int count = 0;
+            for (std::string line; std::getline(iss, line); ) {
+                if (count++ == error.first-1) {
+                    boost::trim_left(line);
+                    error_str += " : " + line;    
+                    break;
                     
+                }
             }
 
+            output += error_str;
+            
+        }
 
 
         PLOGE << output;
