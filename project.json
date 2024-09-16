@@ -1,5 +1,6 @@
 {
   "editors": [
+    ["Free Layer 1"]
   ],
   "inputs": {
       "artnet": {
@@ -15,7 +16,7 @@
             "dim": [ 100,100 ],
             "models": {
                 "quad1": {
-                    "q": 2,
+                    "q": 1,
                     "model": "quad.obj",
                     "effectors": [
                         "argb"

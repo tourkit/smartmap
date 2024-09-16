@@ -51,9 +51,9 @@ void UBO:: bind(uint32_t shader) {
 
 void UBO::update_pv() { 
 
-    resize(footprint_all()); 
-
     Member::update_pv(); 
+
+    resize(footprint_all()); 
     
 } 
 
