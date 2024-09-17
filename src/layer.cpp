@@ -24,11 +24,11 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name) :
 
     if (!init) {
 
-        globals.layer.striding(true);
+        globals.layers.striding(true);
 
-        engine.static_ubo->add(&globals.layer);
+        engine.static_ubo->add(&globals.layers);
 
-        glsl_layers =  &(*new Instance(*engine.static_ubo))[&globals.layer];
+        glsl_layers =  &(*new Instance(*engine.static_ubo))[&globals.layers];
 
         init = true;
 

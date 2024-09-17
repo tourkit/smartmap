@@ -4,6 +4,7 @@
 #include "struct.hpp"
 #include "instance.hpp"
 #include "utils.hpp"
+#include <boost/algorithm/string/trim.hpp>
 #include <regex>
 #include <string>
 
@@ -127,12 +128,15 @@ void FileEffector::load() {
     while ((pos = source_v.find("//", pos)) != std::string::npos) {
 
         size_t end = source_v.find("\n", pos);
-        if (end == std::string::npos) end = source_v.length();
+        if (end == std::string::npos) 
+            end = source_v.length();
         source_v.erase(pos, end - pos+1);
 
     }
-
-    source_v.resize(source_v.find_last_of("}")+1);
+    boost::trim_right(source_v);
+    boost::trim_left(source_v);
+    if (source_v.find_last_of("}") == source_v.length()-1)
+        source_v.resize(source_v.find_last_of("}")+1);
 
 }
 

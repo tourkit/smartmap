@@ -30,8 +30,6 @@ struct FileEffector : Effector {
 
     File* file;
 
-    std::string source;
-
     FileEffector(File* file, std::string name = "");
     
     void load();

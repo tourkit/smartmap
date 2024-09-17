@@ -255,7 +255,6 @@ void Callbacks::init() {
 
     ////////// Effector.HPP
 
-    // NODE<UberEffector>::is_a<Effector>();
     NODE<FileEffector>::is_a<Effector>();
     NODE<Wrappy>::is_a<Effector>();
     NODE<Wrappy>::is_a<Effectable>();
@@ -268,13 +267,11 @@ void Callbacks::init() {
 
     });
 
-    NODE<FileEffector>::on(Node::CHANGE, [&](Node*node, FileEffector* effector){ effector->load();  });
-    
-    NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
+    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){ node->name_v = (ref->effector->name());  });
 
-    // NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, fx->ref());  });
-    
-    // NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){   });
+    NODE<FileEffector>::on(Node::CHANGE, [&](Node*node, FileEffector* effector){ effector->load();  });
+
+    NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
     NODE<EffectorRef>::is_a<Member>();
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {

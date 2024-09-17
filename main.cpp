@@ -35,28 +35,12 @@
 #include <string>
 #include <vector>
 
-
-
 // fix Member::adding all occurence set default  ..
-
-//engine own effector in hidden
-
-// refaire marcher buikder
 
 //  voir comment DC gere lplusieurs models 
 
 
-
 int main() {
-
-
-
-
-    // auto xxx = &f3( std::forward<Args>(args)... );//*(&f<Node>);
-
-    // xxx("123");
-
-    // arbitrary, but convertible types (C++14)
 
     // Boilerplate::Init();
 
@@ -66,9 +50,6 @@ int main() {
 
     // logger.cout(Sev::verbose);
     engine.open("project.json");
-    logger.cout(Sev::verbose);
-
-
 
     // auto lay_ = engine.stack->addOwnr<Layer>(400,300);
     // auto ubl_ = engine.stack->addOwnr<UberLayer>();
@@ -78,13 +59,8 @@ int main() {
     // ubl.calc_matrice();
     // auto vl_ = ubl_->addPtr<UberLayer::VirtualLayer>(&vl);
 
-
-
-
     engine.run();
 
 
-
- 
 
 }

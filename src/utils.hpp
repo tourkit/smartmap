@@ -126,3 +126,9 @@ struct MemberQ { Member* m; uint32_t eq = 0; uint32_t q = 1; };
 
 
 struct Stack {  };
+
+static void ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
+        return !std::isspace(ch);
+    }));
+}
