@@ -7,6 +7,7 @@
 
 struct Builder;
 struct Member;
+struct Texture;
 
 
 struct Shader {

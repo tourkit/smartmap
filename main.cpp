@@ -31,6 +31,7 @@
 #include "layer.hpp"
 #include "gui.hpp"
 #include "member.hpp"
+#include "node.hpp"
 #include <string>
 #include <vector>
 
@@ -38,8 +39,24 @@
 
 // fix Member::adding all occurence set default  ..
 
+//engine own effector in hidden
+
+// refaire marcher buikder
+
+//  voir comment DC gere lplusieurs models 
+
+
 
 int main() {
+
+
+
+
+    // auto xxx = &f3( std::forward<Args>(args)... );//*(&f<Node>);
+
+    // xxx("123");
+
+    // arbitrary, but convertible types (C++14)
 
     // Boilerplate::Init();
 
@@ -47,46 +64,27 @@ int main() {
 
     engine.init();
 
+    // logger.cout(Sev::verbose);
     engine.open("project.json");
+    // logger.cout(Sev::verbose);
 
-    // auto lay = engine.stack->childrens[0]->is_a<Member>()->instance;
 
-    logger.cout(Sev::verbose);
+
+    // auto lay_ = engine.stack->addOwnr<Layer>(400,300);
+    // auto ubl_ = engine.stack->addOwnr<UberLayer>();
+    // auto &ubl = *ubl_->is_a<UberLayer>();
+    // auto vl = ubl.addLayer(1920, 1080);
+    // vl.quantity(2);
+    // ubl.calc_matrice();
+    // auto vl_ = ubl_->addPtr<UberLayer::VirtualLayer>(&vl);
+
+
+
+
     engine.run();
 
-    logger.cout(Sev::warning);
 
 
-    // Member buff("buff");
-    // buff.buffering(true);
-
-    // Member layer("layer");
-    // layer.quantity(3);
-    // buff.add(&layer);
-
-    // Member quad("quad");
-    // quad.quantity(2); 
-    // layer.add(&quad);
-
-    // Member argb("argb");
-    // argb.add<char>("ch").range(0,1,2); 
-    // Member otro("otro");
-    // otro.add<float>("ch").range(0,1,3); 
-
-    // Member ref("ref");
-    // ref.add(&argb);
-    // quad.add(&ref);
-
-    // Member otroref("otroref");
-    // otroref.add(&otro);
-    // quad.add(&otroref);
-
-    // Instance inst(buff);
-
-    // Instance refinst(inst);
-    // refinst[&layer][&quad][&ref];//.parent();
-
-
-    // inst.print();
+ 
 
 }

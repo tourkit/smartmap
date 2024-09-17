@@ -729,7 +729,8 @@ void Editors::init() {
                 Layer* lay = node->is_a<Layer>(); 
                 if (lay) 
                     BUILDER.vbo = &lay->vbo; 
-                BUILDER.build();
+                shader->destroy(); 
+                BUILDER.build(shader);
                 shader->create(BUILDER.frag(), BUILDER.vert()); 
             }
             
@@ -777,7 +778,7 @@ void Editors::init() {
                     std::string x = editor.GetText();
 
                     memset(&x[x.length()-1],0,1); // against new line everytime dafuk
-
+                    shader->destroy(); 
                     shader->create(x,shader->vert.src);
 
                     editor.SetErrorMarkers(shader->frag.errors);
@@ -808,7 +809,7 @@ void Editors::init() {
                     std::string x = editor.GetText();
 
                     memset(&x[x.length()-1],0,1); // against new line everytime dafuk
-
+                    shader->destroy(); 
                     shader->create(shader->frag.src,x);
 
                     editor.SetErrorMarkers(shader->vert.errors);
@@ -824,6 +825,7 @@ void Editors::init() {
             ImGui::EndTabBar();
 
         }
+
 
     });
 
@@ -1239,7 +1241,7 @@ void Editors::init() {
 
                 codeeditors[def].SetShowWhitespaces(false);
                 codeeditors[def].SetReadOnly(false);
-                codeeditors[def].SetText(file_->file.data.data());
+                codeeditors[def].SetText(file_->file->data.data());
             }
 
             auto &codeeditor = codeeditors[def];
@@ -1248,8 +1250,8 @@ void Editors::init() {
 
             if (codeeditor.IsTextChanged()) {
 
-                file_->file.data = codeeditor.GetText().c_str();
-                file_->load(&file_->file);
+                file_->file->data = codeeditor.GetText().c_str();
+                file_->load();
 
                 node->update(); // do I need bkp here ? is even the fx useful
 
@@ -1393,7 +1395,7 @@ void Editors::init() {
 
             }
 
-            for (auto x : layer->builder.samplers) {
+            for (auto x : layer->builder()->samplers) {
                 
                 if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
 

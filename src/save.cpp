@@ -77,114 +77,114 @@ void Save::outputs(){
 
 void Save::layers(){
 
-   json_v.document["layers"].RemoveAllMembers();
+//    json_v.document["layers"].RemoveAllMembers();
 
-    engine.stack->each<Layer>([&](Node* node, Layer* layer){
+//     engine.stack->each<Layer>([&](Node* node, Layer* layer){
 
-        auto &arr = json_v.document["layers"];
+//         auto &arr = json_v.document["layers"];
         
-        if (dynamic_cast<UberLayer*>(layer)) {
+//         if (dynamic_cast<UberLayer*>(layer)) {
 
-            auto  ubl_ = rapidjson::Value(rapidjson::kObjectType);
+//             auto  ubl_ = rapidjson::Value(rapidjson::kObjectType);
 
 
-            node->each<UberLayer::VirtualLayer>([&](Node* node_, UberLayer::VirtualLayer* layer){
+//             node->each<UberLayer::VirtualLayer>([&](Node* node_, UberLayer::VirtualLayer* layer){
 
-                auto  layer_ = rapidjson::Value(rapidjson::kArrayType);
+//                 auto  layer_ = rapidjson::Value(rapidjson::kArrayType);
 
-                layer_.PushBack(layer->w, allocator);
-                layer_.PushBack(layer->h, allocator);
-                layer_.PushBack(layer->quantity(), allocator);
+//                 layer_.PushBack(layer->w, allocator);
+//                 layer_.PushBack(layer->h, allocator);
+//                 layer_.PushBack(layer->quantity(), allocator);
 
-                auto  effectors_ = rapidjson::Value(rapidjson::kArrayType);
+//                 auto  effectors_ = rapidjson::Value(rapidjson::kArrayType);
 
-                for (auto ref : layer->effector_refs) effectors_.PushBack(  rapidjson::Value(ref->effector->name().c_str(), allocator), allocator );
+//                 for (auto ref : layer->effector_refs) effectors_.PushBack(  rapidjson::Value(ref->effector->name().c_str(), allocator), allocator );
 
-                layer_.PushBack(effectors_, allocator);
+//                 layer_.PushBack(effectors_, allocator);
 
-                ubl_.AddMember(rapidjson::Value(node_->name().c_str(), allocator)  , layer_, allocator);
+//                 ubl_.AddMember(rapidjson::Value(node_->name().c_str(), allocator)  , layer_, allocator);
 
-            });
+//             });
 
-            arr.AddMember(rapidjson::Value(node->name().c_str(), allocator), ubl_, allocator);
+//             arr.AddMember(rapidjson::Value(node->name().c_str(), allocator), ubl_, allocator);
                 
-            return ;
+//             return ;
             
-        }
+//         }
 
-        auto  lay = rapidjson::Value(rapidjson::kArrayType);
+//         auto  lay = rapidjson::Value(rapidjson::kArrayType);
 
-        lay.PushBack(layer->fb.width, allocator);
-        lay.PushBack(layer->fb.height, allocator);
+//         lay.PushBack(layer->fb.width, allocator);
+//         lay.PushBack(layer->fb.height, allocator);
 
-        auto  models = rapidjson::Value(rapidjson::kObjectType);
+//         auto  models = rapidjson::Value(rapidjson::kObjectType);
 
-        for (auto model : layer->models) {
+//         for (auto model : layer->models) {
 
-            auto new_model = rapidjson::Value(rapidjson::kArrayType);
+//             auto new_model = rapidjson::Value(rapidjson::kArrayType);
 
-            new_model.PushBack(rapidjson::Value(model.get()->file->filename().c_str(), allocator), allocator);
+//             new_model.PushBack(rapidjson::Value(model.get()->file->filename().c_str(), allocator), allocator);
 
-            new_model.PushBack(model.get()->quantity(),allocator);
+//             new_model.PushBack(model.get()->quantity(),allocator);
 
-            auto effects = rapidjson::Value(rapidjson::kArrayType);
-            for (auto e : model.get()->effector_refs) {
+//             auto effects = rapidjson::Value(rapidjson::kArrayType);
+//             for (auto e : model.get()->effector_refs) {
 
-                std::string name = e.get()->name();
+//                 std::string name = e.get()->name();
 
-                std::string value;
-                auto effector = e.get()->effector;
-                // if (effector->m.ref()) value = effector->m.ref()->name();
-                // else 
-                value = effector->name();
+//                 std::string value;
+//                 auto effector = e.get()->effector;
+//                 // if (effector->m.ref()) value = effector->m.ref()->name();
+//                 // else 
+//                 value = effector->name();
               
-                effects.PushBack(rapidjson::Value(value.c_str(), allocator), allocator ); // TODOTODO
+//                 effects.PushBack(rapidjson::Value(value.c_str(), allocator), allocator ); // TODOTODO
 
-            }
-            new_model.PushBack( effects, allocator );
+//             }
+//             new_model.PushBack( effects, allocator );
 
-            models.AddMember(rapidjson::Value(model.get()->name().c_str(), allocator), new_model, allocator);
+//             models.AddMember(rapidjson::Value(model.get()->name().c_str(), allocator), new_model, allocator);
 
-        }
+//         }
 
-        lay.PushBack(models, allocator);
+//         lay.PushBack(models, allocator);
 
-        auto effects = rapidjson::Value(rapidjson::kArrayType);
-        for (auto e : layer->effector_refs) 
-            effects.PushBack( rapidjson::Value(e.get()->name().c_str(), allocator), allocator );// TODOTODO
-        lay.PushBack( effects, allocator );
+//         auto effects = rapidjson::Value(rapidjson::kArrayType);
+//         for (auto e : layer->effector_refs) 
+//             effects.PushBack( rapidjson::Value(e.get()->name().c_str(), allocator), allocator );// TODOTODO
+//         lay.PushBack( effects, allocator );
 
-        arr.AddMember( rapidjson::Value(node->name().c_str(), allocator)  , lay, allocator );
+//         arr.AddMember( rapidjson::Value(node->name().c_str(), allocator)  , lay, allocator );
 
-    });
+//     });
 
 
 }
 
 void Save::effectors(){
 
-    json_v.document["effectors"].RemoveAllMembers();
+    // json_v.document["effectors"].RemoveAllMembers();
 
-    engine.effectors->each<Effector>([&](Node* n, Effector* effector) {
+    // engine.effectors->each<Effector>([&](Node* n, Effector* effector) {
 
-        auto fe = dynamic_cast<FileEffector*>(effector);
+    //     auto fe = dynamic_cast<FileEffector*>(effector);
 
-        if (fe) json_v.document["effectors"].AddMember(rapidjson::Value(fe->file.name().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&fe->file.data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator());
+    //     if (fe) json_v.document["effectors"].AddMember(rapidjson::Value(fe->file.name().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&fe->file.data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator());
         
-        auto wrap = dynamic_cast<Wrappy*>(effector);
+    //     auto wrap = dynamic_cast<Wrappy*>(effector);
         
-        if (wrap) {
+    //     if (wrap) {
             
-            auto effects = rapidjson::Value(rapidjson::kArrayType);
+    //         auto effects = rapidjson::Value(rapidjson::kArrayType);
 
-            for (auto e : wrap->effector_refs) effects.PushBack(rapidjson::Value(e->effector->name().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
+    //         for (auto e : wrap->effector_refs) effects.PushBack(rapidjson::Value(e->effector->name().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
 
-            json_v.document["effectors"].AddMember(rapidjson::Value(wrap->Effector::name().c_str(), json_v.document.GetAllocator()), effects, json_v.document.GetAllocator());
+    //         json_v.document["effectors"].AddMember(rapidjson::Value(wrap->Effector::name().c_str(), json_v.document.GetAllocator()), effects, json_v.document.GetAllocator());
             
             
-        }
+    //     }
 
-    });
+    // });
 
 }
 

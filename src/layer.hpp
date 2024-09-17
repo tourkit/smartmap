@@ -60,6 +60,30 @@ struct UberEffector : Effector {
 
 struct UberLayer : Layer {
 
+    UberLayer() ;
+
+    Member uberlayer_m;
+
+    int w ; int h;
+
+    void calc_matrice() ;
+    
+    ::Builder* builder() override;
+
+    struct Builder : DrawCall::Builder {
+
+        void setup() override;
+
+        UberLayer* ubl;
+        
+        Builder(UberLayer* ubl);
+
+    };
+
+    UberEffector effector;
+    
+    Layer::Feedback* feedback() override;
+
     struct Feedback : Layer::Feedback {
 
         UberLayer* ubl;
@@ -98,28 +122,6 @@ struct UberLayer : Layer {
 
     std::vector<std::shared_ptr<VirtualLayer>> layers;
 
-    Member uberlayer_m;
-
-    int w ; int h;
-
-    UberLayer() ;
-
-    void calc_matrice() ;
-
     VirtualLayer& addLayer(int w , int h) ; // kinda ctor for VLaye
-
-    static struct Builder : DrawCall::Builder {
-
-        void setup() override;
-
-        UberLayer* ubl;
-
-        Builder(UberLayer* ubl);
-
-    } builder;
-
-    UberEffector effector;
-    
-    Layer::Feedback* feedback() override;
 
 };

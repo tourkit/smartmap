@@ -153,6 +153,7 @@ ShaderProgram::ShaderProgram() {
 
 }
 
+
 ShaderProgram::ShaderProgram(std::string frag, std::string vert) { create(frag,vert); }
 
 void ShaderProgram::destroy() {
@@ -167,8 +168,6 @@ void ShaderProgram::destroy() {
 
 void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
-    destroy();
-
     id = glCreateProgram();
 
     frag.create(frag_src,0);
@@ -181,7 +180,6 @@ void  ShaderProgram::create(std::string frag_src, std::string vert_src) {
 
     loaded = true;
 
-    // sendUniform("atlas_pass", 1);
 
     use();
 

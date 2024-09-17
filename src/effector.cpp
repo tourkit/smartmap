@@ -52,9 +52,9 @@ bool FileEffector::setup(Builder* builder) {
     
 }
 
-void FileEffector::load(File *file) {
+void FileEffector::load() {
 
- source_v = (&file->data[0]);
+     source_v = (&file->data[0]);
 
     // extract args
 
@@ -136,9 +136,7 @@ void FileEffector::load(File *file) {
 
 }
 
-FileEffector::FileEffector(File file, std::string name) : Effector(name), file(file) {
-
-   load(&file);
+FileEffector::FileEffector(File* file, std::string name) : Effector(name.length()?name:"fileEffector"), file(file) {
 
 }
 

@@ -43,7 +43,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
 
     
 
-    static auto exit_cb = []() { exit(0); };
+    static auto exit_cb = []() { logger.cout(Sev::warning); exit(0); };
 
     window.keypress_cbs[{GLFW_KEY_ESCAPE}] = exit_cb;
     window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;

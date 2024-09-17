@@ -4,8 +4,7 @@
 #include "shader.hpp"
 #include "model.hpp"
 #include "builder.hpp"
-
-struct BoilerQuad;
+;
 
 struct DrawCall : Modelable {
 
@@ -17,25 +16,27 @@ struct DrawCall : Modelable {
 
     Model* addModel(File* f) override;
 
-    static struct Builder : ::Builder {
+    virtual ::Builder* builder() ;
+    
+    ::Builder* builder_v = nullptr ;
+
+    ShaderProgram shader;
+
+    int GL_BLEND_MODE_IN = 6;
+    int GL_BLEND_MODE_OUT = 0;//13
+
+    struct Builder : ::Builder {
 
         void setup() override;
 
-        void use(DrawCall* dc = nullptr, int stride_count = 0);
-
         DrawCall* dc;
+        
+        Builder(DrawCall* dc);
 
         int stride_count;
 
         std::string print_layer(Effectable &effectable,std::string prepend ,std::string instance, std::string ar = "");
 
-    } builder;
-
-    Builder* builder_v = &builder;
-
-    ShaderProgram shader;
-
-    int GL_BLEND_MODE_IN = 6;
-    int GL_BLEND_MODE_OUT = 1;//13
-
+    };
+    
 };

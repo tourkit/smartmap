@@ -66,41 +66,24 @@ static void addSmallerFirst(Member* m, std::vector<Member*>& v) {
 
 void Builder::build(ShaderProgram* shader) {
 
-    build();
-
-    shader->create(frag(), vert());
-
-    for (auto ubo : ubos) 
-        ubo->bind(shader->id);
-
-    int sampler_id = 0;
-    for (auto s : samplers) {
-    
-        if (s.first > sampler_id) {
-            // for ( int i = sampler_id; i < s.first; i++) program.sendUniform("randi"+std::to_string(i), i);
-            sampler_id = s.first;
-        }
-
-        s.second->bind(s.first);
-        shader->sendUniform(s.second->sampler_name, s.first);
-        
-        sampler_id++;
-    }
-
-}
-
-void Builder::build(std::function<void()> setup_cb) {
-
+    this->shader = shader;
     PLOGV << "build";
 
-    samplers.clear();
+
+    if (shader) 
+        shader->destroy();
+
+    
+
+    header_fragment.clear();
+    body_fragment.clear();
+    header_vertex.clear();
+    body_vertex.clear();
     definitions.clear();
     unique_names.clear();
     ubos.clear();
 
     setup();
-    if (setup_cb)
-        setup_cb();
 
     for (auto m : ubos) 
         addSmallerFirst(m, definitions);
@@ -114,6 +97,46 @@ void Builder::build(std::function<void()> setup_cb) {
 
     header_common += ubo();
 
+    if (!shader) 
+        return;
+
+    shader->create(frag(), vert());
+
+    for (auto ubo : ubos) 
+        ubo->bind(shader->id);
+
+    int sampler_id = 0;
+    for (auto s : samplers) {
+    
+        if (s.first > sampler_id) 
+            sampler_id = s.first;
+
+        s.second->bind(s.first);
+        shader->sendUniform(s.second->sampler_name, s.first);
+        
+        sampler_id++;
+    }
+}
+
+int Builder::addSampler(Texture* tex, std::string name) {
+    
+        int i = 1;
+
+        for (auto x : samplers) {
+            
+            if (x.second == tex)
+                return x.first;
+            
+            if (x.first > i)
+                i = x.first+1;  
+        
+        }
+
+        samplers[i] = tex;
+
+        tex->sampler_name = name+"_pass";
+
+        return i;
 }
 
 std::string Builder::frag() {
@@ -137,7 +160,8 @@ std::string Builder::frag() {
     if (samplers.size()) samplers_str += "\n";
     
 
-    std::string effectors_str; for (auto x : effectors_fragment)  effectors_str += x->header()+"\n\n";
+    std::string effectors_str; for (auto x : effectors_fragment)  
+        effectors_str += x->header()+"\n\n";
 
     std::string ins_str;
 
@@ -189,7 +213,8 @@ std::string Builder::vert() {
 
     std::string layouts_str; for (auto l : vbo_layouts) layouts_str += "layout (location = "+std::to_string(l.loc)+") in "+l.type+" "+l.name+";\n"; if (samplers.size()) layouts_str += "\n";
 
-    std::string effectors_str; for (auto x : effectors_vertex)  effectors_str += x->header()+"\n\n";
+    std::string effectors_str; for (auto x : effectors_vertex)  
+        effectors_str += x->header()+"\n\n";
 
     return
 
@@ -209,26 +234,7 @@ std::string Builder::vert() {
 
 }
 
-int Builder::addSampler(Texture* tex, std::string name) {
-    
-        int i = 1;
 
-        for (auto x : samplers) {
-            
-            if (x.second == tex)
-                return x.first;
-            
-            if (x.first > i)
-                i = x.first+1;  
-        
-        }
-
-        samplers[i] = tex;
-
-        tex->sampler_name = name+"_pass";
-
-        return i;
-}
 
 
 bool Builder::add(UBO* ubo) { return true; }

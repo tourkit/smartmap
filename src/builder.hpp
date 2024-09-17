@@ -23,22 +23,17 @@ struct Builder {
 
     static inline std::string comment_line  = "///////////////////////////////////////////\n\n";
 
-
     std::string header_common, header_fragment , header_vertex, body_fragment , body_vertex , current_layer;
 
     std::vector<Effector*> effectors_fragment, effectors_vertex;
 
     std::set<UBO*> ubos;
 
-    std::map<int,Texture*> samplers;
-
-    int addSampler(Texture* tex, std::string name = "");
+    ShaderProgram* shader = nullptr;
 
     std::string unique(Member* m);
-
-    void build(std::function<void()> setup_cb = nullptr);
     
-    void build(ShaderProgram* dst);
+    void build(ShaderProgram* dst = nullptr);
     
     virtual void setup();
 
@@ -61,5 +56,9 @@ struct Builder {
     std::vector<Member*> definitions;
 
     std::map<Member*,std::string> unique_names;
+
+    std::map<int,Texture*> samplers;
+
+    int addSampler(Texture* tex, std::string name = "");
 
   };

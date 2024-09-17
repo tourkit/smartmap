@@ -17,7 +17,7 @@ struct Modelable : Effectable {
 
 };
 
-struct Model : Modelable {
+struct Model : Effectable {
 
     File* file;
 

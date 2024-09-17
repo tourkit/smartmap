@@ -11,8 +11,10 @@ Node::Node(void* ptr, TypeIndex type, bool owned) : void_ptr(ptr), stored_type(t
 
 }
 
-Node::Node(std::string name, ImVec4 color) : name_v(name), color(color) {
+Node::Node(std::string name, ImVec4 color) : color(color) {
 
+    this->name(name);
+    
     init();
 
 }
@@ -58,7 +60,7 @@ Node::~Node() {
     pool.erase(this);
 
     if (owned) 
-        deletetyped_cb[stored_type](void_ptr);
+        dtortyped_cb[stored_type](void_ptr);
 
     PLOGV << "~" << name();
 
@@ -197,8 +199,8 @@ Node* Node::add(void* node_v)  {
     if (n != node_v) {
         if (n) 
             og->referings.insert(n);
-        // else
-        //     { PLOGW << name() << " can't add " << og->name(); }
+        else if (n != no_worry)
+            { PLOGW << type_name() << "::" << name() << " couldn't add " << og->type_name() << "::" << og->name(); }
         return n;
     }
     
@@ -283,12 +285,35 @@ void Node::update() {
 }
 
 
-void Node::each_untyped(std::function<void(Node*)> cb) { 
+Node* Node::each_untyped(std::function<Node*(Node*)> cb) { 
     
-    for (auto c : childrens) 
-        c->each_untyped(cb); 
+    bool break_ = false;
+
+    for (auto c : childrens) {
+        
+        if (break_) break;
+
+        if (c->each_untyped(cb) == Node::Break) {
+
+            break_ = true;
+            break;
+        }
+
+    }
     
-    cb(this);  
+    for (auto c : hidden_childrens) {
+        
+        if (break_) break;
+
+        if (c->each_untyped(cb) == Node::Break) {
+
+            break_ = true;
+            break;
+        }
+
+    }
+    
+    return cb(this);  
 
 }
 

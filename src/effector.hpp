@@ -28,13 +28,13 @@ struct Effector : Member {
 
 struct FileEffector : Effector {
 
-    File file;
+    File* file;
 
     std::string source;
 
-    FileEffector(File file, std::string name = "fileEffector");
+    FileEffector(File* file, std::string name = "");
     
-    void load(File* file);
+    void load();
 
     bool setup(Builder* builder) override;
 

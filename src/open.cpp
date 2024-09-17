@@ -15,7 +15,18 @@
 
 static std::string json_error = "JSON error";
 
+static Node* find(Node* tree, std::string& name) {
 
+        
+    if (!name.length())
+        return nullptr;
+
+    auto ext = split(name,".");
+
+    return tree->find(name);
+
+
+}
 
 
 void Open::medias(){
@@ -251,41 +262,41 @@ void Open::layers(){
 
 void Open::effectors(){
 
-    for (auto x : json_v["effectors"]) {
+    // for (auto x : json_v["effectors"]) {
 
-        if (!x.name_v.length() ) continue;
+    //     if (!x.name_v.length() ) continue;
 
-        if (x.str().length()) {
+    //     if (x.str().length()) {
 
-            File file(x.name_v+".glsl", x.str().c_str());
+    //         File file(x.name_v+".glsl", x.str().c_str());
 
-            auto e = engine.effectors->addOwnr<FileEffector>(file);
-            e->name(file.name());
-            e->owned = true;
+    //         auto e = engine.effectors->addOwnr<FileEffector>(file);
+    //         e->name(file.name());
+    //         e->owned = true;
 
-            continue;
+    //         continue;
 
-        }
+    //     }
 
-        if (!x.childrens.size()) continue;
+    //     if (!x.childrens.size()) continue;
 
-        auto  wrap_ = engine.effectors->addOwnr<Wrappy>(std::vector<Effector*>{},3,x.name_v);
+    //     auto  wrap_ = engine.effectors->addOwnr<Wrappy>(std::vector<Effector*>{},3,x.name_v);
 
-        auto wrap = wrap_->is_a<Wrappy>();
+    //     auto wrap = wrap_->is_a<Wrappy>();
 
-        for (auto sub : x) 
+    //     for (auto sub : x) 
 
-            if (sub.str().c_str()) {
+    //         if (sub.str().c_str()) {
 
-                Node* n = (*engine.effectors)[sub.str()];
+    //             Node* n = (*engine.effectors)[sub.str()];
 
-                if (n && n->is_a<Effector>())  
-                    wrap_->add(n);  
+    //             if (n && n->is_a<Effector>())  
+    //                 wrap_->add(n);  
 
-            }
+    //         }
 
         
-    }
+    // }
 
 }
 
@@ -331,7 +342,23 @@ void Open::models(){
 
 }
 
+static void loop (JSONVal val, Node* node) {
 
+    if (!val.name().length())
+        return;
+
+    if (val.isobj()){
+
+        auto new_node = node->addOwnr<Node>(val.name());
+
+        for (auto x : val) 
+            loop(x, new_node);
+
+    }else if (val.str().length())
+
+        auto new_file = node->addOwnr<File>(val.name(), val.str().c_str());
+
+}
 void Open::json(std::string path) {
     
 
@@ -339,6 +366,22 @@ void Open::json(std::string path) {
     engine.reset();
 
     json_v.load(File(path).data.data());
+    
+    auto xx = JSONVal(json_v.document, "doc");
+
+    for (auto x : xx) {
+
+        if (x.name() == "effectors") continue;
+        if (x.name() == "inputs") continue;
+        if (x.name() == "models") continue;
+        if (x.name() == "editors") continue;
+        if (x.name() == "layers") continue;
+        if (x.name() == "medias") continue;
+        if (x.name() == "outputs") continue;
+
+        loop(x, engine.tree);
+        
+    }  
 
 
     if (!json_v.loaded) {
@@ -376,6 +419,9 @@ void Open::json(std::string path) {
     inputs();
 
     editors();
+
+
+
 
     for (auto x : outputs_src){ 
         Node* output = engine.stack->find(x.second["source"].str());

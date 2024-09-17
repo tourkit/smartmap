@@ -12,14 +12,14 @@
 #include "effector.hpp"
 #include "instance.hpp"
 
-Model::Model(File* f, std::string name) : Modelable(name), file(f) {  };
+Model::Model(File* f, std::string name) : Effectable(name), file(f) {  };
 
 Model::~Model() { if (instance) delete instance; }
 
 void Model::convert(File* file, std::string type) {
 
- Assimp::Importer importer;
- Assimp::Exporter exporter;
+    Assimp::Importer importer;
+    Assimp::Exporter exporter;
 
     const aiScene* scene = importer.ReadFileFromMemory(&file->data[0], file->data.size(), aiProcess_CalcTangentSpace       |
         aiProcess_Triangulate            |
@@ -27,14 +27,14 @@ void Model::convert(File* file, std::string type) {
         aiProcess_SortByPType);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
-        PLOGE << "Failed to load OBJ file: " << file->path_v << " . " << importer.GetErrorString(); return; }
+        PLOGE << "Failed to load OBJ file : " << file->path_v << " . " << importer.GetErrorString(); return; }
 
-std::string finale = File::loc()+"/"+file->name()+"."+type;
+    std::string finale = File::loc()+"/"+file->name()+"."+type;
 
-auto x = exporter.Export(scene, type, finale, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
+    auto x = exporter.Export(scene, type, finale, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 
-if (x) 
-    PLOGE << exporter.GetErrorString();
+    if (x) 
+        PLOGE << exporter.GetErrorString();
 
 }
 

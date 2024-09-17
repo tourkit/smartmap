@@ -83,7 +83,7 @@ struct Node {
 
     Node* on(Event event, std::function<void(Node*)> cb = nullptr);
 
-    void each_untyped(std::function<void(Node*)> cb);
+    Node* each_untyped(std::function<Node*(Node*)> cb);
 
     static inline uint32_t total_uid = 0;
     uint32_t uid = 0;
@@ -109,7 +109,7 @@ struct Node {
     std::map<TypeIndex, std::function<Node*(Node*,Node*)>> onadd_cb;
     static inline std::map<TypeIndex, std::map<TypeIndex, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
 
-    static inline std::map<TypeIndex, std::function<void(void*)>> deletetyped_cb;
+    static inline std::map<TypeIndex, std::function<void(void*)>> ctortyped_cb, dtortyped_cb;
     
     static inline std::map<TypeIndex, std::map<TypeIndex, std::function<void*(void*)>>> is_lists;
 
@@ -122,6 +122,13 @@ struct Node {
 
     void* void_ptr = nullptr;
 
+    static inline Node* Null = nullptr;
+    static inline int no_worrint = 0;
+    static inline Node* no_worry = (Node*)&no_worrint;
+    static inline int breakint = 0;
+    static inline Node* Break = (Node*)&breakint;
+
+
     bool owned;
 
     template <typename U>
@@ -132,24 +139,44 @@ struct Node {
         return add(out); 
         
     }
+    template <typename U>
+    static void init() { 
 
-    template <typename U, typename... Args>
-    Node* addOwnr(Args&&... args) {
-
-        if (deletetyped_cb.find(typeid(U)) == deletetyped_cb.end()) 
-            deletetyped_cb.emplace(typeid(U),[&](void* t){ 
+        if (Node::dtortyped_cb.find(typeid(U)) == Node::dtortyped_cb.end()) 
+            Node::dtortyped_cb.emplace(typeid(U),[&](void* t){ 
 
                 delete (U*)t; 
 
             });
+
+        // if (Node::ctortyped_cb.find(typeid(U)) == Node::ctortyped_cb.end()) 
+        //     Node::ctortyped_cb.emplace(typeid(U),[&](void* t){ 
+
+        //         return new U(); 
+
+        //     });
+
+
+    }
+
+    template <typename U, typename... Args>
+    Node* addOwnr(Args&&... args) {
+
+        Node::init<U>();
+
+        Node* n;
         
         auto ptr = new U(std::forward<Args>(args)...);
 
-        auto n = new Node(ptr, typeid(U), true);
+        if (typeid(U) == typeid(Node)) 
+            n = (Node*)ptr;
 
+        else 
+            n = new Node(ptr, typeid(U), true);
+        
         if (!add(n)) { 
             
-            delete n; 
+            delete n; // will delete ptr
             return nullptr; 
         
         } 
@@ -157,14 +184,23 @@ struct Node {
         return n;
 
     }
+    
+
+    template <typename U>
+    Node* eachBreak(std::function<Node*(Node*, U*)> cb) { 
+        return each_untyped([&](Node* n) { 
+            U* isa = n->is_a_nowarning<U>(); 
+            if (isa) 
+                return cb(n,isa); 
+            return (Node*)nullptr;
+        }); 
+    }
 
     template <typename U>
     void each(std::function<void(Node*, U*)> cb) { 
-        each_untyped([&](Node* n) { 
-            U* isa = n->is_a_nowarning<U>(); 
-            if (isa) 
-                cb(n,isa); 
-        }); 
+
+        eachBreak<U>([&](Node* n, U* isa) { cb(n,isa); return (Node*)nullptr; });
+
     }
 
     static inline std::function<Node*(Node*,Node*)> any_cb = [](Node*_this,Node*node){ return node; };
@@ -231,6 +267,7 @@ struct NODE {
 
     static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
     
+
 };
 
 struct AnyNode {

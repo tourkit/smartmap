@@ -33,8 +33,6 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name) :
         init = true;
 
     }
-    
-    builder_v = &Layer::builder;
 
     int xxx = glsl_layers->stl.back().m->quantity();
 
@@ -256,8 +254,6 @@ UberLayer::UberLayer() :
     uberlayer_m(engine.static_ubo->next_name(name())) 
 
 {
-    
-    builder_v = &UberLayer::builder;
 
     uberlayer_m.quantity(0);
 
@@ -267,6 +263,15 @@ UberLayer::UberLayer() :
 
     effector.ubl(this);
     
+}
+
+::Builder* UberLayer::builder() {
+
+    if (!builder_v) 
+        builder_v = new UberLayer::Builder(this); 
+
+    return builder_v;
+
 }
 
 void UberLayer::calc_matrice() {
@@ -349,7 +354,7 @@ void UberLayer::calc_matrice() {
         z++;
     }
 
-    builder.build();
+    builder()->build(&shader);
 
     engine.static_ubo->upload();
 
@@ -376,7 +381,9 @@ UberLayer::VirtualLayer::VirtualLayer(int w, int h, int id) :
 
 }
 
-UberLayer::Builder::Builder(UberLayer* ubl) : ubl(ubl) { dc = ubl; }
+UberLayer::Builder::Builder(UberLayer* ubl) : DrawCall::Builder(ubl), ubl(ubl) {
+
+}
 
 void UberLayer::Builder::setup() {
 
@@ -384,7 +391,7 @@ void UberLayer::Builder::setup() {
 
     body_fragment += "\tint obj  = int(OBJ);\n\n";
 
-    std::string ar_str = lower(ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?"[obj]":"")+".uberLayers";
+    std::string ar_str = lower(ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?"[obj]":"")+".uBL";
 
     if (ubl->layers.size() == 1) 
         body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->name()), "obj", ar_str );

@@ -8,6 +8,8 @@
 
 
 
+
+
 Model* DrawCall::addModel(File* f) {
 
      auto x = Modelable::addModel(f);
@@ -19,6 +21,11 @@ Model* DrawCall::addModel(File* f) {
 
 ///////// LayerBuilder ////
 
+
+DrawCall::Builder::Builder(DrawCall* dc) : dc(dc) {
+
+
+}
 
 std::string DrawCall::Builder::print_layer(Effectable &effectable, std::string prepend,std::string instance, std::string ar) {
 
@@ -45,12 +52,6 @@ std::string DrawCall::Builder::print_layer(Effectable &effectable, std::string p
 
 }
 
-void DrawCall::Builder::use(DrawCall* dc, int stride_count) {
-
-    this->dc = dc;
-    this->stride_count = stride_count;
-
-}
 
 void DrawCall::Builder::setup() {
 
@@ -59,13 +60,7 @@ void DrawCall::Builder::setup() {
     ubos.insert(engine.dynamic_ubo);
     ubos.insert(engine.static_ubo);
 
-    for (auto x : effectors_fragment) x->setup(this);
-
-    for (auto x : effectors_vertex) x->setup(this);
-
     // FRAGMENT ////////////////
-
-    header_fragment.clear();
 
     header_fragment += "\n";
     header_fragment += "in flat int ID;\n"; // add condition
@@ -76,17 +71,22 @@ void DrawCall::Builder::setup() {
     // header_fragment += "vec4 base_color = vec4(1);\n";
     header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
 
-    header_fragment += "void tic() { COLOR += color; uv = uv; color = vec4(1); }\n";
-    header_fragment += "void tac() { COLOR += color; uv = uv; color = vec4(0); }\n\n";
+    header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
+    header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
     // header_fragment += "void base() { base_uv = uv; base_color = color; color = vec4(0); }\n\n";
     header_fragment += "int curr = dynamic_ubo[0].eNGINE.alt;\n";
     header_fragment += "int last = abs(curr-1);\n\n";
-
-    effectors_fragment.clear();
-    body_fragment.clear();
     body_fragment += "\tCOLOR = vec4(0);\n\n";
 
     if (dc) {
+
+        for (auto &model : dc->models) 
+            for (auto x : model->effector_refs) 
+                x.get()->effector->setup(this);
+        
+        for (auto x : dc->effector_refs) 
+            x.get()->effector->setup(this);
+        
 
         // do all body 
 
@@ -99,13 +99,6 @@ void DrawCall::Builder::setup() {
             body_fragment += ref.get()->effector->body(this, "dynamic_ubo[curr]."+lower(dc->_name())+"."+lower(ref->ref()->_name()));
         
         // setup all effector_refs
-
-        for (auto &model : dc->models) 
-            for (auto x : model->effector_refs) 
-                x.get()->effector->setup(this);
-        
-        for (auto x : dc->effector_refs) 
-            x.get()->effector->setup(this);
 
 
         if (dc->effector_refs.size()) 
@@ -182,7 +175,7 @@ void DrawCall::draw() {
 
     };
 
-    glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[GL_BLEND_MODE_OUT]);
+    glBlendFunc(GL_BLEND_MODES[GL_BLEND_MODE_IN], GL_BLEND_MODES[(models.size() != 1 ? GL_BLEND_MODE_OUT : GL_ONE)]);
             
     shader.use();
 
@@ -190,3 +183,11 @@ void DrawCall::draw() {
 
 }
 
+::Builder* DrawCall::builder() {
+
+    if (!builder_v)
+        builder_v = new Builder(this);
+    
+    return builder_v;
+    
+}

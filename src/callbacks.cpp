@@ -1,5 +1,6 @@
 #include "callbacks.hpp"
 
+#include "engine.hpp"
 #include "member.hpp"
 #include "node.hpp"
 #include "file.hpp"
@@ -18,6 +19,9 @@
 #include "framebuffer.hpp"
 #include "layer.hpp"
 #include "texture.hpp"
+
+
+#include "engine.hpp"
 
 void Callbacks::init() {
 
@@ -72,7 +76,7 @@ void Callbacks::init() {
     NODE<Stack>::onadd<File>([](Node*_this,Node*node){
 
         auto x = _this->addOwnr<Layer>();
-        x->add(node)->active(false);
+        x->add(node);
         return x;
 
     });
@@ -119,7 +123,7 @@ void Callbacks::init() {
     
     NODE<UberLayer>::is_a<Layer>();
     NODE<Layer>::is_a<DrawCall>();
-    NODE<Model>::is_a<Modelable>();
+    NODE<Model>::is_a<Effectable>();
     NODE<UberLayer::VirtualLayer>::is_a<Effectable>();
     NODE<Effectable>::is_a<Member>();
     NODE<Effector>::is_a<Member>();
@@ -146,9 +150,7 @@ void Callbacks::init() {
 
         node->each<DrawCall>([](Node*n, DrawCall* dc){ 
             
-            dc->builder_v->use(dc,0) ;
-
-            dc->builder_v->build(&dc->shader);
+            dc->builder()->build(&dc->shader);
 
         });
 
@@ -156,7 +158,46 @@ void Callbacks::init() {
 
     });
 
+    NODE<Effectable>::onadd<File>([](Node*_this,Node*node){
+
+        auto file = node->is_a<File>();
+        if (file->extension != "glsl") {
+
+            if (_this->is_a_nowarning<Modelable>())
+                return Node::no_worry;
+
+            else
+                return Node::Null;
+
+        }
+
+        NODE<File>::allow<Effector>();
+
+        Node* effector = nullptr;
+
+        // bool found = false;
+
+        // // check if des hidden
+        // // make break work
+
+        // node->eachB<FileEffector>(([&](Node* n, FileEffector* effector_){
+            
+        //     effector = n;
+            
+        //     return Node::Break;
+
+        // }));
+
+        // if (!effector)
+            effector = node->addOwnr<FileEffector>(file);
+
+        return _this->add(effector);
+    });
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
+
+        auto file = node->is_a<File>();
+        if (file->extension != "obj") 
+            return Node::Null;
 
         return _this->addPtr<Model>(_this->is_a<Modelable>()->addModel( node->is_a<File>() ));
 
@@ -205,15 +246,24 @@ void Callbacks::init() {
 
     NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
 
-    NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, fx->ref());  });
+    // NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, fx->ref());  });
     
-    NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){   });
+    // NODE<EffectorRef>::on(Node::CHANGE, [&](Node*node, EffectorRef* ref){   });
+    NODE<EffectorRef>::is_a<Member>();
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
 
-        auto effectable = node->parent()->is_a_nowarning<Effectable>();
-        if (effectable) 
-            effectable->removeEffector(effector); 
+            engine.window.end_of_render_cbs.emplace_back(node,[](void* ptr){
+
+                auto node = (Node*)ptr;
+
+                auto effectable = node->parent()->is_a_nowarning<Effectable>();
+                if (effectable) 
+                effectable->removeEffector(node->is_a_nowarning<EffectorRef>()); 
+
+            });
+
+        
 
     });
 
@@ -337,7 +387,7 @@ void Callbacks::init() {
         
         _this->referings.insert(node);
 
-        return nullptr;
+        return Node::no_worry;
 
     });
 
