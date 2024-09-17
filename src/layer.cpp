@@ -12,23 +12,29 @@
 
 ///////// Layer ////
 
-Layer::Layer(uint16_t width, uint16_t height, std::string name)
+Layer::Layer(uint16_t width, uint16_t height, std::string name) :
 
-    : fb((width?width:engine.window.width), (height?height:engine.window.height)), DrawCall(name) {
+    fb((width?width:engine.window.width), 
+    (height?height:engine.window.height)), 
+    DrawCall(name)
+    
+{
 
-        static bool init = false;
+    static bool init = false;
 
-        if (!init) {
+    if (!init) {
 
-            globals.layer.striding(true);
+        globals.layer.striding(true);
 
-            engine.static_ubo->add(&globals.layer);
+        engine.static_ubo->add(&globals.layer);
 
-            glsl_layers =  &(*new Instance(*engine.static_ubo))[&globals.layer];
+        glsl_layers =  &(*new Instance(*engine.static_ubo))[&globals.layer];
 
-            init = true;
+        init = true;
 
-        }
+    }
+    
+    builder_v = Layer::builder;
 
     int xxx = glsl_layers->stl.back().m->quantity();
 
@@ -69,9 +75,9 @@ void Layer::draw() {
 
 // FeedbackEffector  ////////////////
 
-
-
 bool Layer::Feedback::setup(::Builder* builder) { 
+
+    texture.read(&layer->feedback()->texture);
 
     builder->addSampler(&layer->feedback()->texture, "feedback");
 
@@ -80,8 +86,6 @@ bool Layer::Feedback::setup(::Builder* builder) {
     return true; 
     
 }
-
-
 
 std::string Layer::Feedback::header() {
 
@@ -253,6 +257,8 @@ UberLayer::UberLayer() :
     uberlayer_m(engine.static_ubo->next_name(name())) 
 
 {
+    
+    builder_v = UberLayer::builder;
 
     uberlayer_m.quantity(0);
 
@@ -305,7 +311,7 @@ void UberLayer::calc_matrice() {
         }
     }
 
-    if (matrice.size()<2) 
+    if (matrice.size()<1) 
         return;
 
     if (!matrice.back().size()) 
@@ -371,7 +377,7 @@ UberLayer::VirtualLayer::VirtualLayer(int w, int h, int id) :
 
 }
 
-UberLayer::Builder::Builder(UberLayer* ubl) : ubl(ubl) {  }
+UberLayer::Builder::Builder(UberLayer* ubl) : ubl(ubl) { dc = ubl; }
 
 void UberLayer::Builder::setup() {
 
@@ -381,7 +387,8 @@ void UberLayer::Builder::setup() {
 
     std::string ar_str = lower(ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?"[obj]":"")+".uberLayers";
 
-    if (ubl->layers.size() == 1) body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->name()), "obj", ar_str );
+    if (ubl->layers.size() == 1) 
+        body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->name()), "obj", ar_str );
 
     else {
 

@@ -33,6 +33,8 @@ struct DrawCall : Modelable {
 
     static inline Builder builder;
 
+    Builder& builder_v = builder;
+
     ShaderProgram shader;
 
     int GL_BLEND_MODE_IN = 6;

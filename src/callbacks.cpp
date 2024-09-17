@@ -134,13 +134,21 @@ void Callbacks::init() {
         
     });
 
+    NODE<Layer::Feedback>::on(Node::CHANGE, [](Node* node, Layer::Feedback *feedback) {
+
+
+        feedback->texture.create( feedback->layer->fb.width, feedback->layer->fb.height );
+
+
+    });
+
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
         node->each<DrawCall>([](Node*n, DrawCall* dc){ 
             
-            dc->builder.use(dc,0) ;
+            dc->builder_v.use(dc,0) ;
 
-            dc->builder.build(&dc->shader);
+            dc->builder_v.build(&dc->shader);
 
         });
 

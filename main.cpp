@@ -51,6 +51,7 @@ int main() {
 
     // auto lay = engine.stack->childrens[0]->is_a<Member>()->instance;
 
+    logger.cout(Sev::verbose);
     engine.run();
 
     logger.cout(Sev::warning);

@@ -13,21 +13,13 @@
   },
   "layers": {
     "virtuallayers1": {
-
-    },
-      "Free Layer 1": {
-            "dim": [ 100,100 ],
-            "models": {
-                "quad1": {
-                    "q": 1,
-                    "model": "quad.obj",
-                    "effectors": [
-                        "argb"
-                    ]
-                
-                }
-            }
-      }
+        "Fixture Cluster 1": {
+          "dimensions": [ 1920, 1080 ],
+          "quantity": 1,
+          "effectors": [ "argb", "rectangle" ],
+          "blending": "Additive"
+        }
+    }
   },
   "models": {
       "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
