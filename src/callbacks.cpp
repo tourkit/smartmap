@@ -62,8 +62,6 @@ void Callbacks::init() {
         if (m->name() != node->name())
             m->ref()->name(node->name()); 
     });
-
-
     
     NODE<Member>::on(Node::RUN, [](Node* node, Member *m){ m->upload(); });
 
@@ -79,12 +77,6 @@ void Callbacks::init() {
 
     });
     
-    NODE<Stack>::on(Node::CHANGE, [](Node*node, Stack* stack){
-
-
-        
-    });
-
     NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
 
         layer->glsl_layers->eq(layer->vbo.layer_id).set<std::array<float,2>>({(float)layer->fb.width,(float)layer->fb.height});
@@ -105,11 +97,15 @@ void Callbacks::init() {
 
     NODE<Model>::on(Node::DESTROY, [](Node* node, Model *model) {
 
-        auto dc = node->parent()->is_a_nowarning<DrawCall>();
-        if (dc) { dc->removeModel(model); return; }
+        auto modelable = node->parent()->is_a_nowarning<Modelable>();
 
-        auto layer = node->parent()->is_a_nowarning<Layer>();
-        if (layer) { layer->removeModel(model); return; }
+        if (modelable) { 
+
+            modelable->removeModel(model); 
+
+            return; 
+
+        }
 
         PLOGE << "no found";
  
@@ -136,11 +132,6 @@ void Callbacks::init() {
 
         dc->draw(); 
         
-    });
-
-    NODE<DrawCall>::on(Node::CREATE, [](Node* node, DrawCall *dc) {
-
-
     });
 
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
@@ -212,14 +203,9 @@ void Callbacks::init() {
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
 
-        auto lay = node->parent()->is_a_nowarning<Layer>();
-        if (lay) lay->removeEffector(effector); 
-
-        auto ubl = node->parent()->is_a_nowarning<UberLayer::VirtualLayer>();
-        if (ubl) ubl->removeEffector(effector);
-
-        auto model = node->parent()->is_a_nowarning<Model>();
-        if (model) model->removeEffector(effector);
+        auto effectable = node->parent()->is_a_nowarning<Effectable>();
+        if (effectable) 
+            effectable->removeEffector(effector); 
 
     });
 

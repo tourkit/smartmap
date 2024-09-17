@@ -33,10 +33,11 @@ void TreeWidget::draw()  {
     auto xxx = ImGui::GetInputTextState(ImGui::GetItemID());
 
 
-
+    static int curr = 0;
     if (ImGui::IsItemDeactivated() && search_str[0] == '\0') {
 
         filtering = false;
+        curr = 0;
 
         strncpy( &search_str[0], &filter_str[0], sizeof(filter_str) );
 
@@ -44,16 +45,28 @@ void TreeWidget::draw()  {
         
     static bool slashdown = false;
 
-    if (filtering && ImGui::IsKeyPressed(ImGuiKey_Tab) ) {
+    if (filtering && ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Tab) && !ImGui::IsKeyDown(ImGuiKey_LeftCtrl) ) {
 
-        PLOGW << "pick";
+        ImGui::SetKeyboardFocusHere(1);
 
         if (ImGui::IsItemFocused()){
+            if (visible_list.size())
+                gui->selected = visible_list[0];
 
-            // pick first in list
-        }else {
-            // pick next in list
-        }
+        }else 
+
+            for (int i = 0; i < visible_list.size(); i++) 
+                if (visible_list[i] == gui->selected) {
+                    if (ImGui::IsKeyDown(ImGuiKey_LeftShift))
+                        gui->selected = visible_list[(i-1+visible_list.size())%visible_list.size()];
+                    else
+                        gui->selected = visible_list[(i+1)%visible_list.size()];
+                    break;
+                    
+                }
+        
+        if (gui->editors.size())
+            gui->editors[0]->selected = gui->selected;
     }
 
     if (!slashdown && ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_Slash)) {
@@ -181,21 +194,21 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
             const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 
-            static TestWin testwin("test", gui);
-            testwin.floats.resize(10);
+            // static TestWin testwin("test", gui);
+            // testwin.floats.resize(10);
 
-            verticalLineStart.x+=(depth*8)+testwin.floats[0];//21
-            verticalLineStart.y+=-10+testwin.floats[1];
+            verticalLineStart.x+=(depth*8);//21
+            verticalLineStart.y+=-10;
             ImVec2 verticalLineEnd = verticalLineStart;
 
-            verticalLineEnd.y+=18+testwin.floats[2];
+            verticalLineEnd.y+=18;
             ImVec2 verticalLineEnd2 = verticalLineEnd;
-            verticalLineEnd2.x+=12+testwin.floats[3];//Engine::getInstance().blank[8];
+            verticalLineEnd2.x+=12;//Engine::getInstance().blank[8];
 
-            if (ImGui::GetCursorPosX() > 25+testwin.floats[4]) {
+            if (ImGui::GetCursorPosX() > 25) {
                 drawList->AddLine(verticalLineStart, verticalLineEnd, IM_COL32(200,200,200,50));
                 
-                verticalLineEnd.x = std::max(verticalLineEnd.x+10, ImGui::GetWindowPos().x+20+testwin.floats[5])-10;
+                verticalLineEnd.x = std::max(verticalLineEnd.x+10, ImGui::GetWindowPos().x+20)-10;
                 drawList->AddLine(verticalLineEnd, verticalLineEnd2, IM_COL32(200,200,200,50));
 
             }

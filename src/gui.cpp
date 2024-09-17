@@ -216,19 +216,23 @@ ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
   ImGui::PushStyleColor(ImGuiCol_WindowBg,ImVec4(.1,.1,.1,1));
   ImGui::PushStyleColor(ImGuiCol_TableBorderLight,ImVec4(0,0,0,0));
   ImGui::PushStyleColor(ImGuiCol_Button,color_lightgrey);
+  ImGui::PushStyleColor(ImGuiCol_ButtonActive,ImVec4(0,0,0,0));
   ImGui::PushStyleColor(ImGuiCol_ButtonHovered,color_orange);
   ImGui::PushStyleColor(ImGuiCol_TabHovered,color_orange);
   ImGui::PushStyleColor(ImGuiCol_TabActive,color_orange);
   ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.2f, 0.2f, 0.2f, 1.0f)); // Darker border color
   ImGui::PushStyleColor(ImGuiCol_HeaderHovered,ImVec4(0,0,0,0));
   ImGui::PushStyleColor(ImGuiCol_HeaderActive,ImVec4(0,0,0,0));
+  ImGui::PushStyleColor(ImGuiCol_ScrollbarBg,ImVec4(0,0,0,0));
   ImGui::PushStyleColor(ImGuiCol_HeaderHovered,ImVec4(1,1,1,0.333));
   ImGui::PushStyleColor(ImGuiCol_PopupBg,ImVec4(.254,.254,.254,1));
   ImGui::PushStyleColor(ImGuiCol_Text,ImVec4(.939,.939,.939,1));
+  ImGui::PushStyleColor(ImGuiCol_CheckMark,ImVec4(.669,.669,.669,1));
 
   ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding,ImVec2(0,0));
   ImGui::PushStyleVar(ImGuiStyleVar_IndentSpacing,10);
   ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding,2);
+  ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 
   trees.push_back(new TreeWidget(this));
 
