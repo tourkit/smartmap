@@ -2,7 +2,7 @@
   
   "effectorsads": {
 
-      "testfile1.glsl" : "fire content"
+      "testfile1.glsl" : "// x(0,1,1)\nvoid test(float x) {\n}"
 
   },
   "MOMOMOMDS": {

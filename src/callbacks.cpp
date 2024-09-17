@@ -49,8 +49,12 @@ void Callbacks::init() {
         file->path_v = (file->name())+"."+file->extension;
         
         node->eachBreak<FileEffector>([node](Node* e_, FileEffector* e){ 
+            e_->name_v = (node->name());
 
             e->Effector::name(e->file->name());
+
+            for (auto refering : e_->referings) 
+                refering->name(e->file->name());
 
             return Node::Break;
             
@@ -205,11 +209,11 @@ void Callbacks::init() {
         }));
 
         if (!effector)
-            effector = file_->addOwnr<FileEffector>(file);//->hide();
+            effector = file_->addOwnr<FileEffector>(file)->hide();
 
         _this->add(effector);
 
-        return Node::no_worry;
+        return effector;
 
     });
 
@@ -264,6 +268,8 @@ void Callbacks::init() {
 
     });
 
+    NODE<FileEffector>::on(Node::CHANGE, [&](Node*node, FileEffector* effector){ effector->load();  });
+    
     NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
 
     // NODE<EffectorRef>::on(Node::CREATE, [](Node*node, EffectorRef* fx){ NODE<Member>::on_cb[Node::CREATE](node, fx->ref());  });

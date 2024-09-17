@@ -40,7 +40,7 @@ void EditorWidget::draw() {
 
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
     std::string referings;
-    for (auto r : selected->referings) if (r) referings += (r->name())+", ";
+    for (auto r : selected->referings) if (r) referings += (r->type_name()+"::"+r->name())+", ";
     if (referings.length()) {
         std::string str = "(refering"+std::string(referings.length()>1?"s":"")+": "+referings.substr(0,referings.length()-2)+")";
         ImGui::SameLine(); ImGui::Text(str.c_str()); }

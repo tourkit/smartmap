@@ -66,7 +66,7 @@ int main() {
 
     // logger.cout(Sev::verbose);
     engine.open("project.json");
-    // logger.cout(Sev::verbose);
+    logger.cout(Sev::verbose);
 
 
 
