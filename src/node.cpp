@@ -68,6 +68,9 @@ Node::~Node() {
 
 Node* Node::find(std::vector<std::string> names) {
 
+    find_list.clear();
+    find_pos = 0;
+
     auto traget = names.back();
 
     for (auto c : childrens) {
@@ -80,7 +83,8 @@ Node* Node::find(std::vector<std::string> names) {
 
             for (int i = names.size()-2; i >= 0; i--) if (!strcmp(parent->parent()->name().c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
 
-            if (c) return c;
+            if (c) 
+                ADD_UNIQUE<Node*>(find_list, c);
 
         }
 
@@ -90,14 +94,24 @@ Node* Node::find(std::vector<std::string> names) {
 
         auto x = c->find(names);
 
-        if (x) return x;
+        if (x) 
+            ADD_UNIQUE<Node*>(find_list, x);
 
     }
 
-    return nullptr;
+    return find_next();
 
 }
 
+
+Node* Node::find_next() {
+
+    if (!find_list.size() || find_pos > find_list.size()-1)
+        return nullptr;
+
+    return find_list[find_pos++];
+
+}
 
 Node* Node::find(std::string  name) {
 

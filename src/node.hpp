@@ -62,6 +62,7 @@ struct Node {
     Node* top_parent();
 
     Node* find(std::string  name);
+    Node* find_next();
     Node* find_nowarning(std::string  name);
     Node* find(std::vector<std::string> names);
 
@@ -238,6 +239,9 @@ private:
     Node* parent_node = nullptr;
 
     bool has_changed = false;
+
+    int find_pos = 0;
+    std::vector<Node*> find_list;
 
 };
 

@@ -15,16 +15,32 @@
 
 static std::string json_error = "JSON error";
 
-static Node* find(Node* tree, std::string& name) {
+static Node* find(Node* tree, std::string name) {
 
         
     if (!name.length())
         return nullptr;
 
     auto ext = split(name,".");
+    
+    auto x = tree->find(ext[0]);
+    
+    if (ext.size() == 2 && ext[1].length()) { // supposely a file
 
-    return tree->find(name);
+        while(x) {
+            
+            auto file = x->is_a_nowarning<File>();
+            if (file && file->extension == ext[1]) 
+                return x;
 
+            x = x->find_next();
+        }
+
+        if (!x)
+            {PLOGE << "no file " << name }
+    }
+
+    return x;
 
 }
 
@@ -382,6 +398,8 @@ void Open::json(std::string path) {
         loop(x, engine.tree);
         
     }  
+
+    auto x = find(engine.tree, "quad.priout");
 
 
     if (!json_v.loaded) {
