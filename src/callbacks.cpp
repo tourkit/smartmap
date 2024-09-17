@@ -40,9 +40,6 @@ void Callbacks::init() {
 
     // });
     
-    // check referings 
-    // then auto rename
-    // auto open first editor
     ////////// FILE.HPP
 
     NODE<File>::on(Node::CHANGE, [](Node* node, File *file){ 
@@ -210,8 +207,12 @@ void Callbacks::init() {
         if (!effector)
             effector = file_->addOwnr<FileEffector>(file);//->hide();
 
-        return _this->add(effector);
+        _this->add(effector);
+
+        return Node::no_worry;
+        
     });
+
     NODE<Modelable>::onadd<File>([](Node*_this,Node*node){
 
         auto file = node->is_a<File>();

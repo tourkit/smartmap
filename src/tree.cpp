@@ -252,16 +252,20 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
                         memset(&renaming_name[0],0,612);
                         memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
                     }else{
-                        if (IsMouseDown(0)){
-                            if (gui && !gui->editors.size()){
-                                gui->editors.emplace_back(new EditorWidget(gui));
-                                gui->editors.back()->selected = node;
-                            }
+                        if (IsMouseDown(0))
+                            
                             gui->selected = node;
                             
-                        }
+                        
                         // else if (IsMouseDown(1))
+                    }
                 }
+
+                if (IsMouseReleased(0) && gui->selected){
+                    if (gui && !gui->editors.size()){
+                        gui->editors.emplace_back(new EditorWidget(gui));
+                        gui->editors.back()->selected = node;
+                    }
                 }
 
                 PopStyleColor();
