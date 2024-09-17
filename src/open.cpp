@@ -37,7 +37,8 @@ static Node* find(Node* tree, std::string name) {
         }
 
         if (!x)
-            {PLOGE << "no file " << name }
+            { PLOGE << "no file " << name; }
+
     }
 
     return x;
@@ -399,7 +400,6 @@ void Open::json(std::string path) {
         
     }  
 
-    auto x = find(engine.tree, "quad.priout");
 
 
     if (!json_v.loaded) {

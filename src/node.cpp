@@ -211,10 +211,16 @@ Node* Node::add(void* node_v)  {
     }
 
     if (n != node_v) {
-        if (n) 
-            og->referings.insert(n);
-        else if (n != no_worry)
-            { PLOGW << type_name() << "::" << name() << " couldn't add " << og->type_name() << "::" << og->name(); }
+
+        if (n != no_worry) {
+
+            if (n ) 
+                og->referings.insert(n);
+            
+            else 
+                { PLOGW << type_name() << "::" << name() << " couldn't add " << og->type_name() << "::" << og->name(); }
+        }
+
         return n;
     }
     

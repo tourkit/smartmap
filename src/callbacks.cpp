@@ -40,7 +40,28 @@ void Callbacks::init() {
 
     // });
     
+    // check referings 
+    // then auto rename
+    // auto open first editor
     ////////// FILE.HPP
+
+    NODE<File>::on(Node::CHANGE, [](Node* node, File *file){ 
+
+        file->name(node->name());
+
+        file->path_v = (file->name())+"."+file->extension;
+        
+        node->eachBreak<FileEffector>([node](Node* e_, FileEffector* e){ 
+
+            e->Effector::name(e->file->name());
+
+            return Node::Break;
+            
+        });
+
+    });
+
+    
 
     NODE<File>::on(Node::CREATE, [](Node* node, File *file){ node->name(file->name()); });
 
@@ -63,8 +84,8 @@ void Callbacks::init() {
     });
 
     NODE<Member>::on(Node::CHANGE, [&](Node*node, Member* m){
-        if (m->name() != node->name())
-            m->ref()->name(node->name()); 
+        if (m->name() != node->name() && m == m->ref())
+            m->name(node->name()); 
     });
     
     NODE<Member>::on(Node::RUN, [](Node* node, Member *m){ m->upload(); });
@@ -77,7 +98,7 @@ void Callbacks::init() {
 
         auto x = _this->addOwnr<Layer>();
         x->add(node);
-        return x;
+        return Node::no_worry;
 
     });
     
@@ -158,9 +179,11 @@ void Callbacks::init() {
 
     });
 
-    NODE<Effectable>::onadd<File>([](Node*_this,Node*node){
+    NODE<File>::allow<Effector>();
 
-        auto file = node->is_a<File>();
+    NODE<Effectable>::onadd<File>([](Node*_this,Node*file_){
+
+        auto file = file_->is_a<File>();
         if (file->extension != "glsl") {
 
             if (_this->is_a_nowarning<Modelable>())
@@ -171,25 +194,21 @@ void Callbacks::init() {
 
         }
 
-        NODE<File>::allow<Effector>();
 
         Node* effector = nullptr;
 
-        // bool found = false;
+        bool found = false;
 
-        // // check if des hidden
-        // // make break work
-
-        // node->eachB<FileEffector>(([&](Node* n, FileEffector* effector_){
+        file_->eachBreak<FileEffector>(([&](Node* n, FileEffector* effector_){
             
-        //     effector = n;
-            
-        //     return Node::Break;
+            effector = n;
+        
+            return Node::Break;
 
-        // }));
+        }));
 
-        // if (!effector)
-            effector = node->addOwnr<FileEffector>(file);
+        if (!effector)
+            effector = file_->addOwnr<FileEffector>(file);//->hide();
 
         return _this->add(effector);
     });

@@ -136,8 +136,8 @@ void FileEffector::load() {
 
 }
 
-FileEffector::FileEffector(File* file, std::string name) : Effector(name.length()?name:"fileEffector"), file(file) {
-
+FileEffector::FileEffector(File* file, std::string name) : Effector(file->name().length()?file->name():"fileEffector"), file(file) {
+    load();
 }
 
 

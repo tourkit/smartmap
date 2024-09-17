@@ -10,7 +10,7 @@ struct Builder;
 
 struct Effector : Member {
 
-    enum Type { FRAGMENT, VERTEX, COMPUTE } type;
+    enum Type { FRAGMENT, VERTEX, COMPUTE } type = FRAGMENT;
 
     virtual bool setup(Builder* builder) = 0;
 
