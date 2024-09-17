@@ -108,7 +108,7 @@ struct UberLayer : Layer {
 
     VirtualLayer& addLayer(int w , int h) ; // kinda ctor for VLaye
 
-    struct Builder : DrawCall::Builder {
+    static struct Builder : DrawCall::Builder {
 
         void setup() override;
 

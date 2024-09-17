@@ -146,9 +146,9 @@ void Callbacks::init() {
 
         node->each<DrawCall>([](Node*n, DrawCall* dc){ 
             
-            dc->builder_v.use(dc,0) ;
+            dc->builder_v->use(dc,0) ;
 
-            dc->builder_v.build(&dc->shader);
+            dc->builder_v->build(&dc->shader);
 
         });
 

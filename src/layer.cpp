@@ -34,7 +34,7 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name) :
 
     }
     
-    builder_v = Layer::builder;
+    builder_v = &Layer::builder;
 
     int xxx = glsl_layers->stl.back().m->quantity();
 
@@ -253,12 +253,11 @@ std::string UberEffector::body(::Builder* builder, std::string prepend) {
 UberLayer::UberLayer() : 
 
     Layer(0,0,"UberLayer"), 
-    builder(this), 
     uberlayer_m(engine.static_ubo->next_name(name())) 
 
 {
     
-    builder_v = UberLayer::builder;
+    builder_v = &UberLayer::builder;
 
     uberlayer_m.quantity(0);
 

@@ -17,7 +17,7 @@ struct DrawCall : Modelable {
 
     Model* addModel(File* f) override;
 
-    struct Builder : ::Builder {
+    static struct Builder : ::Builder {
 
         void setup() override;
 
@@ -29,11 +29,9 @@ struct DrawCall : Modelable {
 
         std::string print_layer(Effectable &effectable,std::string prepend ,std::string instance, std::string ar = "");
 
-    };
+    } builder;
 
-    static inline Builder builder;
-
-    Builder& builder_v = builder;
+    Builder* builder_v = &builder;
 
     ShaderProgram shader;
 
