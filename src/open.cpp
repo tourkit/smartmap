@@ -361,7 +361,9 @@ void Open::models(){
 
 }
 
-static void loop (JSONVal val, Node* node) {
+
+
+static void getModels (JSONVal val, Node* node) {
 
     if (!val.name().length())
         return;
@@ -371,7 +373,7 @@ static void loop (JSONVal val, Node* node) {
         auto new_node = node->addOwnr<Node>(val.name())->active(false);
 
         for (auto x : val) 
-            loop(x, new_node);
+            getModels(x, new_node);
 
     }else if (val.str().length())
 
@@ -394,7 +396,7 @@ void Open::json(std::string path) {
         if (x.name() == "editors") continue;
         if (x.name() == "main") continue;
 
-        loop(x, engine.tree);
+        getModels(x, engine.tree);
         
     }  
 
@@ -418,21 +420,21 @@ void Open::json(std::string path) {
 
             name = json.name();
 
-            model = json["model"].str("quad");
+            model = json[MODELS].str("quad");
 
-            auto dim = json["dim"];
+            auto dim = json[DIMENSIONS];
             width = dim[0].num();
             height = dim[1].num();
 
-            auto offset = json["offset"];
+            auto offset = json[OFFSET];
             offset_x = offset[0].num();
             offset_y = offset[1].num();
 
-            q = json["q"].num(1);
+            q = json[QUANTITY].num(1);
 
-            if (json["q"].str().length()) {
+            if (json[QUANTITY].str().length()) {
 
-                auto grid = split(json["q"].str(), "x");
+                auto grid = split(json[QUANTITY].str(), "x");
 
                 if ( !grid.size() ||  !is_num(grid[0]))
                     return;
@@ -451,8 +453,8 @@ void Open::json(std::string path) {
 
             } 
 
-            if (json["effectors"].isarr()) 
-                for (auto effector : json["effectors"]) 
+            if (json[EFFECTORS].isarr()) 
+                for (auto effector : json[EFFECTORS]) 
                     if (effector.str().length())
                         effectors.push_back(effector.str());
       
@@ -463,7 +465,7 @@ void Open::json(std::string path) {
 
     for (auto x : json_v["main"]) {
 
-        auto type = x["type"].str();
+        auto type = x[TYPE].str();
 
         if (type == "layer") {
 
@@ -471,8 +473,8 @@ void Open::json(std::string path) {
                 if (model.name().length()) 
                     modelsdata.emplace_back((ModelData(model)));
 
-            uint32_t width = x["dim"][0].num();
-            uint32_t height = x["dim"][1].num();
+            uint32_t width = x[DIMENSIONS][0].num();
+            uint32_t height = x[DIMENSIONS][1].num();
 
             if (!width || !height)  // if no dim, need to find from cumulating layers;
 

@@ -83,3 +83,11 @@ private:
 
 
 static inline Engine &engine = Engine::getInstance();
+
+
+#define DIMENSIONS "dimensions|dimension|dim"
+#define OFFSET "offset"
+#define QUANTITY "quantity|q"
+#define TYPE "type"
+#define EFFECTORS "effectors|effects|fx|fxs|effector|effect"
+#define MODELS "models|model"

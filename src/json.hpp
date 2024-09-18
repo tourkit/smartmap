@@ -56,7 +56,9 @@ struct File;
         std::string stringify();
         
     };
+
 struct JSON : JSONVal {
+
 
     rapidjson::Document document;
 
