@@ -1,5 +1,6 @@
 #include "engine.hpp"
 #include "drawcall.hpp"
+#include "file.hpp"
 #include "layer.hpp"
 #include "struct.hpp"
 #include "effector.hpp"
@@ -126,9 +127,16 @@ void Engine::init() {
     })->active(false);
     debug->addPtr<UBO>(dynamic_ubo)->active(false);
     
-    tree->addOwnr<Node>("main");
+    tree->addOwnr<Node>("main")->onadd<File>([](Node* _this, Node* n){
 
-    tree->addOwnr<File>("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4")->hide();
+        auto x = _this->addOwnr<Layer>();
+        x->add(n);
+
+        return Node::no_worry;
+
+    });
+
+    tree->addOwnr<File>("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4");
 
     PLOGI << "Engine initialized";
     PLOGV << "===========================";

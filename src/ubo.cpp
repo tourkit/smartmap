@@ -78,7 +78,7 @@ void UBO::upload(void* data, size_t size, uint32_t offset){
     //     for (int i = 0 ; i < footprint(); i++) 
     //         str+= std::to_string(*(((uint8_t*)data)+i)) + ", ";
 
-    //     {PLOGW << name() << " " << id << " " << binding << ": " << size << " - " << str;}
+    //     {PLOGV << name() << " " << id << " " << binding << ": " << size << " - " << str;}
     
     // }
 

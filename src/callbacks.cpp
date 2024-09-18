@@ -95,13 +95,6 @@ void Callbacks::init() {
 
     ////////// DRAWCALL
 
-    NODE<Stack>::onadd<File>([](Node*_this,Node*node){
-
-        auto x = _this->addOwnr<Layer>();
-        x->add(node);
-        return Node::no_worry;
-
-    });
     
     NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
 
@@ -173,6 +166,12 @@ void Callbacks::init() {
     });
     NODE<Window>::on(Node::ACT, [](Node* node, Window *win) {
         win->visibility(true);
+    });
+    NODE<Debug>::on(Node::DEACT, [](Node* node, Debug *win) {
+        logger.cout(Sev::warning);
+    });
+    NODE<Debug>::on(Node::ACT, [](Node* node, Debug *win) {
+        logger.cout(Sev::verbose);
     });
 
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {

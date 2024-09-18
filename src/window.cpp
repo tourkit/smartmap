@@ -238,7 +238,7 @@ void Window::render(std::function<void()> callback) {
 
     while (!glfwWindowShouldClose(id)) {
 
-        // PLOGW << "begin frame";
+        // PLOGV << "begin frame";
 
         fps.run();
 
@@ -257,7 +257,7 @@ void Window::render(std::function<void()> callback) {
 
         end_of_render_cbs.clear();
     
-        // PLOGW << "end frame";
+        // PLOGV << "end frame";
 
     }
 

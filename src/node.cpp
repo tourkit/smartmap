@@ -68,17 +68,26 @@ Node* Node::find(std::vector<std::string> names) {
     find_list.clear();
     find_pos = 0;
 
-    auto traget = names.back();
 
     for (auto c : childrens) {
 
         if (!strcmp(names.back().c_str(), c->name().c_str())) {
 
-            if (names.size()== 1) return c;
+            if (names.size()== 1) 
+                return c;
 
             auto parent = c;
 
-            for (int i = names.size()-2; i >= 0; i--) if (!strcmp(parent->parent()->name().c_str(),names[i].c_str())) { parent = parent->parent(); }else{ c = nullptr; break; }
+            for (int i = names.size()-2; i >= 0; i--) 
+                if (!strcmp(parent->parent()->name().c_str(),names[i].c_str())) 
+                    parent = parent->parent(); 
+                    
+                else{ 
+                
+                    c = nullptr; 
+                    break; 
+                
+                }
 
             if (c) 
                 ADD_UNIQUE<Node*>(find_list, c);
@@ -182,36 +191,35 @@ Node* Node::add(void* node_v)  {
         }
     }
 
-    if (!n) { 
-        return nullptr;
-    }
+    if (n && n != Node::no_worry) { 
+        
+        auto is_t = isList(type());
 
-    auto is_t = isList(type());
+        for (auto t_ : is_t){
 
-    for (auto t_ : is_t){
+            bool break_ = false;
+            for (auto u_ : is_u){
 
-        bool break_ = false;
-        for (auto u_ : is_u){
+                std::string t_NAME = t_.pretty_name();
+                std::string u_NAME = u_.pretty_name();
 
-            std::string t_NAME = t_.pretty_name();
-            std::string u_NAME = u_.pretty_name();
+                if (onaddtyped_cb.find(t_) != onaddtyped_cb.end() && onaddtyped_cb.at(t_).find(u_) != onaddtyped_cb.at(t_).end()) {
 
-            if (onaddtyped_cb.find(t_) != onaddtyped_cb.end() && onaddtyped_cb.at(t_).find(u_) != onaddtyped_cb.at(t_).end()) {
+                    PLOGV << t_.pretty_name() << "::" << name() << " ONADD " << u_.pretty_name() << "::" << n->name();
 
-                PLOGV << t_.pretty_name() << "::" << name() << " ONADD " << u_.pretty_name() << "::" << n->name();
-
-                n = onaddtyped_cb[t_][u_](this,n);    
-                break_ = true;
-                callback_ = true;
-                break;
+                    n = onaddtyped_cb[t_][u_](this,n);    
+                    break_ = true;
+                    callback_ = true;
+                    break;
+                }
             }
+
+            if (break_)
+                break;
+        
         }
 
-        if (break_)
-            break;
-    
     }
-
     if (!callback_){
         
         PLOGW << "no cb for " << og->name() << " ("<<  og->type_name() << ") in " << name() << " (" << type_name() << ")"; 
@@ -348,7 +356,7 @@ bool Node::remove(Node *child) {
 
     childrens.erase(it);
 
-    if (child->type() != typeid(None)) 
+    if (child->type() != typeid(None) && !child->hidden) 
         update();
 
     return true;

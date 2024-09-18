@@ -177,7 +177,15 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
             // + for open 
             ////////////////////
 
-            if (node->childrens.size()) {    
+
+            bool has_vis = false;
+            for (auto x : node->childrens) 
+                if (!x->hidden){
+                    has_vis = true;
+                    break;
+                }
+
+            if (has_vis) {    
 
                 SetCursorPosX(t_pos.x+10);
 

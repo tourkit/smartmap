@@ -40,9 +40,9 @@ Layer::Layer(uint16_t width, uint16_t height, std::string name) :
 
     glsl_layers->stl.back().m->quantity(vbo.layer_id+1);
 
-    glsl_layers->eq(vbo.layer_id).set<std::array<float,2>>({(float)width,(float)height});
+    // glsl_layers->eq(vbo.layer_id).set<std::array<float,2>>({(float)width,(float)height});
 
-    engine.static_ubo->upload();
+    // engine.static_ubo->upload();
 
 }
 

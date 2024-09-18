@@ -400,6 +400,7 @@ void branchSTL(std::vector<MemberQ>& stl,  int pos=0) {
     void Instance::set(void* ptr, size_t size) {
 
         memcpy(data(), ptr, size);
+        buff()->upload();
 
     }
 

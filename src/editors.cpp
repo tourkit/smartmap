@@ -967,7 +967,9 @@ void Editors::init() {
 
         // if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) ) { texture->create( texture->width, texture->height, texture->unit, texture->mipmaps, texture->informat, texture->outformat ); }
         Layer* layer = node->is_a_nowarning<Layer>();
-        if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) && layer) { 
+
+        static int p_min = 1;
+        if (ImGui::DragScalarN("size",    ImGuiDataType_U32,  &texture->width, 2, 1, &p_min) && layer) { 
 
             layer->fb.create( texture->width, texture->height); 
             
