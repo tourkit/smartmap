@@ -176,9 +176,31 @@ void Callbacks::init() {
 
         });
 
+        // reset vbo here
+
         dc->vbo.upload();
 
-    });
+        // reset childrens list here
+
+        // node->each<Modelable>([](Node * n, Modelable * m) {
+
+        //     n->stored_type = typeid(None);
+
+        // });
+
+        // auto t_childrens = node->childrens;
+
+        // node->childrens.clear();
+
+        // for (auto x : t_childrens) {
+        //     x->stored_type = typeid(None);
+        //     delete x;
+        //     }
+
+        // for (auto x : dc->models) 
+        //     node->addOwnr<Node>();
+
+    }); 
 
     NODE<File>::allow<Effector>();
 

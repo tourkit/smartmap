@@ -274,6 +274,8 @@ struct NODE {
 
 };
 
+struct None {};
+
 struct AnyNode {
 
 };

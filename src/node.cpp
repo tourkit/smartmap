@@ -339,6 +339,7 @@ Node* Node::each_untyped(std::function<Node*(Node*)> cb) {
 
 bool Node::remove(Node *child) {
 
+
     PLOGV << type_name() << "::" << name() << " remove " << child->type_name() << "::" << child->name();
 
     auto it = std::find(childrens.begin(), childrens.end(), child);
@@ -352,7 +353,8 @@ bool Node::remove(Node *child) {
 
     childrens.erase(it);
 
-    update();
+    if (child->type() != typeid(None)) 
+        update();
 
     return true;
 

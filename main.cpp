@@ -51,6 +51,18 @@ int main() {
     // logger.cout(Sev::verbose);
     engine.open("project.json");
 
+    // what happen when I delete ptr<Model> ?
+    // if undesired callback try changing type to randirando
+
+    // engine.stack->add(engine.tree->childrens[8]->childrens[0]);
+    // logger.cout(Sev::verbose);
+    // engine.stack->childrens[0]->childrens[0]->stored_type = typeid(None);
+    // delete engine.stack->childrens[0]->childrens[0];
+    logger.cout(Sev::warning);
+
+    // test hard_delete childrens, does ~Node ?
+    // on some layer I create
+
     // auto lay_ = engine.stack->addOwnr<Layer>(400,300);
     // auto ubl_ = engine.stack->addOwnr<UberLayer>();
     // auto &ubl = *ubl_->is_a<UberLayer>();

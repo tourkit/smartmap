@@ -92,7 +92,7 @@ void DrawCall::Builder::setup() {
 
         for (auto &model : dc->models)
             for (int instance = 0; instance < (dc->models.size() == 1?1:model.get()->quantity()); instance++) 
-                body_fragment += print_layer(*model, lower(dc->_name()), std::to_string(instance), "layer"+std::string(Layer::glsl_layers->m()->quantity()>1?"[int(LAYER)]":""));
+                body_fragment += print_layer(*model, lower(dc->_name()), std::to_string(instance), "layers"+std::string(Layer::glsl_layers->m()->quantity()>1?"[int(LAYER)]":""));
 
 
         for (auto ref : dc->effector_refs) 

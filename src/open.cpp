@@ -12,6 +12,8 @@
 #include "gui.hpp"
 #include "ndi.hpp"
 #include "editor.hpp"
+#include <cctype>
+#include <cstdint>
 
 static std::string json_error = "JSON error";
 
@@ -400,6 +402,61 @@ void Open::json(std::string path) {
         
     }  
 
+    for (auto x : json_v["main"]) {
+
+        auto type = x["type"].str();
+
+        if (type == "layer") {
+
+            uint32_t width = x["dim"][0].num();
+            uint32_t height = x["dim"][1].num();
+
+
+            if (!width || !height) { // if no dim, need to find from cumulating layers;
+
+                for (auto model : x["models"]) {
+                    
+                    uint32_t q = model["q"].num(1);
+                    uint32_t cols = 1;
+                    uint32_t rows = 1;
+
+                    if (model["q"].str().length()) {
+
+                        auto grid = split(model["q"].str(), "x");
+
+                        if (
+
+                            grid.size() != 2 || !grid[0].length() || !grid[1].length() ||
+                            grid[0].find_first_not_of( "0123456789" ) != std::string::npos || 
+                            grid[1].find_first_not_of( "0123456789" ) != std::string::npos
+                                
+                        )
+                            continue;
+
+                        cols = stoi(grid[0]);
+                        rows = stoi(grid[1]);
+
+                    }
+
+                    auto m_dim = model["dim"];
+                    auto m_offset = model["offset"];
+
+                    uint32_t m_width = m_dim[0].num()*cols+m_offset[0].num();
+                    uint32_t m_height = m_dim[1].num()*rows+m_offset[1].num();
+
+                    if (m_width > width) width = m_width;
+                    if (m_height > height) height = m_height;
+
+                }
+                
+
+            }
+
+            engine.stack->addOwnr<Layer>(width, height);
+
+        }
+
+    }
 
 
     if (!json_v.loaded) {
