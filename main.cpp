@@ -49,34 +49,10 @@ int main() {
     engine.init();
 
 
-    TestWin test("test", engine.gui_v);
-
-    test.cb = [&](){
-
-        static bool visible = true;
-
-        if (ImGui::Checkbox("visible", &visible))
-            if (!visible)
-                glfwHideWindow(engine.window.id);
-            else{
-                engine.window.pos(engine.window.offset_x, engine.window.offset_y);
-                glfwShowWindow(engine.window.id);
-            }
-
-
-    };
-
-
     // logger.cout(Sev::verbose);
     engine.open("project.json");
 
-    // what happen when I delete ptr<Model> ?
-    // if undesired callback try changing type to randirando
 
-    // engine.stack->add(engine.tree->childrens[8]->childrens[0]);
-    // logger.cout(Sev::verbose);
-    // engine.stack->childrens[0]->childrens[0]->stored_type = typeid(None);
-    // delete engine.stack->childrens[0]->childrens[0];
     logger.cout(Sev::warning);
 
     // test hard_delete childrens, does ~Node ?

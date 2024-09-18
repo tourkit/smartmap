@@ -168,6 +168,13 @@ void Callbacks::init() {
 
     });
 
+    NODE<Window>::on(Node::DEACT, [](Node* node, Window *win) {
+        win->visibility(false);
+    });
+    NODE<Window>::on(Node::ACT, [](Node* node, Window *win) {
+        win->visibility(true);
+    });
+
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
         node->each<DrawCall>([](Node*n, DrawCall* dc){ 

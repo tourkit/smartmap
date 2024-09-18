@@ -165,7 +165,9 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
             SetCursorPosX(GetWindowWidth()-19);
 
-            Checkbox(("##active"+std::to_string(node->uid)).c_str(), &node->is_active);
+            if (Checkbox(("##active"+std::to_string(node->uid)).c_str(), &node->is_active)) 
+                node->active(node->is_active);
+            
 
             SameLine();
             

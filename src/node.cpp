@@ -121,7 +121,17 @@ Node* Node::find(std::string  name) {
 
 }
 
-Node* Node::active(bool value) { is_active = value; return this; }
+Node* Node::active(bool value) { 
+
+    is_active = value; 
+    
+    if (is_active)
+        trig(Node::ACT);
+    else
+        trig(Node::DEACT);
+    
+    return this; 
+}
 
 
 Node* Node::top() { auto top = this; while(top->parent()) { top = top->parent(); } return top; }
@@ -386,7 +396,9 @@ static std::string event_name(Node::Event event){
         case Node::CREATE: return "CREATE";
         case Node::CHANGE: return "CHANGE";
         case Node::RUN: return "RUN";
-        case Node::DESTROY: return "DELETE";
+        case Node::DESTROY: return "DESTROY";
+        case Node::ACT: return "ACTIVATE";
+        case Node::DEACT: return "DEACTIVATE";
     }
 
     return "UNKNOWN";

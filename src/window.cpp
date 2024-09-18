@@ -100,7 +100,15 @@ static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { g
 
 void Window::visibility(bool value) {
 
-    glfwSetWindowAttrib(id, GLFW_VISIBLE, value?GLFW_TRUE:GLFW_FALSE);
+    if (value){
+
+        pos(offset_x, offset_y);
+        glfwShowWindow(id);
+
+    }else
+        glfwHideWindow(id);
+
+    // glfwSetWindowAttrib(id, GLFW_VISIBLE, value?GLFW_TRUE:GLFW_FALSE);
 
 }
 
