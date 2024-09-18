@@ -50,9 +50,6 @@ Node::~Node() {
     for (auto c : t_childrens) 
         delete c;
 
-    t_childrens = hidden_childrens;
-    for (auto c : t_childrens) delete c;
-
     for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
 
     if (parent_node) parent_node->remove(this);
@@ -90,14 +87,16 @@ Node* Node::find(std::vector<std::string> names) {
 
     }
 
-    if (names.size()) for (auto c : childrens) {
+    if (names.size()) 
+        
+        for (auto c : childrens) {
 
-        auto x = c->find(names);
+            auto x = c->find(names);
 
-        if (x) 
-            ADD_UNIQUE<Node*>(find_list, x);
+            if (x) 
+                ADD_UNIQUE<Node*>(find_list, x);
 
-    }
+        }
 
     return find_next();
 
@@ -284,9 +283,7 @@ Node* Node::close() {
 
 Node* Node::hide() {
 
-    parent_node->remove(this);
-
-    parent()->hidden_childrens.push_back(this);
+    hidden = true;
 
     return this;
 
@@ -320,18 +317,6 @@ Node* Node::each_untyped(std::function<Node*(Node*)> cb) {
     bool break_ = false;
 
     for (auto c : childrens) {
-        
-        if (break_) break;
-
-        if (c->each_untyped(cb) == Node::Break) {
-
-            break_ = true;
-            break;
-        }
-
-    }
-    
-    for (auto c : hidden_childrens) {
         
         if (break_) break;
 

@@ -35,8 +35,6 @@ struct Node {
 
     std::vector<Node*> childrens;
 
-    std::vector<Node*> hidden_childrens;
-
     bool locked = false, loaded = false, hidden = false, open = true, is_active = false, error = false;
 
     static inline std::set<Node*> pool;

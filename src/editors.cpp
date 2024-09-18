@@ -692,19 +692,19 @@ void Editors::init() {
         static int min1 = 1; 
         ImGuiTextBuffer tbuff;
 
-        for (auto x : engine.stack->childrens) tbuff.append(x->name().c_str(), x->name().c_str()+x->name().length()+1);
+        for (auto x : engine.main->childrens) tbuff.append(x->name().c_str(), x->name().c_str()+x->name().length()+1);
 
         if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) {
 
-            engine.stack->each<Layer>([&](Node* n, Layer* layer){
+            engine.main->each<Layer>([&](Node* n, Layer* layer){
 
                 if (layer && &layer->fb == output->fb) n->referings.erase(node);
 
             });
             
-            output->fb = &engine.stack->childrens[output_currents[output]]->is_a<Layer>()->fb;
+            output->fb = &engine.main->childrens[output_currents[output]]->is_a<Layer>()->fb;
 
-            engine.stack->childrens[output_currents[output]]->referings.insert(node);
+            engine.main->childrens[output_currents[output]]->referings.insert(node);
             
         }
 

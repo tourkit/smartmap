@@ -1,11 +1,11 @@
 {
   
-    "EFFECTORS": {
+    "effectors": {
 
         "testfile1.glsl" : "// x(0,1,1)\nvoid testfile1(float x) {\n\tCOLOR = vec4(1);\n}"
 
     },
-    "MODELS": {
+    "models": {
 
         "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
 

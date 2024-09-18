@@ -209,7 +209,7 @@ void Open::layers(){
          
             auto dim = layer_def["dimensions|dim|dimension"];
 
-            Node* new_layer = engine.stack->addOwnr<Layer>(dim[0].num(),dim[1].num(),layer_def.name());
+            Node* new_layer = engine.main->addOwnr<Layer>(dim[0].num(),dim[1].num(),layer_def.name());
             
             for (auto model_def : layer_def["models"]) {
 
@@ -243,7 +243,7 @@ void Open::layers(){
 
         }else{ // uberlayer
 
-            auto ubl_ = engine.stack->addOwnr<UberLayer>();
+            auto ubl_ = engine.main->addOwnr<UberLayer>();
             auto &ubl = *ubl_->is_a<UberLayer>();
             ubl_->owned = true;
             ubl_->name(layer_def.name());
@@ -271,7 +271,7 @@ void Open::layers(){
 
             ubl.calc_matrice();
 
-            engine.stack->trig(Node::CHANGE);
+            engine.main->trig(Node::CHANGE);
 
             // ubl.updateDC();         
         
@@ -390,13 +390,8 @@ void Open::json(std::string path) {
 
     for (auto x : xx) {
 
-        if (x.name() == "effectors") continue;
         if (x.name() == "inputs") continue;
-        if (x.name() == "models") continue;
         if (x.name() == "editors") continue;
-        if (x.name() == "layers") continue;
-        if (x.name() == "medias") continue;
-        if (x.name() == "outputs") continue;
         if (x.name() == "main") continue;
 
         loop(x, engine.tree);
@@ -494,7 +489,7 @@ void Open::json(std::string path) {
             if (!modelsdata.size()) // if no models , add engine::quad
                 modelsdata.emplace_back("quad", "quad");
             
-            auto lay_ = engine.stack->addOwnr<Layer>(width, height);
+            auto lay_ = engine.tree->find("main")->addOwnr<Layer>(width, height);
 
             lay_->name(x.name().length()?x.name():"layer");
 
@@ -569,7 +564,7 @@ void Open::json(std::string path) {
 
 
     for (auto x : outputs_src){ 
-        Node* output = engine.stack->find(x.second["source"].str());
+        Node* output = engine.main->find(x.second["source"].str());
         if (!output)
             continue;
         

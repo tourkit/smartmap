@@ -147,6 +147,8 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
     
     using namespace ImGui;
 
+    if (node->hidden) 
+        return false;
     if (!filtering || !strlen(&search_str[0]) || (!pattern_error && std::regex_search(node->name().c_str(), pattern))) {
    
         ImDrawList* drawList = ImGui::GetWindowDrawList();

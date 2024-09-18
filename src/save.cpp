@@ -44,7 +44,7 @@ void Save::outputs(){
 
             Layer* lay = nullptr;
 
-            engine.stack->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
+            engine.main->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
 
             outputarr.PushBack( rapidjson::Value(lay->name().c_str(), allocator ), allocator );
 

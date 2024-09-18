@@ -300,14 +300,15 @@ std::string Builder::layout() {
 
         }
 
-        if (content.length()) 
+        if (!content.length()) 
+            continue;
 
-            line+="struct "+name+" { "+nl+nl+content;
+        line+="struct "+name+" { "+nl+nl+content;
 
         if (member->stride()) for (int i = 0; i < member->stride()/sizeof(float); i++) {
 
             line += tb;
-            line += (member->members.back()->type().id == typeid(int) ? "int" : "float");
+            line += (member->members.size() && member->members.back()->type().id == typeid(int) ? "int" : "float");
             line += " stride";
             line += std::to_string(i) + "; "+nl ;
 

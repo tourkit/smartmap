@@ -46,14 +46,9 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
     static auto exit_cb = []() { logger.cout(Sev::warning); exit(0); };
 
     window.keypress_cbs[{GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_LEFT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_SHIFT, GLFW_KEY_ESCAPE}] = exit_cb;
 
     static auto save_cb = [&]() { save(); };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_S}] = save_cb;
     window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_S}] = save_cb;
 
     
@@ -66,15 +61,15 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
         window.end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>{nullptr, std::function<void(void*)>([&](void* ptr) { 
             
             // if (engine.gui_v)
-                glfwFocusWindow(engine.window.id);
+            //     exit_cb();
+            glfwFocusWindow(engine.window.id);
             engine.gui(!engine.gui_v);  
         
         })});
         
     };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_I}] = guiact_cb;
-    window.keypress_cbs[{GLFW_KEY_RIGHT_CONTROL, GLFW_KEY_I}] = guiact_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = guiact_cb;
     window.mousedown_cb = [](int button) { 
         
         if (button == GLFW_MOUSE_BUTTON_LEFT) guiact_cb(); 
@@ -85,6 +80,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
     tree = new Node("tree");
 
     window.keypress();
+    window.visibility(false);
     // gui(true);
 
     // gui(false);
@@ -130,17 +126,9 @@ void Engine::init() {
     })->active(false);
     debug->addPtr<UBO>(dynamic_ubo)->active(false);
     
-    // medias = tree->addOwnr<Node>()->name("Medias")->active(false);
+    tree->addOwnr<Node>("main");
 
-    models = tree->addOwnr<Node>()->name("Models")->active(false);
-
-    // effectors = tree->addOwnr<Node>()->name("Effectors")->active(false);
-
-    // inputs = tree->addOwnr<Node>()->name("Inputs")->active(1);
-
-    stack = tree->addOwnr<Stack>()->active(1)->allow<DrawCall>();
-
-    outputs = tree->addOwnr<Node>()->name("Outputs")->active(true);
+    tree->addOwnr<File>("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4")->hide();
 
     PLOGI << "Engine initialized";
     PLOGV << "===========================";
@@ -165,26 +153,26 @@ void Engine::gui(bool active) {
 
 void Engine::run(std::function<void()> cb) {
 
-    if (models && !models->childrens.size()) 
-        auto quad = models->addPtr<File>( &VBO::quad );
+    // if (models && !models->childrens.size()) 
+    //     auto quad = models->addPtr<File>( &VBO::quad );
 
-    if (outputs && !outputs->childrens.size()) {
+    // if (outputs && !outputs->childrens.size()) {
         
-        auto win = outputs->addPtr<Window>( &window );
+    //     auto win = outputs->addPtr<Window>( &window );
 
-        if (stack->childrens.size()) 
+    //     if (stack->childrens.size()) 
         
-            for (auto output_ : outputs->childrens) {
+    //         for (auto output_ : outputs->childrens) {
                 
-                auto output = output_->is_a<Output>();
+    //             auto output = output_->is_a<Output>();
 
-                if (output && !output->fb) 
+    //             if (output && !output->fb) 
 
-                    win->add(stack->childrens[0]);
+    //                 win->add(stack->childrens[0]);
 
-            }
+    //         }
         
-    }
+    // }
 
     window.fit();
     window.size(50,50);
@@ -232,7 +220,7 @@ void Engine::run(std::function<void()> cb) {
 void Engine::reset() {
 
     gui(false);
-    if (stack) for (auto x : stack->childrens) delete x;
+    if (main) for (auto x : main->childrens) delete x;
     if (outputs) for (auto x : outputs->childrens) delete x;
     if (inputs) for (auto x : inputs->childrens) delete x;
     if (medias) for (auto x : medias->childrens) delete x;

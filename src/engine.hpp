@@ -25,7 +25,7 @@ struct Engine {
     // bool logger = Log::getInstance().cout(false);
 
     Node* tree = nullptr;
-    Node* stack = nullptr;
+    Node* main = nullptr;
     Node* models = nullptr;
     Node* effectors = nullptr;
     Node* medias = nullptr;
