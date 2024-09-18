@@ -687,7 +687,10 @@ void Editors::init() {
 
     Editor<Output>([](Node* node, Output *output){
 
-        static std::map<Output*,int> output_currents; static uint32_t min = 0; ImGuiTextBuffer tbuff;
+        static std::map<Output*,int> output_currents; 
+        static int min0 = 0; 
+        static int min1 = 1; 
+        ImGuiTextBuffer tbuff;
 
         for (auto x : engine.stack->childrens) tbuff.append(x->name().c_str(), x->name().c_str()+x->name().length()+1);
 
@@ -705,9 +708,11 @@ void Editors::init() {
             
         }
 
-        if (ImGui::DragScalarN("position###winpos", ImGuiDataType_U32,  &output->offset_x, 2, 1, &min)) output->pos( output->offset_x, output->offset_y );
+        if (ImGui::DragScalarN("position###winpos", ImGuiDataType_S32,  &output->offset_x, 2, 1, &min0)) 
+            output->pos( output->offset_x, output->offset_y );
 
-        if (ImGui::DragScalarN("size###winsize", ImGuiDataType_U32,  &output->width, 2, 1, &min)) output->size( output->width, output->height );
+        if (ImGui::DragScalarN("size###winsize", ImGuiDataType_U32,  &output->width, 2, 1, &min1)) 
+            output->size( output->width, output->height );
 
     });
 

@@ -37,7 +37,7 @@ struct Window : Output {
     Window(uint32_t width, uint32_t height, uint32_t offset_x = 0, uint32_t offset_y = 0, bool fullscreen = false);
 
     void size(uint32_t width, uint32_t height) override;
-    void pos(uint32_t offset_x, uint32_t offset_y) override;
+    void pos(int offset_x, int offset_y) override;
 
 
     ~Window();
@@ -61,6 +61,8 @@ struct Window : Output {
     std::vector<std::pair<void*,std::function<void(void*)>>> end_of_render_cbs;
     std::function<void(double,double)> mousemove_cb = nullptr;
     std::function<void(int)> mousedown_cb = nullptr;
+
+    void visibility(bool value);
 
 };
 

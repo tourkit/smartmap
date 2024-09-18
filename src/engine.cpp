@@ -65,8 +65,10 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
 
         window.end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>{nullptr, std::function<void(void*)>([&](void* ptr) { 
             
+            // if (engine.gui_v)
+                glfwFocusWindow(engine.window.id);
             engine.gui(!engine.gui_v);  
-            
+        
         })});
         
     };
@@ -120,7 +122,7 @@ void Engine::init() {
     dynamic_ubo->quantity(2);
     dynamic_ubo->add(&glsl_data);
 
-    auto* debug_ = tree->addOwnr<Debug>()->allow<AnyNode>();
+    auto* debug_ = tree->addOwnr<Debug>()->allow<AnyNode>()->name("debug");
     debug = debug_;
     debug->on(Node::RUN, [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(false);//->close();
     debug->addPtr<UBO>(static_ubo)->on(Node::CHANGE, [](Node* n) { 
@@ -128,13 +130,13 @@ void Engine::init() {
     })->active(false);
     debug->addPtr<UBO>(dynamic_ubo)->active(false);
     
-    medias = tree->addOwnr<Node>()->name("Medias")->active(false);
+    // medias = tree->addOwnr<Node>()->name("Medias")->active(false);
 
     models = tree->addOwnr<Node>()->name("Models")->active(false);
 
-    effectors = tree->addOwnr<Node>()->name("Effectors")->active(false);
+    // effectors = tree->addOwnr<Node>()->name("Effectors")->active(false);
 
-    inputs = tree->addOwnr<Node>()->name("Inputs")->active(1);
+    // inputs = tree->addOwnr<Node>()->name("Inputs")->active(1);
 
     stack = tree->addOwnr<Stack>()->active(1)->allow<DrawCall>();
 
@@ -230,10 +232,10 @@ void Engine::run(std::function<void()> cb) {
 void Engine::reset() {
 
     gui(false);
-    for (auto x : stack->childrens) delete x;
-    for (auto x : outputs->childrens) delete x;
-    for (auto x : inputs->childrens) delete x;
-    for (auto x : medias->childrens) delete x;
+    if (stack) for (auto x : stack->childrens) delete x;
+    if (outputs) for (auto x : outputs->childrens) delete x;
+    if (inputs) for (auto x : inputs->childrens) delete x;
+    if (medias) for (auto x : medias->childrens) delete x;
 
 }
 

@@ -132,3 +132,9 @@ static void ltrim(std::string &s) {
         return !std::isspace(ch);
     }));
 }
+
+static bool is_num(const std::string str) {
+
+    return str.length() && str.find_first_not_of( "0123456789" ) == std::string::npos;
+
+}

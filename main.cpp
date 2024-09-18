@@ -48,6 +48,25 @@ int main() {
 
     engine.init();
 
+
+    TestWin test("test", engine.gui_v);
+
+    test.cb = [&](){
+
+        static bool visible = true;
+
+        if (ImGui::Checkbox("visible", &visible))
+            if (!visible)
+                glfwHideWindow(engine.window.id);
+            else{
+                engine.window.pos(engine.window.offset_x, engine.window.offset_y);
+                glfwShowWindow(engine.window.id);
+            }
+
+
+    };
+
+
     // logger.cout(Sev::verbose);
     engine.open("project.json");
 

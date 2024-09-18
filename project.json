@@ -27,6 +27,15 @@
 
                     "effectors" : [ "testfile1" ]
 
+                }   ,
+                "rect2" : {
+
+                    "dim" : [ 100, 100 ],
+
+                    "q": 9,
+
+                    "effectors" : [ "testfile1" ]
+
                 }   
 
             },
@@ -46,5 +55,5 @@
       }
 
     }
-
+    ,"editors":[["layer1"]]
 }

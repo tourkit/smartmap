@@ -132,4 +132,6 @@ struct TestWin : GUI::Window {
 
       void draw();
 
+      std::function<void()> cb = [](){};
+
 };

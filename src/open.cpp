@@ -368,14 +368,14 @@ static void loop (JSONVal val, Node* node) {
 
     if (val.isobj()){
 
-        auto new_node = node->addOwnr<Node>(val.name());
+        auto new_node = node->addOwnr<Node>(val.name())->active(false);
 
         for (auto x : val) 
             loop(x, new_node);
 
     }else if (val.str().length())
 
-        auto new_file = node->addOwnr<File>(val.name(), val.str().c_str());
+        auto new_file = node->addOwnr<File>(val.name(), val.str().c_str())->active(false);
 
 }
 void Open::json(std::string path) {
@@ -397,10 +397,74 @@ void Open::json(std::string path) {
         if (x.name() == "layers") continue;
         if (x.name() == "medias") continue;
         if (x.name() == "outputs") continue;
+        if (x.name() == "main") continue;
 
         loop(x, engine.tree);
         
     }  
+
+    struct ModelData { 
+
+        std::string name, model; 
+
+        uint32_t width, height;
+        int offset_x, offset_y;
+        uint32_t q, cols, rows;
+
+        std::vector<std::string> effectors;
+
+        ModelData(std::string name, std::string model, uint32_t width = 0 , uint32_t height = 0 , int offset_x = 0 , int offset_y = 0 , uint32_t q = 1, uint32_t cols = 1, uint32_t rows = 1) :
+
+            name(name), model(model), width(width), height(height), offset_x(offset_x), offset_y(offset_y), q(q), cols(cols), rows(rows)        
+        
+        {}
+        
+        ModelData(JSONVal& json) {
+
+            name = json.name();
+
+            model = json["model"].str("quad");
+
+            auto dim = json["dim"];
+            width = dim[0].num();
+            height = dim[1].num();
+
+            auto offset = json["offset"];
+            offset_x = offset[0].num();
+            offset_y = offset[1].num();
+
+            q = json["q"].num(1);
+
+            if (json["q"].str().length()) {
+
+                auto grid = split(json["q"].str(), "x");
+
+                if ( !grid.size() ||  !is_num(grid[0]))
+                    return;
+
+                cols = stoi(grid[0]);
+
+                if (grid.size() != 2 || !is_num(grid[1])) {
+
+                    q = cols;
+
+                    return;
+
+                }
+
+                rows = stoi(grid[1]);
+
+            } 
+
+            if (json["effectors"].isarr()) 
+                for (auto effector : json["effectors"]) 
+                    if (effector.str().length())
+                        effectors.push_back(effector.str());
+      
+        };
+    };
+
+    std::vector<ModelData> modelsdata; 
 
     for (auto x : json_v["main"]) {
 
@@ -408,51 +472,57 @@ void Open::json(std::string path) {
 
         if (type == "layer") {
 
+            for (auto model : x["models"]) // get models data first
+                if (model.name().length()) 
+                    modelsdata.emplace_back((ModelData(model)));
+
             uint32_t width = x["dim"][0].num();
             uint32_t height = x["dim"][1].num();
 
+            if (!width || !height)  // if no dim, need to find from cumulating layers;
 
-            if (!width || !height) { // if no dim, need to find from cumulating layers;
+                for (auto model : modelsdata) {
 
-                for (auto model : x["models"]) {
-                    
-                    uint32_t q = model["q"].num(1);
-                    uint32_t cols = 1;
-                    uint32_t rows = 1;
-
-                    if (model["q"].str().length()) {
-
-                        auto grid = split(model["q"].str(), "x");
-
-                        if (
-
-                            grid.size() != 2 || !grid[0].length() || !grid[1].length() ||
-                            grid[0].find_first_not_of( "0123456789" ) != std::string::npos || 
-                            grid[1].find_first_not_of( "0123456789" ) != std::string::npos
-                                
-                        )
-                            continue;
-
-                        cols = stoi(grid[0]);
-                        rows = stoi(grid[1]);
-
-                    }
-
-                    auto m_dim = model["dim"];
-                    auto m_offset = model["offset"];
-
-                    uint32_t m_width = m_dim[0].num()*cols+m_offset[0].num();
-                    uint32_t m_height = m_dim[1].num()*rows+m_offset[1].num();
+                    uint32_t m_width = model.width* model.cols+ model.offset_x;
+                    uint32_t m_height =  model.height* model.rows+ model.offset_y;
 
                     if (m_width > width) width = m_width;
                     if (m_height > height) height = m_height;
 
                 }
+
+            if (!modelsdata.size()) // if no models , add engine::quad
+                modelsdata.emplace_back("quad", "quad");
+            
+            auto lay_ = engine.stack->addOwnr<Layer>(width, height);
+
+            lay_->name(x.name().length()?x.name():"layer");
+
+            for (auto model : modelsdata) {
+
+                auto file = engine.tree->find(model.model);
+                if (!file) {
+                    PLOGE << " no " << model.model;
+                    continue;
+                }
+
+                auto model_ = lay_->add(file);
+                model_->name(model.name);
                 
+                for (auto effector : model.effectors) {
+
+                    auto file = engine.tree->find(effector);
+                    if (!file) {
+                        PLOGE << " no " << effector;
+                        continue;
+                    }
+
+                    model_->add(file);
+                    auto effector_ = model_->childrens.back();
+
+                }
 
             }
-
-            engine.stack->addOwnr<Layer>(width, height);
 
         }
 

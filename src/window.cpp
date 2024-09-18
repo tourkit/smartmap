@@ -28,6 +28,7 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
 
     glfwWindowHint(GLFW_DECORATED, (windows_border ? GLFW_TRUE : GLFW_FALSE));
     glfwWindowHint(GLFW_FLOATING, (window_on_top ? GLFW_TRUE : GLFW_FALSE));
+    glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER,  GLFW_TRUE );
 
     int count;
     GLFWmonitor** monitors = glfwGetMonitors(&count);
@@ -97,11 +98,16 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
 
 static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { glViewport(0, 0, width, height); }
 
+void Window::visibility(bool value) {
 
-void Window::pos(uint32_t offset_x, uint32_t offset_y) {
+    glfwSetWindowAttrib(id, GLFW_VISIBLE, value?GLFW_TRUE:GLFW_FALSE);
 
-    if (offset_x == this->offset_x && offset_y == this->offset_y)
-        return;
+}
+
+void Window::pos(int offset_x, int offset_y) {
+
+    // if (offset_x == this->offset_x && offset_y == this->offset_y)
+    //     return;
     
     Output::pos( offset_x, offset_y);
 
@@ -150,6 +156,7 @@ void Window::keypress() {
                     x.second();
             // PLOGW << _this->keys_down;
         }
+        
     });
     glfwSetCursorPosCallback(id, [](GLFWwindow* id, double mouse_x, double mouse_y) {
         
