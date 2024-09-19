@@ -24,21 +24,46 @@ void EditorWidget::draw() {
     if (!selected || !locked) selected = gui->selected;
     if (!selected) return;
 
+        if (ImGui::BeginDragDropTargetCustom(ImRect(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImGui::GetWindowSize()),ImGui::GetItemID())) {
+
+            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) {
+
+                auto n = (Node*)(*(uint64_t*)payload->Data);
+
+                if (!selected->add(n)) 
+                    for (auto x : selected->childrens)
+                        if (x->add(n))
+                            break;
+
+            }
+
+            ImGui::EndDragDropTarget();
+
+        }
+
     // static TestWin test(gui,10);
 
     auto w = ImGui::GetWindowWidth(); 
     auto x = 0;ImGui::GetCursorPosX();
-    std::string name = selected->nameSTL();
+
+    std::string name = selected->nameSTL()+ " ("+selected->type_name()+")";
+
     auto tx = ImGui::CalcTextSize(name.c_str()).x;
     if (ImGui::GetWindowDockNode() && !ImGui::GetWindowDockNode()->IsHiddenTabBar() && ImGui::DockNodeBeginAmendTabBar(ImGui::GetWindowDockNode())) {
 
         auto x = ImGui::GetCursorPosX();
         auto y = ImGui::GetCursorPosY();
+
         ImGui::SetCursorPosX(x+w-60);
         ImGui::SetCursorPosY(y-21);  
         auto &io = ImGui::GetIO();
         ImGui::SetWindowFontScale(.65);
-        ImGui::Checkbox(("##locked"+std::to_string((size_t)this)).c_str(), &locked);
+        if (ImGui::Checkbox(("##locked"+std::to_string((size_t)this)).c_str(), &locked)) {
+
+            if (!gui->selected)
+                gui->selected = selected;
+
+        }
         ImGui::SetWindowFontScale(1);
         ImGui::SetCursorPosX(x+w+1-tx-65);
         ImGui::SetCursorPosY(y-21);

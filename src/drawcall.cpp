@@ -39,14 +39,14 @@ std::string DrawCall::Builder::print_layer(Effectable &effectable, std::string p
 
     body_fragment += "\taspect_ratio = static_ubo."+ar+".dim;\n";
                 
-	body_fragment += "\ttic();\n";
+	body_fragment += "\tnext(vec4(1));\n";
 
     for (auto ref : effectable.effector_refs) 
 
         body_fragment+=ref->effector->body(this, "dynamic_ubo[curr]."+prepend+"."+name+"."+ref->effector->_name());
 
 
-	body_fragment += "\ttac();\n";
+	body_fragment += "\tnext(vec4(0));\n";
 
     return body_fragment;
 
@@ -71,11 +71,11 @@ void DrawCall::Builder::setup() {
     // header_fragment += "vec4 base_color = vec4(1);\n";
     header_fragment += "vec2 aspect_ratio = vec2(1);\n\n";
 
-    header_fragment += "void tic() { COLOR += color; uv = UV; color = vec4(1); }\n";
-    header_fragment += "void tac() { COLOR += color; uv = UV; color = vec4(0); }\n\n";
-    // header_fragment += "void base() { base_uv = uv; base_color = color; color = vec4(0); }\n\n";
+    header_fragment += "void next(vec4 base) { COLOR += color; uv = UV; color = base; }\n\n";
+
     header_fragment += "int curr = 0; //dynamic_ubo[0].eNGINE.alt;\n";
     header_fragment += "int last = abs(curr-1);\n\n";
+    
     body_fragment += "\tCOLOR = vec4(0);\n\n";
 
     if (dc) {
@@ -102,7 +102,7 @@ void DrawCall::Builder::setup() {
 
 
         if (dc->effector_refs.size()) 
-            body_fragment += "\ttac();\n\n";
+            body_fragment += "\tnext(vec4(0));\n\n";
 
     }
 

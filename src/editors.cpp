@@ -973,7 +973,7 @@ void Editors::init() {
             node->update(); 
     
         float ratio = texture->height/(float)texture->width;
-        auto nw = std::min(texture->width,(GLuint)512);
+        auto nw = GetWindowWidth(); std::min(texture->width,(GLuint)512);
 
         ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(nw,nw*ratio)); // pas comprendre implementation de ImTextureID (aka void*) , voir ImGui_ImplOpenGL3_RenderDrawData()
 
