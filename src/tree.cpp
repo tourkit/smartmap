@@ -180,6 +180,8 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
             // + for open 
             ////////////////////
 
+            // static TestWin testwin("test", gui);
+            // testwin.floats.resize(10);
 
             bool has_vis = false;
             for (auto x : node->childrens) 
@@ -209,10 +211,7 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
             const ImRect nodeRect = ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
 
-            // static TestWin testwin("test", gui);
-            // testwin.floats.resize(10);
-
-            verticalLineStart.x+=(depth*8);//21
+            verticalLineStart.x+=(depth*-2);//21
             verticalLineStart.y+=-10;
             ImVec2 verticalLineEnd = verticalLineStart;
 
