@@ -1045,7 +1045,7 @@ void Editors::init() {
 
     ////////// MODEL.HPP
 
-    Editor<Effectable>([](Node* node, Effectable *effectable){
+    Editor<Effectable>([&](Node* node, Effectable *effectable){
 
         static std::map<Effectable*,int> effector_currents;
 
@@ -1063,12 +1063,10 @@ void Editors::init() {
         SetNextItemWidth(150);
         if (IntButtons(&effector_currents[effectable])) { 
 
-            if (!effector_currents[effectable]) {
+            if (!effector_currents[effectable]) 
+               this->gui->deleteNode(node);
                
-               engine.gui_v->delete_list.push_back(node);
-               
-                
-            }else{
+            else{
     
                 effectable->quantity(effector_currents[effectable]); 
             
@@ -1078,8 +1076,8 @@ void Editors::init() {
 
         }
 
-        if (draw_guis(engine.dynamic_ubo, effectable, effectable->instance->offset,engine.gui_v->member_count))
-            engine.dynamic_ubo->upload();
+        if (draw_guis(effectable->instance->buff(), effectable, effectable->instance->offset,gui->member_count))
+            effectable->instance->buff()->upload();
 
     });
 

@@ -42,8 +42,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
 
     window.max_fps = 59;
 
-    
-
     static auto exit_cb = []() { logger.cout(Sev::warning); exit(0); };
 
     window.keypress_cbs[{GLFW_KEY_ESCAPE}] = exit_cb;
@@ -111,7 +109,7 @@ void Engine::init() {
 
     Callbacks::init();
 
-    Editors::init();
+    editors.init();
     
     dynamic_ubo = new UBO("dynamic_ubo");
     static_ubo = new UBO("static_ubo");
@@ -153,6 +151,7 @@ void Engine::gui(bool active) {
     }else if (!gui_v && active) {
 
         gui_v = new GUI(&window);
+        editors.gui = gui_v;
         gui_v->trees[0]->selected= engine.tree;
 
     }

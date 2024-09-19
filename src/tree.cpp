@@ -324,7 +324,7 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
                 is_deleting = false;
                 
-                gui->delete_list.push_back(node);
+               this->gui->deleteNode(node);
 
             }
 

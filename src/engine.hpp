@@ -6,6 +6,7 @@
 #include "globals.hpp"
 #include "ubo.hpp"
 #include "log.hpp"
+#include "editors.hpp"
 #include <memory>
 #include <vector>
 
@@ -65,6 +66,8 @@ struct Engine {
     Member glsl_data;
 
     GLint gl_max_texture_size,gl_max_texture_image_units, gl_major_version, gl_minor_version;
+
+    Editors editors;
 
 private:
 

@@ -1,7 +1,10 @@
 #pragma once
 
+struct GUI;
+
 struct Editors  {
 
-    static void init();
+    GUI* gui = nullptr;
+    void init();
 
 };

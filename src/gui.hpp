@@ -1,6 +1,7 @@
 #pragma once
 
 
+#include <functional>
 #include <vector>
 #include <string>
 #include <cstring>
@@ -90,8 +91,6 @@ struct GUI {
   std::vector<TreeWidget*> trees;
   int member_count = 0;
 
-  static inline std::vector<Node*> delete_list;
-
   struct Window {
 
     static inline std::vector<Window*> pool; 
@@ -117,7 +116,10 @@ struct GUI {
   };
 
   bool show_demo = false;
-  
+
+
+  void deleteNode(Node* node);
+
 private:
     static inline std::vector<Window*> close_list;
 };
@@ -133,4 +135,4 @@ struct TestWin : GUI::Window {
 
       std::function<void()> cb = [](){};
 
-};
+}; 

@@ -292,27 +292,31 @@ void GUI::draw() {
   render();
 
 
-        for (auto x : delete_list) {
-
-            if (selected == x)
-              selected = x->parent();
-
-            for (auto e : editors) 
-              if (e->selected == x)
-                e->selected = nullptr;
-
-            window->end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{x, std::function<void(void*)>([&](void* ptr){ 
-                
-                auto n = (Node*)ptr;
-                delete n; 
-
-            })});
-        }
-
-        delete_list.clear();
-
 
 }
+
+void GUI::deleteNode(Node* n) {
+
+    if (selected == n)
+        selected = nullptr;
+
+    for (auto tree : trees) 
+        if (tree->selected == n) 
+            tree->selected = nullptr;
+
+    for (auto x : editors) 
+        if (x->selected == n) 
+            x->selected = nullptr;
+
+    window->end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{n, ([&](void* ptr){ 
+        
+        auto n = (Node*)ptr;
+        delete n; 
+
+    })});
+
+}
+
 void GUI::render() {
 
   static int last_framerate = 60;
