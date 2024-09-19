@@ -24,30 +24,41 @@ void EditorWidget::draw() {
     if (!selected || !locked) selected = gui->selected;
     if (!selected) return;
 
+    // static TestWin test(gui,10);
 
-    // static TestWin testwin("test", gui);
-
-    // testwin.floats.resize(4);
-
-    // ImGuiContext& g = *GImGui;
-    // auto curr_node =ImGui::GetCurrentWindow()->DockNode;
-    // ImGui::GetCurrentWindow()->...
-    // if (ImGui::GetCurrentWindow()->DockTabIsVisible && ImGui::DockNodeBeginAmendTabBar(curr_node)) {
-    // ImGui::SameLine();
-
+    auto w = ImGui::GetWindowWidth(); 
+    auto x = 0;ImGui::GetCursorPosX();
     std::string name = selected->nameSTL();
+    auto tx = ImGui::CalcTextSize(name.c_str()).x;
+    if (ImGui::GetWindowDockNode() && !ImGui::GetWindowDockNode()->IsHiddenTabBar() && ImGui::DockNodeBeginAmendTabBar(ImGui::GetWindowDockNode())) {
 
-    ImGui::PushStyleColor(ImGuiCol_Text, selected->color);
-    ImGui::Text(this->name.c_str());
+        auto x = ImGui::GetCursorPosX();
+        auto y = ImGui::GetCursorPosY();
+        ImGui::SetCursorPosX(x+w-60);
+        ImGui::SetCursorPosY(y-21);  
+        auto &io = ImGui::GetIO();
+        ImGui::SetWindowFontScale(.65);
+        ImGui::Checkbox(("##locked"+std::to_string((size_t)this)).c_str(), &locked);
+        ImGui::SetWindowFontScale(1);
+        ImGui::SetCursorPosX(x+w+1-tx-65);
+        ImGui::SetCursorPosY(y-21);
 
-    if (ImGui::IsItemClicked()) ImGui::OpenPopup("nodecolorpicker");
-    if (ImGui::BeginPopup("nodecolorpicker")) { ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color.x); ImGui::EndPopup(); }
+        ImGui::PushStyleColor(ImGuiCol_Text, selected->color);
+        ImGui::Text(name.c_str());
 
-    ImGui::SameLine(); ImGui::Checkbox(("lock##locked"+std::to_string((size_t)this)).c_str(), &locked);
+        if (ImGui::IsItemClicked()) 
+        ImGui::OpenPopup("nodecolorpicker");
+        if (ImGui::BeginPopup("nodecolorpicker")) { 
+            ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color.x); 
+            ImGui::EndPopup(); 
+        }
 
-    ImGui::PopStyleColor(1);
+        ImGui::PopStyleColor(1);
 
-    // ImGui::DockNodeEndAmendTabBar();}
+        ImGui::SetCursorPosY(y);
+
+        ImGui::DockNodeEndAmendTabBar();
+      }
     
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
     std::string referings;

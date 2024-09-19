@@ -129,7 +129,7 @@ struct TestWin : GUI::Window {
       std::vector<float> floats;
       std::vector<int> ints;
 
-      using GUI::Window::Window;
+      TestWin(GUI* gui, int q = 0, std::string name = "testwin") : GUI::Window(name, gui) { floats.resize(q); ints.resize(q); }
 
       void draw();
 

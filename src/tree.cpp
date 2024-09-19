@@ -112,7 +112,10 @@ void TreeWidget::draw()  {
 
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetCursorPosX()-6);
-    if (ImGui::Button("+")) gui->editors.push_back(new EditorWidget(gui));
+    if (ImGui::Button("+")) 
+        gui->window->end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{nullptr, ([&](void*) { 
+            gui->editors.push_back(new EditorWidget(gui)); 
+        })});
 
 
     ImGui::PopItemWidth();

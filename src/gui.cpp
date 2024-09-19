@@ -139,8 +139,8 @@ void GUI::Window::drawFull() { {
 
       std::string str = name+"###"+uid;
 
-      ImGui::Begin(str.c_str(), &p_open, flag);
 
+      ImGui::Begin(str.c_str(), &p_open, flag);
       if (!p_open) close();
       
    ImGuiWindow* window = ImGui::GetCurrentWindow();
