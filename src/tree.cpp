@@ -7,6 +7,7 @@
 #include "window.hpp"
 #include "imgui_internal.h"
 #include <cstring>
+#include <string>
 
 TreeWidget::TreeWidget(GUI* gui) : GUI::Window("Tree", gui) {
 
@@ -286,6 +287,8 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
             } else {
 
+                
+
                 SetCursorPosX(t_pos.x + 17 );
                 
                 if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
@@ -422,9 +425,13 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
     }
 
 
+    TreePush(("###pop"+std::to_string(depth)).c_str());
     if (node->open || filtering)
-        for (auto child : node->childrens) 
+        for (auto child : node->childrens) {
             TreeViewNode(child, depth+1); 
+            
+        }
+    TreePop();
 
     return true;
 

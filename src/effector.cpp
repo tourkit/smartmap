@@ -20,6 +20,19 @@ Effector::Effector(std::string name) : Member(name) {
 
 std::string Effector::body(Builder* builder, std::string prepend) {
 
+    bool found = false;
+
+    for (auto x : builder->definitions) 
+        if (x == this) {
+
+            found = true;
+            break;
+            
+    }
+
+    if (found)
+        return "";
+
     return "\t"+call(prepend)+"\n";
 
 
@@ -70,7 +83,8 @@ void FileEffector::load() {
         std::smatch match = *it;
 
         std::string nameStr = match[1].str();
-        if (strcmp(nameStr.c_str(),file->name().c_str())) continue;
+        if (strcmp(nameStr.c_str(),file->name().c_str())) 
+            continue;
         std::string argsStr = match[2].str();
 
         std::regex regex(R"(\b(\w+)\s+(\w+)\s*(?:,\s*)?)");
