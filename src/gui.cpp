@@ -142,9 +142,7 @@ void GUI::Window::drawFull() { {
       ImGui::Begin(str.c_str(), &p_open, flag);
 
       if (!p_open) close();
-
-
-
+      
    ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems && (window->Flags & ImGuiWindowFlags_MenuBar)){
 

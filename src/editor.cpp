@@ -4,6 +4,8 @@
 #include "node.hpp"
 #include "gui.hpp"
 
+#include "vendors/imgui/imgui_internal.h"
+
 #include <ctime>
 #include <cstring>
 
@@ -22,22 +24,31 @@ void EditorWidget::draw() {
     if (!selected || !locked) selected = gui->selected;
     if (!selected) return;
 
-    std::string name = selected->name();
-    // this->name = name;
-    auto parent = selected->parent();
-    if (parent) {
-        name = parent->name() + "::" + name;  }
+
+    // static TestWin testwin("test", gui);
+
+    // testwin.floats.resize(4);
+
+    // ImGuiContext& g = *GImGui;
+    // auto curr_node =ImGui::GetCurrentWindow()->DockNode;
+    // ImGui::GetCurrentWindow()->...
+    // if (ImGui::GetCurrentWindow()->DockTabIsVisible && ImGui::DockNodeBeginAmendTabBar(curr_node)) {
+    // ImGui::SameLine();
+
+    std::string name = selected->nameSTL();
 
     ImGui::PushStyleColor(ImGuiCol_Text, selected->color);
-    ImGui::Text("%s", name.c_str());
-    ImGui::PopStyleColor(1);
+    ImGui::Text(this->name.c_str());
 
     if (ImGui::IsItemClicked()) ImGui::OpenPopup("nodecolorpicker");
     if (ImGui::BeginPopup("nodecolorpicker")) { ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color.x); ImGui::EndPopup(); }
 
     ImGui::SameLine(); ImGui::Checkbox(("lock##locked"+std::to_string((size_t)this)).c_str(), &locked);
 
+    ImGui::PopStyleColor(1);
 
+    // ImGui::DockNodeEndAmendTabBar();}
+    
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
     std::string referings;
     for (auto r : selected->referings) if (r) referings += (r->type_name()+"::"+r->name())+", ";

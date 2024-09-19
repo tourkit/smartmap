@@ -461,13 +461,15 @@ void Open::json(std::string path) {
         };
     };
 
-    std::vector<ModelData> modelsdata; 
+    
 
     for (auto x : json_v["main"]) {
 
         auto type = x[JSON_TYPE].str();
 
         if (type == "layer") {
+
+            std::vector<ModelData> modelsdata; 
 
             for (auto model : x["models"]) // get models data first
                 if (model.name().length()) 

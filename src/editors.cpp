@@ -1374,7 +1374,7 @@ void Editors::init() {
         
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
-            if (ImGui::BeginTabItem("main")) {
+            if (ImGui::BeginTabItem(node->name().c_str())) {
                             
                 if (ImGui::BeginPopupContextItem()){
                         
