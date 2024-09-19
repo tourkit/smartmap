@@ -923,10 +923,9 @@ void Editors::init() {
 
             if (strcmp(path, file->path_v.c_str())) {
 
-                file->read(path);
+                file->read(path); // only if not local file
 
-                if (!file->loaded) node->name("File");
-                else node->name(file->name()+"."+file->extension+"");
+                node->name(file->name());
 
             }
 
@@ -973,7 +972,7 @@ void Editors::init() {
             node->update(); 
     
         float ratio = texture->height/(float)texture->width;
-        auto nw = GetWindowWidth(); std::min(texture->width,(GLuint)512);
+        auto nw = GetWindowWidth();// std::min(texture->width,(GLuint)512);
 
         ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(nw,nw*ratio)); // pas comprendre implementation de ImTextureID (aka void*) , voir ImGui_ImplOpenGL3_RenderDrawData()
 

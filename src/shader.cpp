@@ -93,9 +93,9 @@ bool Shader::create(std::string src, uint8_t type)  {
 
         std::string output;
 
-        if (type == FRAGMENT) output += "[fragment] ";
-        else if (type == VERTEX) output += "[vertex] ";
-        else if (type == COMPUTE) output += "[compute] ";
+        if (type == FRAGMENT) output += "fragment:";
+        else if (type == VERTEX) output += "vertex:";
+        else if (type == COMPUTE) output += "compute:";
         output += "";
 
         for (auto error : errors) {
