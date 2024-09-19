@@ -114,19 +114,23 @@ void Callbacks::init() {
         
     }); 
 
-    NODE<Model>::on(Node::DESTROY, [](Node* node, Model *model) {
+    NODE<Model>::onCB(Node::DESTROY, [](Node* node, Model *model) {
 
         auto modelable = node->parent()->is_a_nowarning<Modelable>();
 
-        if (modelable) { 
+        if (modelable) {
 
-            modelable->removeModel(model); 
+            // hardcore remove all ptrs
 
-            return; 
+            modelable->removeModel(model); // will remove all effectors
+
+            return Node::NoFollow; 
 
         }
 
         PLOGE << "no found";
+
+        return Node::Null;
  
     });
 
@@ -176,7 +180,7 @@ void Callbacks::init() {
 
     NODE<DrawCall>::on(Node::CHANGE, [](Node* node, DrawCall *dc) {
 
-        node->each<DrawCall>([](Node*n, DrawCall* dc){ 
+        node->parent()->each<DrawCall>([](Node*n, DrawCall* dc){ 
             
             dc->builder()->build(&dc->shader);
 
@@ -302,15 +306,32 @@ void Callbacks::init() {
     NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
     NODE<EffectorRef>::is_a<Member>();
 
-    NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
+    NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *reffector) {
+
+        auto effectable = node->parent()->is_a_nowarning<Effectable>();
+
+        if (effectable) {
+
+            // hardcore remove all ptrs
+
+            effectable->removeEffector(reffector); // will remove all effectors
+
+            return Node::NoFollow; 
+
+        }
+
+        PLOGE << "no found";
+
+        return Node::Null;
+
 
             // engine.window.end_of_render_cbs.emplace_back(node,[](void* ptr){
 
                 // auto node = (Node*)ptr;
 
-                auto effectable = node->parent()->is_a_nowarning<Effectable>();
-                if (effectable) 
-                effectable->removeEffector(node->is_a_nowarning<EffectorRef>()); 
+                // auto effectable = node->parent()->is_a_nowarning<Effectable>();
+                // if (effectable) 
+                // effectable->removeEffector(node->is_a_nowarning<EffectorRef>()); 
 
             // });
 

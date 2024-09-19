@@ -970,13 +970,10 @@ void Editors::init() {
 
         static int p_min = 1;
         if (ImGui::DragScalarN("size",    ImGuiDataType_U32,  &texture->width, 2, 1, &p_min) && layer) { 
-
-            layer->fb.create( texture->width, texture->height); 
             
-            if (layer->feedback_v)
-                layer->feedback_v->texture.create(texture->width, texture->height); 
-            
+    logger.cout(Sev::verbose);
             node->update(); 
+    logger.cout(Sev::warning);
         
         }
 

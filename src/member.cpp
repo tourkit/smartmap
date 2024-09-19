@@ -89,8 +89,9 @@ std::string Member::_name() {
 std::string Member::name() { 
     if (name_v.length()) 
         return name_v; 
-    
-    return "" ; 
+    if (ref() != this)
+        return "*"+ref()->name_v;
+    return "ref" ; 
 }
 
 std::string Member::next_name( std::string name ) {
@@ -573,7 +574,7 @@ bool Member::striding() { return striding_v; }
 
 bool Member::isData() { return type_v.id != typeid(Member); }
 
-Member* Member::ref() { return name_v.length()?this:members[0]; }
+Member* Member::ref() { return !name_v.length()&&members.size()?members[0]:this; }
 
 uint32_t Member::size() {  return size_v; }
 

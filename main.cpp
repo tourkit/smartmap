@@ -41,8 +41,9 @@
 
 //  voir comment DC gere lplusieurs models 
 
-// cant delete model with 2 effectors
+// fix right menu
 
+// fix open shit
 
 
 int main() {
@@ -53,28 +54,31 @@ int main() {
 
     engine.open("project.json");
 
+    engine.window.size(100, 100);
 
-
-    auto quad = engine.tree->find("quad");
+    auto quad_ = engine.tree->find("quad");
     auto main = engine.tree->find("main");
     auto argb = engine.tree->find("argb");
     auto rectangle = engine.tree->find("rectangle");
-    main->add(quad);
-    auto model = main->childrens.back()->childrens.front();
-    model->add(argb);
-    model->add(rectangle);
 
 
+    main->add(quad_);
+    auto quad= main->childrens.back()->childrens.back();
+    quad->add(argb);
+    main->add(quad_);
+    auto quad_1 = main->childrens.back()->childrens.back();
+    quad_1->name("quad_1");
+    quad_1->add(argb);
+    quad_1->add(rectangle);
     logger.cout(Sev::verbose);
+    quad->add(rectangle);
 
-    delete main->childrens.back()->childrens.front();
+    // NEED Node::layer_1->udate()
 
-    for (auto x : engine.window.end_of_render_cbs) 
-        x.second(x.first);
-
-    engine.window.end_of_render_cbs.clear();
-
+    // delete quad;
     logger.cout(Sev::warning);
+
+    engine.gui_v->selected = main->childrens.back();
 
     engine.run();
 
