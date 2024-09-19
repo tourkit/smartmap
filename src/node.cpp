@@ -316,15 +316,15 @@ void Node::update() {
 
     error = false;
 
-    if (referings.size() && *referings.begin())
-        for (auto x : referings)
-            if (x)
-                x->update();
-
     trig(Event::CHANGE);
 
     if (parent_node && parent_node->referings.find(this) == parent_node->referings.end()) 
         parent_node->update();
+
+    if (referings.size() && *referings.begin())
+        for (auto x : referings)
+            if (x)
+                x->update();
 
 }
 
