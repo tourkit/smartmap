@@ -304,15 +304,15 @@ void Callbacks::init() {
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *effector) {
 
-            engine.window.end_of_render_cbs.emplace_back(node,[](void* ptr){
+            // engine.window.end_of_render_cbs.emplace_back(node,[](void* ptr){
 
-                auto node = (Node*)ptr;
+                // auto node = (Node*)ptr;
 
                 auto effectable = node->parent()->is_a_nowarning<Effectable>();
                 if (effectable) 
                 effectable->removeEffector(node->is_a_nowarning<EffectorRef>()); 
 
-            });
+            // });
 
         
 

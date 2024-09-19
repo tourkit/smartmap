@@ -22,6 +22,7 @@
 // ----
 
 
+#include "atlas.hpp"
 #include "boilerplate.hpp"
 #include "drawcall.hpp"
 #include "editor.hpp"
@@ -32,6 +33,7 @@
 #include "gui.hpp"
 #include "member.hpp"
 #include "node.hpp"
+#include "utils.hpp"
 #include <string>
 #include <vector>
 
@@ -39,32 +41,40 @@
 
 //  voir comment DC gere lplusieurs models 
 
+// cant delete model with 2 effectors
+
+
 
 int main() {
-
-    // Boilerplate::Init();
 
     logger.cout(Sev::warning);
 
     engine.init();
 
-
-    // logger.cout(Sev::verbose);
     engine.open("project.json");
 
 
+
+    auto quad = engine.tree->find("quad");
+    auto main = engine.tree->find("main");
+    auto argb = engine.tree->find("argb");
+    auto rectangle = engine.tree->find("rectangle");
+    main->add(quad);
+    auto model = main->childrens.back()->childrens.front();
+    model->add(argb);
+    model->add(rectangle);
+
+
+    logger.cout(Sev::verbose);
+
+    delete main->childrens.back()->childrens.front();
+
+    for (auto x : engine.window.end_of_render_cbs) 
+        x.second(x.first);
+
+    engine.window.end_of_render_cbs.clear();
+
     logger.cout(Sev::warning);
-
-    // test hard_delete childrens, does ~Node ?
-    // on some layer I create
-
-    // auto lay_ = engine.stack->addOwnr<Layer>(400,300);
-    // auto ubl_ = engine.stack->addOwnr<UberLayer>();
-    // auto &ubl = *ubl_->is_a<UberLayer>();
-    // auto vl = ubl.addLayer(1920, 1080);
-    // vl.quantity(2);
-    // ubl.calc_matrice();
-    // auto vl_ = ubl_->addPtr<UberLayer::VirtualLayer>(&vl);
 
     engine.run();
 

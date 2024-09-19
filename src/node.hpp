@@ -12,6 +12,9 @@
 #include "imgui/imgui.h"
 
 
+struct Node;
+using Flag = Node*;
+
 struct Node {
 
     enum Event {
@@ -38,6 +41,15 @@ struct Node {
     bool locked = false, loaded = false, hidden = false, open = true, is_active = false, error = false;
 
     static inline std::set<Node*> pool;
+
+
+    static inline Flag Null = nullptr;
+    static inline int no_worrint = 0;
+    static inline Flag no_worry = (Flag)&no_worrint;
+    static inline int breakint = 0;
+    static inline Flag Break = (Flag)&breakint;
+    static inline int nofollow = 0;
+    static inline Flag NoFollow = (Flag)&nofollow;
 
     Node(std::string name = "node", ImVec4 color = {1,1,1,1});
     Node(void* ptr, TypeIndex type, bool owned);
@@ -83,8 +95,9 @@ struct Node {
     virtual std::string type_name() { return type().pretty_name();  }
 
     Node* on(Event event, std::function<void(Node*)> cb = nullptr);
+    Node* onCB(Event event, std::function<Flag(Node*)> cb = nullptr);
 
-    Node* each_untyped(std::function<Node*(Node*)> cb);
+    Node* each_untyped(std::function<Flag(Node*)> cb);
 
     static inline uint32_t total_uid = 0;
     uint32_t uid = 0;
@@ -95,20 +108,20 @@ struct Node {
 
     void run();
 
-    std::string nameSTL();
+    std::string nameSTL(int depth = -1);
 
     std::set<Node*> referings;
 
-    void trig(Event event);
+    Flag trig(Event event);
 
     template <typename T>
-    void onadd(std::function<Node*(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
+    void onadd(std::function<Flag(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
 
-    std::map<Event,std::function<void(Node*)>> on_cb;
+    std::map<Event,std::function<Flag(Node*)>> on_cb;
     static inline std::map<Event, std::map<TypeIndex, void*>> ontyped_cb;
 
-    std::map<TypeIndex, std::function<Node*(Node*,Node*)>> onadd_cb;
-    static inline std::map<TypeIndex, std::map<TypeIndex, std::function<Node*(Node*,Node*)>>> onaddtyped_cb;
+    std::map<TypeIndex, std::function<Flag(Node*,Node*)>> onadd_cb;
+    static inline std::map<TypeIndex, std::map<TypeIndex, std::function<Flag(Node*,Node*)>>> onaddtyped_cb;
 
     static inline std::map<TypeIndex, std::function<void(void*)>> ctortyped_cb, dtortyped_cb;
     
@@ -122,12 +135,6 @@ struct Node {
     TypeIndex stored_type = typeid(Node);
 
     void* void_ptr = nullptr;
-
-    static inline Node* Null = nullptr;
-    static inline int no_worrint = 0;
-    static inline Node* no_worry = (Node*)&no_worrint;
-    static inline int breakint = 0;
-    static inline Node* Break = (Node*)&breakint;
 
 
     bool owned;
@@ -188,7 +195,7 @@ struct Node {
     
 
     template <typename U>
-    Node* eachBreak(std::function<Node*(Node*, U*)> cb) { 
+    Flag eachBreak(std::function<Flag(Node*, U*)> cb) { 
         return each_untyped([&](Node* n) { 
             U* isa = n->is_a_nowarning<U>(); 
             if (isa) 
@@ -200,11 +207,11 @@ struct Node {
     template <typename U>
     void each(std::function<void(Node*, U*)> cb) { 
 
-        eachBreak<U>([&](Node* n, U* isa) { cb(n,isa); return (Node*)nullptr; });
+        eachBreak<U>([&](Node* n, U* isa) { cb(n,isa); return Null; });
 
     }
 
-    static inline std::function<Node*(Node*,Node*)> any_cb = [](Node*_this,Node*node){ return node; };
+    static inline std::function<Flag(Node*,Node*)> any_cb = [](Node*_this,Node*node){ return node; };
 
     template <typename U>
     Node* allow() { 
@@ -230,11 +237,12 @@ struct Node {
 
     template <typename U>
     U* is_a_nowarning() { return (U*)is_a_untyped(type(),typeid(U),void_ptr); }
-    
+
+
 private:
 
     Node* add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* out);
-    void trig_typed(Event event, TypeIndex type, void* out);
+    Flag trig_typed(Event event, TypeIndex type, void* out);
     
     Node* parent_node = nullptr;
 
@@ -250,7 +258,7 @@ template <typename T>
 
 struct NODE {
     
-    static inline std::map<Node::Event, std::function<void(Node*,T*)>> on_cb;
+    static inline std::map<Node::Event, std::function<Flag(Node*,T*)>> on_cb;
 
     template <typename U>
     static inline void  is_a() { 
@@ -267,11 +275,11 @@ struct NODE {
     }
 
     template <typename U>
-    static void onadd(std::function<Node*(Node*,Node*)> cb) { Node::onaddtyped_cb[typeid(T)][typeid(U)] = cb;  }
+    static void onadd(std::function<Flag(Node*,Node*)> cb) { Node::onaddtyped_cb[typeid(T)][typeid(U)] = cb;  }
 
-    static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
+    static void onCB(Node::Event event, std::function<Flag(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
+    static void on(Node::Event event, std::function<void(Node*,T*)> cb) { onCB(event, [cb](Node* n, T* t){  cb(n,t); return Node::Null; }); }
     
-
 };
 
 struct None {};
@@ -279,3 +287,4 @@ struct None {};
 struct AnyNode {
 
 };
+

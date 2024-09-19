@@ -25,7 +25,7 @@ Member::~Member() {
     if (copy_v) return;
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
-    PLOGV << "~" << name()/* << " ( &" + ss.str() + " )"*/;
+    PLOGV << "~" << ref()->name()/* << " ( &" + ss.str() + " )"*/;
     
 }
 
@@ -385,7 +385,7 @@ bool Member::remove(Member& m) {
 
     removing.insert(&m);
 
-    PLOGV << name() << "[" << footprint_all() << "] remove " << m.name() << "[" << m.footprint_all() << "]";
+    PLOGV << name() << "[" << footprint_all() << "] remove " << m.ref()->name() << "[" << m.footprint_all() << "]";
 
     if (!buffering_v)
         tops = getTop();

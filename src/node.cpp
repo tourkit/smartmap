@@ -44,11 +44,12 @@ Node* Node::name(std::string value) {
 
 Node::~Node() {
 
-    trig(Event::DESTROY);
 
     auto t_childrens = childrens;
     for (auto c : t_childrens) 
         delete c;
+
+    trig(Event::DESTROY);
 
     for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
 
@@ -63,50 +64,59 @@ Node::~Node() {
 
 }
 
+static bool find_obscure(std::vector<std::string>& names, Node* n,int max, int depth, std::vector<Node*>& find_list) {
+
+    bool out = false;
+        
+    if (max == depth) {
+
+        out = true;
+
+        auto curr = n;
+
+        for (int i = 0; i < names.size(); i++) {
+
+            Node* found = nullptr;
+            for (auto x : curr->childrens)
+                if (x->name() == names[i]) {
+                    found = x;
+                    break;
+                }
+
+            if (!found) {
+
+                curr = nullptr;
+
+                break;
+
+            }
+
+            curr = found;
+            
+        }
+
+        if (curr)
+            ADD_UNIQUE<Node*>(find_list, curr);
+
+    }
+
+    for (auto x : n->childrens)
+      if (find_obscure(names, x, max, depth+1, find_list))
+        out = true;
+    
+    return out;
+  
+} 
+
 Node* Node::find(std::vector<std::string> names) {
 
     find_list.clear();
     find_pos = 0;
 
-
-    for (auto c : childrens) {
-
-        if (!strcmp(names.back().c_str(), c->name().c_str())) {
-
-            if (names.size()== 1) 
-                return c;
-
-            auto parent = c;
-
-            for (int i = names.size()-2; i >= 0; i--) 
-                if (!strcmp(parent->parent()->name().c_str(),names[i].c_str())) 
-                    parent = parent->parent(); 
-                    
-                else{ 
-                
-                    c = nullptr; 
-                    break; 
-                
-                }
-
-            if (c) 
-                ADD_UNIQUE<Node*>(find_list, c);
-
-        }
-
-    }
-
-    if (names.size()) 
-        
-        for (auto c : childrens) {
-
-            auto x = c->find(names);
-
-            if (x) 
-                ADD_UNIQUE<Node*>(find_list, x);
-
-        }
-
+    int i = 0;
+    while(true) 
+        if (!find_obscure(names, this, i++, 0,find_list)) 
+            break;
     return find_next();
 
 }
@@ -247,7 +257,7 @@ Node* Node::add(void* node_v)  {
 
 }
 
-std::string Node::nameSTL(){ if (parent()) { return parent()->name() + "::" + name(); } return name(); }
+std::string Node::nameSTL(int depth){ if ((depth < 0 || depth ) && parent()) { return parent()->nameSTL(depth-1) + "::" + name(); } return name(); }
 
 Node *Node::top_parent() { 
     
@@ -280,7 +290,9 @@ void Node::parent(Node* parent_node) {
 
 }
 
-Node* Node::on(Event event, std::function<void(Node*)> cb) { on_cb[event] = cb; return this; }
+Node* Node::onCB(Event event, std::function<Flag(Node*)> cb) { on_cb[event] = cb; return this; }
+
+Node* Node::on(Event event, std::function<void(Node*)> cb) { onCB(event, std::function<Flag(Node*)>([cb](Node* n){ cb(n); return Null; })); return this; }
 
 
 Node* Node::close() {
@@ -397,7 +409,7 @@ static std::string event_name(Node::Event event){
     return "UNKNOWN";
 }
 
-void Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
+Flag Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
 
     std::string t_NAME = t.pretty_name();
 
@@ -413,18 +425,24 @@ void Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
         if (e != RUN)
             { PLOGV << event_name(e)  << " " << t.pretty_name() << "::" << name(); }
 
-        (*(std::function<void(Node*,void*)>*) ontyped_cb[e].at(t))(this,out);  
+        // auto ret = 
+        (*(std::function<Flag(Node*,void*)>*) ontyped_cb[e].at(t))(this,out);  
+
+        // if (ret == NoFollow)
+        //     return NoFollow;
         
     }
-
+    return Null;
 }
 
-void Node::trig(Event e)  { 
+Flag Node::trig(Event e)  { 
 
     trig_typed(e, type(), void_ptr);
 
     if (on_cb.find(e) != on_cb.end()) 
         on_cb[e](this);
+
+    return Null;
     
 }
 

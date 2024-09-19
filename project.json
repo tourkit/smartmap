@@ -16,48 +16,6 @@
 
     "main": {
 
-        "layer1" : {
-
-            "type" : "layer",
-
-            "models" : { 
-
-                "rect1" : {
-
-                    "dim" : [ 100, 100 ],
-
-                    "q": "3x2",
-
-                    "effectors": [ "effectors::argb" ]
-
-                }   
-
-            },
-
-            "effectors" : [  ]
-
-       },
-        "layer2" : {
-
-            "type" : "layer",
-
-            "models" : { 
-
-                "rect1" : {
-
-                    "dim" : [ 100, 100 ],
-
-                    "q": "3x2",
-
-                    "effectors": [ "effectors::argb" ]
-
-                }   
-
-            },
-
-            "effectors" : [  ]
-
-       },
 
       "HDMI 1" : {
 
