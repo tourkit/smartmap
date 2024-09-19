@@ -48,7 +48,7 @@ Node::~Node() {
     for (auto c : t_childrens) 
         delete c;
 
-    if (trig(Event::DESTROY) != NoFollow) {}
+    trig(Event::DESTROY);
       
     for (auto x : pool) for (auto r : x->referings) if (r == this) { x->referings.erase(r); break; }
 
@@ -289,9 +289,7 @@ void Node::parent(Node* parent_node) {
 
 }
 
-Node* Node::onCB(Event event, std::function<Flag(Node*)> cb) { on_cb[event] = cb; return this; }
-
-Node* Node::on(Event event, std::function<void(Node*)> cb) { onCB(event, std::function<Flag(Node*)>([cb](Node* n){ cb(n); return Null; })); return this; }
+Node* Node::on(Event event, std::function<void(Node*)> cb) { on_cb[event] = cb; return this; }
 
 
 Node* Node::close() {
@@ -408,7 +406,7 @@ static std::string event_name(Node::Event event){
     return "UNKNOWN";
 }
 
-Flag Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
+void Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
 
     std::string t_NAME = t.pretty_name();
 
@@ -424,26 +422,17 @@ Flag Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
         if (e != RUN)
             { PLOGV << event_name(e)  << " " << t.pretty_name() << "::" << name(); }
 
-        auto ret = 
-        (*(std::function<Flag(Node*,void*)>*) ontyped_cb[e].at(t))(this,out);  
-
-        if (ret == NoFollow)
-            return NoFollow;
+        (*(std::function<void(Node*,void*)>*) ontyped_cb[e].at(t))(this,out);  
         
     }
-    return Null;
 }
 
-Flag Node::trig(Event e)  { 
+void Node::trig(Event e)  { 
 
-    if (trig_typed(e, type(), void_ptr) == NoFollow)
-        return NoFollow;
+    trig_typed(e, type(), void_ptr);
 
     if (on_cb.find(e) != on_cb.end()) 
-        if (on_cb[e](this) == NoFollow)
-            return NoFollow;
-
-    return Null;
+        on_cb[e](this);
     
 }
 

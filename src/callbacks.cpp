@@ -114,7 +114,7 @@ void Callbacks::init() {
         
     }); 
 
-    NODE<Model>::onCB(Node::DESTROY, [](Node* node, Model *model) {
+    NODE<Model>::on(Node::DESTROY, [](Node* node, Model *model) {
 
         auto modelable = node->parent()->is_a_nowarning<Modelable>();
 
@@ -124,13 +124,9 @@ void Callbacks::init() {
 
             modelable->removeModel(model); // will remove all effectors
 
-            return Node::NoFollow; 
-
         }
 
         PLOGE << "no found";
-
-        return Node::Null;
  
     });
 
@@ -316,13 +312,10 @@ void Callbacks::init() {
 
             effectable->removeEffector(reffector); // will remove all effectors
 
-            return Node::NoFollow; 
 
         }
 
         PLOGE << "no found";
-
-        return Node::Null;
 
 
             // engine.window.end_of_render_cbs.emplace_back(node,[](void* ptr){

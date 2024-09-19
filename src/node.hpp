@@ -48,8 +48,6 @@ struct Node {
     static inline Flag no_worry = (Flag)&no_worrint;
     static inline int breakint = 0;
     static inline Flag Break = (Flag)&breakint;
-    static inline int nofollow = 0;
-    static inline Flag NoFollow = (Flag)&nofollow;
 
     Node(std::string name = "node", ImVec4 color = {1,1,1,1});
     Node(void* ptr, TypeIndex type, bool owned);
@@ -95,7 +93,6 @@ struct Node {
     virtual std::string type_name() { return type().pretty_name();  }
 
     Node* on(Event event, std::function<void(Node*)> cb = nullptr);
-    Node* onCB(Event event, std::function<Flag(Node*)> cb = nullptr);
 
     Node* each_untyped(std::function<Flag(Node*)> cb);
 
@@ -112,12 +109,12 @@ struct Node {
 
     std::set<Node*> referings;
 
-    Flag trig(Event event);
+    void trig(Event event);
 
     template <typename T>
     void onadd(std::function<Flag(Node*,Node*)> cb) { onadd_cb[typeid(T)] = cb; }
 
-    std::map<Event,std::function<Flag(Node*)>> on_cb;
+    std::map<Event,std::function<void(Node*)>> on_cb;
     static inline std::map<Event, std::map<TypeIndex, void*>> ontyped_cb;
 
     std::map<TypeIndex, std::function<Flag(Node*,Node*)>> onadd_cb;
@@ -242,7 +239,7 @@ struct Node {
 private:
 
     Node* add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* out);
-    Flag trig_typed(Event event, TypeIndex type, void* out);
+    void trig_typed(Event event, TypeIndex type, void* out);
     
     Node* parent_node = nullptr;
 
@@ -258,7 +255,7 @@ template <typename T>
 
 struct NODE {
     
-    static inline std::map<Node::Event, std::function<Flag(Node*,T*)>> on_cb;
+    static inline std::map<Node::Event, std::function<void(Node*,T*)>> on_cb;
 
     template <typename U>
     static inline void  is_a() { 
@@ -277,9 +274,8 @@ struct NODE {
     template <typename U>
     static void onadd(std::function<Flag(Node*,Node*)> cb) { Node::onaddtyped_cb[typeid(T)][typeid(U)] = cb;  }
 
-    static void onCB(Node::Event event, std::function<Flag(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
-    static void on(Node::Event event, std::function<void(Node*,T*)> cb) { onCB(event, [cb](Node* n, T* t){  cb(n,t); return Node::Null; }); }
-    
+    static void on(Node::Event event, std::function<void(Node*,T*)> cb) { on_cb[event] = cb; Node::ontyped_cb[event][typeid(T)] = &on_cb[event]; }
+
 };
 
 struct None {};
