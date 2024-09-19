@@ -969,14 +969,9 @@ void Editors::init() {
         Layer* layer = node->is_a_nowarning<Layer>();
 
         static int p_min = 1;
-        if (ImGui::DragScalarN("size",    ImGuiDataType_U32,  &texture->width, 2, 1, &p_min) && layer) { 
-            
-    logger.cout(Sev::verbose);
+        if (ImGui::DragScalarN("size",    ImGuiDataType_U32,  &texture->width, 2, 1, &p_min) && layer) 
             node->update(); 
-    logger.cout(Sev::warning);
-        
-        }
-
+    
         float ratio = texture->height/(float)texture->width;
         auto nw = std::min(texture->width,(GLuint)512);
 

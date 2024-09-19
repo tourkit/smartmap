@@ -1,5 +1,7 @@
 #include "tree.hpp"
+#include "engine.hpp"
 #include "imgui.h"
+#include "log.hpp"
 #include "node.hpp"
 #include "editor.hpp"
 #include "window.hpp"
@@ -288,7 +290,12 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
                 
                 if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
-                    gui->rename_list[node] = &renaming_name[0];
+                    gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>({node, [](void* ptr){ 
+                        logger.cout(Sev::verbose);
+                        ((Node*)ptr)->name(((Node*)ptr)->name_v); 
+                        logger.cout(Sev::warning);
+                    }}));
+                    node->name_v = &renaming_name[0];
 
                     is_renaming = nullptr;
 

@@ -45,6 +45,8 @@
 
 // fix open shit
 
+// um solo teijt editor
+
 
 int main() {
 
@@ -65,12 +67,12 @@ int main() {
     main->add(quad_);
     auto quad= main->childrens.back()->childrens.back();
     quad->add(argb);
-    main->add(quad_);
-    auto quad_1 = main->childrens.back()->childrens.back();
-    quad_1->name("quad_1");
-    quad_1->add(argb);
-    quad_1->add(rectangle);
-    logger.cout(Sev::verbose);
+    // main->add(quad_);
+    // auto quad_1 = main->childrens.back()->childrens.back();
+    // quad_1->name("quad_1");
+    // quad_1->add(argb);
+    // quad_1->add(rectangle);
+    // logger.cout(Sev::verbose);
     quad->add(rectangle);
 
     // NEED Node::layer_1->udate()

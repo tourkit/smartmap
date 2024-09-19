@@ -91,7 +91,6 @@ struct GUI {
   int member_count = 0;
 
   static inline std::vector<Node*> delete_list;
-  static inline std::map<Node*,std::string> rename_list;
 
   struct Window {
 

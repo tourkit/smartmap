@@ -85,9 +85,9 @@ private:
 static inline Engine &engine = Engine::getInstance();
 
 
-#define DIMENSIONS "dimensions|dimension|dim"
-#define OFFSET "offset"
-#define QUANTITY "quantity|q"
-#define TYPE "type"
-#define EFFECTORS "effectors|effects|fx|fxs|effector|effect"
-#define MODELS "models|model"
+#define JSON_DIMENSIONS "dimensions|dimension|dim"
+#define JSON_OFFSET "offset"
+#define JSON_QUANTITY "quantity|q"
+#define JSON_TYPE "type"
+#define JSON_EFFECTORS "effectors|effects|fx|fxs|effector|effect"
+#define JSON_MODELS "models|model"

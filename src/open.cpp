@@ -207,7 +207,7 @@ void Open::layers(){
 
         if (layer_def["models"].isobj())  { // HARD CHECK FOR TYPE BETWEEN VIRTUALLAYER AND LAYER
          
-            auto dim = layer_def["dimensions|dim|dimension"];
+            auto dim = layer_def[JSON_DIMENSIONS];
 
             Node* new_layer = engine.main->addOwnr<Layer>(dim[0].num(),dim[1].num(),layer_def.name());
             
@@ -420,21 +420,21 @@ void Open::json(std::string path) {
 
             name = json.name();
 
-            model = json[MODELS].str("quad");
+            model = json[JSON_MODELS].str("quad");
 
-            auto dim = json[DIMENSIONS];
+            auto dim = json[JSON_DIMENSIONS];
             width = dim[0].num();
             height = dim[1].num();
 
-            auto offset = json[OFFSET];
+            auto offset = json[JSON_OFFSET];
             offset_x = offset[0].num();
             offset_y = offset[1].num();
 
-            q = json[QUANTITY].num(1);
+            q = json[JSON_QUANTITY].num(1);
 
-            if (json[QUANTITY].str().length()) {
+            if (json[JSON_QUANTITY].str().length()) {
 
-                auto grid = split(json[QUANTITY].str(), "x");
+                auto grid = split(json[JSON_QUANTITY].str(), "x");
 
                 if ( !grid.size() ||  !is_num(grid[0]))
                     return;
@@ -453,8 +453,8 @@ void Open::json(std::string path) {
 
             } 
 
-            if (json[EFFECTORS].isarr()) 
-                for (auto effector : json[EFFECTORS]) 
+            if (json[JSON_EFFECTORS].isarr()) 
+                for (auto effector : json[JSON_EFFECTORS]) 
                     if (effector.str().length())
                         effectors.push_back(effector.str());
       
@@ -465,7 +465,7 @@ void Open::json(std::string path) {
 
     for (auto x : json_v["main"]) {
 
-        auto type = x[TYPE].str();
+        auto type = x[JSON_TYPE].str();
 
         if (type == "layer") {
 
@@ -473,8 +473,8 @@ void Open::json(std::string path) {
                 if (model.name().length()) 
                     modelsdata.emplace_back((ModelData(model)));
 
-            uint32_t width = x[DIMENSIONS][0].num();
-            uint32_t height = x[DIMENSIONS][1].num();
+            uint32_t width = x[JSON_DIMENSIONS][0].num();
+            uint32_t height = x[JSON_DIMENSIONS][1].num();
 
             if (!width || !height)  // if no dim, need to find from cumulating layers;
 
