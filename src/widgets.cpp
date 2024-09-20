@@ -2,6 +2,7 @@
 
 #include "member.hpp"
 #include "engine.hpp"
+#include <boost/algorithm/string/trim.hpp>
 #include <cstdint>
 #include <string>
 
@@ -447,7 +448,9 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
 
                 if (str__.length()) {
 
-                    if (str__[0] == '+' || str__[0] == '*' || str__[0] == '/') {
+                    boost::trim_left(str__);
+
+                    if (str__[0] == '+' || str__[0] == '*' || str__[0] == '/' || str__[0] == '-') {
                         
                         if (m->type().id == typeid(float))
                             str__ = std::to_string(*(float*)(buff->data()+offset))+str__;

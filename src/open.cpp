@@ -132,7 +132,7 @@ void Open::outputs(){
 
     for (auto &monitor : outputs["monitor"]) {
 
-        auto n = engine.tree->find("outputs")->addPtr<Window>( &engine.window );//->active(false);
+        auto n = engine.tree->find("outputs")->addPtr<Window>( &engine.window )->active(true);
 
         auto dim = monitor[JSON_DIMENSIONS];
         if (dim[0].num() && dim[1].num())
