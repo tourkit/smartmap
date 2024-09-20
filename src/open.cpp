@@ -408,7 +408,6 @@ void Open::json(std::string path) {
     
     inputs();
 
-    editors();
 
     for (auto &layer_ : layers_) 
         layer_.create();
@@ -425,6 +424,8 @@ void Open::json(std::string path) {
     }
 
 
+    editors();
+    
     outputs_src.clear();
 
 }

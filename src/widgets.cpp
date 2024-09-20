@@ -362,14 +362,19 @@ bool ImGui::RawWidget(void *data, size_t size) {
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
+
+
 static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
-    *(std::string*)data->UserData = data->Buf;
+    // PLOGE << data->Buf;
 
-    return 0;
+    bool change = !strcmp(((std::string*)data->UserData)->c_str(), data->Buf);
+
+    *(std::string*)data->UserData = data->Buf;
+    
+    return change;
 
 }
-
 
 bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& member_count) {
 
@@ -433,8 +438,34 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
                 dis = true;
             }
 
-            auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0);
-            
+            auto x = ImGui::SliderScalarN(
+                ("###"+std::to_string(member_count++)).c_str(), 
+                type, buff->data()+offset, q, m->from(), m->to(),
+                NULL,0,ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue,MyResizeCallback, &str__);
+
+            if (x && str__.length()) {
+
+                // PLOGD   << str__;
+
+                static te_parser tep;
+
+                double r = tep.evaluate(str__);
+
+                str__.clear();
+
+                if (!std::isnan(r)){
+
+                    if (type == ImGuiDataType_Float) 
+                        *(float*)(buff->data()+offset) = r;
+                    else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data()+offset) = r;
+                    else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data()+offset) = r;
+
+                }
+
+                has_changed = true;
+            }
+
+
             if (dis)
                 ImGui::PopStyleColor(1);
 
@@ -453,34 +484,6 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
             }
 
             PopStyleColor();
-
-            if (x>=0) {
-
-                x*=4;
-
-                static te_parser tep;
-                if (str__.length() && !isdigit(str__.at(0)) && str__.at(0) != 46) {
-
-                    if (last_value.length())str__=last_value+str__;
-
-                    last_value = "";
-                }
-
-                double r = tep.evaluate(str__);
-
-                str__.clear();
-
-                if (!std::isnan(r)){
-
-                    if (type == ImGuiDataType_Float) *(float*)(buff->data()+offset+x) = r;
-                    else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data()+offset+x) = r;
-                    else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data()+offset+x) = r;
-
-                }
-
-                has_changed = true;
-            }
-
 
             if (ImGui::IsItemClicked()) {
 
