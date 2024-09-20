@@ -114,8 +114,8 @@ void Save::layers(){
 
 //         auto  lay = rapidjson::Value(rapidjson::kArrayType);
 
-//         lay.PushBack(layer->fb.width, allocator);
-//         lay.PushBack(layer->fb.height, allocator);
+//         lay.PushBack(layer->fb.texture.width, allocator);
+//         lay.PushBack(layer->fb.texture.height, allocator);
 
 //         auto  models = rapidjson::Value(rapidjson::kObjectType);
 

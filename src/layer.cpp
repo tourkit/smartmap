@@ -121,7 +121,7 @@ std::string UberLayer::Feedback::header() {
 Layer::Feedback::Feedback(Layer* layer) : 
 
     Effector("feedback"), 
-    texture(layer->fb.width,layer->fb.height), 
+    texture(layer->fb.texture.width,layer->fb.texture.height), 
     layer(layer) 
 
     {

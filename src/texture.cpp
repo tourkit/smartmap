@@ -48,6 +48,30 @@ void Texture::reset() { create( width, height); }
 void Texture::create(GLuint width, GLuint height) {
     
     destroy();
+
+    static uint32_t p_max = 0;
+    if (!p_max) {
+        static int32_t int_p_max = 0;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &int_p_max);
+        p_max = int_p_max;
+    }
+
+    if (!width) {
+        PLOGE << "width cant be <1px";
+        width = 1;
+    }
+    else if (width > p_max) {
+        PLOGE << "GL_MAX_TEXTURE_SIZE " << p_max << "px";
+        width = p_max;
+    }
+    if (!height) {
+        PLOGE << "height cant be <1px";
+        height = 1;
+    }
+    else if (height > p_max) {
+        PLOGE << "GL_MAX_TEXTURE_SIZE " << p_max << "px";
+        height = p_max;
+    }
     
     this->width = width;
     this->height = height;

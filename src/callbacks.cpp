@@ -98,7 +98,7 @@ void Callbacks::init() {
     
     NODE<Layer>::on(Node::CHANGE, [](Node* node, Layer *layer){ 
 
-        layer->glsl_layers->eq(layer->vbo.layer_id).set<std::array<float,2>>({(float)layer->fb.width,(float)layer->fb.height});
+        layer->glsl_layers->eq(layer->vbo.layer_id).set<std::array<float,2>>({(float)layer->fb.texture.width,(float)layer->fb.texture.height});
 
     });
 
@@ -156,7 +156,7 @@ void Callbacks::init() {
     NODE<Layer::Feedback>::on(Node::CHANGE, [](Node* node, Layer::Feedback *feedback) {
 
 
-        feedback->texture.create( feedback->layer->fb.width, feedback->layer->fb.height );
+        feedback->texture.create( feedback->layer->fb.texture.width, feedback->layer->fb.texture.height );
 
 
     });
@@ -394,7 +394,7 @@ void Callbacks::init() {
 
     //////// FrameBuffer.HPP
 
-    NODE<FrameBuffer>::on(Node::CHANGE, [](Node* node, FrameBuffer *fb) { if (fb->width != fb->texture.width || fb->height != fb->texture.height) { fb->create(fb->width, fb->height); } });
+    NODE<FrameBuffer>::on(Node::CHANGE, [](Node* node, FrameBuffer *fb) { if (fb->texture.width != fb->texture.width || fb->texture.height != fb->texture.height) { fb->create(fb->texture.width, fb->texture.height); } });
 
 
     ////////// Folder.HPP
@@ -410,11 +410,11 @@ void Callbacks::init() {
 
         if (!output->fb) return;
 
-        if (output->fb->width != output->width || output->fb->height != output->height) { 
+        if (output->fb->texture.width != output->width || output->fb->texture.height != output->height) { 
 
-            PLOGE << "resize " << node->name() << " from " << output->width << "x" << output->height << " to " << output->fb->width << "x" << output->fb->height;
+            PLOGE << "resize " << node->name() << " from " << output->width << "x" << output->height << " to " << output->fb->texture.width << "x" << output->fb->texture.height;
 
-            output->size(output->fb->width, output->fb->height); 
+            output->size(output->fb->texture.width, output->fb->texture.height); 
         }
 
       });

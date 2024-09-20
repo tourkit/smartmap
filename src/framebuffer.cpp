@@ -10,7 +10,7 @@ FrameBuffer::~FrameBuffer() {
 
 }
 
-FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height) : id(id), width(width), height(height) {
+FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height) : id(id) {
 
     // n.set<uint32_t>(0,width);
     // n.set<uint32_t>(1,height);
@@ -30,9 +30,6 @@ FrameBuffer::FrameBuffer(GLuint width, GLuint height) {
 void FrameBuffer::create(GLuint width, GLuint height){
 
     destroy();
-
-    this->width = width;
-    this->height = height;
 
     texture.informat = GL_RGB8;;
     texture.create(width,height);
@@ -64,7 +61,7 @@ bool FrameBuffer::destroy() {
 
  }
 
-void FrameBuffer::bind() {  glBindFramebuffer(GL_FRAMEBUFFER, id); glViewport(0,0,width,height); }
+void FrameBuffer::bind() {  glBindFramebuffer(GL_FRAMEBUFFER, id); glViewport(0,0,texture.width,texture.height); }
 
 void FrameBuffer::clear() {
 
@@ -75,7 +72,7 @@ void FrameBuffer::clear() {
 void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
-    glViewport(0,0,width,height);
+    glViewport(0,0,texture.width,texture.height);
     glClearColor(r,g,b,a);
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -83,9 +80,9 @@ void FrameBuffer::clear(GLfloat r, GLfloat  g, GLfloat b, GLfloat a) {
 
 void FrameBuffer::read(unsigned char* data, GLenum format, GLuint width, GLuint height, GLuint x, GLuint y) {
 
-    if (!width) width = this->width;
+    if (!width) width = texture.width;
 
-    if (!height) height = this->height;
+    if (!height) height = texture.height;
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
 
