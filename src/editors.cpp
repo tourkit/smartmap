@@ -414,12 +414,12 @@ void Editors::init() {
         
 
         if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
-        ImGui::SetCursorPos(start);if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
-        ImGui::SetCursorPos(start);if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }
-        ImGui::SetCursorPos(start);if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }
-        ImGui::SetCursorPos(start);if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }
-        ImGui::SetCursorPos(start);ImGui::Checkbox("verbose", &is_verbose);
-        ImGui::SetCursorPos(start); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }
+        ImGui::SameLine();if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
+        ImGui::SameLine();if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }
+        ImGui::SameLine();if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }
+        ImGui::SameLine();if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }
+        ImGui::SameLine();ImGui::Checkbox("verbose", &is_verbose);
+        ImGui::SameLine(); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }
 
         if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
 
@@ -533,7 +533,7 @@ void Editors::init() {
             dims[node][0] = texture->width;
         if (dims[node][1] != texture->height)
             dims[node][1] = texture->height;
-        BeginChild(node->name().c_str());
+
         if (ImGui::DimWiget(&dims[node][0], &dims[node][1], node->name())) {
 
             auto layer = node->is_a<Layer>();
@@ -543,9 +543,7 @@ void Editors::init() {
 
         } 
 
-        ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(GetWindowWidth(), GetWindowWidth()*(texture->height/(float)texture->width))); 
-
-    EndChild();
+        ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(GetContentRegionAvail().x, GetContentRegionAvail().x*(texture->height/(float)texture->width))); 
     });
 
     ////////// HPP
