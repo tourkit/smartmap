@@ -6,10 +6,6 @@
 #include <functional>
 
 struct Node;
-struct Buffer;
-struct Member;
-
-void draw_definition(Member *member, int offset = 0, int depth = 0);
 
 struct EDITOR  {
 

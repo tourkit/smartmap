@@ -65,6 +65,7 @@ src/atlas.cpp
 src/tree.cpp
 
 src/gui.cpp
+src/widgets.cpp
 vendors/imgui/imgui.cpp
 vendors/imgui/imgui_tables.cpp
 vendors/imgui/imgui_widgets.cpp
