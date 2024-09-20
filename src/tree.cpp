@@ -249,71 +249,78 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
             }
 
+            struct ImGuiStr{
+                char data[512];
+                ImGuiStr() { memset(&data[0],0,512); }
+            };
+            static std::map<Node*, ImGuiStr> is_renaming;
+
             if(node->error) 
+
                 node_color = ImVec4(1, 0, 0, 1);
 
-            if (is_renaming != node) {
+
+            if (is_renaming.find(node) == is_renaming.end()) {
+
+                if (filtering)
+                    visible_list.push_back(node);
 
                 ImGui::PushStyleColor(ImGuiCol_Text, node_color);
                 
                 ImGui::SetCursorPosX(t_pos.x+21);
                 
                 Text(node->name().c_str());
+
+                PopStyleColor();
+
+                // /////////////////
+                // // pop up right clik
+                // /////////////////
+
+                // if (BeginPopupContextItem((std::to_string(gui->member_count++)).c_str())) {
+                    
+                //     Separator();
+
+                //     if (!is_deleting) {
+
+                //         ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
+                //         if(ImGui::MenuItem("delete")){ is_deleting = true; }
+                //         ImGui::PopItemFlag();
+
+                //     }else if(ImGui::MenuItem("Sure ?")){
+
+                //         is_deleting = false;
                         
-                /////////////////
-                // pop up right clik
-                /////////////////
+                //     this->gui->deleteNode(node);
 
-                if (BeginPopupContextItem((std::to_string(gui->member_count++)).c_str())) {
+                //     }
+
+                //     if (!ImGui::IsItemHovered()) 
+                //         is_deleting = false;
                     
-                    Separator();
+                //     Separator();
 
-                    if (!is_deleting) {
+                //     if (ImGui::BeginMenu("trig")) {
+                //         Separator();
+                //         if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
+                //         Separator();
+                //         if (ImGui::MenuItem("CREATE")) node->trig(Node::CREATE);
+                //         Separator();
+                //         ImGui::EndMenu();
+                //     }
 
-                        ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
-                        if(ImGui::MenuItem("delete")){ is_deleting = true; }
-                        ImGui::PopItemFlag();
+                //     Separator();
 
-                    }else if(ImGui::MenuItem("Sure ?")){
-
-                        is_deleting = false;
-                        
-                    this->gui->deleteNode(node);
-
-                    }
-
-                    if (!ImGui::IsItemHovered()) 
-                        is_deleting = false;
+                //     ImGui::MenuItem(node->type_name().c_str());
                     
-                    Separator();
+                //     Separator();
 
-                    if (ImGui::BeginMenu("trig")) {
-                        Separator();
-                        if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
-                        Separator();
-                        if (ImGui::MenuItem("CREATE")) node->trig(Node::CREATE);
-                        Separator();
-                        ImGui::EndMenu();
-                    }
-
-                    Separator();
-
-                    ImGui::MenuItem(node->type_name().c_str());
-                    
-                    Separator();
-
-                    EndPopup();
-                }
-
-
-                if (filtering)
-                    visible_list.push_back(node);
+                //     EndPopup();
+                // }
 
                 if (ImGui::IsItemClicked()){
                     if (ImGui::IsMouseDoubleClicked(0)) {
-                        is_renaming = node;
-                        memset(&renaming_name[0],0,612);
-                        memcpy(&renaming_name[0], node->name().c_str(), node->name().length());
+                        is_renaming[node];
                     }else{
                         if (IsMouseDown(0))
                             
@@ -324,6 +331,7 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
                     }
                 }
 
+
                 if (IsMouseReleased(0) && gui->selected){
                     if (gui && !gui->editors.size()){
                         gui->editors.emplace_back(new EditorWidget(gui));
@@ -331,24 +339,23 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
                     }
                 }
 
-                PopStyleColor();
-
             } else {
-
                 
+                SetCursorPosX(t_pos.x+17);
 
-                SetCursorPosX(t_pos.x + 17 );
+                if (strcmp(&is_renaming[node].data[0],node->name().c_str()))
+                    memcpy(&is_renaming[node].data[0],node->name().c_str(),node->name().length());
                 
-                if (ImGui::InputText("##jksdhfjksdfjk", &renaming_name[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                if (ImGui::InputText("##jksdfjk", &is_renaming[node].data[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
                     gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>({node, [](void* ptr){ 
-                        logger.cout(Sev::verbose);
-                        ((Node*)ptr)->name(((Node*)ptr)->name_v); 
-                        logger.cout(Sev::warning);
-                    }}));
-                    node->name_v = &renaming_name[0];
 
-                    is_renaming = nullptr;
+                        ((Node*)ptr)->update(); 
+
+                    }}));
+                    node->name_v = &is_renaming[node].data[0];
+
+                    is_renaming.erase(node);
 
                 }
             }

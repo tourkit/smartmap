@@ -26,8 +26,4 @@ std::regex pattern; bool pattern_error = false;
 
 bool is_deleting = false;
 
-Node* is_renaming = nullptr;
-std::array<char,512> renaming_name;
-
-
 };

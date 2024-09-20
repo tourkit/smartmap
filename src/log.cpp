@@ -18,10 +18,7 @@ void Log::Appender::write(const plog::Record& record) {
 
     if (record.getSeverity() <= plog::Severity::error){
     
-        // cmd = true;
-
-        if (engine.gui_v->editors.back()->selected != engine.tree->find("debug"))
-            engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v, engine.tree->find("debug")));
+        cmd = true;
         
     }
 
@@ -36,8 +33,11 @@ void Log::Appender::write(const plog::Record& record) {
             std::string cout = plog::FuncMessageFormatter::format(record);
             if (cout.length() > 200) 
                 cout = cout.substr(0,200) + "...\n";
+
+            if (engine.gui_v->editors.back()->selected != engine.tree->find("debug"))
+                engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v, engine.tree->find("debug")));
             
-            std::cout << cout;
+            // std::cout << cout;
     }
     
     buffer << ifile.rdbuf();
