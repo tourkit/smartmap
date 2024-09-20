@@ -19,7 +19,7 @@ FrameBuffer::FrameBuffer(GLuint id, GLuint width, GLuint height) : id(id) {
 
 }
 
-FrameBuffer::FrameBuffer(GLuint width, GLuint height) {
+FrameBuffer::FrameBuffer(GLuint width, GLuint height) : texture(width, height) {
 
     create(width, height);
 
@@ -29,14 +29,15 @@ FrameBuffer::FrameBuffer(GLuint width, GLuint height) {
 
 void FrameBuffer::create(GLuint width, GLuint height){
 
+    texture.informat = GL_RGB8;
+
+    if (!texture.create(width,height) && id)
+        return;
+
     destroy();
 
-    texture.informat = GL_RGB8;;
-    texture.create(width,height);
-    // texture = new Texture(width,height, 0,1,GL_RGB8 );
 
     glGenFramebuffers(1, &id);
-
 
     glBindFramebuffer(GL_FRAMEBUFFER, id);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0+(attachments), GL_TEXTURE_2D, texture.id, 0);

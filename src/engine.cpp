@@ -30,8 +30,6 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
     glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
     glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
     PLOGD << "GL_VERSION                 : " << gl_major_version << "." << gl_minor_version;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &gl_max_texture_size);
-    PLOGD << "GL_MAX_TEXTURE_SIZE        : " << gl_max_texture_size << "x" << gl_max_texture_size;
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
     PLOGD << "GL_MAX_TEXTURE_IMAGE_UNITS : " << gl_max_texture_image_units;
 

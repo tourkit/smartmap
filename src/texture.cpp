@@ -45,8 +45,11 @@ Texture::~Texture() {
 
 void Texture::reset() { create( width, height); }
 
-void Texture::create(GLuint width, GLuint height) {
+bool Texture::create(GLuint width, GLuint height) {
     
+    if (this->width == width && this->height == height)
+        return false;
+
     destroy();
 
     static uint32_t p_max = 0;
@@ -76,8 +79,6 @@ void Texture::create(GLuint width, GLuint height) {
     this->width = width;
     this->height = height;
 
-    if (!width || !height) return;
-
     glGenTextures(1, &id);
 
     PLOGD << width << "x" << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
@@ -94,6 +95,8 @@ void Texture::create(GLuint width, GLuint height) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
     glActiveTexture(GL_TEXTURE0);
+
+    return true;
 
 }
 

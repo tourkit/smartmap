@@ -522,14 +522,20 @@ void Editors::init() {
 
     Editor<Texture>([](Node* node, Texture *texture){
 
-        if (ImGui::DimWiget(&texture->width, &texture->height, node->name())) {
+        static std::map<Node*,uint32_t[2]> dims;
+
+        if (dims[node][0] != texture->width)
+            dims[node][0] = texture->width;
+        if (dims[node][1] != texture->height)
+            dims[node][1] = texture->height;
+        if (ImGui::DimWiget(&dims[node][0], &dims[node][1], node->name())) {
 
             auto layer = node->is_a<Layer>();
 
             if (layer)
-                layer->fb.create(texture->width, texture->height);
+                layer->fb.create(dims[node][0], dims[node][1]);
 
-        }
+        } 
 
         ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(GetWindowWidth(), GetWindowWidth()*(texture->height/(float)texture->width))); 
 

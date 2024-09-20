@@ -22,7 +22,7 @@ struct Texture {
 
     ~Texture();
 
-    void create(GLuint width, GLuint height);
+    bool create(GLuint width, GLuint height);
 
     void write(void* data, GLuint width = 0, GLuint height = 0, GLuint offset_x = 0 , GLuint offset_y = 0);
 
