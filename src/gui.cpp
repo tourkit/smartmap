@@ -141,10 +141,14 @@ void GUI::Window::drawFull() { {
 
 
       ImGui::Begin(str.c_str(), &p_open, flag);
-      if (!p_open) close();
+      if (!p_open) 
+        gui->window->end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{this, ([&](void* ptr){
+          ((GUI::Window*)ptr)->close();
+        })});
+      
       
    ImGuiWindow* window = ImGui::GetCurrentWindow();
-    if (window->SkipItems && (window->Flags & ImGuiWindowFlags_MenuBar)){
+    if (window->SkipItems && (window->Flags & ImGuiWindowFlags_MenuBar)){     
 
     ImGui::BeginGroup(); // Backup position on layer 0 // FIXME: Misleading to use a group for that backup/restore
     ImGui::PushID("##menubar");

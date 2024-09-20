@@ -28,7 +28,7 @@
 
                     "q": "3x2",
 
-                    "effectors": [ "argb" ]
+                    "effectors": [ "argb", "rectangle" ]
 
                 }   
 

@@ -9,6 +9,8 @@ static int hovered_offset = -1;
 static int hovered_size = -1;
 static bool is_hovered = false;
 
+static int p_min_1 = 1;
+
 namespace ImGui {
 
 void CustomSliderScalarN();
