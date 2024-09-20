@@ -1,12 +1,9 @@
 #include "editors.hpp"
 
-
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui_internal.h"
 #include "ImGuiColorTextEdit/TextEditor.h"
 
-
-#include "rapidjson/stringbuffer.h"
 
 #include "editor.hpp"
 #include "folder.hpp"
@@ -30,10 +27,8 @@
 
 #include "log.hpp"
 #include <cstdint>
-#include <ctype.h>
 #include <map>
 
-#include <format>
 #include <sstream>
 #include <string>
 
@@ -413,7 +408,8 @@ void Editors::init() {
         auto curpos = GetCursorPos();
         auto winsize = GetWindowSize();
 
-        auto start = curpos + winsize - ImVec2(0.0f, 200.0f);
+        auto start = curpos + winsize + ImVec2(0.0f, GetCurrentContext()->FontBaseSize);
+        
 
         if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
         ImGui::SameLine();if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
@@ -456,7 +452,7 @@ void Editors::init() {
             str += m.msg;
 
             int x = 130;
-            ImGui::TextEx(str.c_str(), str.c_str()+(str.length()>x?x:str.length())); if (str.length()>x) { ImGui::SameLine(); ImGui::Text("..."); }
+            ImGui::Text(str.c_str(), str.c_str()+(str.length()>x?x:str.length())); if (str.length()>x) { ImGui::SameLine(); ImGui::Text("..."); }
             ImGui::PopStyleColor();
 
             if (ImGui::BeginPopupContextItem(("##dsfgsdf"+std::to_string(count)).c_str())) {
