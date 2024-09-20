@@ -34,7 +34,7 @@ void Log::Appender::write(const plog::Record& record) {
             if (cout.length() > 200) 
                 cout = cout.substr(0,200) + "...\n";
 
-            if (engine.gui_v->editors.back()->selected != engine.tree->find("debug"))
+            if (engine.gui_v && engine.gui_v->editors.back()->selected != engine.tree->find("debug"))
                 engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v, engine.tree->find("debug")));
             
             // std::cout << cout;
