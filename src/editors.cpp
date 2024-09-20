@@ -522,8 +522,14 @@ void Editors::init() {
 
     Editor<Texture>([](Node* node, Texture *texture){
 
-        if (ImGui::DimWiget(&texture->width, &texture->height, node->name())) 
-            node->update();
+        if (ImGui::DimWiget(&texture->width, &texture->height, node->name())) {
+
+            auto layer = node->is_a<Layer>();
+
+            if (layer)
+                layer->fb.create(texture->width, texture->height);
+
+        }
 
         ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(GetWindowWidth(), GetWindowWidth()*(texture->height/(float)texture->width))); 
 
