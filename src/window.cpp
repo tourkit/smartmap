@@ -151,7 +151,8 @@ void Window::keypress() {
         (void)scancode;
         (void)mode;
         auto _this = (Window*)glfwGetWindowUserPointer(id);
-
+        if (!_this)
+            return;
         if (action == GLFW_PRESS) 
             _this->keys_down.insert(key);
 

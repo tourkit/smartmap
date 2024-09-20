@@ -314,8 +314,7 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
                 dis = true;
             }
 
-            auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0,
-            ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue, MyResizeCallback, &str__);
+            auto x = ImGui::SliderScalarN(("###"+std::to_string(member_count++)).c_str(), type, buff->data()+offset, q, m->from(), m->to(),NULL,0);
             
             if (dis)
                 ImGui::PopStyleColor(1);
