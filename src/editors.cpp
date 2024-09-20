@@ -543,7 +543,16 @@ void Editors::init() {
 
         } 
 
-        ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(GetContentRegionAvail().x, GetContentRegionAvail().x*(texture->height/(float)texture->width))); 
+        auto w = GetContentRegionAvail().x;
+        auto h = w*((texture->height)/(float)texture->width);
+        if (h > 400) {
+            auto nw = (400/h)*w;
+            SetCursorPosX((w-nw)/2);
+            h = 400;
+            w=nw;
+        }
+
+        ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(w, h)); 
     });
 
     ////////// HPP

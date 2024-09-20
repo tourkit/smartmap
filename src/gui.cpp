@@ -2,6 +2,8 @@
 
 
 #define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui.h"
+#undef IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui_internal.h"
 
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -141,12 +143,12 @@ void GUI::Window::drawFull() { {
       std::string str = name+"###"+uid;
 
 
+      ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200,200));
       ImGui::Begin(str.c_str(), &p_open, flag);
       if (!p_open) 
         gui->window->end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{this, ([&](void* ptr){
           ((GUI::Window*)ptr)->close();
         })});
-      
       
    ImGuiWindow* window = ImGui::GetCurrentWindow();
     if (window->SkipItems && (window->Flags & ImGuiWindowFlags_MenuBar)){     
@@ -164,7 +166,7 @@ void GUI::Window::drawFull() { {
       draw();
 
       ImGui::End();
-
+      ImGui::PopStyleVar();
     }
 
 

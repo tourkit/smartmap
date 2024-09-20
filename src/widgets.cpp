@@ -26,9 +26,9 @@ void ImGui::CustomSliderScalarN(){
 
 bool ImGui::DimWiget(uint32_t* x, uint32_t* y, std::string append) {
 
+
     
     auto iw = (GetContentRegionAvail().x-121)*.5;
-
     PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(3,4));
 
     bool value_changed = false;
@@ -36,7 +36,7 @@ bool ImGui::DimWiget(uint32_t* x, uint32_t* y, std::string append) {
     SetCursorPosX(3);SetNextItemWidth(iw); value_changed += DragScalar(("##dimw"+append).c_str(), ImGuiDataType_U32,  x,1.0f, &p_min_1);
     SameLine(); SetNextItemWidth(iw); value_changed += DragScalar(("##dimh"+append).c_str(), ImGuiDataType_U32, y,1.0f, &p_min_1);
     
-    SameLine(); if (Button("/2", ImVec2(25,0))) { *x=*x/2; *y=*y/2; value_changed = true; }
+    SameLine(); if (Button("/2", ImVec2(25,0))) { *x=std::max(1.0f,*x/2.0f); *y=std::max(1.0f,*y/2.0f); value_changed = true; }
     SameLine(); if (Button("x2", ImVec2(25,0))) { *x=*x*2; *y=*y*2; value_changed = true; }
     SameLine(); if (Button("P", ImVec2(25,0))) { value_changed = true; }
     SameLine(); if (Button("D", ImVec2(25,0))) { *x = engine.gui_v->window->displays[0].width; *y = engine.gui_v->window->displays[0].height; value_changed = true; }
