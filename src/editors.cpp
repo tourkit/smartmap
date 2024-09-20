@@ -25,6 +25,7 @@
 #include "gui.hpp"
 
 #include "log.hpp"
+#include <cstdint>
 #include <ctype.h>
 #include "tinyexpr/tinyexpr.h"
 #include <map>
@@ -70,8 +71,31 @@ namespace ImGui {
     }
 
 
-};
-namespace ImGui {
+    bool DimWiget(uint32_t* x, uint32_t* y, std::string append = "") {
+
+
+        auto ww = GetWindowWidth();
+        auto iw = (GetWindowWidth()-121)*.5;
+
+        PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(3,4));
+
+        static uint32_t p_min = 1;
+
+        bool value_changed = false;
+
+        SetCursorPosX(3);SetNextItemWidth(iw); value_changed += DragScalar(("##dimw"+append).c_str(), ImGuiDataType_U32,  x,1.0f, &p_min);
+        SameLine(); SetNextItemWidth(iw); value_changed += DragScalar(("##dimh"+append).c_str(), ImGuiDataType_U32, y,1.0f, &p_min);
+        SameLine(); if (Button("/2", ImVec2(25,20))) { *x/=2; *y/=2; value_changed = true; }
+        SameLine(); if (Button("x2", ImVec2(25,20))) { *x*=2; *y*=2; value_changed = true; }
+        SameLine(); if (Button("P", ImVec2(25,20))) { value_changed = true; }
+        SameLine(); if (Button("D", ImVec2(25,20))) { *x = engine.gui_v->window->displays[0].width; *y = engine.gui_v->window->displays[0].height; value_changed = true; }
+
+        PopStyleVar(1);
+
+        return value_changed;
+
+    }
+
 
     static void TextX(std::string label, int offset, int size, int depth, std::vector<float> range = {}) {
 
@@ -963,12 +987,12 @@ void Editors::init() {
     ////////// Texture.HPP
 
     Editor<Texture>([](Node* node, Texture *texture){
-
+  
         // if (ImGui::InputScalarN("size",    ImGuiDataType_U32,  &texture->width, 2) ) { texture->create( texture->width, texture->height, texture->unit, texture->mipmaps, texture->informat, texture->outformat ); }
         Layer* layer = node->is_a_nowarning<Layer>();
 
         static int p_min = 1;
-        if (ImGui::DragScalarN("size",    ImGuiDataType_U32,  &texture->width, 2, 1, &p_min) && layer) 
+        if (ImGui::DimWiget(&texture->width, &texture->height, node->name())) 
             node->update(); 
     
         float ratio = texture->height/(float)texture->width;
@@ -1319,6 +1343,8 @@ void Editors::init() {
                     if (!effectable) 
                         continue;
                     Editor<Effectable>::cb(c, effectable);
+
+                    // ImGui::BeginPopupEx
                 }
                 
                 Editor<Effectable>::cb(node, dc);

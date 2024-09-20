@@ -42,6 +42,32 @@
 //  voir comment DC gere lplusieurs models 
 
 
+
+
+struct iosdflg : GUI::Window {
+
+    using GUI::Window::Window;
+
+    void draw() override {
+
+        using namespace ImGui;
+
+        // treepush
+
+        NewLine();
+        NewLine();
+        NewLine();
+
+        static int x = 9; 
+        static int y = 10;
+
+        // DimWiget(&x, &y);
+
+
+    }
+
+};
+
 int main() {
 
     logger.cout(Sev::warning);
@@ -49,6 +75,8 @@ int main() {
     engine.init();
 
     engine.open("project.json");
+
+    static iosdflg w("iosdflg", engine.gui_v);
 
     engine.run();
 

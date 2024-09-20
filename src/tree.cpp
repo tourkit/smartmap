@@ -259,6 +259,52 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
                 ImGui::SetCursorPosX(t_pos.x+21);
                 
                 Text(node->name().c_str());
+                        
+                /////////////////
+                // pop up right clik
+                /////////////////
+
+                if (BeginPopupContextItem((std::to_string(gui->member_count++)).c_str())) {
+                    
+                    Separator();
+
+                    if (!is_deleting) {
+
+                        ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
+                        if(ImGui::MenuItem("delete")){ is_deleting = true; }
+                        ImGui::PopItemFlag();
+
+                    }else if(ImGui::MenuItem("Sure ?")){
+
+                        is_deleting = false;
+                        
+                    this->gui->deleteNode(node);
+
+                    }
+
+                    if (!ImGui::IsItemHovered()) 
+                        is_deleting = false;
+                    
+                    Separator();
+
+                    if (ImGui::BeginMenu("trig")) {
+                        Separator();
+                        if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
+                        Separator();
+                        if (ImGui::MenuItem("CREATE")) node->trig(Node::CREATE);
+                        Separator();
+                        ImGui::EndMenu();
+                    }
+
+                    Separator();
+
+                    ImGui::MenuItem(node->type_name().c_str());
+                    
+                    Separator();
+
+                    EndPopup();
+                }
+
 
                 if (filtering)
                     visible_list.push_back(node);
@@ -309,50 +355,6 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
         }
 
-        /////////////////
-        // pop up right clik
-        /////////////////
-
-        if (BeginPopupContextItem(node->name().c_str())) {
-            
-            Separator();
-
-            if (!is_deleting) {
-
-                ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
-                if(ImGui::MenuItem("delete")){ is_deleting = true; }
-                ImGui::PopItemFlag();
-
-            }else if(ImGui::MenuItem("Sure ?")){
-
-                is_deleting = false;
-                
-               this->gui->deleteNode(node);
-
-            }
-
-            if (!ImGui::IsItemHovered()) 
-                is_deleting = false;
-            
-            Separator();
-
-            if (ImGui::BeginMenu("trig")) {
-                Separator();
-                if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
-                Separator();
-                if (ImGui::MenuItem("CREATE")) node->trig(Node::CREATE);
-                Separator();
-                ImGui::EndMenu();
-            }
-
-            Separator();
-
-            ImGui::MenuItem(node->type_name().c_str());
-            
-            Separator();
-
-            EndPopup();
-        }
 
 
         //////////////////
