@@ -532,7 +532,7 @@ void Editors::init() {
 
             auto layer = node->is_a<Layer>();
 
-            if (layer)
+            if (layer && dims[node][0] && dims[node][1])
                 layer->fb.create(dims[node][0], dims[node][1]);
 
         } 

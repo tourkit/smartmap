@@ -64,7 +64,7 @@ bool Texture::create(GLuint width, GLuint height) {
         width = 1;
     }
     else if (width > p_max) {
-        PLOGE << "GL_MAX_TEXTURE_SIZE " << p_max << "px";
+        PLOGE << "width GL_MAX_TEXTURE_SIZE " << p_max << "px";
         width = p_max;
     }
     if (!height) {
@@ -72,7 +72,7 @@ bool Texture::create(GLuint width, GLuint height) {
         height = 1;
     }
     else if (height > p_max) {
-        PLOGE << "GL_MAX_TEXTURE_SIZE " << p_max << "px";
+        PLOGE << "height GL_MAX_TEXTURE_SIZE " << p_max << "px";
         height = p_max;
     }
     

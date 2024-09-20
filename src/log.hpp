@@ -26,6 +26,8 @@ using Sev = plog::Severity;
 // using plog::Severity::warning;
 // using plog::Severity::info;
 
+struct Node;
+
 struct Log {
 
     struct Appender : public plog::IAppender {

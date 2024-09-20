@@ -1,4 +1,7 @@
 #include "log.hpp"
+#include "editor.hpp"
+#include "engine.hpp"
+#include "gui.hpp"
 
 Log::~Log() {}
 Log::Log() {
@@ -13,8 +16,14 @@ Log::Appender::Appender() : plog::IAppender() { } // useless !
 
 void Log::Appender::write(const plog::Record& record) {
 
-    if (record.getSeverity() <= plog::Severity::error)
-        cmd = true;
+    if (record.getSeverity() <= plog::Severity::error){
+    
+        // cmd = true;
+
+        if (engine.gui_v->editors.back()->selected != engine.tree->find("debug"))
+            engine.gui_v->editors.push_back(new EditorWidget(engine.gui_v, engine.tree->find("debug")));
+        
+    }
 
     list.push_back(Message{plog::FuncMessageFormatter::format(record), record.getSeverity(), record.getTime(), (int)list.size() });
 

@@ -16,7 +16,9 @@
 
 /////// EditorWidget.hpp
 
-EditorWidget::EditorWidget(GUI* gui) : GUI::Window("Editor", gui)  {  }
+EditorWidget::EditorWidget(GUI* gui, Node* selected) : GUI::Window("Editor", gui), selected(selected), locked(selected)  { 
+
+ }
 
 EditorWidget::~EditorWidget()  { std::erase_if(gui->editors, [this](EditorWidget* e) { return e == this; }); }
 
