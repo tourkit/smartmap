@@ -118,7 +118,7 @@ void TreeWidget::draw()  {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX()-6);
     if (ImGui::Button("+")) 
         gui->window->end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{nullptr, ([&](void*) { 
-            gui->editors.push_back(new EditorWidget(gui)); 
+            gui->editors.push_back(std::make_shared<EditorWidget>(gui)); 
         })});
 
 
@@ -338,7 +338,7 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
                 if (IsMouseReleased(0) && gui->selected){
                     if (gui && !gui->editors.size()){
-                        gui->editors.emplace_back(new EditorWidget(gui));
+                        gui->editors.emplace_back(std::make_shared<EditorWidget>(gui));
                         gui->editors.back()->selected = node;
                     }
                 }

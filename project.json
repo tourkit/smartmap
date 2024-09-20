@@ -37,17 +37,25 @@
             "effectors" : [  ]
 
        }
+       
+    },
 
-      "HDMI 1" : {
+    "outputs" : {
 
-          "type" : "monitor",
+        "monitor":{
 
-          "dim" : [ 100, 100 ],
+            "HDMI 1" : {
 
-          "effectors" : [ "layer1" ]
+                "dim" : [ 100, 100 ],
 
-      }
+                "effectors" : [ "layer1" ]
 
-    }
-    ,"editors":[["layer1"]]
+            }
+
+            
+        }
+        
+    },
+    "editors":[["layer1"]]
 }
+

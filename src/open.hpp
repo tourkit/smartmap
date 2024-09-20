@@ -14,7 +14,6 @@ struct Open{
 
     void medias();
     void inputs();
-    void layers();
     void effectors();
     void models();
     void outputs();

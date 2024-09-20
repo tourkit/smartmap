@@ -20,7 +20,7 @@ EditorWidget::EditorWidget(GUI* gui, Node* selected) : GUI::Window("Editor", gui
 
  }
 
-EditorWidget::~EditorWidget()  { std::erase_if(gui->editors, [this](EditorWidget* e) { return e == this; }); }
+EditorWidget::~EditorWidget()  {   }
 
 
 void EditorWidget::draw() {

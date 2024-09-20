@@ -1,4 +1,5 @@
 #include "gui.hpp"
+#include <memory>
 
 
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -16,119 +17,7 @@
 
 
 
-bool VCharSlider(void* c, int label_id) {
 
-        static const char* format = "%d";
-        static ImVec2 size = ImVec2(22,30);
-        static uint8_t min = 0;
-        static uint8_t max = 255;
-        static const char* label_ = "##vcs";
-        std::string label = label_+std::to_string(label_id);
-
-        using namespace ImGui;
-
-
-        ImGuiWindow* window = GetCurrentWindow();
-        if (window->SkipItems)
-            return false;
-
-        ImGuiContext& g = *GImGui;
-        const ImGuiStyle& style = g.Style;
-        const ImGuiID id = window->GetID(label.c_str());
-
-        const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + size);
-        const ImRect bb(frame_bb.Min, frame_bb.Max);
-
-        const bool temp_input_allowed = 1;
-        ItemSize(bb, style.FramePadding.y);
-        if (!ItemAdd(frame_bb, id, &frame_bb, temp_input_allowed ? ImGuiItemFlags_Inputable : 0)) return false;
-
-        // const bool hovered = ItemHoverable(frame_bb, id);
-        // const bool clicked = hovered && IsMouseClicked(0, id);
-        // if (clicked || g.NavActivateId == id)
-        // {
-        //     if (clicked)
-        //         SetKeyOwner(ImGuiKey_MouseLeft, id);
-        //     SetActiveID(id, window);
-        //     SetFocusID(id, window);
-        //     FocusWindow(window);
-        //     g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Up) | (1 << ImGuiDir_Down);
-        // }
-
-        const bool hovered = ItemHoverable(frame_bb, id, g.LastItemData.InFlags);
-        bool temp_input_is_active = temp_input_allowed && TempInputIsActive(id);
-        if (!temp_input_is_active)
-        {
-            // Tabbing or CTRL-clicking on Slider turns it into an input box
-            const bool clicked = hovered && IsMouseClicked(0, ImGuiInputFlags_None, id);
-            const bool make_active = ( clicked || g.NavActivateId == id);
-            if (make_active && clicked)
-                SetKeyOwner(ImGuiKey_MouseLeft, id);
-            if (make_active && temp_input_allowed)
-                if ( (clicked && g.IO.KeyCtrl) || (g.NavActivateId == id && (g.NavActivateFlags & ImGuiActivateFlags_PreferInput)))
-                    temp_input_is_active = true;
-
-            if (make_active && !temp_input_is_active)
-            {
-                SetActiveID(id, window);
-                SetFocusID(id, window);
-                FocusWindow(window);
-                g.ActiveIdUsingNavDirMask |= (1 << ImGuiDir_Left) | (1 << ImGuiDir_Right);
-            }
-        }
-
-        if (temp_input_is_active)
-        {
-            // Only clamp CTRL+Click input when ImGuiSliderFlags_AlwaysClamp is set
-            const bool is_clamp_input = ( ImGuiSliderFlags_AlwaysClamp) != 0;
-
-
-            return TempInputScalar(frame_bb, id, label.c_str(), ImGuiDataType_U8, c, format, &min, &max);
-
-        }
-
-
-        PushStyleVar(ImGuiStyleVar_GrabMinSize, 0);
-
-        PushID(label_id);
-
-
-        // Draw frame
-        const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
-        RenderNavHighlight(frame_bb, id);
-        RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, g.Style.FrameRounding);
-
-        // Slider behavior
-        ImRect grab_bb;
-        const bool value_changed = SliderBehavior(frame_bb, id, ImGuiDataType_U8, c, &min, &max, "",  ImGuiSliderFlags_Vertical, &grab_bb);
-
-        grab_bb.Max.y=frame_bb.Max.y-2;
-        // grab_bb.Min.y+=style.GrabMinSize;
-
-        if (value_changed)
-            MarkItemEdited(id);
-
-        // Render grab
-        if (grab_bb.Max.y > grab_bb.Min.y)
-            window->DrawList->AddRectFilled(grab_bb.Min, grab_bb.Max, GetColorU32(g.ActiveId == id ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab), style.GrabRounding);
-
-        PushStyleColor(ImGuiCol_Text, ImVec4(.05,.05,.05,1));
-        std::string  lid = std::to_string(label_id);
-        RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y), frame_bb.Max, &(*lid.begin()), &(*lid.end()), NULL, ImVec2(0.5f, 0.0f));
-        PopStyleColor();
-
-        // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
-        // For the vertical slider we allow centered text to overlap the frame padding
-        char value_buf[64];
-        const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), ImGuiDataType_U8, c, format);
-        RenderTextClipped(ImVec2(frame_bb.Min.x, frame_bb.Min.y + style.FramePadding.y+14), frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.0f));
-
-
-        PopID();
-        PopStyleVar(1);
-
-        return value_changed;
-    }
 
 
 void GUI::Window::drawFull() { {
@@ -146,7 +35,9 @@ void GUI::Window::drawFull() { {
       ImGui::Begin(str.c_str(), &p_open, flag);
       if (!p_open) 
         gui->window->end_of_render_cbs.push_back(std::pair<void*, std::function<void(void*)>>{this, ([&](void* ptr){
-          ((GUI::Window*)ptr)->close();
+
+           std::erase_if(gui->editors, [ptr](std::shared_ptr<EditorWidget> e) { return e.get() == ptr; });
+
         })});
       
    ImGuiWindow* window = ImGui::GetCurrentWindow();
@@ -174,6 +65,7 @@ void GUI::Window::drawFull() { {
 ///// GUIGUIGUIGUIGUIG
 
 
+  static std::vector<Node*>  bkp;
 GUI::GUI(::Window* window) : window(window) {
 
   ImGui::CreateContext();
@@ -260,18 +152,24 @@ io.Fonts->AddFontFromFileTTF( "assets/fonts/lucide.ttf", iconFontSize, &icons_co
 
   ImGui::GetIO().FontAllowUserScaling = true;
 
+  // editors = bkp;
+  for (auto x : bkp) 
+      editors.push_back(std::make_shared<EditorWidget>(this,x)); 
+  bkp.clear();
+  
 }
 
 
 
 GUI::~GUI() {
 
+  for (auto editor : editors) 
+    bkp.push_back(editor->selected);
+
   auto trees_t = trees;
   for (auto x : trees_t) 
     delete x;
-  auto editors_t = editors;
-  for (auto x : editors_t) 
-    delete x;
+
 
   ImGui::PopStyleVar(3);
 
@@ -306,14 +204,7 @@ void GUI::draw() {
     for (auto window : GUI::Window::pool) 
       window->drawFull(); 
 
-    for (auto x : close_list) 
-      delete x;
-    close_list.resize(0);
-
-
   render();
-
-
 
 }
 

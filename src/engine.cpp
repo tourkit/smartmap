@@ -2,6 +2,7 @@
 #include "drawcall.hpp"
 #include "file.hpp"
 #include "layer.hpp"
+#include "output.hpp"
 #include "struct.hpp"
 #include "effector.hpp"
 #include "gui.hpp"
@@ -66,7 +67,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
         
     };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = guiact_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_I}] = guiact_cb;
     window.mousedown_cb = [](int button) { 
         
         if (button == GLFW_MOUSE_BUTTON_LEFT) guiact_cb(); 
@@ -132,6 +133,9 @@ void Engine::init() {
 
     });
 
+    outputs = tree->addOwnr<Node>("outputs")->active(false);
+    outputs->allow<Output>();
+
     tree->addOwnr<File>("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4");
 
     PLOGI << "Engine initialized";
@@ -140,13 +144,19 @@ void Engine::init() {
 }
 void Engine::gui(bool active) {
 
-    if (gui_v && !active) {
+    static std::vector<std::shared_ptr<EditorWidget>>  bkp;
 
-        auto gui_v_ = gui_v;
-        gui_v = nullptr;
-        delete gui_v_;
+    if (gui_v){
 
-    }else if (!gui_v && active) {
+        if (!active) {
+            
+            auto gui_v_ = gui_v;
+            gui_v = nullptr;
+            delete gui_v_;
+
+        }
+
+    }else if (active) {
 
         gui_v = new GUI(&window);
         editors.gui = gui_v;
