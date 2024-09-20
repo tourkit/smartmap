@@ -117,7 +117,7 @@ void Engine::init() {
 
     auto* debug_ = tree->addOwnr<Debug>()->allow<AnyNode>()->name("debug");
     debug = debug_;
-    debug->on(Node::RUN, [](Node* n) { int fps = std::round(ImGui::GetIO().Framerate); /*n->name_v = ("Debug - " + std::to_string( fps ) + " fps");*/ if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; } } )->active(false);//->close();
+    debug->on(Node::RUN, [](Node* n) { /* int fps = std::round(ImGui::GetIO().Framerate);n->name_v = ("Debug - " + std::to_string( fps ) + " fps");if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; }*/  } )->active(false);//->close();
     debug->addPtr<UBO>(static_ubo)->on(Node::CHANGE, [](Node* n) { 
         n->is_a<UBO>()->upload(); 
     })->active(false);

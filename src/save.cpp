@@ -1,5 +1,7 @@
 #include "save.hpp"
 
+#include <regex>
+
 #include "engine.hpp"
 #include "node.hpp"
 #include "atlas.hpp"

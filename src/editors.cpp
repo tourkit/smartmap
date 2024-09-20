@@ -1,9 +1,12 @@
 #include "editors.hpp"
 
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui_internal.h"
 #include "ImGuiColorTextEdit/TextEditor.h"
-#include "imgui.h"
+
+
 #include "rapidjson/stringbuffer.h"
-#include "vendors/imgui/imgui_internal.h"
 
 #include "editor.hpp"
 #include "folder.hpp"
@@ -406,6 +409,11 @@ void Editors::init() {
         static ImVec4 verbose = ImVec4(0.4f, 0.4f, 1.0f, 1.0f);
 
         static float *curr = &info.x;
+
+        auto curpos = GetCursorPos();
+        auto winsize = GetWindowSize();
+
+        auto start = curpos + winsize - ImVec2(0.0f, 200.0f);
 
         if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
         ImGui::SameLine();if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }

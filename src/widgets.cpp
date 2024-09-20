@@ -1,9 +1,12 @@
 #include "widgets.hpp"
-#include "imgui.h"
+
 #include "member.hpp"
 #include "engine.hpp"
 
-#include "vendors/imgui/imgui_internal.h"
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui_internal.h"
+
+#include "ImGuiColorTextEdit/TextEditor.h"
 
 #include "tinyexpr/tinyexpr.h"
 #include <cmath>

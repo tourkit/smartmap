@@ -9,8 +9,6 @@
 #include "utils.hpp"
 
 
-#include "imgui/imgui.h"
-
 
 struct Node;
 using Flag = Node*;
@@ -34,7 +32,7 @@ struct Node {
     std::string TYPE = "Node";
 #endif
 
-    ImVec4 color = {1,1,1,1};
+    std::array<float,4> color = {1,1,1,1};
 
     std::vector<Node*> childrens;
 
@@ -49,7 +47,7 @@ struct Node {
     static inline int breakint = 0;
     static inline Flag Break = (Flag)&breakint;
 
-    Node(std::string name = "node", ImVec4 color = {1,1,1,1});
+    Node(std::string name = "node", std::array<float,4> color = {1,1,1,1});
     Node(void* ptr, TypeIndex type, bool owned);
 
     Node(Node* other) : Node(other->void_ptr, other->stored_type, other->owned) {  }

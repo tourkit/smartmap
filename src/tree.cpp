@@ -1,11 +1,15 @@
 #include "tree.hpp"
+
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui_internal.h"
+
+
 #include "engine.hpp"
-#include "imgui.h"
 #include "log.hpp"
 #include "node.hpp"
 #include "editor.hpp"
 #include "window.hpp"
-#include "imgui_internal.h"
 #include <cstring>
 #include <string>
 

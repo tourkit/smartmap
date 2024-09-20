@@ -1,18 +1,18 @@
 #include "gui.hpp"
 
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui_internal.h"
+
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
+
 #include "editor.hpp"
-#include "imgui.h"
 #include "tree.hpp"
 #include "window.hpp"
 #include "assets/fonts/IconsLucide.h"
 
 
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
-
-
-
-#include "imgui/imgui_internal.h"
 
 bool VCharSlider(void* c, int label_id) {
 

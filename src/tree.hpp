@@ -1,4 +1,5 @@
 #pragma once
+#include <regex>
 #include "gui.hpp"
 #include "node.hpp"
 

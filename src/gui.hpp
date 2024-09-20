@@ -5,13 +5,8 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <set>
 
 #include "log.hpp"
-
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui/imgui.h"
-#include "vendors/ImGuiColorTextEdit/TextEditor.h"
 
 struct EditorWidget;
 struct TreeWidget;

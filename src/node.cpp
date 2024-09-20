@@ -11,7 +11,7 @@ Node::Node(void* ptr, TypeIndex type, bool owned) : void_ptr(ptr), stored_type(t
 
 }
 
-Node::Node(std::string name, ImVec4 color) : color(color) {
+Node::Node(std::string name, std::array<float,4> color) : color(color) {
 
     this->name(name);
     

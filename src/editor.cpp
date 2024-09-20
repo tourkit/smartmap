@@ -1,15 +1,15 @@
 #include "editor.hpp"
 
-#include "imgui.h"
 #include "node.hpp"
 #include "gui.hpp"
 
-#include "vendors/imgui/imgui_internal.h"
 
 #include <ctime>
 #include <cstring>
 #include <string>
 
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui_internal.h"
 
 #include "assets/fonts/IconsLucide.h"
 
@@ -75,13 +75,13 @@ void EditorWidget::draw() {
         ImGui::SetCursorPosX(x+w+1-tx-65);
         ImGui::SetCursorPosY(y-21);
 
-        ImGui::PushStyleColor(ImGuiCol_Text, selected->color);
+        ImGui::PushStyleColor(ImGuiCol_Text, (ImU32&)selected->color);
         ImGui::Text(name.c_str());
 
         if (ImGui::IsItemClicked()) 
         ImGui::OpenPopup("nodecolorpicker");
         if (ImGui::BeginPopup("nodecolorpicker")) { 
-            ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color.x); 
+            ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color[0]); 
             ImGui::EndPopup(); 
         }
 
