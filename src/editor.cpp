@@ -75,7 +75,7 @@ void EditorWidget::draw() {
         ImGui::SetCursorPosX(x+w+1-tx-65);
         ImGui::SetCursorPosY(y-21);
 
-        ImGui::PushStyleColor(ImGuiCol_Text, (ImU32&)selected->color);
+        ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4&)selected->color);
         ImGui::Text(name.c_str());
 
         if (ImGui::IsItemClicked()) 

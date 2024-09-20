@@ -1,9 +1,12 @@
 #include "widgets.hpp"
 
+#include "imgui.h"
 #include "member.hpp"
 #include "engine.hpp"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui.h"
+#undef IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui_internal.h"
 
 #include "ImGuiColorTextEdit/TextEditor.h"
@@ -24,7 +27,8 @@ void ImGui::CustomSliderScalarN(){
 bool ImGui::DimWiget(uint32_t* x, uint32_t* y, std::string append) {
 
 
-    auto ww = GetWindowWidth();
+    
+    auto ww = -FLT_MIN-10;
     auto iw = (GetWindowWidth()-121)*.5;
 
     PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(3,4));
@@ -39,8 +43,7 @@ bool ImGui::DimWiget(uint32_t* x, uint32_t* y, std::string append) {
     SameLine(); if (Button("P", ImVec2(25,0))) { value_changed = true; }
     SameLine(); if (Button("D", ImVec2(25,0))) { *x = engine.gui_v->window->displays[0].width; *y = engine.gui_v->window->displays[0].height; value_changed = true; }
 
-    PopStyleVar(1);
-
+    PopStyleVar(1);   
     return value_changed;
 
 }

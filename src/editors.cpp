@@ -527,13 +527,13 @@ void Editors::init() {
     ////////// Texture.HPP
 
     Editor<Texture>([](Node* node, Texture *texture){
-
         static std::map<Node*,uint32_t[2]> dims;
 
         if (dims[node][0] != texture->width)
             dims[node][0] = texture->width;
         if (dims[node][1] != texture->height)
             dims[node][1] = texture->height;
+        BeginChild(node->name().c_str());
         if (ImGui::DimWiget(&dims[node][0], &dims[node][1], node->name())) {
 
             auto layer = node->is_a<Layer>();
@@ -545,6 +545,7 @@ void Editors::init() {
 
         ImGui::Image((void*)(uintptr_t)texture->id, ImVec2(GetWindowWidth(), GetWindowWidth()*(texture->height/(float)texture->width))); 
 
+    EndChild();
     });
 
     ////////// HPP
