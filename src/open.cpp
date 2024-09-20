@@ -169,7 +169,7 @@ static void addEffectors(JSONVal v, Node* effectable) {
 
      for (auto effector_def : v) {
 
-        if (!effector_def.str().c_str()) 
+        if (!effector_def.str().length()) 
             { PLOGW << v.stringify(); continue; }
 
         Node* effector_;
@@ -279,46 +279,6 @@ void Open::layers(){
     }
 }
 
-void Open::effectors(){
-
-    // for (auto x : json_v["effectors"]) {
-
-    //     if (!x.name_v.length() ) continue;
-
-    //     if (x.str().length()) {
-
-    //         File file(x.name_v+".glsl", x.str().c_str());
-
-    //         auto e = engine.effectors->addOwnr<FileEffector>(file);
-    //         e->name(file.name());
-    //         e->owned = true;
-
-    //         continue;
-
-    //     }
-
-    //     if (!x.childrens.size()) continue;
-
-    //     auto  wrap_ = engine.effectors->addOwnr<Wrappy>(std::vector<Effector*>{},3,x.name_v);
-
-    //     auto wrap = wrap_->is_a<Wrappy>();
-
-    //     for (auto sub : x) 
-
-    //         if (sub.str().c_str()) {
-
-    //             Node* n = (*engine.effectors)[sub.str()];
-
-    //             if (n && n->is_a<Effector>())  
-    //                 wrap_->add(n);  
-
-    //         }
-
-        
-    // }
-
-}
-
 void Open::editors(){
 
     auto editors = json_v["editors"];
@@ -353,17 +313,8 @@ void Open::editors(){
 
 }
 
-void Open::models(){
-    
-    for (auto x : json_v["models"]) 
-        if (x.name_v.length() && x.str().length()) 
-            engine.models->addOwnr<File>(x.name_v, x.str().c_str());
 
-}
-
-
-
-static void getModels (JSONVal val, Node* node) {
+static void addFile (JSONVal val, Node* node) {
 
     if (!val.name().length())
         return;
@@ -372,8 +323,15 @@ static void getModels (JSONVal val, Node* node) {
 
         auto new_node = node->addOwnr<Node>(val.name())->active(false);
 
-        for (auto x : val) 
-            getModels(x, new_node);
+        for (auto x : val) {
+        
+            if (x.name() == "inputs") continue;
+            if (x.name() == "editors") continue;
+            if (x.name() == "main") continue;
+        
+            addFile(x, new_node);
+
+        }
 
     }else if (val.str().length())
 
@@ -387,19 +345,9 @@ void Open::json(std::string path) {
     engine.reset();
 
     json_v.load(File(path).data.data());
-    
-    auto xx = JSONVal(json_v.document, "doc");
 
-    for (auto x : xx) {
-
-        if (x.name() == "inputs") continue;
-        if (x.name() == "editors") continue;
-        if (x.name() == "main") continue;
-
-        getModels(x, engine.tree);
+    addFile(JSONVal(json_v.document, "doc"), engine.tree);
         
-    }  
-
     struct ModelData { 
 
         std::string name, model; 
@@ -551,10 +499,6 @@ void Open::json(std::string path) {
     }
 
     medias();
-
-    models();
-
-    effectors();
 
     outputs();
     
