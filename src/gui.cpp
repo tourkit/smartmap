@@ -4,6 +4,7 @@
 #include "imgui.h"
 #include "tree.hpp"
 #include "window.hpp"
+#include "assets/fonts/IconsLucide.h"
 
 
 #include "imgui/backends/imgui_impl_glfw.h"
@@ -195,6 +196,23 @@ ImGui_ImplGlfw_SetCallbacksChainForAllWindows(true);
   auto color_darkgrey  = ImVec4(.2,.2,.2,1);
   auto color_lightgrey   = ImVec4(.25,.25,.25,1);
   auto color_lightergrey   = ImVec4(.4,.4,.4,1);
+
+
+
+io.Fonts->AddFontDefault();
+float baseFontSize = 13.0f; // 13.0f is the size of the default font. Change to the font size you use.
+float iconFontSize = baseFontSize * 2.0f / 3.0f; // FontAwesome fonts need to have their sizes reduced by 2.0f/3.0f in order to align correctly
+
+// merge in icons from Font Awesome
+static const ImWchar icons_ranges[] = { ICON_MIN_LC, ICON_MAX_16_LC, 0 };
+ImFontConfig icons_config; 
+icons_config.MergeMode = true; 
+icons_config.PixelSnapH = true; 
+icons_config.GlyphMinAdvanceX = iconFontSize;
+io.Fonts->AddFontFromFileTTF( "assets/fonts/lucide.ttf", iconFontSize, &icons_config, icons_ranges );
+// use FONT_ICON_FILE_NAME_FAR if you want regular instead of solid
+
+
 
   ImGui::PushStyleColor(ImGuiCol_TableRowBgAlt,ImVec4(1,1,1,.022));
   ImGui::PushStyleColor(ImGuiCol_TableBorderLight,color_darkergrey);

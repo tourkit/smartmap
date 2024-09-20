@@ -8,8 +8,10 @@
 
 #include <ctime>
 #include <cstring>
+#include <string>
 
 
+#include "assets/fonts/IconsLucide.h"
 
 
 /////// EditorWidget.hpp
@@ -57,14 +59,17 @@ void EditorWidget::draw() {
         ImGui::SetCursorPosX(x+w-60);
         ImGui::SetCursorPosY(y-21);  
         auto &io = ImGui::GetIO();
-        ImGui::SetWindowFontScale(.65);
-        if (ImGui::Checkbox(("##locked"+std::to_string((size_t)this)).c_str(), &locked)) {
-
+        auto fs = ImGui::GetCurrentWindow()->FontWindowScale;
+        ImGui::SetWindowFontScale(fs*1.2);
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4,0));
+        if (ImGui::Button((std::string(locked?ICON_LC_LOCK_KEYHOLE:ICON_LC_LOCK_KEYHOLE_OPEN)+"##locked"+std::to_string((size_t)this)).c_str())) {
+            locked = !locked;
             if (!gui->selected)
                 gui->selected = selected;
 
         }
-        ImGui::SetWindowFontScale(1);
+        ImGui::SetWindowFontScale(fs);
+        ImGui::PopStyleVar(1);
         ImGui::SetCursorPosX(x+w+1-tx-65);
         ImGui::SetCursorPosY(y-21);
 

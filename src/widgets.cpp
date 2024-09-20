@@ -1,4 +1,5 @@
 #include "widgets.hpp"
+#include "imgui.h"
 #include "member.hpp"
 #include "engine.hpp"
 
@@ -29,10 +30,11 @@ bool ImGui::DimWiget(uint32_t* x, uint32_t* y, std::string append) {
 
     SetCursorPosX(3);SetNextItemWidth(iw); value_changed += DragScalar(("##dimw"+append).c_str(), ImGuiDataType_U32,  x,1.0f, &p_min_1);
     SameLine(); SetNextItemWidth(iw); value_changed += DragScalar(("##dimh"+append).c_str(), ImGuiDataType_U32, y,1.0f, &p_min_1);
-    SameLine(); if (Button("/2", ImVec2(25,20))) { *x=*x/2; *y=*y/2; value_changed = true; }
-    SameLine(); if (Button("x2", ImVec2(25,20))) { *x=*x*2; *y=*y*2; value_changed = true; }
-    SameLine(); if (Button("P", ImVec2(25,20))) { value_changed = true; }
-    SameLine(); if (Button("D", ImVec2(25,20))) { *x = engine.gui_v->window->displays[0].width; *y = engine.gui_v->window->displays[0].height; value_changed = true; }
+    
+    SameLine(); if (Button("/2", ImVec2(25,0))) { *x=*x/2; *y=*y/2; value_changed = true; }
+    SameLine(); if (Button("x2", ImVec2(25,0))) { *x=*x*2; *y=*y*2; value_changed = true; }
+    SameLine(); if (Button("P", ImVec2(25,0))) { value_changed = true; }
+    SameLine(); if (Button("D", ImVec2(25,0))) { *x = engine.gui_v->window->displays[0].width; *y = engine.gui_v->window->displays[0].height; value_changed = true; }
 
     PopStyleVar(1);
 
