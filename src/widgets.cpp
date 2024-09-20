@@ -2,6 +2,8 @@
 
 #include "member.hpp"
 #include "engine.hpp"
+#include <cstdint>
+#include <string>
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui.h"
@@ -366,9 +368,7 @@ bool ImGui::RawWidget(void *data, size_t size) {
 
 static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
-    // PLOGE << data->Buf;
-
-    bool change = !strcmp(((std::string*)data->UserData)->c_str(), data->Buf);
+    bool change = !strcmp(((std::string*)data->UserData)->c_str(), (const char*)data->Buf);
 
     *(std::string*)data->UserData = data->Buf;
     
@@ -443,23 +443,36 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
                 type, buff->data()+offset, q, m->from(), m->to(),
                 NULL,0,ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue,MyResizeCallback, &str__);
 
-            if (x && str__.length()) {
+            if (x) {
 
-                // PLOGD   << str__;
+                if (str__.length()) {
 
-                static te_parser tep;
+                    if (str__[0] == '+' || str__[0] == '*' || str__[0] == '/') {
+                        
+                        if (m->type().id == typeid(float))
+                            str__ = std::to_string(*(float*)(buff->data()+offset))+str__;
+                        else if (m->type().id == typeid(uint32_t))
+                            str__ = std::to_string(*(uint32_t*)(buff->data()+offset))+str__;
+                        else if (m->type().id == typeid(int32_t))
+                            str__ = std::to_string(*(int32_t*)(buff->data()+offset))+str__;
 
-                double r = tep.evaluate(str__);
+                    }
+                    
+                    static te_parser tep;
 
-                str__.clear();
+                    double r = tep.evaluate(str__);
 
-                if (!std::isnan(r)){
+                    str__.clear();
 
-                    if (type == ImGuiDataType_Float) 
-                        *(float*)(buff->data()+offset) = r;
-                    else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data()+offset) = r;
-                    else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data()+offset) = r;
+                    if (!std::isnan(r)){
 
+                        if (type == ImGuiDataType_Float) 
+                            *(float*)(buff->data()+offset) = r;
+                        else if (type == ImGuiDataType_S16) *(int16_t*)(buff->data()+offset) = r;
+                        else if (type == ImGuiDataType_U16) *(uint16_t*)(buff->data()+offset) = r;
+
+                    }
+                
                 }
 
                 has_changed = true;
