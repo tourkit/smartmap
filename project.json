@@ -36,7 +36,28 @@
 
             "effectors" : [  ]
 
-       }
+       },
+       "layer2" : {
+
+           "type" : "layer",
+
+           "models" : { 
+
+               "rect1" : {
+
+                   "dim" : [ 100, 100 ],
+
+                   "q": "3x2",
+
+                   "effectors": [ "argb" ]
+
+               }   
+
+           },
+
+           "effectors" : [  ]
+
+      }
        
     },
 
@@ -48,7 +69,7 @@
 
                 "dim" : [ 100, 100 ],
 
-                "effectors" : [ "layer1" ]
+                "source" :  "layer1" 
 
             }
 

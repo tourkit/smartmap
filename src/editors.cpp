@@ -254,15 +254,17 @@ void Editors::init() {
 
         if (tbuff.size()) if (ImGui::Combo("source", &output_currents[output], tbuff.begin())) {
 
-            engine.main->each<Layer>([&](Node* n, Layer* layer){
+            auto main = engine.tree->find("main");
+
+            main->each<Layer>([&](Node* n, Layer* layer){
 
                 if (layer && &layer->fb == output->fb) n->referings.erase(node);
 
             });
             
-            output->fb = &engine.main->childrens[output_currents[output]]->is_a<Layer>()->fb;
+            output->fb = &main->childrens[output_currents[output]]->is_a<Layer>()->fb;
 
-            engine.main->childrens[output_currents[output]]->referings.insert(node);
+            main->childrens[output_currents[output]]->referings.insert(node);
             
         }
 

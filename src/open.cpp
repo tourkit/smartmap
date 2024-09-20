@@ -299,6 +299,7 @@ struct JSONLayer {
         auto lay_ = engine.tree->find("main")->addOwnr<Layer>(width, height);
 
         lay_->name(name);
+        lay_->close();
 
         for (auto &model : modelsdata) {
 
@@ -413,11 +414,12 @@ void Open::json(std::string path) {
         layer_.create();
 
     for (auto x : outputs_src){ 
-        Node* output = engine.main->find(x.second["source"].str());
+        Node* output = engine.tree->find(x.second["source"].str());
         if (!output)
             continue;
         
         x.first->add(output);
+        // x.first->active(true);
 
         if (x.second.name().length())
             x.first->name(x.second.name());
