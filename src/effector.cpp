@@ -30,9 +30,9 @@ std::string Effector::body(Builder* builder, std::string prepend) {
             
     }
 
-    if (found)
+    if (found || !size())
         return "";
-
+    
     return "\t"+call(prepend)+"\n";
 
 
@@ -60,6 +60,7 @@ std::string Effector::call(std::string prepend) {
 
 bool FileEffector::setup(Builder* builder) { 
 
+    
     ADD_UNIQUE<::Effector*>(builder->effectors_fragment, this);
 
     return true; 

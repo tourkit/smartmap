@@ -49,9 +49,12 @@ void Callbacks::init() {
         file->path_v = (file->name())+"."+file->extension;
         
         node->eachBreak<FileEffector>([node](Node* e_, FileEffector* e){ 
+            // e_->name(node->name());
             e_->name_v = (node->name());
 
             e->Effector::name(e->file->name());
+
+            e->load();
 
             for (auto refering : e_->referings) 
                 refering->name(e->file->name());
@@ -182,29 +185,7 @@ void Callbacks::init() {
 
         });
 
-        // reset vbo here
-
         dc->vbo.upload();
-
-        // reset childrens list here
-
-        // node->each<Modelable>([](Node * n, Modelable * m) {
-
-        //     n->stored_type = typeid(None);
-
-        // });
-
-        // auto t_childrens = node->childrens;
-
-        // node->childrens.clear();
-
-        // for (auto x : t_childrens) {
-        //     x->stored_type = typeid(None);
-        //     delete x;
-        //     }
-
-        // for (auto x : dc->models) 
-        //     node->addOwnr<Node>();
 
     }); 
 

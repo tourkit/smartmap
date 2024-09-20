@@ -160,7 +160,8 @@ std::string Builder::frag() {
     if (samplers.size()) samplers_str += "\n";
     
 
-    std::string effectors_str; for (auto x : effectors_fragment)  
+    std::string effectors_str; 
+    for (auto x : effectors_fragment)  
         effectors_str += x->header()+"\n\n";
 
     std::string ins_str;
@@ -171,7 +172,9 @@ std::string Builder::frag() {
 
         ins_str += "in "+std::string(m->type().id == typeid(int)?"flat ":"")+m->type_name()+" "+m->_name()+";\n";
 
-    } if (ins_str.length()) ins_str += "\n";
+    } 
+    
+    if (ins_str.length()) ins_str += "\n";
 
     return
 

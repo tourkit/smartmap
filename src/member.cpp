@@ -435,7 +435,7 @@ bool Member::clear() {
 
     members.clear();
 
-    // update();
+    update_pv();
 
     tops.clear();
 
