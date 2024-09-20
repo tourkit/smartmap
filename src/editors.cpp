@@ -1,6 +1,8 @@
 #include "editors.hpp"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui/imgui.h"
+#undef IMGUI_DEFINE_MATH_OPERATORS 
 #include "imgui/imgui_internal.h"
 #include "ImGuiColorTextEdit/TextEditor.h"
 
@@ -412,12 +414,12 @@ void Editors::init() {
         
 
         if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
-        ImGui::SameLine();if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
-        ImGui::SameLine();if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }
-        ImGui::SameLine();if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }
-        ImGui::SameLine();if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }
-        ImGui::SameLine();ImGui::Checkbox("verbose", &is_verbose);
-        ImGui::SameLine(); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }
+        ImGui::SetCursorPos(start);if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
+        ImGui::SetCursorPos(start);if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }
+        ImGui::SetCursorPos(start);if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }
+        ImGui::SetCursorPos(start);if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }
+        ImGui::SetCursorPos(start);ImGui::Checkbox("verbose", &is_verbose);
+        ImGui::SetCursorPos(start); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }
 
         if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
 
