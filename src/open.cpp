@@ -82,9 +82,10 @@ static void fetch(JSONVal val, Node* node);
 
 static bool operator==(const std::string& a, const char* b) { // kikoo 
 
-    for (auto x : split(b, "|")) 
-        if (x == a)
-            return true;
+    for (auto x : split(a, "|")) 
+        for (auto y : split(b, "|")) 
+            if (x == y)
+                return true;
      
     return false;
 
@@ -203,13 +204,13 @@ static Node* createArtnet(JSONVal& json, Node* node) {
     PLOGV << "create Artnet " << json.name() << " in " << node->name();
 
     
-        Node* n = node->addOwnr<Artnet>( json["ip", true].str() ) ;
+        Node* n = node->addOwnr<Artnet>( json[JSON_IP_ADDRESS, true].str() ) ;
 
         n->active(1)->name( json.name() );
 
-        for (auto &remap : json["remaps"]) {
+        for (auto &remap : json[JSON_CHILDRENS_REMAP]) {
 
-            Node* dest = engine.tree->find(remap["destination", true].str());
+            Node* dest = engine.tree->find(remap[JSON_DESTINATION, true].str());
 
             if (!dest) 
                 continue; 
@@ -226,11 +227,11 @@ static Node* createArtnet(JSONVal& json, Node* node) {
 
             auto &an = *n->is_a<Artnet>();
             
-            auto &uni = an.universe(remap["universe", true].num(1)-1);
+            auto &uni = an.universe(remap[JSON_DMX_UNI, true].num(1)-1);
 
             n->trig(Node::RUN);
 
-            DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap["channel", true].num(1)-1, attrs, remap["quantity|q"].num(1));
+            DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap[JSON_DMX_CHAN, true].num(1)-1, attrs, remap[JSON_QUANTITY].num(1));
 
             dmxremap->src.remaps.push_back( dmxremap );
 
@@ -253,7 +254,7 @@ static Node* createNDI(JSONVal& json, Node* node) {
 
     node->onadd_cb[typeid(Output)] = Node::any_cb;
 
-    Node* n = engine.tree->find("outputs")->addOwnr<NDI::Sender>( dim[0].num(engine.window.width), dim[1].num(engine.window.height), json.name());
+    Node* n = node->addOwnr<NDI::Sender>( dim[0].num(engine.window.width), dim[1].num(engine.window.height), json.name());
 
     auto src = engine.tree->find(json[JSON_SOURCE].str());
     if (src) 
@@ -264,7 +265,7 @@ static Node* createNDI(JSONVal& json, Node* node) {
 
 }
 
-static Node* createMonitor(JSONVal& json, Node* node) {
+static Node* createWindow(JSONVal& json, Node* node) {
 
     PLOGV << "create Monitor " << json.name() << " in " << node->name();
 
@@ -327,7 +328,7 @@ static Node* createLayer(JSONVal& json, Node* node) {
 
     if (!width || !height) { // if still nothing go for window size
 
-        auto &mon = json.owner->find(JSON_TYPE, "monitor");
+        auto &mon = json.owner->find(JSON_TYPE, JSON_WINDOW);
 
         if (mon.childrens.size() && !(mon == json_null)) {
 
@@ -386,9 +387,9 @@ void fetch(JSONVal json, Node* node) {
             if (type==JSON_NODE) node = createNode(json, node);
             else if (type==JSON_FILE) node = createFile(json, node);
             else if (type==JSON_LAYER) node = createLayer(json, node);
-            else if (type==JSON_WINDOW) node = createMonitor(json, node);
+            else if (type==JSON_WINDOW) node = createWindow(json, node);
             else if (type=="ndi") node = createNDI(json, node);
-            else if (type=="artnet") node = createArtnet(json, node);
+            else if (type==JSON_ARTNET) node = createArtnet(json, node);
             else
                 PLOGW <<"unknown type \""<< type << " " << (type==JSON_FILE) << " " << (JSON_FILE)<< "\" for " << json.name();   
             

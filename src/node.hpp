@@ -10,6 +10,7 @@
 
 
 
+struct None {};
 struct Node;
 using Flag = Node*;
 
@@ -276,7 +277,6 @@ struct NODE {
 
 };
 
-struct None {};
 
 struct AnyNode {
 

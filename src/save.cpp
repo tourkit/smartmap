@@ -3,8 +3,10 @@
 #include <regex>
 
 #include "engine.hpp"
+#include "json.hpp"
 #include "node.hpp"
 #include "atlas.hpp"
+#include "artnet.hpp"
 #include "file.hpp"
 #include "effector.hpp"
 #include "layer.hpp"
@@ -12,6 +14,8 @@
 #include "gui.hpp"
 #include "editor.hpp"
 #include "rapidjson/rapidjson.h"
+#include "remap.hpp"
+#include "window.hpp"
 
 
 void Save::medias(){
@@ -163,11 +167,46 @@ void Save::layers(){
 
 }
 
-void Save::effectors(){
+
+void Save::editors(){
+
+
+    json_v.document["editors"].Clear();
+
+    for (auto e : engine.gui_v->editors) {
+
+        auto v = rapidjson::Value(rapidjson::kArrayType);
+
+        // v.PushBack(0, json_v.document.GetAllocator());
+        // v.PushBack(0, json_v.document.GetAllocator());
+        // v.PushBack(0, json_v.document.GetAllocator());
+        // v.PushBack(0, json_v.document.GetAllocator());
+
+        if (e->selected) v.PushBack(rapidjson::Value(e->selected->nameSTL().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
+        // if (e->locked) v.PushBack(rapidjson::Value(true), json_v.document.GetAllocator());
+
+        auto &x = json_v.document["editors"].PushBack(v, json_v.document.GetAllocator());
+
+    }
+
+
+}
+
+void Save::models(){
+    
+    // json_v.document["models"].RemoveAllMembers();
+    // for (auto m : engine.models->childrens) { json_v.document["models"].AddMember(rapidjson::Value(m->is_a<File>()->filename().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator()); }
+
+
+
+}
+void Save::effectors(){}
+
+static void saveEffectors(Node* node){
 
     // json_v.document["effectors"].RemoveAllMembers();
 
-    // engine.effectors->each<Effector>([&](Node* n, Effector* effector) {
+    node->each<Effector>([&](Node* n, Effector* effector) {
 
     //     auto fe = dynamic_cast<FileEffector*>(effector);
 
@@ -186,72 +225,79 @@ void Save::effectors(){
             
     //     }
 
-    // });
-
-}
-
-void Save::editors(){
-
-
-    json_v.document["editors"].Clear();
-
-    for (auto e : engine.gui_v->editors) {
-
-        auto v = rapidjson::Value(rapidjson::kArrayType);
-
-        // v.PushBack(0, json_v.document.GetAllocator());
-        // v.PushBack(0, json_v.document.GetAllocator());
-        // v.PushBack(0, json_v.document.GetAllocator());
-        // v.PushBack(0, json_v.document.GetAllocator());
-
-        if (e->selected) v.PushBack(rapidjson::Value(e->selected->nameSTL().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
-        if (e->locked) v.PushBack(rapidjson::Value(true), json_v.document.GetAllocator());
-
-        auto &x = json_v.document["editors"].PushBack(v, json_v.document.GetAllocator());
-
-    }
-
-
-}
-
-void Save::models(){
-    
-    // json_v.document["models"].RemoveAllMembers();
-    // for (auto m : engine.models->childrens) { json_v.document["models"].AddMember(rapidjson::Value(m->is_a<File>()->filename().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator()); }
-
-
+    });
 
 }
 
 
 Save::Save() : allocator(json_v.document.GetAllocator()) {}
 
+static void fetch(JSONVal& json, Node* n);
 
-static void fetch(Node* n) {
+static void saveFile(JSONVal& json, Node* n) {
 
+    PLOGW << "create File " << n->name();
 
+}
+
+static void saveNode(JSONVal& json, Node* n) {
+        
     PLOGW << "create Node " << n->name();
 
     for (auto c : n->childrens) 
-        fetch(c);
+        fetch(json, c);
+
+}
+ void fetch(JSONVal& json, Node* n) {
+
+    if (n->hidden) 
+        return;
+    
+    auto found = json[n->name()];
+
+    if (found.name().length()) {
+
+        PLOGW << "found need tpo cleaqr existing " << n->name() ;
+    }else {
+
+        PLOGW << "create json entry for " << n->name();
+    }
+
+    if (!n->void_ptr || n->is_a_nowarning<Node>())
+        saveNode(json, n);
+    else if (n->is_a_nowarning<File>())
+        saveFile(json, n);
+    else if (n->is_a_nowarning<Layer>())
+        PLOGW << "create Layer " << n->name() << " in " << n->parent()->name();
+    else if (n->is_a_nowarning<Model>())
+        PLOGW << "create Model " << n->name() << " in " << n->parent()->name();
+    else if (n->is_a_nowarning<EffectorRef>())
+        PLOGW << "create Effector " << n->name() << " in " << n->parent()->name();
+    else if (n->is_a_nowarning<Window>())
+        PLOGW << "create Window " << n->name() << " in " << n->parent()->name();
+    else if (n->is_a_nowarning<NDI::Sender>())
+        PLOGW << "create NDI " << n->name() << " in " << n->parent()->name();
+    else if (n->is_a_nowarning<Layer>())
+        PLOGW << "create Layer " << n->name() << " in " << n->parent()->name();
+    else if (n->is_a_nowarning<Artnet>())
+        PLOGW << "create Artnet " << n->name() << " in " << n->parent()->name();
+    
+    else
+        PLOGW << "need to create " << n->type_name() << " "  << n->name();
+
 
 
 }
 
 void Save::json(std::string path) {
 
-
-
-
-    for (auto c : engine.tree->childrens) 
-        fetch(c);
-
-
-
-
-
     File file(path);
     json_v.load(&file);
+
+    JSONVal doc(json_v.document, "__JSONVAL__");
+
+    for (auto c : engine.tree->childrens) 
+        fetch(doc, c);
 
     if (!json_v.document.HasMember("editors")) json_v.document.AddMember("editors", rapidjson::Value(rapidjson::kArrayType), json_v.document.GetAllocator());
     if (!json_v.document.HasMember("models")) json_v.document.AddMember("models", rapidjson::Value(rapidjson::kObjectType), json_v.document.GetAllocator());

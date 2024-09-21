@@ -124,7 +124,16 @@ JSONVal& JSONVal::find(std::function<bool(JSONVal&)> cb) {
 
 JSONVal& JSONVal::find(std::string name, std::string val) {
 
-    return find([name,val](JSONVal& entry) { return lower(entry[name].str()) == val; });
+    return find([name,val](JSONVal& entry) { 
+
+        for (auto x : split(name, "|")) 
+            for (auto y : split(val, "|")) 
+                if(lower(entry[name].str()) == val)
+                return true; 
+        
+        return false; 
+
+    });
 
 }
 

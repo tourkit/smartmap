@@ -22,9 +22,9 @@
     "NDI 1": { "type": "ndi", "dim": [ 100, 100 ], "source": "layer1" }
   },
   "editors": [
-    [ "main::layer1", true ],
-    [ "debug", true ],
-    [ "effectors::rectangle", true ]
+    [ "main::layer1" ],
+    [ "debug" ],
+    [ "effectors::rectangle" ]
   ],
   "models": {},
   "layers": {}

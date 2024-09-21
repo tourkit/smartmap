@@ -144,16 +144,15 @@ void Engine::init() {
     dynamic_ubo->quantity(2);
     dynamic_ubo->add(&glsl_data);
 
-    auto* debug_ = tree->addOwnr<Debug>()->name("debug");
-    debug_->onadd<AnyNode>(single_type_cb);
-    debug = debug_;
-    debug->on(Node::RUN, [](Node* n) { /* int fps = std::round(ImGui::GetIO().Framerate);n->name_v = ("Debug - " + std::to_string( fps ) + " fps");if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; }*/  } )->active(false);//->close();
-    debug->addPtr<UBO>(static_ubo)->on(Node::CHANGE, [](Node* n) { 
+
+    
+     debug->addPtr<UBO>(static_ubo)->on(Node::CHANGE, [](Node* n) { 
         n->is_a<UBO>()->upload(); 
     })->active(false);
     debug->addPtr<UBO>(dynamic_ubo)->active(false);
     
-    tree->addOwnr<Node>("main")->onadd<File>([](Node* _this, Node* n){
+    auto main = tree->addOwnr<Node>("main");
+    main->onadd<File>([](Node* _this, Node* n){
 
         auto x = _this->addOwnr<Layer>();
         x->add(n);
@@ -161,6 +160,7 @@ void Engine::init() {
         return Node::no_worry;
 
     });
+    
 
     tree->addOwnr<File>("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4");
 
