@@ -77,7 +77,6 @@ void FileEffector::load() {
 
     std::regex regex; std::smatch match;
 
-    clear();
 
     regex = std::regex(R"(\b(\w+)\s*(?:\(\s*\))?\s*\(\s*((?:\w+\s+\w+\s*(?:,\s*)?)*)\))");
     for (std::sregex_iterator it(source_v.begin(), source_v.end(), regex), end; it != end; ++it) {
@@ -123,19 +122,38 @@ void FileEffector::load() {
 
     name( file->name() );
 
-    for (auto arg : args) {
 
-        if (arg.first == "vec2") add<float, 2>(arg.second.c_str());
-        else if (arg.first == "vec3") add<float, 3>(arg.second.c_str());
-        else if (arg.first == "vec4") add<float, 4>(arg.second.c_str());
+    bool samesame = true;
+    
+    if (args.size() != members.size())
+        samesame = false;
+    else {
+    
+        for (int i = 0; i < args.size(); i++) 
+            if ( ! (members[i]->name() == args[i].second && members[i]->type_name() == args[i].first) )
+                samesame = false;
+    }
 
-        else if (arg.first == "int") add<int>(arg.second.c_str());
+    if (!samesame) {
 
-        else add<float>(arg.second.c_str());
+        clear();
 
-        if (ranges.find(arg.second) != ranges.end()) range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+        for (auto arg : args) {
+
+            if (arg.first == "vec2") add<float, 2>(arg.second.c_str());
+            else if (arg.first == "vec3") add<float, 3>(arg.second.c_str());
+            else if (arg.first == "vec4") add<float, 4>(arg.second.c_str());
+
+            else if (arg.first == "int") add<int>(arg.second.c_str());
+
+            else add<float>(arg.second.c_str());
+
+            if (ranges.find(arg.second) != ranges.end()) range(ranges[arg.second][0],ranges[arg.second][1],ranges[arg.second][2]);
+
+        }
 
     }
+    // for (auto arg : args) 
 
     // clean source_v
 

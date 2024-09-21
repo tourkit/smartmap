@@ -25,8 +25,35 @@ EditorWidget::~EditorWidget()  {   }
 
 void EditorWidget::draw() {
 
+    if (ImGui::BeginDragDropTargetCustom(ImRect(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImGui::GetWindowSize()),ImGui::GetItemID())) {
+
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) {
+
+            auto n = (Node*)(*(uint64_t*)payload->Data);
+
+            if (ImGui::IsKeyDown(ImGuiKey_LeftAlt)) {
+
+            selected = n;
+            }else
+
+            if (selected && !selected->add(n)) 
+                    for (auto x : selected->childrens)
+                        if (x->add(n))
+                            break;
+
+        }
+
+        ImGui::EndDragDropTarget();
+
+    }
+
     if (!selected || !locked) selected = gui->selected;
-    if (!selected) return;
+ 
+
+   if (!selected) {
+        return;
+        
+    }
 
     bool colored_tab = false;
     if (selected->color != std::array<float,4>{1,1,1,1}) {
