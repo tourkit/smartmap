@@ -96,39 +96,7 @@ void Open::inputs(){
 
 }
 
-void Open::outputs(){
 
-    auto outputs = json_v["outputs"];
-
-    for (auto &monitor : outputs["monitor"]) {
-
-        auto n = engine.tree->find("outputs")->addPtr<Window>( &engine.window )->active(true);
-
-        auto dim = monitor[JSON_DIMENSIONS];
-        if (dim[0].num() && dim[1].num())
-            engine.window.size( dim[0].num(), dim[1].num());
-
-        auto offset = monitor[JSON_OFFSET];
-        engine.window.pos( offset[0].num(), offset[1].num());
-
-        outputs_src.emplace(n,monitor); 
-
-        break; // only one alloweed for nowe
-        
-    }
-
-    for (auto &ndi : outputs["ndi"]) { 
-
-        auto dim = ndi[JSON_DIMENSIONS];
-
-        Node* n = engine.tree->find("outputs")->addOwnr<NDI::Sender>( dim[0].num(engine.window.width), dim[1].num(engine.window.height), ndi.name());
-
-        outputs_src.emplace(n,ndi);
-
-    }
-
-
-}
 
 void Open::editors(){
 
@@ -285,6 +253,23 @@ static std::array<uint32_t,3> getQ(JSONVal& json) {
     return {cols*rows, cols, rows};
 
 }
+static Node* createNDI(JSONVal& json, Node* node) {
+
+    PLOGV << "create NDI " << json.name() << " in " << node->name();
+
+    auto dim = json[JSON_DIMENSIONS];
+
+    Node* n = engine.tree->find("outputs")->addOwnr<NDI::Sender>( dim[0].num(engine.window.width), dim[1].num(engine.window.height), json.name());
+
+    auto src = engine.tree->find(json[JSON_SOURCE].str());
+    if (src) 
+        node->add(src);
+
+
+    return node;
+
+}
+
 static Node* createMonitor(JSONVal& json, Node* node) {
 
     PLOGV << "create Monitor " << json.name() << " in " << node->name();
@@ -405,6 +390,7 @@ void fetch(JSONVal json, Node* node) {
             else if (type==JSON_FILE) node = createFile(json, node);
             else if (type==JSON_LAYER) node = createLayer(json, node);
             else if (type==JSON_WINDOW) node = createMonitor(json, node);
+            else if (type=="NDI") node = createNDI(json, node);
             else
                 PLOGW <<"unknown type \""<< type << " " << (type==JSON_FILE) << " " << (JSON_FILE)<< "\" for " << json.name();   
             

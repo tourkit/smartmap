@@ -11,12 +11,8 @@ struct Open{
 
     JSON json_v;
 
-
     void medias();
     void inputs();
-    void effectors();
-    void models();
-    void outputs();
     void editors();
     
     std::map<Node*,JSONVal> outputs_src;
