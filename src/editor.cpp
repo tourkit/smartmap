@@ -47,13 +47,10 @@ void EditorWidget::draw() {
     }
 
     if (!selected || !locked) selected = gui->selected;
- 
 
-   if (!selected) {
+    if (!selected) 
         return;
         
-    }
-
     bool colored_tab = false;
     if (selected->color != std::array<float,4>{1,1,1,1}) {
 
@@ -61,25 +58,6 @@ void EditorWidget::draw() {
         ImGui::PushStyleColor(ImGuiCol_TabSelected, ImVec4{.4,.4,.4,1}*(ImVec4&)selected->color);
 
     }
-
-        if (ImGui::BeginDragDropTargetCustom(ImRect(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImGui::GetWindowSize()),ImGui::GetItemID())) {
-
-            if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("_TREENONODE")) {
-
-                auto n = (Node*)(*(uint64_t*)payload->Data);
-
-                if (!selected->add(n)) 
-                    for (auto x : selected->childrens)
-                        if (x->add(n))
-                            break;
-
-            }
-
-            ImGui::EndDragDropTarget();
-
-        }
-
-    // static TestWin test(gui,10);
 
     auto w = ImGui::GetWindowWidth(); 
     auto x = 0;ImGui::GetCursorPosX();
@@ -106,13 +84,16 @@ void EditorWidget::draw() {
         }
         ImGui::SetWindowFontScale(fs);
         ImGui::PopStyleVar(1);
-        ImGui::SetCursorPosX(x+w+1-tx-65);
+        auto offset = x+100;
+        ImGui::SetCursorPosX(offset);
         ImGui::SetCursorPosY(y-21);
 
         ImGui::PushStyleColor(ImGuiCol_Text, (ImVec4&)selected->color);
         ImGui::PushStyleColor(ImGuiCol_ChildBg, (ImVec4(0,0,0,0)));
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0,0));
-        if (ImGui::Button(name.c_str()))
+
+        // set next item width
+        if (ImGui::Button(name.c_str(), ImVec2(w-200,0)))
             ImGui::OpenPopup("nodecolorpicker");
 
         if (ImGui::BeginPopup("nodecolorpicker")) { 
