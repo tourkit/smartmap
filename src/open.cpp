@@ -12,41 +12,11 @@
 #include "gui.hpp"
 #include "ndi.hpp"
 #include "editor.hpp"
+#include "window.hpp"
 #include <cctype>
 #include <cstdint>
 
 static std::string json_error = "JSON error";
-
-static Node* find(Node* tree, std::string name) {
-
-        
-    if (!name.length())
-        return nullptr;
-
-    auto ext = split(name,".");
-    
-    auto x = tree->find(ext[0]);
-    
-    if (ext.size() == 2 && ext[1].length()) { // supposely a file
-
-        while(x) {
-            
-            auto file = x->is_a_nowarning<File>();
-            if (file && file->extension == ext[1]) 
-                return x;
-
-            x = x->find_next();
-        }
-
-        if (!x)
-            { PLOGE << "no file " << name; }
-
-    }
-
-    return x;
-
-}
-
 
 void Open::medias(){
 
@@ -194,192 +164,272 @@ void Open::editors(){
 
 }
 
-struct JSONModel { 
 
-    std::string name, model; 
+static void fetch(JSONVal val, Node* node);
 
-    uint32_t width, height;
-    int offset_x, offset_y;
-    uint32_t q, cols, rows;
+static bool operator==(const std::string& a, const char* b) { // kikoo 
 
-    std::vector<std::string> effectors;
-
-    JSONModel(std::string name, std::string model, uint32_t width = 0 , uint32_t height = 0 , int offset_x = 0 , int offset_y = 0 , uint32_t q = 1, uint32_t cols = 1, uint32_t rows = 1) :
-
-        name(name), model(model), width(width), height(height), offset_x(offset_x), offset_y(offset_y), q(q), cols(cols), rows(rows)        
-    
-    {}
-    
-    JSONModel(JSONVal& json) {
-
-        name = json.name();
-
-        model = json[JSON_MODELS].str("quad");
-
-        auto dim = json[JSON_DIMENSIONS];
-        width = dim[0].num();
-        height = dim[1].num();
-
-        auto offset = json[JSON_OFFSET];
-        offset_x = offset[0].num();
-        offset_y = offset[1].num();
-
-        q = json[JSON_QUANTITY].num(1);
-
-        if (json[JSON_QUANTITY].str().length()) {
-
-            auto grid = split(json[JSON_QUANTITY].str(), "x");
-
-            if ( !grid.size() ||  !is_num(grid[0]))
-                return;
-
-            cols = stoi(grid[0]);
-
-            if (grid.size() != 2 || !is_num(grid[1])) {
-
-                q = cols;
-
-                return;
-
-            }
-
-            rows = stoi(grid[1]);
-
-        } 
-
-        if (json[JSON_EFFECTORS].isarr()) 
-            for (auto effector : json[JSON_EFFECTORS]) 
-                if (effector.str().length())
-                    effectors.push_back(effector.str());
-    
-    };
-};
-
-
-
-struct JSONLayer { 
-
-    std::string name;
-    uint32_t width, height;
-    int offset_x, offset_y;
-    std::vector<JSONModel> modelsdata; 
-
-    JSONLayer(JSONVal& json) {
-
-        for (auto model : json["models"]) // get models data first
-            if (model.name().length()) 
-                modelsdata.emplace_back((JSONModel(model)));
-
-        uint32_t width = json[JSON_DIMENSIONS][0].num();
-        uint32_t height = json[JSON_DIMENSIONS][1].num();
-
-        if (!width || !height)  // if no dim, need to find from cumulating layers;
-
-            for (auto model : modelsdata) {
-
-                uint32_t m_width = model.width* model.cols+ model.offset_x;
-                uint32_t m_height =  model.height* model.rows+ model.offset_y;
-
-                if (m_width > width) width = m_width;
-                if (m_height > height) height = m_height;
-
-        }
-
-        name = json.name();
-        this->width = width;
-        this->height = height;
-
-    }
-
-    void create() {
-
-        if (!modelsdata.size()) // if no models , add engine::quad
-            modelsdata.emplace_back("quad", "quad");
-        
-        auto lay_ = engine.tree->find("main")->addOwnr<Layer>(width, height);
-
-        lay_->name(name);
-        lay_->close();
-
-        for (auto &model : modelsdata) {
-
-            auto file = engine.tree->find(model.model);
-            if (!file) {
-                PLOGE << " no " << model.model;
-                continue;
-            }
-
-            auto model_ = lay_->add(file);
-            model_->name(model.name);
-            
-            for (auto effector : model.effectors) {
-
-                auto file = engine.tree->find(effector);
-                if (!file) {
-                    PLOGE << " no " << effector;
-                    continue;
-                }
-
-                model_->add(file);
-                auto effector_ = model_->childrens.back();
-
-            }
-
-        }
-
-    }
-
-};
-
-static void addFiles (JSONVal val, Node* node) {
-
-    if (!val.name().length())
-        return;
-
-        
-    if (val.name() == "inputs") return;
-    if (val.name() == "editors") return;
-    if (val.name() == "outputs") return;
-    if (val.name() == "main") return;
-
-    if (val.isobj()){
-
-        auto new_node = node->addOwnr<Node>(val.name())->active(false);
-
-        for (auto x : val) {
-        
-            addFiles(x, new_node);
-
-        }
-
-    }else if (val.str().length())
-
-        auto new_file = node->addOwnr<File>(val.name(), val.str().c_str())->active(false);
+    for (auto x : split(b, "|")) 
+        if (x == a)
+            return true;
+     
+    return false;
 
 }
-void Open::json(std::string path) {
+
+static Node* createFile(JSONVal& json, Node* node) {
+
+    auto src = json.str();
     
+    if (!src.length())
+        src = json[JSON_SOURCE].str();
 
-    std::vector<JSONLayer> layers_; 
+    if (!src.length())
+        return nullptr;
+        
+    PLOGW << "create File " << json.name() << " in " << node->name();
+    
+    node = node->addOwnr<File>(json.name(), src.c_str())->active(false);
 
-    engine.reset();
+    return node;
+    
+}
+
+static Node* createNode(JSONVal& json, Node* node) {
+
+    if (!json.name_v.length())
+        return nullptr;
+
+    if (json.name_v != "__JSONVAL__") {
+
+        PLOGW << "create Node " << json.name() << " in " << node->name();
+        
+        node = node->addOwnr<Node>(json.name_v)->active(false);
+
+    }
+
+    for (auto &c : json[JSON_CHILDRENS]) 
+        fetch(c, node); 
+
+    if (!json[JSON_TYPE].str().length()) // only for Node use case metioned later
+        for (auto &c : json) 
+            fetch(c, node); 
+
+
+    return node;
+
+}
+
+static Node* createEffector(JSONVal& json, Node* node) {
+
+    PLOGW << "create Effector " << json.name() << " in " << node->name();
+
+    auto file = engine.tree->find(json.str());
+    if (!file) {
+        PLOGE << " no " << json.str();
+        return nullptr;
+    }
+
+    node->add(file);
+
+    auto effector_ = node->childrens.back();
+
+    return effector_;
+
+}
+
+static Node* createModel(JSONVal& json, Node* node) {
+
+    PLOGW << "create Model " << json.name() << " in " << node->name();
+
+    auto json_model = json["model"].str();
+    if(!json_model.length())
+        json_model = "quad";
+    auto file = engine.tree->find(json_model);
+    if (!file) {
+        PLOGE << " no " << json_model << " for " << json.name();
+        return  nullptr;
+    }
+
+    auto model_ = node->add(file);
+    model_->name(json.name());
+    
+    for (auto effector : json[JSON_EFFECTORS]) 
+        createEffector(effector, model_);
+
+    return model_;
+
+}
+
+static std::array<uint32_t,3> getQ(JSONVal& json) {
+
+    uint32_t q=1, cols=1, rows=1;
+    
+    q = json[JSON_QUANTITY].num(1);
+
+    if (json[JSON_QUANTITY].str().length()) {
+
+        auto grid = split(json[JSON_QUANTITY].str(), "x");
+
+        if ( grid.size() && is_num(grid[0]))
+            cols = stoi(grid[0]);
+
+        if (grid.size() == 2 && is_num(grid[1])) {
+            q = cols;
+        }else
+        
+            rows = stoi(grid[1]);
+
+    } 
+
+    return {cols*rows, cols, rows};
+
+}
+static Node* createMonitor(JSONVal& json, Node* node) {
+
+    PLOGW << "create Monitor " << json.name() << " in " << node->name();
+
+    Node* already = nullptr;
+    node->each<Window>([&](Node* n, Window* w) { already = n; });
+    if (!already)
+        node = node->addPtr<Window>( &engine.window )->active(true);
+
+    auto dim = json[JSON_DIMENSIONS];
+    if (dim[0].num() && dim[1].num())
+        engine.window.size( dim[0].num(), dim[1].num());
+
+    auto offset = json[JSON_OFFSET];
+    engine.window.pos( offset[0].num(), offset[1].num());
+
+    auto src = engine.tree->find(json[JSON_SOURCE].str());
+    if (src) 
+        node->add(src);
+
+    return node;
+}
+
+static Node* createLayer(JSONVal& json, Node* node) {
+        
+    PLOGW << "create Layer " << json.name() << " in " << node->name();
+
+    auto dim = json[JSON_DIMENSIONS];
+
+    uint32_t width = dim[0].num();
+    uint32_t height = dim[1].num();
+
+    if (!width || !height) { // convenient try to find dims in models
+
+        for (auto model : json["models"]) {
+
+            auto dim = model[JSON_DIMENSIONS];
+            auto offset = model[JSON_OFFSET];
+            auto q = getQ(model);
+
+            uint32_t m_width = dim[0].num()* q[1]+ offset[0].num();
+            uint32_t m_height =  dim[1].num()* q[2]+ offset[1].num();
+
+            if (m_width > width) width = m_width;
+            if (m_height > height) height = m_height;
+
+        }
+
+    }
+
+    if (!width || !height) { // if still nothing go for window size
+
+        auto &mon = json.owner->find(JSON_TYPE, "monitor");
+
+        if (mon.childrens.size() && !(mon == json_null)) {
+
+                auto dim = mon[JSON_DIMENSIONS];
+                width = dim[0].num(1);
+                height = dim[1].num(1);
+            
+        }
+
+    }
+
+    auto lay_ = node->addOwnr<Layer>(width, height);
+
+    lay_->name(json.name());
+    lay_->close();
+    lay_->active(true);
+
+    for (auto model : json["models"]) 
+        createModel(model, lay_);
+
+
+    auto q = getQ(json);
+    if (q[0]!=1)
+        lay_->is_a<Layer>()->quantity(q[0]);
+
+    return lay_;
+    
+}
+
+
+void fetch(JSONVal json, Node* node) {
+
+    Node* already = nullptr;
+
+    if(json.name_v.length()) {
+
+        already = node->find(json.name_v);
+
+        if(already) {
+            node = already;
+
+            for (auto &c : json) 
+                fetch(c, already); 
+            
+            return;
+
+        }
+    }
+
+    if (json.isobj()) {
+
+        auto type = lower(json[JSON_TYPE].str());
+
+        if (type.length()) {
+
+            if (type==JSON_NODE) node = createNode(json, node);
+            else if (type==JSON_FILE) node = createFile(json, node);
+            else if (type==JSON_LAYER) node = createLayer(json, node);
+            else if (type==JSON_WINDOW) node = createMonitor(json, node);
+            else
+                PLOGW <<"unknown type \""<< type << " " << (type==JSON_FILE) << " " << (JSON_FILE)<< "\" for " << json.name();   
+            
+        }else
+            node = createNode(json, node);   // special case for Node
+        
+    }else {
+
+        node = createFile(json, node);
+
+        if (!node)  {  // special case for File
+            PLOGW << "WARNING " << json.name();  // shoudnt ever happen
+            return;
+        }
+    }
+
+    if (json[JSON_ACTIVE].name().length())
+        node->active(json[JSON_ACTIVE].b());
+
+    auto color = json["color"];
+    node->color = {color[0].num(1),color[1].num(1),color[2].num(1),color[3].num(1)};
+
+    // and more default ... (wich could be member names ?)
+        
+}
+void Open::json(std::string path) {
+
+
+    // engine.reset();
 
     json_v.load(File(path).data.data());
 
-
-     for (auto x : JSONVal(json_v.document, "doc")) 
-        addFiles(x, engine.tree);
-    
-
-    for (auto x : json_v["main"]) {
-
-        auto type = x[JSON_TYPE].str();
-
-        if (type == "layer") 
-            layers_.push_back(JSONLayer(x));
-
-    }
-
+    // // JSON ERROR WORKSPACE
 
     if (!json_v.loaded) {
 
@@ -403,27 +453,13 @@ void Open::json(std::string path) {
 
     }
 
-    medias();
+    JSONVal doc(json_v.document, "__JSONVAL__");
 
-    outputs();
+
+    for (auto x : doc) 
+        fetch(x, engine.tree);
     
-    inputs();
 
-
-    for (auto &layer_ : layers_) 
-        layer_.create();
-
-    for (auto x : outputs_src){ 
-        Node* output = engine.tree->find(x.second["source"].str());
-        if (!output)
-            continue;
-        
-        x.first->add(output);
-        // x.first->active(true);
-
-        if (x.second.name().length())
-            x.first->name(x.second.name());
-    }
 
 
     editors();

@@ -76,6 +76,8 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
     };
 
     tree = new Node("tree");
+    tree->allow<Node>();
+    tree->allow<File>();
 
     window.keypress();
     window.visibility(false);
@@ -85,7 +87,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
     // gui(true);
 
     // gui(false);
-    NODE<Node>::onadd<AnyNode>([](Node*_this,Node*node){ return node; });
+    NODE<Node>::onadd<AnyNode>(single_type_cb);
 
     tree->active(1);
 
@@ -107,7 +109,7 @@ Engine::~Engine() {
 void Engine::init() {
 
     Callbacks::init();
-
+ 
     editors.init();
     
     dynamic_ubo = new UBO("dynamic_ubo");
@@ -116,7 +118,8 @@ void Engine::init() {
     dynamic_ubo->quantity(2);
     dynamic_ubo->add(&glsl_data);
 
-    auto* debug_ = tree->addOwnr<Debug>()->allow<AnyNode>()->name("debug");
+    auto* debug_ = tree->addOwnr<Debug>()->name("debug");
+    debug_->onadd<AnyNode>(single_type_cb);
     debug = debug_;
     debug->on(Node::RUN, [](Node* n) { /* int fps = std::round(ImGui::GetIO().Framerate);n->name_v = ("Debug - " + std::to_string( fps ) + " fps");if (fps<60) { n->color = {1,0,0,1}; }else{ n->color = {1,1,1,1}; }*/  } )->active(false);//->close();
     debug->addPtr<UBO>(static_ubo)->on(Node::CHANGE, [](Node* n) { 
@@ -189,9 +192,29 @@ void Engine::run(std::function<void()> cb) {
         
     // }
 
+    bool found = false;
+    tree->eachBreak<Layer>([&](Node* n, Layer* layer) {
+
+       if (!n->hidden) {
+
+            found = true;
+            return Node::Break;
+
+       }
+       
+        return n;
+
+    });
+
+    if (!found)
+        engine.tree->find("quad")->hidden = false;
+
     window.fit();
     window.size(50,50);
 
+    if (!gui_v)
+        window.visibility(true);
+    
     window.render([&](){
 
         if (gui_v)

@@ -69,6 +69,16 @@ struct Engine {
 
     Editors editors;
 
+    std::function<Node*(Node*,Node*)> single_type_cb = [](Node*_this,Node*node){ 
+        
+        if (_this->childrens.size()) 
+            if (node->type() != _this->childrens[0]->type())
+                return (Node*)nullptr;
+        
+        return node; 
+        
+    };
+
 private:
 
     std::string project_name;
@@ -88,9 +98,17 @@ private:
 static inline Engine &engine = Engine::getInstance();
 
 
-#define JSON_DIMENSIONS "dimensions|dimension|dim"
+
+#define JSON_DIMENSIONS "dimensions|dimension|dim|size"
 #define JSON_OFFSET "offset"
+#define JSON_FILE "file|fichier"
+#define JSON_LAYER "layer"
+#define JSON_WINDOW "window|monitor|screen"
 #define JSON_QUANTITY "quantity|q"
 #define JSON_TYPE "type"
 #define JSON_EFFECTORS "effectors|effects|fx|fxs|effector|effect"
 #define JSON_MODELS "models|model"
+#define JSON_SOURCE "source|src"
+#define JSON_CHILDRENS "childs|childrens|members"
+#define JSON_NODE "node"
+#define JSON_ACTIVE "active|act|state"

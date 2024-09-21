@@ -19,41 +19,38 @@ struct File;
 
         std::vector<JSONVal> childrens; 
 
-        JSONVal(rapidjson::Value &value, std::string name = "");
+        JSONVal(rapidjson::Value &value, std::string name = "", JSONVal*owner = nullptr);
     
-
         ~JSONVal() ;
 
+        JSONVal& find(std::function<bool(JSONVal&)> cb) ;
+
+        JSONVal& find(std::string name, std::string val);
 
         JSONVal operator[](std::string name, bool warn = false) ;
 
-
         JSONVal operator[](int id, bool warn = false) ;
-        
 
-        auto begin() { 
-            
-            return childrens.begin();
-            
-        }
+        bool operator==(const JSONVal& other) const { return &other == this; }
 
-        auto end() { 
-    
-            return childrens.end();
-            
-        }
+        auto begin() { return childrens.begin(); }
+
+        auto end() { return childrens.end(); }
 
         std::string name();
 
         std::string str(std::string def = "");
+        float num(float def = 0);
+        bool b(bool def = false);
         
         bool isnum();
         bool isarr();
         bool isobj();
-        float num(float def = 0);
         size_t size();
 
         std::string stringify();
+
+        JSONVal*owner = nullptr;
         
     };
 
@@ -82,3 +79,9 @@ struct JSON : JSONVal {
 
     
 };
+
+static rapidjson::Value null_val;
+static rapidjson::Document null_doc;
+static auto null_obj = null_doc.SetObject().GetObject();
+
+static JSONVal json_null(null_val);

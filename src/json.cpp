@@ -71,13 +71,17 @@ std::string JSONVal::stringify() {
 }
 
 
-  JSONVal::JSONVal(rapidjson::Value &value, std::string name) : value(value), name_v(name) {
+  JSONVal::JSONVal(rapidjson::Value &value, std::string name, JSONVal*owner) : value(value), name_v(name), owner(owner) {
+
+    if (!owner)
+        owner = this;
 
     if (value.IsArray()) {
 
         auto arr =  value.GetArray();
 
-        for (auto &x : arr) childrens.emplace_back(x) ;
+        for (auto &x : arr) 
+            childrens.emplace_back(x, "", owner) ;
 
         return;
         
@@ -89,7 +93,7 @@ std::string JSONVal::stringify() {
 
         for (auto &x : obj) 
             if (x.name.IsString()) 
-                childrens.emplace_back(x.value, x.name.GetString()) ;
+                childrens.emplace_back(x.value, x.name.GetString(), owner) ;
 
         return;
         
@@ -99,16 +103,45 @@ std::string JSONVal::stringify() {
 
 JSONVal::~JSONVal() { }
 
-static rapidjson::Value null_val;
-static rapidjson::Document null_doc;
-static auto null_obj = null_doc.SetObject().GetObject();
+
+
+JSONVal& JSONVal::find(std::function<bool(JSONVal&)> cb) {
+
+    if (cb(*this))
+        return *this;
+
+    for (auto &entry : *this) {
+
+        JSONVal& result = entry.find(cb);
+        if (!(&result == &json_null))
+            return result;
+        
+    }
+
+    return json_null;
+
+}
+
+JSONVal& JSONVal::find(std::string name, std::string val) {
+
+    return find([name,val](JSONVal& entry) { return lower(entry[name].str()) == val; });
+
+}
+
 
 JSONVal JSONVal::operator[](std::string name, bool warn) { 
 
     for (auto x : split(name, "|")) 
-        if (value.IsObject() && value.HasMember(x.c_str())) 
-            return JSONVal(value[x.c_str()], x);
-    
+
+        if (value.IsObject())
+
+            for (auto &v : value.GetObj()) 
+                
+                if (v.name.IsString() && x  == lower(v.name.GetString())) 
+
+                    return JSONVal(value[x.c_str()], x, owner);
+
+
     if (warn)
         {PLOGW << "no " << name << " in " << this->name() << " (" << str() << ")";}
         
@@ -127,7 +160,6 @@ JSONVal JSONVal::operator[](int id, bool warn) {
     return JSONVal(null_val);
     
 }
-
 
 std::string JSONVal::name() { return name_v; }
 
@@ -161,6 +193,21 @@ size_t JSONVal::size() {
     
     return 0; 
     
+
+}
+
+bool JSONVal::b(bool def) {
+
+    if (value.IsBool()) 
+        return value.GetBool();
+    if (value.IsInt()) 
+        return value.GetInt();
+    if (value.IsFloat()) 
+        return value.GetFloat();
+    if (value.IsString()) 
+        return (!strcmp(value.GetString(),"true") + !strcmp(value.GetString(),"active")) ;
+
+    return def;
 
 }
 

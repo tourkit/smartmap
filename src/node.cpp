@@ -200,7 +200,7 @@ Node* Node::add(void* node_v)  {
         }
     }
 
-    if (n && n != Node::no_worry) { 
+    if (!callback_ && n && n != Node::no_worry) { 
         
         auto is_t = isList(type());
 
