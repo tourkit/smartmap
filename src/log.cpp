@@ -1,5 +1,7 @@
 #include "log.hpp"
 #include "engine.hpp"
+#include "gui.hpp"
+#include "editor.hpp"
 
 Log::~Log() {}
 Log::Log() {
