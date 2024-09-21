@@ -256,7 +256,13 @@ Node* Node::add(void* node_v)  {
 
 }
 
-std::string Node::nameSTL(int depth){ if ((depth < 0 || depth ) && parent()) { return parent()->nameSTL(depth-1) + "::" + name(); } return name(); }
+std::string Node::nameSTL(int depth){ 
+    if ((depth < 0 || depth ) && parent()) { 
+        std::string out = parent()->nameSTL(depth-1);
+        return out + (out.length()?"::":"") + name(); 
+    } 
+    return ""; 
+    }
 
 Node *Node::top_parent() { 
     

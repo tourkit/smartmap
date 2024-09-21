@@ -28,8 +28,8 @@ void Save::inputs(){
 void Save::outputs(){
 
 
-    json_v.document["outputs"].SetObject();
-    json_v.document["outputs"].RemoveAllMembers();
+    // json_v.document["outputs"].SetObject();
+    // json_v.document["outputs"].RemoveAllMembers();
     // for (auto output : engine.outputs->childrens) {
 
     //     auto  outputarr = rapidjson::Value(rapidjson::kArrayType);
@@ -199,10 +199,10 @@ void Save::editors(){
 
         auto v = rapidjson::Value(rapidjson::kArrayType);
 
-        v.PushBack(0, json_v.document.GetAllocator());
-        v.PushBack(0, json_v.document.GetAllocator());
-        v.PushBack(0, json_v.document.GetAllocator());
-        v.PushBack(0, json_v.document.GetAllocator());
+        // v.PushBack(0, json_v.document.GetAllocator());
+        // v.PushBack(0, json_v.document.GetAllocator());
+        // v.PushBack(0, json_v.document.GetAllocator());
+        // v.PushBack(0, json_v.document.GetAllocator());
 
         if (e->selected) v.PushBack(rapidjson::Value(e->selected->nameSTL().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
         if (e->locked) v.PushBack(rapidjson::Value(true), json_v.document.GetAllocator());
@@ -227,7 +227,30 @@ void Save::models(){
 Save::Save() : allocator(json_v.document.GetAllocator()) {}
 
 
+static void fetch(Node* n) {
+
+
+    PLOGW << "create Node " << n->name();
+
+    for (auto c : n->childrens) 
+        fetch(c);
+
+
+}
+
 void Save::json(std::string path) {
+
+    auto &tree = *engine.tree;
+
+
+
+
+
+    fetch(&tree);
+
+
+
+
 
     File file(path);
     json_v.load(&file);
