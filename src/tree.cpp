@@ -337,11 +337,11 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
                 if (ImGui::IsItemHovered()){
 
-                    if (ImGui::IsMouseClicked(0)) 
+                    if (ImGui::IsMouseDoubleClicked(0)) 
+                        is_renaming[node];
+                    else if (ImGui::IsMouseClicked(0)) 
                         will_select = node; 
 
-                    else if (ImGui::IsMouseDoubleClicked(0)) 
-                        is_renaming[node];
                     
                 } 
                 

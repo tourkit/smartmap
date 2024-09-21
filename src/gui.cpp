@@ -126,6 +126,7 @@ io.Fonts->AddFontFromFileTTF( "assets/fonts/lucide.ttf", iconFontSize, &icons_co
   ImGui::PushStyleColor(ImGuiCol_ScrollbarGrabActive,color_lightgrey);
   ImGui::PushStyleColor(ImGuiCol_SliderGrab,color_lightergrey);
   ImGui::PushStyleColor(ImGuiCol_SliderGrabActive,color_orange);
+  ImGui::PushStyleColor(ImGuiCol_DragDropTarget,color_orange);
   ImGui::PushStyleColor(ImGuiCol_WindowBg,ImVec4(.1,.1,.1,1));
   ImGui::PushStyleColor(ImGuiCol_TableBorderLight,ImVec4(0,0,0,0));
   ImGui::PushStyleColor(ImGuiCol_TabSelectedOverline,ImVec4(0,0,0,0));

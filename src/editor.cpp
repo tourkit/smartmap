@@ -31,15 +31,14 @@ void EditorWidget::draw() {
 
             auto n = (Node*)(*(uint64_t*)payload->Data);
 
-            if (ImGui::IsKeyDown(ImGuiKey_LeftAlt)) {
-
-            selected = n;
-            }else
-
-            if (selected && !selected->add(n)) 
+            if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) 
+                selected = n;
+            else
+                if (selected && !selected->add(n)) 
                     for (auto x : selected->childrens)
                         if (x->add(n))
                             break;
+
 
         }
 
