@@ -253,14 +253,16 @@ bool TreeWidget::TreeViewNode(Node* node, int depth, std::array<float,4>& color)
 
             ImVec4 node_color = *(ImVec4*)&node->color;
 
+            // static TestWin tw(gui,10);
+
             if (node_color == ImVec4(1,1,1,1) && (ImVec4&)color != ImVec4(1,1,1,1))
-                node_color = (ImVec4&)color+ImVec4(.5,.5,.5,1);
+                node_color = (ImVec4&)color+ImVec4(.65,.65,.65,1);
 
             if(gui->selected != node) {
 
                 if (hovered && IsWindowHovered()) node_color = ImVec4(1, .4, 0, 1);
 
-                else node_color.w = .65;
+                else node_color.w = .70;
 
             }
 
