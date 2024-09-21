@@ -74,11 +74,42 @@
         
     },
 
-    "outpusts" : {
+    "inputs": {
+        "artnet1": {
+            "type": "artnet",
+            "ip": "2.0.0.102",
+            "remaps": {
+                "remap1": {
+                    "universe": 1,
+                    "channel": 1,
+                    "destination": "layer1::rect1",
+                    "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 , 1, 0, 0, 0 ]
+                },
+                "remap2": {
+                    "universe": 1,
+                    "channel": 101,
+                    "destination": "layer1::rect2",
+                    "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0 , 1, 0, 0, 0 ]
+                }
+            }
+        }
+
+    },
+
+    "outputs" : {
 
         "HDMI 1" : {
             
             "type" :  "monitor" ,
+
+            "dim" : [ 100 , 100 ],
+
+            "source" :  "layer1" 
+
+        },
+        "NDI 1" : {
+            
+            "type" :  "ndi" ,
 
             "dim" : [ 100 , 100 ],
 

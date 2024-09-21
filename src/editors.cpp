@@ -152,24 +152,27 @@ void Editors::init() {
                 ImGui::EndTable();
             }
 
-        std::stringstream deststart;
-        deststart  <<  (void*)remap->dst.data();
-        deststart  << " - " << (void*)remap->dst.stl.front().m->data();
-        deststart  << " - " << remap->dst.offset;
-        ImGui::Text(deststart.str().c_str()) ;
+        // std::stringstream deststart;
+        // deststart  <<  (void*)remap->dst.data();
+        // deststart  << " - " << (void*)remap->dst.stl.front().m->data();
+        // deststart  << " - " << remap->dst.offset;
+        // ImGui::Text(deststart.str().c_str()) ;
 
         std::stringstream buffa;
-        buffa << remap->src.stl.back().m->name() << " - " << &remap->src;
+        buffa << remap->src.stl_name() ;//<< " - " << &remap->src;
         std::stringstream buffb;
-        buffb << remap->dst.stl.back().m->name() << " - " << &remap->dst;
+        buffb << remap->dst.stl_name() ;//<< " - " << &remap->dst;
 
-        ImGui::NewLine(); ImGui::SetNextItemWidth( ImGui::CalcTextSize( (char*)buffa.str().c_str() ).x); ImGui::InputText("##puppyaaa", (char*)buffa.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
+        ImGui::NewLine(); 
+        ImGui::SetNextItemWidth( GetContentRegionAvail().x/2-100); 
+        ImGui::InputText("##puppyaaa", (char*)buffa.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
+        ImGui::SetNextItemWidth( GetContentRegionAvail().x/2-100); 
 
         ImGui::SameLine(); ImGui::Text(" -> ");
 
-        ImGui::SameLine(); ImGui::SetNextItemWidth( ImGui::CalcTextSize( (char*)buffb.str().c_str() ).x); ImGui::InputText("##puppybbb", (char*)buffb.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
+        ImGui::SameLine(); ImGui::SetNextItemWidth( ImGui::CalcTextSize( (char*)buffb.str().c_str() ).x); ImGui::InputText("###puppybbb", (char*)buffb.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
 
-        ImGui::SameLine(); ImGui::Text(("* "+std::to_string(remap->dst.stl.back().m->quantity())).c_str());
+        // ImGui::SameLine(); ImGui::Text(("* "+std::to_string(remap->dst.stl.back().m->quantity())).c_str());
 
         // engine.
     });

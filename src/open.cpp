@@ -42,61 +42,6 @@ void Open::medias(){
 }
 
 
-void Open::inputs(){
-
-    for (auto &artnet : json_v["inputs"]["artnet"]) {
-
-        Node* n = engine.inputs->addOwnr<Artnet>( artnet["ip", true].str() ) ;
-
-        n->active(1)->name( artnet.name() );
-
-        for (auto &remap : artnet["remaps"]) {
-
-            Node* dest = engine.tree->find(remap["destination", true].str());
-
-            if (!dest) 
-                continue; 
-            
-            auto vlayer = dest->is_a<UberLayer::VirtualLayer>();
-            
-            if (!vlayer)  
-                continue;
-
-            auto xx = dest->parent();
-            // if (!xx || !xx->is_a<UberLayer>())
-            //     continue;
-
-            auto inst = Instance(*engine.dynamic_ubo)[dest->parent()->is_a<UberLayer>()][vlayer];
-
-            if (inst.stl.size() == 1) 
-                { PLOGW << json_error; continue; }
-
-            std::vector<DMXRemap::Attribute> attrs;
-            for (auto &x : remap["patch"])
-                if (x.isnum()) 
-                    attrs.push_back({(int)x.num(1)});
-
-            auto &an = *n->is_a<Artnet>();
-            
-            auto &uni = an.universe(remap["universe", true].num(1)-1);
-
-            n->trig(Node::RUN);
-
-            DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap["channel", true].num(1)-1, attrs, remap["quantity|q"].num(1));
-
-            dmxremap->src.remaps.push_back( dmxremap );
-
-            auto out = n->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(remap.name());
-
-            dest->referings.insert( out );
-
-        }
-
-    }
-
-}
-
-
 
 void Open::editors(){
 
@@ -253,11 +198,60 @@ static std::array<uint32_t,3> getQ(JSONVal& json) {
     return {cols*rows, cols, rows};
 
 }
+static Node* createArtnet(JSONVal& json, Node* node) {
+
+    PLOGV << "create Artnet " << json.name() << " in " << node->name();
+
+    
+        Node* n = node->addOwnr<Artnet>( json["ip", true].str() ) ;
+
+        n->active(1)->name( json.name() );
+
+        for (auto &remap : json["remaps"]) {
+
+            Node* dest = engine.tree->find(remap["destination", true].str());
+
+            if (!dest) 
+                continue; 
+
+            auto inst = Instance(*engine.dynamic_ubo)[dest->parent()->is_a<Member>()][dest->is_a_nowarning<Member>()];
+
+            if (inst.stl.size() == 1) 
+                { PLOGW << json_error; continue; }
+
+            std::vector<DMXRemap::Attribute> attrs;
+            for (auto &x : remap["patch"])
+                if (x.isnum()) 
+                    attrs.push_back({(int)x.num(1)});
+
+            auto &an = *n->is_a<Artnet>();
+            
+            auto &uni = an.universe(remap["universe", true].num(1)-1);
+
+            n->trig(Node::RUN);
+
+            DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap["channel", true].num(1)-1, attrs, remap["quantity|q"].num(1));
+
+            dmxremap->src.remaps.push_back( dmxremap );
+
+            auto out = n->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(remap.name());
+
+            dest->referings.insert( out );
+
+        }
+
+    
+    return node;
+
+}
+
 static Node* createNDI(JSONVal& json, Node* node) {
 
     PLOGV << "create NDI " << json.name() << " in " << node->name();
 
     auto dim = json[JSON_DIMENSIONS];
+
+    node->onadd_cb[typeid(Output)] = Node::any_cb;
 
     Node* n = engine.tree->find("outputs")->addOwnr<NDI::Sender>( dim[0].num(engine.window.width), dim[1].num(engine.window.height), json.name());
 
@@ -276,6 +270,9 @@ static Node* createMonitor(JSONVal& json, Node* node) {
 
     Node* already = nullptr;
     node->each<Window>([&](Node* n, Window* w) { already = n; });
+
+    node->onadd_cb[typeid(Output)] = Node::any_cb;
+
     if (!already)
         node = node->addPtr<Window>( &engine.window )->active(true);
 
@@ -390,7 +387,8 @@ void fetch(JSONVal json, Node* node) {
             else if (type==JSON_FILE) node = createFile(json, node);
             else if (type==JSON_LAYER) node = createLayer(json, node);
             else if (type==JSON_WINDOW) node = createMonitor(json, node);
-            else if (type=="NDI") node = createNDI(json, node);
+            else if (type=="ndi") node = createNDI(json, node);
+            else if (type=="artnet") node = createArtnet(json, node);
             else
                 PLOGW <<"unknown type \""<< type << " " << (type==JSON_FILE) << " " << (JSON_FILE)<< "\" for " << json.name();   
             
@@ -402,7 +400,7 @@ void fetch(JSONVal json, Node* node) {
         node = createFile(json, node);
 
         if (!node)  {  // special case for File
-            PLOGW << "WARNING " << json.name();  // shoudnt ever happen
+            PLOGV << "WARNING " << json.name();  // shoudnt ever happen
             return;
         }
     }
