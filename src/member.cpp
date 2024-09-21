@@ -368,16 +368,6 @@ Member& Member::range(float from, float to, float def) {
 
     }
 
-    for (auto s : structs) {
-
-        for (auto m : s->members) 
-            if (m == this) 
-                for (auto top : m->getTop())  
-                    top->post_change({{m,m->quantity()-1}});
-
-    }
-
-
     return *this;
 
 }

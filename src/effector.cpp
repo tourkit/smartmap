@@ -152,6 +152,11 @@ void FileEffector::load() {
 
         }
 
+    }else {
+        for (int i = 0; i < args.size(); i++) 
+            if (ranges.find(args[i].second) != ranges.end()) 
+                members[i]->range(ranges[args[i].second][0],ranges[args[i].second][1],ranges[args[i].second][2]);
+        
     }
     // for (auto arg : args) 
 
