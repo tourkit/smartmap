@@ -58,7 +58,7 @@ void EditorWidget::draw() {
     auto w = ImGui::GetWindowWidth(); 
     auto x = 0;ImGui::GetCursorPosX();
 
-    std::string name = selected->nameSTL()+ " ("+selected->type_name()+")";
+    std::string name = selected->nameSTL(1)+ " ("+selected->type_name()+")";
 
     auto tx = ImGui::CalcTextSize(name.c_str()).x;
     if (ImGui::GetWindowDockNode() && !ImGui::GetWindowDockNode()->IsHiddenTabBar() && ImGui::DockNodeBeginAmendTabBar(ImGui::GetWindowDockNode())) {
