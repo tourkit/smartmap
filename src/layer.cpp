@@ -297,7 +297,10 @@ void UberLayer::calc_matrice() {
 
             if (it->get()->h > max_line_h) max_line_h = it->get()->h;
 
-            if (last_x+it->get()->w > engine.gl_max_texture_size/2) { // beware /2 just for me
+            GLint gl_max_texture_size;
+            glGetIntegerv(GL_MAX_TEXTURE_SIZE, &gl_max_texture_size);
+
+            if (last_x+it->get()->w > gl_max_texture_size/2) { // beware /2 just for me
 
                 matrice.resize( matrice.size()+1 );
                 last_y += max_line_h;

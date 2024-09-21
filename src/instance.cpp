@@ -42,14 +42,17 @@ std::pair<std::string,int> nameQ(std::string name) {
 }
 
 
-    std::string Instance::stl_name() {
+    std::string Instance::stl_name(int q) {
 
         std::vector<std::string> names;
 
-        for (auto x : stl)  {
+        if (q)
+            q = stl.size()-q-1;
+        
+        for (int i = q; i < stl.size(); i++) {
 
-            auto name = x.m->name();
-            if (x.eq>0) name += "[" + std::to_string(x.eq) + "]";
+            auto name = stl[i].m->name();
+            if (stl[i].eq>0) name += "[" + std::to_string(stl[i].eq) + "]";
             names.push_back(name);
             
         }

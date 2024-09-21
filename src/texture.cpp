@@ -81,7 +81,7 @@ bool Texture::create(GLuint width, GLuint height) {
 
     glGenTextures(1, &id);
 
-    PLOGD << width << "x" << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
+    PLOGV << width << "x" << height << " - id=" << id << " " << ", unit=" << unit << ", mipmaps=" << mipmaps;
 
     glActiveTexture(GL_TEXTURE0+unit);
 

@@ -71,7 +71,7 @@ void Editors::init() {
         ImGui::InputInt("##chjdshjkers", &remap->chan);
         SameLine();
         ImGui::SetNextItemWidth( -FLT_MIN);
-         ImGui::InputText("###puppybbb", &remap->dst.stl_name()[0], 10, ImGuiInputTextFlags_ReadOnly);
+         ImGui::InputText("###puppybbb", &remap->dst.stl_name(1)[0], 10, ImGuiInputTextFlags_ReadOnly);
 
         if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(GetContentRegionAvail().x, 0))) {
 

@@ -17,7 +17,7 @@ struct Instance {
     
     std::vector<Remap*> remaps;
 
-    std::string stl_name();
+    std::string stl_name(int q = 0);
 
     Instance& parent() ;
 

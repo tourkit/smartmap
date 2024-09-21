@@ -47,9 +47,8 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
 
     }
 
-    if (displays.size())
-        {PLOGI  << " Display @ " << displays.back().rate << "Hz " << displays.back().width << "x" << displays.back().height;}
-    else
+    if (!displays.size())
+
         {PLOGE  << " NO MONITOR"; }
         
     if (fullscreen)
@@ -93,6 +92,12 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
     size( width, height );
 
     glEnable(GL_BLEND);
+
+    GLint gl_major_version, gl_minor_version;
+    glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
+    glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
+
+    PLOGI  << " Display @ " << displays.back().rate << "Hz " << displays.back().width << "x" << displays.back().height << " - GL_VERSION "<< gl_major_version << "." << gl_minor_version << "";
 
 }
 

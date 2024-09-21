@@ -29,13 +29,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
 
     glsl_data.add<int>("frame").add<int>("fps").add<int>("alt");
 
-    glGetIntegerv(GL_MAJOR_VERSION, &gl_major_version);
-    glGetIntegerv(GL_MINOR_VERSION, &gl_minor_version);
-    PLOGD << "GL_VERSION                 : " << gl_major_version << "." << gl_minor_version;
-    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
-    PLOGD << "GL_MAX_TEXTURE_IMAGE_UNITS : " << gl_max_texture_image_units;
-
-    PLOGD << "                              __      "  ;
+    PLOGD << "                              __            "  ;
     PLOGD << "  ______ _____ _____ ________/  |_  _____ _____  ______  ";
     PLOGD << " /  ___//     \\\\__  \\\\_  __ \\   __\\/     \\\\__  \\ \\____ \\ ";
     PLOGD << " \\___ \\|  Y Y  \\/ __ \\|  | \\/|  | |  Y Y  \\/ __ \\|  |_> >";
