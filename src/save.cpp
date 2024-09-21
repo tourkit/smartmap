@@ -240,13 +240,11 @@ static void fetch(Node* n) {
 
 void Save::json(std::string path) {
 
-    auto &tree = *engine.tree;
 
 
 
-
-
-    fetch(&tree);
+    for (auto c : engine.tree->childrens) 
+        fetch(c);
 
 
 

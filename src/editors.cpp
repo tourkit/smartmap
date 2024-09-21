@@ -760,8 +760,8 @@ void Editors::init() {
         }
 
         if (line_count != log_n->appender.list.size()) {
+            SetScrollY(GetScrollMaxY()+((log_n->appender.list.size()-line_count)*GetCurrentContext()->FontBaseSize*2));
             line_count = log_n->appender.list.size();
-            SetScrollY(GetScrollMaxY()+GetCurrentContext()->FontBaseSize*2);
             
         }
         ImGui::SetCursorPos(start); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }start.x+=50;
