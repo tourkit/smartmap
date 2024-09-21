@@ -31,7 +31,7 @@ void EditorWidget::draw() {
 
             auto n = (Node*)(*(uint64_t*)payload->Data);
 
-            if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) 
+            if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsMouseReleased(1)) 
                 selected = n;
             else
                 if (selected && !selected->add(n)) 

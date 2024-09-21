@@ -32,6 +32,8 @@ void TreeWidget::draw()  {
     if (gui->show_demo) ImGui::ShowDemoWindow();
 
 
+    ImGui::PushStyleColor(ImGuiCol_Button,ImVec4(0,0,0,0));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered,ImVec4(0,0,0,0));
     ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,ImVec2(4,1));
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 26);
@@ -152,6 +154,7 @@ void TreeWidget::draw()  {
     ImGui::EndChild();
 
     ImGui::PopStyleVar(1);
+    ImGui::PopStyleColor(2);
 }
 
 
@@ -286,7 +289,7 @@ bool TreeWidget::TreeViewNode(Node* node, int depth, std::array<float,4>& color)
                 
                 ImGui::SetCursorPosX(t_pos.x+21);
                 
-                Text(node->name().c_str());
+                ButtonEx(node->name().c_str(),ImVec2(0,0),ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_MouseButtonLeft);
 
                 PopStyleColor();
 
@@ -364,12 +367,12 @@ bool TreeWidget::TreeViewNode(Node* node, int depth, std::array<float,4>& color)
 
             } else {
                 
-                SetCursorPosX(t_pos.x+17);
+                SetCursorPosX(t_pos.x+21);
 
                 if (strcmp(&is_renaming[node].data[0],node->name().c_str()))
                     memcpy(&is_renaming[node].data[0],node->name().c_str(),node->name().length());
                 
-                if (ImGui::InputText("##jksdfjk", &is_renaming[node].data[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
+                if (ImGui::InputText(("##"+std::to_string(gui->member_count++)).c_str(), &is_renaming[node].data[0], 512, ImGuiInputTextFlags_EnterReturnsTrue)) {
 
                     gui->window->end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>({node, [](void* ptr){ 
 
