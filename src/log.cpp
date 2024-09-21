@@ -34,10 +34,19 @@ void Log::Appender::write(const plog::Record& record) {
             if (cout.length() > 200) 
                 cout = cout.substr(0,200) + "...\n";
 
-            if (engine.gui_v && engine.gui_v->editors.back()->selected != engine.tree->find("debug"))
-                engine.gui_v->editors.push_back(std::make_shared< EditorWidget>(engine.gui_v, engine.tree->find("debug")));
-            
-            // std::cout << cout;
+            if (engine.gui_v){
+                bool already = false;
+                auto debug = engine.tree->find("debug");
+                for (auto x : engine.gui_v->editors) 
+                    if (x->selected == debug) {
+                        already = true;
+                        break;
+                }
+                if (!already)
+                    engine.gui_v->editors.push_back(std::make_shared< EditorWidget>(engine.gui_v, engine.tree->find("debug")));
+        
+            }else
+                std::cout << cout;
     }
     
     buffer << ifile.rdbuf();
