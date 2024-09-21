@@ -12,8 +12,9 @@ struct TreeWidget : GUI::Window {
 
     void draw() override;
 
-    bool TreeViewNode(Node* node, int depth = 0);
+    static inline std::array<float,4> color_v = {1,1,1,1};
 
+    bool TreeViewNode(Node* node, int depth=0, std::array<float,4>& color=color_v);
 
     std::string filter_str = "filter";
 

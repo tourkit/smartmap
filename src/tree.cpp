@@ -155,7 +155,7 @@ void TreeWidget::draw()  {
 }
 
 
-bool TreeWidget::TreeViewNode(Node* node, int depth) {
+bool TreeWidget::TreeViewNode(Node* node, int depth, std::array<float,4>& color) {
 
     ImVec2 verticalLineStart = ImGui::GetCursorScreenPos();
     
@@ -252,6 +252,9 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
             if (ImGui::GetMousePos().y > t_pos.y+ImGui::GetWindowPos().y && ImGui::GetMousePos().y < t_pos.y+ImGui::GetWindowPos().y+ImGui::GetTextLineHeight()) hovered = true;
 
             ImVec4 node_color = *(ImVec4*)&node->color;
+
+            if (node_color == ImVec4(1,1,1,1) && (ImVec4&)color != ImVec4(1,1,1,1))
+                node_color = (ImVec4&)color+ImVec4(.5,.5,.5,1);
 
             if(gui->selected != node) {
 
@@ -457,7 +460,7 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
     TreePush(("###pop"+std::to_string(depth)).c_str());
     if (node->open || filtering)
         for (auto child : node->childrens) {
-            TreeViewNode(child, depth+1); 
+            TreeViewNode(child, depth+1, ((node->color!=std::array<float,4>{1,1,1,1})?node->color:color)); 
             
         }
     TreePop();
