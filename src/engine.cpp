@@ -19,6 +19,7 @@
 #include "callbacks.hpp"
 #include "editors.hpp"
 #include "tree.hpp"
+#include "window.hpp"
 
 #include <GLFW/glfw3.h>
 #include <cmath>
@@ -34,6 +35,12 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &gl_max_texture_image_units);
     PLOGD << "GL_MAX_TEXTURE_IMAGE_UNITS : " << gl_max_texture_image_units;
 
+    PLOGD << "                              __                       "  ;
+    PLOGD << "  ______ _____ _____ ________/  |_  _____ _____  ______  ";
+    PLOGD << " /  ___//     \\\\__  \\\\_  __ \\   __\\/     \\\\__  \\ \\____ \\ ";
+    PLOGD << " \\___ \\|  Y Y  \\/ __ \\|  | \\/|  | |  Y Y  \\/ __ \\|  |_> >";
+    PLOGD << "/____  >__|_|  (____  /__|   |__| |__|_|  (____  /   __/ ";
+    PLOGD << "     \\/      \\/     \\/                  \\/     \\/|__|  ";
 
     glsl_data.striding(true);
 
@@ -54,6 +61,32 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
 
     window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_EQUAL}] = demo_cb;
 
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_ESCAPE}] = [&](){
+
+        engine.tree->each<Window>([](Node*n, Window*w) {
+
+            static uint32_t bkpcoords[2];
+            static bool init = false;
+            
+            if(!init) {
+                
+                bkpcoords[0] = engine.window.width;
+                bkpcoords[1] = engine.window.height;
+                init = true;    
+
+            }
+
+            if (engine.window.width>1){
+                engine.window.size(1, 1);
+                engine.gui(true);
+            }else
+                engine.window.size(bkpcoords[0], bkpcoords[1]);
+
+
+        });
+
+    };
+
     static auto guiact_cb = [&]() { 
 
         window.end_of_render_cbs.emplace_back(std::pair<void*,std::function<void(void*)>>{nullptr, std::function<void(void*)>([&](void* ptr) { 
@@ -67,7 +100,7 @@ Engine::Engine(uint16_t width, uint16_t height) : window(1,1,0,0), glsl_data("EN
         
     };
 
-    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_I}] = guiact_cb;
+    window.keypress_cbs[{GLFW_KEY_LEFT_CONTROL, GLFW_KEY_M}] = guiact_cb;
     window.mousedown_cb = [](int button) { 
         
         if (button == GLFW_MOUSE_BUTTON_LEFT) guiact_cb(); 
@@ -136,9 +169,6 @@ void Engine::init() {
 
     });
 
-    outputs = tree->addOwnr<Node>("outputs")->active(true);
-    outputs->allow<Output>();
-
     tree->addOwnr<File>("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4");
 
     PLOGI << "Engine initialized";
@@ -171,46 +201,19 @@ void Engine::gui(bool active) {
 
 void Engine::run(std::function<void()> cb) {
 
-    // if (models && !models->childrens.size()) 
-    //     auto quad = models->addPtr<File>( &VBO::quad );
-
-    // if (outputs && !outputs->childrens.size()) {
-        
-    //     auto win = outputs->addPtr<Window>( &window );
-
-    //     if (stack->childrens.size()) 
-        
-    //         for (auto output_ : outputs->childrens) {
-                
-    //             auto output = output_->is_a<Output>();
-
-    //             if (output && !output->fb) 
-
-    //                 win->add(stack->childrens[0]);
-
-    //         }
-        
-    // }
-
     bool found = false;
-    tree->eachBreak<Layer>([&](Node* n, Layer* layer) {
+    tree->each<Layer>([&](Node* n, Layer* layer) {
 
-       if (!n->hidden) {
-
+       if (!n->hidden) 
             found = true;
-            return Node::Break;
-
-       }
-       
-        return n;
 
     });
 
     if (!found)
         engine.tree->find("quad")->hidden = false;
 
-    window.fit();
-    window.size(50,50);
+    // window.fit();
+    // window.size(50,50);
 
     if (!gui_v)
         window.visibility(true);
@@ -259,7 +262,6 @@ void Engine::reset() {
 
     gui(false);
     if (main) for (auto x : main->childrens) delete x;
-    if (outputs) for (auto x : outputs->childrens) delete x;
     if (inputs) for (auto x : inputs->childrens) delete x;
     if (medias) for (auto x : medias->childrens) delete x;
 

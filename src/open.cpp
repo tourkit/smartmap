@@ -21,23 +21,23 @@ static std::string json_error = "JSON error";
 void Open::medias(){
 
 
-    for (auto &media : json_v["medias"]) {
+    // for (auto &media : json_v["medias"]) {
 
-        if (!media.name().length() || !media.str().length()) 
-            return;
+    //     if (!media.name().length() || !media.str().length()) 
+    //         return;
 
-        if (media.name() != "atlas") // temporary only name allowed
-            return;
+    //     if (media.name() != "atlas") // temporary only name allowed
+    //         return;
     
-        Node* atlas_ = engine.medias->addOwnr<Atlas>(4096, 4096, media.str());
+    //     Node* atlas_ = engine.medias->addOwnr<Atlas>(4096, 4096, media.str());
 
-        auto atlas = atlas_->is_a<Atlas>();
+    //     auto atlas = atlas_->is_a<Atlas>();
 
-        engine.effectors->addPtr<Effector>(&atlas->effector);
+    //     engine.effectors->addPtr<Effector>(&atlas->effector);
 
-        atlas->texture->bind();
+    //     atlas->texture->bind();
 
-    };
+    // };
 
 }
 
@@ -187,7 +187,7 @@ static Node* createFile(JSONVal& json, Node* node) {
     if (!src.length())
         return nullptr;
         
-    PLOGW << "create File " << json.name() << " in " << node->name();
+    PLOGV << "create File " << json.name() << " in " << node->name();
     
     node = node->addOwnr<File>(json.name(), src.c_str())->active(false);
 
@@ -202,7 +202,7 @@ static Node* createNode(JSONVal& json, Node* node) {
 
     if (json.name_v != "__JSONVAL__") {
 
-        PLOGW << "create Node " << json.name() << " in " << node->name();
+        PLOGV << "create Node " << json.name() << " in " << node->name();
         
         node = node->addOwnr<Node>(json.name_v)->active(false);
 
@@ -222,7 +222,7 @@ static Node* createNode(JSONVal& json, Node* node) {
 
 static Node* createEffector(JSONVal& json, Node* node) {
 
-    PLOGW << "create Effector " << json.name() << " in " << node->name();
+    PLOGV << "create Effector " << json.name() << " in " << node->name();
 
     auto file = engine.tree->find(json.str());
     if (!file) {
@@ -240,7 +240,7 @@ static Node* createEffector(JSONVal& json, Node* node) {
 
 static Node* createModel(JSONVal& json, Node* node) {
 
-    PLOGW << "create Model " << json.name() << " in " << node->name();
+    PLOGV << "create Model " << json.name() << " in " << node->name();
 
     auto json_model = json["model"].str();
     if(!json_model.length())
@@ -287,7 +287,7 @@ static std::array<uint32_t,3> getQ(JSONVal& json) {
 }
 static Node* createMonitor(JSONVal& json, Node* node) {
 
-    PLOGW << "create Monitor " << json.name() << " in " << node->name();
+    PLOGV << "create Monitor " << json.name() << " in " << node->name();
 
     Node* already = nullptr;
     node->each<Window>([&](Node* n, Window* w) { already = n; });
@@ -305,12 +305,20 @@ static Node* createMonitor(JSONVal& json, Node* node) {
     if (src) 
         node->add(src);
 
+    auto parent = node->parent();
+
+    while (parent) {
+
+        parent->active(true);
+        parent = parent->parent();
+    }
+
     return node;
 }
 
 static Node* createLayer(JSONVal& json, Node* node) {
         
-    PLOGW << "create Layer " << json.name() << " in " << node->name();
+    PLOGV << "create Layer " << json.name() << " in " << node->name();
 
     auto dim = json[JSON_DIMENSIONS];
 

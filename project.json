@@ -80,7 +80,7 @@
             
             "type" :  "monitor" ,
 
-            "dim" : [ 100, 100 ],
+            "dim" : [ 100 , 100 ],
 
             "source" :  "layer1" 
 
@@ -88,6 +88,6 @@
         
     },
     
-    "editors":[["layer1"]]
+    "editors":[["layer1"], ["debug"]]
 }
 

@@ -30,50 +30,50 @@ void Save::outputs(){
 
     json_v.document["outputs"].SetObject();
     json_v.document["outputs"].RemoveAllMembers();
-    for (auto output : engine.outputs->childrens) {
+    // for (auto output : engine.outputs->childrens) {
 
-        auto  outputarr = rapidjson::Value(rapidjson::kArrayType);
+    //     auto  outputarr = rapidjson::Value(rapidjson::kArrayType);
 
-        Output* output_ = output->is_a_nowarning<Window>();
-        if (!output_) output_ = output->is_a_nowarning<NDI::Sender>();
-        if (!output_) continue;
+    //     Output* output_ = output->is_a_nowarning<Window>();
+    //     if (!output_) output_ = output->is_a_nowarning<NDI::Sender>();
+    //     if (!output_) continue;
 
-        outputarr.PushBack( output_->width, allocator );
-        outputarr.PushBack( output_->height, allocator );
-        outputarr.PushBack( output_->offset_x, allocator );
-        outputarr.PushBack( output_->offset_y, allocator );
-        if (output_->fb) {
+    //     outputarr.PushBack( output_->width, allocator );
+    //     outputarr.PushBack( output_->height, allocator );
+    //     outputarr.PushBack( output_->offset_x, allocator );
+    //     outputarr.PushBack( output_->offset_y, allocator );
+    //     if (output_->fb) {
 
-            Layer* lay = nullptr;
+    //         Layer* lay = nullptr;
 
-            engine.main->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
+    //         engine.main->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
 
-            outputarr.PushBack( rapidjson::Value(lay->name().c_str(), allocator ), allocator );
+    //         outputarr.PushBack( rapidjson::Value(lay->name().c_str(), allocator ), allocator );
 
-        }
+    //     }
 
-        // if ( output->is_a<NDI::Sender>() ) { }
+    //     // if ( output->is_a<NDI::Sender>() ) { }
 
-        auto &outputs = json_v.document["outputs"];
+    //     auto &outputs = json_v.document["outputs"];
 
-        if ( output->is_a_nowarning<Window>() ) {
+    //     if ( output->is_a_nowarning<Window>() ) {
 
-            if (!outputs.HasMember("monitor")) outputs.AddMember(rapidjson::Value("monitor", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
+    //         if (!outputs.HasMember("monitor")) outputs.AddMember(rapidjson::Value("monitor", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
 
-            outputs["monitor"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
+    //         outputs["monitor"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
 
-        }
-        if ( output->is_a_nowarning<NDI::Sender>() ) {
+    //     }
+    //     if ( output->is_a_nowarning<NDI::Sender>() ) {
 
-            if (!outputs.HasMember("ndi")) outputs.AddMember(rapidjson::Value("ndi", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
+    //         if (!outputs.HasMember("ndi")) outputs.AddMember(rapidjson::Value("ndi", allocator) , rapidjson::Value(rapidjson::kObjectType), allocator);
 
-            outputs["ndi"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
+    //         outputs["ndi"].AddMember( rapidjson::Value(output->name().c_str(), allocator)  , outputarr, allocator );
 
-        }
+    //     }
 
 
 
-    }
+    // }
 
 }
 
@@ -216,8 +216,8 @@ void Save::editors(){
 
 void Save::models(){
     
-    json_v.document["models"].RemoveAllMembers();
-    for (auto m : engine.models->childrens) { json_v.document["models"].AddMember(rapidjson::Value(m->is_a<File>()->filename().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator()); }
+    // json_v.document["models"].RemoveAllMembers();
+    // for (auto m : engine.models->childrens) { json_v.document["models"].AddMember(rapidjson::Value(m->is_a<File>()->filename().c_str(), json_v.document.GetAllocator()), rapidjson::Value(&m->is_a<File>()->data[0], json_v.document.GetAllocator()), json_v.document.GetAllocator()); }
 
 
 

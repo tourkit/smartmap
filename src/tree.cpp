@@ -1,6 +1,7 @@
 #include "tree.hpp"
 
 
+
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui_internal.h"
 
@@ -157,6 +158,8 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
     
     using namespace ImGui;
 
+    static bool holding = false;
+    
     if (node->hidden) 
         return false;
     if (!filtering || !strlen(&search_str[0]) || (!pattern_error && std::regex_search(node->name().c_str(), pattern))) {
@@ -281,52 +284,56 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
                 // // pop up right clik
                 // /////////////////
 
-                // if (BeginPopupContextItem((std::to_string(gui->member_count++)).c_str())) {
+                if (BeginPopupContextItem((std::to_string(gui->member_count++)).c_str())) {
                     
-                //     Separator();
+                    Separator();
 
-                //     if (!is_deleting) {
+                    if (!is_deleting) {
 
-                //         ImGui::PushItemFlag(ImGuiItemFlags_SelectableDontClosePopup, true);
-                //         if(ImGui::MenuItem("delete")){ is_deleting = true; }
-                //         ImGui::PopItemFlag();
+                        ImGui::PushItemFlag(ImGuiItemFlags_AutoClosePopups, false);
+                        if(ImGui::MenuItem("delete")){ is_deleting = true; }
+                        ImGui::PopItemFlag();
 
-                //     }else if(ImGui::MenuItem("Sure ?")){
+                    }else if(ImGui::MenuItem("Sure ?")){
 
-                //         is_deleting = false;
+                        is_deleting = false;
                         
-                //     this->gui->deleteNode(node);
+                    this->gui->deleteNode(node);
 
-                //     }
+                    }
 
-                //     if (!ImGui::IsItemHovered()) 
-                //         is_deleting = false;
+                    if (!ImGui::IsItemHovered()) 
+                        is_deleting = false;
                     
-                //     Separator();
+                    Separator();
 
-                //     if (ImGui::BeginMenu("trig")) {
-                //         Separator();
-                //         if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
-                //         Separator();
-                //         if (ImGui::MenuItem("CREATE")) node->trig(Node::CREATE);
-                //         Separator();
-                //         ImGui::EndMenu();
-                //     }
+                    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
+                            
+                        if (ImGui::BeginMenu("trig")) {
+                            Separator();
+                            if (ImGui::MenuItem("CHANGE")) node->trig(Node::CHANGE);
+                            Separator();
+                            if (ImGui::MenuItem("CREATE")) node->trig(Node::CREATE);
+                            Separator();
+                            ImGui::EndMenu();
+                        }
 
-                //     Separator();
+                        Separator();
 
-                //     ImGui::MenuItem(node->type_name().c_str());
-                    
-                //     Separator();
+                        ImGui::MenuItem(node->type_name().c_str());
+                        
+                        Separator();
 
-                //     EndPopup();
-                // }
+                    }
+
+                    EndPopup();
+                }
 
                 if (ImGui::IsItemClicked()){
                     if (ImGui::IsMouseDoubleClicked(0)) {
                         is_renaming[node];
                     }else{
-                        if (IsMouseDown(0))
+                        if (IsMouseDown(0) && !holding)
                             
                             gui->selected = node;
                             
@@ -372,7 +379,6 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
         // drag n drop
         //////////////////
 
-        static bool holding = false;
 
         if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
 

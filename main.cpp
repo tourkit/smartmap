@@ -5,9 +5,17 @@
                                 */
 
 
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "imgui.h"
+#include "imgui/imgui_internal.h"
+
 #include "engine.hpp"
 #include "gui.hpp"
-#include "imgui.h"
+#include "editor.hpp"
+
+
+
 
 
 struct slidetest : GUI::Window {
@@ -23,15 +31,17 @@ struct slidetest : GUI::Window {
 
 };
 
+
 int main() {
 
     // logger.cout(Sev::warning);
 
     engine.init();
+    engine.open("project.json");  
+
 
     // TestWin test(engine.gui_v);
 
-    engine.open("project.json");  
 
     engine.run();
 

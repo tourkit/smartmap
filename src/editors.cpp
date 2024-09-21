@@ -394,80 +394,7 @@ void Editors::init() {
 
     });
 
-    ////////// Log.HPP
 
-    Editor<Log>([](Node* node, Log *log_n){
-
-
-        static bool is_verbose = false;
-
-        static ImVec4 info = ImVec4(0.6f, 0.6f, 0.6f, 1.0f);
-        static ImVec4 debug = ImVec4(0.25f, 0.25f, 0.25f, 1.0f);
-        static ImVec4 warning = ImVec4(1.0f, 0.7f, 0.0f, 1.0f);
-        static ImVec4 error = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
-        static ImVec4 verbose = ImVec4(0.4f, 0.4f, 1.0f, 1.0f);
-
-        static float *curr = &info.x;
-
-        auto curpos = GetCursorPos();
-        auto winsize = GetWindowSize();
-
-        auto start = curpos + winsize + ImVec2(0.0f, GetCurrentContext()->FontBaseSize);
-        
-
-        if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }
-        ImGui::SameLine();if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }
-        ImGui::SameLine();if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }
-        ImGui::SameLine();if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }
-        ImGui::SameLine();if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }
-        ImGui::SameLine();ImGui::Checkbox("verbose", &is_verbose);
-        ImGui::SameLine(); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }
-
-        if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
-
-        int max_lines = 1000;
-        int count = 0;
-
-        for (int member_count = log_n->appender.list.size()-1; member_count>=0; member_count-- ) {
-
-            auto &m = log_n->appender.list[member_count];
-
-            ImVec4 color = info;
-
-            if (m.severity == plog::Severity::debug) color = debug;
-            if (m.severity == plog::Severity::warning) color = warning;
-            if (m.severity == plog::Severity::error) color = error;
-            if (m.severity == plog::Severity::verbose) {color = verbose; if (!is_verbose) { continue;} }
-
-            count++;
-            if (count == max_lines) break;
-
-            ImGui::PushStyleColor(ImGuiCol_Text, color);
-            std::string str;
-            tm t;
-            plog::util::localtime_s(&t, &m.time.time);
-            plog::util::nostringstream ss;
-            ss <<std::setfill('0') << std::setw(4) << static_cast<int> (m.id) << ":"<< std::setfill('0') << std::setw(2)<<t.tm_sec<<"."<< std::setfill('0') << std::setw(3) << static_cast<int> (m.time.millitm);
-
-            str+="[";
-            str+=ss.str();
-            str+="] ";
-
-            str += m.msg;
-
-            int x = 130;
-            ImGui::Text(str.c_str(), str.c_str()+(str.length()>x?x:str.length())); if (str.length()>x) { ImGui::SameLine(); ImGui::Text("..."); }
-            ImGui::PopStyleColor();
-
-            if (ImGui::BeginPopupContextItem(("##dsfgsdf"+std::to_string(count)).c_str())) {
-
-                if (ImGui::Button("copy" )) { ImGui::SetClipboardText(str.c_str()); ImGui::CloseCurrentPopup(); }
-
-                ImGui::EndPopup();
-
-            }
-        }
-    });
 
     ////////// File.HPP
 
@@ -767,19 +694,97 @@ void Editors::init() {
         // static int blendin = 1, blendout = 3;
         // if (ImGui::SliderInt2( "blend", &blendin, 0, enums.size()-1)) glBlendFunc(enums[blendin],enums[blendout]);
 
-        SameLine();
 
-        auto curs = GetCursorPosX();
-
-        SetCursorPosX(GetWindowSize().x-100);
-
-        Text((std::to_string(Member::structs.size())+" struct"+(Member::structs.size()>1?"s":"")).c_str());
-        SameLine();
-        SetCursorPosX(curs);
         Editor<Log>::cb( node, &logger);
 
     });
-  
+        ////////// Log.HPP
+
+        using namespace ImGui;
+
+    Editor<Log>([&](Node* node, Log *log_n){
+
+
+        static bool is_verbose = false;
+
+        static ImVec4 info = ImVec4(0.6f, 0.6f, 0.6f, 1.0f);
+        static ImVec4 debug = ImVec4(0.25f, 0.25f, 0.25f, 1.0f);
+        static ImVec4 warning = ImVec4(1.0f, 0.7f, 0.0f, 1.0f);
+        static ImVec4 error = ImVec4(1.0f, 0.2f, 0.2f, 1.0f);
+        static ImVec4 verbose = ImVec4(0.4f, 0.4f, 1.0f, 1.0f);
+
+        static float *curr = &info.x;
+
+        auto curpos = GetCursorPos();
+        auto winsize = GetContentRegionAvail();
+        auto start = curpos  - ImVec2(255, -5);
+        start.x += winsize.x;
+        start.y += GetScrollY();
+
+
+        int max_lines = 1000;
+        int count = 0;
+
+        static int line_count = 0;
+
+        for (int member_count = log_n->appender.list.size()-1; member_count>=0; member_count-- ) {
+
+            auto &m = log_n->appender.list[log_n->appender.list.size()-1-member_count];
+
+            ImVec4 color = info;
+
+            if (m.severity == Sev::debug) color = debug;
+            if (m.severity == Sev::warning) color = warning;
+            if (m.severity == Sev::error) color = error;
+            if (m.severity == Sev::verbose) {color = verbose; if (!is_verbose) { continue;} }
+
+            count++;
+            if (count == max_lines) break;
+
+            ImGui::PushStyleColor(ImGuiCol_Text, color);
+            std::string str;
+            tm t;
+            plog::util::localtime_s(&t, &m.time.time);
+            plog::util::nostringstream ss;
+            ss <<std::setfill('0') << std::setw(4) << static_cast<int> (m.id) << ":"<< std::setfill('0') << std::setw(2)<<t.tm_sec<<"."<< std::setfill('0') << std::setw(3) << static_cast<int> (m.time.millitm);
+
+            str+="[";
+            str+=ss.str();
+            str+="] ";
+
+            str += m.msg;
+
+            int x = 130;
+            ImGui::Text(str.c_str(), str.c_str()+(str.length()>x?x:str.length())); if (str.length()>x) { ImGui::SameLine(); ImGui::Text("..."); }
+            ImGui::PopStyleColor();
+
+            if (ImGui::BeginPopupContextItem(("##dsfgsdf"+std::to_string(count)).c_str())) {
+
+                if (ImGui::Button("copy" )) { ImGui::SetClipboardText(str.c_str()); ImGui::CloseCurrentPopup(); }
+
+                ImGui::EndPopup();
+
+            }
+        }
+
+        if (line_count != log_n->appender.list.size()) {
+            line_count = log_n->appender.list.size();
+            SetScrollY(GetScrollMaxY()+GetCurrentContext()->FontBaseSize*2);
+            
+        }
+        ImGui::SetCursorPos(start); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }start.x+=50;
+        ImGui::SetCursorPos(start); if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }start.x+=25;
+        ImGui::SetCursorPos(start);if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }start.x+=25;
+        ImGui::SetCursorPos(start);if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }start.x+=25;
+        ImGui::SetCursorPos(start);if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }start.x+=25;
+        ImGui::SetCursorPos(start);if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }start.x+=25;
+        ImGui::SetCursorPos(start);ImGui::Checkbox("verbose", &is_verbose);start.x+=25;
+        ImGui::SetCursorPos(start); if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
+        ImGui::SetCursorPos(curpos);
+    });
+
+
+
     ////////// Effector.HPP
 
     // Editor<EffectorRef>([](Node* node, EffectorRef *effector){
