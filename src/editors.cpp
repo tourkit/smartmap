@@ -68,18 +68,20 @@ void Editors::init() {
 
 
         ImGui::SetNextItemWidth(100);
-        ImGui::InputInt("channel##chjdshjkers", &remap->chan);
+        ImGui::InputInt("##chjdshjkers", &remap->chan);
+        SameLine();
+        ImGui::SetNextItemWidth( -FLT_MIN);
+         ImGui::InputText("###puppybbb", &remap->dst.stl_name()[0], 10, ImGuiInputTextFlags_ReadOnly);
 
-        ImGui::SetNextItemWidth(500);
-        if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(550, 0))) {
+        if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(GetContentRegionAvail().x, 0))) {
 
             ImGui::TableSetupColumn("name");
-            ImGui::TableSetupColumn("skip", ImGuiTableColumnFlags_WidthFixed, 40);
-            ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 40);
-            ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 40);
-            ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 40);
-            ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 120);
-            ImGui::TableSetupColumn("active", ImGuiTableColumnFlags_WidthFixed, 40);
+            ImGui::TableSetupColumn("skip", ImGuiTableColumnFlags_WidthFixed, 35);
+            ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 35);
+            ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 35);
+            ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 35);
+            ImGui::TableSetupColumn("state", ImGuiTableColumnFlags_WidthFixed, 35);
+            ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 106); 
             ImGui::TableHeadersRow();
 
             int member_id = 0;
@@ -122,11 +124,11 @@ void Editors::init() {
                         if (ImGui::RadioButton(("##srbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 3)) 
                             changed = true;
                         ImGui::TableNextColumn();
-                        ImGui::SetNextItemWidth(120);
-                        if (ImGui::InputFloat2(("##minmax"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].min)) 
+                        if (ImGui::Checkbox(("##arsbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].active)) 
                             changed = true;
                         ImGui::TableNextColumn();
-                        if (ImGui::Checkbox(("##arsbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].active)) 
+                        ImGui::SetNextItemWidth(100);
+                        if (ImGui::InputFloat2(("##minmax"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].min)) 
                             changed = true;
 
                         if (changed) {
@@ -158,19 +160,6 @@ void Editors::init() {
         // deststart  << " - " << remap->dst.offset;
         // ImGui::Text(deststart.str().c_str()) ;
 
-        std::stringstream buffa;
-        buffa << remap->src.stl_name() ;//<< " - " << &remap->src;
-        std::stringstream buffb;
-        buffb << remap->dst.stl_name() ;//<< " - " << &remap->dst;
-
-        ImGui::NewLine(); 
-        ImGui::SetNextItemWidth( GetContentRegionAvail().x/2-100); 
-        ImGui::InputText("##puppyaaa", (char*)buffa.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
-        ImGui::SetNextItemWidth( GetContentRegionAvail().x/2-100); 
-
-        ImGui::SameLine(); ImGui::Text(" -> ");
-
-        ImGui::SameLine(); ImGui::SetNextItemWidth( ImGui::CalcTextSize( (char*)buffb.str().c_str() ).x); ImGui::InputText("###puppybbb", (char*)buffb.str().c_str(), 10, ImGuiInputTextFlags_ReadOnly);
 
         // ImGui::SameLine(); ImGui::Text(("* "+std::to_string(remap->dst.stl.back().m->quantity())).c_str());
 

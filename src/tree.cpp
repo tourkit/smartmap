@@ -1,4 +1,5 @@
 #include "tree.hpp"
+#include <cstddef>
 
 
 
@@ -42,6 +43,8 @@ void TreeWidget::draw()  {
 
 
     static int curr = 0;
+    
+
     if (ImGui::IsItemDeactivated() && search_str[0] == '\0') {
 
         filtering = false;
@@ -160,6 +163,8 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
 
     static bool holding = false;
     
+    static Node* will_select = nullptr;
+
     if (node->hidden) 
         return false;
     if (!filtering || !strlen(&search_str[0]) || (!pattern_error && std::regex_search(node->name().c_str(), pattern))) {
@@ -329,26 +334,28 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
                     EndPopup();
                 }
 
-                if (ImGui::IsItemClicked()){
-                    if (ImGui::IsMouseDoubleClicked(0)) {
+
+                if (ImGui::IsItemHovered()){
+
+                    if (ImGui::IsMouseClicked(0)) 
+                        will_select = node; 
+
+                    else if (ImGui::IsMouseDoubleClicked(0)) 
                         is_renaming[node];
-                    }else{
-                        if (IsMouseDown(0) && !holding)
-                            
-                            gui->selected = node;
-                            
-                        
-                        // else if (IsMouseDown(1))
-                    }
-                }
+                    
+                } 
+                
+                if (will_select && IsMouseReleased(0)) {
 
-
-                if (IsMouseReleased(0) && gui->selected){
+                    gui->selected = will_select;
+                    will_select = nullptr;
                     if (gui && !gui->editors.size()){
                         gui->editors.emplace_back(std::make_shared<EditorWidget>(gui));
                         gui->editors.back()->selected = node;
                     }
                 }
+
+
 
             } else {
                 
@@ -411,6 +418,7 @@ bool TreeWidget::TreeViewNode(Node* node, int depth) {
         }
 
         if (ImGui::IsDragDropActive()) {
+            will_select = nullptr;
 
             ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(4,0));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(4,0));

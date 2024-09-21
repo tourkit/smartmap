@@ -32,7 +32,7 @@ void DMXRemap::update() {
 
             // range remap
             if (attributes[i].active && c > 0) 
-                *((float*)dst.data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min;
+                *((float*)dst.data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min; // remap is expensive thou
 
             data += c;
 

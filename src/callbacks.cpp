@@ -373,6 +373,21 @@ void Callbacks::init() {
 
     NODE<DMXRemap>::is_a<Remap>();
 
+    NODE<DMXRemap>::onadd<Member>([](Node*_this,Node*node){ 
+    
+        auto &remap = *_this->is_a<DMXRemap>();
+        auto &member = *node->is_a<Member>();
+        Instance inst(*engine.dynamic_ubo);
+        inst.loc(&member);
+        remap.dst = inst;
+
+        remap.extract(&member);
+
+        return Node::no_worry; 
+    
+    });
+
+
     //////// FrameBuffer.HPP
 
     NODE<FrameBuffer>::on(Node::CHANGE, [](Node* node, FrameBuffer *fb) { if (fb->texture.width != fb->texture.width || fb->texture.height != fb->texture.height) { fb->create(fb->texture.width, fb->texture.height); } });

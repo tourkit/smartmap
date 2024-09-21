@@ -119,6 +119,6 @@
         
     },
     
-    "editors":[["layer1"], ["debug"]]
+    "editors":[["layer1"], ["debug"], ["remap1"]]
 }
 
