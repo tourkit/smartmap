@@ -136,6 +136,113 @@ static void saveFile(JSONVal json, Node* n, rjs::Document& doc) {
 
 }
 
+static void saveWindow(JSONVal json, Node* n, rjs::Document& doc) {
+
+    PLOGW << "create Window " << n->name();
+
+    auto window = n->is_a<Window>();
+
+
+    auto* val_ = &json.value;
+    if (val_->HasMember(n->name().c_str()))
+        val_ = &(*val_)[n->name().c_str()];
+    auto &val = *val_;
+
+
+
+    val.AddMember(rjs::Value("type", doc.GetAllocator()), rjs::Value("monitor", doc.GetAllocator()), doc.GetAllocator());
+
+    if (window->width && window->height) {
+
+        auto dims = rjs::Value(kArrayType);
+
+        dims.PushBack(window->width, doc.GetAllocator());
+        dims.PushBack(window->height, doc.GetAllocator());
+
+        val.AddMember(rjs::Value("resolution", doc.GetAllocator()), dims, doc.GetAllocator());
+
+    }
+
+    if (window->offset_x || window->offset_y) {
+
+        rjs::Value offsets(rjs::kArrayType);
+
+        offsets.PushBack(window->width, doc.GetAllocator());
+        offsets.PushBack(window->height, doc.GetAllocator());
+
+        val.AddMember("offset", offsets, doc.GetAllocator());
+
+    }
+
+    if (window->fb) {
+
+        Node* source = nullptr;
+        engine.tree->eachBreak<Layer>([&](Node* n, Layer* l) {
+            if (&l->fb == window->fb) {
+                source = n;
+                return Node::Break;
+            }
+            return Node::Null;
+        });
+
+        if (source) 
+            val.AddMember("source", rjs::Value(source->name().c_str(), doc.GetAllocator()), doc.GetAllocator());
+        
+    }
+
+}
+#include "artnet.hpp"
+static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
+
+    PLOGW << "create Artnet " << n->name();
+
+    auto artnet = n->is_a<Artnet>();
+
+    json.value.AddMember("type", "artnet", doc.GetAllocator());
+
+    rjs::Value ip(artnet->ip.c_str(), doc.GetAllocator());
+    json.value.AddMember("ip", ip, doc.GetAllocator());
+
+    rjs::Value universes_(kObjectType);
+
+    n->each<Universe>([&](Node* n, Universe* uni) {
+
+        rjs::Value uni_(kObjectType);
+
+        n->each<DMXRemap>([&](Node* n, DMXRemap* remap) {
+
+            rjs::Value remap_(kObjectType);
+            remap_.AddMember("channel",0,doc.GetAllocator());
+            remap_.AddMember("destination",0,doc.GetAllocator());
+            remap_.AddMember("patch",0,doc.GetAllocator());
+
+            uni_.AddMember(
+                rjs::Value(n->name().c_str(),doc.GetAllocator()), 
+                rjs::Value(remap_, doc.GetAllocator()), 
+                doc.GetAllocator()
+            );
+
+        });
+
+        if (n->childrens.size())
+
+            universes_.AddMember(
+                rjs::Value(std::to_string(uni->id).c_str(),doc.GetAllocator()), 
+                rjs::Value(uni_, doc.GetAllocator()), 
+                doc.GetAllocator()
+            );
+
+    });
+
+    if (n->childrens.size())
+        json.value.AddMember(
+            rjs::Value("universes", doc.GetAllocator()), 
+            rjs::Value(universes_, doc.GetAllocator()), 
+            doc.GetAllocator()
+        );
+
+}
+
 static void saveEffector(JSONVal json, Node* n, rjs::Document& doc) {
 
 auto ref = n->is_a<EffectorRef>();
@@ -248,15 +355,24 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
     
     auto found = json[n->name()];
 
-
     if (found.name().length()) {
         found.value.RemoveAllMembers();
         PLOGW << "found need tpo cleaqr existing " << n->name() ;
     }else {
 
-        if (json.value.IsObject())  
-            json.value.AddMember(rjs::Value(n->name().c_str(), doc.GetAllocator()), rjs::Value(rjs::kObjectType), doc.GetAllocator());
-        else if (json.value.IsArray())  
+        if (json.value.IsObject())  {
+            
+        
+            if (n->is_a_nowarning<Window>())
+                json.value.AddMember(rjs::Value(n->name().c_str(), doc.GetAllocator()), rjs::Value(kObjectType), doc.GetAllocator());
+            else
+                json.value.AddMember(
+                    rjs::Value(n->name().c_str(), doc.GetAllocator()), 
+                    rjs::Value(rjs::kObjectType), 
+                    doc.GetAllocator()
+                );
+
+        }else if (json.value.IsArray())  
             json.value.PushBack(rjs::Value(n->name().c_str(), doc.GetAllocator()), doc.GetAllocator());
         else{
             json.value.SetObject();
@@ -277,13 +393,14 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
     else if (n->is_a_nowarning<EffectorRef>())
         saveEffector(json[n->name()], n, doc);
     else if (n->is_a_nowarning<Window>())
-        PLOGW << "create Window " << n->name() << " in " << n->parent()->name();
+        saveWindow(json, n, doc);
     else if (n->is_a_nowarning<NDI::Sender>())
         PLOGW << "create NDI " << n->name() << " in " << n->parent()->name();
     else if (n->is_a_nowarning<Layer>())
         PLOGW << "create Layer " << n->name() << " in " << n->parent()->name();
     else if (n->is_a_nowarning<Artnet>())
-        PLOGW << "create Artnet " << n->name() << " in " << n->parent()->name();
+        saveArtnet(json[n->name()], n, doc);
+        
     
     else
         PLOGW << "need to create " << n->type_name() << " "  << n->name();

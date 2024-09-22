@@ -402,7 +402,7 @@ void Callbacks::init() {
     NODE<Output>::on(Node::RUN, [](Node* node, Output *output){ output->draw(); });
 
 
-    NODE<Output>::on(Node::CHANGE, [](Node* node, Output *output){
+    NODE<NDI::Sender>::on(Node::CHANGE, [](Node* node, Output *output){
 
         if (!output->fb) return;
 

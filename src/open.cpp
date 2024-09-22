@@ -127,7 +127,11 @@ static Node* createNode(JSONVal& json, Node* node) {
 
         PLOGV << "create Node " << json.name() << " in " << node->name();
         
-        node = node->addOwnr<Node>(json.name_v)->active(false);
+        node = node->addOwnr<Node>(json.name_v);
+        if (!node)
+            return nullptr;
+            
+        node->active(false);
 
     }
 
@@ -247,7 +251,7 @@ static Node* createArtnet(JSONVal& json, Node* node) {
 
         n->trig(Node::RUN);
 
-        DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap[JSON_DMX_CHAN, true].num(1)-1, attrs, remap[JSON_QUANTITY].num(1));
+        DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&uni), inst, remap[JSON_DMX_CHAN, true].num(1)-1, attrs, remap[JSON_QUANTITY].num(1));
 
         dmxremap->src.remaps.push_back( dmxremap );
 
@@ -311,6 +315,8 @@ static Node* createWindow(JSONVal& json, Node* node) {
         parent->active(true);
         parent = parent->parent();
     }
+
+    node->name(json.name());
 
     return node;
 }
@@ -428,9 +434,9 @@ void fetch(JSONVal json, Node* node) {
         }
     }
 
-    getNodeData(json, node);
+    if(node)
+        getNodeData(json, node);
 
-    
 
     // and more default ... (wich could be member names ?)
         

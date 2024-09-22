@@ -184,13 +184,13 @@ void Editors::init() {
             std::string str;
 
 
-            auto inst = Instance(*an)[&x.second->m];
+            auto inst = Instance(*an)[x.second.get()];
 
-            str = "universe "+std::to_string(x.first) + " " + std::to_string(inst.offset) + " " + x.second->m.name();
+            str = "universe "+std::to_string(x.first) + " " + std::to_string(inst.offset) + " " + x.second->name();
             ImGui::Text(str.c_str());
 
             ImGui::NewLine();
-            if (RawWidget(an->data()+(*x.second->m.instances.begin())->offset, 512)) {
+            if (RawWidget(an->data()+(*x.second->instances.begin())->offset, 512)) {
 
                 node->update();
 

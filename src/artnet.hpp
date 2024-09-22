@@ -28,9 +28,8 @@ struct DMXRemap : Remap {
 };
 
 struct Artnet;
-struct Universe { 
-  
-  Member m; Artnet* an; int id; Instance* inst; ~Universe(); Universe(Artnet* an, int id); 
+struct Universe : Member{ 
+   Artnet* an; int id; ~Universe(); Universe(Artnet* an, int id); 
 };
 struct Artnet : Member{
 
