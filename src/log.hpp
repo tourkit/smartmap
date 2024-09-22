@@ -12,8 +12,7 @@
 #include "vendors/plog/Appenders/ColorConsoleAppender.h"
 #include "vendors/plog/Appenders/RollingFileAppender.h"
 
-#include <list>
-#include <vector>
+#include <deque>
 #include <string>
 #include <fstream>
 
@@ -40,7 +39,7 @@ struct Log {
             std::string msg;
             plog::Severity severity;
             plog::util::Time time;
-            int id = 0;
+            uint32_t id = 0;
 
         };
 
@@ -48,7 +47,7 @@ struct Log {
 
         virtual void write(const plog::Record& record) PLOG_OVERRIDE;
 
-        std::vector<Message> list;
+        std::deque<Message> list;
     };
 
     Appender appender;

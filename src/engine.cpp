@@ -1,6 +1,7 @@
 #include "engine.hpp"
 #include "drawcall.hpp"
 #include "file.hpp"
+#include "imgui.h"
 #include "layer.hpp"
 #include "output.hpp"
 #include "struct.hpp"
@@ -144,12 +145,6 @@ void Engine::init() {
     dynamic_ubo->quantity(2);
     dynamic_ubo->add(&glsl_data);
 
-
-    
-     debug->addPtr<UBO>(static_ubo)->on(Node::CHANGE, [](Node* n) { 
-        n->is_a<UBO>()->upload(); 
-    })->active(false);
-    debug->addPtr<UBO>(dynamic_ubo)->active(false);
     
     auto main = tree->addOwnr<Node>("main");
     main->onadd<File>([](Node* _this, Node* n){
@@ -160,7 +155,33 @@ void Engine::init() {
         return Node::no_worry;
 
     });
-    
+
+    EDITOR::cb[main] = [](Node* n) {
+
+        if (ImGui::BeginTabBar("##mamain")) {
+            if (ImGui::BeginTabItem("log")) {
+        
+                Editor<Log>::cb_typed(n, &logger);
+                
+                ImGui::EndTabItem(); 
+            }
+            if (ImGui::BeginTabItem("dynubo")) {
+        
+                Editor<UBO>::cb_typed(n, engine.dynamic_ubo);
+                
+                ImGui::EndTabItem(); 
+            }
+            if (ImGui::BeginTabItem("statubo")) {
+        
+                Editor<UBO>::cb_typed(n, engine.static_ubo);
+                
+                ImGui::EndTabItem(); 
+            }
+
+            ImGui::EndTabBar();
+        
+        }
+    }; 
 
     tree->addOwnr<File>("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4");
 

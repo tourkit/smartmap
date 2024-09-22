@@ -2,6 +2,7 @@
 #include "engine.hpp"
 #include "gui.hpp"
 #include "editor.hpp"
+#include <cstdint>
 
 Log::~Log() {}
 Log::Log() {
@@ -22,7 +23,13 @@ void Log::Appender::write(const plog::Record& record) {
         
     }
 
-    list.push_back(Message{plog::FuncMessageFormatter::format(record), record.getSeverity(), record.getTime(), (int)list.size() });
+
+    if (list.size()>1000) {
+        list.pop_front();
+    }
+
+    static uint32_t uid = 0;
+    list.push_back(Message{plog::FuncMessageFormatter::format(record), record.getSeverity(), record.getTime(), uid++ });
 
     // post first line
     std::ifstream ifile(File::loc()+"build/logs/logs.txt");

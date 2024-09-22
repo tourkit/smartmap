@@ -71,7 +71,7 @@ std::string JSONVal::stringify() {
 }
 
 
-  JSONVal::JSONVal(rapidjson::Value &value, std::string name, JSONVal*owner) : value(value), name_v(name), owner(owner) {
+  JSONVal::JSONVal(rapidjson::Value &value, std::string name, JSONVal*owner, JSONVal*parent) : value(value), name_v(name), owner(owner), parent(parent) {
 
     if (!owner)
         owner = this;
@@ -148,7 +148,7 @@ JSONVal JSONVal::operator[](std::string name, bool warn) {
                 
                 if (v.name.IsString() && x  == lower(v.name.GetString())) 
 
-                    return JSONVal(value[x.c_str()], x, owner);
+                    return JSONVal(value[x.c_str()], x, owner, this);
 
 
     if (warn)
@@ -161,7 +161,7 @@ JSONVal JSONVal::operator[](std::string name, bool warn) {
 
 JSONVal JSONVal::operator[](int id, bool warn) { 
 
-    if (value.IsArray() && id < value.GetArray().Size()) return JSONVal(value.GetArray()[id]);
+    if (value.IsArray() && id < value.GetArray().Size()) return JSONVal(value.GetArray()[id], "", owner, this);
     
     if (warn)
         {PLOGW << "no " << id;}

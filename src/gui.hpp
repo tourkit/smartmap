@@ -83,7 +83,7 @@ struct GUI {
 
   std::vector<std::shared_ptr<EditorWidget>> editors;
   std::vector<TreeWidget*> trees;
-  int member_count = 0;
+  static inline int member_count = 0;
 
   struct Window {
 

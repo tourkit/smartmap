@@ -94,7 +94,7 @@ static inline Engine &engine = Engine::getInstance();
 
 
 
-#define JSON_DIMENSIONS "dimensions|dimension|dim|size"
+#define JSON_DIMENSIONS "dimensions|dimension|dim|size|resolution"
 #define JSON_OFFSET "offset"
 #define JSON_FILE "file|fichier"
 #define JSON_LAYER "layer"
@@ -110,6 +110,6 @@ static inline Engine &engine = Engine::getInstance();
 #define JSON_SOURCE "source|src"
 #define JSON_DESTINATION "destination|dst"
 #define JSON_CHILDRENS "childs|childrens|members"
-#define JSON_CHILDRENS_REMAP "remap"
+#define JSON_CHILDRENS_REMAP "remap|remaps"
 #define JSON_NODE "node"
 #define JSON_ACTIVE "active|act|state"

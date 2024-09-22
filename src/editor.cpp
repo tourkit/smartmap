@@ -76,7 +76,7 @@ void EditorWidget::draw() {
         auto fs = ImGui::GetCurrentWindow()->FontWindowScale;
         ImGui::SetWindowFontScale(fs*1.2);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(4,0));
-        if (ImGui::Button((std::string(locked?ICON_LC_LOCK_KEYHOLE:ICON_LC_LOCK_KEYHOLE_OPEN)+"##locked"+std::to_string((size_t)this)).c_str())) {
+        if (ImGui::ButtonEx((std::string(locked?ICON_LC_LOCK_KEYHOLE:ICON_LC_LOCK_KEYHOLE_OPEN)+"##locked"+std::to_string((size_t)this)).c_str())) {
             locked = !locked;
             if (!gui->selected)
                 gui->selected = selected;
@@ -117,6 +117,9 @@ void EditorWidget::draw() {
         ImGui::SameLine(); ImGui::Text(str.c_str()); }
     ImGui::PopStyleColor(1);
 
+
+    if(EDITOR::cb.find(selected) != EDITOR::cb.end()) 
+        EDITOR::cb[selected](selected);
 
     if(EDITOR::ptr.find(selected->stored_type) != EDITOR::ptr.end()) 
 

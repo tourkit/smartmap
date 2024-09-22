@@ -19,7 +19,7 @@ struct File;
 
         std::vector<JSONVal> childrens; 
 
-        JSONVal(rapidjson::Value &value, std::string name = "", JSONVal*owner = nullptr);
+        JSONVal(rapidjson::Value &value, std::string name = "", JSONVal*owner = nullptr, JSONVal* parent = nullptr);
     
         ~JSONVal() ;
 
@@ -50,7 +50,7 @@ struct File;
 
         std::string stringify();
 
-        JSONVal*owner = nullptr;
+        JSONVal*owner = nullptr, *parent = nullptr;
         
     };
 

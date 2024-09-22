@@ -114,7 +114,7 @@ static Node* createNode(JSONVal& json, Node* node) {
     if (!json.name_v.length())
         return nullptr;
 
-    if (json.name_v != "__JSONVAL__") {
+    if (json.name_v != "__JSONVAL__" && json.name_v != "childrens") {
 
         PLOGV << "create Node " << json.name() << " in " << node->name();
         
@@ -122,12 +122,13 @@ static Node* createNode(JSONVal& json, Node* node) {
 
     }
 
-    for (auto &c : json[JSON_CHILDRENS]) 
-        fetch(c, node); 
-
     if (!json[JSON_TYPE].str().length()) // only for Node use case metioned later
         for (auto &c : json) 
             fetch(c, node); 
+    else
+        for (auto &c : json[JSON_CHILDRENS]) 
+            fetch(c, node); 
+
 
 
     return node;
@@ -204,44 +205,46 @@ static Node* createArtnet(JSONVal& json, Node* node) {
     PLOGV << "create Artnet " << json.name() << " in " << node->name();
 
     
-        Node* n = node->addOwnr<Artnet>( json[JSON_IP_ADDRESS, true].str() ) ;
+    Node* n = node->addOwnr<Artnet>( json[JSON_IP_ADDRESS, true].str() ) ;
 
-        n->active(1)->name( json.name() );
+    n->active(1)->name( json.name() );
+    node->active(1);
 
-        for (auto &remap : json[JSON_CHILDRENS_REMAP]) {
 
-            Node* dest = engine.tree->find(remap[JSON_DESTINATION, true].str());
+    for (auto &remap : json[JSON_CHILDRENS_REMAP]) {
 
-            if (!dest) 
-                continue; 
+        Node* dest = engine.tree->find(remap[JSON_DESTINATION, true].str());
 
-            auto inst = Instance(*engine.dynamic_ubo)[dest->parent()->is_a<Member>()][dest->is_a_nowarning<Member>()];
+        if (!dest) 
+            continue; 
 
-            if (inst.stl.size() == 1) 
-                { PLOGW << json_error; continue; }
+        auto inst = Instance(*engine.dynamic_ubo)[dest->parent()->is_a<Member>()][dest->is_a_nowarning<Member>()];
 
-            std::vector<DMXRemap::Attribute> attrs;
-            for (auto &x : remap["patch"])
-                if (x.isnum()) 
-                    attrs.push_back({(int)x.num(1)});
+        if (inst.stl.size() == 1) 
+            { PLOGW << json_error; continue; }
 
-            auto &an = *n->is_a<Artnet>();
-            
-            auto &uni = an.universe(remap[JSON_DMX_UNI, true].num(1)-1);
+        std::vector<DMXRemap::Attribute> attrs;
+        for (auto &x : remap["patch"])
+            if (x.isnum()) 
+                attrs.push_back({(int)x.num(1)});
 
-            n->trig(Node::RUN);
+        auto &an = *n->is_a<Artnet>();
+        
+        auto &uni = an.universe(remap[JSON_DMX_UNI, true].num(1)-1);
 
-            DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap[JSON_DMX_CHAN, true].num(1)-1, attrs, remap[JSON_QUANTITY].num(1));
+        n->trig(Node::RUN);
 
-            dmxremap->src.remaps.push_back( dmxremap );
+        DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&(uni.m)), inst, remap[JSON_DMX_CHAN, true].num(1)-1, attrs, remap[JSON_QUANTITY].num(1));
 
-            auto out = n->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(remap.name());
+        dmxremap->src.remaps.push_back( dmxremap );
 
-            dest->referings.insert( out );
+        auto out = n->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(remap.name());
 
-        }
+        dest->referings.insert( out );
 
-    
+    }
+
+
     return node;
 
 }

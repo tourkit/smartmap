@@ -53,7 +53,7 @@ void Editors::init() {
 
 
 
-        Editor<Output>::cb( node, sender);
+        Editor<Output>::cb_typed( node, sender);
 
 
             ImGui::NewLine();
@@ -208,7 +208,7 @@ void Editors::init() {
 
         using namespace ImGui;
 
-        Editor<Output>::cb( node, window);
+        Editor<Output>::cb_typed( node, window);
 
 
         NewLine();
@@ -229,7 +229,7 @@ void Editors::init() {
         NewLine();
 
 
-        if (window->shader) Editor<ShaderProgram>::cb( node, window->shader);
+        if (window->shader) Editor<ShaderProgram>::cb_typed( node, window->shader);
 
     });
 
@@ -536,7 +536,7 @@ void Editors::init() {
         // for (auto s: ubo->subscribers) subs_str += " #"+std::to_string(s->id);
         // ImGui::Text(subs_str.c_str());
 
-        Editor<Member>::cb( node, ubo);
+        Editor<Member>::cb_typed( node, ubo);
 
     });
 
@@ -610,7 +610,7 @@ void Editors::init() {
         
         }
 
-        Editor<Member>::cb( node, vbo);
+        Editor<Member>::cb_typed( node, vbo);
 
     });
 
@@ -621,7 +621,7 @@ void Editors::init() {
 
     Editor<Atlas>([](Node* node, Atlas *atlas){
 
-        if (atlas) Editor<Texture>::cb( node, atlas->texture);
+        if (atlas) Editor<Texture>::cb_typed( node, atlas->texture);
         else PLOGE << "NONONON";
 
         // Editor<Object>::cb( node, atlas->m);  // tofix
@@ -655,7 +655,7 @@ void Editors::init() {
 
         // ImGui::Text(("attachment "+std::to_string(fb->attachments)).c_str());
 
-        Editor<Texture>::cb( node, &fb->texture);
+        Editor<Texture>::cb_typed( node, &fb->texture);
 
     });
 
@@ -687,7 +687,7 @@ void Editors::init() {
         // if (ImGui::SliderInt2( "blend", &blendin, 0, enums.size()-1)) glBlendFunc(enums[blendin],enums[blendout]);
 
 
-        Editor<Log>::cb( node, &logger);
+        Editor<Log>::cb_typed( node, &logger);
 
     });
         ////////// Log.HPP
@@ -714,10 +714,10 @@ void Editors::init() {
         start.y += GetScrollY();
 
 
-        int max_lines = 1000;
+        int max_lines = 200;
         int count = 0;
 
-        static int line_count = 0;
+        static int last_id = 0;
 
         for (int member_count = log_n->appender.list.size()-1; member_count>=0; member_count-- ) {
 
@@ -759,9 +759,9 @@ void Editors::init() {
             }
         }
 
-        if (line_count != log_n->appender.list.size()) {
-            SetScrollY(GetScrollMaxY()+((log_n->appender.list.size()-line_count)*GetCurrentContext()->FontBaseSize*2));
-            line_count = log_n->appender.list.size();
+        if (last_id != log_n->appender.list.back().id) {
+            SetScrollY(GetScrollMaxY()+((log_n->appender.list.size())*GetCurrentContext()->FontBaseSize*2));
+            last_id = log_n->appender.list.back().id;
             
         }
         ImGui::SetCursorPos(start); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }start.x+=50;
@@ -770,7 +770,7 @@ void Editors::init() {
         ImGui::SetCursorPos(start);if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }start.x+=25;
         ImGui::SetCursorPos(start);if (ImGui::ColorButton("error", error)) { curr = &error.x; ImGui::OpenPopup("picker"); }start.x+=25;
         ImGui::SetCursorPos(start);if (ImGui::ColorButton("verbose##vcolop", verbose)) { curr = &verbose.x; ImGui::OpenPopup("picker"); }start.x+=25;
-        ImGui::SetCursorPos(start);ImGui::Checkbox("verbose", &is_verbose);start.x+=25;
+        ImGui::SetCursorPos(start); if (ImGui::Checkbox("verbose", &is_verbose)) { SetScrollY(GetScrollMaxY()); } start.x+=25;
         ImGui::SetCursorPos(start); if (ImGui::BeginPopup("picker")) { ImGui::ColorPicker4("#dfsdinfo", curr); ImGui::EndPopup(); }
         ImGui::SetCursorPos(curpos);
     });
@@ -837,7 +837,7 @@ void Editors::init() {
 
     });
 
-    Editor<FileEffector>([](Node* node, FileEffector *e){ Editor<Effector>::cb( node, e); });
+    Editor<FileEffector>([](Node* node, FileEffector *e){ Editor<Effector>::cb_typed( node, e); });
 
 
     // REMAP.HPP
@@ -894,12 +894,12 @@ void Editors::init() {
                     auto effectable = c->is_a_nowarning<Effectable>();
                     if (!effectable) 
                         continue;
-                    Editor<Effectable>::cb(c, effectable);
+                    Editor<Effectable>::cb_typed(c, effectable);
 
                     // ImGui::BeginPopupEx
                 }
                 
-                Editor<Effectable>::cb(node, dc);
+                Editor<Effectable>::cb_typed(node, dc);
 
                 ImGui::EndTabItem();
 
@@ -907,7 +907,7 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("ShaderProgram")) {
 
-                Editor<ShaderProgram>::cb( node, &dc->shader);
+                Editor<ShaderProgram>::cb_typed( node, &dc->shader);
 
                 ImGui::EndTabItem();
 
@@ -915,7 +915,7 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("VBO")) {
 
-                Editor<VBO>::cb( node, &dc->vbo);
+                Editor<VBO>::cb_typed( node, &dc->vbo);
 
                 ImGui::EndTabItem();
 
@@ -943,7 +943,7 @@ void Editors::init() {
         // }
             
         
-        Editor<Layer>::cb( node, ubl);
+        Editor<Layer>::cb_typed( node, ubl);
 
     });
 
@@ -963,7 +963,7 @@ void Editors::init() {
                 
                 }
 
-                Editor<FrameBuffer>::cb( node, &layer->fb);
+                Editor<FrameBuffer>::cb_typed( node, &layer->fb);
 
                 ImGui::EndTabItem();
 
@@ -973,7 +973,7 @@ void Editors::init() {
                 
                 if (ImGui::BeginTabItem(x.second->sampler_name.c_str())) {
 
-                    Editor<Texture>::cb( node, x.second);
+                    Editor<Texture>::cb_typed( node, x.second);
 
                     ImGui::EndTabItem();
 
@@ -986,7 +986,7 @@ void Editors::init() {
         }
 
 
-        Editor<DrawCall>::cb( node, layer);
+        Editor<DrawCall>::cb_typed( node, layer);
 
     });
 
