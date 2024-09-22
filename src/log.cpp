@@ -24,7 +24,7 @@ void Log::Appender::write(const plog::Record& record) {
     }
 
 
-    if (list.size()>1000) {
+    if (list.size()>3000) {
         list.pop_front();
     }
 

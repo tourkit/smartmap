@@ -77,6 +77,15 @@ void Open::editors(){
 
 }
 
+static void getNodeData(JSONVal& json, Node* node) {
+
+    if (json[JSON_ACTIVE].name().length())
+        node->active(json[JSON_ACTIVE].b());
+
+    auto color = json["color"];
+    node->color = {color[0].num(1),color[1].num(1),color[2].num(1),color[3].num(1)};
+
+}
 
 static void fetch(JSONVal val, Node* node);
 
@@ -148,6 +157,8 @@ static Node* createEffector(JSONVal& json, Node* node) {
     node->add(file);
 
     auto effector_ = node->childrens.back();
+    
+    getNodeData(json, effector_);
 
     return effector_;
 
@@ -171,6 +182,8 @@ static Node* createModel(JSONVal& json, Node* node) {
     
     for (auto effector : json[JSON_EFFECTORS]) 
         createEffector(effector, model_);
+
+    getNodeData(json, model_);
 
     return model_;
 
@@ -387,12 +400,18 @@ void fetch(JSONVal json, Node* node) {
 
         if (type.length()) {
 
-            if (type==JSON_NODE) node = createNode(json, node);
-            else if (type==JSON_FILE) node = createFile(json, node);
-            else if (type==JSON_LAYER) node = createLayer(json, node);
-            else if (type==JSON_WINDOW) node = createWindow(json, node);
-            else if (type=="ndi") node = createNDI(json, node);
-            else if (type==JSON_ARTNET) node = createArtnet(json, node);
+            if (type==JSON_NODE) 
+                node = createNode(json, node);
+            else if (type==JSON_FILE) 
+                node = createFile(json, node);
+            else if (type==JSON_LAYER) 
+                node = createLayer(json, node);
+            else if (type==JSON_WINDOW) 
+                node = createWindow(json, node);
+            else if (type=="ndi") 
+                node = createNDI(json, node);
+            else if (type==JSON_ARTNET) 
+                node = createArtnet(json, node);
             else
                 PLOGW <<"unknown type \""<< type << " " << (type==JSON_FILE) << " " << (JSON_FILE)<< "\" for " << json.name();   
             
@@ -409,11 +428,9 @@ void fetch(JSONVal json, Node* node) {
         }
     }
 
-    if (json[JSON_ACTIVE].name().length())
-        node->active(json[JSON_ACTIVE].b());
+    getNodeData(json, node);
 
-    auto color = json["color"];
-    node->color = {color[0].num(1),color[1].num(1),color[2].num(1),color[3].num(1)};
+    
 
     // and more default ... (wich could be member names ?)
         

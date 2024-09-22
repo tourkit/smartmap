@@ -15,6 +15,11 @@
 #include <cstring>
 #include <string>
 
+
+static std::string filter_str_ = "filter";
+static std::string filter_str_alt = "ctrl + /";
+static const char* filter_str = filter_str_.c_str();
+
 TreeWidget::TreeWidget(GUI* gui) : GUI::Window("Tree", gui) {
 
     memset( &search_str[0], 0, sizeof(search_str) );
@@ -45,6 +50,30 @@ void TreeWidget::draw()  {
 
 
     static int curr = 0;
+
+    if (ImGui::IsKeyPressed(ImGuiKey_LeftCtrl) && !strcmp(&search_str[0], filter_str_.c_str())) {
+        
+        memset( &search_str[0], 0, sizeof(search_str) );
+
+        filter_str = filter_str_alt.c_str();
+
+        strncpy( &search_str[0], &filter_str[0], sizeof(filter_str) );
+
+    }
+    
+    if (ImGui::IsKeyReleased(ImGuiKey_LeftCtrl)) {
+        
+        filter_str = filter_str_.c_str();
+        
+        if (!strcmp(&search_str[0], filter_str_alt.c_str())) {
+
+            memset( &search_str[0], 0, sizeof(search_str) );
+
+            strncpy( &search_str[0], &filter_str[0], sizeof(filter_str) );
+
+        }
+
+    }
     
 
     if (ImGui::IsItemDeactivated() && search_str[0] == '\0') {
@@ -59,7 +88,7 @@ void TreeWidget::draw()  {
     static bool slashdown = false;
 
     if (filtering && ImGui::IsWindowFocused() && ImGui::IsKeyPressed(ImGuiKey_Tab) && !ImGui::IsKeyDown(ImGuiKey_LeftCtrl) ) {
-
+        
         ImGui::SetKeyboardFocusHere(1);
 
         if (ImGui::IsItemFocused()){
@@ -106,6 +135,8 @@ void TreeWidget::draw()  {
             filtering  = true;        
 
         }
+
+        filter_str = filter_str_.c_str();
         
     }
     

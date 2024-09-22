@@ -16,8 +16,6 @@ struct TreeWidget : GUI::Window {
 
     bool TreeViewNode(Node* node, int depth=0, std::array<float,4>& color=color_v);
 
-    std::string filter_str = "filter";
-
     std::array<char,100> search_str;
 
     bool filtering = false;

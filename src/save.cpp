@@ -5,6 +5,7 @@
 
 #include "engine.hpp"
 #include "json.hpp"
+#include "model.hpp"
 #include "node.hpp"
 #include "atlas.hpp"
 #include "artnet.hpp"
@@ -139,7 +140,8 @@ static void saveEffector(JSONVal json, Node* n, rjs::Document& doc) {
 
 auto ref = n->is_a<EffectorRef>();
 
-// json.value.PushBack(rjs::Value(ref->effector->name().c_str(), doc.GetAllocator()), doc.GetAllocator());
+// json.value.setobject(); for mode info like node color
+
 
 }
 
@@ -160,10 +162,14 @@ static void saveModel(JSONVal json, Node* n, rjs::Document& doc) {
     if (model->effector_refs.size()){
 
         rjs::Value effectors(rjs::kArrayType);
+
+        n->each<EffectorRef>([&](Node* n, EffectorRef* ref) {
+
+            fetch(effectors, n, doc);
+
+        });
+
         json.value.AddMember("effectors", effectors, doc.GetAllocator());
-        auto effectors_ = json["effectors"];
-        for (auto x : n->childrens) 
-            fetch(effectors_, x, doc);
 
     }
 
@@ -188,20 +194,29 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
         json.value.AddMember("quantity", layer->quantity(), doc.GetAllocator());
 
     if (layer->models.size()){
-
+        
         rjs::Value models(rjs::kObjectType);
+
+        n->each<Model>([&](Node* n, Model* m) {
+
+            fetch(models, n, doc);
+
+        });
+
         json.value.AddMember("models", models, doc.GetAllocator());
-        auto models_ = json["models"];
-        for (auto x : n->childrens) 
-            fetch(models_, x, doc);
 
     }
     if (layer->effector_refs.size()){
 
         rjs::Value effectors(rjs::kArrayType);
+
+        n->each<EffectorRef>([&](Node* n, EffectorRef* ref) {
+
+            fetch(effectors, n, doc);
+
+        });
+
         json.value.AddMember("effectors", effectors, doc.GetAllocator());
-        for (auto x : n->childrens) 
-            fetch(json["effectors"], x, doc);
 
     }
 
@@ -233,16 +248,21 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
     
     auto found = json[n->name()];
 
-    if (!json.isobj())
-        json.value.SetObject();
 
     if (found.name().length()) {
         found.value.RemoveAllMembers();
         PLOGW << "found need tpo cleaqr existing " << n->name() ;
     }else {
 
-        json.value.AddMember(rjs::Value(n->name().c_str(), doc.GetAllocator()), rjs::Value(rjs::kObjectType), doc.GetAllocator());
-        // json_v
+        if (json.value.IsObject())  
+            json.value.AddMember(rjs::Value(n->name().c_str(), doc.GetAllocator()), rjs::Value(rjs::kObjectType), doc.GetAllocator());
+        else if (json.value.IsArray())  
+            json.value.PushBack(rjs::Value(n->name().c_str(), doc.GetAllocator()), doc.GetAllocator());
+        else{
+            json.value.SetObject();
+            PLOGE << "cant create json entry for " << n->name();
+        }
+        
         PLOGW << "create json entry for " << n->name();
     }
 

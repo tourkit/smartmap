@@ -238,6 +238,10 @@ void Engine::run(std::function<void()> cb) {
         
             gui_v->draw();
         
+        tree->run();
+
+        cb();
+        
         if (dynamic_ubo) {   
             
             static int frame = 0;
@@ -253,17 +257,13 @@ void Engine::run(std::function<void()> cb) {
 
             int from = 0;//alt ? dynubofp : 0 ;
 
-            int size = dynubofp;
+            int offset = 0;
 
-            int to = from+size;
+            int to = from+dynubofp+offset;
             
-            dynamic_ubo->upload(dynamic_ubo->data()+from, to, size);
+            dynamic_ubo->upload(dynamic_ubo->data()+from, to, offset);
             
         }
-        
-        tree->run();
-
-        cb();
 
     });
 
