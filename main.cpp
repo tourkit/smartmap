@@ -7,9 +7,7 @@
 
 
 #include "engine.hpp"
-#include "gui.hpp"
-#include "editor.hpp"
-#include "instance.hpp"
+#include "model.hpp"
 
 int main() {
 
