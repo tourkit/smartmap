@@ -542,6 +542,12 @@ void Editors::init() {
 
     ////////// MODEL.HPP
 
+    Editor<Model>([&](Node* node, Model *model){
+
+        Editor<Effectable>::cb_typed( node, model);
+
+    });
+
     Editor<Effectable>([&](Node* node, Effectable *effectable){
 
         static std::map<Effectable*,int> effector_currents;
@@ -889,14 +895,6 @@ void Editors::init() {
                     Text(("instances: " + std::to_string((dc->models.size() == 1 ? dc->models[0]->quantity():1))).c_str());
 
                     EndPopup();
-                }
-                for (auto c : node->childrens) {
-                    auto effectable = c->is_a_nowarning<Effectable>();
-                    if (!effectable) 
-                        continue;
-                    Editor<Effectable>::cb_typed(c, effectable);
-
-                    // ImGui::BeginPopupEx
                 }
                 
                 Editor<Effectable>::cb_typed(node, dc);
