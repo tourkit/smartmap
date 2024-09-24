@@ -183,7 +183,7 @@ void Engine::init() {
         }
     }; 
 
-    tree->addOwnr<File>("quad.obj", "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4");
+    tree->addPtr<File>(&VBO::quad);
 
     PLOGI << "Engine initialized";
     PLOGV << "===========================";

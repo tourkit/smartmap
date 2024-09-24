@@ -324,47 +324,89 @@ void Callbacks::init() {
 
     ////////// Artnet.HPP
 
+
+    // NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){ 
+
+
+        
+    // });
+
     NODE<Artnet>::on(Node::RUN, [](Node* node, Artnet *an){ 
         
         an->run();
 
-        if (an->universes.size() != node->childrens.size()) 
-            node->trig(Node::CHANGE);
+        static int size = 0;
+
+        if (an->universes.size() != size) {
+
+            std::vector<Universe*> missing;
+
+            for (auto uni : an->universes) {
+
+                bool found = false;
+                for (auto n : node->childrens) {
+                    auto uni_ = n->is_a_nowarning<Universe>();
+                    if (uni_ == uni.second.get()) {
+                        found = true;
+                        break;
+                    }
+
+                }
+
+                if (!found) 
+                    missing.push_back(uni.second.get());
+
+            }
+
+            if (missing.size())
+                for (auto x : missing)
+                    node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id+1));
+            
+        
+            missing.clear();
+
+            size = an->universes.size();
+        }
 
     });
     
     NODE<Artnet>::is_a<Member>();
 
-    NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){
+    // NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){
 
-        std::vector<Universe*> missing;
+    //     std::vector<Universe*> missing;
 
-        for (auto uni : an->universes) {
+    //     for (auto uni : an->universes) {
 
-            bool found = false;
-            for (auto n : node->childrens) {
-                auto uni_ = n->is_a_nowarning<Universe>();
-                if (uni_ == uni.second.get()) {
-                    found = true;
-                    break;
-                }
+    //         bool found = false;
+    //         for (auto n : node->childrens) {
+    //             auto uni_ = n->is_a_nowarning<Universe>();
+    //             if (uni_ == uni.second.get()) {
+    //                 found = true;
+    //                 break;
+    //             }
 
-            }
+    //         }
 
-            if (!found) 
-                missing.push_back(uni.second.get());
+    //         if (!found) 
+    //             missing.push_back(uni.second.get());
 
-        }
+    //     }
 
-        for (auto x : missing)
-            node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id+1));
-        
+    //     for (auto x : missing) {
+    //         auto uni_ = node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id+1));
+    //     }
     
-        missing.clear();
+    //     missing.clear();
 
-    });
+    // });
 
     //////// Remap.HPP
+
+    NODE<DMXRemap>::on(Node::CHANGE, [](Node* node, DMXRemap *remap) { 
+        remap->extract(remap->dst->m()); 
+    });
+
 
     NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { remap->update(); });
 
@@ -376,7 +418,7 @@ void Callbacks::init() {
 
         if (!artnet.universes.size()) {
             artnet.universe(0);
-            _this->trig(Node::CHANGE);
+            _this->trig(Node::RUN);
         }
         _this->eachBreak<Universe>([&](Node* n, Universe* uni_){
 

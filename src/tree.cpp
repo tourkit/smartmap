@@ -1,5 +1,4 @@
 #include "tree.hpp"
-#include <cstddef>
 
 
 
@@ -320,7 +319,9 @@ bool TreeWidget::TreeViewNode(Node* node, int depth, std::array<float,4>& color)
                 
                 ImGui::SetCursorPosX(t_pos.x+21);
                 
+                PushID(gui->member_count++);
                 ButtonEx(node->name().c_str(),ImVec2(0,0),ImGuiButtonFlags_MouseButtonRight | ImGuiButtonFlags_MouseButtonLeft);
+                PopID();
 
                 PopStyleColor();
 

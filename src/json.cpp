@@ -103,7 +103,12 @@ std::string JSONVal::stringify() {
 
 JSONVal::~JSONVal() { }
 
+JSONVal::JSONVal(const JSONVal& other) : value(other.value), owner(other.owner), parent(other.parent), childrens(other.childrens), name_v(other.name_v) {
 
+
+
+
+}
 
 JSONVal& JSONVal::find(std::function<bool(JSONVal&)> cb) {
 

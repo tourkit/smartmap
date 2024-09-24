@@ -43,14 +43,14 @@ void Log::Appender::write(const plog::Record& record) {
 
             if (engine.gui_v){
                 bool already = false;
-                auto debug = engine.tree->find("debug");
+                auto debug = engine.tree->find("main");
                 for (auto x : engine.gui_v->editors) 
                     if (x->selected == debug) {
                         already = true;
                         break;
                 }
                 if (!already)
-                    engine.gui_v->editors.push_back(std::make_shared< EditorWidget>(engine.gui_v, engine.tree->find("debug")));
+                    engine.gui_v->editors.push_back(std::make_shared< EditorWidget>(engine.gui_v, engine.tree->find("main")));
         
             }else
                 std::cout << cout;

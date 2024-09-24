@@ -275,6 +275,8 @@ static Node* createRemap(JSONVal& json, Node* node) {
 }
 
 
+std::map<Node*,JSONVal> inputs_dst;
+
 static Node* createArtnet(JSONVal& json, Node* node) {
 
     PLOGV << "create Artnet " << json.name() << " in " << node->name();
@@ -291,16 +293,16 @@ static Node* createArtnet(JSONVal& json, Node* node) {
 
         auto &uni = an.universe(std::stoi(uni_.name())-1);
 
-        an_->trig(Node::CHANGE); // update childs list
+        an_->trig(Node::RUN); // update childs list
 
         auto uni_node = an_->childrens.back(); // wild guess
 
         for (auto &remap_ : uni_[JSON_CHILDRENS_REMAP]) 
-            createRemap(remap_, uni_node);
+            inputs_dst.emplace(uni_node, remap_);
 
         if (!uni_[JSON_CHILDRENS_REMAP].isobj())
             for (auto &remap_ : uni_) 
-                createRemap(remap_, uni_node);
+            inputs_dst.emplace(uni_node, remap_);
             
     }
 
@@ -363,6 +365,7 @@ static Node* createWindow(JSONVal& json, Node* node) {
     return node;
 }
 
+
 static Node* createLayer(JSONVal& json, Node* node) {
         
     PLOGV << "create Layer " << json.name() << " in " << node->name();
@@ -408,7 +411,14 @@ static Node* createLayer(JSONVal& json, Node* node) {
 
     lay_->name(json.name());
     lay_->close();
-    lay_->active(true);
+
+    auto parent = lay_;
+    while(parent) {
+
+        parent->active(true);
+        parent = parent->parent();
+
+    }
 
     for (auto model : json["models"]) 
         createModel(model, lay_);
@@ -422,7 +432,7 @@ static Node* createLayer(JSONVal& json, Node* node) {
     
 }
 
-
+std::map<Node*,JSONVal> layers_lst;
 void fetch(JSONVal json, Node* node) {
 
     Node* already = nullptr;
@@ -453,7 +463,7 @@ void fetch(JSONVal json, Node* node) {
             else if (type==JSON_FILE) 
                 node = createFile(json, node);
             else if (type==JSON_LAYER) 
-                node = createLayer(json, node);
+                layers_lst.emplace(node,json);
             else if (type==JSON_WINDOW) 
                 node = createWindow(json, node);
             else if (type=="ndi") 
@@ -516,15 +526,17 @@ void Open::json(std::string path) {
 
     JSONVal doc(json_v.document, "__JSONVAL__");
 
-
     for (auto x : doc) 
         fetch(x, engine.tree);
-    
 
+    for (auto x : layers_lst) 
+        createLayer(x.second, x.first);
+    outputs_src.clear();
 
+    for (auto x : inputs_dst) 
+        createRemap(x.second, x.first);
+    inputs_dst.clear();
 
     editors();
-    
-    outputs_src.clear();
 
 }

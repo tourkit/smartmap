@@ -20,6 +20,8 @@
 #include "remap.hpp"
 #include "window.hpp"
 
+#include <boost/algorithm/string/replace.hpp>
+
 
 void Save::medias(){
 
@@ -213,7 +215,12 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
 
             rjs::Value remap_(kObjectType);
             remap_.AddMember("channel",remap->chan+1,doc.GetAllocator());
-            remap_.AddMember("destination",rjs::Value(remap->dst->stl_name(1).c_str(), doc.GetAllocator()),doc.GetAllocator());
+
+            auto stlname = remap->dst->stl_name(1);
+
+            boost::replace_all(stlname, "dynamic_ubo::", "");
+
+            remap_.AddMember("destination",rjs::Value(stlname.c_str(), doc.GetAllocator()),doc.GetAllocator());
             rjs::Value patch_(kArrayType);
             for (auto attr : remap->attributes) {
                 
@@ -309,7 +316,12 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
 
     PLOGW << "create Layer " << n->name();
 
-    json.value.AddMember("type", "layer", doc.GetAllocator());
+    auto* val_ = &json.value;
+    if (val_->HasMember(n->name().c_str()))
+        val_ = &(*val_)[n->name().c_str()];
+    auto &val = *val_;
+
+    val.AddMember("type", "layer", doc.GetAllocator());
     
     auto layer = n->is_a<Layer>();
 
@@ -318,10 +330,10 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
     dims.PushBack(layer->fb.texture.width, doc.GetAllocator());
     dims.PushBack(layer->fb.texture.height, doc.GetAllocator());
 
-    json.value.AddMember("resolution", dims, doc.GetAllocator());
+    val.AddMember("resolution", dims, doc.GetAllocator());
 
     if (layer->quantity() != 1)
-        json.value.AddMember("quantity", layer->quantity(), doc.GetAllocator());
+        val.AddMember("quantity", layer->quantity(), doc.GetAllocator());
 
     if (layer->models.size()){
         
@@ -333,7 +345,7 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
 
         });
 
-        json.value.AddMember("models", models, doc.GetAllocator());
+        val.AddMember("models", models, doc.GetAllocator());
 
     }
     if (layer->effector_refs.size()){
@@ -346,7 +358,7 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
 
         });
 
-        json.value.AddMember("effectors", effectors, doc.GetAllocator());
+        val.AddMember("effectors", effectors, doc.GetAllocator());
 
     }
 
@@ -413,7 +425,7 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
     else if (n->is_a_nowarning<File>())
         saveFile(json[n->name()], n, doc);
     else if (n->is_a_nowarning<Layer>())
-        saveLayer(json[n->name()], n, doc);
+        saveLayer(json, n, doc);
     else if (n->is_a_nowarning<Model>())
         saveModel(json[n->name()], n, doc);
     else if (n->is_a_nowarning<EffectorRef>())
