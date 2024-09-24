@@ -29,7 +29,7 @@ struct DMXRemap : Remap {
 
 struct Artnet;
 struct Universe : Member{ 
-   Artnet* an; int id; ~Universe(); Universe(Artnet* an, int id); 
+   Artnet* an; int id; Instance* instance = nullptr; ~Universe(); Universe(Artnet* an, int id); 
 };
 struct Artnet : Member{
 

@@ -387,17 +387,28 @@ void Callbacks::init() {
 
     NODE<DMXRemap>::is_a<Remap>();
 
-    NODE<DMXRemap>::onadd<Member>([](Node*_this,Node*node){ 
+    NODE<Universe>::onadd<Effectable>([](Node*_this,Node*node){ 
+
+        
+        auto &uni = *_this->is_a<Universe>();
+
+
+
+       auto remap = _this->addOwnr<DMXRemap>(uni.inst, inst, json[JSON_DMX_CHAN, true].num(1)-1, attrs, json[JSON_QUANTITY].num(1));
+
+
+        uni.
+
+        
+        return Node::no_worry; 
+
+    });
+
+    NODE<DMXRemap>::onadd<Effectable>([](Node*_this,Node*node){ 
     
-        // auto &remap = *_this->is_a<DMXRemap>();
-        // auto &member = *node->is_a<Member>();
-        // Instance inst(*engine.dynamic_ubo);
-        // inst.loc(&member);
-        // remap.dst = inst;
-
-        // remap.extract(&member);
-
-        PLOGW << " TODO WARNING ";
+        auto &remap = *_this->is_a<DMXRemap>();
+        auto &effectable = *node->is_a<Effectable>();
+        remap.dst = effectable.instance;
 
         return Node::no_worry; 
     

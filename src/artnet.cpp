@@ -129,6 +129,8 @@ Universe::Universe(Artnet* an, int id) : Member(""+std::to_string(id)), an(an), 
 
     add(&globals.universe);
 
+    // instance = 
+
 }
 
 
