@@ -367,40 +367,37 @@ void Callbacks::init() {
 
     });
 
-
-    NODE<Universe>::onadd<Member>([](Node*_this,Node*node){ 
-
-        // auto uni = _this->is_a<Universe>();
-
-        // auto remap = _this->addOwnr<DMXRemap>(Instance(*uni->an), {}, 1);
-
-        PLOGE << "TOTOTOOTODODODODOD ";
-
-        return nullptr;
-
-    });
-
-
     //////// Remap.HPP
 
     NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { remap->update(); });
 
     NODE<DMXRemap>::is_a<Remap>();
 
-    NODE<Universe>::onadd<Effectable>([](Node*_this,Node*node){ 
+    NODE<Artnet>::onadd<Effectable>([](Node*_this,Node*node){ 
+        
+        auto &artnet = *_this->is_a<Artnet>();
 
+        _this->eachBreak<Universe>([node](Node* n, Universe* uni){
+
+            n->add(node);
+
+            return Node::Break;
+
+        });
+    
+        return Node::no_worry; 
+
+    });
+    NODE<Universe>::onadd<Effectable>([](Node*_this,Node*node){ 
         
         auto &uni = *_this->is_a<Universe>();
+        auto &effectable = *_this->is_a<Effectable>();
 
+        auto remap = _this->addOwnr<DMXRemap>(uni.instance, effectable.instance);
 
-
-    //    auto remap = _this->addOwnr<DMXRemap>(uni.inst, inst, json[JSON_DMX_CHAN, true].num(1)-1, attrs, json[JSON_QUANTITY].num(1));
-
-
-    //     uni.
-
-        
-        return Node::no_worry; 
+        remap->add(node);
+    
+        return remap; 
 
     });
 

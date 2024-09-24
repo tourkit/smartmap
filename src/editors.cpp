@@ -190,11 +190,11 @@ void Editors::init() {
             ImGui::Text(str.c_str());
 
             ImGui::NewLine();
-            if (RawWidget(an->data()+(*x.second->instances.begin())->offset, 512)) {
+            // if (RawWidget(an->data()+(*x.second->instances.begin())->offset, 512)) { // TODODOTODOTODO
 
-                node->update();
+            //     node->update();
 
-            }
+            // }
             ImGui::NewLine();
 
         };
