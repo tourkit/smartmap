@@ -15,7 +15,9 @@
     "layer2": { "type": "layer", "resolution": [ 300, 100 ], "models": { "rect1": { "effectors": [ "argb" ] } } }
   },
   "inputs": {
-    "artnet1": { "type": "artnet", "ip": "2.0.0.111", "universes": { "0": { "remap1": { "channel": 0, "destination": 0, "patch": 0 } } } }
+    "artnet1": { "type": "artnet", "ip": "2.0.0.111" 
+  
+  }
   },
   "outputs": {
     "HDMI 1": { "type": "monitor", "resolution": [ 100, 100 ], "source": "layer1" },
@@ -25,8 +27,5 @@
     [ "main::layer1" ],
     [ "main" ],
     [ "effectors::rectangle" ]
-  ],
-  "models": {},
-  "layers": {},
-  "quad.obj": "o quad\n\nv -1 -1 0\nv 1 -1 0\nv -1 1 0\nv 1 1 0\n\nvt 0 0\nvt 1 0\nvt 0 1\nvt 1 1 \n\nf 1/1 2/2 3/3 \nf 2/2 3/3 4/4"
+  ]
 }

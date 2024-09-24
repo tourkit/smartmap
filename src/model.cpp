@@ -14,7 +14,7 @@
 
 Model::Model(File* f, std::string name) : Effectable(name), file(f) {  };
 
-Model::~Model() { if (instance) delete instance; }
+Model::~Model() { }
 
 void Model::convert(File* file, std::string type) {
 
@@ -47,14 +47,14 @@ Model* Modelable::addModel(File* f) {
 
     add(mod);
 
-    for (auto x : getTop()) { // should be one Top only
-
-        x->each([&](Instance& inst){ 
-            if (inst.stl.back().m == mod) 
-                mod->instance = new Instance(inst); 
-        });
-
-    }
+    if (!instance)
+        for (auto x : getTop()) // if no root instance ( per buffer )
+            x->each([&](Instance& inst){ 
+                if (inst.stl.back().m == this) 
+                    instance = new Instance(inst); 
+            });
+            
+    mod->instance = &(new Instance(*instance))->loc(mod);
 
     return mod;
 

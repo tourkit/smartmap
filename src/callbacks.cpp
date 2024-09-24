@@ -350,7 +350,7 @@ void Callbacks::init() {
             }
 
             for (auto x : missing)
-                node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id));
+                node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id+1));
             
         
             missing.clear();
@@ -366,6 +366,20 @@ void Callbacks::init() {
 
 
     });
+
+
+    NODE<Universe>::onadd<Member>([](Node*_this,Node*node){ 
+
+        // auto uni = _this->is_a<Universe>();
+
+        // auto remap = _this->addOwnr<DMXRemap>(Instance(*uni->an), {}, 1);
+
+        PLOGE << "TOTOTOOTODODODODOD ";
+
+        return nullptr;
+
+    });
+
 
     //////// Remap.HPP
 

@@ -212,9 +212,32 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
         n->each<DMXRemap>([&](Node* n, DMXRemap* remap) {
 
             rjs::Value remap_(kObjectType);
-            remap_.AddMember("channel",0,doc.GetAllocator());
-            remap_.AddMember("destination",0,doc.GetAllocator());
-            remap_.AddMember("patch",0,doc.GetAllocator());
+            remap_.AddMember("channel",remap->chan+1,doc.GetAllocator());
+            remap_.AddMember("destination",rjs::Value(remap->dst.stl_name(1).c_str(), doc.GetAllocator()),doc.GetAllocator());
+            rjs::Value patch_(kArrayType);
+            for (auto attr : remap->attributes) {
+                
+                if (attr.min == 0 && attr.max == 1 && attr.active == true) {// aka default val
+                
+                    patch_.PushBack(attr.combining, doc.GetAllocator());
+
+                }else{
+
+                    rjs::Value attr_(kArrayType);
+
+                    attr_.PushBack(attr.combining, doc.GetAllocator());
+                    attr_.PushBack(attr.min, doc.GetAllocator());
+                    attr_.PushBack(attr.max, doc.GetAllocator());
+                    attr_.PushBack(attr.active, doc.GetAllocator());
+
+                    patch_.PushBack(attr_, doc.GetAllocator());
+
+                }
+
+            }
+
+            if (remap->attributes.size())
+                remap_.AddMember("patch",patch_,doc.GetAllocator());
 
             uni_.AddMember(
                 rjs::Value(n->name().c_str(),doc.GetAllocator()), 
@@ -227,7 +250,7 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
         if (n->childrens.size())
 
             universes_.AddMember(
-                rjs::Value(std::to_string(uni->id).c_str(),doc.GetAllocator()), 
+                rjs::Value(std::to_string(uni->id+1).c_str(),doc.GetAllocator()), 
                 rjs::Value(uni_, doc.GetAllocator()), 
                 doc.GetAllocator()
             );
@@ -353,6 +376,9 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
     if (n->hidden) 
         return;
     
+    if (n->type()  == typeid(File) && n->is_a<File>() == &VBO::quad) 
+        return;
+
     auto found = json[n->name()];
 
     if (found.name().length()) {

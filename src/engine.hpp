@@ -111,5 +111,6 @@ static inline Engine &engine = Engine::getInstance();
 #define JSON_DESTINATION "destination|dst"
 #define JSON_CHILDRENS "childs|childrens|members"
 #define JSON_CHILDRENS_REMAP "remap|remaps"
+#define JSON_CHILDRENS_UNI "universes|unis"
 #define JSON_NODE "node"
 #define JSON_ACTIVE "active|act|state"

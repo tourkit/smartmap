@@ -22,6 +22,9 @@ Member::~Member() {
 
     deleteData(false);
 
+     if (instance) 
+        delete instance;
+
     if (copy_v) return;
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);
@@ -440,7 +443,7 @@ void Member::simpleupdate() {
 
 }
 
-void remap2(Instance this_, Instance bkp) {
+void remap(Instance this_, Instance bkp) {
 
     auto m = bkp.stl.back().m;
     
@@ -465,7 +468,7 @@ void remap2(Instance this_, Instance bkp) {
         
         // each eq
         for (int i = 0; i < q; i++) 
-            remap2(this__.eq(i), bkp_.eq(i));
+            remap(this__.eq(i), bkp_.eq(i));
 
     }
 
@@ -515,7 +518,7 @@ void Member::update_pv() {
 
             t->post_change(adding);
 
-            remap2(*t,Instance(*t->stl.front().m->bkp_v));
+            remap(*t,Instance(*t->stl.front().m->bkp_v));
 
             auto bkp_v = t->stl.front().m->bkp_v;
 

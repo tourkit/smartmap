@@ -186,7 +186,7 @@ void Editors::init() {
 
             auto inst = Instance(*an)[x.second.get()];
 
-            str = "universe "+std::to_string(x.first) + " " + std::to_string(inst.offset) + " " + x.second->name();
+            str = "universe "+std::to_string(x.first+1) + " " + std::to_string(inst.offset) + " " + x.second->name();
             ImGui::Text(str.c_str());
 
             ImGui::NewLine();

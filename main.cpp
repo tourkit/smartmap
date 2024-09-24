@@ -6,42 +6,22 @@
 
 
 
-#define IMGUI_DEFINE_MATH_OPERATORS
-#include "imgui.h"
-#include "imgui/imgui_internal.h"
-
 #include "engine.hpp"
 #include "gui.hpp"
 #include "editor.hpp"
-
-
-
-
-
-struct slidetest : GUI::Window {
-
-    using GUI::Window::Window;
-
-    void draw() override {
-
-        static float x=0;
-        ImGui::SliderFloat("x", &x,0,1);
-
-    }
-
-};
-
+#include "instance.hpp"
 
 int main() {
 
     // logger.cout(Sev::warning);
 
     engine.init();
+    
     engine.open("project.json");  
 
+    auto rect1 = engine.tree->find("layer2::rect1")->is_a<Member>();
 
-    // TestWin test(engine.gui_v);
-
+    auto loc_test = rect1->instance;
 
     engine.run();
 

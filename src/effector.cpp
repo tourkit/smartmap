@@ -274,9 +274,11 @@ EffectorRef::EffectorRef(std::string name, Effector* effector ) : Member(""), ef
 // Effectable  ////////////////
 // Effectable  ////////////////
 
-Effectable::~Effectable() {  }
+Effectable::~Effectable() { }
 
-Effectable::Effectable(std::string name) : Member(name) {  }
+Effectable::Effectable(std::string name) : Member(name) { 
+
+ }
 
 bool Effectable::removeEffector(EffectorRef* effector) {
     int i = 0;
