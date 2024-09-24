@@ -63,7 +63,7 @@ void EditorWidget::draw() {
     auto x = 0;ImGui::GetCursorPosX();
 
     std::string name = selected->nameSTL(1)+ " ("+selected->type_name()+")";
-
+    if (selected->referings.size()) name += " *";
     auto tx = ImGui::CalcTextSize(name.c_str()).x;
     if (ImGui::GetWindowDockNode() && !ImGui::GetWindowDockNode()->IsHiddenTabBar() && ImGui::DockNodeBeginAmendTabBar(ImGui::GetWindowDockNode())) {
 
@@ -95,6 +95,16 @@ void EditorWidget::draw() {
         // set next item width
         if (ImGui::Button(name.c_str(), ImVec2(w-200,0)))
             ImGui::OpenPopup("nodecolorpicker");
+        if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(1))
+            ImGui::OpenPopup("referings");
+
+        if (ImGui::BeginPopup("referings")) { 
+            for (auto r : selected->referings) {
+                ImGui::Text(r->name().c_str());
+                ImGui::Separator();
+            }
+            ImGui::EndPopup(); 
+        }
 
         if (ImGui::BeginPopup("nodecolorpicker")) { 
             ImGui::ColorPicker4("#nodecolorpickercolor", &selected->color[0]); 
@@ -109,15 +119,6 @@ void EditorWidget::draw() {
         ImGui::DockNodeEndAmendTabBar();
       }
     
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 0.6f, 0.6f, 1.0f));
-    std::string referings;
-    for (auto r : selected->referings) if (r) referings += (r->type_name()+"::"+r->name())+", ";
-    if (referings.length()) {
-        std::string str = "(refering"+std::string(referings.length()>1?"s":"")+": "+referings.substr(0,referings.length()-2)+")";
-        ImGui::SameLine(); ImGui::Text(str.c_str()); }
-    ImGui::PopStyleColor(1);
-
-
     if(EDITOR::cb.find(selected) != EDITOR::cb.end()) 
         EDITOR::cb[selected](selected);
 
