@@ -394,10 +394,10 @@ void Callbacks::init() {
 
 
 
-       auto remap = _this->addOwnr<DMXRemap>(uni.inst, inst, json[JSON_DMX_CHAN, true].num(1)-1, attrs, json[JSON_QUANTITY].num(1));
+    //    auto remap = _this->addOwnr<DMXRemap>(uni.inst, inst, json[JSON_DMX_CHAN, true].num(1)-1, attrs, json[JSON_QUANTITY].num(1));
 
 
-        uni.
+    //     uni.
 
         
         return Node::no_worry; 
