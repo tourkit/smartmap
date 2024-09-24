@@ -15,8 +15,8 @@
     "layer2": { "type": "layer", "resolution": [ 300, 100 ], "models": { "rect1": { "effectors": [ "argb" ] } } }
   },
   "inputs": {
-    "artnet1": { "type": "artnet", "ip": "2.0.0.111" 
-  
+    "artnet1": { "type": "artnet", "ip": "2.0.0.111", 
+    "universes": { "1": { "remap1": { "channel": 1, "destination": "layer1::rect1", "patch": [ 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1 ] } } } 
   }
   },
   "outputs": {

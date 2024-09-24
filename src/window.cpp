@@ -103,8 +103,16 @@ Window::Window(uint32_t width, uint32_t height, uint32_t offset_x, uint32_t offs
 
 static void framebuffer_size_callback(GLFWwindow* id, int width, int height) { glViewport(0, 0, width, height); }
 
+bool Window::visibility() {
+
+    return visibility_v;
+
+}
+
 void Window::visibility(bool value) {
 
+    visibility_v = value;
+    
     if (value){
 
         pos(offset_x, offset_y);

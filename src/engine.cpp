@@ -226,11 +226,12 @@ void Engine::run(std::function<void()> cb) {
     if (!found)
         engine.tree->find("quad")->hidden = false;
 
-    // window.fit();
-    // window.size(50,50);
+    if (!gui_v && !window.visibility()){
 
-    if (!gui_v)
         window.visibility(true);
+        window.size(50,50);
+
+    }
     
     window.render([&](){
 

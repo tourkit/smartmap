@@ -63,6 +63,11 @@ struct Window : Output {
     std::function<void(int)> mousedown_cb = nullptr;
 
     void visibility(bool value);
+    bool visibility();
+
+private:
+
+    bool visibility_v = false;
 
 };
 

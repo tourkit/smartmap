@@ -324,46 +324,43 @@ void Callbacks::init() {
 
     ////////// Artnet.HPP
 
-    NODE<Artnet>::on(Node::RUN, [](Node* node, Artnet *an){ an->run();
-
-        static int size = 0;
-
-        if (an->universes.size() != size) {
-
-            std::vector<Universe*> missing;
-
-            for (auto uni : an->universes) {
-
-                bool found = false;
-                for (auto n : node->childrens) {
-                    auto uni_ = n->is_a_nowarning<Universe>();
-                    if (uni_ == uni.second.get()) {
-                        found = true;
-                        break;
-                    }
-
-                }
-
-                if (!found) 
-                    missing.push_back(uni.second.get());
-
-            }
-
-            for (auto x : missing)
-                node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id+1));
-            
+    NODE<Artnet>::on(Node::RUN, [](Node* node, Artnet *an){ 
         
-            missing.clear();
+        an->run();
 
-            size = an->universes.size();
-        }
+        if (an->universes.size() != node->childrens.size()) 
+            node->trig(Node::CHANGE);
 
     });
     
-    // NODE<Artnet>::is_a<Member>();
+    NODE<Artnet>::is_a<Member>();
 
     NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){
 
+        std::vector<Universe*> missing;
+
+        for (auto uni : an->universes) {
+
+            bool found = false;
+            for (auto n : node->childrens) {
+                auto uni_ = n->is_a_nowarning<Universe>();
+                if (uni_ == uni.second.get()) {
+                    found = true;
+                    break;
+                }
+
+            }
+
+            if (!found) 
+                missing.push_back(uni.second.get());
+
+        }
+
+        for (auto x : missing)
+            node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id+1));
+        
+    
+        missing.clear();
 
     });
 
@@ -377,21 +374,25 @@ void Callbacks::init() {
         
         auto &artnet = *_this->is_a<Artnet>();
 
-        _this->eachBreak<Universe>([node](Node* n, Universe* uni){
+        if (!artnet.universes.size()) {
+            artnet.universe(0);
+            _this->trig(Node::CHANGE);
+        }
+        _this->eachBreak<Universe>([&](Node* n, Universe* uni_){
 
-            n->add(node);
+            n->add(node);;
 
             return Node::Break;
 
         });
-    
+
         return Node::no_worry; 
 
     });
     NODE<Universe>::onadd<Effectable>([](Node*_this,Node*node){ 
         
         auto &uni = *_this->is_a<Universe>();
-        auto &effectable = *_this->is_a<Effectable>();
+        auto &effectable = *node->is_a<Effectable>();
 
         auto remap = _this->addOwnr<DMXRemap>(uni.instance, effectable.instance);
 

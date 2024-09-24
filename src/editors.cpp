@@ -166,6 +166,13 @@ void Editors::init() {
         // engine.
     });
 
+    Editor<Universe>([](Node*node,Universe* uni){ 
+
+        if (RawWidget(uni->instance->data(), 512)) 
+            node->update();
+
+    });
+
     Editor<Artnet>([](Node*node,Artnet* an){
 
         ImGui::Text(an->name().c_str());
@@ -180,24 +187,17 @@ void Editors::init() {
 
         }
 
-        for (auto x : an->universes) {
-            std::string str;
+        node->each<Universe>([](Node* n, Universe* uni){
 
-
-            auto inst = Instance(*an)[x.second.get()];
-
-            str = "universe "+std::to_string(x.first+1) + " " + std::to_string(inst.offset) + " " + x.second->name();
+            std::string str = "universe "+std::to_string(uni->id+1);
+            
             ImGui::Text(str.c_str());
 
             ImGui::NewLine();
-            // if (RawWidget(an->data()+(*x.second->instances.begin())->offset, 512)) { // TODODOTODOTODO
 
-            //     node->update();
+            Editor<Universe>::cb_typed(n, uni);
 
-            // }
-            ImGui::NewLine();
-
-        };
+        });
 
     });
 

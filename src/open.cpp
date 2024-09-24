@@ -482,11 +482,11 @@ void Open::json(std::string path) {
 
         engine.gui_v->editors.push_back(std::make_shared<EditorWidget>(engine.gui_v));
 
-        engine.gui_v->editors.back()->selected = engine.debug;
+        engine.gui_v->editors.back()->selected = engine.tree->find("main");
 
         engine.gui_v->editors.back()->locked = true;
 
-        auto f = engine.debug->addOwnr<File>(path);
+        auto f = engine.tree->addOwnr<File>(path);
 
         f->on(Node::CHANGE, [&](Node* n) { engine.open(path.c_str()); });
 
