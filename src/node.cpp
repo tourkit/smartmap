@@ -132,7 +132,8 @@ Node* Node::find_next() {
 
 Node* Node::find(std::string  name) {
 
-    if (!name.length()) return nullptr;
+    if (!name.length()) 
+        return nullptr;
 
     return find(split(name));
 

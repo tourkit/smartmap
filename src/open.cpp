@@ -19,6 +19,37 @@
 
 static std::string json_error = "JSON error";
 
+
+static Node* find(Node* tree, std::string name) {
+
+        
+    if (!name.length())
+        return nullptr;
+
+    auto ext = split(name,".");
+    
+    auto x = tree->find(ext[0]);
+    
+    if (ext.size() == 2 && ext[1].length()) { // supposely a file
+
+        while(x) {
+            
+            auto file = x->is_a_nowarning<File>();
+            if (file && file->extension == ext[1]) 
+                return x;
+
+            x = x->find_next();
+        }
+
+        if (!x)
+            {PLOGE << "no file " << name; }
+    }
+
+    return x;
+
+}
+
+
 void Open::medias(){
 
 
@@ -113,7 +144,12 @@ static Node* createFile(JSONVal& json, Node* node) {
         
     PLOGV << "create File " << json.name() << " in " << node->name();
     
-    node = node->addOwnr<File>(json.name(), src.c_str())->active(false);
+    node = node->addOwnr<File>(json.name(), src.c_str());
+    
+    if (!node)
+        return nullptr;
+
+    node->active(false);
 
     return node;
     
@@ -176,7 +212,7 @@ static Node* createModel(JSONVal& json, Node* node) {
     auto json_model = json["model"].str();
     if(!json_model.length())
         json_model = "quad";
-    auto file = engine.tree->find(json_model);
+    auto file = find(engine.tree, json_model);
     if (!file) {
         PLOGE << " no " << json_model << " for " << json.name();
         return  nullptr;
@@ -220,36 +256,20 @@ static std::array<uint32_t,3> getQ(JSONVal& json) {
 }
 static Node* createRemap(JSONVal& json, Node* node) {
 
-    // Node* dest = engine.tree->find(json[JSON_DESTINATION, true].str());
+    Node* dest = engine.tree->find(json[JSON_DESTINATION, true].str());
 
-    // if (!dest) 
-    //     return nullptr; 
+    if (!dest) 
+        return nullptr; 
 
-    // auto inst = Instance(*engine.dynamic_ubo)[dest->parent()->is_a<Member>()][dest->is_a<Member>()];
+    auto remap_ = node->add(dest);
+    remap_->name(json.name());
 
-    // if (inst.stl.size() == 1) 
-    //     { PLOGW << json_error; return nullptr; }
+    auto remap = remap_->is_a<DMXRemap>();
 
-    // std::vector<DMXRemap::Attribute> attrs;
-    // for (auto &x : json["patch"])
-    //     if (x.isnum()) 
-    //         attrs.push_back({(int)x.num(1)});
+    for (auto &x : json["patch"])
+        if (x.isnum()) 
+            remap->attributes.push_back({(int)x.num(1)});
 
-    
-
-    // node->trig(Node::RUN);
-
-    // DMXRemap* dmxremap = new DMXRemap(Instance(an).loc(&uni), inst, json[JSON_DMX_CHAN, true].num(1)-1, attrs, json[JSON_QUANTITY].num(1));
-
-    // dmxremap->src.remaps.push_back( dmxremap );
-
-    // auto out = node->childrens[0]->addPtr<DMXRemap>(dmxremap)->name(json.name());
-
-    // dest->referings.insert( out );
-    
-        PLOGE << "tiotototoodododo ";
-
-        return nullptr;
     return node;
 
 }
@@ -260,30 +280,28 @@ static Node* createArtnet(JSONVal& json, Node* node) {
     PLOGV << "create Artnet " << json.name() << " in " << node->name();
 
     
-    Node* n = node->addOwnr<Artnet>( json[JSON_IP_ADDRESS, true].str() ) ;
+    Node* an_ = node->addOwnr<Artnet>( json[JSON_IP_ADDRESS, true].str() ) ;
 
-    n->active(1)->name( json.name() );
+    an_->active(1)->name( json.name() );
     node->active(1);
 
-    auto &an = *n->is_a<Artnet>();
+    auto &an = *an_->is_a<Artnet>();
 
     for (auto &uni_ : json[JSON_CHILDRENS_UNI]) {
 
         auto &uni = an.universe(std::stoi(uni_.name())-1);
 
-        if (!uni_[JSON_CHILDRENS_REMAP].isobj()) {
+        an_->trig(Node::CHANGE); // update childs list
 
-            for (auto remap_ : uni_) {
+        auto uni_node = an_->childrens.back(); // wild guess
 
+        for (auto &remap_ : uni_[JSON_CHILDRENS_REMAP]) 
+            createRemap(remap_, uni_node);
 
-            }
-
-        }else
-
-            for (auto &remap_ : uni_[JSON_CHILDRENS_REMAP]) 
-                createRemap(remap_, n);
+        if (!uni_[JSON_CHILDRENS_REMAP].isobj())
+            for (auto &remap_ : uni_) 
+                createRemap(remap_, uni_node);
             
-
     }
 
     return node;

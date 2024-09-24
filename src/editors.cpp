@@ -765,12 +765,14 @@ void Editors::init() {
             }
         }
 
-        if (last_id != log_n->appender.list.back().id) {
+        if (log_n->appender.list.size() && last_id != log_n->appender.list.back().id) {
             SetScrollY(GetScrollMaxY()+((log_n->appender.list.size())*GetCurrentContext()->FontBaseSize*2));
             last_id = log_n->appender.list.back().id;
             
         }
-        ImGui::SetCursorPos(start); if (ImGui::Button("clear")) { log_n->appender.list.resize(0); }start.x+=50;
+        ImGui::SetCursorPos(start); if (ImGui::Button("clear")) { 
+            log_n->appender.list.clear(); 
+            }start.x+=50;
         ImGui::SetCursorPos(start); if(ImGui::ColorButton("info", info)){ curr = &info.x; ImGui::OpenPopup("picker");  }start.x+=25;
         ImGui::SetCursorPos(start);if (ImGui::ColorButton("debug", debug)) { curr = &debug.x; ImGui::OpenPopup("picker"); }start.x+=25;
         ImGui::SetCursorPos(start);if (ImGui::ColorButton("warning", warning)) { curr = &warning.x; ImGui::OpenPopup("picker"); }start.x+=25;
