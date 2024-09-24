@@ -4,13 +4,13 @@
 
 struct Remap {
 
-    Instance src, dst;
+    Instance *src, *dst;
 
     virtual void update();
 
     int quantity;
 
-    Remap(Instance src ,Instance dst, int quantity = 1);
+    Remap(Instance *src ,Instance *dst, int quantity = 1);
 
 
 };

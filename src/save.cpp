@@ -213,7 +213,7 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
 
             rjs::Value remap_(kObjectType);
             remap_.AddMember("channel",remap->chan+1,doc.GetAllocator());
-            remap_.AddMember("destination",rjs::Value(remap->dst.stl_name(1).c_str(), doc.GetAllocator()),doc.GetAllocator());
+            remap_.AddMember("destination",rjs::Value(remap->dst->stl_name(1).c_str(), doc.GetAllocator()),doc.GetAllocator());
             rjs::Value patch_(kArrayType);
             for (auto attr : remap->attributes) {
                 

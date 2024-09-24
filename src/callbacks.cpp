@@ -389,13 +389,15 @@ void Callbacks::init() {
 
     NODE<DMXRemap>::onadd<Member>([](Node*_this,Node*node){ 
     
-        auto &remap = *_this->is_a<DMXRemap>();
-        auto &member = *node->is_a<Member>();
-        Instance inst(*engine.dynamic_ubo);
-        inst.loc(&member);
-        remap.dst = inst;
+        // auto &remap = *_this->is_a<DMXRemap>();
+        // auto &member = *node->is_a<Member>();
+        // Instance inst(*engine.dynamic_ubo);
+        // inst.loc(&member);
+        // remap.dst = inst;
 
-        remap.extract(&member);
+        // remap.extract(&member);
+
+        PLOGW << " TODO WARNING ";
 
         return Node::no_worry; 
     

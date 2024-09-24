@@ -10,11 +10,11 @@
 
 void DMXRemap::update() {
 
-    auto data = (uint8_t*)src.data()+chan;
+    auto data = (uint8_t*)src->data()+chan;
 
-    for (int offset = 0; offset < dst.stl.back().m->quantity(); offset++) {
+    for (int offset = 0; offset < dst->stl.back().m->quantity(); offset++) {
 
-        auto size = dst.stl.back().m->size();
+        auto size = dst->stl.back().m->size();
 
         auto pos = (offset*size);
         pos /=sizeof(float);
@@ -32,7 +32,7 @@ void DMXRemap::update() {
 
             // range remap
             if (attributes[i].active && c > 0) 
-                *((float*)dst.data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min; // remap is expensive thou
+                *((float*)dst->data()+i+pos) = (target * (attributes[i].max - attributes[i].min)) + attributes[i].min; // remap is expensive thou
 
             data += c;
 
@@ -58,12 +58,12 @@ void DMXRemap::extract(Member *s) {
 
 }
 
-DMXRemap::DMXRemap(Instance src, Instance dst, int chan, std::vector<DMXRemap::Attribute> attrs, int quantity)
+DMXRemap::DMXRemap(Instance *src, Instance *dst, int chan, std::vector<DMXRemap::Attribute> attrs, int quantity)
 
     : Remap(src, dst), chan(chan), attributes(attrs),quantity(quantity) {
 
     if (!attributes.size()) 
-        extract(dst.stl.back().m);
+        extract(dst->stl.back().m);
 
 }
 extern "C" {

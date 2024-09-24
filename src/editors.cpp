@@ -71,7 +71,7 @@ void Editors::init() {
         ImGui::InputInt("##chjdshjkers", &remap->chan);
         SameLine();
         ImGui::SetNextItemWidth( -FLT_MIN);
-         ImGui::InputText("###puppybbb", &remap->dst.stl_name(1)[0], 10, ImGuiInputTextFlags_ReadOnly);
+         ImGui::InputText("###puppybbb", &remap->dst->stl_name(1)[0], 10, ImGuiInputTextFlags_ReadOnly);
 
         if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(GetContentRegionAvail().x, 0))) {
 
@@ -86,7 +86,7 @@ void Editors::init() {
 
             int member_id = 0;
 
-            Instance(*remap->dst.stl.back().m).each([&](Instance inst) {
+            Instance(*remap->dst->stl.back().m).each([&](Instance inst) {
 
                 auto *m = inst.stl.back().m;
 
@@ -155,13 +155,13 @@ void Editors::init() {
             }
 
         // std::stringstream deststart;
-        // deststart  <<  (void*)remap->dst.data();
-        // deststart  << " - " << (void*)remap->dst.stl.front().m->data();
-        // deststart  << " - " << remap->dst.offset;
+        // deststart  <<  (void*)remap->dst->data();
+        // deststart  << " - " << (void*)remap->dst->stl.front().m->data();
+        // deststart  << " - " << remap->dst->offset;
         // ImGui::Text(deststart.str().c_str()) ;
 
 
-        // ImGui::SameLine(); ImGui::Text(("* "+std::to_string(remap->dst.stl.back().m->quantity())).c_str());
+        // ImGui::SameLine(); ImGui::Text(("* "+std::to_string(remap->dst->stl.back().m->quantity())).c_str());
 
         // engine.
     });
