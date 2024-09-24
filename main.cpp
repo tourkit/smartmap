@@ -16,10 +16,10 @@ int main() {
     // logger.cout(Sev::warning);
 
     engine.init();
-    
+
     engine.open("project.json");  
 
-    auto rect1 = engine.tree->find("layer2::rect1")->is_a<Member>();
+    auto rect1 = engine.tree->find("layer2::rect1")->is_a<Model>();
 
     auto loc_test = rect1->instance;
 

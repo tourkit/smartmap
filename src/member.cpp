@@ -22,9 +22,6 @@ Member::~Member() {
 
     deleteData(false);
 
-     if (instance) 
-        delete instance;
-
     if (copy_v) return;
 
     // std::stringstream ss; ss << std::hex << std::showbase << reinterpret_cast<void*>(this);

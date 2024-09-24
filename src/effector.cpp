@@ -274,7 +274,12 @@ EffectorRef::EffectorRef(std::string name, Effector* effector ) : Member(""), ef
 // Effectable  ////////////////
 // Effectable  ////////////////
 
-Effectable::~Effectable() { }
+Effectable::~Effectable() {
+
+     if (instance) 
+        delete instance;
+
+}
 
 Effectable::Effectable(std::string name) : Member(name) { 
 
