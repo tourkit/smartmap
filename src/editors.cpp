@@ -73,6 +73,27 @@ void Editors::init() {
             if (remap->dst) Text(("dst"+remap->dst->stl_name()).c_str());
         }
 
+        if (BeginPopupContextWindow()){
+
+            if (Button("clear src")) {
+                engine.window.end_of_render_cbs.push_back({remap, [](void* ptr){
+                    ((DMXRemap*)ptr)->src = nullptr;
+                }});
+            }
+
+            if (Button("clear dst")) {
+                engine.window.end_of_render_cbs.push_back({node, [](void* ptr){
+                    auto node = (Node*)ptr;
+                    auto remap = node->is_a<DMXRemap>();
+                    // remap->dst->referings.erase(node);
+                    remap->dst = nullptr;
+                }});
+            }
+            
+            EndPopup();
+
+        }
+
         ImGui::SetNextItemWidth(100);
         ImGui::InputInt("##chjdshjkers", &remap->chan);
         SameLine();

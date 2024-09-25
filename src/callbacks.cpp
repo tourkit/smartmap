@@ -99,8 +99,10 @@ void Callbacks::init() {
 
                 if (remap->src->m() == m) 
                 remap->src = nullptr;
-                if (remap->dst->m() == m) 
-                remap->dst = nullptr;
+                if (remap->dst->m() == m) {
+                    // remap->dst->m().r
+                    remap->dst = nullptr;
+                }
 
             }
         }
@@ -402,6 +404,21 @@ void Callbacks::init() {
     });
 
 
+    NODE<Remap>::on(Node::DESTROY, [](Node* n, Remap *remap) {
+        // for (auto node : Node::pool) {
+        //     for (auto refering : node->referings) 
+        //     if (refering == n) { 
+        //         node->referings.erase(refering); 
+        //         break; 
+        //     }
+
+        //     // if (node->void_ptr == remap) {
+
+        //     //     node->referings.insert(n);
+        //     // }
+        // }
+    });
+
     NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { 
 
         if (remap->src && remap->dst)
@@ -437,9 +454,9 @@ void Callbacks::init() {
 
         auto remap = _this->addOwnr<DMXRemap>(uni.instance, effectable.instance);
 
-        remap->add(node);
+        remap->add(node); 
     
-        return remap; 
+        return remap ; 
 
     });
 
@@ -447,7 +464,21 @@ void Callbacks::init() {
     
         auto &remap = *_this->is_a<DMXRemap>();
         auto &effectable = *node->is_a<Effectable>();
+
+        engine.tree->each<Effectable>([&](Node* node, Effectable* effectable){ 
+            
+            if (effectable->instance == remap.src) 
+                node->referings.erase(_this);
+            else if (effectable->instance == remap.dst) 
+                node->referings.erase(_this);
+            
+        });
+
+        node->referings.insert(_this);
+        
         remap.dst = effectable.instance;
+        
+        // also add to Universe na ?
 
         return Node::no_worry; 
     

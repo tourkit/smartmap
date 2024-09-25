@@ -3,8 +3,8 @@
 
 Remap::Remap(Instance *src , Instance *dst, int quantity) : src(src) ,dst(dst) , quantity(quantity) {
     
-    ADD_UNIQUE<Remap*>(src->remaps, this ); 
-    ADD_UNIQUE<Remap*>(dst->remaps, this );  
+    src->track(); ADD_UNIQUE<Remap*>(src->remaps, this ); 
+    dst->track(); ADD_UNIQUE<Remap*>(dst->remaps, this );  
 
 }
 

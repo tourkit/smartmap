@@ -1,10 +1,11 @@
 {
   "editors": [
-    [ "inputs::artnet1::universe 0::DMXRemap" ],
-    [ "main" ]
+    [ "main::layer" ],
+    [ "main" ],
+    [ "inputs::artnet1" ]
   ],
   "inputs": {
-    "artnet1": { "type": "artnet", "ip": "192.168.204.4", "universes": { "0": { "DMXRemap": { "channel": 0, "destination": "layer" } } } }
+    "artnet1": { "type": "artnet", "ip": "192.168.204.4", "universes": { "0": { "DMXRemap": { "channel": 0, "destination": "layer", "patch": [ 1, 1, 1, 1 ] } } } }
   },
   "main": {
     "layer": { "type": "layer", "resolution": [ 100, 100 ], "models": { "quad": { "effectors": [ "argb" ] } } }
