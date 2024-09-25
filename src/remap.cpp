@@ -1,7 +1,13 @@
 #include "remap.hpp"
 #include "member.hpp"
 
-Remap::Remap(Instance *src , Instance *dst, int quantity) : src(src) ,dst(dst) , quantity(quantity) { }
+Remap::Remap(Instance *src , Instance *dst, int quantity) : src(src) ,dst(dst) , quantity(quantity) {
+    
+    ADD_UNIQUE<Remap*>(src->remaps, this ); 
+    ADD_UNIQUE<Remap*>(dst->remaps, this );  
+
+}
+
 void Remap::update() {
 
     int size = src->stl.back().m->size();
@@ -10,6 +16,5 @@ void Remap::update() {
 
     memcpy(dst->data(), src->data(), quantity * size);
 
-    src->remaps.push_back( this ); 
-    
+
 }

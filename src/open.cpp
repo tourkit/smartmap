@@ -310,6 +310,8 @@ static Node* createArtnet(JSONVal& json, Node* node) {
 
 }
 
+static std::map<Node*,JSONVal> outputs_src;
+
 static Node* createNDI(JSONVal& json, Node* node) { 
 
     PLOGV << "create NDI " << json.name() << " in " << node->name();
@@ -320,10 +322,7 @@ static Node* createNDI(JSONVal& json, Node* node) {
 
     Node* n = node->addOwnr<NDI::Sender>( dim[0].num(engine.window.width), dim[1].num(engine.window.height), json.name());
 
-    auto src = engine.tree->find(json[JSON_SOURCE].str());
-    if (src) 
-        node->add(src);
-
+    outputs_src.emplace(n, json);
 
     return node;
 
@@ -348,9 +347,7 @@ static Node* createWindow(JSONVal& json, Node* node) {
     auto offset = json[JSON_OFFSET];
     engine.window.pos( offset[0].num(), offset[1].num());
 
-    auto src = engine.tree->find(json[JSON_SOURCE].str());
-    if (src) 
-        node->add(src);
+    outputs_src.emplace(node, json);
 
     auto parent = node->parent();
 
@@ -531,6 +528,16 @@ void Open::json(std::string path) {
 
     for (auto x : layers_lst) 
         createLayer(x.second, x.first);
+    layers_lst.clear();
+
+    for (auto x : outputs_src) {
+
+        auto src = engine.tree->find(x.second[JSON_SOURCE].str());
+        if (src) 
+            x.first->add(src);
+
+    }
+
     outputs_src.clear();
 
     for (auto x : inputs_dst) 

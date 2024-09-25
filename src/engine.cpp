@@ -150,7 +150,8 @@ void Engine::init() {
     main->onadd<File>([](Node* _this, Node* n){
 
         auto x = _this->addOwnr<Layer>();
-        x->add(n);
+        if (x)
+            x->add(n);
 
         return Node::no_worry;
 

@@ -59,6 +59,7 @@ Node::~Node() {
     if (owned) 
         dtortyped_cb[stored_type](void_ptr);
 
+
     PLOGV << "~" << name();
 
 }
@@ -437,6 +438,8 @@ void Node::trig_typed(Node::Event e, TypeIndex t, void* out) {
 void Node::trig(Event e)  { 
 
     trig_typed(e, type(), void_ptr);
+    
+    trig_typed(e, typeid(AnyNode), void_ptr);
 
     if (on_cb.find(e) != on_cb.end()) 
         on_cb[e](this);

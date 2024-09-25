@@ -66,6 +66,12 @@ void Editors::init() {
 
     Editor<DMXRemap>([](Node*node, DMXRemap* remap){
 
+        if (!remap->dst || !remap->src)
+            return;
+        else {
+            if (remap->src) Text(("src"+remap->src->stl_name()).c_str());
+            if (remap->dst) Text(("dst"+remap->dst->stl_name()).c_str());
+        }
 
         ImGui::SetNextItemWidth(100);
         ImGui::InputInt("##chjdshjkers", &remap->chan);

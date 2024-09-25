@@ -14,7 +14,4 @@ struct Open{
     void medias();
     void editors();
     
-    std::map<Node*,JSONVal> outputs_src;
-
-    
 };

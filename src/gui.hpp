@@ -80,6 +80,8 @@ struct GUI {
   void render();
 
   void draw() ;
+  
+  void deselect(Node* n) ;
 
   std::vector<std::shared_ptr<EditorWidget>> editors;
   std::vector<TreeWidget*> trees;

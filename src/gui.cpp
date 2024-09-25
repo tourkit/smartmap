@@ -64,6 +64,16 @@ void GUI::Window::drawFull() { {
 
 ///// GUIGUIGUIGUIGUIG
 
+void GUI::deselect(Node* n) {
+
+  if (selected == n) selected = nullptr;
+  for (auto t : trees) 
+    if (t->selected == n) t->selected = nullptr;
+  for (auto e : editors) 
+    if (e->selected == n) e->selected = nullptr;
+
+
+}
 
   static std::vector<Node*>  bkp;
 GUI::GUI(::Window* window) : window(window) {

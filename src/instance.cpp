@@ -157,10 +157,6 @@ std::pair<std::string,int> nameQ(std::string name) {
     Instance::Instance(std::string stl_name) { loc(stl_name); }
 
     Instance::~Instance() { 
-
-        for (auto r : remaps) {
-            r->src = nullptr;
-        } 
         stl.back().m->instances.erase(this); 
     }
 

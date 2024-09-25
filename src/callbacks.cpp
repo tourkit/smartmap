@@ -19,6 +19,7 @@
 #include "framebuffer.hpp"
 #include "layer.hpp"
 #include "texture.hpp"
+#include "gui.hpp"
 
 
 #include "engine.hpp"
@@ -83,6 +84,28 @@ void Callbacks::init() {
 
     ////////// Member.HPP
 
+
+    NODE<AnyNode>::on(Node::DESTROY, [](Node* node, AnyNode *n){ 
+
+        engine.gui_v->deselect(node);
+        
+
+    });
+
+    NODE<Member>::on(Node::DESTROY, [](Node* node, Member *m){ 
+        for (auto inst : m->instances) {
+
+            for (auto remap : inst->remaps) {
+
+                if (remap->src->m() == m) 
+                remap->src = nullptr;
+                if (remap->dst->m() == m) 
+                remap->dst = nullptr;
+
+            }
+        }
+    });
+
     NODE<Member>::on(Node::CREATE, [](Node* node, Member *m){ 
         node->name_v = (m->ref()->name()); 
     });
@@ -109,7 +132,7 @@ void Callbacks::init() {
 
         for (auto x : node->referings) {
 
-            auto o = x->is_a<Output>();
+            auto o = x->is_a_nowarning<Output>();
 
             if (o && o->fb == &layer->fb) o->fb = nullptr;
  
@@ -370,36 +393,7 @@ void Callbacks::init() {
 
     });
     
-    NODE<Artnet>::is_a<Member>();
-
-    // NODE<Artnet>::on(Node::CHANGE, [](Node* node, Artnet *an){
-
-    //     std::vector<Universe*> missing;
-
-    //     for (auto uni : an->universes) {
-
-    //         bool found = false;
-    //         for (auto n : node->childrens) {
-    //             auto uni_ = n->is_a_nowarning<Universe>();
-    //             if (uni_ == uni.second.get()) {
-    //                 found = true;
-    //                 break;
-    //             }
-
-    //         }
-
-    //         if (!found) 
-    //             missing.push_back(uni.second.get());
-
-    //     }
-
-    //     for (auto x : missing) {
-    //         auto uni_ = node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id+1));
-    //     }
-    
-    //     missing.clear();
-
-    // });
+    // NODE<Artnet>::is_a<Member>();
 
     //////// Remap.HPP
 
@@ -408,7 +402,12 @@ void Callbacks::init() {
     });
 
 
-    NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { remap->update(); });
+    NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { 
+
+        if (remap->src && remap->dst)
+            remap->update(); 
+
+    });
 
     NODE<DMXRemap>::is_a<Remap>();
 
