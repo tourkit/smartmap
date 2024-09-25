@@ -69,8 +69,8 @@ void Editors::init() {
         if (!remap->dst || !remap->src)
             return;
         else {
-            if (remap->src) Text(("src"+remap->src->stl_name()).c_str());
-            if (remap->dst) Text(("dst"+remap->dst->stl_name()).c_str());
+            // if (remap->src) Text(("src"+remap->src->stl_name()).c_str());
+            // if (remap->dst) Text(("dst"+remap->dst->stl_name()).c_str());
         }
 
         if (BeginPopupContextWindow()){
