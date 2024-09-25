@@ -232,6 +232,8 @@ void Engine::run(std::function<void()> cb) {
         window.size(50,50);
 
     }
+
+    running = true;
     
     window.render([&](){
 

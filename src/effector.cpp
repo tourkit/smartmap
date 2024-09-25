@@ -286,17 +286,13 @@ Effectable::Effectable(std::string name) : Member(name) {
  }
 
 bool Effectable::removeEffector(EffectorRef* effector) {
-    int i = 0;
+
      std::erase_if( effector_refs, [&](std::shared_ptr<EffectorRef> e) { 
-        i++;
+ 
         return e.get() == effector; 
-        i++;
+
     });
     
-        i++;
-    
-    PLOGV << i;
-
     return true;
 }
 

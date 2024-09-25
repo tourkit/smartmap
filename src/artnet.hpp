@@ -20,6 +20,11 @@ struct DMXRemap : Remap {
     int quantity;
 
     DMXRemap(Instance *src, Instance *dst, int chan = 0, std::vector<Attribute> attributes = {}, int quantity = 1); // Maybe chan could be in inst already thoo
+    ~DMXRemap(){
+
+PLOGV << "catch";
+
+    }
 
     void update() override;
 

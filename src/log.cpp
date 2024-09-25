@@ -41,7 +41,7 @@ void Log::Appender::write(const plog::Record& record) {
             if (cout.length() > 200) 
                 cout = cout.substr(0,200) + "...\n";
 
-            if (engine.gui_v){
+            if (engine.running && engine.gui_v){
                 bool already = false;
                 auto debug = engine.tree->find("main");
                 for (auto x : engine.gui_v->editors) 

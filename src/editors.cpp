@@ -86,7 +86,7 @@ void Editors::init() {
 
             int member_id = 0;
 
-            Instance(*remap->dst->stl.back().m).each([&](Instance inst) {
+            remap->dst->each([&](Instance inst) {
 
                 auto *m = inst.stl.back().m;
 
@@ -189,7 +189,7 @@ void Editors::init() {
 
         node->each<Universe>([](Node* n, Universe* uni){
 
-            std::string str = "universe "+std::to_string(uni->id+1);
+            std::string str = "universe "+std::to_string(uni->id);
             
             ImGui::Text(str.c_str());
 

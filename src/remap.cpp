@@ -10,6 +10,6 @@ void Remap::update() {
 
     memcpy(dst->data(), src->data(), quantity * size);
 
-    src->remaps.push_back( this ); // is this handled at dtor ? nop .. warnign
-
+    src->remaps.push_back( this ); 
+    
 }

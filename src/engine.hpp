@@ -74,6 +74,8 @@ struct Engine {
         
     };
 
+    bool running = false;
+
 private:
 
     std::string project_name;

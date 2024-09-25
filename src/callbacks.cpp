@@ -294,9 +294,9 @@ void Callbacks::init() {
             effectable->removeEffector(reffector); // will remove all effectors
 
 
-        }
+        }else
 
-        PLOGE << "no found";
+            PLOGE << "no found";
 
 
             // engine.window.end_of_render_cbs.emplace_back(node,[](void* ptr){
@@ -354,13 +354,13 @@ void Callbacks::init() {
                 }
 
                 if (!found) 
-                    missing.push_back(uni.second.get());
+                    missing.push_back(&an->universe(uni.first));
 
             }
 
             if (missing.size())
                 for (auto x : missing)
-                    node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id+1));
+                    node->addPtr<Universe>(x)->name("universe "+std::to_string(x->id));
             
         
             missing.clear();

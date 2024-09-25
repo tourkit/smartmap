@@ -291,7 +291,7 @@ static Node* createArtnet(JSONVal& json, Node* node) {
 
     for (auto &uni_ : json[JSON_CHILDRENS_UNI]) {
 
-        auto &uni = an.universe(std::stoi(uni_.name())-1);
+        auto &uni = an.universe(std::stoi(uni_.name()));
 
         an_->trig(Node::RUN); // update childs list
 

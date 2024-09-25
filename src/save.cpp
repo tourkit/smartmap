@@ -112,7 +112,7 @@ static void fetch(JSONVal json, Node* n, rjs::Document& doc);
 
 static void saveFile(JSONVal json, Node* n, rjs::Document& doc) {
 
-    PLOGW << "create File " << n->name();
+    // PLOGW << "create File " << n->name();
 
     auto file = n->is_a<File>();
     json.parent->value.RemoveMember(n->name().c_str()); // apparently gota remove first cant rename directly
@@ -140,7 +140,7 @@ static void saveFile(JSONVal json, Node* n, rjs::Document& doc) {
 
 static void saveWindow(JSONVal json, Node* n, rjs::Document& doc) {
 
-    PLOGW << "create Window " << n->name();
+    // PLOGW << "create Window " << n->name();
 
     auto window = n->is_a<Window>();
 
@@ -196,7 +196,7 @@ static void saveWindow(JSONVal json, Node* n, rjs::Document& doc) {
 #include "artnet.hpp"
 static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
 
-    PLOGW << "create Artnet " << n->name();
+    // PLOGW << "create Artnet " << n->name();
 
     auto artnet = n->is_a<Artnet>();
 
@@ -214,7 +214,7 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
         n->each<DMXRemap>([&](Node* n, DMXRemap* remap) {
 
             rjs::Value remap_(kObjectType);
-            remap_.AddMember("channel",remap->chan+1,doc.GetAllocator());
+            remap_.AddMember("channel",remap->chan,doc.GetAllocator());
 
             auto stlname = remap->dst->stl_name(1);
 
@@ -257,7 +257,7 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
         if (n->childrens.size())
 
             universes_.AddMember(
-                rjs::Value(std::to_string(uni->id+1).c_str(),doc.GetAllocator()), 
+                rjs::Value(std::to_string(uni->id).c_str(),doc.GetAllocator()), 
                 rjs::Value(uni_, doc.GetAllocator()), 
                 doc.GetAllocator()
             );
@@ -284,7 +284,7 @@ auto ref = n->is_a<EffectorRef>();
 
 static void saveModel(JSONVal json, Node* n, rjs::Document& doc) {
 
-    PLOGW << "create Model " << n->name();
+    // PLOGW << "create Model " << n->name();
     
     auto model = n->is_a<Model>();
 
@@ -314,7 +314,7 @@ static void saveModel(JSONVal json, Node* n, rjs::Document& doc) {
 
 static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
 
-    PLOGW << "create Layer " << n->name();
+    // PLOGW << "create Layer " << n->name();
 
     auto* val_ = &json.value;
     if (val_->HasMember(n->name().c_str()))
@@ -366,7 +366,7 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
 
 static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
     
-    PLOGW << "create Node " << n->name();
+    // PLOGW << "create Node " << n->name();
 
     if (n->color != std::array<float,4>{1,1,1,1} && n->childrens.size()) {
 
@@ -395,7 +395,7 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
 
     if (found.name().length()) {
         found.value.RemoveAllMembers();
-        PLOGW << "found need tpo cleaqr existing " << n->name() ;
+        // PLOGW << "found need tpo cleaqr existing " << n->name() ;
     }else {
 
         if (json.value.IsObject())  {
@@ -417,7 +417,7 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
             PLOGE << "cant create json entry for " << n->name();
         }
         
-        PLOGW << "create json entry for " << n->name();
+        // PLOGW << "create json entry for " << n->name();
     }
 
     if (!n->void_ptr || n->is_a_nowarning<Node>())
@@ -432,16 +432,14 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
         saveEffector(json[n->name()], n, doc);
     else if (n->is_a_nowarning<Window>())
         saveWindow(json, n, doc);
-    else if (n->is_a_nowarning<NDI::Sender>())
-        PLOGW << "create NDI " << n->name() << " in " << n->parent()->name();
-    else if (n->is_a_nowarning<Layer>())
-        PLOGW << "create Layer " << n->name() << " in " << n->parent()->name();
+    // else if (n->is_a_nowarning<NDI::Sender>())
+        // PLOGW << "create NDI " << n->name() << " in " << n->parent()->name();
     else if (n->is_a_nowarning<Artnet>())
         saveArtnet(json[n->name()], n, doc);
         
     
     else
-        PLOGW << "need to create " << n->type_name() << " "  << n->name();
+        // PLOGW << "need to create " << n->type_name() << " "  << n->name();
 
     if (n->color != std::array<float,4> {1,1,1,1}){
     
