@@ -35,8 +35,8 @@ Save::Save() : allocator(json_v.document.GetAllocator()) {}
 void Save::saveColor(rjs::Value& value, Node* n) {
     auto &doc = json_v.document;
 
-    if (!n->is_active)
-        value.AddMember("active", false, doc.GetAllocator());
+    if (n->is_active)
+        value.AddMember("active", true, doc.GetAllocator());
 
     if (n->color != std::array<float,4> {1,1,1,1}){
     
@@ -56,13 +56,15 @@ void Save::saveColor(rjs::Value& value, Node* n) {
 
 
     auto &doc = json_v.document;
+    auto &val = json.value;
 
     // PLOGW << "create File " << n->name();
 
     auto file = n->is_a<File>();
+    
     json.parent->value.RemoveMember(n->name().c_str()); // apparently gota remove first cant rename directly
 
-    if (n->color != std::array<float,4>{1,1,1,1}) {
+    if (n->color != std::array<float,4>{1,1,1,1} || n->is_active) {
 
         rjs::Value obj(rjs::kObjectType);
         obj.AddMember("source", rjs::Value(file->data.c_str(), doc.GetAllocator()), doc.GetAllocator() );
@@ -215,12 +217,12 @@ static void saveUniverse(rjs::Document& doc, rjs::Value& obj, Node* n) {
 
         rjs::Value uni_(kObjectType);
 
-        auto &target = uni_;
+        rjs::Value *remaps = &uni_;
 
-        if (n->color != std::array<float,4>{1,1,1,1}){
+        if (n->color != std::array<float,4>{1,1,1,1} || n->is_active) {
             saveColor(uni_, n);
-            uni_.AddMember("remaps", rjs::Value(kObjectType), doc.GetAllocator());
-            target = uni_["remaps"];
+            uni_.AddMember("remaps", rjs::Value(rjs::Value(kObjectType), doc.GetAllocator()), doc.GetAllocator());
+            remaps = &uni_["remaps"];
         }
         n->each<DMXRemap>([&](Node* n, DMXRemap* remap) {
 
@@ -228,7 +230,7 @@ static void saveUniverse(rjs::Document& doc, rjs::Value& obj, Node* n) {
 
             saveRemap(remap_,n);
             
-            uni_.AddMember(
+            remaps->AddMember(
                 rjs::Value(n->name().c_str(),doc.GetAllocator()), 
                 rjs::Value(remap_, doc.GetAllocator()), 
                 doc.GetAllocator()
@@ -370,7 +372,7 @@ auto ref = n->is_a<EffectorRef>();
     
     // PLOGW << "create Node " << n->name();
 
-    if (n->color != std::array<float,4>{1,1,1,1} && n->childrens.size()) {
+    if (n->color != std::array<float,4>{1,1,1,1} || n->is_active || n->childrens.size()) {
 
         json.value.AddMember(rjs::Value("childrens", doc.GetAllocator()), rjs::Value(rjs::kObjectType),  doc.GetAllocator());
         for (auto c : n->childrens) 
@@ -465,10 +467,11 @@ void Save::json(std::string path) {
     rjs::PrettyWriter<rjs::StringBuffer> writer(buffer);
     writer.SetIndent(' ', 4); // Set indent to 2 spaces
     writer.SetFormatOptions(rjs::kFormatSingleLineArray);
+    writer.SetMaxDecimalPlaces(3);
     json_v.document.Accept(writer);
 
     // inline from depth
-    std::string result =  buffer.GetString();//std::regex_replace(buffer.GetString(), std::regex(R"(([0-9|(true|false)],?|\[)\n\s+)"), "$1 ");
+    std::string result = std::regex_replace(buffer.GetString(), std::regex(R"(\.0([,\s\)\}\]]))"), "$1");
     // buffer.GetString();std::regex_replace(buffer.GetString(), std::regex(R"(\s{5}(([\]\}])|\s{4,}))"), " $2");
     // result = std::regex_replace(result, std::regex(R"(\n)"), " \n\n");
 
