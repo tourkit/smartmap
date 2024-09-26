@@ -99,7 +99,7 @@ void Save::editors(){
 
         auto v = rjs::Value(rjs::kArrayType);
 
-        if (e->selected) v.PushBack(rjs::Value(e->selected->nameSTL().c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
+        if (e->selected) v.PushBack(rjs::Value(e->selected->nameSTL(3).c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
 
         auto &x = json_v.document["editors"].PushBack(v, json_v.document.GetAllocator());
 

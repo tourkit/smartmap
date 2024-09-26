@@ -4,6 +4,7 @@
 
 #include "../../vendors/ofxLibArtnet/artnet/misc.h"
 #include <cmath>
+#include <string>
 #ifdef ISUNIX
 #include <arpa/inet.h>
 #endif
@@ -44,21 +45,32 @@ void DMXRemap::update() {
 
 }
 
-void DMXRemap::extract(Member *s) {
+std::vector<DMXRemap::Attribute> extract_r(Member *m) {
 
-    attributes.clear();
+    std::vector<DMXRemap::Attribute> attributes;
 
-    for (auto m : s->members) 
+    for (auto m_ : m->members) 
 
-        if (m->isData()) 
-
-            for (int i = 0 ; i < m->quantity(); i++)
-
-                attributes.push_back({1,*(float*)m->from(),*(float*)m->to()});
+        if (m_->isData()) 
+            for (int i = 0 ; i < m_->quantity(); i++)
+                attributes.push_back({1,*(float*)m_->from(),*(float*)m_->to()});
 
         else
+            for (auto a : extract_r(m_))
+                attributes.push_back(a);
 
-            extract(m);
+    return attributes;
+
+}
+
+void DMXRemap::extract(Member *m) {
+
+    auto new_list = extract_r(m);
+
+    attributes.resize(new_list.size());
+
+    for (int i = 0; i < new_list.size(); i++) 
+        attributes[i] = new_list[i];
 
 }
 

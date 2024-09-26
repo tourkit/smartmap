@@ -266,9 +266,13 @@ static Node* createRemap(JSONVal& json, Node* node) {
 
     auto remap = remap_->is_a<DMXRemap>();
 
+    if (json["patch"].isarr())
+        remap->attributes.clear();
     for (auto &x : json["patch"])
         if (x.isnum()) 
             remap->attributes.push_back({(int)x.num(1)});
+        else if (x.isarr() && x[0].isnum() && x[1].isnum() && x[2].isnum())
+            remap->attributes.push_back({(int)x[0].num(1), x[1].num(), x[2].num()});
 
     return node;
 

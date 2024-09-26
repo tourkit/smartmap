@@ -75,6 +75,7 @@ void Editors::init() {
 
         // if ( BeginPopupContextWindow()){
 
+
         //     if (Button("clear src")) {
         //         engine.window.end_of_render_cbs.push_back({remap, [](void* ptr){
         //             ((DMXRemap*)ptr)->src = nullptr;
@@ -155,7 +156,7 @@ void Editors::init() {
                             changed = true;
                         ImGui::TableNextColumn();
                         ImGui::SetNextItemWidth(100);
-                        if (ImGui::InputFloat2(("##minmax"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].min)) 
+                        if (ImGui::DragScalarN(("##minmax"+std::to_string(member_id)).c_str(), ImGuiDataType_Float, &remap->attributes[member_id].min, 2)) 
                             changed = true;
 
                         if (changed) {
