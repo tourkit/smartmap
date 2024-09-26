@@ -134,10 +134,10 @@ static bool operator==(const std::string& a, const char* b) { // kikoo
 
 static Node* createFile(JSONVal& json, Node* node) {
 
-    auto src = json.str();
+    auto src = JSONVal(json)[JSON_SOURCE].str();
     
     if (!src.length())
-        src = json[JSON_SOURCE].str();
+        src = json.str();
 
     if (!src.length())
         return nullptr;
@@ -274,6 +274,9 @@ static Node* createRemap(JSONVal& json, Node* node) {
         else if (x.isarr() && x[0].isnum() && x[1].isnum() && x[2].isnum())
             remap->attributes.push_back({(int)x[0].num(1), x[1].num(), x[2].num()});
 
+
+    getNodeData(json, remap_);
+
     return node;
 
 }
@@ -301,6 +304,8 @@ static Node* createArtnet(JSONVal& json, Node* node) {
 
         auto uni_node = an_->childrens.back(); // wild guess
 
+        getNodeData(uni_, uni_node);
+
         for (auto &remap_ : uni_[JSON_CHILDRENS_REMAP]) 
             inputs_dst.emplace(uni_node, remap_);
 
@@ -309,6 +314,7 @@ static Node* createArtnet(JSONVal& json, Node* node) {
             inputs_dst.emplace(uni_node, remap_);
             
     }
+    getNodeData(json, an_);
 
     return node;
 
@@ -428,6 +434,8 @@ static Node* createLayer(JSONVal& json, Node* node) {
     auto q = getQ(json);
     if (q[0]!=1)
         lay_->is_a<Layer>()->quantity(q[0]);
+    
+    getNodeData(json, lay_);
 
     return lay_;
     

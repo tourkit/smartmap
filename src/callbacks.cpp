@@ -87,7 +87,8 @@ void Callbacks::init() {
 
     NODE<AnyNode>::on(Node::DESTROY, [](Node* node, AnyNode *n){ 
 
-        engine.gui_v->deselect(node);
+        if (engine.gui_v) 
+            engine.gui_v->deselect(node);
         
 
     });

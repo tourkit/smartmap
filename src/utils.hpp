@@ -6,6 +6,10 @@
 #include "log.hpp"
 
 
+
+#include <boost/algorithm/string/replace.hpp>
+
+
 template <typename T>
 static bool ADD_UNIQUE( std::vector<T>& list, T n) {
 
@@ -138,3 +142,4 @@ static bool is_num(const std::string str) {
     return str.length() && str.find_first_not_of( "0123456789" ) == std::string::npos;
 
 }
+

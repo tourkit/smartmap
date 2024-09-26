@@ -12,84 +12,8 @@
 #include "file.hpp"
 #include "effector.hpp"
 #include "layer.hpp"
-#include "ndi.hpp"
-#include "gui.hpp"
 #include "editor.hpp"
-#include "rapidjson/document.h"
-#include "rapidjson/rapidjson.h"
-#include "remap.hpp"
 #include "window.hpp"
-
-#include <boost/algorithm/string/replace.hpp>
-
-
-void Save::medias(){
-
-
-}
-
-void Save::inputs(){
-
-
-
-}
-
-void Save::outputs(){
-
-
-    // json_v.document["outputs"].SetObject();
-    // json_v.document["outputs"].RemoveAllMembers();
-    // for (auto output : engine.outputs->childrens) {
-
-    //     auto  outputarr = rjs::Value(rjs::kArrayType);
-
-    //     Output* output_ = output->is_a_nowarning<Window>();
-    //     if (!output_) output_ = output->is_a_nowarning<NDI::Sender>();
-    //     if (!output_) continue;
-
-    //     outputarr.PushBack( output_->width, allocator );
-    //     outputarr.PushBack( output_->height, allocator );
-    //     outputarr.PushBack( output_->offset_x, allocator );
-    //     outputarr.PushBack( output_->offset_y, allocator );
-    //     if (output_->fb) {
-
-    //         Layer* lay = nullptr;
-
-    //         engine.main->each<Layer>([&](Node* node, Layer* layer){ if (&layer->fb == output_->fb) lay = layer; });
-
-    //         outputarr.PushBack( rjs::Value(lay->name().c_str(), allocator ), allocator );
-
-    //     }
-
-    //     // if ( output->is_a<NDI::Sender>() ) { }
-
-    //     auto &outputs = json_v.document["outputs"];
-
-    //     if ( output->is_a_nowarning<Window>() ) {
-
-    //         if (!outputs.HasMember("monitor")) outputs.AddMember(rjs::Value("monitor", allocator) , rjs::Value(rjs::kObjectType), allocator);
-
-    //         outputs["monitor"].AddMember( rjs::Value(output->name().c_str(), allocator)  , outputarr, allocator );
-
-    //     }
-    //     if ( output->is_a_nowarning<NDI::Sender>() ) {
-
-    //         if (!outputs.HasMember("ndi")) outputs.AddMember(rjs::Value("ndi", allocator) , rjs::Value(rjs::kObjectType), allocator);
-
-    //         outputs["ndi"].AddMember( rjs::Value(output->name().c_str(), allocator)  , outputarr, allocator );
-
-    //     }
-
-
-
-    // }
-
-}
-
-
-using namespace rapidjson;
-
-namespace rjs  =rapidjson;
 
 void Save::editors(){
 
@@ -97,7 +21,7 @@ void Save::editors(){
 
     for (auto e : engine.gui_v->editors) {
 
-        auto v = rjs::Value(rjs::kArrayType);
+        auto v = rjs::Value(kArrayType);
 
         if (e->selected) v.PushBack(rjs::Value(e->selected->nameSTL(3).c_str(), json_v.document.GetAllocator()), json_v.document.GetAllocator());
 
@@ -108,21 +32,45 @@ void Save::editors(){
 
 Save::Save() : allocator(json_v.document.GetAllocator()) {}
 
-static void fetch(JSONVal json, Node* n, rjs::Document& doc);
+void Save::saveColor(rjs::Value& value, Node* n) {
+    auto &doc = json_v.document;
 
-static void saveFile(JSONVal json, Node* n, rjs::Document& doc) {
+    if (!n->is_active)
+        value.AddMember("active", false, doc.GetAllocator());
+
+    if (n->color != std::array<float,4> {1,1,1,1}){
+    
+        rjs::Value color(kArrayType);
+        color.PushBack(n->color[0], doc.GetAllocator());
+        color.PushBack(n->color[1], doc.GetAllocator());
+        color.PushBack(n->color[2], doc.GetAllocator());
+        color.PushBack(n->color[3], doc.GetAllocator());
+
+        if (value.IsObject())
+            value.AddMember("color", rjs::Value(color, doc.GetAllocator()), doc.GetAllocator());
+    }
+
+}
+
+ void Save::saveFile(JSONVal json, Node* n) {
+
+
+    auto &doc = json_v.document;
 
     // PLOGW << "create File " << n->name();
 
     auto file = n->is_a<File>();
     json.parent->value.RemoveMember(n->name().c_str()); // apparently gota remove first cant rename directly
 
-    if (n->color != std::array<float,4>{1,1,1,1} && n->childrens.size()) {
+    if (n->color != std::array<float,4>{1,1,1,1}) {
 
         rjs::Value obj(rjs::kObjectType);
         obj.AddMember("source", rjs::Value(file->data.c_str(), doc.GetAllocator()), doc.GetAllocator() );
-        json.parent->value.AddMember( rjs::Value(file->filename().c_str(), doc.GetAllocator()), obj, doc.GetAllocator());
+        obj.AddMember(rjs::Value("type", doc.GetAllocator()), rjs::Value("file", doc.GetAllocator()), doc.GetAllocator() );
         
+        saveColor(obj, n);
+
+        json.parent->value.AddMember( rjs::Value(file->filename().c_str(), doc.GetAllocator()), obj, doc.GetAllocator());
         
     }else{
 
@@ -138,7 +86,10 @@ static void saveFile(JSONVal json, Node* n, rjs::Document& doc) {
 
 }
 
-static void saveWindow(JSONVal json, Node* n, rjs::Document& doc) {
+ void Save::saveWindow(JSONVal json, Node* n) {
+
+
+    auto &doc = json_v.document;
 
     // PLOGW << "create Window " << n->name();
 
@@ -156,7 +107,7 @@ static void saveWindow(JSONVal json, Node* n, rjs::Document& doc) {
 
     if (window->width && window->height) {
 
-        auto dims = rjs::Value(kArrayType);
+        auto dims = rjs::Value(kArrayType); 
 
         dims.PushBack(window->width, doc.GetAllocator());
         dims.PushBack(window->height, doc.GetAllocator());
@@ -167,7 +118,7 @@ static void saveWindow(JSONVal json, Node* n, rjs::Document& doc) {
 
     if (window->offset_x || window->offset_y) {
 
-        rjs::Value offsets(rjs::kArrayType);
+        rjs::Value offsets(kArrayType);
 
         offsets.PushBack(window->width, doc.GetAllocator());
         offsets.PushBack(window->height, doc.GetAllocator());
@@ -175,6 +126,8 @@ static void saveWindow(JSONVal json, Node* n, rjs::Document& doc) {
         val.AddMember("offset", offsets, doc.GetAllocator());
 
     }
+    
+    saveColor(val, n);
 
     if (window->fb) {
 
@@ -194,7 +147,58 @@ static void saveWindow(JSONVal json, Node* n, rjs::Document& doc) {
 
 }
 #include "artnet.hpp"
-static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
+
+void Save::saveRemap(rjs::Value& obj, Node* n) {
+
+    auto &doc = json_v.document;
+
+    auto remap = n->is_a<DMXRemap>();
+
+    obj.AddMember("channel",remap->chan,doc.GetAllocator());
+
+    auto stlname = remap->dst->stl_name(1);
+
+    boost::replace_all(stlname, "dynamic_ubo::", "");
+
+    obj.AddMember("destination",rjs::Value(stlname.c_str(), doc.GetAllocator()),doc.GetAllocator());
+    rjs::Value patch_(kArrayType);
+    for (auto attr : remap->attributes) {
+        
+        if (attr.min == 0 && attr.max == 1 && attr.active == true) {// aka default val
+        
+            patch_.PushBack(attr.combining, doc.GetAllocator());
+
+        }else{
+
+            rjs::Value attr_(kArrayType);
+
+            attr_.PushBack(attr.combining, doc.GetAllocator());
+            attr_.PushBack(attr.min, doc.GetAllocator());
+            attr_.PushBack(attr.max, doc.GetAllocator());
+            attr_.PushBack(attr.active, doc.GetAllocator());
+
+            patch_.PushBack(attr_, doc.GetAllocator());
+
+        }
+
+    }
+
+    if (remap->attributes.size())
+        obj.AddMember("patch",patch_,doc.GetAllocator());
+    
+    saveColor(obj, n);
+
+}
+
+static void saveUniverse(rjs::Document& doc, rjs::Value& obj, Node* n) {
+
+
+}
+
+ void Save::saveArtnet(JSONVal json, Node* n) {
+
+
+    auto &doc = json_v.document;
 
     // PLOGW << "create Artnet " << n->name();
 
@@ -211,41 +215,19 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
 
         rjs::Value uni_(kObjectType);
 
+        auto &target = uni_;
+
+        if (n->color != std::array<float,4>{1,1,1,1}){
+            saveColor(uni_, n);
+            uni_.AddMember("remaps", rjs::Value(kObjectType), doc.GetAllocator());
+            target = uni_["remaps"];
+        }
         n->each<DMXRemap>([&](Node* n, DMXRemap* remap) {
 
             rjs::Value remap_(kObjectType);
-            remap_.AddMember("channel",remap->chan,doc.GetAllocator());
 
-            auto stlname = remap->dst->stl_name(1);
-
-            boost::replace_all(stlname, "dynamic_ubo::", "");
-
-            remap_.AddMember("destination",rjs::Value(stlname.c_str(), doc.GetAllocator()),doc.GetAllocator());
-            rjs::Value patch_(kArrayType);
-            for (auto attr : remap->attributes) {
-                
-                if (attr.min == 0 && attr.max == 1 && attr.active == true) {// aka default val
-                
-                    patch_.PushBack(attr.combining, doc.GetAllocator());
-
-                }else{
-
-                    rjs::Value attr_(kArrayType);
-
-                    attr_.PushBack(attr.combining, doc.GetAllocator());
-                    attr_.PushBack(attr.min, doc.GetAllocator());
-                    attr_.PushBack(attr.max, doc.GetAllocator());
-                    attr_.PushBack(attr.active, doc.GetAllocator());
-
-                    patch_.PushBack(attr_, doc.GetAllocator());
-
-                }
-
-            }
-
-            if (remap->attributes.size())
-                remap_.AddMember("patch",patch_,doc.GetAllocator());
-
+            saveRemap(remap_,n);
+            
             uni_.AddMember(
                 rjs::Value(n->name().c_str(),doc.GetAllocator()), 
                 rjs::Value(remap_, doc.GetAllocator()), 
@@ -256,6 +238,8 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
 
         if (n->childrens.size())
 
+            
+
             universes_.AddMember(
                 rjs::Value(std::to_string(uni->id).c_str(),doc.GetAllocator()), 
                 rjs::Value(uni_, doc.GetAllocator()), 
@@ -263,6 +247,8 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
             );
 
     });
+
+    saveColor(json.value, n);
 
     if (n->childrens.size())
         json.value.AddMember(
@@ -273,7 +259,10 @@ static void saveArtnet(JSONVal json, Node* n, rjs::Document& doc) {
 
 }
 
-static void saveEffector(JSONVal json, Node* n, rjs::Document& doc) {
+ void Save::saveEffector(JSONVal json, Node* n) {
+
+
+    auto &doc = json_v.document;
 
 auto ref = n->is_a<EffectorRef>();
 
@@ -282,13 +271,16 @@ auto ref = n->is_a<EffectorRef>();
 
 }
 
-static void saveModel(JSONVal json, Node* n, rjs::Document& doc) {
+ void Save::saveModel(JSONVal json, Node* n) {
+
+
+    auto &doc = json_v.document;
 
     // PLOGW << "create Model " << n->name();
     
     auto model = n->is_a<Model>();
 
-    rjs::Value dims(rjs::kArrayType);
+    rjs::Value dims(kArrayType);
 
     // dims.PushBack(model., doc.GetAllocator());
     // dims.PushBack(model., doc.GetAllocator());
@@ -298,11 +290,11 @@ static void saveModel(JSONVal json, Node* n, rjs::Document& doc) {
 
     if (model->effector_refs.size()){
 
-        rjs::Value effectors(rjs::kArrayType);
+        rjs::Value effectors(kArrayType);
 
         n->each<EffectorRef>([&](Node* n, EffectorRef* ref) {
 
-            fetch(effectors, n, doc);
+            fetch(effectors, n);
 
         });
 
@@ -310,9 +302,14 @@ static void saveModel(JSONVal json, Node* n, rjs::Document& doc) {
 
     }
 
+    saveColor(json.value, n);
+
 }
 
-static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
+ void Save::saveLayer(JSONVal json, Node* n) {
+
+
+    auto &doc = json_v.document;
 
     // PLOGW << "create Layer " << n->name();
 
@@ -325,7 +322,7 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
     
     auto layer = n->is_a<Layer>();
 
-    rjs::Value dims(rjs::kArrayType);
+    rjs::Value dims(kArrayType);
 
     dims.PushBack(layer->fb.texture.width, doc.GetAllocator());
     dims.PushBack(layer->fb.texture.height, doc.GetAllocator());
@@ -341,7 +338,7 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
 
         n->each<Model>([&](Node* n, Model* m) {
 
-            fetch(models, n, doc);
+            fetch(models, n);
 
         });
 
@@ -350,11 +347,11 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
     }
     if (layer->effector_refs.size()){
 
-        rjs::Value effectors(rjs::kArrayType);
+        rjs::Value effectors(kArrayType);
 
         n->each<EffectorRef>([&](Node* n, EffectorRef* ref) {
 
-            fetch(effectors, n, doc);
+            fetch(effectors, n);
 
         });
 
@@ -362,9 +359,14 @@ static void saveLayer(JSONVal json, Node* n, rjs::Document& doc) {
 
     }
 
+    saveColor(val, n);
+
 }
 
-static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
+ void Save::saveNode(JSONVal json, Node* n) {
+
+
+    auto &doc = json_v.document;
     
     // PLOGW << "create Node " << n->name();
 
@@ -372,18 +374,22 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
 
         json.value.AddMember(rjs::Value("childrens", doc.GetAllocator()), rjs::Value(rjs::kObjectType),  doc.GetAllocator());
         for (auto c : n->childrens) 
-            fetch(json["childrens"], c, doc);
+            fetch(json["childrens"], c);
+
+        saveColor(json.value, n);
         
     }else{
 
         for (auto c : n->childrens) 
-            fetch(json, c, doc);
+            fetch(json, c);
         
     }
 
 }
 
- void fetch(JSONVal json, Node* n, rjs::Document& doc) {
+ void Save::fetch(JSONVal json, Node* n) {
+
+    auto &doc = json_v.document;
 
     if (n->hidden) 
         return;
@@ -421,36 +427,25 @@ static void saveNode(JSONVal json, Node* n, rjs::Document& doc) {
     }
 
     if (!n->void_ptr || n->is_a_nowarning<Node>())
-        saveNode(json[n->name()], n, doc);
+        saveNode(json[n->name()], n);
     else if (n->is_a_nowarning<File>())
-        saveFile(json[n->name()], n, doc);
+        saveFile(json[n->name()], n);
     else if (n->is_a_nowarning<Layer>())
-        saveLayer(json, n, doc);
+        saveLayer(json, n);
     else if (n->is_a_nowarning<Model>())
-        saveModel(json[n->name()], n, doc);
+        saveModel(json[n->name()], n);
     else if (n->is_a_nowarning<EffectorRef>())
-        saveEffector(json[n->name()], n, doc);
+        saveEffector(json[n->name()], n);
     else if (n->is_a_nowarning<Window>())
-        saveWindow(json, n, doc);
+        saveWindow(json, n);
     // else if (n->is_a_nowarning<NDI::Sender>())
         // PLOGW << "create NDI " << n->name() << " in " << n->parent()->name();
     else if (n->is_a_nowarning<Artnet>())
-        saveArtnet(json[n->name()], n, doc);
-        
+        saveArtnet(json[n->name()], n);
     
     else
-        // PLOGW << "need to create " << n->type_name() << " "  << n->name();
+        PLOGW << "need to create " << n->type_name() << " "  << n->name();
 
-    if (n->color != std::array<float,4> {1,1,1,1}){
-    
-        rjs::Value color(rjs::kArrayType);
-        color.PushBack(n->color[0], doc.GetAllocator());
-        color.PushBack(n->color[1], doc.GetAllocator());
-        color.PushBack(n->color[2], doc.GetAllocator());
-        color.PushBack(n->color[3], doc.GetAllocator());
-
-        json[n->name()].value.AddMember("color", color, doc.GetAllocator());
-    }
 }
 
 void Save::json(std::string path) {
@@ -461,18 +456,20 @@ void Save::json(std::string path) {
     JSONVal doc(json_v.document, "__JSONVAL__");
 
     for (auto c : engine.tree->childrens) 
-        fetch(doc, c, json_v.document);
+        fetch(doc, c);
 
-    if (!json_v.document.HasMember("editors")) json_v.document.AddMember("editors", rjs::Value(rjs::kArrayType), json_v.document.GetAllocator());
+    if (!json_v.document.HasMember("editors")) json_v.document.AddMember("editors", rjs::Value(kArrayType), json_v.document.GetAllocator());
     editors();
 
     rjs::StringBuffer buffer;
     rjs::PrettyWriter<rjs::StringBuffer> writer(buffer);
-    writer.SetIndent(' ', 2); // Set indent to 2 spaces
+    writer.SetIndent(' ', 4); // Set indent to 2 spaces
+    writer.SetFormatOptions(rjs::kFormatSingleLineArray);
     json_v.document.Accept(writer);
 
     // inline from depth
-    std::string result = std::regex_replace(buffer.GetString(), std::regex(R"(\s{5}(([\]\}])|\s{2,}))"), " $2");
+    std::string result =  buffer.GetString();//std::regex_replace(buffer.GetString(), std::regex(R"(([0-9|(true|false)],?|\[)\n\s+)"), "$1 ");
+    // buffer.GetString();std::regex_replace(buffer.GetString(), std::regex(R"(\s{5}(([\]\}])|\s{4,}))"), " $2");
     // result = std::regex_replace(result, std::regex(R"(\n)"), " \n\n");
 
     // PLOGD << result;
