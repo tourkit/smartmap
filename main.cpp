@@ -8,6 +8,7 @@
 #include "engine.hpp"
 #include "layer.hpp"
 #include "node.hpp"
+#include "editor.hpp"
 
 int main() {
 
@@ -16,22 +17,28 @@ int main() {
     engine.init();
 
     engine.open("project.json");  
+    engine.window.size(100, 1);
+    engine.gui(true);
 
     auto main_ = engine.tree->find("main")->allow<AnyNode>();
-
-    auto ubl_ = engine.tree->find("main")->addOwnr<UberLayer>();
-    auto ubl = ubl_->is_a<UberLayer>();
 
     auto argb_ = engine.tree->find("argb");
     auto quad_ = engine.tree->find("quad");
 
-    // auto v1 = ubl->addModel(quad_->is_a<File>());
-    main_->add(quad_);
-    auto lay_ = main_->childrens.back();
-    auto v1_ = lay_->childrens.back();
-    v1_->add(argb_);
-    auto v2_ = lay_->add(quad_);
-    v2_->add(argb_);
+
+    // main_->add(quad_);
+    // auto lay_ = main_->childrens.back();
+    // auto v1_ = lay_->childrens.back();
+    // v1_->add(argb_);
+    // auto v2_ = lay_->add(quad_);
+    // v2_->add(argb_);
+    // engine.gui_v->editors[0].get()->selected = lay_;
+    // engine.gui_v->editors[0].get()->locked = true;
+
+
+
+    auto ubl_ = engine.tree->find("main")->addOwnr<UberLayer>();
+    auto ubl = ubl_->is_a<UberLayer>();
 
     auto &vl1 = ubl->addLayer(100, 1);
     vl1.quantity(5);
@@ -45,6 +52,8 @@ int main() {
     vl2_->active(true);
     vl2_->add(argb_);
 
+    engine.gui_v->editors[1].get()->selected = ubl_;
+    engine.gui_v->editors[1].get()->locked = true;
     engine.run();
 
 }
