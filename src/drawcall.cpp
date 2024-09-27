@@ -63,7 +63,10 @@ void DrawCall::Builder::setup() {
     // FRAGMENT ////////////////
 
     header_fragment += "\n";
-    header_fragment += "in flat int ID;\n"; // add condition
+
+    header_fragment += "in flat int ID;\n"; // COULD add condition
+
+    body_fragment += "\tint obj  = int(OBJ);\n\n"; // COULD add condition
 
     header_fragment += "vec2 uv = UV;\n";
     header_fragment += "vec4 color = vec4(0);\n";

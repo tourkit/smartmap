@@ -113,8 +113,6 @@ static void getNodeData(JSONVal& json, Node* node) {
 
     if (json[JSON_ACTIVE].name().length())
         node->active(json[JSON_ACTIVE].b());
-    else
-        node->active(false);
 
     auto color = json["color"];
     node->color = {color[0].num(1),color[1].num(1),color[2].num(1),color[3].num(1)};
@@ -469,6 +467,7 @@ static Node* createLayer(JSONVal& json, Node* node) {
 
     lay_->name(json.name());
     lay_->close();
+    lay_->active(true);
 
     auto parent = lay_;
     while(parent) {
@@ -495,7 +494,7 @@ static Node* createLayer(JSONVal& json, Node* node) {
     
 }
 
-std::map<Node*,JSONVal> layers_lst;
+std::vector<std::pair<Node*,JSONVal>> layers_lst;
 void fetch(JSONVal json, Node* node) {
 
     Node* already = nullptr;
@@ -529,7 +528,7 @@ void fetch(JSONVal json, Node* node) {
             else if (type==JSON_FILE) 
                 node = createFile(json, node);
             else if (type==JSON_LAYER) 
-                layers_lst.emplace(node,json);
+                layers_lst.push_back({node,json});
             else if (type==JSON_WINDOW) 
                 node = createWindow(json, node);
             else if (type=="ndi") 

@@ -147,15 +147,11 @@ void Callbacks::init() {
 
         auto modelable = node->parent()->is_a_nowarning<Modelable>();
 
-        if (modelable) {
+        if (modelable) 
+            modelable->removeModel(model); 
 
-            // hardcore remove all ptrs
-
-            modelable->removeModel(model); // will remove all effectors
-
-        }
-
-        PLOGE << "no found";
+        else
+            PLOGE << "error distroying " << node->nameSTL();
  
     });
 
@@ -402,22 +398,6 @@ void Callbacks::init() {
 
     NODE<DMXRemap>::on(Node::CHANGE, [](Node* node, DMXRemap *remap) { 
         remap->extract(remap->dst->m()); 
-    });
-
-
-    NODE<Remap>::on(Node::DESTROY, [](Node* n, Remap *remap) {
-        // for (auto node : Node::pool) {
-        //     for (auto refering : node->referings) 
-        //     if (refering == n) { 
-        //         node->referings.erase(refering); 
-        //         break; 
-        //     }
-
-        //     // if (node->void_ptr == remap) {
-
-        //     //     node->referings.insert(n);
-        //     // }
-        // }
     });
 
     NODE<Remap>::on(Node::RUN, [](Node* node, Remap *remap) { 

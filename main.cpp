@@ -6,7 +6,7 @@
 
 
 #include "engine.hpp"
-#include "model.hpp"
+#include "layer.hpp"
 
 int main() {
 
@@ -15,6 +15,9 @@ int main() {
     engine.init();
 
     engine.open("project.json");  
+
+    // engine.tree->find("main")->allow<UberLayer>();
+    // engine.tree->find("main")->addOwnr<UberLayer>();
 
     engine.run();
 

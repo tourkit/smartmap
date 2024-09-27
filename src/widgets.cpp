@@ -211,7 +211,7 @@ bool ImGui::VCharSlider(void* c, int label_id) {
 
         PushStyleVar(ImGuiStyleVar_GrabMinSize, 0);
 
-        PushID(label_id);
+        PushID(GUI::member_count++);
 
 
         // Draw frame
@@ -284,27 +284,29 @@ bool ImGui::RawWidget(void *data, size_t size) {
 
          if (size > 1025) size = 1025;
 
-        if (cells_per_line) for (int i = 0; i < size; i++) {
+        if (cells_per_line) 
+            
+            for (int i = 0; i < size; i++) {
 
 
-        // ImGui::PushID(i);
-        if (ImGui::IsWindowHovered() && is_hovered && i == hovered_offset) {
+                // ImGui::PushID(i);
+                if (ImGui::IsWindowHovered() && is_hovered && i == hovered_offset) {
 
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,0,0,1));
+                    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,0,0,1));
 
-            colorized = true;
+                    colorized = true;
 
-        }
+                }
 
-        if (i && !(i%cells_per_line)) ImGui::NewLine();
-        ImGui::SameLine(((i%cells_per_line)*(cell_width+cell_margin)));
+                if (i && !(i%cells_per_line)) ImGui::NewLine();
+                ImGui::SameLine(((i%cells_per_line)*(cell_width+cell_margin)));
 
-        if (VCharSlider((((uint8_t*)data)+i),GUI::member_count++)) has_changed = true;
+                if (VCharSlider((((uint8_t*)data)+i),i)) has_changed = true;
 
-        // ImGui::PopID();
-        if (colorized && (i == hovered_offset+hovered_size-1 || i == size-1)) { ImGui::PopStyleColor(); colorized= false; }
+                // ImGui::PopID();
+                if (colorized && (i == hovered_offset+hovered_size-1 || i == size-1)) { ImGui::PopStyleColor(); colorized= false; }
 
-    }
+            }
 
     // ImGui::EndDisabled();
 
@@ -378,7 +380,7 @@ static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
 }
 
-bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& member_count) {
+bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset) {
 
     
     if (!member)
@@ -393,7 +395,7 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
         SameLine();
 
         SetNextItemWidth(-FLT_MIN-10);
-        if (ImGui::SliderInt(("##"+std::to_string(member_count++)).c_str(), &elem_current, 0, member->quantity()-1)) { }
+        if (ImGui::SliderInt(("##"+std::to_string(GUI::member_count++)).c_str(), &elem_current, 0, member->quantity()-1)) { }
 
         offset += member->footprint()*elem_current;
 
@@ -441,9 +443,9 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
             }
 
             auto x = ImGui::SliderScalarN(
-                ("###"+std::to_string(member_count++)).c_str(), 
+                ("###"+std::to_string(GUI::member_count++)).c_str(), 
                 type, buff->data()+offset, q, m->from(), m->to(),
-                NULL,0,ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue,MyResizeCallback, &str__);
+                NULL,0,ImGuiInputTextFlags_CallbackAlways|ImGuiInputTextFlags_EnterReturnsTrue,MyResizeCallback, &str__); 
 
             if (x) {
 
@@ -544,7 +546,7 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
                 }
             }
 
-            if (SlidersWidget(buff, m, offset, member_count)) has_changed = true;
+            if (SlidersWidget(buff, m, offset)) has_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){

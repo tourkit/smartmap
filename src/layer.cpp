@@ -392,9 +392,10 @@ void UberLayer::Builder::setup() {
 
     DrawCall::Builder::setup();
 
-    body_fragment += "\tint obj  = int(OBJ);\n\n";
-
-    std::string ar_str = lower(ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?"[obj]":"")+".uBL";
+    std::string ar_str = lower(
+        ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?
+        "[obj]":"")+
+        ".uBL";
 
     if (ubl->layers.size() == 1) 
         body_fragment += print_layer( *ubl->layers[0].get(), lower(dc->name()), "obj", ar_str );

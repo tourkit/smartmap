@@ -505,7 +505,7 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("programmer")) {
                 
-                if (m->buffering() && SlidersWidget(m,nullptr,0,engine.gui_v->member_count)) {
+                if (m->buffering() && SlidersWidget(m)) {
             
                     m->upload();
 
@@ -596,7 +596,7 @@ void Editors::init() {
 
         }
 
-        if (SlidersWidget(effectable->instance->buff(), effectable, effectable->instance->offset,gui->member_count))
+        if (SlidersWidget(effectable->instance->buff(), effectable, effectable->instance->offset))
             effectable->instance->buff()->upload();
 
     });
