@@ -82,6 +82,7 @@ void Editors::init() {
             EndPopup();
 
         }
+        Text((std::to_string(remap->attributes.size())+ " VS " + std::to_string(remap->dst->m()->quantity())).c_str());
 
         DragInt("sdf", &remap->quantity, 0, 2);
 

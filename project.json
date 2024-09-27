@@ -1,20 +1,23 @@
 {
-    "editors": [["layers::Free Layer 10::quad1"], ["main"], ["artnet1::universe 0::DMXRemap"]],
+    "editors": [["main::layers::Free Layer 10"], ["main"], ["artnet1::universe 0::DMXRemap"], ["inputs::artnet1::universe 0"]],
     "inputs": {
         "childrens": {
             "artnet1": {
                 "type": "artnet",
                 "ip": "192.168.192.4",
                 "active": true,
+                "color": [0.451, 1, 0, 1],
                 "universes": {
                     "0": {
                         "active": true,
+                        "color": [0, 1, 0.935, 1],
                         "remaps": {
                             "DMXRemap": {
                                 "channel": 0,
                                 "destination": "Free Layer 10::quad1",
-                                "patch": [1, 1, 1, 1, 2, 2, 2, 2, 1],
-                                "active": true
+                                "patch": [1, 1, 1, 1, 2, 2, 2, 2, 0],
+                                "active": true,
+                                "color": [1, 0, 0, 1]
                             }
                         }
                     }

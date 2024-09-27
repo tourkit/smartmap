@@ -15,9 +15,9 @@ void DMXRemap::update() {
 
     auto data = (uint8_t*)src->data()+chan;
 
-    for (int offset = 0; offset < dst->stl.back().m->quantity(); offset++) {
+    for (int offset = 0; offset < dst->m()->quantity(); offset++) {
 
-        auto size = dst->stl.back().m->size();
+        auto size = dst->m()->size();
 
         auto pos = (offset*size);
         pos /=sizeof(float);

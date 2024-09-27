@@ -287,11 +287,11 @@ static Node* createModel(JSONVal& json, Node* node) {
     for (auto effector : json[JSON_EFFECTORS]) 
         createEffector(effector, model_);
     
-    
     auto q = getQ(json);
 
     if (q[0]!=1)
         model_->is_a<Model>()->quantity(q[0]);
+    
 
     getNodeData(json, model_);
 
