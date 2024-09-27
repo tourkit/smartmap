@@ -2,7 +2,7 @@
 
 minimalist multi-purpose realtime engine ;)
 
-![image](https://github.com/user-attachments/assets/5b0b0b27-0c83-4739-ae35-20d03507f739)
+![image](https://github.com/user-attachments/assets/2d26eba3-3152-43a9-bd6f-2eec0ec11701)
 
 
-*dependencies : imgui, glm, glfw, gl3w, freetype, assimp, ndi, libartnet, plog, rapidjson, ...*
+OPENGL, DMX , NDI, ...
