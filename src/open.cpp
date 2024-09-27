@@ -465,6 +465,10 @@ static Node* createLayer(JSONVal& json, Node* node) {
 
     auto lay_ = node->addOwnr<Layer>(width, height);
 
+    if (!lay_){
+        PLOGE << "layer " << json.name() << " error";
+        return nullptr;
+    }
     lay_->name(json.name());
     lay_->close();
     lay_->active(true);

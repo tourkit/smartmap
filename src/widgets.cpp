@@ -1,5 +1,6 @@
 #include "widgets.hpp"
 
+#include "gui.hpp"
 #include "member.hpp"
 #include "engine.hpp"
 #include "effector.hpp"
@@ -29,7 +30,7 @@ void ImGui::CustomSliderScalarN(){
 
 bool ImGui::DimWiget(uint32_t* x, uint32_t* y, std::string append) {
 
-
+    PushID(GUI::member_count++);
     
     auto iw = (GetContentRegionAvail().x-121)*.5;
     PushStyleVar(ImGuiStyleVar_ItemSpacing,ImVec2(3,4));
@@ -45,6 +46,8 @@ bool ImGui::DimWiget(uint32_t* x, uint32_t* y, std::string append) {
     SameLine(); if (Button("D", ImVec2(25,0))) { *x = engine.gui_v->window->displays[0].width; *y = engine.gui_v->window->displays[0].height; value_changed = true; }
 
     PopStyleVar(1);  
+
+    PopID();
 
     return value_changed;
 

@@ -16,8 +16,8 @@ int main() {
 
     engine.open("project.json");  
 
-    // engine.tree->find("main")->allow<UberLayer>();
-    // engine.tree->find("main")->addOwnr<UberLayer>();
+    engine.tree->find("main")->allow<UberLayer>();
+    engine.tree->find("main")->addOwnr<UberLayer>();
 
     engine.run();
 
