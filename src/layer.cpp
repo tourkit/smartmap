@@ -365,7 +365,7 @@ void UberLayer::calc_matrice() {
 
 UberLayer::VirtualLayer& UberLayer::addLayer(int w , int h) {
 
-    layers.emplace_back(std::make_shared<UberLayer::VirtualLayer>(w,h,layers.size()));
+    layers.emplace_back(std::make_shared<UberLayer::VirtualLayer>(this, w,h));
 
     add(layers.back().get());
 
@@ -373,12 +373,13 @@ UberLayer::VirtualLayer& UberLayer::addLayer(int w , int h) {
 
 }
 
-UberLayer::VirtualLayer::VirtualLayer(int w, int h, int id) : 
+UberLayer::VirtualLayer::VirtualLayer(UberLayer* ubl, int w, int h) : 
 
-    Effectable("Vlayer"+std::to_string(id)), 
+    ubl(ubl),
+    Effectable(ubl->next_name("Vlayer")), 
     w(w?w:engine.window.width), 
     h(h?h:engine.window.height), 
-    id(id), effector(this) 
+    effector(this) 
         
 { 
 

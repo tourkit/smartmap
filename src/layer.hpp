@@ -96,11 +96,10 @@ struct UberLayer : Layer {
 
     struct VirtualLayer : Effectable {
 
-        VirtualLayer(int w = 0, int h = 0, int id = 0);
+        VirtualLayer(UberLayer* ubl, int w = 0, int h = 0);
 
         int w ;
         int h;
-        int id;
 
         UberLayer* ubl;
 

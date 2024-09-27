@@ -369,12 +369,14 @@ void Editors::init() {
             }
             if (ImGui::BeginTabItem("vertex")) {
 
-                if (editor.GetText().length() != shader->vert.src.length()+1) {
+                if (EDITOR::triglist.find(node) != EDITOR::triglist.end()) {
                 
                     editor.SetText(shader->vert.src);
                     editor.SetErrorMarkers(shader->vert.errors);
                     node->error = shader->vert.errors.size();
               
+                    EDITOR::triglist.erase(node);
+
                 }
 
                 editor.Render("vertex");

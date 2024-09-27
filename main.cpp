@@ -22,13 +22,19 @@ int main() {
     auto ubl = ubl_->is_a<UberLayer>();
 
 
-
-    auto &vl = ubl->addLayer(100, 100);
-    vl.quantity(5);
-    auto vl_ = ubl_->addPtr<UberLayer::VirtualLayer>(&vl);
-    vl_->active(true);
     auto argb_ = engine.tree->find("argb");
-    vl_->add(argb_);
+
+    auto &vl1 = ubl->addLayer(100, 100);
+    vl1.quantity(5);
+    auto vl1_ = ubl_->addPtr<UberLayer::VirtualLayer>(&vl1);
+    vl1_->active(true);
+    vl1_->add(argb_);
+
+    auto &vl2 = ubl->addLayer(100, 100);
+    vl2.quantity(2);
+    auto vl2_ = ubl_->addPtr<UberLayer::VirtualLayer>(&vl2);
+    vl2_->active(true);
+    vl2_->add(argb_);
 
     ubl->calc_matrice();
     ubl->upload();

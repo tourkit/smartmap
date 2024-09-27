@@ -317,8 +317,6 @@ void Callbacks::init() {
 
     });
 
-
-
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *reffector) {
 
         auto effectable = node->parent()->is_a_nowarning<Effectable>();

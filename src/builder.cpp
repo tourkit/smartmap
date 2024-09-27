@@ -327,7 +327,7 @@ std::string Builder::layout() {
         out+=line;
 
     }
-std::cout << out << std::endl;
+    
     return out;
 
 }
