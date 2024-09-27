@@ -47,13 +47,6 @@ Model* Modelable::addModel(File* f) {
 
     add(mod);
 
-    if (!instance) // instance is owned by mod (Effectable)
-        for (auto x : getTop()) // if no root instance ( per buffer )
-            x->each([&](Instance& inst){ 
-                if (inst.stl.back().m == this) 
-                    instance = new Instance(inst); 
-            });
-
     mod->instance = &(new Instance(*instance))->loc(mod);
 
     return mod;

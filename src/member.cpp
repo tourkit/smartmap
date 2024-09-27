@@ -378,8 +378,8 @@ bool Member::remove(Member& m) {
 
     PLOGV << name() << "[" << footprint_all() << "] remove " << m.ref()->name() << "[" << m.footprint_all() << "]";
 
-    if (!buffering_v)
-        tops = getTop();
+    // if (!buffering_v) // proven to be problematic ex buff.remove(xxx)
+    tops = getTop();
 
     for (auto t : tops)  
         t->stl.front().m->bkp();

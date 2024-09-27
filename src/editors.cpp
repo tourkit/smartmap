@@ -567,6 +567,8 @@ void Editors::init() {
 
     Editor<Instance>([&](Node* node, Instance *instance){ 
 
+        Text(std::string(std::to_string(instance->offset)).c_str());
+
         if (SlidersWidget(instance->buff(), node->is_a<Member>(), instance->offset))
             instance->buff()->upload();
         

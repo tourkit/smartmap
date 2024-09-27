@@ -149,6 +149,8 @@ DrawCall::DrawCall(std::string name) : Modelable(engine.dynamic_ubo->next_name(n
 
     engine.dynamic_ubo->add(this);
 
+    instance = &(new Instance(*engine.dynamic_ubo))->loc(this);
+
 }
 
 

@@ -278,9 +278,8 @@ void branchSTL(std::vector<MemberQ>& stl,  int pos=0) {
             }
 
             for (auto adding : adding_list) 
+            
                 if (adding.m == inst.m() && adding.m->quantity()){
-
-
 
                     // auto parent = inst.parent();
 

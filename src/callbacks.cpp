@@ -94,7 +94,9 @@ void Callbacks::init() {
     });
 
     NODE<Member>::on(Node::DESTROY, [](Node* node, Member *m){ 
-        for (auto inst : m->instances) {
+
+        // detach all remaps (couldnt it be per refering isntead  ?)
+        for (auto inst : m->instances) { 
 
             for (auto remap : inst->remaps) {
 
