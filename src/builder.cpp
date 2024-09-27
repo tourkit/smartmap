@@ -66,6 +66,10 @@ static void addSmallerFirst(Member* m, std::vector<Member*>& v) {
 
 void Builder::build(ShaderProgram* shader) {
 
+    samplers.clear();
+    effectors_fragment.clear();
+    effectors_vertex.clear();
+
     this->shader = shader;
     PLOGV << "build";
 

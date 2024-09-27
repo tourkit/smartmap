@@ -581,6 +581,7 @@ void Editors::init() {
 
         Editor<Effectable>::cb_typed( node, model);
 
+
     });
 
     Editor<Effectable>([&](Node* node, Effectable *effectable){
@@ -983,7 +984,7 @@ void Editors::init() {
     });
 
     Editor<Layer>([](Node* node, Layer *layer){
-        
+
         if (ImGui::BeginTabBar("laytab", ImGuiTabBarFlags_None)) {
 
             if (ImGui::BeginTabItem(node->name().c_str())) {

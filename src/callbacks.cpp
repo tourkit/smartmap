@@ -311,14 +311,6 @@ void Callbacks::init() {
     NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
     NODE<EffectorRef>::is_a<Member>();
 
-    NODE<Layer::Feedback>::on(Node::DESTROY, [](Node* node, Layer::Feedback *fb) {
-
-
-        auto lay_ = node->parent()->is_a<Layer>();
-        if (lay_)
-            delete lay_->feedback();
-
-    });
     NODE<Layer::Feedback>::on(Node::CHANGE, [](Node* node, Layer::Feedback *fb) {
 
         node->name_v = "feedback";
@@ -333,27 +325,17 @@ void Callbacks::init() {
 
         if (effectable) {
 
-            // hardcore remove all ptrs
+            effectable->removeEffector(reffector); 
 
-            effectable->removeEffector(reffector); // will remove all effectors
-
+            auto lay_ = node->parent()->is_a_nowarning<Layer>();
+            if (lay_ && (void*)reffector->effector == (void*)lay_->feedback_v){
+                delete lay_->feedback_v;
+                lay_->feedback_v = nullptr;
+            }
 
         }else
 
             PLOGE << "no found";
-
-
-            // engine.window.end_of_render_cbs.emplace_back(node,[](void* ptr){
-
-                // auto node = (Node*)ptr;
-
-                // auto effectable = node->parent()->is_a_nowarning<Effectable>();
-                // if (effectable) 
-                // effectable->removeEffector(node->is_a_nowarning<EffectorRef>()); 
-
-            // });
-
-        
 
     });
 
