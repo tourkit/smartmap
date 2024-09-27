@@ -565,39 +565,20 @@ void Editors::init() {
 
     });
 
+    Editor<Instance>([&](Node* node, Instance *instance){ 
+
+        if (SlidersWidget(instance->buff(), node->is_a<Member>(), instance->offset))
+            instance->buff()->upload();
+        
+
+    });
+
     Editor<Effectable>([&](Node* node, Effectable *effectable){
-
-        static std::map<Effectable*,int> effector_currents; // ca c est de la memory chaipakwa la 
-
-        if (!effectable->instance)
-            return;
-
-        effector_currents[effectable] = effectable->quantity();
-
-        // Separator();
 
         ImGui::SeparatorText(effectable->name().c_str());
 
-        SameLine();
-
-        SetNextItemWidth(150);
-        if (IntButtons(&effector_currents[effectable])) { 
-
-            if (!effector_currents[effectable]) 
-               this->gui->deleteNode(node);
-               
-            else{
-    
-                effectable->quantity(effector_currents[effectable]); 
-            
-                node->update(); 
-            
-            }
-
-        }
-
-        if (SlidersWidget(effectable->instance->buff(), effectable, effectable->instance->offset))
-            effectable->instance->buff()->upload();
+        if (effectable->instance)
+            Editor<Instance>::cb_typed( node, effectable->instance);
 
     });
 

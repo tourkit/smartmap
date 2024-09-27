@@ -56,7 +56,7 @@ struct Effectable : Member {
     EffectorRef* addEffector(Effector* effector); // kinda ctor for effectors
     bool removeEffector(EffectorRef* ref);
 
-    Instance* instance = nullptr;
+    Instance* instance = nullptr; // thus in modelable, dc, layer and so on...
 
 };
 
