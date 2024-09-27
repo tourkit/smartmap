@@ -243,7 +243,31 @@ static Node* createEffector(JSONVal& json, Node* node) {
     return effector_;
 
 }
+static std::array<uint32_t,3> getQ(JSONVal& json) {
 
+    uint32_t cols=1, rows=1;
+
+    if (json[JSON_QUANTITY].str().length()) {
+
+        auto grid = split(json[JSON_QUANTITY].str(), "x");
+
+        if ( grid.size() && is_num(grid[0])) {
+
+            cols = stoi(grid[0]);
+
+            if (grid.size() == 2 && is_num(grid[1])) 
+
+                rows = stoi(grid[1]);
+            
+        }
+
+    }else 
+        cols = json[JSON_QUANTITY].num(1);
+    
+
+    return {cols*rows, cols, rows};
+
+}
 static Node* createModel(JSONVal& json, Node* node) {
 
     PLOGV << "create Model " << json.name() << " in " << node->name();
@@ -262,6 +286,12 @@ static Node* createModel(JSONVal& json, Node* node) {
     
     for (auto effector : json[JSON_EFFECTORS]) 
         createEffector(effector, model_);
+    
+    
+    auto q = getQ(json);
+
+    if (q[0]!=1)
+        model_->is_a<Model>()->quantity(q[0]);
 
     getNodeData(json, model_);
 
@@ -269,30 +299,7 @@ static Node* createModel(JSONVal& json, Node* node) {
 
 }
 
-static std::array<uint32_t,3> getQ(JSONVal& json) {
 
-    uint32_t q=1, cols=1, rows=1;
-    
-    q = json[JSON_QUANTITY].num(1);
-
-    if (json[JSON_QUANTITY].str().length()) {
-
-        auto grid = split(json[JSON_QUANTITY].str(), "x");
-
-        if ( grid.size() && is_num(grid[0]))
-            cols = stoi(grid[0]);
-
-        if (grid.size() == 2 && is_num(grid[1])) {
-            q = cols;
-        }else
-        
-            rows = stoi(grid[1]);
-
-    } 
-
-    return {cols*rows, cols, rows};
-
-}
 static Node* createRemap(JSONVal& json, Node* node) {
 
     Node* dest = engine.tree->find(json[JSON_DESTINATION, true].str());

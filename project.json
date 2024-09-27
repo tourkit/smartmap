@@ -1,5 +1,5 @@
 {
-    "editors": [["main::layers::Free Layer 10"], ["main"], ["artnet1::universe 0::DMXRemap"]],
+    "editors": [["layers::Free Layer 10::quad1"], ["main"], ["artnet1::universe 0::DMXRemap"]],
     "inputs": {
         "childrens": {
             "artnet1": {
@@ -12,8 +12,8 @@
                         "remaps": {
                             "DMXRemap": {
                                 "channel": 0,
-                                "destination": "Free Layer 10",
-                                "patch": [[3, -1, 22], 1, 1, 1, 2, 2, 2, 2, 1],
+                                "destination": "Free Layer 10::quad1",
+                                "patch": [1, 1, 1, 1, 2, 2, 2, 2, 1],
                                 "active": true
                             }
                         }
@@ -33,11 +33,11 @@
                         "resolution": [756, 376],
                         "models": {
                             "quad1": {
-                                "effectors": ["argb", "rectangle", "wrappy"],
+                                "quantity": 2,
+                                "effectors": ["argb", "rectangle"],
                                 "active": true
                             }
                         },
-                        "effectors": ["feedback"],
                         "active": true,
                         "color": [1, 0, 0.947, 1]
                     }
