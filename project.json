@@ -1,5 +1,5 @@
 {
-    "editors": [["wrappy"], ["main"], ["artnet1::universe 0::DMXRemap"]],
+    "editors": [["main::layers::Free Layer 10"], ["main"], ["artnet1::universe 0::DMXRemap"]],
     "inputs": {
         "childrens": {
             "artnet1": {
@@ -37,13 +37,13 @@
                                 "active": true
                             }
                         },
-
                         "effectors": ["feedback"],
                         "active": true,
                         "color": [1, 0, 0.947, 1]
                     }
                 },
-                "active": true
+                "active": true,
+                "color": [1, 0, 0, 1]
             }
         },
         "active": true
@@ -88,6 +88,6 @@
             }
         },
         "active": true,
-        "color": [0.166, 1, 0, 1]
+        "color": [0.165, 1, 0, 1]
     }
 }

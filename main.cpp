@@ -11,7 +11,7 @@
 
 int main() {
 
-    // logger.cout(Sev::warning);
+    logger.cout(Sev::warning);
 
     engine.init();
 

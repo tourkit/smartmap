@@ -107,12 +107,12 @@ void Editors::init() {
 
         if (ImGui::BeginTable("##remapswindow", 7, ImGuiTableFlags_Borders, ImVec2(GetContentRegionAvail().x, 0))) {
 
+            ImGui::TableSetupColumn("##state", ImGuiTableColumnFlags_WidthFixed, 20);
             ImGui::TableSetupColumn("name");
             ImGui::TableSetupColumn("skip", ImGuiTableColumnFlags_WidthFixed, 35);
             ImGui::TableSetupColumn("coarse", ImGuiTableColumnFlags_WidthFixed, 35);
             ImGui::TableSetupColumn("fine", ImGuiTableColumnFlags_WidthFixed, 35);
             ImGui::TableSetupColumn("ultra", ImGuiTableColumnFlags_WidthFixed, 35);
-            ImGui::TableSetupColumn("state", ImGuiTableColumnFlags_WidthFixed, 35);
             ImGui::TableSetupColumn("min/max", ImGuiTableColumnFlags_WidthFixed, 106); 
             ImGui::TableHeadersRow();
 
@@ -124,10 +124,20 @@ void Editors::init() {
 
                  if (!m->isData()) return;
 
+                    static int e = 0;
+
+                    bool changed = false;
+
                     ImGui::TableNextRow();
 
                     // if (ImGui::IsItemHovered()) ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(.5,.5,.5,1));
 
+                    ImGui::TableNextColumn();
+                    if (ImGui::Checkbox(("##arsbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].active)) 
+                        changed = true;
+
+                    if (!remap->attributes[member_id].active)
+                        BeginDisabled();
                     ImGui::TableNextColumn();
                     // auto textWidth   = 100-ImGui::CalcTextSize(m->name().c_str()).x;
                     // ImGui::SetCursorPosX((textWidth * 0.5f) );
@@ -137,42 +147,35 @@ void Editors::init() {
 
                     ImGui::Text(name.c_str());
 
-                    if (member_id < remap->attributes.size()) {
+                    ImGui::TableNextColumn();
+                    if (ImGui::RadioButton(("##arbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 0)) 
+                        changed = true;
+                    ImGui::TableNextColumn();
+                    if (ImGui::RadioButton(("##vrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 1)) 
+                        changed = true;
+                    ImGui::TableNextColumn();
+                    if (ImGui::RadioButton(("##xrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 2)) 
+                        changed = true;
+                    ImGui::TableNextColumn();
+                    if (ImGui::RadioButton(("##srbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 3)) 
+                        changed = true;
+                    ImGui::TableNextColumn();
+                    ImGui::SetNextItemWidth(100);
+                    if (ImGui::DragScalarN(("##minmax"+std::to_string(member_id)).c_str(), ImGuiDataType_Float, &remap->attributes[member_id].min, 2)) 
+                        changed = true;
 
-                        static int e = 0;
-
-                        bool changed = false;
-
-                        ImGui::TableNextColumn();
-                        if (ImGui::RadioButton(("##arbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 0)) 
-                            changed = true;
-                        ImGui::TableNextColumn();
-                        if (ImGui::RadioButton(("##vrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 1)) 
-                            changed = true;
-                        ImGui::TableNextColumn();
-                        if (ImGui::RadioButton(("##xrbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 2)) 
-                            changed = true;
-                        ImGui::TableNextColumn();
-                        if (ImGui::RadioButton(("##srbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].combining , 3)) 
-                            changed = true;
-                        ImGui::TableNextColumn();
-                        if (ImGui::Checkbox(("##arsbt"+std::to_string(member_id)).c_str(), &remap->attributes[member_id].active)) 
-                            changed = true;
-                        ImGui::TableNextColumn();
-                        ImGui::SetNextItemWidth(100);
-                        if (ImGui::DragScalarN(("##minmax"+std::to_string(member_id)).c_str(), ImGuiDataType_Float, &remap->attributes[member_id].min, 2)) 
-                            changed = true;
-
-                        if (changed) {
-                            for (int i = 1; i < m->quantity(); i++) {
-                                remap->attributes[member_id+i].min = remap->attributes[member_id].min;
-                                remap->attributes[member_id+i].max = remap->attributes[member_id].max;
-                                remap->attributes[member_id+i].combining = remap->attributes[member_id].combining;
-                                remap->attributes[member_id+i].active = remap->attributes[member_id].active;
-                            }
+                    if (changed) {
+                        for (int i = 1; i < m->quantity(); i++) {
+                            remap->attributes[member_id+i].min = remap->attributes[member_id].min;
+                            remap->attributes[member_id+i].max = remap->attributes[member_id].max;
+                            remap->attributes[member_id+i].combining = remap->attributes[member_id].combining;
+                            remap->attributes[member_id+i].active = remap->attributes[member_id].active;
                         }
-
                     }
+
+
+                    if (!remap->attributes[member_id].active)
+                        EndDisabled();                
 
                     member_id+=m->quantity();
 

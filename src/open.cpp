@@ -215,6 +215,19 @@ static Node* createEffector(JSONVal& json, Node* node) {
 
     PLOGV << "create Effector " << json.name() << " in " << node->name();
 
+    if (json.str() == "feedback") {
+
+        auto lay_ = node->is_a<Layer>();
+
+        if (lay_){
+
+            node->addPtr<Layer::Feedback>(lay_->feedback());
+        
+        }
+
+        return nullptr;
+    }
+
     auto file = engine.tree->find(json.str());
     if (!file) {
         PLOGE << " no " << json.str();
@@ -402,6 +415,8 @@ static Node* createWindow(JSONVal& json, Node* node) {
 static Node* createLayer(JSONVal& json, Node* node) {
         
     PLOGV << "create Layer " << json.name() << " in " << node->name();
+
+    node->allow<Effector>();
 
     auto dim = json[JSON_DIMENSIONS];
 

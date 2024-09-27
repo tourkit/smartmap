@@ -375,11 +375,9 @@ auto ref = n->is_a<EffectorRef>();
 
         rjs::Value effectors(kArrayType);
 
-        n->each<EffectorRef>([&](Node* n, EffectorRef* ref) {
-
-            fetch(effectors, n);
-
-        });
+        for (auto fx : n->childrens) 
+            if (fx->is_a<EffectorRef>() )
+                fetch(effectors, fx);
 
         val.AddMember("effectors", effectors, doc.GetAllocator());
 

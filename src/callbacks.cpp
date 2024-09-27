@@ -293,6 +293,8 @@ void Callbacks::init() {
     NODE<FileEffector>::is_a<Effector>();
     NODE<Wrappy>::is_a<Effector>();
     NODE<Wrappy>::is_a<Effectable>();
+    NODE<Layer::Feedback>::is_a<Effector>();
+    NODE<UberLayer::Feedback>::is_a<Layer::Feedback>();
 
     NODE<Wrappy>::onadd<Effector>([](Node* _this, Node *node) {
 
@@ -308,6 +310,22 @@ void Callbacks::init() {
 
     NODE<UberLayer>::on(Node::CHANGE, [&](Node*node, UberLayer* ubl){ NODE<Member>::on_cb[Node::CHANGE](node, &ubl->effector);   });
     NODE<EffectorRef>::is_a<Member>();
+
+    NODE<Layer::Feedback>::on(Node::DESTROY, [](Node* node, Layer::Feedback *fb) {
+
+
+        auto lay_ = node->parent()->is_a<Layer>();
+        if (lay_)
+            delete lay_->feedback();
+
+    });
+    NODE<Layer::Feedback>::on(Node::CHANGE, [](Node* node, Layer::Feedback *fb) {
+
+        node->name_v = "feedback";
+
+    });
+
+
 
     NODE<EffectorRef>::on(Node::DESTROY, [](Node* node, EffectorRef *reffector) {
 
