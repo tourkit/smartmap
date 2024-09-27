@@ -164,7 +164,7 @@ std::pair<std::string,int> nameQ(std::string name) {
 
     Instance::Instance(const Instance& other) 
         : stl(other.stl), offset(other.offset) { 
-            
+             
         }
 
 void Instance::track() {stl.back().m->instances.insert(this); }
