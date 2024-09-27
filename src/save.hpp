@@ -28,6 +28,7 @@ struct Save{
     void fetch(JSONVal json, Node* n);
 
     void saveFile(JSONVal json, Node* n);
+    void saveWrappy(JSONVal json, Node* n);
     void saveWindow(JSONVal json, Node* n);
     void saveArtnet(JSONVal json, Node* n);
     void saveEffector(JSONVal json, Node* n);

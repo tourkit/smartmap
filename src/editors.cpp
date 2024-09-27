@@ -73,8 +73,12 @@ void Editors::init() {
             // if (remap->dst) Text(("dst"+remap->dst->stl_name()).c_str());
         }
 
-        // if ( BeginPopupContextWindow()){
+        if ( BeginPopupContextWindow()){
 
+
+            if (Button("reset")) 
+                // remap->attributes.resize(remap->dst->m()->members.size());
+                remap->extract(remap->dst->m());
 
         //     if (Button("clear src")) {
         //         engine.window.end_of_render_cbs.push_back({remap, [](void* ptr){
@@ -91,9 +95,9 @@ void Editors::init() {
         //         }});
         //     }
             
-        //     EndPopup();
+            EndPopup();
 
-        // }
+        }
 
         ImGui::SetNextItemWidth(100);
         ImGui::InputInt("##chjdshjkers", &remap->chan);

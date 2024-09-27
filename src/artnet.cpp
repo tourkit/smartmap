@@ -67,9 +67,10 @@ void DMXRemap::extract(Member *m) {
 
     auto new_list = extract_r(m);
 
+    auto start = attributes.size();
     attributes.resize(new_list.size());
 
-    for (int i = 0; i < new_list.size(); i++) 
+    for (int i = start; i < new_list.size(); i++) 
         attributes[i] = new_list[i];
 
 }

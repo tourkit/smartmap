@@ -113,9 +113,12 @@ static void getNodeData(JSONVal& json, Node* node) {
 
     if (json[JSON_ACTIVE].name().length())
         node->active(json[JSON_ACTIVE].b());
+    else
+        node->active(false);
 
     auto color = json["color"];
     node->color = {color[0].num(1),color[1].num(1),color[2].num(1),color[3].num(1)};
+    // node->name(json.name());
 
 }
 
@@ -129,6 +132,29 @@ static bool operator==(const std::string& a, const char* b) { // kikoo
                 return true;
      
     return false;
+
+}
+
+static Node* createWrapper(JSONVal& json, Node* node) {
+
+    node->allow<Wrappy>();
+
+    auto wrap_ = node->addOwnr<Wrappy>();
+
+    for (auto effector : json[JSON_EFFECTORS]) {
+
+        auto fx_ = engine.tree->find(effector.str());
+
+        if (fx_)
+            wrap_->add(fx_);
+
+    }
+    
+    wrap_->name(json.name());
+    
+    getNodeData(json, wrap_);
+
+    return wrap_;
 
 }
 
@@ -431,6 +457,9 @@ static Node* createLayer(JSONVal& json, Node* node) {
         createModel(model, lay_);
 
 
+    for (auto effector : json[JSON_EFFECTORS]) 
+        createEffector(effector, lay_);
+
     auto q = getQ(json);
     if (q[0]!=1)
         lay_->is_a<Layer>()->quantity(q[0]);
@@ -469,6 +498,9 @@ void fetch(JSONVal json, Node* node) {
 
             if (type==JSON_NODE) 
                 node = createNode(json, node);
+
+            if (type=="wrapper") 
+                node = createWrapper(json, node);
             else if (type==JSON_FILE) 
                 node = createFile(json, node);
             else if (type==JSON_LAYER) 

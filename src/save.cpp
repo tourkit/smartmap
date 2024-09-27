@@ -13,6 +13,8 @@
 #include "effector.hpp"
 #include "layer.hpp"
 #include "editor.hpp"
+#include "rapidjson/document.h"
+#include "rapidjson/rapidjson.h"
 #include "window.hpp"
 
 void Save::editors(){
@@ -51,6 +53,27 @@ void Save::saveColor(rjs::Value& value, Node* n) {
     }
 
 }
+
+ void Save::saveWrappy(JSONVal json, Node* n) {
+
+    auto &doc = json_v.document;
+    auto &val = json.value;
+
+    auto wrap_ = n->is_a<Wrappy>();
+
+    val.AddMember("type", rjs::Value("wrapper", doc.GetAllocator()), doc.GetAllocator());
+
+    auto obj = rjs::Value(kArrayType);
+    for (auto fx : wrap_->effector_refs) {
+        obj.PushBack(rjs::Value(fx->ref()->name().c_str(), doc.GetAllocator()), doc.GetAllocator());
+    }
+    if (wrap_->effector_refs.size())
+        val.AddMember("effectors", obj, doc.GetAllocator());
+
+    saveColor(val, n);
+
+ }
+
 
  void Save::saveFile(JSONVal json, Node* n) {
 
@@ -177,7 +200,8 @@ void Save::saveRemap(rjs::Value& obj, Node* n) {
             attr_.PushBack(attr.combining, doc.GetAllocator());
             attr_.PushBack(attr.min, doc.GetAllocator());
             attr_.PushBack(attr.max, doc.GetAllocator());
-            attr_.PushBack(attr.active, doc.GetAllocator());
+            if (!attr.active)
+                attr_.PushBack(attr.active, doc.GetAllocator());
 
             patch_.PushBack(attr_, doc.GetAllocator());
 
@@ -432,6 +456,8 @@ auto ref = n->is_a<EffectorRef>();
         saveNode(json[n->name()], n);
     else if (n->is_a_nowarning<File>())
         saveFile(json[n->name()], n);
+    else if (n->is_a_nowarning<Wrappy>())
+        saveWrappy(json[n->name()], n);
     else if (n->is_a_nowarning<Layer>())
         saveLayer(json, n);
     else if (n->is_a_nowarning<Model>())
