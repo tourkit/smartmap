@@ -157,7 +157,7 @@ std::pair<std::string,int> nameQ(std::string name) {
     Instance::Instance(std::string stl_name) { loc(stl_name); }
 
     Instance::~Instance() { 
-        stl.back().m->instances.erase(this); 
+        stl.back().m->instances.erase(this);  
     }
 
     Instance::Instance(Member& m) { stlAdd(&m); }
