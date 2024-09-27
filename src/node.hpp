@@ -234,7 +234,6 @@ struct Node {
     template <typename U>
     U* is_a_nowarning() { return (U*)is_a_untyped(type(),typeid(U),void_ptr); }
 
-
 private:
 
     Node* add_typed(TypeIndex t, TypeIndex u, Node* to_add, void* out);

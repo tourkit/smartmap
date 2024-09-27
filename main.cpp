@@ -23,12 +23,12 @@ int main() {
 
 
 
-    auto vl = ubl->addLayer(100, 100);
+    auto &vl = ubl->addLayer(100, 100);
     vl.quantity(5);
     auto vl_ = ubl_->addPtr<UberLayer::VirtualLayer>(&vl);
     vl_->active(true);
-
-    vl_->add(engine.tree->find("argb"));
+    auto argb_ = engine.tree->find("argb");
+    vl_->add(argb_);
 
     ubl->calc_matrice();
     ubl->upload();

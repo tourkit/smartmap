@@ -241,7 +241,7 @@ void Engine::run(std::function<void()> cb) {
         if (gui_v)
         
             gui_v->draw();
-        
+
         tree->run();
 
         cb();

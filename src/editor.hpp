@@ -3,6 +3,7 @@
 #include "gui.hpp"
 #include "utils.hpp"
 #include <map>
+#include <set>
 #include <functional>
 
 struct Node;
@@ -12,6 +13,7 @@ struct EDITOR  {
     static inline std::map<Node*, std::function<void(Node*)>> cb ;
 
     static inline std::map<TypeIndex, void*> ptr ;
+    static inline std::set<Node*> triglist;
 
 };
 

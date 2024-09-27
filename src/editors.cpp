@@ -335,11 +335,13 @@ void Editors::init() {
             if (ImGui::BeginTabItem("fragment")) {
 
 
-                if (editor.GetText().length() != shader->frag.src.length()+1) {
+                if (EDITOR::triglist.find(node) != EDITOR::triglist.end()) {
                     
                     editor.SetText(shader->frag.src);
                     editor.SetErrorMarkers(shader->frag.errors);
                     node->error = shader->frag.errors.size();
+
+                    EDITOR::triglist.erase(node);
 
                 }
 
@@ -573,6 +575,14 @@ void Editors::init() {
             instance->buff()->upload();
         if (widget[1])
             node->update ();
+
+        auto ubl_ = node->is_a_nowarning<UberLayer>();
+        if (ubl_ && widget[1]) {
+
+            ubl_->calc_matrice();
+            ubl_->update_pv();
+            ubl_->upload();
+        }
         
 
     });

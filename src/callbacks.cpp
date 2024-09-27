@@ -12,6 +12,7 @@
 #include "folder.hpp"
 #include "drawcall.hpp"
 #include "artnet.hpp"
+#include "editor.hpp"
 #include "ndi.hpp"
 #include "atlas.hpp"
 #include "json.hpp"
@@ -83,7 +84,6 @@ void Callbacks::init() {
     });
 
     ////////// Member.HPP
-
 
     NODE<AnyNode>::on(Node::DESTROY, [](Node* node, AnyNode *n){ 
 
@@ -206,6 +206,8 @@ void Callbacks::init() {
         node->parent()->each<DrawCall>([](Node*n, DrawCall* dc){ 
             
             dc->builder()->build(&dc->shader);
+
+            EDITOR::triglist.insert(n);
 
         });
 

@@ -392,6 +392,10 @@ void UberLayer::Builder::setup() {
 
     DrawCall::Builder::setup();
 
+    for (auto &model : ubl->layers) 
+        for (auto x : model->effector_refs) 
+            x.get()->effector->setup(this);
+
     body_fragment += "\tint obj  = int(OBJ);\n\n"; // COULD add condition
 
     std::string ar_str = lower(

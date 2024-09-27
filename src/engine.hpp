@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utils.hpp"
 #include "window.hpp"
 #include "framebuffer.hpp"
 #include "node.hpp"
