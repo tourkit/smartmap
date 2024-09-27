@@ -2,6 +2,7 @@
 
 #include "member.hpp"
 #include "engine.hpp"
+#include "effector.hpp"
 #include <boost/algorithm/string/trim.hpp>
 #include <cstdint>
 #include <string>
@@ -518,6 +519,30 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset, int& me
             PushStyleColor(ImGuiCol_Text, ImVec4(0.6, 0.6, 0.6, 1.0f));
             ImGui::SeparatorText(septxt.c_str());
             PopStyleColor(1);
+
+            if (m == m->ref() ){
+
+                SameLine();
+                SetNextItemWidth(150);
+
+                int qq = m->quantity();
+                if (IntButtons(&qq)) { 
+
+                    if (!qq) {
+                        
+                    // engine.gui_v->deleteNode(node);
+                    } 
+                    
+                    else{
+            
+                        m->quantity(qq); 
+                    
+                        has_changed = true; 
+                    
+                    }
+
+                }
+            }
 
             if (SlidersWidget(buff, m, offset, member_count)) has_changed = true;
 

@@ -1,5 +1,5 @@
 {
-    "editors": [["main::layers::Free Layer 10"], ["main"], ["artnet1::universe 0::DMXRemap"], ["inputs::artnet1::universe 0"]],
+    "editors": [["main::layers::Free Layer 10"], ["main"], ["artnet1::universe 0::DMXRemap"], ["effectors::rectangle"]],
     "inputs": {
         "childrens": {
             "artnet1": {
@@ -36,7 +36,7 @@
                         "resolution": [756, 376],
                         "models": {
                             "quad1": {
-                                "quantity": 2,
+                                "quantity": 5,
                                 "effectors": ["argb", "rectangle"],
                                 "active": true
                             }
@@ -60,7 +60,7 @@
     "effectors": {
         "childrens": {
             "argb.glsl": "//red(0,1,1)\n//green(0,1,1)\n//blue(0,1,1)\n//alpha(0,1,1)\n \nvoid argb(float alpha, float red, float green, float  blue) { \n\n\tcolor = color * vec4 (red, green, blue, 1) * alpha; \n\n}",
-            "rectangle.glsl": "//size(0,1,.1) \n//pos(0,1,0.5)\n//orientation(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size, float orientation) {\n\n\n\tuv = uv - pos - pos*size + size*0.5;\n\n\torientation = (orientation-.5)*6.2831853072;\n\t\n\tfloat c = cos(orientation);\n\tfloat s = sin(orientation);\n\t\n\tuv *= aspect_ratio;\n\tuv = vec2(uv.x * c - uv.y * s, uv.x * s + uv.y * c);\n\tuv *= 1./aspect_ratio;\n\t\n\tvec2 tuv = abs(uv) - size * 0.5;\n\tfloat dist = length(max(tuv, 0)) + min(max(tuv.x, tuv.y), 0);\n\n\tuv/=size;\n\n\tuv+=.5;\n\t\n\tcolor *= vec4(vec3(1 - step(0, dist)), 1);\n\n}",
+            "rectangle.glsl": "//size(0,1,) \n//pos(0,1,0.5)\n//orientation(0,1,0.5) \n\nvoid rectangle(vec2 pos, vec2 size, float orientation) {\n\n\n\tuv = uv - pos - pos*size + size*0.5;\n\n\torientation = (orientation-.5)*6.2831853072;\n\t\n\tfloat c = cos(orientation);\n\tfloat s = sin(orientation);\n\t\n\tuv *= aspect_ratio;\n\tuv = vec2(uv.x * c - uv.y * s, uv.x * s + uv.y * c);\n\tuv *= 1./aspect_ratio;\n\t\n\tvec2 tuv = abs(uv) - size * 0.5;\n\tfloat dist = length(max(tuv, 0)) + min(max(tuv.x, tuv.y), 0);\n\n\tuv/=size;\n\n\tuv+=.5;\n\t\n\tcolor *= vec4(vec3(1 - step(0, dist)), 1);\n\n}\n",
             "flower.glsl": "//inratio(0,1,0)\n//shape(0,1,0)\n//petals(0,1,0)\n\nvoid flower(float inratio, float shape, float petals) {\n\n\tuv-=.5;\n\n\tfloat c = length(uv)+.5;\n\n\tfloat a = atan(uv.x,uv.y);//+iTime;\n\n\tfloat r = a * ((petals*29.)+3.);//  - rotation*3.14*2.;\n\n\tr = abs(fract(.5/3.14*r)-.5)*2.;\n\n\tr = pow(r,.5+pow(shape*2.,4.)); // petal type\n\n\tr = 1.-r*inratio*.5;//; // spikes out\n\n\tr = step(c,r);\n\n\tcolor *= vec4(r);\n\n}",
             "gradient.glsl": "void gradient(float exp, float angle) {\n\tangle *= 6.28318530718;\n\tfloat s = sin(angle);\n\tfloat c = cos(angle);\n\tuv *= mat2(c, -s, s, c);\n\tuv += .5;\n\tuv += 1-exp*2;\n\tcolor *= vec4(uv.x);}",
             "burst.glsl": "void burst(float inratio, float shape, float petals) {\n\n\tuv -= .5;\n\n\tshape = 1-shape;\n\n\tfloat c = length(uv)+.5;\n\n\tfloat a = atan(uv.x,uv.y);//+iTime;\n\n\tfloat r = a * ((petals*29.)+3.);//\t- rotation*3.14*2.;\n\n\tr = abs(fract(.5/3.14*r)-.5)*2.; // equals : abs(mod(.5/3.14*r,1.)-.5); equals sdTriangle(a,petals);\n\n\tr = clamp(r*c*.9,0.,1.);\n\n\tr += (1.-inratio*2.); // gradient to white\n\n\tfloat zzz = shape*.4999;\n\tr = smoothstep(zzz,1.-zzz, r);\n\n\tr = mix(0.,1.,r);\n\n\tcolor *= r;\n\nuv += .5;\n\n}",

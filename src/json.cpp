@@ -179,9 +179,9 @@ std::string JSONVal::name() { return name_v; }
 
 bool JSONVal::isnum() {     
     
-    if (value.IsFloat()) return value.GetFloat();
+    if (value.IsFloat()) return value.IsFloat();
 
-    if (value.IsInt()) return value.GetInt();
+    if (value.IsInt()) return value.IsInt();
     
     return 0; 
 }

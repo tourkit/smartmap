@@ -289,9 +289,12 @@ static Node* createModel(JSONVal& json, Node* node) {
     
     auto q = getQ(json);
 
-    if (q[0]!=1)
-        model_->is_a<Model>()->quantity(q[0]);
+    if (q[0]!=1) {
     
+        model_->is_a<Model>()->quantity(q[0]);
+        model_->update();
+    
+    }
 
     getNodeData(json, model_);
 

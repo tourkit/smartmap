@@ -573,7 +573,7 @@ void Editors::init() {
 
     Editor<Effectable>([&](Node* node, Effectable *effectable){
 
-        static std::map<Effectable*,int> effector_currents;
+        static std::map<Effectable*,int> effector_currents; // ca c est de la memory chaipakwa la 
 
         if (!effectable->instance)
             return;
