@@ -32,6 +32,10 @@ struct Editor  {
 
 };
 
+
+#define IMGUI_DEFINE_MATH_OPERATORS
+#include "ImGuiColorTextEdit/TextEditor.h"
+
 struct EditorWidget : GUI::Window {
 
     Node* selected = nullptr;
@@ -42,5 +46,9 @@ struct EditorWidget : GUI::Window {
     ~EditorWidget();
 
     void draw() override;
+
+    TextEditor editor;
+
+    static inline EditorWidget* current = nullptr;
 
 };

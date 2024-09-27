@@ -314,22 +314,6 @@ void Editors::init() {
         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
 
-        static TextEditor editor;
-
-        static bool init = false;
-
-
-        if (!init){
-
-            editor.SetShowWhitespaces(false);
-
-            editor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
-            editor.SetReadOnly(false);
-            
-            init = true;
-        }
-
-
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
             if (ImGui::BeginTabItem("fragment")) {
@@ -337,8 +321,8 @@ void Editors::init() {
 
                 if (EDITOR::triglist.find(node) != EDITOR::triglist.end()) {
                     
-                    editor.SetText(shader->frag.src);
-                    editor.SetErrorMarkers(shader->frag.errors);
+                    EditorWidget::current->editor.SetText(shader->frag.src);
+                    EditorWidget::current->editor.SetErrorMarkers(shader->frag.errors);
                     node->error = shader->frag.errors.size();
 
                     EDITOR::triglist.erase(node);
@@ -346,17 +330,17 @@ void Editors::init() {
                 }
 
                 
-                editor.Render("fragment");
+                EditorWidget::current->editor.Render("fragment");
 
-                if (editor.IsTextChanged()) {
+                if (EditorWidget::current->editor.IsTextChanged()) {
                     
-                    std::string x = editor.GetText();
+                    std::string x = EditorWidget::current->editor.GetText();
 
                     memset(&x[x.length()-1],0,1); // against new line everytime dafuk
                     shader->destroy(); 
                     shader->create(x,shader->vert.src);
 
-                    editor.SetErrorMarkers(shader->frag.errors);
+                    EditorWidget::current->editor.SetErrorMarkers(shader->frag.errors);
                     node->error = shader->frag.errors.size();
 
                     
@@ -371,25 +355,25 @@ void Editors::init() {
 
                 if (EDITOR::triglist.find(node) != EDITOR::triglist.end()) {
                 
-                    editor.SetText(shader->vert.src);
-                    editor.SetErrorMarkers(shader->vert.errors);
+                    EditorWidget::current->editor.SetText(shader->vert.src);
+                    EditorWidget::current->editor.SetErrorMarkers(shader->vert.errors);
                     node->error = shader->vert.errors.size();
               
                     EDITOR::triglist.erase(node);
 
                 }
 
-                editor.Render("vertex");
+                EditorWidget::current->editor.Render("vertex");
 
-                if (editor.IsTextChanged()) {
+                if (EditorWidget::current->editor.IsTextChanged()) {
 
-                    std::string x = editor.GetText();
+                    std::string x = EditorWidget::current->editor.GetText();
 
                     memset(&x[x.length()-1],0,1); // against new line everytime dafuk
                     shader->destroy(); 
                     shader->create(shader->frag.src,x);
 
-                    editor.SetErrorMarkers(shader->vert.errors);
+                    EditorWidget::current->editor.SetErrorMarkers(shader->vert.errors);
                     node->error = shader->vert.errors.size();
                     
                 }

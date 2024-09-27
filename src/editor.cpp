@@ -8,7 +8,6 @@
 #include <cstring>
 #include <string>
 
-#define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui_internal.h"
 
 #include "assets/fonts/IconsLucide.h"
@@ -18,12 +17,19 @@
 
 EditorWidget::EditorWidget(GUI* gui, Node* selected) : GUI::Window("Editor", gui), selected(selected), locked(selected)  { 
 
- }
+    editor.SetShowWhitespaces(false);
+
+    editor.SetLanguageDefinition(TextEditor::LanguageDefinition::GLSL());
+    editor.SetReadOnly(false);
+    
+}
 
 EditorWidget::~EditorWidget()  {   }
 
 
 void EditorWidget::draw() {
+
+    current = this;
 
     if (ImGui::BeginDragDropTargetCustom(ImRect(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImGui::GetWindowSize()),ImGui::GetItemID())) {
 
