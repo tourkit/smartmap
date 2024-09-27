@@ -75,16 +75,10 @@ void Editors::init() {
             if (Button("reset")) 
                 remap->extract(remap->dst->m());
 
-
-            Text(std::to_string(remap->quantity).c_str());
-            Separator();
             
             EndPopup();
 
         }
-        Text((std::to_string(remap->attributes.size())+ " VS " + std::to_string(remap->dst->m()->quantity())).c_str());
-
-        DragInt("sdf", &remap->quantity, 0, 2);
 
         ImGui::SetNextItemWidth(100);
         ImGui::InputInt("##chjdshjkers", &remap->chan);
