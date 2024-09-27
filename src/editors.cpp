@@ -505,7 +505,8 @@ void Editors::init() {
 
             if (ImGui::BeginTabItem("programmer")) {
                 
-                if (m->buffering() && SlidersWidget(m)) {
+                auto widget = SlidersWidget(m);
+                if (m->buffering() && widget[0]) {
             
                     m->upload();
 
@@ -569,8 +570,11 @@ void Editors::init() {
 
         Text(std::string(std::to_string(instance->offset)).c_str());
 
-        if (SlidersWidget(instance->buff(), node->is_a<Member>(), instance->offset))
+        auto widget = SlidersWidget(instance->buff(), node->is_a<Member>(), instance->offset);
+        if (widget[0])
             instance->buff()->upload();
+        if (widget[1])
+            node->update ();
         
 
     });

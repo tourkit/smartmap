@@ -383,9 +383,8 @@ static int MyResizeCallback(ImGuiInputTextCallbackData* data) {
 
 }
 
-bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset) {
+std::array<bool,2> ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset) {
 
-    
     if (!member)
         member = buff; 
     
@@ -406,7 +405,8 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset) {
 
     member = member->ref();
 
-    bool has_changed = false;
+    bool val_changed = false;
+    bool def_changed = false;
 
     // if (member->ref()) member = member->ref();
 
@@ -484,7 +484,7 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset) {
                 
                 }
 
-                has_changed = true;
+                val_changed = true;
             }
 
 
@@ -542,14 +542,16 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset) {
             
                         m->quantity(qq); 
                     
-                        has_changed = true; 
+                        def_changed = true; 
                     
                     }
 
                 }
             }
 
-            if (SlidersWidget(buff, m, offset)) has_changed = true;
+            auto recurse = SlidersWidget(buff, m, offset);
+            if (recurse[0]) val_changed = true;
+            if (recurse[1]) def_changed = true;
 
             // ImGui::Text("delete");
             // if(ImGui::IsItemClicked()){
@@ -564,7 +566,7 @@ bool ImGui::SlidersWidget(Member* buff, Member* member, uint32_t offset) {
     }
 
 
-    return has_changed;
+    return {val_changed,def_changed};
 
  }
 

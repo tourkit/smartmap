@@ -392,6 +392,8 @@ void UberLayer::Builder::setup() {
 
     DrawCall::Builder::setup();
 
+    body_fragment += "\tint obj  = int(OBJ);\n\n"; // COULD add condition
+
     std::string ar_str = lower(
         ubl->uberlayer_m.name())+std::string(ubl->uberlayer_m.quantity()>1?
         "[obj]":"")+
