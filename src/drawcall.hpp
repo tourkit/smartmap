@@ -23,7 +23,7 @@ struct DrawCall : Modelable {
     ShaderProgram shader;
 
     int GL_BLEND_MODE_IN = 6;
-    int GL_BLEND_MODE_OUT = 0;//13
+    int GL_BLEND_MODE_OUT = 1;//13
 
     struct Builder : ::Builder {
 

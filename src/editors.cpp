@@ -313,19 +313,21 @@ void Editors::init() {
 
         ImGuiTabBarFlags tab_bar_flags = ImGuiTabBarFlags_None;
 
+        static std::map<EditorWidget*,int> active_tab;
 
         if (ImGui::BeginTabBar("MyTabBar", tab_bar_flags)) {
 
             if (ImGui::BeginTabItem("fragment")) {
 
-
-                if (EDITOR::triglist.find(node) != EDITOR::triglist.end()) {
+;
+                if (active_tab[EditorWidget::current] != 1 || EDITOR::triglist.find(node) != EDITOR::triglist.end()) {
                     
                     EditorWidget::current->editor.SetText(shader->frag.src);
                     EditorWidget::current->editor.SetErrorMarkers(shader->frag.errors);
                     node->error = shader->frag.errors.size();
 
                     EDITOR::triglist.erase(node);
+                    active_tab[EditorWidget::current] = 1;
 
                 }
 
@@ -353,13 +355,15 @@ void Editors::init() {
             }
             if (ImGui::BeginTabItem("vertex")) {
 
-                if (EDITOR::triglist.find(node) != EDITOR::triglist.end()) {
+                if (active_tab[EditorWidget::current] != 2 || EDITOR::triglist.find(node) != EDITOR::triglist.end()) {
                 
                     EditorWidget::current->editor.SetText(shader->vert.src);
                     EditorWidget::current->editor.SetErrorMarkers(shader->vert.errors);
                     node->error = shader->vert.errors.size();
               
                     EDITOR::triglist.erase(node);
+
+                    active_tab[EditorWidget::current] = 2;
 
                 }
 

@@ -23,17 +23,20 @@ int main() {
     auto main_ = engine.tree->find("main")->allow<AnyNode>();
 
     auto argb_ = engine.tree->find("argb");
+    auto rectangle_ = engine.tree->find("rectangle");
     auto quad_ = engine.tree->find("quad");
 
 
-    // main_->add(quad_);
-    // auto lay_ = main_->childrens.back();
-    // auto v1_ = lay_->childrens.back();
-    // v1_->add(argb_);
-    // auto v2_ = lay_->add(quad_);
-    // v2_->add(argb_);
-    // engine.gui_v->editors[0].get()->selected = lay_;
-    // engine.gui_v->editors[0].get()->locked = true;
+    main_->add(quad_);
+    auto lay_ = main_->childrens.back();
+    auto v1_ = lay_->childrens.back();
+    v1_->add(argb_);
+    v1_->add(rectangle_);
+    auto v2_ = lay_->add(quad_);
+    v2_->add(argb_);
+    v2_->add(rectangle_);
+    engine.gui_v->editors[0].get()->selected = lay_;
+    engine.gui_v->editors[0].get()->locked = true;
 
 
 
@@ -51,6 +54,8 @@ int main() {
     auto vl2_ = ubl_->addPtr<UberLayer::VirtualLayer>(&vl2);
     vl2_->active(true);
     vl2_->add(argb_);
+
+    ubl->calc_matrice();
 
     engine.gui_v->editors[1].get()->selected = ubl_;
     engine.gui_v->editors[1].get()->locked = true;
