@@ -337,23 +337,29 @@ void Node::update() {
 }
 
 
-Node* Node::each_untyped(std::function<Node*(Node*)> cb) { 
+Node* Node::each_untyped(std::function<Node*(Node*)> cb, int depth) { 
     
-    bool break_ = false;
+    Node* out = nullptr;
 
     for (auto c : childrens) {
+
+        if (depth != 0){
         
-        if (break_) break;
+            out = c->each_untyped(cb, depth-1);
 
-        if (c->each_untyped(cb) == Node::Break) {
-
-            break_ = true;
-            break;
+            if (out == Node::Break) 
+                return Node::Break;
+        
         }
+        
+        out = cb(this);
 
+        if (out == Node::Break) 
+            return Node::Break;
+        
     }
     
-    return cb(this);  
+    return out;  
 
 }
 

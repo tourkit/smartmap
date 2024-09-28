@@ -93,7 +93,7 @@ struct Node {
 
     Node* on(Event event, std::function<void(Node*)> cb = nullptr);
 
-    Node* each_untyped(std::function<Flag(Node*)> cb);
+    Node* each_untyped(std::function<Flag(Node*)> cb, int depth = 0);
 
     static inline uint32_t total_uid = 0;
     uint32_t uid = 0;

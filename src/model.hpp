@@ -21,6 +21,8 @@ struct Model : Effectable {
 
     File* file;
 
+    bool vbo_split_mode = false;
+
     Model(File* f, std::string name);
 
     ~Model();

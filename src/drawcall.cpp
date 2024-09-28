@@ -14,7 +14,7 @@ Model* DrawCall::addModel(File* f) {
 
      auto x = Modelable::addModel(f);
 
-     vbo.addFile(f, models.size()-1);
+    //  vbo.addFile(f, models.size()-1);
 
      return x;
 }
@@ -56,6 +56,19 @@ std::string DrawCall::Builder::print_layer(Effectable &effectable, std::string p
 void DrawCall::Builder::setup() {
 
     vbo = &dc->vbo;
+
+    // vbo
+
+    for (auto model : dc->models) {
+
+        // addfile or addquad
+
+    }
+
+
+    
+
+    // shader
 
     ubos.insert(engine.dynamic_ubo);
     ubos.insert(engine.static_ubo);

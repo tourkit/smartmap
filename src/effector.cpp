@@ -8,7 +8,6 @@
 #include <regex>
 #include <string>
 
-
 // Effector  ////////////////
 
 Effector::Effector(std::string name) : Member(name) {

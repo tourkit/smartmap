@@ -31,6 +31,8 @@ struct Builder {
 
     ShaderProgram* shader = nullptr;
 
+    VBO* vbo = nullptr;
+
     std::string unique(Member* m);
     
     void build(ShaderProgram* dst = nullptr);
@@ -46,8 +48,6 @@ struct Builder {
     std::string ubo();
 
     bool add(UBO* ubo);
-
-    VBO* vbo = nullptr;
 
     struct VBOLayout { int loc; std::string type,name;};
 
