@@ -71,32 +71,7 @@ function renderTree(container) {
     container.appendChild(header);
   });
 
-  // === Buffer ===
-  const bufferHeader = document.createElement("div");
-  bufferHeader.className = "category-header";
-  bufferHeader.textContent = "📥 Buffer";
-  container.appendChild(bufferHeader);
-
-  buffer.forEach(struct => {
-    const header = document.createElement("div");
-    header.className = "node struct";
-    header.textContent = "📦 " + struct.name;
-
-    if (struct.fields.length) {
-      const fieldsstr = document.createElement("span");
-      fieldsstr.className = "node field";
-      struct.fields.forEach((field, idx) => {
-        fieldsstr.innerHTML += `<span class="badge">${field.type}${field.quantity ? " ["+field.quantity+"]" : ""}</span> ${field.label}${idx === struct.fields.length-1 ? "" : ", "}`;
-      });
-      header.appendChild(fieldsstr);
-    }
-
-    header.onclick = () => {
-      selectStruct(struct);
-    };
-
-    container.appendChild(header);
-  });
+  
 
   // === Files ===
   const cfgNode = document.createElement("div");
