@@ -1,242 +1,792 @@
 
-#include "member.hpp"
+
+#include <cstddef>
+#include <cstdint>
+#include <iostream>
+
+
+#include "vendors/nlohmann/json.hpp"
+
+
+// WTF is a  Instance ?  
+// 
+// 
+
+
+/*
+
+
+
+why Type is not a Struct ?
+
+
+struct TypeIndex : boost::typeindex::type_index ;
+template <typename T>
+struct TYPE : TypeIndex {}
+
+struct Struct { // fais struct aussi ? pk a un nom ?
+
+    struct Field {} // wtf ?
+    struct Instance {
+        struct Element {} // wtf ?
+    }  
+
+} 
+struct Data : Struct {}  // typé(int,string,..) aka non struct
+struct Buffer : Struct {} // stored
+struct Register {} //
+
+
+
+diff member / def ? watiz def ?
+
+
+faut creer un struct pour int, float et aussi monStruct etc . pur utiliser dans Field->type
+
+*/
+
+#include <cstring>
+#include <map>
 #include <memory>
+#include <set>
+#include <sys/types.h>
+#include <typeinfo>
+#include <unordered_map>
+#include <vector>
+#include <boost/type_index.hpp>
 
-void Buffer_::Instance_::calc_offset() {
+#define SHAREDSTRUCT_(__NAME__) STRUCT_(__NAME__) : std::enable_shared_from_this<__NAME__##_>
 
-    // for (auto x : *list) 
-    int offset = 0;
+#define STRUCT_(__NAME__) struct __NAME__##_ ;\
+struct __NAME__ : std::shared_ptr<__NAME__##_> {\
+\
+    __NAME__(std::shared_ptr<__NAME__##_> ptr = nullptr) : std::shared_ptr<__NAME__##_>(ptr) {}\
+\
+    template <typename... Args>\
+    static __NAME__ Create(Args&&... args) { return (__NAME__)std::make_shared<__NAME__##_>(std::forward<Args>(args)...); } \
+};\
+struct __NAME__##_
 
-    // for (int i = 0; i < list.size()-2; i++) 
-    //     for (auto def : list[i+1]->def->type_v->members) {
+
+
+using boost::typeindex::type_index;
+
+struct TypeIndex : boost::typeindex::type_index {
+
+    using boost::typeindex::type_index::type_index;
+
+    static inline std::map<TypeIndex, int> sizes;
+    static int size(TypeIndex t, int def = 0) {
+
+        auto it = TypeIndex::sizes.find(t);
+        if (it == TypeIndex::sizes.end())
+            TypeIndex::sizes[t] = def;
             
-    //         if (def == list[i]->def)
-    //             break;
-            
-    //         offset += def->footprint_all();
-        
-    //     }
+        return it->second;
 
-
-
-}
-
-std::vector<Instance> Member_::getInstances(Instance inst, int q) {
-
-    std::vector<Instance> out;
-
-    int i = 0;
-
-    std::cout << inst->elements.back()->def->label << " " << inst->offset << "\n";
-
-    if (!observers.size()) {// faster than dynacastbuffer?
-
-        inst->owner = shared_from_this();
-        out.push_back(inst);
-        
-        return out;
     }
 
-    inst->elements.emplace_back(Element::Create());
+};
 
-    for (auto observer : observers) {
-        int offset = inst->offset;
-        for (auto def : observer.first->members) {
-            if (def->type_v.get() == this) {
+template <typename T>
+struct TYPE : TypeIndex { 
+    
+    TYPE() : TypeIndex(typeid(T)) { 
+        
+        TypeIndex::size(typeid(T), sizeof(T));
 
-                inst->elements.back()->def = def;
-                inst->offset = offset;
+    }
+};
 
-                for (auto stl_ : observer.first->getInstances(Instance::Create(inst),0)) {
-                    out.push_back(stl_);
+SHAREDSTRUCT_ (Struct) {
+
+    std::string name_v;
+
+    int size_v = 0; //  passively maintained by Buffer::post() // strange weird shoul be in buffer ? maybe that static map ?
+
+    Struct_(const char* n = nullptr) { 
+        if (n) 
+            this->name_v = n; 
+    } 
+
+    enum Event { PRE};
+
+    SHAREDSTRUCT_(Field) {
+
+        std::string label_v;
+        
+        Struct type_v;
+
+        int quantity_v;
+    
+        Field clone_v;
+        
+        Field_( Struct type, const char* label = nullptr, int q = 1, float from = 0, float to = 0, float def = 0) : quantity_v(q) {
+    
+            if (label)
+                label_v = label;
+
+            this->type(type);
+
+            if (from || to || def)
+                range(from, to, def); 
+        }
+
+        std::vector<char> rangedef; 
+        std::vector<char> temprangedef; 
+
+        uint32_t footprint_all() { return type_v->footprint() *  quantity_v ; }
+
+        void trig(Event e){}    
+        
+        void type(Struct type) {
+
+            type_v = type;
+            
+
+        }
+
+        void type(uint32_t id) {
+
+            //type_v. = id;
+            
+
+        }
+
+
+        bool quantity(int q);
+
+        void range(float from, float to, float def) {
+
+            if (!type_v->size()) 
+                return;
+
+            rangedef.resize(type_v->size()*3);
+            memset(&rangedef[0],0,rangedef.size());
+
+            //set(type_v->type_v, this->from(), from);
+            //set(type_v->type_v, this->def(), def);
+            //set(type_v->type_v, this->to(), to);
+   
+        }
+
+        char* from() { return rangedef.size()?rangedef.data():nullptr; }
+
+        char* to() { 
+            
+            if (rangedef.size())
+                return rangedef.data()+(type_v->size());
+            
+            static uint64_t ui64 = 0xffffffffffffffffu;
+            static int64_t i64   = 0xffffffffffffffff;
+            static double f32    = 0xfffffffffffff;
+
+            if (type_v->type_v == typeid(float)) return (char*)&f32;
+            if (type_v->type_v == typeid(double)) return (char*)&f32;
+            if (type_v->type_v == typeid(uint64_t)) return (char*)&ui64;
+            if (type_v->type_v == typeid(uint32_t)) return (char*)&ui64;            
+            if (type_v->type_v == typeid(uint16_t)) return (char*)&ui64;
+            if (type_v->type_v == typeid(uint8_t)) return (char*)&ui64;
+            if (type_v->type_v == typeid(int64_t)) return (char*)&i64;
+            if (type_v->type_v == typeid(int32_t)) return (char*)&i64;            
+            if (type_v->type_v == typeid(int16_t)) return (char*)&i64;
+            if (type_v->type_v == typeid(int8_t)) return (char*)&i64;
+
+            return nullptr;
+
+        }
+
+        char* def() { 
+
+            if (rangedef.size()) return rangedef.data()+(type_v->size()*2);
+            
+            if (type_v->type_v == typeid(Field_)) {
+
+                if (!type_v->size())
+                    return nullptr;
+
+                temprangedef.resize(type_v->size());
+
+                int offset = 0;
+
+                for (auto def : type_v->fields) 
+
+                    for (int i = 0; i < def->quantity_v; i++) {
+
+                        memcpy(temprangedef.data()+offset, def->def(), def->type_v->size());    
+
+                        offset += def->type_v->size();
 
                 }
+
+                return temprangedef.data();
+
             }
-            offset += def->footprint_all();
-        }
-        i++;
-    }
 
-    return out;
-
-}
-
-
-auto nulld = Definition::Create(reg->create("null"));
-
-void print(Instance in, Definition x = nulld) { 
-
-    auto inst = in->elements.front();
-
-    in->elements.insert(in->elements.begin(),Element::Create());
-    for (auto def : inst->def->type_v->members) {
-
-        in->elements.front()->def = def;
-        
-        def->type_v->size_v = def->type_v->footprint();   
-
-        for (int i = 0; i < def->quantity_v; i++) {
-                    
-            in->elements.front()->eq = i;
-            print(Instance::Create(in), x);
-    
-            if (x == nulld || x == def)
-                std::cout <<  Buffer_::str(in) << " " << in->offset << "\n";
-
-            in->offset += def->type_v->size_v;
+            return nullptr; 
+            
         }
 
+
+        //template <typename T, typename... Args>
+        //Field add(Args&&... args) { return type_v->add<T>(std::forward<Args>(args)...); } 
+        //template <typename... Args>
+        //Field add(Args&&... args) { return type_v->add(std::forward<Args>(args)...); } 
+        //template <typename T, int q = 1, typename... Args>
+        //Field add(Args&&... args) { return type_v->add<T,q>(std::forward<Args>(args)...); } 
+
+
+        auto begin() { return type_v->fields.begin(); }
+        auto end() { return type_v->fields.end(); }
+    
+    };
+
+    std::vector<Field> fields;
+     static inline Field nofield(TYPE<Field>);
+    
+    Field* operator[] (std::string q) {
+
+        for (auto& e:fields) 
+            if (!strcmp(q.c_str(), e->label_v.c_str()))
+                return &e;
+        
+        return nullptr;
+    }       
+    uint32_t stride() { return 0 ; }
+
+    virtual uint32_t size(); // dynamicly calculated
+
+    uint32_t footprint() { return size() + stride() ; } // missleading not only first instance footprint if array
+
+    TypeIndex type_v = typeid(*this);
+
+    // CRUD
+
+    Field add(Struct type, const char* label = nullptr, int quantity = 1, float from = 0, float to = 0, float def = 0) {
+
+        type->addObserver(shared_from_this(),quantity);
+
+        auto observers = getTop();
+
+        int compoffset = footprint(); // or pos <- what is this com?
+        
+        for (auto x :  observers)
+            x->pre(shared_from_this(), compoffset);
+        
+        auto definition = Field::Create(type, label, quantity, from, to, def);
+
+        int compsize = definition->type_v->footprint();
+
+        auto defval = definition->def();
+
+        // std::string cout = this->label+ "[" +std::to_string(footprint()) + "] add  " + definition->label + "(" + definition->type_v->label + ":" + std::to_string(compsize);
+        // if (definition->quantity_v > 1)
+        //     cout += "*" + std::to_string(definition->quantity_v)  + ":" + std::to_string(definition->footprint_all());
+        // cout += ")";
+        // std::cout << cout << std::endl;
+
+        fields.emplace_back(definition);
+
+        for (auto x :   observers)
+            x->post(definition->quantity_v,compsize, defval, 0);
+
+        return definition;
+
     }
 
-    // in->offset = 0;
+    Field add(const TypeIndex& type, const char* label, int quantity, float from, float to, float def);
 
+    template <typename T, int q = 1>
+    Field add(const char* label, float from = 0, float to = 0, float def = 0) {
+
+        return add(TYPE<T>(), label, q, from, to, def);
+        
+    }
+    
+
+
+    // OBSERVERS
+
+    std::map<Struct,int> observers;
+
+    void addObserver(Struct m, int q = 1) {
+
+        if (observers.find(m) == observers.end())
+            observers[m] = q;
+        else
+            observers[m]+=q;
+    }
+
+    void removeObserver(Struct m, int q = 1) {
+
+        if (observers.find(m) == observers.end())
+            std::cout << "\nerore\n\n"; // FIXME :: WTF
+        
+        observers[m]-=q;
+        
+        if (observers[m] < 1)   
+            observers.erase(m);
+
+    }
+    
+    std::set<Struct> getTop() {
+
+        std::set<Struct> out;
+
+        if (!observers.size()) 
+            out.insert(shared_from_this());
+        
+        for (auto observer : observers)     
+            for (auto x :   observer.first->getTop())
+                out.insert(x);
+
+        return out;
+
+    }
+  
+    virtual void pre(Struct changing, int compoffset) {}
+
+    virtual void post(int diff, int compsize, char* def, int q) {}
+
+    auto name() {
+
+        if (name_v.empty())
+
+            return boost::typeindex::type_index(type_v).pretty_name();
+
+        return name_v;
+
+    }
+
+    std::string json() ;
+
+    nlohmann::ordered_json serializeSafe(int depth = 0);
+    
+};
+
+using Definition = Struct_::Field;
+
+STRUCT_(Data) : Struct_ {
+
+    Data_(const TypeIndex& type, const char* name)  { 
+
+        type_v = type; 
+
+        this->name_v = name ? name : type_v.pretty_name();
+        
+        size_v = TypeIndex::size(type_v); 
+
+    }
+
+    uint32_t size() override {
+        return TypeIndex::size(type_v);
+    }
+
+};
+
+SHAREDSTRUCT_(Register) {
+
+    std::set<Data> datatypes;
+    std::set<Struct> structtypes;
+
+    template <typename T>
+    Data create(const char* name = nullptr) {
+
+        return create(TYPE<T>(), name?name:TYPE<T>().pretty_name());
+        
+    }
+
+    // static inline Register current;
+
+    Data create(const TypeIndex& type, const char* name = nullptr) {
+
+        auto d = Data::Create(type, name);
+
+        // std::cout << "create " << d->quantity_v << " " << d->name << (d->quantity_v>1?"s":"")<<  " " << Type(type).name() << " - " << Type(type).size() << "\n";
+
+        datatypes.insert(d);
+
+        return d;
+        
+    }
+
+    template <typename T>
+    Data create() {
+
+        return create<T>("");
+        
+    }
+
+    Struct create(const char* name) {
+
+        auto s = Struct::Create();
+
+        s->name_v = name;
+
+        // std::cout << "create " << s->quantity_v << " " << s->name << (s->quantity_v>1?"s":"")<<  ""  << "\n";
+
+        structtypes.insert(s);
+
+        return s;
+        
+    }
+ 
+    Struct find(const TypeIndex& type) {
+
+        // type.type_info().name()
+        for (const auto& x : datatypes) 
+            if (x.get()->type_v == type) 
+                return x->shared_from_this();
+
+        return create(type)->shared_from_this();
+        
+    }
+ 
+    template <typename T>
+    Struct find() {
+        return find(TYPE<T>());
+    }
+
+    Struct changing;
+
+
+    nlohmann::ordered_json serializeSafe(int depth = 0);
+};
+
+
+static Register reg = Register::Create();
+
+Definition Struct_::add(const TypeIndex& type, const char* name, int quantity, float from, float to, float def) {
+
+    return add(reg->find(type), name, quantity, from, to, def);
+}
+uint32_t Struct_::size() {
+    
+    size_t size_v = 0;
+
+    for (auto def : fields) 
+        size_v += def->footprint_all(); 
+
+    return size_v;
 }
 
-std::string str2(Instance inst) {
+#include <set>
 
-    std::string out;
+#include <algorithm>
 
-    if (inst->owner)
-        out =  inst->owner->name+"::";
-    
-    for (auto it = inst->elements.rbegin(); it != inst->elements.rend(); ++it) {
-        
+//ranger par ordre de longeur
 
-        out +=  it->get()->def->label;
+//template <typename T>
+//struct Pool {
 
-        if (it->get()->def->quantity_v > 1)
-            out += "[" + std::to_string(it->get()->eq) + "]";
+//        std::vector<T*> list;
 
-        out += "::";
+//};
 
+struct String {
+
+    static inline std::vector<char> data; // could be 2 (shortstr and longtxt)
+    static inline std::vector<String*> pool;
+
+    static void defrag() {
+
+        // create new order list
+
+        // create new empty buffer
+
+        // populate 
+
+        // move new to old
 
     }
 
-    if (out.length())
-        out = out.substr(0,out.length()-2);
+    ////////////////////////////////////////////////////
 
-    return out;
+    uint32_t offset;
+    uint32_t length = 0;
 
+    String(const char* value = nullptr) {
+
+        pool.push_back(this);
+        offset = data.size();
+
+        if (value)
+            set(value);
+
+    }
+
+    String(const String& other)  : offset(other.offset), length(other.length) { }
+
+    ~String() {
+
+        resize(0);
+
+        pool.erase(std::remove(pool.begin(), pool.end(), this), pool.end());
+        
+    }
+
+    bool set(const char* value) {
+
+        auto len = strlen(value);
+
+        if (len > length)
+            resize(len);
+        else
+            length = len;
+            
+        memmove(&data[offset], value, len);
+
+        return 1;
+
+    }
+
+    char* mut() { return &data[offset]; }
+
+    auto view() { return std::string_view(data.data() + offset, length); }
+
+    String string() { return String(*this); } 
+
+private:
+
+    void resize(size_t length) {
+        
+        int diff =  length-this->length;
+
+        auto old_size = data.size();
+
+        if (length && old_size+diff>data.capacity()) 
+            data.reserve(std::max(old_size,length)*2);
+
+        data.resize(old_size+diff);
+
+        auto end = offset+this->length;
+
+        memmove(&data[end]+diff, &data[end], old_size-end);
+
+        this->length = length;
+
+        for(auto e : pool)
+            if (e->offset>offset)   
+                e->offset += diff;
+
+    }
+
+};
+
+template <typename T>
+struct AoS {
+
+    std::vector<T> data;
+
+    struct Element {};
+
+};
+
+
+std::string Struct_::json() {
+
+
+    std::string out = "{";
+
+    for (auto f : fields) {
+    
+            //f
+    }
+
+    out = out + "}";
+    return out+"";
 }
 
-
-std::vector<Instance> getInstances2(Member x, Instance inst = Instance::Create()) {
-
-    std::vector<Instance> out;
-    
-    // std::cout << inst->elements.back()->def->label << " " << inst->offset << "\n";
-
-    std::cout << x->name << "\n";
-
-    Buffer_* buff = dynamic_cast<Buffer_*>(x->shared_from_this().get());
-
-    if (buff){
-
-
-        inst->owner = x;
-        out.push_back(inst);
-        
-        
+nlohmann::ordered_json Struct_::serializeSafe( int depth) {
+    if (depth > 10) {
+        return { {"error", "max depth reached"} };
     }
 
-    for (auto observer : x->observers) { // find definitions
+    nlohmann::ordered_json j;
 
-        for (auto def : observer.first->members) {
+    j["name"] = name_v;
 
-            if (def->type_v == x) {
+    if (fields.size()) {
 
-                auto ninst = Instance::Create(inst);
-                ninst->elements.emplace_back(Element::Create(def));
+        j["fields"] = nlohmann::json::array();
+        
+        for (const auto& f : fields) {
 
-                std::cout << def->label << "\n";
+            j["fields"].push_back({
+                {"label", f->label_v},
+                {"type", f->type_v->serializeSafe(depth + 1)}
+            });
+
+            if (f->quantity_v > 1)      
+                j["fields"].back()["quantity"] = f->quantity_v;
+
+        }
+    }
+
+
+    return j;
+}
+
+nlohmann::ordered_json Register_::serializeSafe( int depth) {
+
+    if (depth > 10) {
+        return { {"error", "max depth reached"} };
+    }
+
+    nlohmann::ordered_json j;
+    
+    j[0] = nlohmann::json::array();
+
+    for (const auto& s : structtypes) {
+
+        j[0].push_back({
+            {"name", s->name_v},
+        });
+
+        if (s->fields.size()) {
+
+            j[0].back()["fields"] = nlohmann::json::array();
+
+            int i = 0;
+            for (const auto& f : s->fields){
+            
+            j[0].back()["fields"].push_back({
+                {"label", f->label_v},
+                {"type", f->type_v->name_v}
+            });
                 
-                for (auto inst : getInstances2(observer.first, ninst)) 
-                    out.push_back(inst); // push front
+                
+                if (f->quantity_v > 1)      
+                    j[0].back()["fields"].back()["quantity"] = f->quantity_v;
 
+                i++;
+                
             }
-
         }
-    }
+    };
 
-    return out;
-
+    return j;
 }
+
+
+#include <App.h>
+#include <iostream>
+#include <thread>
+#include <chrono>
+
+// -------------------- TON JSON PRODUCER --------------------
+std::string json() {
+    return R"({
+        "types": [
+            {
+                "name": "3D",
+                "fields": [
+                    {"label":"x","type":"float"},
+                    {"label":"y","type":"float"},
+                    {"label":"z","type":"float"}
+                ]
+            },
+            {
+                "name": "Objet",
+                "fields": [
+                    {"label":"coord","type":"3D"},
+                    {"label":"RGBA","type":"int","quantity":4}
+                ]
+            }
+        ]
+    })";
+}
+
 
 int main() {
 
-    struct Foo {};
-    
-    auto f1 = std::make_shared<Foo>();
-    auto a1 = Buffer::Create("kouta");
 
-    std::shared_ptr<Member_> a4 = a1;
-    Member a5 = a1->shared_from_this();
-    auto a2 = a4.get();
-    Member_* a3 = a2;
-    auto x1 = dynamic_cast<Member_*>(a2);
-    auto x2 = dynamic_cast<Member_*>(a3);
-    auto x3 = dynamic_cast<Buffer_*>(a2);
-    auto x4 = dynamic_cast<Buffer_*>(a3);
-    auto x5 = dynamic_cast<Buffer_*>(a5.get());
-    Buffer_* x6 = dynamic_cast<Buffer_*>(a5.get());
+    auto coord3d = reg->create("3D");
+    coord3d->add<float>("x",-1,1,0);
+    coord3d->add<float>("y",-1,1,0);
+    coord3d->add<float>("z",-1,1,0);
 
 
+    auto objet_struct = reg->create("Objet");
 
+    objet_struct->add(coord3d,"coord");
+    objet_struct->add<int,4>("RGBA",0,1,1);
 
+    auto piece_struct = Struct::Create ("Piece");
 
-    auto test = reg->create("test");
-    test->add<uint8_t,2>("offset2", 2,2,2 );
-    auto target = test->add<uint8_t,2>("targetos", 3,3,3 );
-
-
-    auto buffer1 = Definition::Create(Buffer::Create("Buffuno")->shared_from_this());
-    buffer1->add<uint8_t,4>("offset", 1,1,1 );
-    buffer1->add(test, 1 , "test1");
-    buffer1->add(test, 1 , "test11");
-    
-    auto buffer2 = Definition::Create(Buffer::Create("Buffdos")->shared_from_this());
-    buffer2->add(test, 1 , "test2");
-    buffer2->add(test, 1 , "test22");
+        std::cout << reg->serializeSafe() << std::endl;
+    struct SringIndex{};
+    piece_struct->add<SringIndex>("nom"); 
+    //piece_struct.add(objet_struct, "table",);
+    auto chaises = piece_struct->add(objet_struct, "chaises", 4);
+    piece_struct->add<int>("ouverte");
 
 
 
-
-    Buffer_* x7 = dynamic_cast<Buffer_*>(buffer2->type_v.get());
-
-
-    // std::cout << "############\n";
-    // print( Instance::Create(buffer2));
-    // std::cout << "############\n";
-    // print( Instance::Create(buffer2), target);
-    // std::cout << "############\n";
-    // print( Instance::Create(buffer1));
-    // std::cout << "############\n";
-
-    // on veut 2 6 3 7 en ordre wesh bfs
-
-    // finding up the hierarchy nto ok
-    auto uc = target->type_v;
-    std::cout << "############\n";
-    auto xxx = getInstances2(uc); // forx obs recurse ()
-    std::cout << "############\n";
-    for (auto x : xxx) {
-
-        std::cout << str2(x) << " - " << x->offset << "\n";
-    
-    }
-    
-    // // finding down the hierarchy ok 
-    // std::cout << "############\n";
-    //     Instance::Create(buffer1)->findBF(target); // maake return list // seee in old version
+    uWS::App()
 
 
-    // std::cout << "############\n";
-        std::cout << "DONE" << "\n";
+    .any("/*", [](auto* res, auto* req) {
+        res->writeStatus("200 Found");
+        res->end();
+
+    std::string url = std::string(req->getUrl());
+    std::string method = std::string(req->getMethod());
+    std::transform(method.begin(), method.end(), method.begin(), ::toupper);
+    std::string body;
+
+    res->onData([res, method, url, body = std::move(body)](std::string_view chunk, bool isLast) mutable {
+        body.append(chunk);
+
+        if (isLast) 
+            std::cout << method << " " << url << (strlen(body.c_str()) ? " -> " : "")  << body << std::endl;
+            
+        
+    });
+})
+
+
+
+    .ws<std::string>("/*", {
+        .open = [](auto* ws) {
+            std::cout << "Client connected\n";
+
+            // send initial state
+            ws->send(json(), uWS::OpCode::TEXT);
+        },
+
+        .message = [](auto* ws, std::string_view msg, uWS::OpCode op) {
+            std::string_view m = msg;
+
+            if (m == "get") {
+                ws->send(json(), uWS::OpCode::TEXT);
+            }
+        },
+
+        .close = [](auto*, int, std::string_view) {
+            std::cout << "Client disconnected\n";
+        }
+    })
+    .listen(1337, [](auto* token) {
+        if (token) {
+            std::cout << "WebSocket running on ws://localhost:1337\n";
+        }
+    })
+    .run();
+
+    //(*objet_struct)["nom"] // find field by name
+
+    //nom_objet.name("piece"); // change name to "piece"
+    //nom_objet.name(); // return "piece"
+
+    //objet_struct[2].type(); // return RGBA (3rd field) type "int"
+    //objet_struct[2].type<float>(); //  set it to float()
+
+    //objet_struct[2].destroy();
+    //object_struct.count() // return 2;
+
+
 }
 
 
-// in findbfs should return instance
 
-// buff need to be def, on a dit buffer is not a Buffer , buffer is a def(Buffer)
-
-// 1 1 21 122 122 122 122 23 4 4 5 5 5 5 5 5 21 122 122 122 122 23 4 4 5 5 5 5 5 5 2 2 1 1 21 122 122 122 122 23 4 4 5 5 5 5 5 5 21 122 122 122 122 23 4 4 5 5 5 5 5 5 2 2 

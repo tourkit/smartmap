@@ -4,4 +4,6 @@ build/*
 imgui.ini
 compile_commands.json
 assets/logs/*
+vendors/*
+.prettierrc
 TODO*

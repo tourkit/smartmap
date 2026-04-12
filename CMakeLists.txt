@@ -6,6 +6,7 @@ option(PLUGREGIE "c moi" OFF)
 
 find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(ZLIB REQUIRED)
 # find_package(Freetype REQUIRED)
 
 add_executable( smartmap
@@ -49,6 +50,8 @@ target_include_directories(
           vendors/gl3w/include/
           vendors/glm/
           vendors/ft/include/
+          vendors/uWebSockets/src/
+          vendors/uWebSockets/uSockets/src/
           # ${FREETYPE_INCLUDE_DIRS}
 
 )
@@ -56,7 +59,7 @@ target_include_directories(
 # link_directories(${FREETYPE_LIBRARY_DIRS})
 
 target_link_libraries(
-  smartmap PRIVATE OpenGL::GL glfw assimp # ${FREETYPE_LIBRARIES}
+  smartmap PRIVATE OpenGL::GL glfw assimp ${CMAKE_CURRENT_SOURCE_DIR}/vendors/uWebSockets/uSockets/uSockets.a ZLIB::ZLIB # ${FREETYPE_LIBRARIES}
 )
 
 target_link_directories(smartmap PRIVATE

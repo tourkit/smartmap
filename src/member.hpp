@@ -100,10 +100,10 @@ SHAREDSTRUCT_(Member) {
 
     Member_(const char* n = nullptr) { 
         if (n) 
-            this->name = n; 
+            this->label_v = n; 
     } 
 
-    std::string name;
+    std::string label_v;
 
     std::map<Member,int> observers;
     void addObserver(Member m, int q = 1) {
@@ -128,7 +128,7 @@ SHAREDSTRUCT_(Member) {
 
     std::map<Member,std::vector<int>> offsets;
 
-    int size_v = 0;
+    int size_v = 0; //  passively maintained in post() 
 
     TypeIndex type_v = typeid(Member_);
 
@@ -142,7 +142,7 @@ SHAREDSTRUCT_(Member) {
     
         Definition clone_v;
         
-        Definition_( Member type, const char* name = nullptr, int q = 1, float from = 0, float to = 0, float def = 0) : label(name?name:type->name), quantity_v(q) {
+        Definition_( Member type, const char* name = nullptr, int q = 1, float from = 0, float to = 0, float def = 0) : label(name?name:type->label_v), quantity_v(q) {
 
             this->type(type);
 
@@ -263,16 +263,10 @@ SHAREDSTRUCT_(Member) {
 
     }
 
-    virtual int size() {
-        // return size_v;
-        int size = 0;
-        for (auto def : members) 
-            size+= def->footprint_all();
-        return size;
-    }
-
+    virtual uint32_t size() {return size_v; }
         
     uint32_t stride() { return 0 ; }
+
     uint32_t footprint() { return size() + stride() ; }
   
     virtual void pre(Member changing, int compoffset) {}
@@ -295,10 +289,6 @@ SHAREDSTRUCT_(Member) {
 
 
 
-
-    // Definition add(Member type, int quantity = 1, const char* name = nullptr, float from = 0, float to = 0, float def = 0) {
-    //     return add(type->shared_from_this(), quantity, name, from, to, def);
-    // }
     
     operator Member() {
 
@@ -306,6 +296,7 @@ SHAREDSTRUCT_(Member) {
     }
 
 
+    // FIXME: c'estait pour quoi ? a refaire ou delete ?
     // bool owned = false;
     // void* 
     // template <typename T>
@@ -315,6 +306,7 @@ SHAREDSTRUCT_(Member) {
 
     //     return add(n);
     // }
+
     struct Instance_ : std::enable_shared_from_this<Instance_> {
 
         STRUCT_(Element) { 
@@ -404,7 +396,7 @@ SHAREDSTRUCT_(Member) {
 
         auto observers = getTop();
 
-        int compoffset = footprint(); // or pos
+        int compoffset = footprint(); // or pos <- what is this com?
         
         for (auto x :  observers)
             x->pre(shared_from_this(), compoffset);
@@ -498,13 +490,13 @@ STRUCT_(Data) : Member_ {
 
         type_v = type; 
 
-        this->name = name ? name : type_v.pretty_name();
+        this->label_v = name ? name : type_v.pretty_name();
         
         size_v = TypeIndex::size(type_v); 
 
     }
 
-    int size() override {
+    uint32_t size() override {
         return TypeIndex::size(type_v);
     }
 
@@ -548,7 +540,7 @@ SHAREDSTRUCT_(Register) {
 
         auto s = Member::Create();
 
-        s->name = name;
+        s->label_v = name;
 
         // std::cout << "create " << s->quantity_v << " " << s->name << (s->quantity_v>1?"s":"")<<  ""  << "\n";
 
@@ -583,7 +575,7 @@ SHAREDSTRUCT_(Register) {
 STRUCT_(Buffer) : Member_ {
 
     Buffer_(std::string name = "") /* : def(Definition::Create(shared_from_this()))  */{ 
-        this->name = name;
+        this->label_v = name;
     }
 
     operator Member() { return shared_from_this(); }
@@ -647,8 +639,8 @@ STRUCT_(Buffer) : Member_ {
     void pre(Member changing, int compoffset) override { 
         
         // find offset of each new instance 
-        
-        changing_offsets.clear();
+        //toke
+        //changing_offsets.clear();
 
         if (changing.get() == this)
             changing_offsets = {footprint()};
@@ -724,8 +716,8 @@ STRUCT_(Buffer) : Member_ {
         }
 
         size_v = 0;
-        for (auto x : members) 
-            size_v += x->footprint_all();
+        for (auto def : members) 
+            size_v += def->footprint_all();
      }
 
     void print() {
