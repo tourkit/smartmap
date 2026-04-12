@@ -1,0 +1,9 @@
+{
+  "title": "My Game",
+  "version": "1.0.0",
+  "settings": {
+    "maxPlayers": 4,
+    "difficulty": "normal",
+    "soundEnabled": true
+  }
+}

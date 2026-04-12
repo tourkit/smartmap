@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Struct Editor DnD</title>
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  font-family: Arial;
+  background: #151515;
+  color: #ddd;
+  overflow: hidden;
+}
+
+/* ---- PANE SYSTEM ---- */
+#root-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+}
+
+.pane-split {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.pane-split.vertical   { flex-direction: row; }
+.pane-split.horizontal { flex-direction: column; }
+
+.pane-leaf {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 60px;
+  min-height: 60px;
+}
+
+/* pane header bar */
+.pane-header {
+  flex: 0 0 auto;
+  background: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  color: #888;
+  user-select: none;
+}
+
+.pane-header .pane-title {
+  flex: 1;
+  font-weight: bold;
+  color: #aaa;
+}
+
+.pane-header-btn {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 1;
+}
+.pane-header-btn:hover {
+  background: #2a2a2a;
+  color: #ccc;
+}
+
+.pane-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* splitter handle */
+.splitter {
+  flex: 0 0 4px;
+  background: #222;
+  z-index: 10;
+  position: relative;
+  transition: background 0.15s;
+}
+.splitter:hover, .splitter.active {
+  background: #7aa2f7;
+}
+.pane-split.vertical   > .splitter { cursor: col-resize; width: 4px; }
+.pane-split.horizontal > .splitter { cursor: row-resize; height: 4px; }
+
+/* ---- DROPDOWN MENU ---- */
+.pane-menu {
+  position: fixed;
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 4px 0;
+  z-index: 1000;
+  min-width: 180px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  font-size: 13px;
+}
+
+.pane-menu-item {
+  padding: 6px 14px;
+  cursor: pointer;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pane-menu-item:hover { background: #2a2a2a; }
+.pane-menu-sep {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 4px 0;
+}
+.pane-menu-sub-label {
+  padding: 4px 14px 2px;
+  font-size: 11px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ---- CONTENT VIEWS ---- */
+
+/* tree view */
+.view-tree {
+  padding: 8px;
+}
+
+.node {
+  padding: 6px 8px;
+  border-radius: 5px;
+  margin: 2px 0;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.node:hover { background: #2a2a2a; }
+.node.struct { font-weight: bold; color: #fff; }
+.node.field {
+  color: #8f8f8f;
+  font-size: 13px;
+  font-style: italic;
+  margin-left: 4px;
+}
+
+.badge {
+  color: #595959;
+  margin-left: 4px;
+  margin-right: 4px;
+}
+
+.category-header {
+  font-weight: bold;
+  color: #fff;
+  padding: 8px;
+  background: #2a2a2a;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.struct-container {
+  margin-bottom: 10px;
+  border-left: 2px solid #333;
+  padding-left: 6px;
+}
+
+.drop-hover { outline: 1px solid #7aa2f7; }
+
+/* inspector view */
+.view-inspector {
+  padding: 16px;
+}
+
+.title {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.box {
+  background: #1f1f1f;
+  border: 1px solid #2a2a2a;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  margin: 6px 0;
+  align-items: center;
+}
+
+input, select, textarea {
+  background: #222;
+  border: 1px solid #333;
+  color: #ddd;
+  padding: 4px;
+}
+
+.editor-wrap {
+  position: relative;
+  height: 400px;
+}
+
+.json-key { color: #7aa2f7; }
+.json-str { color: #9ece6a; }
+.json-num { color: #ff9e64; }
+.json-kw  { color: #bb9af7; }
+
+/* welcome / empty view */
+.view-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #444;
+  font-size: 14px;
+}
+
+/* ---- JSON EDITOR ---- */
+.view-jsoneditor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #161616;
+}
+
+.jsoneditor-toolbar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
+  font-size: 12px;
+}
+
+.jsoneditor-toolbar button {
+  background: #252525;
+  border: 1px solid #333;
+  color: #bbb;
+  padding: 3px 9px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.jsoneditor-toolbar button:hover { background: #2e2e2e; color: #fff; }
+.jsoneditor-toolbar button.danger { border-color: #6b2020; color: #d16060; }
+.jsoneditor-toolbar button.danger:hover { background: #3a1a1a; }
+
+.jsoneditor-status {
+  flex: 1;
+  text-align: right;
+  color: #555;
+  font-size: 11px;
+}
+.jsoneditor-status.ok    { color: #4caf6e; }
+.jsoneditor-status.error { color: #d16060; }
+
+.jsoneditor-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  position: relative;
+}
+
+/* line numbers */
+.jsoneditor-lines {
+  flex: 0 0 auto;
+  min-width: 38px;
+  background: #161616;
+  color: #3a3a3a;
+  text-align: right;
+  padding: 8px 6px 8px 4px;
+  user-select: none;
+  overflow: hidden;
+  border-right: 1px solid #222;
+  white-space: pre;
+}
+
+/* the actual editable layer */
+.jsoneditor-textarea {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: #ddd;
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 8px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre;
+  overflow: auto;
+  z-index: 2;
+  tab-size: 2;
+}
+
+/* the highlighted mirror layer */
+.jsoneditor-highlight {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #161616;
+  padding: 8px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+  color: #ddd;
+}
+
+.jsoneditor-textarea::selection {
+  background: rgba(122, 162, 247, 0.25);
+}
+.jsoneditor-textarea::-webkit-scrollbar { width: 8px; height: 8px; }
+.jsoneditor-textarea::-webkit-scrollbar-track { background: #1a1a1a; }
+.jsoneditor-textarea::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div id="root-container"></div>
+
+<!-- pane context menu (shared, moved in DOM) -->
+<div class="pane-menu" id="pane-menu" style="display:none"></div>
+
+<script>
+
+// =====================================================================
+// DATA
+// =====================================================================
+let registry = [
+  { name: "3Dello", fields: [{ label:"x",type:"float" },{ label:"y",type:"float" },{ label:"z",type:"float" }] },
+  { name: "Objet",  fields: [{ label:"coord",type:"3D" },{ label:"RGBA",type:"int",quantity:4 }] }
+];
+
+let buffer = [
+  { name: "Cell", fields: [{ label:"value",type:"int" },{ label:"state",type:"bool" }] },
+  { name: "Line", fields: [{ label:"start",type:"3D" },{ label:"end",type:"3D" }] }
+];
+
+const typeMap = () => Object.fromEntries([...registry,...buffer].map(t=>[t.name,t]));
+
+// Shared inspector state
+let selected = null;
+
+// =====================================================================
+// PANE LAYOUT ENGINE
+// =====================================================================
+// A node is either:
+//   { type: "leaf",  id, source, el }
+//   { type: "split", direction: "vertical"|"horizontal", children: [node,node,...], sizes:[...], el }
+
+let layoutRoot = null;
+let paneIdCounter = 0;
+
+const SOURCES = {
+  treeview:   { label: "Tree View",   icon: "🗂" },
+  inspector:  { label: "Inspector",   icon: "🔍" },
+  jsoneditor: { label: "JSON Editor", icon: "📝" },
+  empty:      { label: "Empty",       icon: "⬜" },
+};
+
+function makeLeaf(source = "empty") {
+  return { type: "leaf", id: ++paneIdCounter, source, el: null };
+}
+
+function buildDOM(node, parentEl) {
+  if (node.type === "leaf") {
+    const wrapper = document.createElement("div");
+    wrapper.className = "pane-leaf";
+    wrapper.dataset.paneId = node.id;
+
+    const header = document.createElement("div");
+    header.className = "pane-header";
+
+    const title = document.createElement("span");
+    title.className = "pane-title";
+    title.textContent = (SOURCES[node.source]?.icon || "") + " " + (SOURCES[node.source]?.label || node.source);
+
+    const menuBtn = document.createElement("button");
+    menuBtn.className = "pane-header-btn";
+    menuBtn.title = "Pane options";
+    menuBtn.textContent = "⋯";
+    menuBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openPaneMenu(node, menuBtn);
+    });
+
+    header.appendChild(title);
+    header.appendChild(menuBtn);
+
+    const content = document.createElement("div");
+    content.className = "pane-content";
+    content.id = "pane-content-" + node.id;
+
+    wrapper.appendChild(header);
+    wrapper.appendChild(content);
+
+    node.el = wrapper;
+    node._header = header;
+    node._title  = title;
+    node._content = content;
+
+    parentEl.appendChild(wrapper);
+    renderPaneContent(node);
+    return wrapper;
+  }
+
+  if (node.type === "split") {
+    const wrap = document.createElement("div");
+    wrap.className = "pane-split " + node.direction;
+    node.el = wrap;
+    parentEl.appendChild(wrap);
+
+    node.children.forEach((child, i) => {
+      buildDOM(child, wrap);
+      applySize(node, i);
+      if (i < node.children.length - 1) {
+        const spl = makeSplitter(node, i);
+        // insert splitter after child
+        wrap.appendChild(spl);
+      }
+    });
+
+    // We need to reorder: child0, splitter0, child1, splitter1, child2 ...
+    rebuildSplitDOM(node);
+    return wrap;
+  }
+}
+
+function rebuildSplitDOM(node) {
+  const wrap = node.el;
+  wrap.innerHTML = "";
+  node.children.forEach((child, i) => {
+    if (!child.el) buildDOM(child, wrap);
+    else wrap.appendChild(child.el);
+    applySize(node, i);
+    if (i < node.children.length - 1) {
+      wrap.appendChild(makeSplitter(node, i));
+    }
+  });
+}
+
+function applySize(splitNode, childIdx) {
+  const child = splitNode.children[childIdx];
+  if (!child.el) return;
+  const size = splitNode.sizes[childIdx];
+  if (splitNode.direction === "vertical") {
+    child.el.style.width  = size + "%";
+    child.el.style.height = "100%";
+    child.el.style.flex   = "none";
+  } else {
+    child.el.style.height = size + "%";
+    child.el.style.width  = "100%";
+    child.el.style.flex   = "none";
+  }
+}
+
+function makeSplitter(splitNode, afterIdx) {
+  const spl = document.createElement("div");
+  spl.className = "splitter";
+
+  spl.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    spl.classList.add("active");
+    const isVert = splitNode.direction === "vertical";
+    const container = splitNode.el;
+    const rect = container.getBoundingClientRect();
+    const totalPx = isVert ? rect.width : rect.height;
+
+    const onMove = (ev) => {
+      const pos = isVert ? ev.clientX - rect.left : ev.clientY - rect.top;
+      // distribute between afterIdx and afterIdx+1
+      const sumBefore = splitNode.sizes.slice(0, afterIdx).reduce((a,b)=>a+b,0);
+      const sumAfter  = splitNode.sizes.slice(afterIdx+2).reduce((a,b)=>a+b,0);
+      const available = 100 - sumBefore - sumAfter;
+      let newA = (pos / totalPx) * 100 - sumBefore;
+      newA = Math.max(5, Math.min(available - 5, newA));
+      splitNode.sizes[afterIdx]   = newA;
+      splitNode.sizes[afterIdx+1] = available - newA;
+      applySize(splitNode, afterIdx);
+      applySize(splitNode, afterIdx+1);
+    };
+
+    const onUp = () => {
+      spl.classList.remove("active");
+      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mouseup", onUp);
+    };
+
+    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mouseup", onUp);
+  });
+
+  return spl;
+}
+
+// =====================================================================
+// PANE CONTENT RENDERERS
+// =====================================================================
+function renderPaneContent(node) {
+  const el = node._content;
+  if (!el) return;
+  el.innerHTML = "";
+
+  if (node.source === "treeview") {
+    const div = document.createElement("div");
+    div.className = "view-tree";
+    el.appendChild(div);
+    renderTree(div);
+  } else if (node.source === "inspector") {
+    const div = document.createElement("div");
+    div.className = "view-inspector";
+    el.appendChild(div);
+    renderInspector(div);
+  } else if (node.source === "jsoneditor") {
+    renderJsonEditor(node, el);
+  } else {
+    const div = document.createElement("div");
+    div.className = "view-empty";
+    div.textContent = "Empty pane";
+    el.appendChild(div);
+  }
+}
+
+function refreshAllPanes(type) {
+  // re-render all panes of a given source type
+  forEachLeaf(layoutRoot, node => {
+    if (!type || node.source === type) renderPaneContent(node);
+  });
+}
+
+function forEachLeaf(node, fn) {
+  if (!node) return;
+  if (node.type === "leaf") { fn(node); return; }
+  node.children.forEach(c => forEachLeaf(c, fn));
+}
+
+// =====================================================================
+// TREE RENDER
+// =====================================================================
+function renderTree(container) {
+  container.innerHTML = "";
+
+  const registreHeader = document.createElement("div");
+  registreHeader.className = "category-header";
+  registreHeader.textContent = "📁 Registre";
+  container.appendChild(registreHeader);
+
+  registry.forEach(struct => {
+    const header = document.createElement("div");
+    header.className = "node struct";
+    header.textContent = "📦 " + struct.name;
+
+    if (struct.fields.length) {
+      const fieldsstr = document.createElement("span");
+      fieldsstr.className = "node field";
+      struct.fields.forEach((field, idx) => {
+        fieldsstr.innerHTML += `<span class="badge">${field.type}${field.quantity ? " ["+field.quantity+"]" : ""}</span> ${field.label}${idx === struct.fields.length-1 ? "" : ", "}`;
+      });
+      header.appendChild(fieldsstr);
+    }
+
+    header.onclick = () => {
+      selectStruct(struct);
+    };
+
+    container.appendChild(header);
+  });
+
+  const cfgNode = document.createElement("div");
+  cfgNode.className = "node struct";
+  cfgNode.textContent = "config.json";
+  cfgNode.onclick = () => { editJSON(); };
+  container.appendChild(cfgNode);
+}
+
+// =====================================================================
+// INSPECTOR RENDER
+// =====================================================================
+function renderInspector(container) {
+  if (!selected) {
+    container.innerHTML = `<div class="title">Inspector</div><div class="box">Drop a field here or select a struct</div>`;
+    return;
+  }
+
+  const struct = selected;
+  const tm = typeMap();
+  container.innerHTML = `
+    <div class="title">📦 ${struct.name}</div>
+    <div class="box">
+      ${struct.fields.map(f => `
+        <div class="row">
+          <input value="${f.label}" onchange="updateField('${struct.name}','${f.label}',this.value,'label')" />
+          <select onchange="updateField('${struct.name}','${f.label}',this.value,'type')">
+            ${["int","float","string","bool",...Object.keys(tm)]
+              .map(t => `<option ${t===f.type?"selected":""}>${t}</option>`).join("")}
+          </select>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function selectStruct(struct) {
+  selected = struct;
+  refreshAllPanes("inspector");
+}
+
+window.updateField = function(structName, oldLabel, value, prop) {
+  const s = registry.find(x => x.name === structName);
+  if (!s) return;
+  const f = s.fields.find(x => x.label === oldLabel);
+  if (!f) return;
+  f[prop] = value;
+  refreshAllPanes("treeview");
+};
+
+// =====================================================================
+// JSON EDITOR
+// =====================================================================
+
+// Shared JSON document state
+let jsonDocText = "";
+let configPath = "./config.json";
+
+async function loadConfig() {
+  try {
+    const res = await fetch(configPath);
+    if (res.ok) {
+      const text = await res.text();
+      jsonDocText = text;
+    } else {
+      jsonDocText = "{}";
+    }
+  } catch (e) {
+    jsonDocText = "{}";
+  }
+}
+
+async function saveConfig() {
+  if (validateAndMark(jsonDocText)) {
+    try {
+      await fetch(configPath, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: jsonDocText
+      });
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  return false;
+}
+
+function highlightJSON(raw) {
+  // escape HTML first
+  let s = raw
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // tokenize: strings, numbers, booleans/null, keys
+  s = s.replace(
+    /("(?:[^"\\]|\\.)*")\s*:/g,
+    '<span class="json-key">$1</span>:'
+  );
+  s = s.replace(
+    /:\s*("(?:[^"\\]|\\.)*")/g,
+    ': <span class="json-str">$1</span>'
+  );
+  // bare string values (after comma or bracket) — already handled by key-colon pass,
+  // handle remaining strings that aren't keys
+  s = s.replace(
+    /^(\s*)("(?:[^"\\]|\\.)*")/gm,
+    (m, indent, str) => {
+      // if it was already wrapped as key skip
+      if (m.includes('class="json-key"') || m.includes('class="json-str"')) return m;
+      return indent + '<span class="json-str">' + str + '</span>';
+    }
+  );
+  s = s.replace(
+    /\b(-?\d+\.?\d*(?:[eE][+-]?\d+)?)\b/g,
+    '<span class="json-num">$1</span>'
+  );
+  s = s.replace(
+    /\b(true|false|null)\b/g,
+    '<span class="json-kw">$1</span>'
+  );
+  return s;
+}
+
+function updateLineNumbers(linesEl, text) {
+  const count = (text.match(/\n/g) || []).length + 1;
+  let ln = "";
+  for (let i = 1; i <= count; i++) ln += i + "\n";
+  linesEl.textContent = ln;
+}
+
+function renderJsonEditor(node, container) {
+  container.innerHTML = "";
+
+  const wrap = document.createElement("div");
+  wrap.className = "view-jsoneditor";
+
+  // --- toolbar ---
+  const toolbar = document.createElement("div");
+  toolbar.className = "jsoneditor-toolbar";
+
+  const formatBtn = document.createElement("button");
+  formatBtn.textContent = "⟳ Format";
+  formatBtn.title = "Auto-format JSON (Ctrl+Shift+F)";
+
+  const saveBtn = document.createElement("button");
+  saveBtn.textContent = "💾 Save";
+  saveBtn.title = "Save (Ctrl+S)";
+
+  const status = document.createElement("span");
+  status.className = "jsoneditor-status";
+  status.textContent = "config.json";
+
+  toolbar.appendChild(formatBtn);
+  toolbar.appendChild(saveBtn);
+  toolbar.appendChild(status);
+
+  // --- body ---
+  const body = document.createElement("div");
+  body.className = "jsoneditor-body";
+
+  const linesEl = document.createElement("div");
+  linesEl.className = "jsoneditor-lines";
+
+  const highlightEl = document.createElement("div");
+  highlightEl.className = "jsoneditor-highlight";
+
+  const textarea = document.createElement("textarea");
+  textarea.className = "jsoneditor-textarea";
+  textarea.spellcheck = false;
+  textarea.autocomplete = "off";
+  textarea.value = jsonDocText;
+
+  body.appendChild(linesEl);
+  body.appendChild(highlightEl);
+  body.appendChild(textarea);
+
+  wrap.appendChild(toolbar);
+  wrap.appendChild(body);
+  container.appendChild(wrap);
+
+  // --- sync helpers ---
+  function syncHighlight() {
+    highlightEl.innerHTML = highlightJSON(textarea.value);
+    updateLineNumbers(linesEl, textarea.value);
+  }
+
+  // sync highlight scroll with textarea scroll
+  textarea.addEventListener("scroll", () => {
+    highlightEl.scrollTop  = textarea.scrollTop;
+    highlightEl.scrollLeft = textarea.scrollLeft;
+    linesEl.scrollTop      = textarea.scrollTop;
+  });
+
+  function validateAndMark(text) {
+    try {
+      JSON.parse(text);
+      status.className = "jsoneditor-status ok";
+      status.textContent = "✓ Valid JSON — config.json";
+      return true;
+    } catch (e) {
+      status.className = "jsoneditor-status error";
+      status.textContent = "✗ " + e.message;
+      return false;
+    }
+  }
+
+  function doFormat() {
+    if (validateAndMark(textarea.value)) {
+      try {
+        textarea.value = formatPreservingEmptyLines(textarea.value);
+        jsonDocText = textarea.value;
+        syncHighlight();
+        validateAndMark(textarea.value);
+      } catch (e) {
+        validateAndMark(textarea.value);
+      }
+    }
+  }
+
+  async function doSave() {
+    if (validateAndMark(textarea.value)) {
+      jsonDocText = textarea.value;
+      const ok = await saveConfig();
+      if (ok) {
+        status.className = "jsoneditor-status ok";
+        status.textContent = "✓ Saved — config.json";
+      } else {
+        status.className = "jsoneditor-status error";
+        status.textContent = "✗ Save failed";
+      }
+    }
+  }
+
+  // format JSON but preserve empty lines
+  function formatPreservingEmptyLines(text) {
+    const parsed = JSON.parse(text);
+    const lines = text.split('\n');
+    const emptyLineIndices = new Set();
+    lines.forEach((line, i) => {
+      if (line.trim() === '') emptyLineIndices.add(i);
+    });
+
+    let formatted = JSON.stringify(parsed, null, 2);
+    const formattedLines = formatted.split('\n');
+
+    // re-insert empty lines at their original positions (adjusted)
+    if (emptyLineIndices.size > 0) {
+      const result = [];
+      let srcIdx = 0;
+      let emptySet = new Set(emptyLineIndices);
+      for (let i = 0; i < lines.length; i++) {
+        if (emptySet.has(i) && srcIdx < formattedLines.length) {
+          result.push('');
+        }
+        if (srcIdx < formattedLines.length) {
+          result.push(formattedLines[srcIdx++]);
+        }
+      }
+      formatted = result.join('\n');
+    }
+    return formatted;
+  }
+
+  // --- events ---
+  let formatTimeout = null;
+
+  textarea.addEventListener("input", () => {
+    jsonDocText = textarea.value;
+    syncHighlight();
+    validateAndMark(textarea.value);
+
+    // auto-format after 600ms of inactivity
+    clearTimeout(formatTimeout);
+    formatTimeout = setTimeout(() => {
+      if (validateAndMark(textarea.value)) {
+        try {
+          textarea.value = formatPreservingEmptyLines(textarea.value);
+          jsonDocText = textarea.value;
+          syncHighlight();
+        } catch (e) {}
+      }
+    }, 600);
+  });
+
+  // compute auto-indent based on current line context (brackets/braces)
+  function getAutoIndent(text, pos) {
+    const before = text.slice(0, pos);
+    const lineStart = before.lastIndexOf('\n') + 1;
+    const currentLine = before.slice(lineStart);
+    let indent = currentLine.match(/^(\s*)/)[1].length;
+    // count opening vs closing brackets on current line
+    const opens = (currentLine.match(/[{[\[]/g) || []).length;
+    const closes = (currentLine.match(/[}\]]/g) || []).length;
+    if (closes < opens) indent += 2;
+    return ' '.repeat(indent);
+  }
+
+  textarea.addEventListener("keydown", (e) => {
+    // Enter → auto-indent
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const s = textarea.selectionStart;
+      const v = textarea.value;
+      const indent = getAutoIndent(v, s);
+      textarea.value = v.slice(0, s) + '\n' + indent + v.slice(textarea.selectionEnd);
+      textarea.selectionStart = textarea.selectionEnd = s + 1 + indent.length;
+      syncHighlight();
+      return;
+    }
+    // Tab → insert 2 spaces
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const s = textarea.selectionStart;
+      const v = textarea.value;
+      textarea.value = v.slice(0, s) + "  " + v.slice(textarea.selectionEnd);
+      textarea.selectionStart = textarea.selectionEnd = s + 2;
+      syncHighlight();
+    }
+    // Ctrl+S → save
+    if (e.key === "s" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      doSave();
+    }
+    // Ctrl+Shift+F → format
+    if (e.key === "F" && (e.ctrlKey || e.metaKey) && e.shiftKey) {
+      e.preventDefault();
+      doFormat();
+    }
+  });
+
+  formatBtn.addEventListener("click", doFormat);
+  saveBtn.addEventListener("click",   doSave);
+
+  // initial render
+  syncHighlight();
+  validateAndMark(textarea.value);
+
+  // store ref so pane resize doesn't lose scroll
+  node._jsonTextarea = textarea;
+}
+
+function editJSON() {
+  // find first jsoneditor pane
+  let target = null;
+  forEachLeaf(layoutRoot, n => {
+    if (!target && n.source === "jsoneditor") target = n;
+  });
+  if (target) {
+    renderPaneContent(target);
+    return;
+  }
+  // otherwise use inspector pane (or first available leaf)
+  forEachLeaf(layoutRoot, n => {
+    if (!target && n.source === "inspector") target = n;
+  });
+  if (!target) {
+    forEachLeaf(layoutRoot, n => { if (!target) target = n; });
+  }
+  if (target) {
+    target.source = "jsoneditor";
+    target._title.textContent = SOURCES.jsoneditor.icon + " " + SOURCES.jsoneditor.label;
+    renderPaneContent(target);
+  }
+}
+
+// =====================================================================
+// PANE CONTEXT MENU
+// =====================================================================
+let activeMenuNode = null;
+const menuEl = document.getElementById("pane-menu");
+
+document.addEventListener("click", () => closeMenu());
+
+function openPaneMenu(node, anchorEl) {
+  activeMenuNode = node;
+  menuEl.innerHTML = "";
+
+  // --- split section ---
+  addMenuLabel("Split");
+  addMenuItem("↔ Split Vertical",   () => splitPane(node, "vertical"));
+  addMenuItem("↕ Split Horizontal", () => splitPane(node, "horizontal"));
+
+  addMenuSep();
+
+  // --- source section ---
+  addMenuLabel("View");
+  Object.entries(SOURCES).forEach(([key, info]) => {
+    const active = node.source === key;
+    addMenuItem((active ? "✓ " : "    ") + info.icon + " " + info.label, () => {
+      node.source = key;
+      node._title.textContent = info.icon + " " + info.label;
+      renderPaneContent(node);
+      closeMenu();
+    });
+  });
+
+  addMenuSep();
+  addMenuItem("✕ Close pane", () => closePane(node));
+
+  // position
+  const rect = anchorEl.getBoundingClientRect();
+  menuEl.style.display = "block";
+  const mw = menuEl.offsetWidth;
+  let left = rect.left;
+  if (left + mw > window.innerWidth) left = window.innerWidth - mw - 4;
+  menuEl.style.left = left + "px";
+  menuEl.style.top  = (rect.bottom + 4) + "px";
+}
+
+function closeMenu() {
+  menuEl.style.display = "none";
+  activeMenuNode = null;
+}
+
+function addMenuLabel(text) {
+  const el = document.createElement("div");
+  el.className = "pane-menu-sub-label";
+  el.textContent = text;
+  menuEl.appendChild(el);
+}
+
+function addMenuItem(text, fn) {
+  const el = document.createElement("div");
+  el.className = "pane-menu-item";
+  el.innerHTML = text;
+  el.addEventListener("click", (e) => { e.stopPropagation(); fn(); closeMenu(); });
+  menuEl.appendChild(el);
+}
+
+function addMenuSep() {
+  const el = document.createElement("hr");
+  el.className = "pane-menu-sep";
+  menuEl.appendChild(el);
+}
+
+// =====================================================================
+// SPLIT / CLOSE
+// =====================================================================
+function splitPane(leaf, direction) {
+  const parent = findParent(layoutRoot, null, leaf);
+  const newLeaf = makeLeaf(leaf.source);
+
+  if (!parent) {
+    // leaf IS root — replace root with a split
+    const split = {
+      type: "split",
+      direction,
+      children: [leaf, newLeaf],
+      sizes: [50, 50],
+      el: null
+    };
+    layoutRoot = split;
+    const rootEl = document.getElementById("root-container");
+    rootEl.innerHTML = "";
+    buildDOM(layoutRoot, rootEl);
+  } else {
+    const idx = parent.children.indexOf(leaf);
+
+    if (parent.direction === direction) {
+      // same axis — just insert alongside
+      const sz = parent.sizes[idx] / 2;
+      parent.sizes[idx] = sz;
+      parent.sizes.splice(idx + 1, 0, sz);
+      parent.children.splice(idx + 1, 0, newLeaf);
+      newLeaf.el = null;
+      rebuildSplitDOM(parent);
+      renderPaneContent(newLeaf);
+    } else {
+      // different axis — wrap leaf in new split
+      const newSplit = {
+        type: "split",
+        direction,
+        children: [leaf, newLeaf],
+        sizes: [50, 50],
+        el: null
+      };
+      parent.children[idx] = newSplit;
+      newSplit.el = null;
+      leaf.el = null;
+      rebuildSplitDOM(parent);
+      renderPaneContent(leaf);
+      renderPaneContent(newLeaf);
+    }
+  }
+}
+
+function closePane(leaf) {
+  const parent = findParent(layoutRoot, null, leaf);
+  if (!parent) return; // can't close last pane
+
+  const idx = parent.children.indexOf(leaf);
+  const removedSize = parent.sizes[idx];
+
+  parent.children.splice(idx, 1);
+  parent.sizes.splice(idx, 1);
+
+  // redistribute removed size to neighbor
+  if (parent.sizes.length > 0) {
+    const neighborIdx = Math.min(idx, parent.sizes.length - 1);
+    parent.sizes[neighborIdx] += removedSize;
+  }
+
+  if (parent.children.length === 1) {
+    // collapse the split
+    collapseParent(parent);
+  } else {
+    rebuildSplitDOM(parent);
+  }
+}
+
+function collapseParent(splitNode) {
+  const grandParent = findParent(layoutRoot, null, splitNode);
+  const onlyChild = splitNode.children[0];
+
+  if (!grandParent) {
+    // split IS root, child becomes root
+    layoutRoot = onlyChild;
+    const rootEl = document.getElementById("root-container");
+    rootEl.innerHTML = "";
+    onlyChild.el = null;
+    buildDOM(layoutRoot, rootEl);
+  } else {
+    const idx = grandParent.children.indexOf(splitNode);
+    grandParent.children[idx] = onlyChild;
+    onlyChild.el = null;
+    rebuildSplitDOM(grandParent);
+    if (onlyChild.type === "leaf") renderPaneContent(onlyChild);
+  }
+}
+
+function findParent(node, parent, target) {
+  if (node === target) return parent;
+  if (node.type === "split") {
+    for (const child of node.children) {
+      const found = findParent(child, node, target);
+      if (found !== undefined) return found;
+    }
+  }
+  return undefined;
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+function initLayout() {
+  layoutRoot = {
+    type: "split",
+    direction: "vertical",
+    sizes: [25, 75],
+    children: [
+      makeLeaf("treeview"),
+      makeLeaf("inspector")
+    ],
+    el: null
+  };
+
+  const rootEl = document.getElementById("root-container");
+  buildDOM(layoutRoot, rootEl);
+}
+
+// =====================================================================
+// WEBSOCKET
+// =====================================================================
+const ws = new WebSocket("ws://localhost:1337");
+
+ws.addEventListener("open", () => {
+  console.log("Connecté au serveur WebSocket");
+  ws.send("get");
+});
+
+ws.addEventListener("message", (event) => {
+  try {
+    const data = JSON.parse(event.data);
+    registry = structuredClone(data["types"]);
+    refreshAllPanes("treeview");
+    console.log("Registry mis à jour :", registry);
+  } catch (err) {
+    console.error("Erreur de parsing JSON :", err);
+  }
+});
+
+initLayout();
+
+loadConfig().then(() => {
+  // refresh json editor panes after config is loaded
+  forEachLeaf(layoutRoot, n => {
+    if (n.source === "jsoneditor") renderPaneContent(n);
+  });
+});</script>
+</body>
+</html>
