@@ -671,31 +671,6 @@ nlohmann::ordered_json Register_::serializeSafe( int depth) {
 
 #include <App.h>
 #include <iostream>
-#include <thread>
-#include <chrono>
-
-// -------------------- TON JSON PRODUCER --------------------
-std::string json() {
-    return R"({
-        "types": [
-            {
-                "name": "3D",
-                "fields": [
-                    {"label":"x","type":"float"},
-                    {"label":"y","type":"float"},
-                    {"label":"z","type":"float"}
-                ]
-            },
-            {
-                "name": "Objet",
-                "fields": [
-                    {"label":"coord","type":"3D"},
-                    {"label":"RGBA","type":"int","quantity":4}
-                ]
-            }
-        ]
-    })";
-}
 
 
 int main() {
@@ -750,16 +725,13 @@ int main() {
     .ws<std::string>("/*", {
         .open = [](auto* ws) {
             std::cout << "Client connected\n";
-
-            // send initial state
-            ws->send(json(), uWS::OpCode::TEXT);
         },
 
         .message = [](auto* ws, std::string_view msg, uWS::OpCode op) {
             std::string_view m = msg;
 
-            if (m == "get") {
-                ws->send(json(), uWS::OpCode::TEXT);
+            if (m == "registre") {
+                ws->send(reg->serializeSafe().dump(), uWS::OpCode::TEXT);
             }
         },
 

@@ -27,7 +27,9 @@ function renderPaneContent(node) {
 }
 
 function refreshAllPanes(type) {
+     
   forEachLeaf(layoutRoot, node => {
+    console.log("oooooo")
     if (!type || node.source === type) renderPaneContent(node);
   });
 }
@@ -44,41 +46,250 @@ function forEachLeaf(node, fn) {
 function renderTree(container) {
   container.innerHTML = "";
 
-  // === Registre ===
+  const tree = document.createElement("ul");
+  tree.className = "tree-list";
+
+  // === Registre (collapsible parent) ===
+  const registreLi = document.createElement("li");
+  registreLi.className = "tree-category";
+
   const registreHeader = document.createElement("div");
-  registreHeader.className = "category-header";
-  registreHeader.textContent = "📁 Registre";
-  container.appendChild(registreHeader);
+  registreHeader.className = "tree-category-header";
+  registreHeader.innerHTML = `<span class="tree-toggle">▶</span> <span>📁 Registre</span>`;
+  registreLi.appendChild(registreHeader);
+
+  const registreChildren = document.createElement("ul");
+  registreChildren.className = "tree-children";
 
   registry.forEach(struct => {
-    const header = document.createElement("div");
-    header.className = "node struct";
-    header.textContent = "📦 " + struct.name;
-
-    if (struct.fields.length) {
-      const fieldsstr = document.createElement("span");
-      fieldsstr.className = "node field";
-      struct.fields.forEach((field, idx) => {
-        fieldsstr.innerHTML += `<span class="badge">${field.type}${field.quantity ? " ["+field.quantity+"]" : ""}</span> ${field.label}${idx === struct.fields.length-1 ? "" : ", "}`;
-      });
-      header.appendChild(fieldsstr);
-    }
-
-    header.onclick = () => {
-      selectStruct(struct);
-    };
-
-    container.appendChild(header);
+    const structLi = document.createElement("li");
+    structLi.className = "tree-item";
+    structLi.textContent = "📦 " + struct.name;
+    structLi.title = struct.fields.map(f => `${f.type} ${f.label}`).join(", ");
+    structLi.onclick = () => selectStruct(struct);
+    registreChildren.appendChild(structLi);
   });
 
-  
+  registreLi.appendChild(registreChildren);
+  tree.appendChild(registreLi);
 
-  // === Files ===
-  const cfgNode = document.createElement("div");
-  cfgNode.className = "node struct";
-  cfgNode.textContent = "📄 config.json";
-  cfgNode.onclick = () => { editJSON(); };
-  container.appendChild(cfgNode);
+  registreHeader.onclick = () => {
+    registreHeader.querySelector(".tree-toggle").classList.toggle("expanded");
+    registreChildren.classList.toggle("visible");
+  };
+
+  // === Buffer (collapsible parent) ===
+  const bufferLi = document.createElement("li");
+  bufferLi.className = "tree-category";
+
+  const bufferHeader = document.createElement("div");
+  bufferHeader.className = "tree-category-header";
+  bufferHeader.innerHTML = `<span class="tree-toggle">▶</span> <span>📥 Buffer</span>`;
+  bufferLi.appendChild(bufferHeader);
+
+  const bufferChildren = document.createElement("ul");
+  bufferChildren.className = "tree-children";
+
+  buffer.forEach(item => {
+    const itemLi = document.createElement("li");
+    itemLi.className = "tree-item buffer-item";
+    
+    const row = document.createElement("div");
+    row.className = "tree-item-row";
+
+    const toggle = document.createElement("span");
+    toggle.className = "tree-toggle";
+    toggle.textContent = item.type ? "▶" : "";
+    if (!item.type) toggle.style.visibility = "hidden";
+
+    const name = document.createElement("span");
+    name.className = "tree-item-name";
+    name.textContent = "📦 " + item.name;
+
+    const type = document.createElement("span");
+    type.className = "tree-item-type";
+    type.textContent = item.type ? `[${item.type}]` : "";
+
+    const menuBtn = document.createElement("button");
+    menuBtn.className = "pane-header-btn";
+    menuBtn.textContent = "⋯";
+    menuBtn.onclick = (e) => {
+      e.stopPropagation();
+      openPaneTypeMenu(item, menuBtn);
+    };
+
+    row.appendChild(toggle);
+    row.appendChild(name);
+    row.appendChild(type);
+    row.appendChild(menuBtn);
+    itemLi.appendChild(row);
+
+    if (item.type) {
+      const hier = buildBufferHierarchy(item);
+      if (hier) {
+        const itemChildren = document.createElement("ul");
+        itemChildren.className = "tree-children";
+        renderHierarchyList(hier, itemChildren);
+        itemLi.appendChild(itemChildren);
+        itemChildren.classList.remove("visible");
+
+        const onToggle = () => {
+          toggle.classList.toggle("expanded");
+          toggle.textContent = toggle.classList.contains("expanded") ? "▼" : "▶";
+          itemChildren.classList.toggle("visible");
+        };
+
+        toggle.onclick = onToggle;
+        name.onclick = onToggle;
+      }
+    }
+
+    bufferChildren.appendChild(itemLi);
+  });
+
+  bufferLi.appendChild(bufferChildren);
+  tree.appendChild(bufferLi);
+
+  bufferHeader.onclick = () => {
+    bufferHeader.querySelector(".tree-toggle").classList.toggle("expanded");
+    bufferChildren.classList.toggle("visible");
+  };
+
+  // === Files (collapsible parent) ===
+  const filesLi = document.createElement("li");
+  filesLi.className = "tree-category";
+
+  const filesHeader = document.createElement("div");
+  filesHeader.className = "tree-category-header";
+  filesHeader.innerHTML = `<span class="tree-toggle">▶</span> <span>📄 Files</span>`;
+  filesLi.appendChild(filesHeader);
+
+  const filesChildren = document.createElement("ul");
+  filesChildren.className = "tree-children";
+
+  try {
+    const parsed = JSON.parse(jsonDocText || "{}");
+    renderJsonFileTree(parsed, filesChildren);
+  } catch (e) {}
+
+  filesLi.appendChild(filesChildren);
+  tree.appendChild(filesLi);
+
+  filesHeader.onclick = () => {
+    filesHeader.querySelector(".tree-toggle").classList.toggle("expanded");
+    filesChildren.classList.toggle("visible");
+  };
+
+  container.appendChild(tree);
+}
+
+function renderHierarchyList(node, container) {
+  if (!node) return;
+
+  const li = document.createElement("li");
+  li.className = "tree-item";
+
+  const row = document.createElement("div");
+  row.className = "tree-item-row";
+
+  const toggle = document.createElement("span");
+  toggle.className = "tree-toggle";
+
+  const name = document.createElement("span");
+  name.className = "tree-item-name";
+  name.textContent = node.name;
+
+  const type = document.createElement("span");
+  type.className = "tree-item-type";
+  type.textContent = node.type ? `[${node.type}]` : "";
+
+  row.appendChild(toggle);
+  row.appendChild(name);
+  row.appendChild(type);
+  li.appendChild(row);
+
+  if (node.children && node.children.length > 0) {
+    const children = document.createElement("ul");
+    children.className = "tree-children";
+    node.children.forEach(child => renderHierarchyList(child, children));
+    li.appendChild(children);
+    children.classList.remove("visible");
+
+    const onToggle = () => {
+      toggle.classList.toggle("expanded");
+      toggle.textContent = toggle.classList.contains("expanded") ? "▼" : "▶";
+      children.classList.toggle("visible");
+    };
+
+    toggle.onclick = onToggle;
+    name.onclick = onToggle;
+  }
+
+  container.appendChild(li);
+}
+
+function renderJsonFileTree(parsed, container) {
+  function walk(key, value, depth) {
+    const isObj = value && typeof value === "object" && !Array.isArray(value);
+    const isArr = Array.isArray(value);
+
+    const li = document.createElement("li");
+    li.className = "tree-item";
+
+    const row = document.createElement("div");
+    row.className = "tree-item-row";
+
+    if (isObj || isArr) {
+      const toggle = document.createElement("span");
+      toggle.className = "tree-toggle";
+      toggle.textContent = "▶";
+
+      const name = document.createElement("span");
+      name.className = "tree-item-name";
+      name.textContent = key;
+
+      const type = document.createElement("span");
+      type.className = "tree-item-type";
+      type.textContent = isArr ? "[]" : "{}";
+
+      row.appendChild(toggle);
+      row.appendChild(name);
+      row.appendChild(type);
+      li.appendChild(row);
+
+      const children = document.createElement("ul");
+      children.className = "tree-children";
+      Object.keys(value).forEach(k => walk(k, value[k], depth + 1));
+      li.appendChild(children);
+      children.classList.remove("visible");
+
+      const onToggle = () => {
+        toggle.classList.toggle("expanded");
+        toggle.textContent = toggle.classList.contains("expanded") ? "▼" : "▶";
+        children.classList.toggle("visible");
+      };
+
+      toggle.onclick = onToggle;
+      name.onclick = onToggle;
+    } else {
+      const name = document.createElement("span");
+      name.className = "tree-item-name";
+      name.textContent = key;
+
+      const valueSpan = document.createElement("span");
+      valueSpan.className = "tree-item-value json-num";
+      valueSpan.textContent = JSON.stringify(value);
+
+      row.appendChild(name);
+      row.appendChild(document.createTextNode(": "));
+      row.appendChild(valueSpan);
+      li.appendChild(row);
+    }
+
+    container.appendChild(li);
+  }
+
+  Object.keys(parsed).forEach(k => walk(k, parsed[k], 0));
 }
 
 // =====================================================================

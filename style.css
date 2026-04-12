@@ -165,6 +165,86 @@ body {
   margin-bottom: 8px;
 }
 
+/* === TREE LIST STRUCTURE === */
+.tree-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tree-category {
+  margin-bottom: 4px;
+}
+
+.tree-category-header {
+  font-weight: bold;
+  color: #fff;
+  padding: 6px 8px;
+  background: #2a2a2a;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tree-category-header:hover {
+  background: #333;
+}
+
+.tree-children {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 12px;
+  display: none;
+}
+
+.tree-children.visible {
+  display: block;
+}
+
+.tree-item {
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.tree-item:hover {
+  background: #2a2a2a;
+}
+
+.tree-item-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tree-toggle {
+  width: 14px;
+  font-size: 10px;
+  color: #666;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.tree-toggle.expanded {
+  color: #888;
+}
+
+.tree-item-name {
+  flex: 1;
+  color: #ddd;
+}
+
+.tree-item-type {
+  color: #555;
+  font-size: 11px;
+}
+
+.tree-item-value {
+  color: #9ece6a;
+}
+
 .struct-container {
   margin-bottom: 10px;
   border-left: 2px solid #333;
