@@ -167,10 +167,24 @@ function renderTree(container) {
   const filesChildren = document.createElement("ul");
   filesChildren.className = "tree-children";
 
-  try {
-    const parsed = JSON.parse(jsonDocText || "{}");
-    renderJsonFileTree(parsed, filesChildren);
-  } catch (e) {}
+  if (fileList.length > 0) {
+    fileList.forEach(file => {
+      const fileLi = document.createElement("li");
+      fileLi.className = "tree-item";
+      fileLi.innerHTML = `<span class="tree-item-name">📄 ${file.name || file}</span>`;
+      fileLi.onclick = () => {
+        configPath = file.path || file.name || file;
+        editJSON();
+      };
+      filesChildren.appendChild(fileLi);
+    });
+  } else {
+    const emptyLi = document.createElement("li");
+    emptyLi.className = "tree-item";
+    emptyLi.style.color = "#555";
+    emptyLi.textContent = "(no files)";
+    filesChildren.appendChild(emptyLi);
+  }
 
   filesLi.appendChild(filesChildren);
   tree.appendChild(filesLi);

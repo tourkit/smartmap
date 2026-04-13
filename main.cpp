@@ -5,6 +5,7 @@
 #include <iostream>
 
 
+#include "nlohmann/json_fwd.hpp"
 #include "vendors/nlohmann/json.hpp"
 
 
@@ -635,29 +636,29 @@ nlohmann::ordered_json Register_::serializeSafe( int depth) {
 
     nlohmann::ordered_json j;
     
-    j[0] = nlohmann::json::array();
+    j = nlohmann::json::array();
 
     for (const auto& s : structtypes) {
 
-        j[0].push_back({
+        j.push_back({
             {"name", s->name_v},
         });
 
         if (s->fields.size()) {
 
-            j[0].back()["fields"] = nlohmann::json::array();
+            j.back()["fields"] = nlohmann::json::array();
 
             int i = 0;
             for (const auto& f : s->fields){
             
-            j[0].back()["fields"].push_back({
+            j.back()["fields"].push_back({
                 {"label", f->label_v},
                 {"type", f->type_v->name_v}
             });
                 
                 
                 if (f->quantity_v > 1)      
-                    j[0].back()["fields"].back()["quantity"] = f->quantity_v;
+                    j.back()["fields"].back()["quantity"] = f->quantity_v;
 
                 i++;
                 
@@ -672,7 +673,16 @@ nlohmann::ordered_json Register_::serializeSafe( int depth) {
 #include <App.h>
 #include <iostream>
 
+nlohmann::ordered_json json_message(const char* type, nlohmann::ordered_json body){
 
+    nlohmann::ordered_json message;
+    message["type"] = type;
+    message["body"] = body;
+
+
+    return message;
+
+}
 int main() {
 
 
@@ -695,6 +705,7 @@ int main() {
     //piece_struct.add(objet_struct, "table",);
     auto chaises = piece_struct->add(objet_struct, "chaises", 4);
     piece_struct->add<int>("ouverte");
+
 
 
 
@@ -731,13 +742,31 @@ int main() {
             std::string_view m = msg;
 
             if (m == "registre") {
-                ws->send(reg->serializeSafe().dump(), uWS::OpCode::TEXT);
+
+                auto message = json_message(std::string(m).c_str(),reg->serializeSafe()).dump();
+                std::cout << message << std::endl;
+                
+                ws->send(message, uWS::OpCode::TEXT);
+            }else if (m == "files") {
+
+                nlohmann::ordered_json json;
+
+                json["type"] = "files";
+
+                json["body"] = json["body"] = nlohmann::json::array({{ {"path", "config.json"} },{ {"path", "layout.json"} } });
+
+                std::cout << json << std::endl;
+
+                ws->send(json.dump(), uWS::OpCode::TEXT);
+
             }
         },
 
         .close = [](auto*, int, std::string_view) {
             std::cout << "Client disconnected\n";
         }
+
+
     })
     .listen(1337, [](auto* token) {
         if (token) {
