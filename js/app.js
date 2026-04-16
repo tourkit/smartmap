@@ -11,20 +11,21 @@ const ws = new WebSocket("ws://localhost:1337");
 
 ws.addEventListener("open", () => {
   console.log("Connecté au serveur WebSocket");
-  ws.send("registre");
-  ws.send("files");
+  //ws.send("{\"type\": \"registre\", \"data\": [123]}");
+  //ws.send("{\"type\": \"files\"}");
 });
 
 ws.addEventListener("message", (event) => {
 
+    if (!(typeof event.data === "string"))
+        return;
     const message = JSON.parse(event.data);
     
     if (message["type"] === "registre") {
       registry = structuredClone(message["body"]);
       refreshAllPanes("treeview");
-      console.log("Registry mis à jour :", registry);
     }
-    if (message["type"] === "files") {
+    else if (message["type"] === "files") {
       fileList = structuredClone(message["body"]);
 
       message["body"].forEach(e => {
@@ -33,8 +34,8 @@ ws.addEventListener("message", (event) => {
         
       });
       refreshAllPanes("treeview");
-      console.log("Registry mis à jour :", registry);
-    }
+    }else 
+      console.log(message)
 
 });
 

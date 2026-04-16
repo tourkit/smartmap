@@ -15,6 +15,9 @@ add_executable( smartmap
 
 main.cpp
 
+# src/struct.cpp
+ src/websocket.cpp
+# src/string.cpp
 # src/test.cpp
 
 # src/folder.cpp
@@ -27,6 +30,7 @@ main.cpp
 )
 target_compile_features(smartmap PUBLIC cxx_std_23)
 set_target_properties(smartmap PROPERTIES CXX_EXTENSIONS OFF)
+target_precompile_headers(smartmap PRIVATE src/pch.hpp)
 set_target_properties(
   smartmap PROPERTIES COMPILE_FLAGS
                       "-DIMGUI_IMPL_OPENGL_LOADER_GL3W -Xlinker --verbose ")
@@ -50,7 +54,7 @@ target_include_directories(
           vendors/gl3w/include/
           vendors/glm/
           vendors/ft/include/
-          vendors/uWebSockets/src/
+          #vendors/uWebSockets/src/
           vendors/uWebSockets/uSockets/src/
           # ${FREETYPE_INCLUDE_DIRS}
 
@@ -59,14 +63,15 @@ target_include_directories(
 # link_directories(${FREETYPE_LIBRARY_DIRS})
 
 target_link_libraries(
-  smartmap PRIVATE OpenGL::GL glfw assimp ${CMAKE_CURRENT_SOURCE_DIR}/vendors/uWebSockets/uSockets/uSockets.a ZLIB::ZLIB # ${FREETYPE_LIBRARIES}
+  smartmap PRIVATE OpenGL::GL glfw assimp 
+  ${CMAKE_CURRENT_SOURCE_DIR}/vendors/uWebSockets/uSockets/uSockets.a ZLIB::ZLIB 
+  # ${FREETYPE_LIBRARIES}
 )
 
 target_link_directories(smartmap PRIVATE
                         ${CMAKE_CURRENT_SOURCE_DIR}/vendors/NDI/Lib/
                         vendors/
                         )
-
 if(WIN32)
   file(
     COPY ${CMAKE_CURRENT_SOURCE_DIR}/vendors/NDI/Lib/Processing.NDI.Lib.x64.dll

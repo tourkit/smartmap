@@ -10,8 +10,9 @@ let paneIdCounter = 0;
 
 const SOURCES = {
   treeview:   { label: "Tree View",   icon: "🗂" },
-  inspector:  { label: "Inspector",   icon: "🔍" },
+  inspector: { label: "Inspector",   icon: "🔍" },
   jsoneditor: { label: "JSON Editor", icon: "📝" },
+  buffer:     { label: "Buffer",      icon: "▦" },
   empty:      { label: "Empty",       icon: "⬜" },
 };
 

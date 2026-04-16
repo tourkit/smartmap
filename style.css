@@ -332,9 +332,35 @@ input, select, textarea {
   cursor: pointer;
   font-size: 12px;
 }
-.jsoneditor-toolbar button:hover { background: #2e2e2e; color: #fff; }
 .jsoneditor-toolbar button.danger { border-color: #6b2020; color: #d16060; }
 .jsoneditor-toolbar button.danger:hover { background: #3a1a1a; }
+
+.jsoneditor-btn-auto {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 12px;
+  background: #222;
+  border: 1px solid #333;
+}
+.jsoneditor-btn-auto:hover { background: #2a2a2a; }
+.jsoneditor-btn-auto input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+  cursor: pointer;
+  display: none;
+}
+.jsoneditor-btn-icon {
+  color: #555;
+  font-size: 11px;
+}
+.jsoneditor-btn-auto input:checked + .jsoneditor-btn-icon {
+  color: #ffd700;
+}
 
 .jsoneditor-status {
   flex: 1;
@@ -411,3 +437,125 @@ input, select, textarea {
 .jsoneditor-textarea::-webkit-scrollbar { width: 8px; height: 8px; }
 .jsoneditor-textarea::-webkit-scrollbar-track { background: #1a1a1a; }
 .jsoneditor-textarea::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+/* ---- BUFFER VIEW ---- */
+.buffer-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #0b0f14;
+}
+
+.buffer-toolbar {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 10px;
+  background: #1a1a1a;
+  border-bottom: 1px solid #2a2a2a;
+  font-size: 12px;
+  color: #888;
+}
+
+.buffer-toolbar input[type="number"] {
+  width: 60px;
+  background: #111;
+  border: 1px solid #333;
+  color: #ddd;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.buffer-toolbar input[type="range"] {
+  width: 60px;
+}
+
+.buffer-toolbar label {
+  color: #888;
+}
+
+.buffer-toolbar button {
+  background: #333;
+  border: 1px solid #444;
+  color: #ddd;
+  padding: 2px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.buffer-toolbar button:hover {
+  background: #444;
+}
+
+.buffer-toolbar select {
+  background: #111;
+  border: 1px solid #333;
+  color: #ddd;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.buffer-toolbar input[type="checkbox"] {
+  margin-left: 8px;
+  width: 14px;
+  height: 14px;
+}
+
+.buffer-toolbar label:has(input[type="checkbox"]) {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+#buffer-gl, #buffer-text {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: auto;
+}
+
+#buffer-text {
+  pointer-events: none;
+}
+
+#buffer-tooltip {
+  position: fixed;
+  background: #111826;
+  border: 1px solid #2a3a50;
+  padding: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  display: none;
+  color: #cfe3ff;
+}
+
+.buffer-toolbar input[type="checkbox"] {
+  margin-left: 12px;
+}
+
+.buffer-toolbar label:has(input[type="checkbox"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.buffer-style-radios {
+  display: inline-flex;
+  gap: 8px;
+  margin-left: 8px;
+}
+
+.buffer-style-radios label {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  color: #888;
+  cursor: pointer;
+}
+
+.buffer-style-radios input[type="radio"] {
+  margin: 0;
+}
