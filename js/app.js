@@ -1,51 +1,38 @@
-// =====================================================================
-// MAIN APP
-// =====================================================================
 
-let fileList = [];
 
 // =====================================================================
 // WEBSOCKET
 // =====================================================================
 const ws = new WebSocket("ws://localhost:1337");
 
-ws.addEventListener("open", () => {
-  console.log("Connecté au serveur WebSocket");
-  //ws.send("{\"type\": \"registre\", \"data\": [123]}");
-  //ws.send("{\"type\": \"files\"}");
-});
+ws.binaryType = "arraybuffer";
 
 ws.addEventListener("message", (event) => {
 
-    if (!(typeof event.data === "string"))
-        return;
+    if (!(typeof event.data === "string")) {
+
+      const buffer = event.data; // ArrayBuffer
+      const view = new Uint8Array(buffer);
+      console.log(view);
+
+      for (const cb of broadcastCallbacks) {
+        cb(event.data);
+      }
+      return;
+    }
     const message = JSON.parse(event.data);
-    
+
     if (message["type"] === "registre") {
       registry = structuredClone(message["body"]);
       refreshAllPanes("treeview");
     }
     else if (message["type"] === "files") {
       fileList = structuredClone(message["body"]);
-
       message["body"].forEach(e => {
-
         fileList.push(e["path"])
-        
       });
       refreshAllPanes("treeview");
-    }else 
+    }else
       console.log(message)
 
-});
-
-// =====================================================================
-// STARTUP
-// =====================================================================
-initLayout();
-
-loadConfig().then(() => {
-  forEachLeaf(layoutRoot, n => {
-    if (n.source === "jsoneditor") renderPaneContent(n);
-  });
 });

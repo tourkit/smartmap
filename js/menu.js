@@ -23,6 +23,7 @@ function openPaneMenu(node, anchorEl) {
       node.source = key;
       node._title.textContent = info.icon + " " + info.label;
       renderPaneContent(node);
+      saveLayout();
       closeMenu();
     });
   });

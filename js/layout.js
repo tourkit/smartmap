@@ -139,6 +139,7 @@ function makeSplitter(splitNode, afterIdx) {
       spl.classList.remove("active");
       document.removeEventListener("mousemove", onMove);
       document.removeEventListener("mouseup", onUp);
+      saveLayout();
     };
 
     document.addEventListener("mousemove", onMove);
@@ -167,17 +168,19 @@ function splitPane(leaf, direction) {
     const rootEl = document.getElementById("root-container");
     rootEl.innerHTML = "";
     buildDOM(layoutRoot, rootEl);
-  } else {
-    const idx = parent.children.indexOf(leaf);
+    saveLayout();
+} else {
+      const idx = parent.children.indexOf(leaf);
 
-    if (parent.direction === direction) {
-      const sz = parent.sizes[idx] / 2;
-      parent.sizes[idx] = sz;
-      parent.sizes.splice(idx + 1, 0, sz);
-      parent.children.splice(idx + 1, 0, newLeaf);
-      newLeaf.el = null;
-      rebuildSplitDOM(parent);
-      renderPaneContent(newLeaf);
+      if (parent.direction === direction) {
+        const sz = parent.sizes[idx] / 2;
+        parent.sizes[idx] = sz;
+        parent.sizes.splice(idx + 1, 0, sz);
+        parent.children.splice(idx + 1, 0, newLeaf);
+        newLeaf.el = null;
+        rebuildSplitDOM(parent);
+        saveLayout();
+        renderPaneContent(newLeaf);
     } else {
       const newSplit = {
         type: "split",
@@ -215,6 +218,7 @@ function closePane(leaf) {
     collapseParent(parent);
   } else {
     rebuildSplitDOM(parent);
+    saveLayout();
   }
 }
 
@@ -235,6 +239,7 @@ function collapseParent(splitNode) {
     rebuildSplitDOM(grandParent);
     if (onlyChild.type === "leaf") renderPaneContent(onlyChild);
   }
+  saveLayout();
 }
 
 function findParent(node, parent, target) {
@@ -251,18 +256,67 @@ function findParent(node, parent, target) {
 // =====================================================================
 // INIT
 // =====================================================================
-function initLayout() {
-  layoutRoot = {
+const STORAGE_KEY = "smartmap-layout";
+
+function serializeLayout(node) {
+  if (node.type === "leaf") {
+    return { type: "leaf", source: node.source };
+  }
+  return {
     type: "split",
-    direction: "vertical",
-    sizes: [25, 75],
-    children: [
-      makeLeaf("treeview"),
-      makeLeaf("inspector")
-    ],
+    direction: node.direction,
+    sizes: node.sizes,
+    children: node.children.map(serializeLayout)
+  };
+}
+
+function saveLayout() {
+  if (!layoutRoot) return;
+  const data = serializeLayout(layoutRoot);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadLayout() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) {
+    return null;
+  }
+}
+
+function deserializeLayout(data) {
+  if (data.type === "leaf") {
+    return makeLeaf(data.source);
+  }
+  return {
+    type: "split",
+    direction: data.direction,
+    sizes: data.sizes,
+    children: data.children.map(deserializeLayout),
     el: null
   };
+}
+
+function initLayout() {
+  const saved = loadLayout();
+  if (saved) {
+    layoutRoot = deserializeLayout(saved);
+  } else {
+    layoutRoot = {
+      type: "split",
+      direction: "vertical",
+      sizes: [25, 75],
+      children: [
+        makeLeaf("treeview"),
+        makeLeaf("inspector")
+      ],
+      el: null
+    };
+  }
 
   const rootEl = document.getElementById("root-container");
   buildDOM(layoutRoot, rootEl);
+  saveLayout();
 }
