@@ -3,6 +3,7 @@
 // =====================================================================
 // WEBSOCKET
 // =====================================================================
+const broadcastCallbacks = [];
 const ws = new WebSocket("ws://localhost:1337");
 
 ws.binaryType = "arraybuffer";
@@ -13,7 +14,7 @@ ws.addEventListener("message", (event) => {
 
       const buffer = event.data; // ArrayBuffer
       const view = new Uint8Array(buffer);
-      console.log(view);
+      //console.log(view);
 
       for (const cb of broadcastCallbacks) {
         cb(event.data);
