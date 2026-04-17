@@ -149,6 +149,44 @@ function renderTree(container) {
     filesChildren.classList.toggle("visible");
   };
 
+  const timelineLi = document.createElement("li");
+  timelineLi.className = "tree-category";
+
+  const timelineHeader = document.createElement("div");
+  timelineHeader.className = "tree-category-header";
+  timelineHeader.innerHTML = `<span class="tree-toggle">▶</span> <span>⏱ Timelines</span>`;
+  timelineLi.appendChild(timelineHeader);
+
+  const timelineChildren = document.createElement("ul");
+  timelineChildren.className = "tree-children";
+
+  if (typeof timelinesData !== "undefined" && timelinesData.length > 0) {
+    timelinesData.forEach(t => {
+      const tli = document.createElement("li");
+      tli.className = "tree-item";
+      tli.innerHTML = `<span class="tree-item-name">⏱ Timeline ${t.id}</span>`;
+      tli.onclick = () => {
+        selectedTimelineId = t.id;
+        openTimelineEditor();
+      };
+      timelineChildren.appendChild(tli);
+    });
+  } else {
+    const emptyLi = document.createElement("li");
+    emptyLi.className = "tree-item";
+    emptyLi.style.color = "#555";
+    emptyLi.textContent = "(no timelines)";
+    timelineChildren.appendChild(emptyLi);
+  }
+
+  timelineLi.appendChild(timelineChildren);
+  tree.appendChild(timelineLi);
+
+  timelineHeader.onclick = () => {
+    timelineHeader.querySelector(".tree-toggle").classList.toggle("expanded");
+    timelineChildren.classList.toggle("visible");
+  };
+
   container.appendChild(tree);
 }
 

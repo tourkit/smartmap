@@ -20,6 +20,11 @@ function renderPaneContent(node) {
     renderJsonEditor(node, el);
   } else if (node.source === "buffer") {
     renderBufferView(node, el);
+  } else if (node.source === "timeline") {
+    const div = document.createElement("div");
+    div.className = "view-timeline";
+    el.appendChild(div);
+    renderTimelineEditor(node, div);
   } else {
     const div = document.createElement("div");
     div.className = "view-empty";

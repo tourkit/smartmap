@@ -13,6 +13,7 @@ const SOURCES = {
   inspector: { label: "Inspector",   icon: "🔍" },
   jsoneditor: { label: "JSON Editor", icon: "📝" },
   buffer:     { label: "Buffer",      icon: "▦" },
+  timeline:   { label: "Timeline",    icon: "⏱" },
   empty:      { label: "Empty",       icon: "⬜" },
 };
 
