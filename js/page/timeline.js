@@ -3,9 +3,13 @@ let selectedTimelineId = null;
 
 async function loadTimelines() {
     try {
+        console.log("Loading timelines...");
         const res = await fetch("/api/timelines");
+        console.log("Response:", res);
         if (res.ok) {
-            timelinesData = await res.json();
+            const data = await res.json();
+            console.log("Timelines data:", data);
+            timelinesData = data;
             refreshAllPanes("timeline");
         }
     } catch (e) {
@@ -15,6 +19,12 @@ async function loadTimelines() {
 
 function renderTimelineEditor(node, container) {
     container.innerHTML = "";
+    
+    if (timelinesData.length === 0) {
+        loadTimelines().then(() => renderPaneContent(node));
+        container.innerHTML = "<div style='padding:20px;color:#666;'>Loading...</div>";
+        return;
+    }
 
     const wrap = document.createElement("div");
     wrap.className = "view-timeline-editor";

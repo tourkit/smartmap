@@ -8,6 +8,13 @@ const ws = new WebSocket("ws://localhost:1337");
 
 ws.binaryType = "arraybuffer";
 
+ws.addEventListener("open", () => {
+    console.log("WS connected");
+    window.setTimeout(() => {
+        if (typeof loadTimelines === "function") loadTimelines();
+    }, 100);
+});
+
 ws.addEventListener("message", (event) => {
 
     if (!(typeof event.data === "string")) {
@@ -36,4 +43,11 @@ ws.addEventListener("message", (event) => {
     }else
       console.log(message)
 
+});
+initLayout();
+
+loadConfig().then(() => {
+  forEachLeaf(layoutRoot, n => {
+    if (n.source === "jsoneditor") renderPaneContent(n);
+  });
 });

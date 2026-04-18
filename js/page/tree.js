@@ -160,7 +160,9 @@ function renderTree(container) {
   const timelineChildren = document.createElement("ul");
   timelineChildren.className = "tree-children";
 
-  if (typeof timelinesData !== "undefined" && timelinesData.length > 0) {
+  if (typeof timelinesData === "undefined" || timelinesData.length === 0) {
+    timelineChildren.innerHTML = "<li class='tree-item' style='color:#555;'>Loading...</li>";
+  }
     timelinesData.forEach(t => {
       const tli = document.createElement("li");
       tli.className = "tree-item";
@@ -182,7 +184,10 @@ function renderTree(container) {
   timelineLi.appendChild(timelineChildren);
   tree.appendChild(timelineLi);
 
-  timelineHeader.onclick = () => {
+  timelineHeader.onclick = async () => {
+    if (!window.loadTimelines || timelinesData.length === 0) {
+        await window.loadTimelines();
+    }
     timelineHeader.querySelector(".tree-toggle").classList.toggle("expanded");
     timelineChildren.classList.toggle("visible");
   };
